@@ -1,0 +1,146 @@
+﻿html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, code, img, strike, tt, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: baseline;
+}
+
+body 
+{
+	padding: 10px;
+	font-family: Georgia, Times New Roman, Serif;
+}
+
+p, h1, h2, h3, h4, blockquote
+{
+	margin-bottom: 14px;
+}
+
+ul, ol
+{
+	margin-left: 18px;
+	margin-bottom: 10px;
+}
+
+blockquote
+{
+	margin-left: 30px;
+}
+
+td, th 
+{
+	padding: 5px;
+}
+
+h1 { font-size: 140%; }
+h2 { font-size: 120%; }
+h3 { font-size: 100%; }
+h4 { font-size: 80%; }
+h1, h2, h3, h4 
+{
+	font-weight: bold;
+	font-family: Trebuchet MS,Arial,Sans-Serif;
+}
+
+fieldset
+{
+	border: solid 1px black;
+	border-radius: 4px; -moz-border-radius: 4px;
+	padding: 10px; margin-bottom: 20px;
+}
+legend
+{
+	font-weight: bold;
+	font-family: Trebuchet MS,Arial,Sans-Serif;
+}
+
+a, a:visited { color: #3b7157; }
+a:hover { color: #6acb9c; }
+
+#MenuRail
+{
+	width: 210px;
+	position: absolute;
+	border: solid 1px black;
+	border-radius: 4px; -moz-border-radius: 4px;
+	padding: 20px;
+}
+
+#MenuRail li
+{
+	list-style-type: none;
+}
+
+#Content
+{
+	position: absolute;
+	left: 280px;
+}
+
+#Copyright
+{
+	font-size: 12px; padding: 20px 0 0 10px;
+}
+
+#PostResult, .warning
+{
+	color: Red; font-weight: bold;
+	font-family: Trebuchet MS,Arial,Sans-Serif;
+	margin: 10px 0;
+}
+
+.shortText
+{
+	width: 50px;
+}
+
+table.settings
+{
+	width: 600px;
+}
+
+table.settings input[type="text"].shortValue
+{
+	width: 50px;
+}
+table.settings input[type="text"], table.settings input[type="password"]
+{
+	width: 350px;
+}
+table.settings textarea
+{
+	width: 350px; height: 100px;
+}
+table.settings td.label { vertical-align: top; }
+
+#TermsOfService
+{
+	width: 100%; height: 150px;
+}
+
+tr.category
+{
+	background-color: #bbbbbb;
+}
+
+.permissionListBox
+{
+	width: 150px;
+	height: 250px;
+}
+
+tr.stripe
+{
+	background-color: #dedede;
+}
+
+.ui-widget-content { background-color: #eeeeee; border: 1px solid #ddd; }
+.ui-widget-content a { color: #000; padding: 2px; display: block; }
+.ui-widget-content a:hover { color: #fff; background-color: #379769 }
+.ui-menu { list-style: none; padding: 2px; float: left; }
+.ui-menu-item { margin: 2px; cursor: pointer; }

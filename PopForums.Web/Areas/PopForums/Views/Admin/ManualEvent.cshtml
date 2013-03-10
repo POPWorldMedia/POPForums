@@ -1,0 +1,83 @@
+﻿@{
+	ViewBag.PageTitle = PopForums.Resources.ManualEvent;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script src="/Scripts/jquery-ui-1.8.9.popforums.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function () {
+			var toText = $(".toText");
+			toText.autocomplete({
+				source: function (request, response) {
+					$.getJSON(PopForums.areaPath + "/Admin/GetNames", { id: request.term }, response);
+				},
+				minLength: 2,
+				select: function (event, ui) {
+					$(".names").val(ui.item.value);
+					$(".userIDs").val(ui.item.UserID);
+				},
+				close: function (event, ui) { toText.val(''); }
+			});
+		});
+	</script>
+}
+
+<h1>@PopForums.Resources.ManualEvent</h1>
+
+@using (Html.BeginForm())
+{
+@Html.Hidden("UserID", String.Empty, new { @class = "userIDs" })
+<table class="settings stripe">
+	<tr>
+		<td>Type name to search for user</td>
+		<td>@Html.TextBox("ToText", String.Empty, new { @class = "toText" })</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Name</td>
+		<td>@Html.TextBox("Name", String.Empty, new { @class = "names", disabled = "disabled" })</td>
+	</tr>
+	<tr>
+		<td>Feed message</td>
+		<td>@Html.TextBox("FeedMessage")</td>
+	</tr>
+	<tr>
+		<td>Points</td>
+		<td>@Html.TextBox("Points", String.Empty, new { @class = "shortValue" })</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Publish Points" /></td>
+	</tr>
+</table>
+}
+
+<h2>Manual existing event</h2>
+
+@using (Html.BeginForm("ManualExistingEvent", "Admin"))
+{
+@Html.Hidden("UserID", String.Empty, new { @class = "userIDs" })
+<table class="settings stripe">
+	<tr>
+		<td>Type name to search for user</td>
+		<td>@Html.TextBox("ToText", String.Empty, new { @class = "toText" })</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Name</td>
+		<td>@Html.TextBox("Name", String.Empty, new { @class = "names", disabled = "disabled" })</td>
+	</tr>
+	<tr>
+		<td>Feed message</td>
+		<td>@Html.TextBox("FeedMessage")</td>
+	</tr>
+	<tr>
+		<td>Event Definition ID</td>
+		<td>@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList)</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Publish Event" /></td>
+	</tr>
+</table>
+}

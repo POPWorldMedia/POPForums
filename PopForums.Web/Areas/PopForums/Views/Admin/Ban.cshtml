@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.PageTitle = PopForums.Resources.EmailIpBan;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.EmailIpBan</h1>
+
+<fieldset>
+	<legend>@PopForums.Resources.EmailBan</legend>
+	<table>
+		<tr>
+			<td>
+				@using(Html.BeginForm("BanEmail", "Admin")) {
+					@Html.TextBox("email")
+					<input type="submit" value="@PopForums.Resources.Ban" />
+				}
+			</td>
+			<td>
+				@using(Html.BeginForm("RemoveEmailBan", "Admin")) {
+					<select name="email" size="6">
+						@foreach(var item in (List<string>)ViewData["EmailList"]) {
+							<option>@item</option>
+						}
+					</select><br />
+					<input type="submit" value="@PopForums.Resources.BanRemove" />
+				}
+			</td>
+		</tr>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>@PopForums.Resources.IpBan</legend>
+	<table>
+		<tr>
+			<td>
+				@using(Html.BeginForm("BanIP", "Admin")) {
+					@Html.TextBox("ip")
+					<input type="submit" value="@PopForums.Resources.Ban" />
+				}
+			</td>
+			<td>
+				@using(Html.BeginForm("RemoveIPBan", "Admin")) {
+					<select name="ip" size="6">
+						@foreach(var item in (List<string>)ViewData["IPList"]) {
+							<option>@item</option>
+						}
+					</select><br />
+					<input type="submit" value="@PopForums.Resources.BanRemove" />
+				}
+			</td>
+		</tr>
+	</table>
+</fieldset>

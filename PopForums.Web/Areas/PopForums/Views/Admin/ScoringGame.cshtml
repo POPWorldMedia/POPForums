@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.PageTitle = PopForums.Resources.ScoringGame;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.ScoringGame</h1>
+
+@using (Html.BeginForm()) {
+	<table>
+		<tr>
+			<td>Interval (@PopForums.Resources.Millseconds)</td>
+			<td>@Html.TextBox("ScoringGameCalculatorInterval", ViewData["Interval"])</td>
+		</tr>
+	</table>
+	<input type="submit" value="@PopForums.Resources.Save" />
+}

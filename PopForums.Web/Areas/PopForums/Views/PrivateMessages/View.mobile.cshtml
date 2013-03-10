@@ -1,0 +1,39 @@
+﻿@model PopForums.Models.PrivateMessageView
+@using PopForums.Controllers;
+@{
+    ViewBag.Title = Model.PrivateMessage.Subject;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<ul class="pf-list pf-container">
+	<li class="pf-list-item">
+		<a href="@Url.Action("Index", PrivateMessagesController.Name)" class="pf-indicator-list-link">
+			<div class="pf-back"> </div>
+			<span class="pf-heading">@PopForums.Resources.PrivateMessages</span>
+		</a>
+	</li>
+</ul>
+
+@foreach (var post in Model.Posts)
+{
+	<div>
+		<ul class="pf-list pf-container">
+			<li class="pf-list-item">
+				<a href="@Url.Action("ViewProfile", "Account", new { id = post.UserID })"class="pf-list-link"><span class="pf-heading">@post.Name</span></a>
+			</li>
+		</ul>
+		<div>
+			@Html.Raw(post.FullText)
+			<p class="pf-subhead">@FormatTime(post.PostTime)</p>
+		</div>
+	</div>
+}
+
+@using(Html.BeginForm("ArchivePM", "PrivateMessages", new { id = Model.PrivateMessage.PMID })) {
+	<p><input type="submit" value="@PopForums.Resources.Archive" class="pf-button" /></p>
+}
+
+@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post)) {
+	@Html.TextArea("FullText", new { @class = "pf-text", rows = 6 })
+	<p><input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="pf-button" /></p>
+}

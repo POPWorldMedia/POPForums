@@ -1,0 +1,28 @@
+﻿@using PopForums.Extensions;
+@using PopForums.Models;
+@model List<PrivateMessage>
+@{
+	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + PopForums.Resources.Archived;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@Html.PagerLinksMobile(Url, "PrivateMessages", "Archive", (PagerContext)ViewBag.PagerContext)
+
+<ul class="pf-list pf-container">
+	<li class="pf-list-item">
+		<a href="@Url.Action("Index")" class="pf-indicator-list-link">
+			<div class="pf-back"> </div>
+			<span class="pf-heading">@PopForums.Resources.PrivateMessages</span>
+		</a>
+	</li>
+	@foreach (var pm in Model)
+	{
+		<li class="pf-list-item">
+			<a href="@Url.Action("View", new { id = pm.PMID })" class="pf-indicator-list-link">
+				@Html.PMReadIndicator(pm, "/Content/PopForums/", "pf-indicator")
+				<span class="pf-heading">@pm.Subject</span>
+				<span class="pf-subhead">@pm.UserNames - @pm.LastPostTime</span>
+			</a>
+		</li>
+	}
+</ul>

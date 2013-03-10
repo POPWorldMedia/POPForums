@@ -1,0 +1,79 @@
+﻿div, span, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, code, img, tt, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: baseline;
+}
+
+/* You may need to delete the above styles for your site, if they interfere */
+
+#ForumContainer p, #ForumContainer h1, #ForumContainer h2, #ForumContainer h3, #ForumContainer h4, #ForumContainer blockquote
+{
+	margin-bottom: 14px;
+}
+
+#ForumContainer ul, #ForumContainer ol
+{
+	margin-left: 18px;
+	margin-bottom: 10px;
+}
+
+#ForumContainer blockquote
+{
+	margin-left: 30px;
+}
+
+#ForumContainer td, #ForumContainer th 
+{
+	padding: 5px;
+}
+
+#ForumContainer
+{
+	width: 100%; margin: 10px auto 10px auto;
+}
+
+#ForumContainer .forumGrid
+{
+	width: 100%;
+}
+
+#ForumContainer #ForumFooter
+{
+	clear: both;
+}
+
+#ForumContainer .postForm #FullText
+{
+	width: 550px; height: 300px;
+}
+#ForumContainer .postForm #Title, #ForumContainer .postForm #Comment, #ForumContainer .postForm #Subject
+{
+	width: 500px; margin: 4px;
+}
+
+#ForumContainer .pagerLinks
+{
+	text-align: right;
+	padding: 2px;
+	margin: 10px 0 10px auto;
+}
+
+#ForumContainer .inlineModForm
+{
+	display: inline;
+}
+#ForumContainer .inlineModForm input[type="submit"]
+{
+	width: 90px;
+}
+
+#ForumContainer .deletePostForm
+{
+	display: inline;
+}
+
+#ForumContainer .voters ul { margin-left: 4px; margin-bottom: 1px; }

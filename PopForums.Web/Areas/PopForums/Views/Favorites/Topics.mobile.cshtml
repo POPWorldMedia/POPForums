@@ -1,0 +1,52 @@
+﻿@model PagedTopicContainer
+@using PopForums.Extensions;
+@using PopForums.Models
+@{
+    ViewBag.Title = PopForums.Resources.FavoriteTopics;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@if (Model == null)
+{
+	<p>@PopForums.Resources.FavoriteMustBeLoggedIn</p>
+}
+else
+{
+	if (Model.Topics.Count == 0)
+	{
+		<p>@PopForums.Resources.FavoritesDontHave</p>
+	}
+
+	@Html.PagerLinksMobile(Url, "Favorites", "Topics", Model.PagerContext)
+
+	@helper TopicLink(Topic topic)
+	{
+		if (this.GetUserFromViewData() == null)
+		{
+			@Url.Action("Topic", "Forum", new { id = topic.UrlName, page = 1 })
+		}
+		else
+		{
+			@Url.Action("GoToNewestPost", "Forum", new { id = topic.TopicID })
+		}
+	}
+
+	<ul class="pf-list pf-container">
+		<li class="pf-list-item">
+			<a href="@Url.Action("Index", PopForums.Controllers.ForumHomeController.Name)" class="pf-indicator-list-link">
+				<div class="pf-back"> </div>
+				<span class="pf-heading">@PopForums.Resources.ForumHome</span>
+			</a>
+		</li>
+		@foreach (var topic in Model.Topics)
+		{
+			<li class="pf-list-item@(topic.IsDeleted ? Html.Raw(" deletedItem") : Html.Raw(""))">
+				<a href="@TopicLink(topic)" class="pf-indicator-list-link">
+					@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/", "pf-indicator")
+					<span class="pf-heading">@topic.Title</span>
+					<span class="pf-subhead">@PopForums.Resources.Last: @FormatTime(topic.LastPostTime) @PopForums.Resources.By @topic.LastPostName</span>
+				</a>
+			</li>
+		}
+	</ul>
+}

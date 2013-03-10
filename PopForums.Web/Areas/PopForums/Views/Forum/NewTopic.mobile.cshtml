@@ -1,0 +1,13 @@
+﻿@model PopForums.Models.NewPost
+
+<div id="NewTopic">
+	<label for="Title" class="pf-label">@PopForums.Resources.Title</label>
+	@Html.TextBoxFor(p => p.Title, new { @class = "pf-text" })
+	@Html.TextAreaFor(p => p.FullText, new { @class = "pf-text", rows = 6 })
+	@Html.HiddenFor(p => p.IncludeSignature)
+	@Html.HiddenFor(p => p.ItemID)
+	@Html.HiddenFor(p => p.IsPlainText)
+	@Html.HiddenFor(p => p.IsImageEnabled)
+	<p><input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="pf-button" /></p>
+	<span id="PostResponseMessage" class="warning"></span>
+</div>

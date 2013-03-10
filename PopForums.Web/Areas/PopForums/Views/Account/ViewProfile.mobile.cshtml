@@ -1,0 +1,113 @@
+﻿@using PopForums.Extensions
+@model PopForums.Models.DisplayProfile
+
+@{
+    ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<ul class="pf-list pf-container">
+@if (Model.ShowDetails && this.GetUserFromViewData() != null)
+{
+	<li class="pf-list-item"><a href="@Url.Action("Create", "PrivateMessages", new { id = Model.UserID })"><span class="pf-heading">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</span></a></li>
+	<li class="pf-list-item"><a href="@Url.Action("EmailUser", "Account", new { id = Model.UserID })"><span class="pf-heading">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</span></a></li>
+}
+
+	<li class="pf-list-item">
+		<a href="@Url.Action("Posts", "Account", new { id = Model.UserID })">
+			<span class="pf-heading">@String.Format(PopForums.Resources.NamePosts, Model.Name)
+			(@Model.PostCount.ToString("N0"))</span>
+		</a>
+	</li>
+</ul>
+	
+<table class="pf-container">
+	<tr>
+		<th>@PopForums.Resources.Joined</th>
+		<td>@FormatTime(Model.Joined)</td>
+	</tr>
+	@if (Model.Dob.HasValue)
+	{
+		<tr>
+			<th>@PopForums.Resources.Birthday</th>
+			<td>@Model.Dob.Value.ToString("d")</td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Location))
+	{
+		<tr>
+			<th>@PopForums.Resources.Location</th>
+			<td>@Model.Location</td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Web))
+	{
+		<tr>
+			<th>@PopForums.Resources.Web</th>
+			<td><a href="@Model.Web" target="_blank">@Model.Web</a></td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Aim))
+	{
+		<tr>
+			<th>AIM</th>
+			<td>@Model.Aim</td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.YahooMessenger))
+	{
+		<tr>
+			<th>Yahoo Messenger</th>
+			<td>@Model.YahooMessenger</td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Icq))
+	{
+		<tr>
+			<th>ICQ</th>
+			<td>@Model.Icq</td>
+		</tr>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.MsnMessenger))
+	{
+		<tr>
+			<th>MSN Messenger</th>
+			<td>@Model.MsnMessenger</td>
+		</tr>
+	}
+	@if (Model.AvatarID.HasValue)
+	{
+		<tr>
+			<th>@PopForums.Resources.Avatar</th>
+			<td><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" /></td>
+		</tr>
+	}
+</table>
+
+@if (Model.ImageID.HasValue && Model.IsImageApproved)
+{
+	<p>
+		<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" />
+	</p>
+}
+
+<h2>@PopForums.Resources.ScoringGame (@Model.Points)</h2>
+
+	@foreach (var item in Model.Feed)
+	{
+		<p>
+			@FormatTime(item.TimeStamp): @Html.Raw(item.Message)
+			<span>+@item.Points</span>
+		</p>
+	}
+
+<h2>@PopForums.Resources.Awards</h2>
+
+@foreach (var item in Model.UserAwards)
+{
+	<p title="@item.Description">@FormatTime(item.TimeStamp): @item.Title</p>
+}
+@if (Model.UserAwards.Count == 0)
+{
+	<p>@PopForums.Resources.None</p>
+}

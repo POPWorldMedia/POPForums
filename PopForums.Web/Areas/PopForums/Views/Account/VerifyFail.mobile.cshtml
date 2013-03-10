@@ -1,0 +1,6 @@
+﻿@{
+	ViewBag.Title = PopForums.Resources.VerificationFailure;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p>@PopForums.Resources.VerificationLinkBad @Html.ActionLink(PopForums.Resources.NeedToVerifyExistingAccount, "Verify", new { id = "" })?</p>

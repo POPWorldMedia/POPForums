@@ -1,0 +1,61 @@
+﻿@{
+	ViewBag.Title = PopForums.Resources.NewPM;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@section HeaderContent
+{
+	<script type="text/javascript">
+		$(function () {
+			$("#ToButton").click(function () {
+				$("#PMTo").slideToggle();
+			});
+			var box = $("#SearchBox");
+			var results = $("#SearchResults");
+			box.keyup(function () {
+				if (box.val().length > 1) {
+					$.getJSON(PopForums.areaPath + "/PrivateMessages/GetNames", { id: box.val() }, function (data) {
+						results.empty();
+						$.each(data, function (index, user) {
+							results.append("<li class=\"pmUser pf-list-item\" data-userid=\"" + user.UserID + "\" data-name=\"" + user.value + "\"><a href=\"#\" class=\"pf-list-link\"><span class=\"pf-heading\">" + user.value + "</span></a></li>");
+						});
+					});
+				}
+			});
+			$(".pmUser").live("click", function () {
+				var userID = $(this).attr("data-userid");
+				$("#TargetUserName").text($(this).attr("data-name"));
+				$("#UserID").val(userID);
+				$("#PMTo").slideToggle();
+			});
+		});
+	</script>
+}
+
+<p class="warning">@ViewBag.Warning</p>
+
+@using (Html.BeginForm("CreateOne", "PrivateMessages"))
+{
+	@Html.Hidden("UserID") @Html.Hidden("Context", "mobile")
+	<p><a href="#" id="ToButton">@PopForums.Resources.To:</a> <span id="TargetUserName">@ViewBag.TargetUserName</span></p>
+	<div id="PMTo" style="display: none;">
+		<div>
+			<div>
+				<label for="SearchBox" class="pf-label">@PopForums.Resources.Search</label>
+				<input id="SearchBox" name="SearchBox" type="text" class="pf-text" autocomplete="off" />
+			</div>
+			<ul id="SearchResults" class="pf-list pf-container">
+				
+			</ul>
+		</div>
+	</div>
+	<div>
+		<label for="Subject" class="pf-label">@PopForums.Resources.Subject</label>
+		<input id="Subject" name="Subject" type="text" class="pf-text" />
+	</div>
+	<div>
+		<label for="text" class="pf-label">@PopForums.Resources.Message</label>
+		<textarea id="FullText" name="FullText" class="pf-text" rows="6"></textarea>
+	</div>
+	<p><input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="pf-button" /></p>
+}

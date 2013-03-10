@@ -1,0 +1,60 @@
+﻿@model List<PopForums.ScoringGame.AwardDefinition>
+
+@{
+	ViewBag.PageTitle = PopForums.Resources.AwardDefinitions;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.AwardDefinitions</h1>
+
+<table class="stripe settings">
+	<tr>
+		<th>Award Definition ID</th>
+		<th>@PopForums.Resources.Title</th>
+		<th>@PopForums.Resources.Description</th>
+		<th>Single-time award</th>
+		<th>&nbsp;</th>
+	</tr>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>@Html.ActionLink(item.AwardDefinitionID, "Award", new { id = item.AwardDefinitionID })</td>
+			<td>@item.Title</td>
+			<td>@item.Description</td>
+			<td><input type="checkbox" disabled="disabled" @if (item.IsSingleTimeAward){<text>checked="checked" </text>}/></td>
+			<td>
+				@using (Html.BeginForm("DeleteAward", "Admin", new { id = item.AwardDefinitionID })) {
+					<input type="submit" value="Delete" />
+				}
+			</td>
+		</tr>
+	}
+</table>
+
+<h2>Add Award</h2>
+
+@using (Html.BeginForm("AddAward", "Admin"))
+{
+<table class="stripe settings">
+	<tr>
+		<td>Award Definition ID</td>
+		<td>@Html.TextBox("AwardDefinitionID", String.Empty, new { @class = "shortValue" })</td>
+	</tr>
+	<tr>
+		<td>Title</td>
+		<td>@Html.TextBox("Title")</td>
+	</tr>
+	<tr>
+		<td>Description</td>
+		<td>@Html.TextArea("Description")</td>
+	</tr>
+	<tr>
+		<td>Single-time award</td>
+		<td>@Html.CheckBox("IsSingleTimeAward")</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Add Award" /></td>
+	</tr>
+</table>
+}

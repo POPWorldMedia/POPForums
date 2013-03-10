@@ -1,0 +1,13 @@
+﻿@model PopForums.Models.NewPost
+
+<div id="NewReply">
+	@Html.HiddenFor(p => p.Title)
+	@Html.TextAreaFor(p => p.FullText, new { @class = "pf-text", rows = 6 })
+	@Html.HiddenFor(p => p.IncludeSignature)
+	@Html.HiddenFor(p => p.ItemID)
+	@Html.HiddenFor(p => p.IsPlainText)
+	@Html.HiddenFor(p => p.IsImageEnabled)
+	@Html.HiddenFor(p => p.ParentPostID)
+	<p><input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="pf-button" /></p>
+	<p id="PostResponseMessage" class="warning"></p>
+</div>

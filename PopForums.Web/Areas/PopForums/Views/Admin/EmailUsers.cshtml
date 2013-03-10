@@ -1,0 +1,30 @@
+﻿@{
+	ViewBag.PageTitle = PopForums.Resources.EmailUsers;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.EmailUsers</h1>
+
+<p class="warning">@ViewBag.Result</p>
+
+@using (Html.BeginForm())
+{
+<table class="settings stripe">
+	<tr>
+		<td>@PopForums.Resources.Subject</td>
+		<td>@Html.TextBox("Subject")</td>
+	</tr>
+	<tr>
+		<td class="label">@PopForums.Resources.Body</td>
+		<td>@Html.TextArea("Body")</td>
+	</tr>
+	<tr>
+		<td class="label">@PopForums.Resources.BodyHtml<br />@PopForums.Resources.Optional</td>
+		<td>@Html.TextArea("HtmlBody")</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="Send" /></td>
+	</tr>
+</table>
+}

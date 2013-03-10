@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@PopForums.Resources.PopForumsAdmin - @ViewBag.PageTitle</title>
+	<script src="~/Scripts/jquery-1.9.0.min.js" type="text/javascript"></script>
+	<script src="~/Scripts/PopForums.js" type="text/javascript"></script>
+	<link href="~/Content/PopForums/Admin.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+		$(function () {
+			$("table.stripe tr:even").addClass("stripe");
+		});
+	</script>
+	@RenderSection("HeaderContent", required: false)
+</head>
+<body>
+	<h1>@PopForums.Resources.PopForumsAdmin</h1>
+	<div id="MenuRail">
+		<ul>
+			<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", PopForums.Controllers.ForumHomeController.Name)</li>
+		</ul>
+		<ul>
+			<li>@Html.ActionLink(PopForums.Resources.GeneralSettings, "Index")</li>
+			<li>@Html.ActionLink(PopForums.Resources.Categories, "Categories")</li>
+			<li>@Html.ActionLink(PopForums.Resources.Forums, "Forums")</li>
+			<li>@Html.ActionLink(PopForums.Resources.ForumPermisions, "ForumPermissions")</li>
+			<li>@Html.ActionLink(PopForums.Resources.Email, "Email")</li>
+			<li>@Html.ActionLink(PopForums.Resources.Search, "Search")</li>
+		</ul>
+
+		<ul>
+			<li>@Html.ActionLink(PopForums.Resources.EditUser, "EditUserSearch")</li>
+			<li>@Html.ActionLink(PopForums.Resources.UserRoles, "UserRoles")</li>
+			<li>@Html.ActionLink(PopForums.Resources.UserImageApproval, "UserImageApprove")</li>
+			<li>@Html.ActionLink(PopForums.Resources.EmailIpBan, "Ban")</li>
+			<li>@Html.ActionLink(PopForums.Resources.EmailUsers, "EmailUsers")</li>
+		</ul>
+
+		<ul>
+			<li>@Html.ActionLink(PopForums.Resources.ScoringGame, "ScoringGame")</li>
+			<li>@Html.ActionLink(PopForums.Resources.EventDefinitions, "EventDefinitions")</li>
+			<li>@Html.ActionLink(PopForums.Resources.AwardDefinitions, "AwardDefinitions")</li>
+			<li>@Html.ActionLink(PopForums.Resources.ManualEvent, "ManualEvent")</li>
+		</ul>
+
+		<ul>
+			<li>@Html.ActionLink(PopForums.Resources.IpHistory, "IPHistory")</li>
+			<li>@Html.ActionLink(PopForums.Resources.SecurityLog, "SecurityLog")</li>
+			<li>@Html.ActionLink(PopForums.Resources.ModerationLog, "ModerationLog")</li>
+			<li>@Html.ActionLink(PopForums.Resources.ErrorLog, "ErrorLog")</li>
+			<li>@Html.ActionLink(PopForums.Resources.Services, "Services")</li>
+		</ul>
+
+		<p id="Copyright">&copy;@DateTime.Now.Year, POP World Media, LLC</p>
+	</div>
+    <div id="Content">
+		<p id="PostResult">@ViewData["PostResult"]</p>
+        @RenderBody()
+    </div>
+</body>
+</html>

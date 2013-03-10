@@ -1,0 +1,64 @@
+﻿@using PopForums.Extensions;
+@using PopForums.Models;
+@model Post
+
+<a name="@Model.PostID"></a>
+<div class="@(Model.IsDeleted ? "deletedItem " : "")postItem" postID="@Model.PostID" userID="@Model.UserID">
+	<div class="postUserData">
+		<p class="postTime">
+			@if (this.IsUserInRole(PermanentRoles.Moderator)) {
+				@:IP: @Model.IP -
+			}
+			<span class="fTime" data-utc="@FormatTime8601(Model.PostTime)">@FormatTime(Model.PostTime)</span>
+		</p>
+		<p><a href="javascript:void(0)" class="postNameLink">@Model.Name</a></p>
+	</div>
+	<div class="miniProfileBox" style="display:none"></div>
+
+	@if (!this.HideVanity() && ((Dictionary<int, int>)ViewBag.Avatars).ContainsKey(Model.UserID))
+	{
+		<img src="@Url.Action("Avatar", "Image", new {id = ((Dictionary<int, int>)ViewBag.Avatars)[Model.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Name)" class="avatar" />
+	}
+	
+	@Html.Raw(Model.FullText)
+
+	@if (Model.IsEdited && Model.LastEditTime.HasValue)
+ {
+		<p class="lastEdit">@String.Format(PopForums.Resources.NameLastEdit, Model.LastEditName), <span class="fTime" data-utc="@FormatTime8601(Model.LastEditTime.Value)">@FormatTime(Model.LastEditTime.Value)</span></p>
+	}
+	
+	@if (Model.ShowSig && !this.HideVanity() && ((Dictionary<int, string>)ViewBag.Signatures).ContainsKey(Model.UserID))
+	{
+		<hr />
+		<div class="signature">@Html.Raw(((Dictionary<int, string>)ViewBag.Signatures)[Model.UserID])</div>
+	}
+	<div class="voteCount">@Html.Partial("~/Areas/PopForums/Views/Forum/Votes.cshtml", Model.Votes)</div>
+	<div class="postTools">
+		@if (User != null && ((PopForums.Models.User)User).UserID != Model.UserID) {
+			if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.PostID)) {
+				@PopForums.Resources.Voted
+			} else {
+			<span class="voteUp">Vote up</span>} @:| 
+		}
+		@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.PostID }, null)
+		@if (User != null) {
+			@:| <a href="#" class="replyLink">@PopForums.Resources.Reply</a> 
+			@:| <a href="#" class="quoteLink">@PopForums.Resources.Quote</a> 
+		}
+		@if (User.IsPostEditable(Model))
+		{
+			@:| 
+			@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.PostID }, null)
+			@:| 
+			if (Model.IsDeleted) {
+				using (Html.BeginForm("UndeletePost", "Moderator", new { id = Model.PostID }, FormMethod.Post, new { @class = "deletePostForm" })) { <input type="submit" value="@PopForums.Resources.Undelete" /> }
+			} else {
+				using (Html.BeginForm("DeletePost", "Forum", new { id = Model.PostID }, FormMethod.Post, new { @class = "deletePostForm" })) { <input type="submit" value="@Html.PostDeleteLinkFormatter(Model)" /> }
+			}
+		}
+		@if (Model.IsEdited && this.IsUserInRole(PermanentRoles.Moderator)){
+			<input postID="@Model.PostID" class="postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" />
+			<div class="moderationLog"></div>
+		}
+	</div>
+</div>

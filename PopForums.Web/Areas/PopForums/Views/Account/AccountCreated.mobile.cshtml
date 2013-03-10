@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = PopForums.Resources.AccountCreated;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p><a href="@Url.Action("EditProfile", "Account")">@PopForums.Resources.EditYourProfile</a></p>
+
+<p class="warning">@ViewData["EmailProblem"] @ViewData["Result"]</p>

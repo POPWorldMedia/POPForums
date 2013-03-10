@@ -1,0 +1,26 @@
+﻿@using PopForums.Extensions;
+@using PopForums.Models;
+@model List<PrivateMessage>
+@{
+    ViewBag.Title = PopForums.Resources.PrivateMessages;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p><a href="@Url.Action("Create")" class="pf-button">@PopForums.Resources.SendPM</a></p>
+
+@Html.PagerLinksMobile(Url, "PrivateMessages", "Index", (PagerContext)ViewBag.PagerContext)
+
+<ul class="pf-list pf-container">
+	@foreach (var pm in Model)
+	{
+		<li class="pf-list-item">
+			<a href="@Url.Action("View", new { id = pm.PMID })" class="pf-indicator-list-link">
+				@Html.PMReadIndicator(pm, "/Content/PopForums/", "pf-indicator")
+				<span class="pf-heading">@pm.Subject</span>
+				<span class="pf-subhead">@pm.UserNames - @pm.LastPostTime</span>
+			</a>
+		</li>
+	}
+</ul>
+
+<p><a href="@Url.Action("Archive")">@PopForums.Resources.ViewArchivedMessages</a></p>

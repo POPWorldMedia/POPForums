@@ -1,0 +1,41 @@
+﻿@model PopForums.Models.CategorizedForumContainer
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.Forums;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+<script language="javascript" type="text/javascript">
+	PopForums.MoveForum = function (direction, forumID) {
+		$.ajax({
+			url: PopForums.areaPath + "/Admin/MoveForum" + direction,
+			type: "POST",
+			data: { forumID: forumID },
+			dataType: "json",
+			success: function (result) {
+				var forumList = $("#CategorizedForums");
+				switch (result.Result) {
+					case true:
+						forumList.load(PopForums.areaPath + "/Admin/CategorizedForums");
+						break;
+					default:
+						forumList.html(result.Message);
+				}
+			},
+			error: function () {
+				var categoryList = $("#CategorizedForums");
+				categoryList.html("@PopForums.Resources.ForumMoveError");
+			}
+		});
+	}
+</script>
+}
+
+<h2>@PopForums.Resources.Forums</h2>
+
+<p>@Html.ActionLink(PopForums.Resources.AddNewForum, "AddForum")</p>
+
+<div id="CategorizedForums">
+	@Html.Partial("CategorizedForums", Model)
+</div>

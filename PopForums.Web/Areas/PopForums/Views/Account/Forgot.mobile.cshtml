@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = PopForums.Resources.ForgotPassword;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p>@PopForums.Resources.ForgotInstructions</p>
+
+@using (Html.BeginForm())
+{
+	<p>
+		<label for="Email" class="pf-label">@PopForums.Resources.Email</label>
+		<input id="Email" name="Email" type="text" class="pf-text" />
+	</p>
+	<p><input type="submit" value="@PopForums.Resources.SendEmailButton" class="pf-button" /></p>
+}
+
+<p class="warning">@ViewBag.Result</p>

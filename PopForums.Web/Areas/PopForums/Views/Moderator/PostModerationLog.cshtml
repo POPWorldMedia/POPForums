@@ -1,0 +1,19 @@
+﻿@using PopForums.Controllers;
+@model List<PopForums.Models.ModerationLogEntry>
+
+<table>
+@foreach (var entry in Model)
+{
+	<tr>
+		<td>@this.FormatTime(entry.TimeStamp)</td>
+		<td>@Html.ActionLink(entry.UserName, "ViewProfile", AccountController.Name, new { id = entry.UserID }, new { target = "_blank" })</td>
+		<td>@entry.ModerationType</td>
+	</tr>
+	<tr>
+		<td colspan="3" style="border-bottom: solid 1px black;">
+			<p>@PopForums.Resources.Comment: @entry.Comment</p>
+			@Html.Raw(entry.OldText)
+		</td>
+	</tr>
+}
+</table>

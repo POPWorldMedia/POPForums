@@ -1,0 +1,66 @@
+﻿@model PopForums.Models.UserEditProfile
+@using PopForums.Extensions;
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</p>
+
+<p class="warning">@ViewData["Result"]</p>
+
+@using (Html.BeginForm())
+{
+
+	<h2>@PopForums.Resources.Options</h2>
+	
+	<p>
+		@Html.CheckBoxFor(m => m.IsSubscribed, new { @class = "pf-check"}) <label for="IsSubscribed" class="pf-label">@PopForums.Resources.SubscribeToList</label>
+	</p>
+	<p>
+		@Html.CheckBoxFor(m => m.ShowDetails, new { @class = "pf-check"}) <label for="ShowDetails" class="pf-label">@PopForums.Resources.ShowProfileDetails</label>
+	</p>
+	@Html.HiddenFor(m => m.IsPlainText)
+	@Html.HiddenFor(m => m.HideVanity)
+	<p>
+		<label for="TimeZone" class="pf-label">@PopForums.Resources.TimeZone</label>
+		@Html.TimeZoneDropDown("TimeZone", new { @class = "pf-text"}, Model.TimeZone)
+	</p>
+	<p>
+		@Html.CheckBoxFor(m => m.IsDaylightSaving, new { @class = "pf-check" }) <label for="IsDaylightSaving" class="pf-label">@PopForums.Resources.UseDaylight</label>
+	</p>
+
+	<h2>@PopForums.Resources.Details</h2>
+	
+	@Html.HiddenFor(m => m.Signature)
+	<p>
+		<label for="Location" class="pf-label">@PopForums.Resources.Location</label>
+		<input id="Location" name="Location" type="text" value="@Model.Location" class="pf-text" />
+	</p>
+	<p>
+		<label for="Dob" class="pf-label">@PopForums.Resources.DateOfBirth</label>
+		<input id="Dob" name="Dob" type="text" value="@(Model.Dob.HasValue ? Model.Dob.Value.ToString("d") : "")" class="pf-text" />
+	</p>
+	<p>
+		<label for="Web" class="pf-label">@PopForums.Resources.Web</label>
+		<input id="Web" name="Web" type="text" value="@Model.Web" class="pf-text" />
+	</p>
+	<p>
+		<label for="Aim" class="pf-label">AIM</label>
+		<input id="Aim" name="Aim" type="text" value="@Model.Aim" class="pf-text" />
+	</p>
+	<p>
+		<label for="Icq" class="pf-label">ICQ</label>
+		<input id="Icq" name="Icq" type="text" value="@Model.Icq" class="pf-text" />
+	</p>
+	<p>
+		<label for="YahooMessenger" class="pf-label">Yahoo Messenger</label>
+		<input id="YahooMessenger" name="YahooMessenger" type="text" value="@Model.YahooMessenger" class="pf-text" />
+	</p>
+	<p>
+		<label for="MsnMessenger" class="pf-label">MSN Messenger</label>
+		<input id="MsnMessenger" name="MsnMessenger" type="text" value="@Model.MsnMessenger" class="pf-text" />
+	</p>
+
+	<p><input type="submit" value="@PopForums.Resources.Save" class="pf-button" /></p>
+}

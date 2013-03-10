@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = PopForums.Resources.AccountCreated;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<p>@Html.ActionLink("Forums", "Index", PopForums.Controllers.ForumHomeController.Name, null, null) - &gt;</p>
+
+<h1>@PopForums.Resources.AccountCreated</h1>
+
+<p class="warning">@ViewData["EmailProblem"] @ViewData["Result"]</p>
+
+<p>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile")</p>

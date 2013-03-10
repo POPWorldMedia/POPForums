@@ -1,0 +1,25 @@
+﻿@model PopForums.Models.User
+@{
+    ViewBag.Title = PopForums.Resources.EmailUser;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@using (Html.BeginForm()) {
+	<p>
+		<label class="pf-label">@PopForums.Resources.To</label>
+		<span class="pf-static-field">@Model.Name</span>
+	</p>
+	<p>
+		<label class="pf-label">@PopForums.Resources.YourIP</label>
+		<span class="pf-static-field">@ViewBag.IP</span>
+	</p>
+	<p>
+		<label for="subject" class="pf-label">@PopForums.Resources.Subject</label>
+		<input id="subject" name="subject" type="text" class="pf-text" />
+	</p>
+	<p>
+		<label for="text" class="pf-label">@PopForums.Resources.Text</label>
+		<textarea id="text" name="text" rows="6" class="pf-text"></textarea>
+	</p>
+	<p><input type="submit" value="@PopForums.Resources.SendEmailButton" class="pf-button" /></p>
+}

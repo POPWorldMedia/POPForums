@@ -1,0 +1,18 @@
+﻿@model List<PopForums.Models.Category>
+
+<table>
+	@foreach (var category in Model) {
+	<tr>
+		<td>@if (Model.IndexOf(category) != 0) {<a href="javascript:PopForums.MoveCategory('Up',@category.CategoryID)">@PopForums.Resources.Up</a>} </td>
+		<td>@if (Model.IndexOf(category) != Model.Count - 1) {<a href="javascript:PopForums.MoveCategory('Down',@category.CategoryID)">@PopForums.Resources.Down</a>} </td>
+		<td>@category.Title</td>
+		<td><input type="button" value="@PopForums.Resources.Edit" onclick="PopForums.EditCategory(@category.CategoryID)" /></td>
+		<td>
+			@using (Html.BeginForm("DeleteCategory", "Admin")) {
+				@Html.Hidden("categoryID", category.CategoryID)
+				<input type="submit" value="@PopForums.Resources.Delete" />
+			}
+		</td>
+	</tr>
+	}
+</table>

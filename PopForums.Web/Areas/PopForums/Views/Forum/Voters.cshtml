@@ -1,0 +1,7 @@
+﻿@model PopForums.Models.VotePostContainer
+<ul>
+@foreach (var user in Model.Voters)
+{
+	<li>@Html.ActionLink(user.Value, "ViewProfile", "Account", new { id = user.Key }, new { target = "_blank" })</li>
+}
+</ul>

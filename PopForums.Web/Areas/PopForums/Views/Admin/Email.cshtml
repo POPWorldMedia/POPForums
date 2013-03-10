@@ -1,0 +1,77 @@
+﻿@model PopForums.Configuration.Settings
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.Email;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+<script language="javascript" type="text/javascript">
+	$(function () {
+		var useEsmtp = $("#UseEsmtp:checkbox");
+		SetEsmtpBoxes();
+		useEsmtp.click(function () { SetEsmtpBoxes(); });
+	});
+
+	function SetEsmtpBoxes() {
+		var enabled = $("#UseEsmtp:checkbox").is(":checked");
+		if (enabled)
+			$("#SmtpUser, #SmtpPassword").removeAttr("disabled");
+		else
+			$("#SmtpUser, #SmtpPassword").attr("disabled", "disabled");
+	}
+</script>
+}
+
+<h2>@PopForums.Resources.Email</h2>
+
+@using (Html.BeginForm()) {
+
+<table class="stripe settings">
+	<tr>
+		<td>@PopForums.Resources.SmtpServer</td>
+		<td>@Html.TextBoxFor(s => s.SmtpServer)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.SmtpPort</td>
+		<td>@Html.TextBoxFor(s => s.SmtpPort, new { @class = "shortValue"})</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.FromEmailAddress</td>
+		<td>@Html.TextBoxFor(s => s.MailerAddress)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.UseSsl</td>
+		<td>@Html.CheckBoxFor(s => s.UseSslSmtp)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.UseEsmtpCred</td>
+		<td>@Html.CheckBoxFor(s => s.UseEsmtp)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.SmtpUser</td>
+		<td>@Html.TextBoxFor(s => s.SmtpUser)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.SmtpPassword</td>
+		<td>@Html.TextBoxFor(s => s.SmtpPassword)</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.SendingInterval</td>
+		<td>@Html.TextBoxFor(s => s.MailSendingInverval, new { @class = "shortValue" })</td>
+	</tr>
+	<tr>
+		<td>Mailer quantity</td>
+		<td>@Html.TextBoxFor(s => s.MailerQuantity, new { @class = "shortValue" })</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Signature</td>
+		<td>@Html.TextAreaFor(s => s.MailSignature)</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="@PopForums.Resources.Save" /></td>
+	</tr>
+</table>
+
+}

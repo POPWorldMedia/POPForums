@@ -1,0 +1,16 @@
+﻿@model PopForums.Models.Forum
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.EditForum;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.EditForum</h2>
+
+@using(Html.BeginForm()) {
+
+Html.RenderPartial("ForumForm");
+
+<p><input type="submit" value="@PopForums.Resources.Save" /></p>
+
+}

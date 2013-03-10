@@ -1,0 +1,11 @@
+﻿@model PopForums.Models.Category
+
+@using(Html.BeginForm("EditCategory", "Admin")) {
+	<h3>@PopForums.Resources.CategoryEditTitle:</h3>
+
+	<p>
+		@Html.TextBox("newTitle", Model.Title)
+		@Html.Hidden("categoryID", Model.CategoryID)
+		<input type="submit" value="@PopForums.Resources.Save" />
+	</p>
+}

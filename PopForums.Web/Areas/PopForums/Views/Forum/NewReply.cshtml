@@ -1,0 +1,17 @@
+﻿@model PopForums.Models.NewPost
+
+<h2>@PopForums.Resources.CreateNewReply</h2>
+
+<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" /></p>
+
+<p class="postForm">
+	@PopForums.Resources.Title: @Html.TextBoxFor(p => p.Title)<br />
+	@Html.TextAreaFor(p => p.FullText)<br />
+	@Html.CheckBoxFor(p => p.IncludeSignature)<label for="IncludeSignature">@PopForums.Resources.IncludeSignature</label>
+	@Html.HiddenFor(p => p.ItemID)
+	@Html.HiddenFor(p => p.IsPlainText)
+	@Html.HiddenFor(p => p.IsImageEnabled)
+	@Html.HiddenFor(p => p.ParentPostID)
+	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" />
+	<span id="PostResponseMessage" class="warning"></span>
+</p>

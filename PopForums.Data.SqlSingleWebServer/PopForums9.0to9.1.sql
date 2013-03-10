@@ -1,0 +1,2 @@
+﻿ALTER TABLE pf_Forum ADD ForumAdapterName VARCHAR(256) NULL
+GO

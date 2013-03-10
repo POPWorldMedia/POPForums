@@ -1,0 +1,48 @@
+﻿@model List<PopForums.Models.Category>
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.Categories;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+<script language="javascript" type="text/javascript">
+	PopForums.MoveCategory = function (direction, categoryID) {
+		$.ajax({
+			url: PopForums.areaPath + "/Admin/MoveCategory" + direction,
+			type: "POST",
+			data: { categoryID: categoryID },
+			dataType: "json",
+			success: function (result) {
+				var categoryList = $("#CategoryList");
+				switch (result.Result) {
+					case true:
+						categoryList.load(PopForums.areaPath + "/Admin/CategoryList");
+						break;
+					default:
+						categoryList.html(result.Message);
+				}
+			},
+			error: function () {
+				var categoryList = $("#CategoryList");
+				categoryList.html("@PopForums.Resources.CategoryMoveError");
+			}
+		});
+	}
+
+	PopForums.EditCategory = function (categoryID) {
+		$("#CategoryList").load(PopForums.areaPath + "/Admin/EditCategory/" + categoryID);
+	}
+</script>
+}
+
+<h2>@PopForums.Resources.Categories</h2>
+
+@using (Html.BeginForm("AddCategory", "Admin")) {
+	@Html.TextBox("newCategoryTitle")
+	<input type="submit" value="@PopForums.Resources.AddNew" />
+}
+
+<div id="CategoryList">
+	@Html.Partial("CategoryList", Model)
+</div>

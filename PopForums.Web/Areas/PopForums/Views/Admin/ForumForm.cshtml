@@ -1,0 +1,25 @@
+﻿<table class="stripe settings">
+	<tr>
+		<td>@PopForums.Resources.Title</td>
+		<td>@Html.TextBox("title")</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Description</td>
+		<td>@Html.TextBox("description")</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Category</td>
+		<td>@Html.DropDownList("categoryID")</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td>
+			@Html.CheckBox("isVisible")<label for="isVisible">@PopForums.Resources.Visible</label><br />
+			@Html.CheckBox("isArchived")<label for="isArchived">@PopForums.Resources.Archived</label>
+		</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.ForumAdapter</td>
+		<td>@Html.TextBox("forumAdapterName")</td>
+	</tr>
+</table>

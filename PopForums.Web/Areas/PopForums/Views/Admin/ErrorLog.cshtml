@@ -1,0 +1,32 @@
+﻿@model List<PopForums.Models.ErrorLogEntry>
+@using PopForums.Extensions;
+@using PopForums.Models;
+@{
+    ViewBag.PageTitle = PopForums.Resources.ErrorLog;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.ErrorLog</h1>
+
+@using(Html.BeginForm("DeleteAllErrorLog", "Admin")) {
+	<p><input type="submit" value="@PopForums.Resources.DeleteAllErrors" /></p>
+}
+
+<p>@Html.PagerLinks("Admin", "ErrorLog", (PagerContext)ViewData["PagerContext"], "", "", "")</p>
+
+@foreach(var error in Model) {
+
+	<p>
+		@using(Html.BeginForm("DeleteErrorLog", "Admin")) {
+			<input type="submit" value="@PopForums.Resources.Delete" />@Html.Hidden("id", error.ErrorID)
+		}
+		<b>@error.Severity: @error.TimeStamp - @error.Message</b>
+	</p>
+
+	<p>@MvcHtmlString.Create(error.StackTrace.Replace("\r\n", "<br />"))</p>
+
+	<p>@MvcHtmlString.Create(error.Data.Replace("\r\n", "<br />"))</p>
+
+	<hr />
+
+}

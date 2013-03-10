@@ -1,0 +1,26 @@
+﻿@using PopForums.Configuration;
+
+@model List<ApplicationServiceBase>
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.Services;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.Services</h1>
+
+<table class="stripe">
+	<tr>
+		<th>@PopForums.Resources.Name</th>
+		<th>@PopForums.Resources.IsRunning</th>
+		<th>@PopForums.Resources.Last</th>
+	</tr>
+	@foreach (var service in Model)
+	 {
+		<tr>
+			<td>@service.Name</td>
+			<td>@service.IsRunning</td>
+			<td>@service.LastExecutionTime</td>
+		</tr>
+	 }
+</table>

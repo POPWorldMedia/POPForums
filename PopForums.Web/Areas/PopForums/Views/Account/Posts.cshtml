@@ -1,0 +1,37 @@
+﻿@model PopForums.Models.PagedTopicContainer
+@using PopForums.Extensions;
+
+@{
+	ViewBag.Title = ViewBag.PostUserName + "'s " + PopForums.Resources.Posts;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+<script type="text/javascript">
+	$(function () {
+		PopForums.topicPreviewSetup();
+	});
+</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt;</p>
+
+<h1>@ViewBag.PostUserName's @PopForums.Resources.Posts</h1>
+
+@Html.PagerLinks(PopForums.Resources.Account, "Posts", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
+
+<table class="forumGrid">
+	@foreach (var topic in Model.Topics)
+	{
+		<tr @if (topic.IsDeleted) {<text> class="deletedItem"</text> }>
+			<td class="newIndicator"><a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a></td>
+			<td>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton" title="Preview topic" topicID="@topic.TopicID">&gt;&gt;</span></h2>
+				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+				<p class="forumStatData">
+					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: @FormatTime(topic.LastPostTime) @PopForums.Resources.By @topic.LastPostName
+				</p>
+			</td>
+		</tr>
+	}
+</table>

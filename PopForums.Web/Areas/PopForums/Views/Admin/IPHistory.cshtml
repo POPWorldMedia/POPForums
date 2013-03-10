@@ -1,0 +1,67 @@
+﻿@using PopForums.Models;
+@model List<IPHistoryEvent>
+
+@{
+	ViewBag.PageTitle = PopForums.Resources.IpHistory;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.IpHistory</h1>	
+
+@using (Html.BeginForm()) {
+	<table class="settings">
+		<tr>
+			<td>@PopForums.Resources.IP</td>
+			<td>@Html.TextBox("ip")</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.StartDate</td>
+			<td>@Html.TextBox("start")</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.EndDate</td>
+			<td>@Html.TextBox("end")</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="@PopForums.Resources.Search" /></td>
+		</tr>
+	</table>
+}
+
+@if (Model != null && Model.Count > 0) {
+
+	<table class="stripe">
+		<tr>
+			<th>@PopForums.Resources.EventTime</th>
+			<th>@PopForums.Resources.Type</th>
+			<th>@PopForums.Resources.Description</th>
+			<th>@PopForums.Resources.UserID</th>
+			<th>@PopForums.Resources.Name</th>
+			<th>@PopForums.Resources.ID</th>
+		</tr>
+	@foreach (var entry in Model) {
+		<tr>
+			<td>@FormatTime(entry.EventTime)</td>
+			<td>@entry.Type.Name</td>
+			<td>
+				@switch(entry.Type.Name) {
+					case "Post":
+						@Html.ActionLink(entry.Description, "PostLink", "Forum", new { id = entry.ID }, new { target = "_blank" })
+						break;
+					case "SecurityLogEntry":
+						@entry.Description
+						break;
+					default:
+						@:none
+						break;
+				}
+			</td>
+			<td>@entry.UserID</td>
+			<td>@entry.Name</td>
+			<td>@entry.ID</td>
+		</tr>
+	}
+	</table>
+
+}

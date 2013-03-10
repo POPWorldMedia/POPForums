@@ -1,0 +1,42 @@
+﻿@model PopForums.Models.PostEdit
+
+@{
+    ViewBag.Title = PopForums.Resources.EditPost;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script type="text/javascript" src="@Url.Content("~/scripts/tiny_mce/jquery.tinymce.js")"></script>
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
+			if (!usePlainText) {
+				$("#FullText").tinymce({
+					script_url: "/scripts/tiny_mce/tiny_mce.js",
+					theme: "advanced",
+					plugins: "paste,inlinepopups",
+					content_css: "/Content/PopForums/Style.css",
+					gecko_spellcheck: true,
+					mode: "exact"
+				});
+			}
+		});
+	</script>
+}
+
+<h1>@PopForums.Resources.EditPost</h1>
+
+@using (Html.BeginForm())
+{
+	<p class="postForm">
+		@PopForums.Resources.Title: @Html.TextBoxFor(p => p.Title)<br />
+		@Html.TextAreaFor(p => p.FullText)<br />
+		@Html.CheckBoxFor(p => p.ShowSig)<label for="IncludeSignature">@PopForums.Resources.IncludeSignature
+		</label><br />
+		@PopForums.Resources.CommentsOptional:<br />
+		@Html.TextAreaFor(p => p.Comment)
+		@Html.HiddenFor(p => p.IsPlainText)
+	</p>
+	<input type="submit" value="@PopForums.Resources.Save" />
+}

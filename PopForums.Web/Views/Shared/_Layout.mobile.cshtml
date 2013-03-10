@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+	<title>@ViewBag.Title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    @RenderSection("HeaderContent", required: false)
+</head>
+<body>
+	<div id="Container">
+		<div id="MainMenu">
+			<div id="MenuHeader" class="pf-header">
+				<div id="MenuCloser"></div>
+			</div>
+			@RenderSection("MenuExtension", required: false)
+		</div>
+		<div id="MenuModal"></div>
+		<div id="Header" class="pf-header">
+			<div id="MenuToggle"></div>
+			<h1>@ViewBag.Title</h1>
+		</div>
+		<div id="Content">
+			@RenderBody()
+		</div>
+	</div>
+
+</body>
+</html>

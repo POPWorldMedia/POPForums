@@ -1,0 +1,14 @@
+﻿@model PopForums.Models.TopicUnsubscribeContainer
+@{
+    ViewBag.Title = PopForums.Resources.Unsubscribe;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@if (Model.Topic != null && Model.User != null)
+{
+	<p>@Model.User.Name is unsubscribed from @Html.ActionLink(Model.Topic.Title, "Topic", "Forum", new { id = Model.Topic.UrlName, page = 1 }, null)</p>
+}
+else
+{
+	<p>@PopForums.Resources.InvalidLink @Html.ActionLink(PopForums.Resources.Unsubscribe, "Topics", "Subscription")</p>
+}

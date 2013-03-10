@@ -1,0 +1,39 @@
+﻿@using PopForums.Controllers;
+@using PopForums.Extensions;
+@{
+    ViewBag.Title = PopForums.Resources.Login;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			$("#LoginButton").click(PopForums.processLogin);
+			$("#EmailLogin,#PasswordLogin").keydown(function (e) { if (e.keyCode == 13) PopForums.processLogin(); });
+		});
+	</script>
+}
+
+@if (this.GetUserFromViewData() == null)
+{
+	<p id="LoginResult" class="warning"></p>
+	
+	<label for="EmailLogin" class="pf-label">@PopForums.Resources.Email</label>
+	<input id="EmailLogin" name="EmailLogin" class="pf-text" type="text" />
+	
+	<label for="PasswordLogin" class="pf-label">@PopForums.Resources.Password</label>
+	<input id="PasswordLogin" name="PasswordLogin" class="pf-text" type="password" />
+	
+	<p>@Html.CheckBox("PersistCookie", new { @class = "pf-check"}) <label for="PersistCookie" class="pf-label">@PopForums.Resources.RememberMe</label></p>
+	
+	<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="pf-button" />
+
+	<p>@Html.ActionLink(PopForums.Resources.ForgotPasswordQuestion, "Forgot", AccountController.Name)</p>
+
+	@Html.Hidden("Referrer", (object)ViewBag.Referrer)
+}
+else
+{
+	<p>@PopForums.Resources.LoginAlready</p>
+}

@@ -1,0 +1,119 @@
+﻿@model PopForums.Models.CategorizedForumContainer
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.ForumPermisions;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<script language="javascript" type="text/javascript">
+	$(function () {
+		$("#ForumSelect").change(PopForums.PopulatePermissions);
+		PopForums.PopulatePermissions();
+
+		$("#AddPostButton").click(function () {
+			var role = $("#AllRoles").val();
+			if (role)
+				PopForums.ModifyForumPermissions("AddPost", role);
+		});
+		$("#RemovePostButton").click(function () {
+			var role = $("#PostRoles").val();
+			if (role)
+				PopForums.ModifyForumPermissions("RemovePost", role);
+		});
+		$("#AddViewButton").click(function () {
+			var role = $("#AllRoles").val();
+			if (role)
+				PopForums.ModifyForumPermissions("AddView", role);
+		});
+		$("#RemoveViewButton").click(function () {
+			var role = $("#ViewRoles").val();
+			if (role)
+				PopForums.ModifyForumPermissions("RemoveView", role);
+		});
+		$("#RemoveAllPostButton").click(function () {
+			PopForums.ModifyForumPermissions("RemoveAllPost", null);
+		});
+		$("#RemoveAllViewButton").click(function () {
+			PopForums.ModifyForumPermissions("RemoveAllView", null);
+		});
+	});
+
+	PopForums.ModifyForumPermissions = function (modifyType, role) {
+		$.ajax({
+			url: PopForums.areaPath + "/Admin/ModifyForumRoles",
+			type: "POST",
+			data: { forumID: $("#ForumSelect").val(), modifyType: modifyType, role: role },
+			dataType: "json",
+			complete: function () { PopForums.PopulatePermissions(); }
+		});
+	};
+
+	PopForums.PopulatePermissions = function () {
+		var forumSelect = $("#ForumSelect");
+		$.get(PopForums.areaPath + "/Admin/ForumRoles/" + forumSelect.val(),
+			function (result) {
+				$(".permissionListBox").empty();
+				$.each(result.AllRoles, function (k, v) {
+					var option = $('<option/>').attr('value', v).text(v);
+					$("#AllRoles").append(option);
+				});
+				$.each(result.ViewRoles, function (k, v) {
+					var option = $('<option/>').attr('value', v).text(v);
+					$("#ViewRoles").append(option);
+				});
+				$.each(result.PostRoles, function (k, v) {
+					var option = $('<option/>').attr('value', v).text(v);
+					$("#PostRoles").append(option);
+				});
+			}, "json"
+		);
+	};
+</script>
+
+<h2>@PopForums.Resources.ForumPermisions</h2>
+
+<p>
+	@PopForums.Resources.Forum:
+	<select id="ForumSelect">
+		@foreach (var forum in Model.UncategorizedForums) {<option value="@forum.ForumID">@forum.Title</option>}
+		@foreach (var category in Model.CategoryDictionary) {
+			<optgroup label="@category.Key.Title">
+				@foreach (var forum in category.Value) {<option value="@forum.ForumID">@forum.Title</option>}
+			</optgroup>
+		}
+	</select>
+</p>
+
+<table>
+	<tr>
+		<td>@PopForums.Resources.PostingRoles</td>
+		<td colspan="3"></td>
+		<td>@PopForums.Resources.ViewingRoles</td>
+	</tr>
+	<tr>
+		<td>
+			<select id="PostRoles" size="6" class="permissionListBox"></select>
+		</td>
+		<td style="vertical-align: middle;">
+			<input type="button" id="AddPostButton" value="&lt;&lt;" /><br />
+			<input type="button" id="RemovePostButton" value="&gt;&gt;" />
+		</td>
+		<td>
+			<select id="AllRoles" size="6" class="permissionListBox"></select>
+		</td>
+		<td style="vertical-align: middle;">
+			<input type="button" id="AddViewButton" value="&gt;&gt;" /><br />
+			<input type="button" id="RemoveViewButton" value="&lt;&lt;" />
+		</td>
+		<td>
+			<select id="ViewRoles" size="6" class="permissionListBox"></select>
+		</td>
+	</tr>
+	<tr>
+		<td><input type="button" id="RemoveAllPostButton" value="@PopForums.Resources.RemoveAll" /></td>
+		<td colspan="3"></td>
+		<td><input type="button" id="RemoveAllViewButton" value="@PopForums.Resources.RemoveAll" /></td>
+	</tr>
+</table>
+
+<p>@PopForums.Resources.ForumPermissionInstructions</p>

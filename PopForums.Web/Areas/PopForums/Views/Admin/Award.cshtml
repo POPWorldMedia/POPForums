@@ -1,0 +1,75 @@
+﻿@model PopForums.ScoringGame.AwardDefinition
+
+@{
+    ViewBag.PageTitle = "Award - " + Model.Title;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent{
+	
+}
+
+<h1>Award - @Model.Title</h1>
+
+<table class="stripe settings">
+	<tr>
+		<td>Award Definition ID</td>
+		<td>@Model.AwardDefinitionID</td>
+	</tr>
+	<tr>
+		<td>Title</td>
+		<td>@Model.Title</td>
+	</tr>
+	<tr>
+		<td>Description</td>
+		<td>@Model.Description</td>
+	</tr>
+	<tr>
+		<td>Single-time award</td>
+		<td><input type="checkbox" disabled="disabled" @if (Model.IsSingleTimeAward) {<text>checked="checked" </text>}/></td>
+	</tr>
+</table>
+
+<h2>Conditions</h2>
+
+<table class="stripe settings">
+	<tr>
+		<td>Event DefinitionID</td>
+		<td>Event Count</td>
+		<td>&nbsp;</td>
+	</tr>
+	@foreach (var item in (List<PopForums.ScoringGame.AwardCondition>)ViewBag.Conditions)
+	{
+		<tr>
+			<td>@item.EventDefinitionID</td>
+			<td>@item.EventCount</td>
+			<td>
+				@using (Html.BeginForm("DeleteAwardCondition", "Admin", new { awardDefinitionID = item.AwardDefinitionID, eventDefinitionID = item.EventDefinitionID }))
+				{
+					<input type="submit" value="Delete" />
+				}
+			</td>
+		</tr>
+	}
+</table>
+
+<h2>Add Condition</h2>
+
+@using (Html.BeginForm("AddAwardCondition", "Admin"))
+{
+@Html.Hidden("AwardDefinitionID", Model.AwardDefinitionID)
+<table class="stripe settings">
+	<tr>
+		<td>Event Definition ID</td>
+		<td>@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList)</td>
+	</tr>
+	<tr>
+		<td>Event Count</td>
+		<td>@Html.TextBox("EventCount", String.Empty, new { @class = "shortValue" })</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type="submit" value="Add Condition" /></td>
+	</tr>
+</table>
+}

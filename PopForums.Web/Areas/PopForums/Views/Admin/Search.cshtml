@@ -1,0 +1,43 @@
+﻿@model PopForums.Configuration.Settings
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.Search;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.Search</h2>
+
+<fieldset>
+	<legend>@PopForums.Resources.IndexingInterval</legend>
+	@using (Html.BeginForm()) {
+		<table>
+			<tr>
+				<td>@PopForums.Resources.Millseconds</td>
+				<td>@Html.TextBox("SearchIndexingInterval", ViewData["Interval"])</td>
+			</tr>
+		</table>
+		<input type="submit" value="@PopForums.Resources.Save" />
+	}
+</fieldset>
+
+<fieldset>
+	<legend>@PopForums.Resources.JunkWords</legend>
+
+	@using (Html.BeginForm("CreateJunkWord", "Admin")) {
+		<p>
+			<input type="text" id="newWord" name="newWord" />
+			<input type="submit" value="@PopForums.Resources.CreateJunkWordButton" />
+		</p>
+ }
+
+	@using (Html.BeginForm("DeleteJunkWord", "Admin"))
+ {
+		<p>
+			<select id="deleteWord" name="deleteWord" size="10">
+				@foreach (var word in (List<string>)ViewData["JunkWords"])
+	{<option value="@word">@word</option>}
+			</select><br />
+			<input type="submit" value="@PopForums.Resources.DeleteJunkWordButton" />
+		</p>
+	}
+</fieldset>

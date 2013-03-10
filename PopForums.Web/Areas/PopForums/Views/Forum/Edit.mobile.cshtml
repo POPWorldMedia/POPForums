@@ -1,0 +1,21 @@
+﻿@model PopForums.Models.PostEdit
+
+@{
+    ViewBag.Title = PopForums.Resources.EditPost;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+	<div>
+		<label for="Title" class="pf-label">@PopForums.Resources.Title</label>
+		@Html.TextBoxFor(p => p.Title, new { @class = "pf-text" })
+	</div>
+	@Html.TextAreaFor(p => p.FullText, new { @class = "pf-text", rows = 6 })
+	@Html.HiddenFor(p => p.ShowSig)
+	@Html.HiddenFor(p => p.IsPlainText)
+	<p>@PopForums.Resources.CommentsOptional</p>
+	@Html.TextAreaFor(p => p.Comment, new { @class = "pf-text", rows = 6 })
+	@Html.HiddenFor(p => p.IsPlainText)
+	<p><input type="submit" value="@PopForums.Resources.Save" class="pf-button" /></p>
+}

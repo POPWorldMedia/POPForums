@@ -1,0 +1,10 @@
+﻿<browsers>
+    <gateway id="iPad" parentID="Safari">
+        <identification>
+            <userAgent match="iPad" />
+        </identification>
+        <capabilities>
+            <capability name="isMobileDevice" value="true" />
+        </capabilities>
+    </gateway>
+</browsers>

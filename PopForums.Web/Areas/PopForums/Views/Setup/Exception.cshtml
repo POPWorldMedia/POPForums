@@ -1,0 +1,19 @@
+﻿@model System.Exception
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@PopForums.Resources.PopForumsSetup - @PopForums.Resources.Error</title>
+	<link href="/Content/PopForums/Structure.css" rel="stylesheet" type="text/css" />
+	<link href="/Content/PopForums/Style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id="ForumContainer">
+		<p>@PopForums.Resources.ErrorSettingUpDb:</p>
+
+		<h2>@Model.Message</h2>
+
+		<p>@Html.Raw(Model.StackTrace.Replace(Environment.NewLine, "<br />"))</p>
+    </div>
+</body>
+</html>

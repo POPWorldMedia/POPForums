@@ -1,0 +1,10 @@
+﻿@model PopForums.Models.UserEditPhoto
+
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</p>
+
+<p>You can't manage photos from the mobile version of the forums.</p>

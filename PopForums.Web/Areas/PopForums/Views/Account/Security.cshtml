@@ -1,0 +1,59 @@
+﻿@model PopForums.Models.UserEditSecurity
+
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ChangeYourEmailPassword;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; </p>
+
+<h1>@PopForums.Resources.Account - @PopForums.Resources.ChangeYourEmailPassword</h1>
+
+<p>
+	@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account") | 
+	@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")
+</p>
+
+<h2>@PopForums.Resources.ChangePassword</h2>
+
+<p class="warning">@ViewBag.PasswordResult</p>
+
+@using(Html.BeginForm("ChangePassword", "Account")) {
+	<table class="stripe account">
+		<tr>
+			<td>@PopForums.Resources.PasswordOld</td>
+			<td>@Html.Password("OldPassword")</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.PasswordNew</td>
+			<td>@Html.Password("NewPassword")</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.PasswordNewRetype</td>
+			<td>@Html.Password("NewPasswordRetype")</td>
+		</tr>
+	</table>
+
+	<p><input type="submit" value="@PopForums.Resources.ChangePassword" /></p>
+}
+
+<h2>@PopForums.Resources.ChangeEmail</h2>
+
+<p>@PopForums.Resources.ChangeEmailConsequence</p>
+
+<p class="warning">@ViewData["EmailResult"]</p>
+
+@using (Html.BeginForm("ChangeEmail", "Account")) {
+	<table class="stripe account">
+		<tr>
+			<td>@PopForums.Resources.EmailNew</td>
+			<td>@Html.TextBox("NewEmail")</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.EmailNewRetype</td>
+			<td>@Html.TextBox("NewEmailRetype")</td>
+		</tr>
+	</table>
+
+	<p><input type="submit" value="@PopForums.Resources.ChangeEmailButton" /></p>
+}

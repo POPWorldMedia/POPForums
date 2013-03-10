@@ -1,0 +1,151 @@
+﻿@model PopForums.Models.UserEditProfile
+@using PopForums.Extensions;
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; </p>
+
+<h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
+
+<p>
+	@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account") | 
+	@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")
+</p>
+
+<p class="warning">@ViewData["Result"]</p>
+
+@using (Html.BeginForm()) {
+
+<h2>@PopForums.Resources.Options</h2>
+<table class="stripe account">
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+		<td>
+			@Html.CheckBoxFor(m => m.IsSubscribed)
+			<label for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+		<td>
+			@Html.CheckBoxFor(m => m.ShowDetails)
+			<label for="ShowDetails">
+				@PopForums.Resources.ShowProfileDetails</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+		<td>
+			@Html.CheckBoxFor(m => m.IsPlainText)
+			<label for="IsPlainText">
+				@PopForums.Resources.ForcePlainTextBox</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+		<td>
+			@Html.CheckBoxFor(m => m.HideVanity)
+			<label for="HideVanity">
+				@PopForums.Resources.HideVanity</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@PopForums.Resources.TimeZone
+		</td>
+		<td>
+			@Html.TimeZoneDropDown("TimeZone", null, Model.TimeZone)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;
+		</td>
+		<td>
+			@Html.CheckBoxFor(m => m.IsDaylightSaving)
+			<label for="IsDaylightSaving">
+				@PopForums.Resources.UseDaylight</label>
+		</td>
+	</tr>
+</table>
+
+<h2>@PopForums.Resources.Details</h2>
+<table class="stripe account">
+	<tr>
+		<td class="label">
+			@PopForums.Resources.Signature
+		</td>
+		<td>
+			@Html.TextAreaFor(m => m.Signature)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@PopForums.Resources.Location
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.Location)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@PopForums.Resources.DateOfBirth
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.Dob)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			@PopForums.Resources.Web
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.Web)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			AIM
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.Aim)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			ICQ
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.Icq)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Yahoo Messenger
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.YahooMessenger)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			MSN Messenger
+		</td>
+		<td>
+			@Html.TextBoxFor(m => m.MsnMessenger)
+		</td>
+	</tr>
+</table>
+	
+<p><input type="submit" value="@PopForums.Resources.Save" /></p>
+}

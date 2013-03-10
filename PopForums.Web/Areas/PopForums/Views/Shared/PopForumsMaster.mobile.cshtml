@@ -1,0 +1,40 @@
+﻿@using PopForums.Controllers;
+@using PopForums.Extensions;
+@{
+	Layout = "~/Views/Shared/_Layout.mobile.cshtml";
+}
+
+@section HeaderContent {
+	<script src="~/Scripts/jquery-1.9.0.min.js" type="text/javascript"></script>
+	<script src="~/Scripts/PopForums.mobile.js" type="text/javascript"></script>
+	<link href="~/Content/PopForums.Mobile/Style.css" rel="stylesheet" type="text/css" />
+    @RenderSection("HeaderContent", required: false)
+}
+
+@section MenuExtension {
+	<ul>
+		<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", ForumHomeController.Name, null, null)</li>
+		@if (this.GetUserFromViewData() == null)
+		{
+			<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+			<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)</li>
+		}
+		else
+		{
+			<li>@Html.ActionLink(this.GetUserFromViewData().Name, "ViewProfile", AccountController.Name, new { id = this.GetUserFromViewData().UserID }, null)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Account, "EditProfile", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1 }, null)</li>
+			<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)</li>
+			<li>@Html.ActionLink(String.Format("{0} ({1})", PopForums.Resources.PrivateMessages, Html.Action("NewPMCount", PrivateMessagesController.Name)), "Index", PrivateMessagesController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
+		}
+	</ul>	
+}
+
+@RenderBody()

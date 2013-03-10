@@ -1,0 +1,40 @@
+﻿@using PopForums.Extensions;
+@using PopForums.Models;
+@model List<PrivateMessage>
+@{
+    ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + PopForums.Resources.Archived;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		});
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink("Private Messages", "Index") -&gt;</p>
+
+<h1>@PopForums.Resources.Archived</h1>
+
+@Html.PagerLinks("PrivateMessages", "Archive", (PagerContext)ViewBag.PagerContext, "pagerLinks", "morePager", "currentPager")
+
+<table class="forumGrid">
+	@foreach (var pm in Model)
+	{
+		<tr>
+			<td class="newIndicator">
+				<a href="@Url.Action("View", new { id = pm.PMID })">@Html.PMReadIndicator(pm, "/Content/PopForums/")</a>
+			</td>
+			<td>
+				@using(Html.BeginForm("UnarchivePM", "PrivateMessages", new { id = pm.PMID })) {
+					<input type="submit" value="@PopForums.Resources.Unarchive" />
+				}
+			</td>
+			<td>@Html.ActionLink(pm.Subject, "View", new { id = pm.PMID })</td>
+			<td>@pm.UserNames</td>
+			<td><span class="lastPostTime fTime" data-utc="@FormatTime8601(pm.LastPostTime)">@FormatTime(pm.LastPostTime)</span></td>
+		</tr>
+	}
+</table>

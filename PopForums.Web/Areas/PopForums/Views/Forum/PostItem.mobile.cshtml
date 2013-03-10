@@ -1,0 +1,33 @@
+﻿@using PopForums.Extensions;
+@using PopForums.Models;
+@model Post
+
+<a name="@Model.PostID"></a>
+<div class="@(Model.IsDeleted ? "deletedItem " : "")postItem" data-postID="@Model.PostID">
+	<ul class="pf-list pf-container">
+		<li class="pf-list-item">
+			<a href="@Url.Action("ViewProfile", "Account", new { id = Model.UserID })"class="pf-list-link"><span class="pf-heading">@Model.Name</span></a>
+		</li>
+	</ul>
+	<div>
+		@Html.Raw(Model.FullText)
+		<p class="pf-subhead">
+			<span class="voteCount">+@Model.Votes</span> | 
+			@if (User != null && ((PopForums.Models.User)User).UserID != Model.UserID) {
+				if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.PostID)) {
+					@PopForums.Resources.Voted
+				} else {
+				<span class="voteUp">Vote up</span>} @:| 
+			} 
+			@FormatTime(Model.PostTime)
+			@if (User.IsPostEditable(Model))
+			{
+				@:| @Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.PostID }, null)
+			}
+		</p>
+		@if (Model.IsEdited && Model.LastEditTime.HasValue)
+		{
+			<p class="pf-subhead">@String.Format(PopForums.Resources.NameLastEdit, Model.LastEditName), @FormatTime(Model.LastEditTime.Value)</p>
+		}
+	</div>
+</div>

@@ -1,0 +1,60 @@
+﻿@using PopForums.Extensions;
+@model PopForums.Models.CategorizedForumContainer
+@{
+	ViewBag.Title = Model.ForumTitle;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@if (this.GetUserFromViewData() != null) {
+	using (Html.BeginForm("MarkAllForumsRead", "Forum"))
+	{	
+		<p><input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="pf-button" /></p>
+	}
+}
+
+<ul class="pf-list pf-container">
+	@foreach (var forum in Model.UncategorizedForums)
+	{
+		<li class="pf-list-item">
+			<a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })" class="pf-indicator-list-link">
+				@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/", "pf-indicator")
+				<span class="pf-heading">@forum.Title</span>
+				<span class="pf-subhead">@forum.Description</span>
+			</a>
+		</li>
+	}
+</ul>
+
+<ul class="pf-list pf-container">
+	@foreach (var category in Model.CategoryDictionary)
+	{
+		<li class="pf-header pf-heading">@category.Key.Title</li>
+		foreach (var forum in category.Value)
+		{
+			<li class="pf-list-item">
+				<a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })" class="pf-indicator-list-link">
+					@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/", "pf-indicator")
+					<span class="pf-heading">@forum.Title</span>
+					<span class="pf-subhead">@forum.Description</span>
+				</a>
+			</li>
+		}
+	}
+</ul>
+
+<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
+
+<p>
+    @if (ViewContext.HttpContext.GetOverriddenBrowser().IsMobileDevice)
+    {
+        @: Displaying mobile view 
+        @Html.ActionLink("Switch to desktop view", "SwitchView", PopForums.Controllers.ForumHomeController.Name, new { mobile = false }, new { rel = "external" })
+	} 
+    else 
+    {
+        @: Displaying desktop view 
+        @Html.ActionLink("Switch to mobile view", "SwitchView", PopForums.Controllers.ForumHomeController.Name, new { mobile = true }, new { rel = "external" })
+	}
+</p>
+
+<p class="pf-footer"><a href="http://popforums.com/" target="_blank">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</p>

@@ -1,0 +1,26 @@
+﻿@model List<PopForums.Models.User>
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.EditUser + " - " + PopForums.Resources.Search;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.EditUser - @PopForums.Resources.Search</h2>
+
+@using (Html.BeginForm()) {
+	@Html.TextBox("SearchText")
+	<input type="submit" value="@PopForums.Resources.Search" /><br />
+	@Html.RadioButton("SearchType", "Name", new {id="Name", @checked="checked"})<label for="Name">@PopForums.Resources.Name</label>
+	@Html.RadioButton("SearchType", "Email", new { id = "Email" })<label for="Email">@PopForums.Resources.Email</label>
+	@Html.RadioButton("SearchType", "Role", new { id = "Role" })<label for="Role">@PopForums.Resources.Role</label>
+}
+
+<p>
+	@if (Model != null)
+ {
+	 foreach (var user in Model)
+	 {
+			@Html.ActionLink(user.Name, "EditUser", new { id = user.UserID })<br />
+		}
+	}
+</p>

@@ -1,0 +1,62 @@
+﻿@model PopForums.Models.SignupData
+@using PopForums.Controllers;
+@using PopForums.Extensions;
+@{
+	ViewBag.Title = PopForums.Resources.CreateAnAccount;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@if (this.GetUserFromViewData() == null)
+{
+	using (Html.BeginForm())
+	{
+		<p id="LoginResult" class="warning"></p>
+		<p>
+			<label for="Name" class="pf-label">@PopForums.Resources.Name @PopForums.Resources.AsYouWouldLikeItToAppear</label>
+			@Html.ValidationMessageFor(m => m.Name)
+			@Html.TextBoxFor(m => m.Name, new { @class = "pf-text" })
+		</p>
+		<p>
+			<label for="Email" class="pf-label">@PopForums.Resources.Email</label>
+			@Html.ValidationMessageFor(m => m.Email)
+			@Html.TextBoxFor(m => m.Email, new { @class = "pf-text" })
+		</p>
+		<p>
+			<label for="Password" class="pf-label">@PopForums.Resources.Password @PopForums.Resources.AtLeastSixChar</label>
+			@Html.ValidationMessageFor(m => m.Password)
+			@Html.PasswordFor(m => m.Password, new { @class = "pf-text" })
+		</p>
+		<p>
+			<label for="PasPasswordRetypesword" class="pf-label">@PopForums.Resources.RetypePassword</label>
+			@Html.ValidationMessageFor(m => m.PasswordRetype)
+			@Html.PasswordFor(m => m.PasswordRetype, new { @class = "pf-text" })
+		</p>
+		<p>
+			<label for="TimeZone" class="pf-label">@PopForums.Resources.TimeZone</label>
+			@Html.TimeZoneDropDown("TimeZone", new { @class = "pf-text" }, ViewData[AccountController.ServerTimeZoneKey])
+		</p>
+		<p>
+			@Html.CheckBoxFor(m => m.IsDaylightSaving, new { @class = "pf-check" }) <label for="IsDaylightSaving" class="pf-label">@PopForums.Resources.UseDaylight</label>
+		</p>
+		<p>
+			@Html.CheckBoxFor(m => m.IsSubscribed, new { @class = "pf-check" }) <label for="IsSubscribed" class="pf-label">@PopForums.Resources.SubscribeToList</label>
+		</p>
+		<p>
+			@Html.CheckBoxFor(m => m.IsCoppa, new { @class = "pf-check" }) <label for="IsCoppa" class="pf-label">@String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label> @Html.ValidationMessageFor(m => m.IsCoppa)
+		</p>
+		<p>
+			@PopForums.Resources.TermsOfService<br />
+			<textarea disabled="disabled" rows="6" cols="60" id="TOS" class="pf-text">@ViewData[AccountController.TosKey])</textarea>
+		</p>
+		<p>
+			@Html.CheckBoxFor(m => m.IsTos, new { @class = "pf-check" }) <label for="IsTos" class="pf-label">@PopForums.Resources.HaveReadTOS</label> 
+			@Html.ValidationMessageFor(m => m.IsTos)
+		</p>
+	
+		<p><input type="submit" value="@PopForums.Resources.CreateAccountButton" class="pf-button" /></p>
+	}
+}
+else
+{
+	<p class="warning">@PopForums.Resources.AlreadyCreatedAccount</p>
+}

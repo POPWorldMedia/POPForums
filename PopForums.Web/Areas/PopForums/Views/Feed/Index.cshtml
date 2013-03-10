@@ -1,0 +1,25 @@
+﻿@model List<string>
+
+@{
+	ViewBag.Title = PopForums.Resources.ActivityFeed;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.loadFeed();
+		});
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; </p>
+
+<h1>@PopForums.Resources.ActivityFeed</h1>
+
+<div id="FeedList">
+@foreach (var item in Model)
+{
+	<div class="activityFeedEvent">@Html.Raw(item)</div>
+}
+</div>

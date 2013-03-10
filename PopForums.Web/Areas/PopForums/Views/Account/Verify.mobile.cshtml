@@ -1,0 +1,22 @@
+﻿@{
+	ViewBag.Title = PopForums.Resources.VerifyAccount;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+<p class="warning">@ViewData["EmailProblem"] @ViewData["Result"]</p>
+
+@using (Html.BeginForm("VerifyCode", "Account")) {
+	<p>
+		<label for="authorizationCode" class="pf-label">@PopForums.Resources.EnterVerificationCode</label>
+		<input id="authorizationCode" name="authorizationCode" type="text" class="pf-text" />
+	</p>
+	<p><input type="submit" value="@PopForums.Resources.VerifyCodeButton" class="pf-button" /></p>
+}
+
+@using (Html.BeginForm("RequestCode", "Account"))
+{
+	<p>
+		<label for="email" class="pf-label">@PopForums.Resources.VerificationIfYouNeed</label>
+		<input id="email" name="email" type="text" class="pf-text" />
+	</p>
+	<p><input type="submit" value="@PopForums.Resources.SendEmailWithNewCodeButton" class="pf-button" /></p>
+}

@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.PageTitle = PopForums.Resources.AddForum;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.AddForum</h2>
+
+@using(Html.BeginForm()) {
+
+Html.RenderPartial("ForumForm");
+
+<p><input type="submit" value="@PopForums.Resources.AddForum" /></p>
+
+}

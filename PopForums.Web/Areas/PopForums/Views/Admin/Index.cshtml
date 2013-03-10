@@ -1,0 +1,123 @@
+﻿@model PopForums.Configuration.Settings
+@using PopForums.Extensions;
+@{
+    ViewBag.PageTitle = PopForums.Resources.GeneralSettings;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.GeneralSettings</h2>
+
+@using (Html.BeginForm()) {
+<fieldset>
+	<legend>@PopForums.Resources.ForumSettings</legend>
+	<table class="stripe settings">
+		<tr>
+			<td>@PopForums.Resources.Title</td>
+			<td>@Html.TextBoxFor(s => s.ForumTitle)</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.TopicsPerPage</td>
+			<td>@Html.TextBoxFor(s => s.TopicsPerPage, new { @class = "shortValue" })</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.PostsPerPage</td>
+			<td>@Html.TextBoxFor(s => s.PostsPerPage, new { @class = "shortValue" })</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.SessionLength</td>
+			<td>@Html.TextBoxFor(s => s.SessionLength, new { @class = "shortValue" })</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.MinimumTimeBetweenPosts</td>
+			<td>@Html.TextBoxFor(s => s.MinimumSecondsBetweenPosts, new { @class = "shortValue" })</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				@Html.CheckBoxFor(s => s.IsNewUserApproved)
+				<label for="IsNewUserApproved">@PopForums.Resources.NewUserApprovedWithoutVerification</label>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				@Html.CheckBoxFor(s => s.IsNewUserImageApproved)
+				<label for="IsNewUserImageApproved">@PopForums.Resources.NewUserImageApprovedWithoutMod</label>
+			</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.UserImageMaxDim</td>
+			<td>
+				@Html.TextBoxFor(s => s.UserImageMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserImageMaxWidth, new { @class = "shortValue" })W<br />
+				@PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserImageMaxkBytes, new { @class = "shortValue" })kB
+			</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.UserAvatarMaxDim</td>
+			<td>
+				@Html.TextBoxFor(s => s.UserAvatarMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserAvatarMaxWidth, new { @class = "shortValue" })W<br />
+				@PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserAvatarMaxkBytes, new { @class = "shortValue" })kB
+			</td>
+		</tr>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>@PopForums.Resources.Parsing</legend>
+	<table class="stripe settings">
+		<tr>
+			<td class="label">@PopForums.Resources.CensorWords</td>
+			<td>@Html.TextAreaFor(s => s.CensorWords)</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.CensorReplacementChar</td>
+			<td>@Html.TextBoxFor(s => s.CensorCharacter, new { @class = "shortValue" })</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				@Html.CheckBoxFor(s => s.AllowImages)
+				<label for="AllowImages">@PopForums.Resources.AllowImages</label>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+
+<fieldset>
+	<legend>@PopForums.Resources.Logging</legend>
+	<p>
+		@Html.CheckBoxFor(s => s.LogSecurity)
+		<label for="LogSecurity">@PopForums.Resources.LogSecurity</label><br />
+		@Html.CheckBoxFor(s => s.LogModeration)
+		<label for="LogSecurity">@PopForums.Resources.LogMod</label><br />
+		@Html.CheckBoxFor(s => s.LogErrors)
+		<label for="LogSecurity">@PopForums.Resources.LogErrors</label>
+	</p>
+</fieldset>
+
+<fieldset>
+	<legend>@PopForums.Resources.ServerTime</legend>
+	<table class="stripe settings">
+		<tr>
+			<td>@PopForums.Resources.TimeZone</td>
+			<td>
+				@Html.TimeZoneDropDown("ServerTimeZone", null, Model.ServerTimeZone)
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				@Html.CheckBoxFor(s => s.ServerDaylightSaving)
+				<label for="ServerDaylightSaving">@PopForums.Resources.UseDaylight</label>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+	
+<fieldset>
+	<legend>@PopForums.Resources.TermsOfService</legend>
+		@Html.TextAreaFor(s => s.TermsOfService)
+</fieldset>
+
+<input type="submit" value="@PopForums.Resources.Save" />
+}

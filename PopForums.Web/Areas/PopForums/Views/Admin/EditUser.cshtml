@@ -1,0 +1,240 @@
+﻿@model PopForums.Models.UserEdit
+@using PopForums.Extensions;
+@{
+    ViewBag.PageTitle = PopForums.Resources.EditUser;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+<script language="javascript" type="text/javascript">
+	$(function () {
+		$("input.confirm").click(function () {
+			if (confirm("@PopForums.Resources.AreYouSure"))
+				return true;
+			else
+				return false;
+		});
+	});
+</script>
+}
+
+<h2>@PopForums.Resources.EditUser</h2>
+
+@using (Html.BeginForm("EditUser", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" })) {
+
+<fieldset>
+	<legend>@PopForums.Resources.Security</legend>
+	<table class="stripe settings">
+		<tr>
+			<td>
+				@PopForums.Resources.Name
+			</td>
+			<td>
+				@Model.Name
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.Email
+			</td>
+			<td>
+				<a href="mailto:@Model.Email">@Model.Email</a>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.EmailNewOptional
+			</td>
+			<td>
+				@Html.TextBoxFor(model => model.NewEmail)
+				@Html.ValidationMessageFor(model => model.NewEmail)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.PasswordNewOptional
+			</td>
+			<td>
+				@Html.PasswordFor(model => model.NewPassword)
+				@Html.ValidationMessageFor(model => model.NewPassword)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.IsApproved)
+				<label for="IsApproved">@PopForums.Resources.IsApproved</label>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset>
+	<legend>@PopForums.Resources.Options</legend>
+	<table class="stripe settings">
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.IsSubscribed)
+				<label for="IsSubscribed">@PopForums.Resources.IsSubscribed</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.ShowDetails)
+				<label for="ShowDetails">@PopForums.Resources.ShowProfileDetails</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.IsPlainText)
+				<label for="IsPlainText">@PopForums.Resources.ForcePlainTextBox</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.HideVanity)
+				<label for="HideVanity">@PopForums.Resources.HideVanity</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.TimeZone
+			</td>
+			<td>
+				@Html.TimeZoneDropDown("TimeZone", null, Model.TimeZone)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td>
+				@Html.CheckBoxFor(m => m.IsDaylightSaving)
+				<label for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset>
+	<legend>@PopForums.Resources.Details</legend>
+	<table class="stripe settings">
+		<tr>
+			<td class="label">
+				@PopForums.Resources.Signature
+			</td>
+			<td>
+				@Html.TextAreaFor(m => m.Signature)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.Location
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.Location)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.DateOfBirth
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.Dob)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.Web
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.Web)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				AIM
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.Aim)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				ICQ
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.Icq)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Yahoo Mesenger
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.YahooMessenger)
+			</td>
+		</tr>
+		<tr>
+			<td>
+				MSN Messenger
+			</td>
+			<td>
+				@Html.TextBoxFor(m => m.MsnMessenger)
+			</td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset>
+	<legend>@PopForums.Resources.Roles</legend>
+	<p>
+		@Html.RoleCheckBoxes("Roles", Model.Roles)
+	</p>
+</fieldset>
+<fieldset>
+	<legend>@PopForums.Resources.Avatar</legend>
+	<p>@PopForums.Resources.UploadNew: <input type="file" id="avatarFile" name="avatarFile" /></p>
+	@if (Model.AvatarID.HasValue) {
+		<p>
+			<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" /><br />
+			@Html.CheckBoxFor(m => m.DeleteAvatar) <label for="DeleteAvatar">@PopForums.Resources.AvatarDelete</label>
+		</p>
+	}
+</fieldset>
+<fieldset>
+	<legend>@PopForums.Resources.Photo</legend>
+	<p>@PopForums.Resources.UploadNew: <input type="file" id="photoFile" name="photoFile" /></p>
+	@if (Model.ImageID.HasValue) {
+		<p>
+			<img src="@Url.Action("UserImage", "Image", new {id = Model.ImageID})" alt="User photo" /><br />
+			@Html.CheckBoxFor(m => m.DeleteImage) <label for="DeleteImage">@PopForums.Resources.PhotoDelete</label>
+		</p>
+	}
+</fieldset>
+	
+<p><input type="submit" value="@PopForums.Resources.Save" /></p>
+}
+
+<fieldset>
+	<p><em>@PopForums.Resources.UserDeleteWarning</em></p>
+	@using (Html.BeginForm("DeleteAndBanUser", "Admin")) {
+		@Html.Hidden("id", Model.UserID)
+		<p><input type="submit" value="@PopForums.Resources.DeleteAndBanButton" class="confirm" /></p>
+	}
+	@using (Html.BeginForm("DeleteUser", "Admin")) {
+		@Html.Hidden("id", Model.UserID)
+		<p><input type="submit" value="@PopForums.Resources.DeleteUserButton" class="confirm" /></p>
+	}
+</fieldset>

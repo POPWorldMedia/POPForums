@@ -1,0 +1,59 @@
+﻿@model TopicContainer
+@using PopForums.Extensions;
+@using PopForums.Models;
+@{
+	ViewBag.Title = Model.Topic.Title;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@section HeaderContent {
+	<script type="text/javascript">
+	  	$(function() {
+	  		PopForums.topicToolSetup(@Model.Topic.TopicID);
+	  	});
+	</script>
+}
+
+@if (this.GetUserFromViewData() != null)
+{
+	<p id="AsyncResponse"></p>
+	<p>
+		<input id="SubscribeButton" type="button" class="pf-button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)"/>
+		<input id="FavoriteButton" type="button" class="pf-button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)"/>
+	</p>
+}
+
+<ul class="pf-list pf-container">
+	<li class="pf-list-item">
+		<a href="@Url.Action("Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 })" class="pf-indicator-list-link">
+			<div class="pf-back"> </div>
+			<span class="pf-heading">@Model.Forum.Title</span>
+		</a>
+	</li>
+</ul>
+
+@Html.PagerLinksMobile(Url, "Forum", "Topic", Model.PagerContext)
+
+@foreach (var post in Model.Posts)
+{
+	Html.RenderPartial("PostItem", post, new ViewDataDictionary { { "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, { ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData() } });
+}
+
+@Html.PagerLinksMobile(Url, "Forum", "Topic", Model.PagerContext)
+
+<ul class="pf-list pf-container">
+	<li class="pf-list-item">
+		<a href="@Url.Action("Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 })" class="pf-indicator-list-link">
+			<div class="pf-back"> </div>
+			<span class="pf-heading">@Model.Forum.Title</span>
+		</a>
+	</li>
+</ul>
+
+@if (this.GetUserFromViewData() != null)
+{
+	<h2>@PopForums.Resources.Reply</h2>
+	<div>
+		@{ Html.RenderAction("PostReply", "Forum", new { id = Model.Topic.TopicID }); }
+	</div>
+}

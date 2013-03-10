@@ -1,0 +1,62 @@
+﻿@model PopForums.Models.PagedTopicContainer
+@using PopForums.Extensions;
+@{
+    ViewBag.Title = PopForums.Resources.RecentTopics;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.topicPreviewSetup();
+			PopForums.startTimeUpdater();
+		@if (Model.PagerContext.PageIndex == 1)
+		{
+			<text>PopForums.recentListen(@Model.PagerContext.PageSize);</text>
+		}
+		});
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink("Forums", "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt;</p>
+
+<h1>@PopForums.Resources.RecentTopics</h1>
+
+@Html.PagerLinks("Forum", "Recent", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
+
+<table class="forumGrid">
+	@foreach (var topic in Model.Topics)
+	{
+		<tr @if (topic.IsDeleted) {<text> class="deletedItem"</text> } data-topicID="@topic.TopicID">
+			<td class="newIndicator">
+				@if (this.GetUserFromViewData() == null)
+				{
+					<a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName, page = 1 })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a>
+				}
+				else
+				{
+					<a href="@Url.Action("GoToNewestPost", "Forum", new { id = topic.TopicID })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a>
+				}
+			</td>
+			<td>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton" title="@PopForums.Resources.PreviewTopic" topicID="@topic.TopicID">&gt;&gt;</span></h2>
+				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+				<p class="forumStatData">
+					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(topic.LastPostTime)">@FormatTime(topic.LastPostTime)</span> @PopForums.Resources.By @topic.LastPostName
+				</p>
+			</td>
+		</tr>
+	}
+	<tr id="TopicTemplate" data-topicID="">
+		<td class="newIndicator">
+			<a class="indicatorLink" href=""><img src=""/></a>
+		</td>
+		<td>
+			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton" title="@PopForums.Resources.PreviewTopic" topicID="">&gt;&gt;</span></h2>
+			<div id="" class="topicPreview"></div>
+			<p class="forumStatData">
+				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
+			</p>
+		</td>
+	</tr>
+</table>

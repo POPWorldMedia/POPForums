@@ -1,0 +1,135 @@
+﻿@model PopForums.Models.DisplayProfile
+
+@{
+    ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) - &gt;</p>
+
+<h1>@Model.Name</h1>
+
+<div id="ProfileTabs">
+
+	<div id="Profile" class="isLoaded">
+		<table class="profile stripe">
+			@if (Model.ShowDetails)
+			{
+				<tr>
+					<td>@PopForums.Resources.Contact</td>
+					<td>
+						@Html.ActionLink(String.Format(PopForums.Resources.SendNamePM, Model.Name), "Create", "PrivateMessages", new { id = Model.UserID }, null)<br />
+						@Html.ActionLink(String.Format(PopForums.Resources.SendNameEmail, Model.Name), "EmailUser", "Account", new { id = Model.UserID }, null)
+					</td>
+				</tr>
+			}
+			<tr>
+				<td></td>
+				<td>@Html.ActionLink(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")", "Posts", "Account", new { id = Model.UserID }, null)</td>
+			</tr>
+			<tr>
+				<td>@PopForums.Resources.Joined</td>
+				<td>@FormatTime(Model.Joined)</td>
+			</tr>
+			@if (Model.Dob.HasValue)
+			{
+				<tr>
+					<td>@PopForums.Resources.Birthday</td>
+					<td>@Model.Dob</td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.Location))
+			{
+				<tr>
+					<td>@PopForums.Resources.Location</td>
+					<td>@Model.Location</td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.Web))
+			{
+				<tr>
+					<td>@PopForums.Resources.Web</td>
+					<td><a href="@Model.Web" target="_blank">@Model.Web</a></td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.Aim))
+			{
+				<tr>
+					<td>AIM</td>
+					<td><a href="aim:goIM?screenname=@Model.Aim">@Model.Aim</a></td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.YahooMessenger))
+			{
+				<tr>
+					<td>Yahoo Messenger</td>
+					<td><a href="ymsgr:sendIM?@Model.YahooMessenger">@Model.YahooMessenger</a></td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.Icq))
+			{
+				<tr>
+					<td>ICQ</td>
+					<td><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></td>
+				</tr>
+			}
+			@if (!String.IsNullOrWhiteSpace(Model.MsnMessenger))
+			{
+				<tr>
+					<td>MSN Messenger</td>
+					<td>@Model.MsnMessenger</td>
+				</tr>
+			}
+			@if (Model.AvatarID.HasValue)
+			{
+				<tr>
+					<td>@PopForums.Resources.Avatar</td>
+					<td><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" /></td>
+				</tr>
+			}
+			<tr>
+				<td>@PopForums.Resources.ScoringGame</td>
+				<td>@Model.Points.ToString("N0")</td>
+			</tr>
+		</table>
+
+		@if (Model.ImageID.HasValue && Model.IsImageApproved)
+		{
+			<div class="userPhoto">
+				<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" />
+			</div>
+		}
+	</div>
+	
+	<div id="ActivityFeed">
+		<h2>@PopForums.Resources.ActivityFeed</h2>
+
+		@foreach (var item in Model.Feed)
+		{
+			<div class="activityFeedEvent">
+				@if (item.Points > 0)
+				{
+					<div class="activityFeedPoints">+@item.Points</div>
+				}
+				<div class="activityFeedMessage">@Html.Raw(item.Message)</div>
+				<div class="forumStatData">@FormatTime(item.TimeStamp)</div>
+			</div>
+		}
+	</div>
+	
+	<div id="Awards">
+		<h2>@PopForums.Resources.Awards</h2>
+
+		@foreach (var item in Model.UserAwards)
+		{
+			<div class="userAward" title="@item.Description">
+				<div class="awardTitle">@item.Title</div>
+				<div class="forumStatData">@FormatTime(item.TimeStamp)</div>
+			</div>
+		}
+		@if (Model.UserAwards.Count == 0)
+		{
+			<div>@PopForums.Resources.None</div>
+		}
+	</div>
+</div>

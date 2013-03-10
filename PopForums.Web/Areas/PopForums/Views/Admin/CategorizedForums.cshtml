@@ -1,0 +1,40 @@
+﻿@model PopForums.Models.CategorizedForumContainer
+
+<table>
+	<tr>
+		<th colspan="2">@PopForums.Resources.Move</th>
+		<th>@PopForums.Resources.Forum</th>
+		<th>@PopForums.Resources.Visible</th>
+		<th>@PopForums.Resources.Archived</th>
+		<th>&nbsp;</th>
+	</tr>
+	<tr class="category">
+		<td colspan="6">@PopForums.Resources.ForumsUncat</td>
+	</tr>
+	@foreach(var forum in Model.UncategorizedForums) {
+		<tr>
+			<td>@if (Model.UncategorizedForums.IndexOf(forum) != 0) {<a href="javascript:PopForums.MoveForum('Up',@forum.ForumID)">@PopForums.Resources.Up</a>} </td>
+			<td>@if (Model.UncategorizedForums.IndexOf(forum) != Model.UncategorizedForums.Count - 1) {<a href="javascript:PopForums.MoveForum('Down',@forum.ForumID)">@PopForums.Resources.Down</a>} </td>
+			<td>@forum.Title</td>
+			<td>@Html.CheckBox("v", forum.IsVisible, new { disabled = "disabled" })</td>
+			<td>@Html.CheckBox("a", forum.IsArchived, new { disabled = "disabled" })</td>
+			<td>@Html.ActionLink(PopForums.Resources.Edit, "EditForum", new { id = forum.ForumID })</td>
+		</tr>
+	}
+	@foreach(var category in Model.CategoryDictionary) {
+		<tr class="category">
+			<td colspan="6">@category.Key.Title</td>
+		</tr>
+		foreach(var forum in category.Value) {
+		<tr>
+			<td>@if (category.Value.IndexOf(forum) != 0) {<a href="javascript:PopForums.MoveForum('Up',@forum.ForumID)">@PopForums.Resources.Up</a>} </td>
+			<td>@if (category.Value.IndexOf(forum) != category.Value.Count - 1)
+		  {<a href="javascript:PopForums.MoveForum('Down',@forum.ForumID)">@PopForums.Resources.Down</a>} </td>
+			<td>@forum.Title</td>
+			<td>@Html.CheckBox("v", forum.IsVisible, new { disabled = "disabled" })</td>
+			<td>@Html.CheckBox("a", forum.IsArchived, new { disabled = "disabled" })</td>
+			<td>@Html.ActionLink(PopForums.Resources.Edit, "EditForum", new { id = forum.ForumID })</td>
+		</tr>
+		}
+	}
+</table>

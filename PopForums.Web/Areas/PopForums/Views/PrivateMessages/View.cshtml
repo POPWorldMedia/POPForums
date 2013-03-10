@@ -1,0 +1,47 @@
+﻿@model PopForums.Models.PrivateMessageView
+@{
+    ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		});
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink("Private Messages", "Index") -&gt;</p>
+
+<h1>@Model.PrivateMessage.Subject</h1>
+
+@foreach (var post in Model.Posts)
+{
+	<div class="postItem">
+		<div class="postUserData">
+			<p class="postTime">
+				<span class="lastPostTime fTime" data-utc="@FormatTime8601(post.PostTime)">@FormatTime(post.PostTime)</span>
+			</p>
+			<p>@Html.ActionLink(post.Name, "ViewProfile", "Account", new { id = post.UserID }, null)</p>
+		</div>
+
+		@Html.Raw(post.FullText)
+	</div>
+}
+
+@using(Html.BeginForm("ArchivePM", "PrivateMessages", new { id = Model.PrivateMessage.PMID })) {
+	<p><input type="submit" value="@PopForums.Resources.Archive" /></p>
+}
+
+<h2>Reply</h2>
+@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post)) {
+<table class="postForm">
+	<tr>
+		<td>@Html.TextArea("FullText")</td>
+	</tr>
+	<tr>
+		<td><input id="SendButton" type="submit" value="@PopForums.Resources.Reply" /></td>
+	</tr>
+</table>
+}

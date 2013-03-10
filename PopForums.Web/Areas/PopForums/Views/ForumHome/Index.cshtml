@@ -1,0 +1,79 @@
+﻿@using PopForums.Extensions;
+@model PopForums.Models.CategorizedForumContainer
+@{
+	ViewBag.Title = Model.ForumTitle;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent{
+<script type="text/javascript">
+	$(function () {
+		PopForums.homeSetup();
+	});
+</script>
+}
+
+<h1>@Model.ForumTitle</h1>
+
+@if (this.GetUserFromViewData() != null)
+{
+	using (Html.BeginForm("MarkAllForumsRead", "Forum"))
+	{
+		<input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="toolButton" />
+	}
+}
+
+<table class="forumGrid">
+	@foreach(var forum in Model.UncategorizedForums) {
+		<tr class="forum" data-forumID="@forum.ForumID">
+			<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/")</a></td>
+			<td>
+				<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
+				<p class="forumDescription">@forum.Description</p>
+				<p class="forumStatData">
+					@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(forum.LastPostTime)">@FormatTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
+				</p>
+			</td>
+		</tr>
+ }
+	@foreach (var category in Model.CategoryDictionary)
+ {
+		<tr class="category">
+			<td colspan="2">@category.Key.Title</td>
+		</tr>
+	 foreach (var forum in category.Value)
+	 {
+		<tr class="forum" data-forumID="@forum.ForumID">
+			<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/")</a></td>
+			<td>
+				<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
+				<p class="forumDescription">@forum.Description</p>
+				<p class="forumStatData">
+					@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(forum.LastPostTime)">@FormatTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
+				</p>
+			</td>
+		</tr>
+	 }
+ }
+</table>
+
+<div>
+	<h3>@PopForums.Resources.UsersOnline</h3>
+	<p>@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var user in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
+		{<text>, </text>@Html.ActionLink(user.Name, "ViewProfile", "Account", new { id = user.UserID }, null)}
+	</p>
+	<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
+</div>
+
+<div>
+    @if (ViewContext.HttpContext.GetOverriddenBrowser().IsMobileDevice)
+    {
+        @: Displaying mobile view 
+        @Html.ActionLink("Desktop view", "SwitchView", PopForums.Controllers.ForumHomeController.Name, new { mobile = false }, new { rel = "external" })
+	} 
+    else 
+    {
+        @: Displaying desktop view 
+        @Html.ActionLink("Mobile view", "SwitchView", PopForums.Controllers.ForumHomeController.Name, new { mobile = true }, new { rel = "external" })
+	}
+</div>

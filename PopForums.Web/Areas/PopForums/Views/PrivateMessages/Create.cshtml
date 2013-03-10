@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = PopForums.Resources.NewPM;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			var toText = $("#ToText");
+			var toContainer = $("#ToContainer");
+			toText.keydown(function (data) {
+				if (data.keyCode == 8) {
+					var names = $("#ToContainer .autoItem:last").remove();
+					serializeIDs();
+				}
+			});
+			toText.autocomplete({
+				source: function (request, response) { $.getJSON(PopForums.areaPath + "/PrivateMessages/GetNames", { id: request.term }, response); },
+				minLength: 2,
+				select: function (event, ui) { toContainer.append('<span userID="' + ui.item.UserID + '" class="autoItem">' + ui.item.value + '</span>'); },
+				close: function (event, ui) { toText.val(''); serializeIDs(); },
+				messages:  {
+					noResults: null,
+					results: function() {}
+			}
+			});
+		});
+
+		function serializeIDs() {
+			var items = $("#ToContainer span");
+			var ids = [];
+			items.each(function () { ids.push($(this).attr("userID")); });
+			$("#UserIDs").val(ids);
+		}
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink("Private Messages", "Index") -&gt;</p>
+
+<h1>@PopForums.Resources.NewPM</h1>
+
+<p class="warning">@ViewBag.Warning</p>
+
+@using (Html.BeginForm())
+{
+@Html.Hidden("UserIDs")
+<table class="postForm">
+	<tr>
+		<td>@PopForums.Resources.To</td>
+		<td>
+			<div id="PMToBox">
+				<span id="ToContainer">
+					@if (ViewBag.TargetUserID != null) {
+						<span userID="@ViewBag.TargetUserID" class="autoItem">@ViewBag.TargetUserName</span>
+					}
+				</span>
+				<input id="ToText" type="text" />
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Subject</td>
+		<td>@Html.TextBox("Subject")</td>
+	</tr>
+	<tr>
+		<td class="label">@PopForums.Resources.Message</td>
+		<td>@Html.TextArea("FullText")</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input id="SendButton" type="submit" value="@PopForums.Resources.Send" /></td>
+	</tr>
+</table>
+}

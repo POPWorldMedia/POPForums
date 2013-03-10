@@ -1,0 +1,78 @@
+﻿@model PopForums.Models.SignupData
+@using PopForums.Controllers;
+@using PopForums.Extensions;
+@{
+	ViewBag.Title = PopForums.Resources.CreateAnAccount;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<p class="breadcrumb">@Html.ActionLink(@PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) - &gt;</p>
+
+<h1>@PopForums.Resources.CreateAnAccount</h1>
+
+<p>@Html.ActionLink(PopForums.Resources.NeedToVerifyExistingAccount, "Verify")</p>
+
+@if (this.GetUserFromViewData() == null) {
+	using (Html.BeginForm()) {
+	<table class="stripe account">
+		<tr>
+			<td>
+				@PopForums.Resources.Name<br />
+				@PopForums.Resources.AsYouWouldLikeItToAppear
+			</td>
+			<td>@Html.TextBoxFor(m => m.Name)<br />@Html.ValidationMessageFor(m => m.Name)</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.Email</td>
+			<td>@Html.TextBoxFor(m => m.Email)<br />@Html.ValidationMessageFor(m => m.Email)</td>
+		</tr>
+		<tr>
+			<td>
+				@PopForums.Resources.Password<br />
+				@PopForums.Resources.AtLeastSixChar
+			</td>
+			<td>@Html.PasswordFor(m => m.Password)<br />@Html.ValidationMessageFor(m => m.Password)</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.RetypePassword</td>
+			<td>@Html.PasswordFor(m => m.PasswordRetype)<br />@Html.ValidationMessageFor(m => m.PasswordRetype)</td>
+		</tr>
+		<tr>
+			<td>@PopForums.Resources.TimeZone</td>
+			<td>
+				@Html.TimeZoneDropDown("TimeZone", null, ViewData[AccountController.ServerTimeZoneKey])
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				@Html.CheckBoxFor(m => m.IsDaylightSaving) <label for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label><br />
+				@Html.CheckBoxFor(m => m.IsSubscribed) <label for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>@Html.CheckBoxFor(m => m.IsCoppa) <label for="IsCoppa">@String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label> @Html.ValidationMessageFor(m => m.IsCoppa)</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<p>
+					@PopForums.Resources.TermsOfService<br />
+					<textarea disabled="disabled" rows="6" cols="60" id="TOS">@ViewData[AccountController.TosKey]</textarea>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>@Html.CheckBoxFor(m => m.IsTos) <label for="IsTos">@PopForums.Resources.HaveReadTOS</label> @Html.ValidationMessageFor(m => m.IsTos)</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="@PopForums.Resources.CreateAccountButton" /></td>
+		</tr>
+	</table>
+}
+} else {
+	<p class="warning">@PopForums.Resources.AlreadyCreatedAccount</p>
+}
+

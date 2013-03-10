@@ -1,0 +1,17 @@
+﻿@using PopForums.Controllers;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@PopForums.Resources.PopForumsSetup - @PopForums.Resources.Success</title>
+	<link href="/Content/PopForums/Structure.css" rel="stylesheet" type="text/css" />
+	<link href="/Content/PopForums/Style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id="ForumContainer">
+		<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
+
+		<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
+    </div>
+</body>
+</html>

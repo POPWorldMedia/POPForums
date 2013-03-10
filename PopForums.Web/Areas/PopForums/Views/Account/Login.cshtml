@@ -1,0 +1,53 @@
+﻿@using PopForums.Controllers;
+@using PopForums.Extensions;
+@{
+    ViewBag.Title = PopForums.Resources.Login;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			$("#LoginButton").click(PopForums.processLogin);
+			$("#EmailLogin,#PasswordLogin").keydown(function (e) { if (e.keyCode == 13) PopForums.processLogin(); });
+		});
+	</script>
+}
+
+<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) - &gt;</p>
+
+<h1>@PopForums.Resources.Login</h1>
+
+@if (this.GetUserFromViewData() == null)
+{
+<table class="account">
+	<tr>
+		<td colspan="2"><span id="LoginResult" class="warning"></span></td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Email</td>
+		<td>@Html.TextBox("EmailLogin")</td>
+	</tr>
+	<tr>
+		<td>@PopForums.Resources.Password</td>
+		<td>@Html.Password("PasswordLogin")</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>@Html.CheckBox("PersistCookie") <label for="PersistCookie">@PopForums.Resources.RememberMe</label></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input id="LoginButton" type="button" value="@PopForums.Resources.Login" /></td>
+	</tr>
+</table>
+
+<p>@PopForums.Resources.NotRegisteredQuestion @Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name). @Html.ActionLink(PopForums.Resources.ForgotPasswordQuestion, "Forgot", AccountController.Name)</p>
+
+@Html.Hidden("Referrer", (object)ViewBag.Referrer)
+}
+else
+{
+	<p>@PopForums.Resources.LoginAlready</p>
+}
