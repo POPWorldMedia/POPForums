@@ -15,9 +15,12 @@
 </script>
 }
 
-<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null) -&gt;</p>
+<div id="TopBreadcrumb" class="navAbsolute">
+	<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null) -&gt;</p>
 
-<h1>@Model.Topic.Title</h1>
+	<h1>@Model.Topic.Title</h1>
+
+</div>
 
 @if (this.GetUserFromViewData() != null) {
 	<p id="AsyncResponse"></p>
@@ -54,8 +57,6 @@
 @Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
 	
 @Html.PagerLinks("Forum", "Topic", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
-
-<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null) -&gt; @Model.Topic.Title</p>
 
 <div id="StreamBottom"></div>
 

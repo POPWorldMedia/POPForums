@@ -224,3 +224,16 @@
 #ForumContainer #TopicTemplate {
 	display: none;
 }
+
+#ForumContainer #TopBreadcrumb {
+	color: white;background-color: #379769;
+}
+#ForumContainer #TopBreadcrumb a, #ForumContainer #TopBreadcrumb a:visited {
+	color: white;
+}
+#ForumContainer #TopBreadcrumb p {
+	padding: 10px 10px 5px 20px;
+}
+#ForumContainer #TopBreadcrumb h1 {
+	padding: 0 10px 15px 20px;
+}

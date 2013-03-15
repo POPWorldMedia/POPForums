@@ -1,5 +1,14 @@
 ﻿$(function () {
 	$("table.stripe tr:even").addClass("stripe");
+
+	var crumbs = $("#ForumContainer #TopBreadcrumb");
+	PopForums.crumbTop = crumbs.position().top;
+	crumbs.css("width", $("#ForumContainer").width());
+
+	$(window).scroll(function() {
+		PopForums.checkScroll();
+	});
+	PopForums.checkScroll();
 });
 
 var PopForums = {};
@@ -7,6 +16,19 @@ var PopForums = {};
 PopForums.areaPath = "/Forums";
 PopForums.contentPath = "/Content/PopForums";
 PopForums.currentTopicState = null;
+
+PopForums.checkScroll = function () {
+	var crumb = $("#ForumContainer #TopBreadcrumb");
+	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+	if (scrollTop > PopForums.crumbTop && crumb.hasClass("navAbsolute")) {
+		crumb.addClass("navFixed");
+		crumb.removeClass("navAbsolute");
+	}
+	else if (scrollTop < PopForums.crumbTop && crumb.hasClass("navFixed")) {
+		crumb.addClass("navAbsolute");
+		crumb.removeClass("navFixed");
+	}
+};
 
 PopForums.processLogin = function () {
 	$.ajax({

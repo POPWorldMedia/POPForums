@@ -77,3 +77,11 @@ fieldset, form, label, legend, table, caption, tbody, tr, th, td {
 }
 
 #ForumContainer .voters ul { margin-left: 4px; margin-bottom: 1px; }
+
+#ForumContainer #AccountBox {
+	margin-bottom: 10px;
+}
+
+#ForumContainer #TopBreadcrumb.navFixed {
+	position:fixed;top:0;z-index: 1000;
+}
