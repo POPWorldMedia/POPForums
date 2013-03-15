@@ -2,13 +2,14 @@
 	$("table.stripe tr:even").addClass("stripe");
 
 	var crumbs = $("#ForumContainer #TopBreadcrumb");
-	PopForums.crumbTop = crumbs.position().top;
-	crumbs.css("width", $("#ForumContainer").width());
-
-	$(window).scroll(function() {
+	if (crumbs.length > 0) {
+		PopForums.crumbTop = crumbs.position().top;
+		crumbs.css("width", $("#ForumContainer").width());
+		$(window).scroll(function () {
+			PopForums.checkScroll();
+		});
 		PopForums.checkScroll();
-	});
-	PopForums.checkScroll();
+	}
 });
 
 var PopForums = {};
