@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
-using Microsoft.AspNet.SignalR;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 using Ninject;
 using PopForums.Configuration;
@@ -25,7 +23,6 @@ namespace PopForums.Web
 				{
 					Kernel = new StandardKernel(new CoreInjectionModule());
 					DynamicModuleUtility.RegisterModule(typeof (PopForumsLoggingModule));
-					RouteTable.Routes.MapHubs(); 
 					_isInitialized = true;
 				}
 			}

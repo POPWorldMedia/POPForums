@@ -24,6 +24,9 @@ namespace PopForums.Web
 			// Run the background services in this Web application.
 			PopForumsActivation.StartServices();
 
+			// Register SignalR hubs
+			RouteTable.Routes.MapHubs();
+
 			RegisterRoutes(RouteTable.Routes);
 		}
 
