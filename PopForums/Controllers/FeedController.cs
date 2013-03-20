@@ -25,7 +25,7 @@ namespace PopForums.Controllers
 
 		public ViewResult Index()
 		{
-			var feed = _feedService.GetFeed().Select(x => x.Message).ToList();
+			var feed = _feedService.GetFeed();
 			 return View(feed);
 		 }
 	}

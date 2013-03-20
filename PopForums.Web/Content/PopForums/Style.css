@@ -221,7 +221,7 @@
 	font-size: 20px;margin-bottom: 4px;
 }
 
-#ForumContainer #TopicTemplate {
+#ForumContainer #TopicTemplate, #ForumContainer #ActivityFeedTemplate {
 	display: none;
 }
 

@@ -134,11 +134,23 @@ PopForums.loadReply = function (topicID, postID, replyID) {
 
 PopForums.loadFeed = function() {
 	var hub = $.connection.feed;
-	hub.client.notifyFeed = function(message) {
+	hub.client.notifyFeed = function(data) {
 		var list = $("#FeedList");
-		list.prepend('<div class="activityFeedEvent">' + message + '</div>');
+		var row = PopForums.populateFeedRow(data);
+		list.prepend(row);
+		row.fadeIn();
 	};
 	$.connection.hub.start();
+	PopForums.startTimeUpdater();
+};
+
+PopForums.populateFeedRow = function (data) {
+	var row = $("#ActivityFeedTemplate").clone();
+	row.removeAttr("id");
+	row.find(".feedItemText").html(data.Message);
+	row.find(".fTime").attr("data-utc", data.Utc);
+	row.find(".fTime").text(data.TimeStamp);
+	return row;
 };
 
 PopForums.setReplyMorePosts = function (lastPostID) {

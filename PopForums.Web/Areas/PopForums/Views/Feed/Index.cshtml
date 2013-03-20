@@ -1,4 +1,4 @@
-﻿@model List<string>
+﻿@model List<PopForums.Models.FeedEvent>
 
 @{
 	ViewBag.Title = PopForums.Resources.ActivityFeed;
@@ -20,6 +20,13 @@
 <div id="FeedList">
 @foreach (var item in Model)
 {
-	<div class="activityFeedEvent">@Html.Raw(item)</div>
+	<div class="activityFeedEvent">
+		<div class="feedItemText">@Html.Raw(item.Message)</div>
+		<div class="forumStatData fTime" data-utc="@FormatTime8601(item.TimeStamp)">@FormatTime(item.TimeStamp)</div>
+	</div>
+	<div id="ActivityFeedTemplate" class="activityFeedEvent">
+		<div class="feedItemText"></div>
+		<div class="forumStatData fTime" data-utc=""></div>
+	</div>
 }
 </div>

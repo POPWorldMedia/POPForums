@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System;
+using Microsoft.AspNet.SignalR;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -41,7 +42,8 @@ namespace PopForums.Messaging
 		public void NotifyFeed(string message)
 		{
 			var context = GlobalHost.ConnectionManager.GetHubContext<Feed>();
-			context.Clients.All.notifyFeed(message);
+			var data = new {Message = message, Utc = new DateTime(DateTime.UtcNow.Ticks, DateTimeKind.Unspecified).ToString("o"), TimeStamp = Resources.LessThanMinute};
+			context.Clients.All.notifyFeed(data);
 		}
 
 		public void NotifyForumUpdate(Forum forum)
