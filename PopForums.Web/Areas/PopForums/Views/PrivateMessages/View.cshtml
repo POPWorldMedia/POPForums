@@ -1,4 +1,5 @@
-﻿@model PopForums.Models.PrivateMessageView
+﻿@using PopForums.Controllers
+@model PopForums.Models.PrivateMessageView
 @{
     ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
@@ -12,9 +13,13 @@
 	</script>
 }
 
-<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink("Private Messages", "Index") -&gt;</p>
-
-<h1>@Model.PrivateMessage.Subject</h1>
+<div id="TopBreadcrumb" class="navAbsolute">
+	<h1>@Model.PrivateMessage.Subject</h1>
+	<p>
+		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
+		-&gt; @Html.ActionLink("Private Messages", "Index") 
+	</p>
+</div>
 
 @foreach (var post in Model.Posts)
 {

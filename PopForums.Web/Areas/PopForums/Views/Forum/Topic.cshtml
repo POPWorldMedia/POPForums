@@ -1,4 +1,5 @@
 ﻿@model TopicContainer
+@using PopForums.Controllers;
 @using PopForums.Extensions;
 @using PopForums.Models;
 @{
@@ -16,10 +17,12 @@
 }
 
 <div id="TopBreadcrumb" class="navAbsolute">
-	<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null) -&gt;</p>
-
 	<h1>@Model.Topic.Title</h1>
-
+	<p>
+		@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)
+		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
+		-&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null)
+	</p>
 </div>
 
 @if (this.GetUserFromViewData() != null) {

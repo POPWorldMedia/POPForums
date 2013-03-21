@@ -1,4 +1,4 @@
-﻿#ForumContainer h1, #ForumContainer h2, #ForumContainer h3, #ForumContainer h4, #ForumContainer #AccountBox, #ForumContainer tr.category td, #ForumContainer .forumStatData, #ForumContainer .lastEdit, #ForumContainer .breadcrumb, #ForumContainer .postUserData, #ForumContainer .postTools, #ForumContainer .pagerLinks, #ForumContainer .voteCount, #ForumContainer .activityFeedEvent, #ForumContainer .awardTitle {
+﻿#ForumContainer h1, #ForumContainer h2, #ForumContainer h3, #ForumContainer h4, #ForumContainer #AccountBox, #ForumContainer tr.category td, #ForumContainer .forumStatData, #ForumContainer .lastEdit, #ForumContainer .breadcrumb, #ForumContainer .postUserData, #ForumContainer .postTools, #ForumContainer .pagerLinks, #ForumContainer .voteCount, #ForumContainer .activityFeedEvent, #ForumContainer .awardTitle, #ForumContainer #TopBreadcrumb p {
 	font-family: 'Segoe UI', Helvetica, 'Lucida Grande', Verdana, Arial, Sans-Serif;
 }
 
@@ -202,7 +202,7 @@
 
 #ForumContainer .activityFeedEvent {
 	background-color: #efefef;
-	margin-bottom: 20px; padding: 10px; min-height: 50px;
+	margin-bottom: 20px; padding: 10px 10px 0 10px; min-height: 50px;
 }
 #ForumContainer .activityFeedPoints {
 	font-size: 50px;text-align: center;
@@ -226,14 +226,17 @@
 }
 
 #ForumContainer #TopBreadcrumb {
-	color: white;background-color: #379769;
+	color: white;
+	background-color: #379769;
+	-webkit-box-shadow: 5px 0 5px white;
+	box-shadow: 5px 0 5px white;
 }
 #ForumContainer #TopBreadcrumb a, #ForumContainer #TopBreadcrumb a:visited {
 	color: white;
 }
 #ForumContainer #TopBreadcrumb p {
-	padding: 10px 10px 5px 20px;
+	padding: 0 10px 5px 20px;font-size: 11px;margin-bottom: 0;
 }
 #ForumContainer #TopBreadcrumb h1 {
-	padding: 0 10px 15px 20px;
+	padding: 5px 10px 0 20px;margin-bottom: 0;
 }

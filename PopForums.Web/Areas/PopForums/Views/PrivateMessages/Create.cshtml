@@ -1,4 +1,5 @@
-﻿@{
+﻿@using PopForums.Controllers
+@{
     ViewBag.Title = PopForums.Resources.NewPM;
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
 }
@@ -36,9 +37,13 @@
 	</script>
 }
 
-<p class="breadcrumb">@Html.ActionLink(PopForums.Resources.Forums, "Index", PopForums.Controllers.ForumHomeController.Name, null, null) -&gt; @Html.ActionLink("Private Messages", "Index") -&gt;</p>
-
-<h1>@PopForums.Resources.NewPM</h1>
+<div id="TopBreadcrumb" class="navAbsolute">
+	<h1>@PopForums.Resources.NewPM</h1>
+	<p>
+		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
+		-&gt; @Html.ActionLink("Private Messages", "Index") 
+	</p>
+</div>
 
 <p class="warning">@ViewBag.Warning</p>
 
