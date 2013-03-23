@@ -10,6 +10,21 @@
 		});
 		PopForums.checkScroll();
 	}
+
+	if (window.location.hash) {
+		var hash = window.location.hash;
+		while (hash.charAt(0) == '#') hash = hash.substr(1);
+		var tag = $("a[name='" + hash + "']");
+		if ($("#PostStream").has(tag).length > 0) {
+			var offset = tag.offset();
+			if (offset) {
+				var height = $("#TopBreadcrumb").outerHeight() + PopForums.navOffset;
+				var tagTop = offset.top;
+				var newPosition = tagTop - height;
+				$("html,body").animate({ scrollTop: newPosition }, "fast");
+			}
+		}
+	}
 });
 
 var PopForums = {};
@@ -17,6 +32,7 @@ var PopForums = {};
 PopForums.areaPath = "/Forums";
 PopForums.contentPath = "/Content/PopForums";
 PopForums.currentTopicState = null;
+PopForums.navOffset = 0;
 
 PopForums.checkScroll = function () {
 	var crumb = $("#ForumContainer #TopBreadcrumb");
