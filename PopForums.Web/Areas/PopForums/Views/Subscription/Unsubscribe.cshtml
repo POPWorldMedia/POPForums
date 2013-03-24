@@ -1,10 +1,16 @@
-﻿@model PopForums.Models.TopicUnsubscribeContainer
+﻿@using PopForums.Controllers
+@model PopForums.Models.TopicUnsubscribeContainer
 @{
     ViewBag.Title = PopForums.Resources.Unsubscribe;
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<h1>@PopForums.Resources.Unsubscribe</h1>
+<div id="TopBreadcrumb" class="navAbsolute">
+	<h1>@PopForums.Resources.Unsubscribe</h1>
+	<p>
+		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
+	</p>
+</div>
 
 @if (Model.Topic != null && Model.User != null)
 {

@@ -1,4 +1,4 @@
-﻿#ForumContainer h1, #ForumContainer h2, #ForumContainer h3, #ForumContainer h4, #ForumContainer #AccountBox, #ForumContainer tr.category td, #ForumContainer .forumStatData, #ForumContainer .lastEdit, #ForumContainer .breadcrumb, #ForumContainer .postUserData, #ForumContainer .postTools, #ForumContainer .pagerLinks, #ForumContainer .voteCount, #ForumContainer .activityFeedEvent, #ForumContainer .awardTitle, #ForumContainer #TopBreadcrumb p {
+﻿#ForumContainer h1, #ForumContainer h2, #ForumContainer h3, #ForumContainer h4, #ForumContainer #AccountBox, #ForumContainer tr.category td, #ForumContainer .forumStatData, #ForumContainer .lastEdit, #ForumContainer .breadcrumb, #ForumContainer .postUserData, #ForumContainer .postTools, #ForumContainer .pagerLinks, #ForumContainer .voteCount, #ForumContainer .activityFeedEvent, #ForumContainer .awardTitle, #ForumContainer #TopBreadcrumb p, #ForumContainer .ui-tabs-anchor {
 	font-family: 'Segoe UI', Helvetica, 'Lucida Grande', Verdana, Arial, Sans-Serif;
 }
 
@@ -138,7 +138,7 @@
 	width: 250px;
 }
 #ForumContainer table.account textarea {
-	width: 250px; height: 50px;
+	width: 250px; height: 150px;
 }
 
 #ForumContainer div.userPhoto {
@@ -220,8 +220,9 @@
 #ForumContainer #TopBreadcrumb {
 	color: white;
 	background-color: #379769;
-	-webkit-box-shadow: 0 4px 2px -2px black;
-	box-shadow: 0 4px 2px -2px black;
+	-webkit-box-shadow: 0 4px 2px -2px #000;
+	box-shadow: 0 4px 2px -2px #000;
+	margin-bottom: 10px;
 }
 #ForumContainer #TopBreadcrumb a, #ForumContainer #TopBreadcrumb a:visited {
 	color: white;
@@ -234,30 +235,11 @@
 }
 
 
-
-.ui-widget-content { background-color: #eeeeee; border: 1px solid #ddd; }
-.ui-widget-content a { color: #000; padding: 2px; display: block; }
-/*.ui-widget-content a:hover { color: #fff; background-color: #379769 }*/
+.ui-tabs-nav { margin: 10px 0; }
+.ui-tabs-nav li { float: left;list-style: none;margin: 10px 20px 10px 0;}
+.ui-widget-content.ui-tabs, .ui-widget-content.ui-tabs-panel { background-color: #fff;clear: both;}
+.ui-widget-content { background-color: #eeeeee; }
+.ui-widget-content .ui-tabs-nav a { color: #000; padding: 2px; display: block;padding: 10px 15px; }
+#ForumContainer .ui-widget-content .ui-tabs-nav a:hover, .ui-widget-content .ui-menu-item a:hover { color: #fff; background-color: #379769 }
 .ui-menu { list-style: none; padding: 2px; float: left; }
 .ui-menu-item { margin: 2px; cursor: pointer; }
-
-.ui-tabs.ui-widget-content { background-color: #ffffff; border: none; }
-.ui-tabs div { clear: both;margin-top: 10px; }
-
-.ui-tabs { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-.ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0;border-bottom: 1px solid #ddd; }
-.ui-tabs .ui-tabs-nav li { list-style: none; float: left; position: relative; top: 1px; margin: 0 .2em 1px 0; border-bottom: 0 !important; padding: 0; white-space: nowrap; }
-.ui-tabs .ui-tabs-nav li a { float: left; padding: .5em 1em; text-decoration: none; }
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected { margin-bottom: 0; padding-bottom: 1px; }
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected a, .ui-tabs .ui-tabs-nav li.ui-state-disabled a, .ui-tabs .ui-tabs-nav li.ui-state-processing a { cursor: text; }
-.ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
-.ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 1em 0; background: none; }
-.ui-tabs .ui-tabs-hide { display: none !important; }
-
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #ffffff; background: #efefef; font-weight: normal; color: #000000; }
-.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #000000; text-decoration: none; }
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #379769; background: #379769; font-weight: normal; color: #ffffff !important; }
-.ui-state-hover a, .ui-state-hover a:hover { color: #ffffff; text-decoration: none; }
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #efefef; background: #ffffff; font-weight: normal; color: #212121; }
-.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #212121; text-decoration: none; }
-.ui-widget :active { outline: none; }

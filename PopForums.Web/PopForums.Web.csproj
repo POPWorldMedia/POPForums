@@ -137,9 +137,7 @@
     <Content Include="Scripts\tiny_mce\langs\en.js" />
     <Content Include="Scripts\tiny_mce\license.txt" />
     <Content Include="Scripts\tiny_mce\plugins\directionality\editor_plugin.js" />
-    <Content Include="Scripts\tiny_mce\plugins\directionality\editor_plugin_src.js" />
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\editor_plugin.js" />
-    <Content Include="Scripts\tiny_mce\plugins\inlinepopups\editor_plugin_src.js" />
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\alert.gif" />
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\button.gif" />
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\skins\clearlooks2\img\buttons.gif" />
@@ -150,7 +148,6 @@
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\skins\clearlooks2\window.css" />
     <Content Include="Scripts\tiny_mce\plugins\inlinepopups\template.htm" />
     <Content Include="Scripts\tiny_mce\plugins\paste\editor_plugin.js" />
-    <Content Include="Scripts\tiny_mce\plugins\paste\editor_plugin_src.js" />
     <Content Include="Scripts\tiny_mce\plugins\paste\js\pastetext.js" />
     <Content Include="Scripts\tiny_mce\plugins\paste\js\pasteword.js" />
     <Content Include="Scripts\tiny_mce\plugins\paste\langs\en_dlg.js" />

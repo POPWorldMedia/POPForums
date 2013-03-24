@@ -16,22 +16,22 @@ var LinkDialog = {
 		if (isVisible('hrefbrowser'))
 			document.getElementById('href').style.width = '180px';
 
-//		this.fillClassList('class_list');
-//		this.fillFileList('link_list', 'tinyMCELinkList');
-//		this.fillTargetList('target_list');
+		this.fillClassList('class_list');
+		this.fillFileList('link_list', 'tinyMCELinkList');
+		this.fillTargetList('target_list');
 
 		if (e = ed.dom.getParent(ed.selection.getNode(), 'A')) {
 			f.href.value = ed.dom.getAttrib(e, 'href');
-//			f.linktitle.value = ed.dom.getAttrib(e, 'title');
-//			f.insert.value = ed.getLang('update');
+			f.linktitle.value = ed.dom.getAttrib(e, 'title');
+			f.insert.value = ed.getLang('update');
 			selectByValue(f, 'link_list', f.href.value);
-//			selectByValue(f, 'target_list', ed.dom.getAttrib(e, 'target'));
-//			selectByValue(f, 'class_list', ed.dom.getAttrib(e, 'class'));
+			selectByValue(f, 'target_list', ed.dom.getAttrib(e, 'target'));
+			selectByValue(f, 'class_list', ed.dom.getAttrib(e, 'class'));
 		}
 	},
 
 	update : function() {
-		var f = document.forms[0], ed = tinyMCEPopup.editor, e, b;
+		var f = document.forms[0], ed = tinyMCEPopup.editor, e, b, href = f.href.value.replace(/ /g, '%20');
 
 		tinyMCEPopup.restoreSelection();
 		e = ed.dom.getParent(ed.selection.getNode(), 'A');
@@ -39,7 +39,6 @@ var LinkDialog = {
 		// Remove element if there is no href
 		if (!f.href.value) {
 			if (e) {
-				tinyMCEPopup.execCommand("mceBeginUndoLevel");
 				b = ed.selection.getBookmark();
 				ed.dom.remove(e, 1);
 				ed.selection.moveToBookmark(b);
@@ -49,32 +48,36 @@ var LinkDialog = {
 			}
 		}
 
-		tinyMCEPopup.execCommand("mceBeginUndoLevel");
-
 		// Create new anchor elements
 		if (e == null) {
 			ed.getDoc().execCommand("unlink", false, null);
-			tinyMCEPopup.execCommand("CreateLink", false, "#mce_temp_url#", {skip_undo : 1});
+			tinyMCEPopup.execCommand("mceInsertLink", false, "#mce_temp_url#", {skip_undo : 1});
 
 			tinymce.each(ed.dom.select("a"), function(n) {
 				if (ed.dom.getAttrib(n, 'href') == '#mce_temp_url#') {
 					e = n;
 
 					ed.dom.setAttribs(e, {
-						href : f.href.value//,
-//						title : f.linktitle.value,
-//						target : f.target_list ? getSelectValue(f, "target_list") : null,
-//						'class' : f.class_list ? getSelectValue(f, "class_list") : null
+						href : href,
+						title : f.linktitle.value,
+						target : f.target_list ? getSelectValue(f, "target_list") : null,
+						'class' : f.class_list ? getSelectValue(f, "class_list") : null
 					});
 				}
 			});
 		} else {
 			ed.dom.setAttribs(e, {
-				href : f.href.value//,
-//				title : f.linktitle.value,
-//				target : f.target_list ? getSelectValue(f, "target_list") : null,
-//				'class' : f.class_list ? getSelectValue(f, "class_list") : null
+				href : href,
+				title : f.linktitle.value
 			});
+	
+			if (f.target_list) {
+				ed.dom.setAttrib(e, 'target', getSelectValue(f, "target_list"));
+			}
+
+			if (f.class_list) {
+				ed.dom.setAttrib(e, 'class', getSelectValue(f, "class_list"));
+			}
 		}
 
 		// Don't move caret if selection was image

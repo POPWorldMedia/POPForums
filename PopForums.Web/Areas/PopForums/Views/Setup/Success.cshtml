@@ -9,7 +9,10 @@
 </head>
 <body>
 	<div id="ForumContainer">
-		<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
+		<div id="TopBreadcrumb" class="navAbsolute">
+			<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
+			<p>Congratulations!</p>
+		</div>
 
 		<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
     </div>

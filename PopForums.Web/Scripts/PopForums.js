@@ -3,7 +3,7 @@
 
 	var crumbs = $("#ForumContainer #TopBreadcrumb");
 	if (crumbs.length > 0) {
-		PopForums.crumbTop = crumbs.position().top;
+		PopForums.crumbTop = crumbs.offset().top + PopForums.navOffset;
 		crumbs.css("width", $("#ForumContainer").width());
 		$(window).scroll(function () {
 			PopForums.checkScroll();
@@ -14,13 +14,15 @@
 	if (window.location.hash) {
 		var hash = window.location.hash;
 		while (hash.charAt(0) == '#') hash = hash.substr(1);
-		var tag = $("a[name='" + hash + "']");
+		var tag = $("div[postID='" + hash + "']");
 		if ($("#PostStream").has(tag).length > 0) {
 			var offset = tag.offset();
 			if (offset) {
-				var height = $("#TopBreadcrumb").outerHeight() + PopForums.navOffset;
+				var crumb = $("#TopBreadcrumb");
+				var height = crumb.outerHeight();
+				var margin = parseInt($(".postItem").css("margin-top"), 10);
 				var tagTop = offset.top;
-				var newPosition = tagTop - height;
+				var newPosition = tagTop - height - margin + PopForums.navOffset;
 				$("html,body").animate({ scrollTop: newPosition }, "fast");
 			}
 		}
@@ -38,12 +40,16 @@ PopForums.checkScroll = function () {
 	var crumb = $("#ForumContainer #TopBreadcrumb");
 	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
 	if (scrollTop > PopForums.crumbTop && crumb.hasClass("navAbsolute")) {
+		var holder = $("<div id='TopBreadcrumbHolder'/>");
+		holder.height(crumb.height());
 		crumb.addClass("navFixed");
 		crumb.removeClass("navAbsolute");
+		crumb.after(holder);
 	}
 	else if (scrollTop < PopForums.crumbTop && crumb.hasClass("navFixed")) {
 		crumb.addClass("navAbsolute");
 		crumb.removeClass("navFixed");
+		$("#TopBreadcrumbHolder").remove();
 	}
 };
 
@@ -97,6 +103,7 @@ PopForums.topicListSetup = function (forumID) {
 };
 
 PopForums.loadReply = function (topicID, postID, replyID) {
+	$(window).off("scroll", PopForums.ScrollLoad);
 	var n = $("#NewReply");
 	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
 	if (postID != null)
@@ -148,9 +155,9 @@ PopForums.loadReply = function (topicID, postID, replyID) {
 	});
 };
 
-PopForums.loadFeed = function() {
+PopForums.loadFeed = function () {
 	var hub = $.connection.feed;
-	hub.client.notifyFeed = function(data) {
+	hub.client.notifyFeed = function (data) {
 		var list = $("#FeedList");
 		var row = PopForums.populateFeedRow(data);
 		list.prepend(row);
@@ -177,7 +184,7 @@ PopForums.setReplyMorePosts = function (lastPostID) {
 		$("#MorePostsBeforeReplyButton").css("visibility", "visible");
 };
 
-PopForums.richEditorComplete = function(instance) {
+PopForums.richEditorComplete = function (instance) {
 	var isImageEnabled = ($("#IsImageEnabled").val().toLowerCase() == "true");
 	if (!isImageEnabled) {
 		var imageButton = $(".mce_image");
@@ -208,10 +215,9 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	$.connection.hub.start().done(function () {
 		topicHub.server.listenTo(topicID);
 	});
-	
+
 	$(".postItem img:not('.avatar')").addClass("postImage");
 	$(document).on("click", "#ReplyButton,.replyLink", function () {
-		$(window).off("scroll", PopForums.ScrollLoad);
 		PopForums.loadReply(topicID, null, replyID);
 	});
 	$(document).on("click", ".quoteLink", function () {
@@ -228,7 +234,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		var postID = parent.attr("postID");
 		parent.find(".voters").slideDown(function () {
 			$(this).load(PopForums.areaPath + "/Forum/Voters/" + postID);
-			$(this).mouseleave(function() {
+			$(this).mouseleave(function () {
 				$(this).hide();
 			});
 		}).css("display", "block");
@@ -377,7 +383,7 @@ PopForums.LoadMorePosts = function (topicID, clickedButton) {
 	});
 };
 
-PopForums.TopicState = function(startPageIndex, lastVisiblePost, pageCount, topicID) {
+PopForums.TopicState = function (startPageIndex, lastVisiblePost, pageCount, topicID) {
 	this.lowPage = startPageIndex;
 	this.highPage = startPageIndex;
 	this.lastVisiblePost = lastVisiblePost;
@@ -386,10 +392,10 @@ PopForums.TopicState = function(startPageIndex, lastVisiblePost, pageCount, topi
 	this.topicID = topicID;
 	this.replyLoaded = false;
 };
-PopForums.TopicState.prototype.addEndPage = function() { this.highPage++; };
-PopForums.TopicState.prototype.addStartPage = function() { this.lowPage--; };
+PopForums.TopicState.prototype.addEndPage = function () { this.highPage++; };
+PopForums.TopicState.prototype.addStartPage = function () { this.lowPage--; };
 
-PopForums.topicPreviewSetup = function() {
+PopForums.topicPreviewSetup = function () {
 	$(document).on("click", ".topicPreviewButton", function () {
 		var id = $(this).attr("topicID");
 		var preview = $("#TopicPreview" + id);
@@ -400,10 +406,10 @@ PopForums.topicPreviewSetup = function() {
 				url: PopForums.areaPath + "/Forum/FirstPostPreview/" + id,
 				type: "GET",
 				dataType: "json",
-				success: function(result) {
+				success: function (result) {
 					preview.html(result.Data.FullText);
 				},
-				error: function() {
+				error: function () {
 					preview.html("<p>There was an unknown error getting the preview</p>");
 				}
 			});
@@ -464,7 +470,7 @@ PopForums.loadMiniProfile = function (userID, d) {
 	else d.slideUp();
 };
 
-PopForums.scrollToElement = function(id) {
+PopForums.scrollToElement = function (id) {
 	var e = document.getElementById(id);
 	var t = 0;
 	if (e.offsetParent) {
@@ -475,6 +481,10 @@ PopForums.scrollToElement = function(id) {
 	} else if (e.y) {
 		t += e.y;
 	}
+	var crumb = $("#TopBreadcrumb");
+	if (crumb)
+		t -= crumb.outerHeight();
+	t += PopForums.navOffset;
 	scrollTo(0, t);
 };
 
@@ -529,7 +539,7 @@ PopForums.forumListen = function (pageSize, forumID) {
 	});
 };
 
-PopForums.populateTopicRow = function(data) {
+PopForums.populateTopicRow = function (data) {
 	var row = $("#TopicTemplate").clone();
 	row.attr("data-topicID", data.TopicID);
 	row.removeAttr("id");
@@ -548,7 +558,7 @@ PopForums.populateTopicRow = function(data) {
 	return row;
 };
 
-PopForums.updateForumStats = function(data) {
+PopForums.updateForumStats = function (data) {
 	var row = $("[data-forumID='" + data.ForumID + "']");
 	row.find(".topicCount").text(data.TopicCount);
 	row.find(".postCount").text(data.PostCount);
@@ -558,8 +568,8 @@ PopForums.updateForumStats = function(data) {
 	row.find(".newIndicator img").attr("src", PopForums.contentPath + "/" + data.Image);
 };
 
-PopForums.startTimeUpdater = function() {
-	setTimeout(function() {
+PopForums.startTimeUpdater = function () {
+	setTimeout(function () {
 		PopForums.startTimeUpdater();
 		PopForums.updateTimes();
 	}, 60000);
@@ -577,11 +587,11 @@ PopForums.updateTimes = function () {
 		$.ajax({
 			url: PopForums.areaPath + "/Time/GetTimes",
 			type: "POST",
-			data: { times : a },
+			data: { times: a },
 			dataType: "json",
 			traditional: true,
 			success: function (result) {
-				$.each(result, function() {
+				$.each(result, function () {
 					$(".fTime[data-utc='" + this.Key + "']").text(this.Value);
 				});
 			},

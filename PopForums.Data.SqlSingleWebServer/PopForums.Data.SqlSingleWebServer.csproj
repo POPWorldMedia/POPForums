@@ -111,7 +111,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PopForums9.xto9.2.sql" />
+    <Content Include="PopForums9.xto9.2andLater.sql" />
     <Content Include="PopForums9.0to9.1.sql" />
   </ItemGroup>
   <ItemGroup>

@@ -828,9 +828,9 @@ CREATE CLUSTERED INDEX [IX_AwardCondition_EventDefinitionID] ON [dbo].[pf_AwardC
 ALTER TABLE [dbo].[pf_AwardCondition]  WITH CHECK ADD  CONSTRAINT [FK_pf_AwardCondition_pf_AwardDefinition] FOREIGN KEY([AwardDefinitionID])
 REFERENCES [dbo].[pf_AwardDefinition] ([AwardDefinitionID])
 ON DELETE CASCADE
-GO
+
 ALTER TABLE [dbo].[pf_AwardCondition] CHECK CONSTRAINT [FK_pf_AwardCondition_pf_AwardDefinition]
-GO
+
 
 
 
