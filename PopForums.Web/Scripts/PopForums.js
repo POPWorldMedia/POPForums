@@ -543,6 +543,7 @@ PopForums.populateTopicRow = function (data) {
 	var row = $("#TopicTemplate").clone();
 	row.attr("data-topicID", data.TopicID);
 	row.removeAttr("id");
+	row.find(".startedByName").text(data.StartedByName);
 	row.find(".indicatorLink").attr("href", data.Link);
 	row.find(".titleLink").text(data.Title);
 	row.find(".titleLink").attr("href", data.Link);
