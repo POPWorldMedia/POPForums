@@ -104,6 +104,24 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void ParseClassicImgTags()
+		{
+			var service = GetService();
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("check out the image [img]http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800[/img] here");
+			Assert.AreEqual("<p>check out the image <img src=\"http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800\" /> here</p>", result);
+		}
+
+		[Test]
+		public void ParseAllThreeImageVariants()
+		{
+			var service = GetService();
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("[image=http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800]\r\n\r\n[image=\"http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800\"]\r\n\r\n[img]http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800[/img]");
+			Assert.AreEqual("<p><img src=\"http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800\" /></p><p><img src=\"http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800\" /></p><p><img src=\"http://coasterbuzz.com/CoasterPhoto/CoasterPhotoImage/4800\" /></p>", result);
+		}
+
+		[Test]
 		public void ReplaceItalic()
 		{
 			var service = GetService();

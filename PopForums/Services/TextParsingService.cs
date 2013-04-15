@@ -16,7 +16,7 @@ namespace PopForums.Services
 
 		public ISettingsManager SettingsManager { get; private set; }
 
-		public static string[] AllowedCloseableTags = new []{"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote"};
+		public static string[] AllowedCloseableTags = new []{"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img"};
 		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -284,7 +284,10 @@ namespace PopForums.Services
 
 			// replace image tags
 			if (SettingsManager.Current.AllowImages)
+			{
+				text = Regex.Replace(text, @"(\[img\])(\S+?)(\[/img\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
 				text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
+			}
 			else
 				text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", String.Empty, RegexOptions.IgnoreCase);
 
