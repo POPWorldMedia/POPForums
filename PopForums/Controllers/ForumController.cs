@@ -238,8 +238,12 @@ namespace PopForums.Controllers
 			var topic = TopicService.Get(id);
 			if (topic == null)
 				return Content(Resources.TopicNotExist);
-			ForumPermissionContext permissionContext;
-			GetForumByIdWithPermissionContext(topic.ForumID, out permissionContext);
+			var forum = ForumService.Get(topic.ForumID);
+			if (forum == null)
+				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+			if (topic.IsClosed)
+				return Content(Resources.Closed);
+			var permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser(), topic);
 			if (!permissionContext.UserCanView)
 				return Content(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -270,6 +274,8 @@ namespace PopForums.Controllers
 			var topic = TopicService.Get(newPost.ItemID);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
+			if (topic.IsClosed)
+				return Json(new BasicJsonMessage { Message = Resources.Closed, Result = false });
 			GetForumByIdWithPermissionContext(topic.ForumID, out permissionContext);
 			if (!permissionContext.UserCanView)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });

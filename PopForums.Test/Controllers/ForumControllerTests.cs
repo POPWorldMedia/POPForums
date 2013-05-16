@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -703,7 +704,7 @@ namespace PopForums.Test.Controllers
 			var controller = GetForumController();
 			var user = Models.UserTest.GetTestUser();
 			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(new Forum(1));
-			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>(), It.IsAny<Topic>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 			_topicService.Setup(t => t.Get(1)).Returns(new Topic(2) {Title = "blah"});
 			_profileService.Setup(p => p.GetProfile(user)).Returns(new Profile {Signature = "wo;heif", IsPlainText = true});
 			var contextHelper = new HttpContextHelper();
@@ -724,7 +725,7 @@ namespace PopForums.Test.Controllers
 			var controller = GetForumController();
 			var user = Models.UserTest.GetTestUser();
 			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(new Forum(1));
-			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>(), It.IsAny<Topic>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 			_topicService.Setup(t => t.Get(1)).Returns(new Topic(2) { Title = "blah" });
 			_profileService.Setup(p => p.GetProfile(user)).Returns(new Profile { Signature = "" });
 			var contextHelper = new HttpContextHelper();
@@ -734,6 +735,49 @@ namespace PopForums.Test.Controllers
 			Assert.IsInstanceOf<ViewResult>(result);
 			var viewResult = (ViewResult)result;
 			Assert.False(((NewPost)viewResult.Model).IncludeSignature);
+		}
+
+		[Test]
+		public void ReplyPartialClosedTopic()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(new Forum(1));
+			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>(), It.IsAny<Topic>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_topicService.Setup(t => t.Get(1)).Returns(new Topic(2) { Title = "blah", IsClosed = true });
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var result = controller.PostReply(1);
+			Assert.IsInstanceOf<ContentResult>(result);
+			var contentResult = (ContentResult)result;
+			Assert.AreEqual(Resources.Closed, contentResult.Content);
+		}
+
+		[Test]
+		public void ReplyPartialPostClosedTopic()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(new Forum(1));
+			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>(), It.IsAny<Topic>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_topicService.Setup(t => t.Get(1)).Returns(new Topic(2) { Title = "blah", IsClosed = true });
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var newPost = new NewPost { ItemID = 1 };
+			var result = controller.PostReply(newPost);
+			var messageResult = GetValueFromJsonResult<string>(result, "Message");
+			Assert.AreEqual(Resources.Closed, messageResult);
+			Assert.IsFalse(GetValueFromJsonResult<bool>(result, "Result"));
+		}
+
+		private T GetValueFromJsonResult<T>(JsonResult jsonResult, string propertyName)
+		{
+			var property = jsonResult.Data.GetType().GetProperties().FirstOrDefault(p => String.Compare(p.Name, propertyName) == 0);
+			if (property == null)
+				throw new NullReferenceException();
+			return (T)property.GetValue(jsonResult.Data, null);
 		}
 
 		[Test]

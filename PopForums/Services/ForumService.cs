@@ -188,7 +188,7 @@ namespace PopForums.Services
 							context.UserCanPost = true;
 						else
 						{
-							context.DenialReason += "You aren't allowed to post in this forum. ";
+							context.DenialReason += Resources.ForumNoPost + ". ";
 							context.UserCanPost = false;
 						}
 					}
@@ -197,7 +197,7 @@ namespace PopForums.Services
 			if (topic != null && topic.IsClosed)
 			{
 				context.UserCanPost = false;
-				context.DenialReason += "Topic is closed. ";
+				context.DenialReason += Resources.Closed + ". ";
 			}
 
 			if (topic != null && topic.IsDeleted)
