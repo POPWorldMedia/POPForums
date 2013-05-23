@@ -92,6 +92,7 @@
     <Compile Include="ScoringGame\FeedServiceTests.cs" />
     <Compile Include="ScoringGame\UserAwardServiceTests.cs" />
     <Compile Include="Services\ClientSettingsMapperTests.cs" />
+    <Compile Include="Services\FriendServiceTests.cs" />
     <Compile Include="Services\PrivateMessageServiceTests.cs" />
     <Compile Include="Web\AdminAttributeTest.cs" />
     <Compile Include="Models\UserEditSecurityTests.cs" />

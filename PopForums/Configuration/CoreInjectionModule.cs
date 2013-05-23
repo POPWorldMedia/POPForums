@@ -52,6 +52,7 @@ namespace PopForums.Configuration
 			Bind<IFeedService>().To<FeedService>();
 			Bind<IAwardDefinitionService>().To<AwardDefinitionService>();
 			Bind<IUserAwardService>().To<UserAwardService>();
+			Bind<IFriendService>().To<FriendService>();
 
 			Bind<IBroker>().To<Broker>();
 		}

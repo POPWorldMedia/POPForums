@@ -164,6 +164,7 @@
     <Compile Include="Repositories\IEventDefinitionRepository.cs" />
     <Compile Include="Repositories\IFavoriteTopicsRepository.cs" />
     <Compile Include="Repositories\IFeedRepository.cs" />
+    <Compile Include="Repositories\IFriendRepository.cs" />
     <Compile Include="Repositories\ILastReadRepository.cs" />
     <Compile Include="Repositories\IModerationLogRepository.cs" />
     <Compile Include="Repositories\IPointLedgerRepository.cs" />
@@ -200,10 +201,12 @@
     <Compile Include="Services\ClientSettingsMapper.cs" />
     <Compile Include="Services\FavoriteTopicService.cs" />
     <Compile Include="Services\ForumAdapterFactory.cs" />
+    <Compile Include="Services\FriendService.cs" />
     <Compile Include="Services\IBanService.cs" />
     <Compile Include="Services\IClientSettingsMapper.cs" />
     <Compile Include="Services\IFavoriteTopicService.cs" />
     <Compile Include="Services\IForumAdapter.cs" />
+    <Compile Include="Services\IFriendService.cs" />
     <Compile Include="Services\IIPHistoryService.cs" />
     <Compile Include="Services\ILastReadService.cs" />
     <Compile Include="Services\IMailingListService.cs" />
