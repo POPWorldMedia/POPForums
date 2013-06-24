@@ -342,6 +342,7 @@
       <CustomToolNamespace>PopForums</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Resources.uk.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

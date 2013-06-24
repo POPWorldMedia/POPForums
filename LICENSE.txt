@@ -3,10 +3,12 @@ POP Forums
 http://popw.com/
 http://jeffputz.com/
 
-INITIAL TRANSLATIONS PROVIDED BY:
+TRANSLATIONS PROVIDED BY:
 
 Spanish: Mauricio Atanache
 Dutch: Steven van Deursen
+Ukrainian: Nazar Harasym
+German: Manfred Theis
 
 LICENSE:
 
