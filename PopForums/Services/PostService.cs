@@ -98,7 +98,8 @@ namespace PopForums.Services
 			var minimumSeconds = _settingsManager.Current.MinimumSecondsBetweenPosts;
 			if (DateTime.UtcNow.Subtract(lastPost.PostTime).TotalSeconds < minimumSeconds)
 				return true;
-			if (newPost.FullText == lastPost.FullText)
+			var parsedText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
+			if (parsedText == lastPost.FullText)
 				return true;
 			return false;
 		}

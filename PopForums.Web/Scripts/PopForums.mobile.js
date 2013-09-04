@@ -137,7 +137,7 @@ PopForums.postReply = function () {
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostReply",
 		type: "POST",
-		data: { Title: $("#NewReply #Title").val(), FullText: $("#NewReply #FullText").val(), IncludeSignature: $("#NewReply #IncludeSignature").val(), ItemID: $("#NewReply #ItemID").val(), CloseOnReply: $("#CloseOnReply").is(":checked"), IsPlainText: $("#NewReply #IsPlainText").val(), ParentPostID: $("#NewReply #ParentPostID").val() },
+		data: { Title: $("#NewReply #Title").val(), FullText: $("#NewReply #FullText").val(), IncludeSignature: $("#NewReply #IncludeSignature").val(), ItemID: $("#NewReply #ItemID").val(), CloseOnReply: $("#CloseOnReply").is(":checked"), IsPlainText: true, ParentPostID: $("#NewReply #ParentPostID").val() },
 		dataType: "json",
 		success: function (result) {
 			var r = $("#PostResponseMessage");
@@ -159,7 +159,7 @@ PopForums.postNewTopic = function () {
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostTopic",
 		type: "POST",
-		data: { Title: $("#NewTopic #Title").val(), FullText: $("#NewTopic #FullText").val(), IncludeSignature: $("#NewTopic #IncludeSignature").val(), ItemID: $("#NewTopic #ItemID").val(), IsPlainText: $("#NewTopic #IsPlainText").val() },
+		data: { Title: $("#NewTopic #Title").val(), FullText: $("#NewTopic #FullText").val(), IncludeSignature: $("#NewTopic #IncludeSignature").val(), ItemID: $("#NewTopic #ItemID").val(), IsPlainText: true },
 		dataType: "json",
 		success: function (result) {
 			var r = $("#PostResponseMessage");

@@ -128,14 +128,27 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
-		public void DupeAndTimeCheckIsDupeText()
+		public void DupeAndTimeCheckIsDupeTextPlainText()
 		{
 			var postService = GetService();
 			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
 			const string dupeText = "whatever";
 			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
 			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) { FullText = dupeText });
-			Assert.IsTrue(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText }, user));
+			_textParsingService.Setup(x => x.ForumCodeToHtml(dupeText)).Returns(dupeText);
+			Assert.IsTrue(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = true}, user));
+		}
+
+		[Test]
+		public void DupeAndTimeCheckIsDupeTextRichText()
+		{
+			var postService = GetService();
+			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
+			const string dupeText = "whatever";
+			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
+			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) { FullText = dupeText });
+			_textParsingService.Setup(x => x.ClientHtmlToHtml(dupeText)).Returns(dupeText);
+			Assert.IsTrue(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = false }, user));
 		}
 
 		[Test]
