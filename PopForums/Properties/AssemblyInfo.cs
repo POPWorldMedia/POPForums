@@ -6,6 +6,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyProduct("PopForums")]
 [assembly: AssemblyCopyright("Copyright ©2013, POP World Media, LLC")]
 [assembly: AssemblyTrademark("POP Forums is a trademark of POP World Media, LLC")]
-[assembly: AssemblyVersion("11.0.2.13061")]
+[assembly: AssemblyVersion("11.1.0.13091")]
 
 [assembly: InternalsVisibleTo("PopForums.Test")]
