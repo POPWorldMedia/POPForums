@@ -41,6 +41,7 @@ namespace PopForums.Data.SqlSingleWebServer
 			Bind<IUserAwardRepository>().To<UserAwardRepository>();
 			Bind<IAwardConditionRepository>().To<AwardConditionRepository>();
 			Bind<IFriendRepository>().To<FriendRepository>();
+			Bind<IExternalUserAssociationRepository>().To<ExternalUserAssociationRepository>();
 		}
 	}
 }

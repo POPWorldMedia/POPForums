@@ -42,6 +42,16 @@ namespace PopForums.Configuration
 			MailSignature = String.Empty;
 			ScoringGameCalculatorInterval = 1000;
 			MailerQuantity = 4;
+			UseGoogleLogin = false;
+			UseFacebookLogin = false;
+			FacebookAppID = String.Empty;
+			FacebookAppSecret = String.Empty;
+			UseTwitterLogin = false;
+			TwitterConsumerKey = String.Empty;
+			TwitterConsumerSecret = String.Empty;
+			UseMicrosoftLogin = false;
+			MicrosoftClientID = String.Empty;
+			MicrosoftClientSecret = String.Empty;
 		}
 
 		public virtual string TermsOfService { get; set; }
@@ -80,5 +90,15 @@ namespace PopForums.Configuration
 		public virtual string MailSignature { get; set; }
 		public virtual int ScoringGameCalculatorInterval { get; set; }
 		public virtual int MailerQuantity { get; set; }
+		public virtual bool UseGoogleLogin { get; set; }
+		public virtual bool UseFacebookLogin { get; set; }
+		public virtual string FacebookAppID { get; set; }
+		public virtual string FacebookAppSecret { get; set; }
+		public virtual bool UseTwitterLogin { get; set; }
+		public virtual string TwitterConsumerKey { get; set; }
+		public virtual string TwitterConsumerSecret { get; set; }
+		public virtual bool UseMicrosoftLogin { get; set; }
+		public virtual string MicrosoftClientID { get; set; }
+		public virtual string MicrosoftClientSecret { get; set; }
 	}
 }

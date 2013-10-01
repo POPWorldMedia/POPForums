@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Owin.Security.Facebook</id>
+    <version>2.0.0-rc1</version>
+    <title>Microsoft.Owin.Security.Facebook</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnetcomponent_enu.htm</licenseUrl>
+    <projectUrl>http://katanaproject.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Middleware that enables an application to support Facebook's OAuth 2.0 authentication workflow.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>Microsoft OWIN</tags>
+    <dependencies>
+      <dependency id="Owin" version="1.0" />
+      <dependency id="Newtonsoft.Json" version="4.5.11" />
+      <dependency id="Microsoft.Owin" version="2.0.0-rc1" />
+      <dependency id="Microsoft.Owin.Security" version="2.0.0-rc1" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Net.Http.WebRequest" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+</package>

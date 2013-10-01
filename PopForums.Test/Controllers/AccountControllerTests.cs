@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Moq;
 using NUnit.Framework;
 using PopForums.Configuration;
 using PopForums.Controllers;
 using PopForums.Email;
+using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.ScoringGame;
 using PopForums.Services;
 using PopForums.Test.Models;
 using PopForums.Test.Services;
+using FormCollection = System.Web.Mvc.FormCollection;
 
 namespace PopForums.Test.Controllers
 {
@@ -34,6 +39,9 @@ namespace PopForums.Test.Controllers
 		private Mock<IImageService> _imageService;
 		private Mock<IFeedService> _feedService;
 		private Mock<IUserAwardService> _userAwardService;
+		private Mock<IOwinContext> _owinContext;
+		private Mock<IExternalAuthentication> _externalAuth;
+		private Mock<IUserAssociationManager> _userAssociationManager;
 
 		private TestableAccountController GetController()
 		{
@@ -50,12 +58,15 @@ namespace PopForums.Test.Controllers
 			_imageService = new Mock<IImageService>();
 			_feedService = new Mock<IFeedService>();
 			_userAwardService = new Mock<IUserAwardService>();
-			return new TestableAccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object);
+			_owinContext = new Mock<IOwinContext>();
+			_externalAuth = new Mock<IExternalAuthentication>();
+			_userAssociationManager = new Mock<IUserAssociationManager>();
+			return new TestableAccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _owinContext.Object, _externalAuth.Object, _userAssociationManager.Object);
 		}
 
 		private class TestableAccountController : AccountController
 		{
-			public TestableAccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsManager, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService) : base(userService, profileService, newAccountMailer, settingsManager, postService, topicService, forumService, lastReadService, clientSettingsManager, userEmailer, imageService, feedService, userAwardService) { }
+			public TestableAccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsManager, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager) : base(userService, profileService, newAccountMailer, settingsManager, postService, topicService, forumService, lastReadService, clientSettingsManager, userEmailer, imageService, feedService, userAwardService, owinContext, externalAuthentication, userAssociationManager) { }
 
 			public void SetUser(User user)
 			{
@@ -99,13 +110,66 @@ namespace PopForums.Test.Controllers
 			_newAccountMailer.Setup(n => n.Send(It.IsAny<User>(), It.IsAny<string>())).Returns(System.Net.Mail.SmtpStatusCode.CommandNotImplemented);
 			var settings = new Settings { IsNewUserApproved = true };
 			_settingsManager.Setup(s => s.Current).Returns(settings);
-			var result = controller.Create(signUp);
+			var authManager = new Mock<IAuthenticationManager>();
+			_owinContext.Setup(x => x.Authentication).Returns(authManager.Object);
+			var authResult = Task.FromResult<ExternalAuthenticationResult>(null);
+			_externalAuth.Setup(x => x.GetAuthenticationResult(It.IsAny<IAuthenticationManager>())).Returns(authResult);
+
+			var result = controller.Create(signUp).Result;
+
 			Assert.IsTrue(controller.ModelState.IsValid);
 			Assert.AreEqual("AccountCreated", result.ViewName);
 			Assert.IsTrue(result.ViewData["EmailProblem"].ToString().Contains(System.Net.Mail.SmtpStatusCode.CommandNotImplemented.ToString()));
 			_userService.Verify(u => u.CreateUser(signUp, It.IsAny<string>()), Times.Once());
 			_profileService.Verify(p => p.Create(user, signUp), Times.Once());
 			_newAccountMailer.Verify(n => n.Send(user, It.IsAny<string>()), Times.Once());
+		}
+
+		[Test]
+		public void CreateValidCallExternalAuthAssociateWithAuthResult()
+		{
+			var controller = GetController();
+			MockUpUrl(controller);
+			_userService.Setup(u => u.IsEmailInUse(It.IsAny<string>())).Returns(false);
+			_userService.Setup(u => u.IsNameInUse(It.IsAny<string>())).Returns(false);
+			var user = UserServiceTests.GetDummyUser("Diana", "a@b.com");
+			var signUp = new SignupData { Email = "a@b.com", IsCoppa = true, IsDaylightSaving = true, IsSubscribed = true, IsTos = true, Name = "Diana", Password = "passwerd", PasswordRetype = "passwerd", TimeZone = -5 };
+			_userService.Setup(u => u.CreateUser(signUp, It.IsAny<string>())).Returns(user);
+			_newAccountMailer.Setup(n => n.Send(It.IsAny<User>(), It.IsAny<string>())).Returns(System.Net.Mail.SmtpStatusCode.CommandNotImplemented);
+			var settings = new Settings { IsNewUserApproved = true };
+			_settingsManager.Setup(s => s.Current).Returns(settings);
+			var authManager = new Mock<IAuthenticationManager>();
+			_owinContext.Setup(x => x.Authentication).Returns(authManager.Object);
+			var externalAuthResult = new ExternalAuthenticationResult();
+			var authResult = Task.FromResult(externalAuthResult);
+			_externalAuth.Setup(x => x.GetAuthenticationResult(authManager.Object)).Returns(authResult);
+
+			var result = controller.Create(signUp).Result;
+
+			_userAssociationManager.Verify(x => x.Associate(user, externalAuthResult), Times.Once());
+		}
+
+		[Test]
+		public void CreateValidNotCallExternalAuthAssociateWithoutAuthResult()
+		{
+			var controller = GetController();
+			MockUpUrl(controller);
+			_userService.Setup(u => u.IsEmailInUse(It.IsAny<string>())).Returns(false);
+			_userService.Setup(u => u.IsNameInUse(It.IsAny<string>())).Returns(false);
+			var user = UserServiceTests.GetDummyUser("Diana", "a@b.com");
+			var signUp = new SignupData { Email = "a@b.com", IsCoppa = true, IsDaylightSaving = true, IsSubscribed = true, IsTos = true, Name = "Diana", Password = "passwerd", PasswordRetype = "passwerd", TimeZone = -5 };
+			_userService.Setup(u => u.CreateUser(signUp, It.IsAny<string>())).Returns(user);
+			_newAccountMailer.Setup(n => n.Send(It.IsAny<User>(), It.IsAny<string>())).Returns(System.Net.Mail.SmtpStatusCode.CommandNotImplemented);
+			var settings = new Settings { IsNewUserApproved = true };
+			_settingsManager.Setup(s => s.Current).Returns(settings);
+			var authManager = new Mock<IAuthenticationManager>();
+			_owinContext.Setup(x => x.Authentication).Returns(authManager.Object);
+			var authResult = Task.FromResult <ExternalAuthenticationResult>(null);
+			_externalAuth.Setup(x => x.GetAuthenticationResult(authManager.Object)).Returns(authResult);
+
+			var result = controller.Create(signUp).Result;
+
+			_userAssociationManager.Verify(x => x.Associate(user, It.IsAny<ExternalAuthenticationResult>()), Times.Never);
 		}
 
 		private void MockUpUrl(AccountController controller)
@@ -129,7 +193,7 @@ namespace PopForums.Test.Controllers
 			_userService.Setup(u => u.IsEmailInUse(It.IsAny<string>())).Returns(true);
 			_userService.Setup(u => u.IsNameInUse(It.IsAny<string>())).Returns(true);
 			var signUp = new SignupData {Email = "a@b.com", IsCoppa = true, IsDaylightSaving = true, IsSubscribed = true, IsTos = true, Name = "Diana", Password = "pwd", PasswordRetype = "pwd", TimeZone = -5};
-			var result = controller.Create(signUp);
+			var result = controller.Create(signUp).Result;
 			Assert.IsFalse(controller.ModelState.IsValid);
 			Assert.IsInstanceOf<ViewResult>(result);
 			Assert.IsInstanceOf<String>(controller.ViewData[AccountController.CoppaDateKey]);

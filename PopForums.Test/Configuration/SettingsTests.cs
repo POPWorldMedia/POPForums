@@ -151,6 +151,16 @@ namespace PopForums.Test.Configuration
 			const string mailSignature = "this is the sig";
 			const int awardCalcInterval = 5230;
 			const int mailerQuantity = 914;
+			const bool useGoogleLogin = true;
+			const bool useFacebookLogin = true;
+			const string facebookAppID = "oiwoeighw";
+			const string facebookAppSecret = "oiwhwohgcgr";
+			const bool useTwitterLogin = true;
+			const string twitterConsumerKey = "w8hgcoweggew";
+			const string twitterConsumerSecret = "ohgwfhweh";
+			const bool useMicrosoftLogin = true;
+			const string microsoftClientID = "hhvcwefwege";
+			const string microsoftClientSecret = "oiwhgoigrccaa";
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -188,7 +198,17 @@ namespace PopForums.Test.Configuration
 									{"UserAvatarMaxkBytes", userAvatarMaxkBytes},
 									{"MailSignature", mailSignature},
 									{"ScoringGameCalculatorInterval", awardCalcInterval},
-									{"MailerQuantity", mailerQuantity}
+									{"MailerQuantity", mailerQuantity},
+									{"UseGoogleLogin", useGoogleLogin},
+									{"UseFacebookLogin", useFacebookLogin},
+									{"FacebookAppID", facebookAppID},
+									{"FacebookAppSecret", facebookAppSecret},
+									{"UseTwitterLogin", useTwitterLogin},
+									{"TwitterConsumerKey", twitterConsumerKey},
+									{"TwitterConsumerSecret", twitterConsumerSecret},
+									{"UseMicrosoftLogin", useMicrosoftLogin},
+									{"MicrosoftClientID", microsoftClientID},
+									{"MicrosoftClientSecret", microsoftClientSecret}
 			                 	};
 
 			var settingsRepo = new Mock<ISettingsRepository>();
@@ -234,6 +254,16 @@ namespace PopForums.Test.Configuration
 			settings.MailSignature = mailSignature;
 			settings.ScoringGameCalculatorInterval = awardCalcInterval;
 			settings.MailerQuantity = mailerQuantity;
+			settings.UseGoogleLogin = useGoogleLogin;
+			settings.UseFacebookLogin = useFacebookLogin;
+			settings.FacebookAppID = facebookAppID;
+			settings.FacebookAppSecret = facebookAppSecret;
+			settings.UseTwitterLogin = useTwitterLogin;
+			settings.TwitterConsumerKey = twitterConsumerKey;
+			settings.TwitterConsumerSecret = twitterConsumerSecret;
+			settings.UseMicrosoftLogin = useMicrosoftLogin;
+			settings.MicrosoftClientID = microsoftClientID;
+			settings.MicrosoftClientSecret = microsoftClientSecret;
 			settingsManager.SaveCurrent();
 
 			settingsRepo.Verify(s => s.Save(dictionary), Times.Once());
@@ -276,6 +306,16 @@ namespace PopForums.Test.Configuration
 			const int userAvatarMaxWidth = 554;
 			const int userAvatarMaxkBytes = 33;
 			const string mailSignature = "this is the sig";
+			const bool useGoogleLogin = true;
+			const bool useFacebookLogin = true;
+			const string facebookAppID = "oiwoeighw";
+			const string facebookAppSecret = "oiwhwohgcgr";
+			const bool useTwitterLogin = true;
+			const string twitterConsumerKey = "w8hgcoweggew";
+			const string twitterConsumerSecret = "ohgwfhweh";
+			const bool useMicrosoftLogin = true;
+			const string microsoftClientID = "hhvcwefwege";
+			const string microsoftClientSecret = "oiwhgoigrccaa";
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -311,7 +351,17 @@ namespace PopForums.Test.Configuration
 									{"UserAvatarMaxHeight", userAvatarMaxHeight},
 									{"UserAvatarMaxWidth", userAvatarMaxWidth},
 									{"UserAvatarMaxkBytes", userAvatarMaxkBytes},
-									{"MailSignature", mailSignature}
+									{"MailSignature", mailSignature},
+									{"UseGoogleLogin", useGoogleLogin},
+									{"UseFacebookLogin", useFacebookLogin},
+									{"FacebookAppID", facebookAppID},
+									{"FacebookAppSecret", facebookAppSecret},
+									{"UseTwitterLogin", useTwitterLogin},
+									{"TwitterConsumerKey", twitterConsumerKey},
+									{"TwitterConsumerSecret", twitterConsumerSecret},
+									{"UseMicrosoftLogin", useMicrosoftLogin},
+									{"MicrosoftClientID", microsoftClientID},
+									{"MicrosoftClientSecret", microsoftClientSecret}
 			                 	};
 
 			var settingsRepo = new Mock<ISettingsRepository>();

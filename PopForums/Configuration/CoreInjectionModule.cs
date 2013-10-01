@@ -1,5 +1,9 @@
-﻿using Ninject.Modules;
+﻿using System;
+using System.Web;
+using Microsoft.Owin;
+using Ninject.Modules;
 using PopForums.Email;
+using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Messaging;
 using PopForums.ScoringGame;
@@ -55,6 +59,10 @@ namespace PopForums.Configuration
 			Bind<IFriendService>().To<FriendService>();
 
 			Bind<IBroker>().To<Broker>();
+
+			Bind<IOwinContext>().ToMethod(x => HttpContext.Current.GetOwinContext());
+			Bind<IExternalAuthentication>().To<ExternalAuthentication>();
+			Bind<IUserAssociationManager>().To<UserAssociationManager>();
 		}
 	}
 }

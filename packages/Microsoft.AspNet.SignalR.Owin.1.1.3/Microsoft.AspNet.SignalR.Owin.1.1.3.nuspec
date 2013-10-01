@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>OWIN componenets for ASP.NET SignalR.</description>
     <summary>OWIN componenets for ASP.NET SignalR.</summary>
+    <releaseNotes />
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <language>en-US</language>
     <tags>Microsoft AspNet SignalR AspNetSignalR Owin</tags>

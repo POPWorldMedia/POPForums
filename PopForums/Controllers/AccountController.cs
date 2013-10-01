@@ -1,14 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
+using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Ninject;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
+using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.ScoringGame;
 using PopForums.Services;
 using PopForums.Web;
+using FormCollection = System.Web.Mvc.FormCollection;
 
 namespace PopForums.Controllers
 {
@@ -30,9 +37,12 @@ namespace PopForums.Controllers
 			ImageService = container.Get<IImageService>();
 			FeedService = container.Get<IFeedService>();
 			UserAwardService = container.Get<IUserAwardService>();
+			OwinContext = container.Get<IOwinContext>();
+			ExternalAuthentication = container.Get<IExternalAuthentication>();
+			UserAssociationManager = container.Get<IUserAssociationManager>();
 		}
 
-		protected internal AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService)
+		protected internal AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager)
 		{
 			UserService = userService;
 			SettingsManager = settingsManager;
@@ -47,6 +57,9 @@ namespace PopForums.Controllers
 			ImageService = imageService;
 			FeedService = feedService;
 			UserAwardService = userAwardService;
+			OwinContext = owinContext;
+			ExternalAuthentication = externalAuthentication;
+			UserAssociationManager = userAssociationManager;
 		}
 
 		public static string Name = "Account";
@@ -67,6 +80,9 @@ namespace PopForums.Controllers
 		public IImageService ImageService { get; private set; }
 		public IFeedService FeedService { get; private set; }
 		public IUserAwardService UserAwardService { get; private set; }
+		public IOwinContext OwinContext { get; private set; }
+		public IExternalAuthentication ExternalAuthentication { get; private set; }
+		public IUserAssociationManager UserAssociationManager { get; private set; }
 
 		public ViewResult Create()
 		{
@@ -88,7 +104,7 @@ namespace PopForums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult Create(SignupData signupData)
+		public async Task<ViewResult> Create(SignupData signupData)
 		{
 			signupData.Validate(ModelState, UserService, HttpContext.Request.UserHostAddress);
 			if (ModelState.IsValid)
@@ -106,6 +122,12 @@ namespace PopForums.Controllers
 				}
 				else
 					ViewData["Result"] = Resources.AccountReadyCheckEmail;
+
+				var authentication = OwinContext.Authentication;
+				var authResult = await ExternalAuthentication.GetAuthenticationResult(authentication);
+				if (authResult != null)
+					UserAssociationManager.Associate(user, authResult);
+
 				return View("AccountCreated");
 			}
 			SetupCreateData();
@@ -384,7 +406,38 @@ namespace PopForums.Controllers
 					link = Url.Action("Index", ForumHomeController.Name);
 			}
 			ViewBag.Referrer = link;
-			return View();
+
+			var externalLoginList = new List<AuthenticationDescription>(HttpContext.GetOwinContext().Authentication.GetAuthenticationTypes((Func<AuthenticationDescription, bool>) (d =>
+				{
+				  if (d.Properties != null)
+					return d.Properties.ContainsKey("Caption");
+					return false;
+				})));
+
+			return View(externalLoginList);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public ActionResult ExternalLogin(string provider, string returnUrl)
+		{
+			return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { loginProvider = provider, ReturnUrl = returnUrl }));
+		}
+
+		public async Task<ActionResult> ExternalLoginCallback(string loginProvider, string returnUrl)
+		{
+			var authentication = OwinContext.Authentication;
+			var authResult = await ExternalAuthentication.GetAuthenticationResult(authentication);
+			var matchResult = UserAssociationManager.ExternalUserAssociationCheck(authResult);
+			if (matchResult.Successful)
+			{
+				UserService.Login(matchResult.User, HttpContext);
+				return Redirect(returnUrl);
+			}
+
+			// TODO: offer standard login to associate, or go to create
+
+			return RedirectToAction("Create");
 		}
 
 		public ViewResult EmailUser(int id)

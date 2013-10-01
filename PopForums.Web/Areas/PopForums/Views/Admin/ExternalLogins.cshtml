@@ -1,0 +1,62 @@
+﻿@model PopForums.Configuration.Settings
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.ExternalLogins;
+    Layout = "~/Areas/PopForums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+}
+
+<h2>@PopForums.Resources.ExternalLogins</h2>
+
+@using (Html.BeginForm()) {
+
+<table class="settings">
+    <tr>
+        <th>Google</th>
+        <td>@Html.CheckBoxFor(x => x.UseGoogleLogin)</td>
+    </tr>
+	<tr>
+		<th>Facebook</th>
+		<td>@Html.CheckBoxFor(x => x.UseFacebookLogin)</td>
+	</tr>
+	<tr>
+		<td>AppID:</td>
+		<td>@Html.TextBoxFor(x => x.FacebookAppID)</td>
+	</tr>
+	<tr>
+		<td>AppSecret:</td>
+		<td>@Html.TextBoxFor(x => x.FacebookAppSecret)</td>
+	</tr>
+	<tr>
+		<th>Twitter</th>
+		<td>@Html.CheckBoxFor(x => x.UseTwitterLogin)</td>
+	</tr>
+	<tr>
+		<td>ConsumerKey:</td>
+		<td>@Html.TextBoxFor(x => x.TwitterConsumerKey)</td>
+	</tr>
+	<tr>
+		<td>ConsumerSecret:</td>
+		<td>@Html.TextBoxFor(x => x.TwitterConsumerSecret)</td>
+	</tr>
+	<tr>
+		<th>Microsoft</th>
+		<td>@Html.CheckBoxFor(x => x.UseMicrosoftLogin)</td>
+	</tr>
+	<tr>
+		<td>ClientID:</td>
+		<td>@Html.TextBoxFor(x => x.MicrosoftClientID)</td>
+	</tr>
+	<tr>
+		<td>ClientSecret:</td>
+		<td>@Html.TextBoxFor(x => x.MicrosoftClientSecret)</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="submit" value="@PopForums.Resources.Save" /></td>
+	</tr>
+</table>
+
+}

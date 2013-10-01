@@ -1192,4 +1192,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
     <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; begann ein neues Thema: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
     <comment>{0} is uri to user, {1} is user name, {2} is uri to topic{3} is topic name</comment>
   </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Externe Logins</value>
+  </data>
 </root>

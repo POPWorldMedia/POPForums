@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Owin.Security.Twitter</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Owin.Security.Twitter.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.Resources.Exception_ValidatorHandlerMismatch">
+            <summary>
+              Looks up a localized string similar to An ICertificateValidator cannot be specified at the same time as an HttpMessageHandler unless it is a WebRequestHandler..
+            </summary>
+        </member>
+        <member name="T:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions">
+            <summary>
+            Options for the Twitter authentication middleware.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions"/> class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.ConsumerKey">
+            <summary>
+            Gets or sets the consumer key used to communicate with Twitter.
+            </summary>
+            <value>The consumer key used to communicate with Twitter.</value>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.ConsumerSecret">
+            <summary>
+            Gets or sets the consumer secret used to sign requests to Twitter.
+            </summary>
+            <value>The consumer secret used to sign requests to Twitter.</value>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.BackchannelTimeout">
+            <summary>
+            Gets or sets timeout value in milliseconds for back channel communications with Twitter.
+            </summary>
+            <value>
+            The back channel timeout.
+            </value>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.BackchannelCertificateValidator">
+            <summary>
+            Gets or sets the a pinned certificate validator to use to validate the endpoints used
+            in back channel communications belong to Twitter.
+            </summary>
+            <value>
+            The pinned certificate validator.
+            </value>
+            <remarks>If this property is null then the default certificate checks are performed,
+            validating the subject name and if the signing chain is a trusted party.</remarks>
+        </member>
+        <member name="P:Microsoft.Owin.Security.Twitter.TwitterAuthenticationOptions.BackchannelHttpHandler">
+            <summary>
+            The HttpMessageHandler used to communicate with Twitter.
+            This cannot be set at the same time as BackchannelCertificateValidator unless the value 
+            can be downcast to a WebRequestHandler.
+            </summary>
+        </member>
+    </members>
+</doc>

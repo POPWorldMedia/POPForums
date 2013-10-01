@@ -1,9 +1,12 @@
 ﻿using System;
+using Microsoft.Owin;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using PopForums.Configuration;
 using PopForums.Controllers;
 using PopForums.Email;
+using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.ScoringGame;
@@ -27,6 +30,9 @@ namespace PopForums.Test.Models
 		private Mock<IImageService> _imageService;
 		private Mock<IFeedService> _feedService;
 		private Mock<IUserAwardService> _userAwardService;
+		private Mock<IOwinContext> _owinContext;
+		private Mock<IExternalAuthentication> _externalAuth;
+		private Mock<IUserAssociationManager> _userAssociationManager;
 
 		private AccountController GetController()
 		{
@@ -43,7 +49,10 @@ namespace PopForums.Test.Models
 			_imageService = new Mock<IImageService>();
 			_feedService = new Mock<IFeedService>();
 			_userAwardService = new Mock<IUserAwardService>();
-			return new AccountController(_userManager.Object, _profileManager.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _froumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object);
+			_owinContext = new Mock<IOwinContext>();
+			_externalAuth = new Mock<IExternalAuthentication>();
+			_userAssociationManager = new Mock<IUserAssociationManager>();
+			return new AccountController(_userManager.Object, _profileManager.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _froumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _owinContext.Object, _externalAuth.Object, _userAssociationManager.Object);
 		}
 
 		[Test]

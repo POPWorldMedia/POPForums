@@ -98,6 +98,18 @@ namespace PopForums.Controllers
 			return View(SettingsManager.Current);
 		}
 
+		public ViewResult ExternalLogins()
+		{
+			return View(SettingsManager.Current);
+		}
+
+		[HttpPost]
+		public ViewResult ExternalLogins(FormCollection collection)
+		{
+			SaveFormValuesToSettings(collection);
+			return View(SettingsManager.Current);
+		}
+
 		public ViewResult Email()
 		{
 			return View(SettingsManager.Current);
