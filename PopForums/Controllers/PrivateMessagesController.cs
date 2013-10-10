@@ -15,18 +15,18 @@ namespace PopForums.Controllers
 		public PrivateMessagesController()
 		{
 			var container = PopForumsActivation.Kernel;
-			PrivateMessageService = container.Get<IPrivateMessageService>();
-			UserService = container.Get<IUserService>();
+			_privateMessageService = container.Get<IPrivateMessageService>();
+			_userService = container.Get<IUserService>();
 		}
 
 		protected internal PrivateMessagesController(IPrivateMessageService privateMessageService, IUserService userService)
 		{
-			PrivateMessageService = privateMessageService;
-			UserService = userService;
+			_privateMessageService = privateMessageService;
+			_userService = userService;
 		}
 
-		public IPrivateMessageService PrivateMessageService { get; private set; }
-		public IUserService UserService { get; private set; }
+		private readonly IPrivateMessageService _privateMessageService;
+		private readonly IUserService _userService;
 
 		public static string Name = "PrivateMessages";
 
@@ -36,7 +36,7 @@ namespace PopForums.Controllers
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
 			PagerContext pagerContext;
-			var privateMessages = PrivateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page, out pagerContext);
+			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
@@ -47,7 +47,7 @@ namespace PopForums.Controllers
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
 			PagerContext pagerContext;
-			var privateMessages = PrivateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page, out pagerContext);
+			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
@@ -57,15 +57,15 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var pm = PrivateMessageService.Get(id);
-			if (!PrivateMessageService.IsUserInPM(user, pm))
+			var pm = _privateMessageService.Get(id);
+			if (!_privateMessageService.IsUserInPM(user, pm))
 				return this.Forbidden("Forbidden", null);
 			var model = new PrivateMessageView
 			            	{
 			            		PrivateMessage = pm,
-			            		Posts = PrivateMessageService.GetPosts(pm)
+			            		Posts = _privateMessageService.GetPosts(pm)
 			            	};
-			PrivateMessageService.MarkPMRead(user, pm);
+			_privateMessageService.MarkPMRead(user, pm);
 			return View(model);
 		}
 
@@ -77,7 +77,7 @@ namespace PopForums.Controllers
 			ViewBag.UserIDs = " ";
 			if (id.HasValue)
 			{
-				var targetUser = UserService.GetUser(id.Value);
+				var targetUser = _userService.GetUser(id.Value);
 				ViewBag.UserIDs = targetUser.UserID.ToString(CultureInfo.InvariantCulture);
 				ViewBag.UserID = targetUser.UserID.ToString(CultureInfo.InvariantCulture);
 				ViewBag.TargetUserID = targetUser.UserID;
@@ -104,8 +104,8 @@ namespace PopForums.Controllers
 				return View("Create");
 			}
 			var ids = userIDs.Split(new[] {','}).Select(i => Convert.ToInt32(i));
-			var users = ids.Select(id => UserService.GetUser(id)).ToList();
-			PrivateMessageService.Create(subject, fullText, user, users);
+			var users = ids.Select(id => _userService.GetUser(id)).ToList();
+			_privateMessageService.Create(subject, fullText, user, users);
 			return RedirectToAction("Index");
 		}
 
@@ -115,16 +115,16 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var pm = PrivateMessageService.Get(id);
-			if (!PrivateMessageService.IsUserInPM(user, pm))
+			var pm = _privateMessageService.Get(id);
+			if (!_privateMessageService.IsUserInPM(user, pm))
 				return this.Forbidden("Forbidden", null);
-			PrivateMessageService.Reply(pm, fullText, user);
+			_privateMessageService.Reply(pm, fullText, user);
 			return RedirectToAction("View", new { id });
 		}
 
 		public JsonResult GetNames(string id)
 		{
-			var users = UserService.SearchByName(id);
+			var users = _userService.SearchByName(id);
 			var projection = users.Select(u => new {u.UserID, value = u.Name});
 			return Json(projection, JsonRequestBehavior.AllowGet);
 		}
@@ -135,10 +135,10 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var pm = PrivateMessageService.Get(id);
-			if (!PrivateMessageService.IsUserInPM(user, pm))
+			var pm = _privateMessageService.Get(id);
+			if (!_privateMessageService.IsUserInPM(user, pm))
 				return this.Forbidden("Forbidden", null);
-			PrivateMessageService.Archive(user, pm);
+			_privateMessageService.Archive(user, pm);
 			return RedirectToAction("Index");
 		}
 
@@ -148,10 +148,10 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var pm = PrivateMessageService.Get(id);
-			if (!PrivateMessageService.IsUserInPM(user, pm))
+			var pm = _privateMessageService.Get(id);
+			if (!_privateMessageService.IsUserInPM(user, pm))
 				return this.Forbidden("Forbidden", null);
-			PrivateMessageService.Unarchive(user, pm);
+			_privateMessageService.Unarchive(user, pm);
 			return RedirectToAction("Archive");
 		}
 
@@ -160,7 +160,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return Content(String.Empty);
-			var count = PrivateMessageService.GetUnreadCount(user);
+			var count = _privateMessageService.GetUnreadCount(user);
 			return Content(count.ToString());
 		}
 	}

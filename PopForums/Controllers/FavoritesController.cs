@@ -12,24 +12,24 @@ namespace PopForums.Controllers
 		public FavoritesController()
 		{
 			var container = PopForumsActivation.Kernel;
-			FavoriteTopicService = container.Get<IFavoriteTopicService>();
-			ForumService = container.Get<IForumService>();
-			LastReadService = container.Get<ILastReadService>();
-			TopicService = container.Get<ITopicService>();
+			_favoriteTopicService = container.Get<IFavoriteTopicService>();
+			_forumService = container.Get<IForumService>();
+			_lastReadService = container.Get<ILastReadService>();
+			_topicService = container.Get<ITopicService>();
 		}
 
 		protected internal FavoritesController(IFavoriteTopicService favoriteTopicService, IForumService forumService, ILastReadService lastReadService, ITopicService topicService)
 		{
-			FavoriteTopicService = favoriteTopicService;
-			ForumService = forumService;
-			LastReadService = lastReadService;
-			TopicService = topicService;
+			_favoriteTopicService = favoriteTopicService;
+			_forumService = forumService;
+			_lastReadService = lastReadService;
+			_topicService = topicService;
 		}
 
-		public IFavoriteTopicService FavoriteTopicService { get; private set; }
-		public IForumService ForumService { get; private set; }
-		public ILastReadService LastReadService { get; private set; }
-		public ITopicService TopicService { get; private set; }
+		private readonly IFavoriteTopicService _favoriteTopicService;
+		private readonly IForumService _forumService;
+		private readonly ILastReadService _lastReadService;
+		private readonly ITopicService _topicService;
 
 		public static string Name = "Favorites";
 
@@ -39,10 +39,10 @@ namespace PopForums.Controllers
 			if (user == null)
 				return View();
 			PagerContext pagerContext;
-			var topics = FavoriteTopicService.GetTopics(user, page, out pagerContext);
-			var titles = ForumService.GetAllForumTitles();
+			var topics = _favoriteTopicService.GetTopics(user, page, out pagerContext);
+			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 
@@ -50,8 +50,8 @@ namespace PopForums.Controllers
 		public RedirectToRouteResult RemoveFavorite(int id)
 		{
 			var user = this.CurrentUser();
-			var topic = TopicService.Get(id);
-			FavoriteTopicService.RemoveFavoriteTopic(user, topic);
+			var topic = _topicService.Get(id);
+			_favoriteTopicService.RemoveFavoriteTopic(user, topic);
 			return RedirectToAction("Topics");
 		}
 
@@ -61,15 +61,15 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return Json(new BasicJsonMessage { Message = Resources.NotLoggedIn, Result = false });
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-			if (FavoriteTopicService.IsTopicFavorite(user, topic))
+			if (_favoriteTopicService.IsTopicFavorite(user, topic))
 			{
-				FavoriteTopicService.RemoveFavoriteTopic(user, topic);
+				_favoriteTopicService.RemoveFavoriteTopic(user, topic);
 				return Json(new BasicJsonMessage { Data = new { isFavorite = false }, Result = true });
 			}
-			FavoriteTopicService.AddFavoriteTopic(user, topic);
+			_favoriteTopicService.AddFavoriteTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isFavorite = true }, Result = true });
 		}
 	}

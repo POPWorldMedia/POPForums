@@ -13,27 +13,27 @@ namespace PopForums.Controllers
 		public SetupController()
 		{
 			var container = PopForumsActivation.Kernel;
-			SetupService = container.Get<ISetupService>();
-			UserService = container.Get<IUserService>();
+			_setupService = container.Get<ISetupService>();
+			_userService = container.Get<IUserService>();
 		}
 
 		protected internal SetupController(ISetupService setupService, IUserService userService)
 		{
-			SetupService = setupService;
-			UserService = userService;
+			_setupService = setupService;
+			_userService = userService;
 		}
 
-		public ISetupService SetupService { get; private set; }
-		public IUserService UserService { get; private set; }
+		private readonly ISetupService _setupService;
+		private readonly IUserService _userService;
 
 		public static string Name = "Setup";
 
 		[PopForumsAuthorizationIgnore]
 		public ActionResult Index()
 		{
-			if (!SetupService.IsConnectionPossible())
+			if (!_setupService.IsConnectionPossible())
 				return View("NoConnection");
-			if (SetupService.IsDatabaseSetup())
+			if (_setupService.IsDatabaseSetup())
 				return this.Forbidden("Forbidden", null);
 			var setupVariables = new SetupVariables
 			                     	{
@@ -49,13 +49,13 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ActionResult Index(SetupVariables setupVariables)
 		{
-			if (SetupService.IsDatabaseSetup())
+			if (_setupService.IsDatabaseSetup())
 				return this.Forbidden("Forbidden", null);
 			Exception exc;
-			var user = SetupService.SetupDatabase(setupVariables, out exc);
+			var user = _setupService.SetupDatabase(setupVariables, out exc);
 			if (exc != null)
 				return View("Exception", exc);
-			UserService.Login(user, HttpContext);
+			_userService.Login(user, HttpContext);
 			return View("Success");
 		}
 	}

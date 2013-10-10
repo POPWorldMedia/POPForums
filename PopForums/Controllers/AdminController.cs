@@ -19,75 +19,75 @@ namespace PopForums.Controllers
 		public AdminController()
 		{
 			var container = PopForumsActivation.Kernel;
-			UserService = container.Get<IUserService>();
-			ProfileService = container.Get<IProfileService>();
-			SettingsManager = container.Get<ISettingsManager>();
-			CategoryService = container.Get<ICategoryService>();
-			ForumService = container.Get<IForumService>();
-			SearchService = container.Get<ISearchService>();
-			SecurityLogService = container.Get<ISecurityLogService>();
-			ErrorLogService = container.Get<IErrorLog>();
-			BanService = container.Get<IBanService>();
-			ModerationLogService = container.Get<IModerationLogService>();
-			IPHistoryService = container.Get<IIPHistoryService>();
-			ImageService = container.Get<IImageService>();
-			MailingListService = container.Get<IMailingListService>();
-			EventDefinitionService = container.Get<IEventDefinitionService>();
-			AwardDefinitionService = container.Get<IAwardDefinitionService>();
-			EventPublisher = container.Get<IEventPublisher>();
+			_userService = container.Get<IUserService>();
+			_profileService = container.Get<IProfileService>();
+			_settingsManager = container.Get<ISettingsManager>();
+			_categoryService = container.Get<ICategoryService>();
+			_forumService = container.Get<IForumService>();
+			_searchService = container.Get<ISearchService>();
+			_securityLogService = container.Get<ISecurityLogService>();
+			_errorLogService = container.Get<IErrorLog>();
+			_banService = container.Get<IBanService>();
+			_moderationLogService = container.Get<IModerationLogService>();
+			_ipHistoryService = container.Get<IIPHistoryService>();
+			_imageService = container.Get<IImageService>();
+			_mailingListService = container.Get<IMailingListService>();
+			_eventDefinitionService = container.Get<IEventDefinitionService>();
+			_awardDefinitionService = container.Get<IAwardDefinitionService>();
+			_eventPublisher = container.Get<IEventPublisher>();
 		}
 
 		protected internal AdminController(IUserService userService, IProfileService profileService, ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, ISearchService searchService, ISecurityLogService securityLogService, IErrorLog errorLog, IBanService banService, IModerationLogService modLogService, IIPHistoryService ipHistoryService, IImageService imageService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher)
 		{
-			UserService = userService;
-			ProfileService = profileService;
-			SettingsManager = settingsManager;
-			CategoryService = categoryService;
-			ForumService = forumService;
-			SearchService = searchService;
-			SecurityLogService = securityLogService;
-			ErrorLogService = errorLog;
-			BanService = banService;
-			ModerationLogService = modLogService;
-			IPHistoryService = ipHistoryService;
-			ImageService = imageService;
-			MailingListService = mailingListService;
-			EventDefinitionService = eventDefinitionService;
-			AwardDefinitionService = awardDefinitionService;
-			EventPublisher = eventPublisher;
+			_userService = userService;
+			_profileService = profileService;
+			_settingsManager = settingsManager;
+			_categoryService = categoryService;
+			_forumService = forumService;
+			_searchService = searchService;
+			_securityLogService = securityLogService;
+			_errorLogService = errorLog;
+			_banService = banService;
+			_moderationLogService = modLogService;
+			_ipHistoryService = ipHistoryService;
+			_imageService = imageService;
+			_mailingListService = mailingListService;
+			_eventDefinitionService = eventDefinitionService;
+			_awardDefinitionService = awardDefinitionService;
+			_eventPublisher = eventPublisher;
 		}
 
 		public static string Name = "Admin";
 		public static string TimeZonesKey = "TimeZonesKey";
 
-		public IUserService UserService { get; private set; }
-		public IProfileService ProfileService { get; private set; }
-		public ISettingsManager SettingsManager { get; private set; }
-		public ICategoryService CategoryService { get; private set; }
-		public IForumService ForumService { get; private set; }
-		public ISearchService SearchService { get; private set; }
-		public ISecurityLogService SecurityLogService { get; private set; }
-		public IErrorLog ErrorLogService { get; private set; }
-		public IBanService BanService { get; private set; }
-		public IModerationLogService ModerationLogService { get; private set; }
-		public IIPHistoryService IPHistoryService { get; private set; }
-		public IImageService ImageService { get; private set; }
-		public IMailingListService MailingListService { get; private set; }
-		public IEventDefinitionService EventDefinitionService { get; private set; }
-		public IAwardDefinitionService AwardDefinitionService { get; private set; }
-		public IEventPublisher EventPublisher { get; private set; }
+		private readonly IUserService _userService;
+		private readonly IProfileService _profileService;
+		private readonly ISettingsManager _settingsManager;
+		private readonly ICategoryService _categoryService;
+		private readonly IForumService _forumService;
+		private readonly ISearchService _searchService;
+		private readonly ISecurityLogService _securityLogService;
+		private readonly IErrorLog _errorLogService;
+		private readonly IBanService _banService;
+		private readonly IModerationLogService _moderationLogService;
+		private readonly IIPHistoryService _ipHistoryService;
+		private readonly IImageService _imageService;
+		private readonly IMailingListService _mailingListService;
+		private readonly IEventDefinitionService _eventDefinitionService;
+		private readonly IAwardDefinitionService _awardDefinitionService;
+		private readonly IEventPublisher _eventPublisher;
 
 		private void SaveFormValuesToSettings(FormCollection collection)
 		{
 			ViewData["PostResult"] = Resources.SettingsSaved;
 			var dictionary = new Dictionary<string, object>();
 			collection.CopyTo(dictionary);
-			SettingsManager.SaveCurrent(dictionary);
+			_settingsManager.SaveCurrent(dictionary);
 		}
 
 		public ViewResult Index()
 		{
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		[HttpPost]
@@ -96,12 +96,12 @@ namespace PopForums.Controllers
 		{
 			SaveFormValuesToSettings(collection);
 			ViewData[TimeZonesKey] = DataCollections.TimeZones();
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		public ViewResult ExternalLogins()
 		{
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		[HttpPost]
@@ -109,71 +109,71 @@ namespace PopForums.Controllers
 		{
 			SaveFormValuesToSettings(collection);
 			HttpRuntime.UnloadAppDomain();
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		public ViewResult Email()
 		{
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		[HttpPost]
 		public ViewResult Email(FormCollection collection)
 		{
 			SaveFormValuesToSettings(collection);
-			return View(SettingsManager.Current);
+			return View(_settingsManager.Current);
 		}
 
 		public ViewResult Categories()
 		{
-			return View(CategoryService.GetAll());
+			return View(_categoryService.GetAll());
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult AddCategory(string newCategoryTitle)
 		{
-			CategoryService.Create(newCategoryTitle);
+			_categoryService.Create(newCategoryTitle);
 			return RedirectToAction("Categories");
 		}
 
 		public ViewResult CategoryList()
 		{
-			return View(CategoryService.GetAll());
+			return View(_categoryService.GetAll());
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult DeleteCategory(int categoryID)
 		{
-			var category = CategoryService.Get(categoryID);
+			var category = _categoryService.Get(categoryID);
 			if (category == null)
 				throw new Exception(String.Format("Category with ID {0} does not exist.", categoryID));
-			CategoryService.Delete(category);
+			_categoryService.Delete(category);
 			return RedirectToAction("Categories");
 		}
 
 		[HttpPost]
 		public JsonResult MoveCategoryUp(int categoryID)
 		{
-			var category = CategoryService.Get(categoryID);
+			var category = _categoryService.Get(categoryID);
 			if (category == null)
 				return Json(new BasicJsonMessage { Result = false, Message = "That category doesn't exist" });
-			CategoryService.MoveCategoryUp(category);
+			_categoryService.MoveCategoryUp(category);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		[HttpPost]
 		public JsonResult MoveCategoryDown(int categoryID)
 		{
-			var category = CategoryService.Get(categoryID);
+			var category = _categoryService.Get(categoryID);
 			if (category == null)
 				return Json(new BasicJsonMessage { Result = false, Message = "That category doesn't exist" });
-			CategoryService.MoveCategoryDown(category);
+			_categoryService.MoveCategoryDown(category);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		public ViewResult EditCategory(int id)
 		{
-			var category = CategoryService.Get(id);
+			var category = _categoryService.Get(id);
 			if (category == null)
 				throw new Exception(String.Format("Category with ID {0} does not exist.", id));
 			return View(category);
@@ -182,16 +182,16 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public RedirectToRouteResult EditCategory(int categoryID, string newTitle)
 		{
-			var category = CategoryService.Get(categoryID);
+			var category = _categoryService.Get(categoryID);
 			if (category == null)
 				throw new Exception(String.Format("Category with ID {0} does not exist.", categoryID));
-			CategoryService.UpdateTitle(category, newTitle);
+			_categoryService.UpdateTitle(category, newTitle);
 			return RedirectToAction("Categories");
 		}
 
 		public ViewResult Forums()
 		{
-			return View(ForumService.GetCategorizedForumContainer());
+			return View(_forumService.GetCategorizedForumContainer());
 		}
 
 		public ViewResult AddForum()
@@ -202,7 +202,7 @@ namespace PopForums.Controllers
 
 		private void SetupCategoryDropDown(int categoryID = 0)
 		{
-			var categories = CategoryService.GetAll();
+			var categories = _categoryService.GetAll();
 			categories.Insert(0, new Category(0) {Title = "Uncategorized"});
 			var selectList = new SelectList(categories, "CategoryID", "Title", categoryID);
 			ViewData["categoryID"] = selectList;
@@ -211,13 +211,13 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public RedirectToRouteResult AddForum(int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName)
 		{
-			ForumService.Create(categoryID, title, description, isVisible, isArchived, -2, forumAdapterName);
+			_forumService.Create(categoryID, title, description, isVisible, isArchived, -2, forumAdapterName);
 			return RedirectToAction("Forums");
 		}
 
 		public ViewResult EditForum(int id)
 		{
-			var forum = ForumService.Get(id);
+			var forum = _forumService.Get(id);
 			SetupCategoryDropDown(forum.CategoryID.HasValue ? forum.CategoryID.Value : 0);
 			return View(forum);
 		}
@@ -225,52 +225,52 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public RedirectToRouteResult EditForum(int id, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName)
 		{
-			var forum = ForumService.Get(id);
-			ForumService.Update(forum, categoryID, title, description, isVisible, isArchived, forumAdapterName);
+			var forum = _forumService.Get(id);
+			_forumService.Update(forum, categoryID, title, description, isVisible, isArchived, forumAdapterName);
 			return RedirectToAction("Forums");
 		}
 
 		public ViewResult CategorizedForums()
 		{
-			return View(ForumService.GetCategorizedForumContainer());
+			return View(_forumService.GetCategorizedForumContainer());
 		}
 
 		[HttpPost]
 		public JsonResult MoveForumUp(int forumID)
 		{
-			var forum = ForumService.Get(forumID);
+			var forum = _forumService.Get(forumID);
 			if (forum == null)
 				return Json(new BasicJsonMessage { Result = false, Message = "That forum doesn't exist" });
-			ForumService.MoveForumUp(forum);
+			_forumService.MoveForumUp(forum);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		[HttpPost]
 		public JsonResult MoveForumDown(int forumID)
 		{
-			var forum = ForumService.Get(forumID);
+			var forum = _forumService.Get(forumID);
 			if (forum == null)
 				return Json(new BasicJsonMessage { Result = false, Message = "That forum doesn't exist" });
-			ForumService.MoveForumDown(forum);
+			_forumService.MoveForumDown(forum);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		public ViewResult ForumPermissions()
 		{
-			return View(ForumService.GetCategorizedForumContainer());
+			return View(_forumService.GetCategorizedForumContainer());
 		}
 
 		public JsonResult ForumRoles(int id)
 		{
-			var forum = ForumService.Get(id);
+			var forum = _forumService.Get(id);
 			if (forum == null)
 				throw new Exception(String.Format("ForumID {0} not found.", id));
 			var container = new ForumPermissionContainer
 			    {
 					ForumID = forum.ForumID,
-			        AllRoles = UserService.GetAllRoles(),
-					PostRoles = ForumService.GetForumPostRoles(forum),
-					ViewRoles = ForumService.GetForumViewRoles(forum)
+			        AllRoles = _userService.GetAllRoles(),
+					PostRoles = _forumService.GetForumPostRoles(forum),
+					ViewRoles = _forumService.GetForumViewRoles(forum)
 			    };
 			return Json(container, JsonRequestBehavior.AllowGet);
 		}
@@ -282,28 +282,28 @@ namespace PopForums.Controllers
 
 		public EmptyResult ModifyForumRoles(int forumID, ModifyForumRolesType modifyType, string role = null)
 		{
-			var forum = ForumService.Get(forumID);
+			var forum = _forumService.Get(forumID);
 			if (forum == null)
 				throw new Exception(String.Format("ForumID {0} not found.", forumID));
 			switch (modifyType)
 			{
 				case ModifyForumRolesType.AddPost:
-					ForumService.AddPostRole(forum, role);
+					_forumService.AddPostRole(forum, role);
 					break;
 				case ModifyForumRolesType.RemovePost:
-					ForumService.RemovePostRole(forum, role);
+					_forumService.RemovePostRole(forum, role);
 					break;
 				case ModifyForumRolesType.AddView:
-					ForumService.AddViewRole(forum, role);
+					_forumService.AddViewRole(forum, role);
 					break;
 				case ModifyForumRolesType.RemoveView:
-					ForumService.RemoveViewRole(forum, role);
+					_forumService.RemoveViewRole(forum, role);
 					break;
 				case ModifyForumRolesType.RemoveAllPost:
-					ForumService.RemoveAllPostRoles(forum);
+					_forumService.RemoveAllPostRoles(forum);
 					break;
 				case ModifyForumRolesType.RemoveAllView:
-					ForumService.RemoveAllViewRoles(forum);
+					_forumService.RemoveAllViewRoles(forum);
 					break;
 				default:
 					throw new Exception("ModifyForumRoles doesn't know what to do.");
@@ -313,7 +313,7 @@ namespace PopForums.Controllers
 
 		public ViewResult UserRoles()
 		{
-			var roles = UserService.GetAllRoles();
+			var roles = _userService.GetAllRoles();
 			roles.Remove("Admin");
 			roles.Remove("Moderator");
 			return View(roles);
@@ -323,7 +323,7 @@ namespace PopForums.Controllers
 		public RedirectToRouteResult CreateRole(string newRole)
 		{
 			var user = this.CurrentUser();
-			UserService.CreateRole(newRole, user, HttpContext.Request.UserHostAddress);
+			_userService.CreateRole(newRole, user, HttpContext.Request.UserHostAddress);
 			return RedirectToAction("UserRoles");
 		}
 
@@ -331,14 +331,14 @@ namespace PopForums.Controllers
 		public RedirectToRouteResult DeleteRole(string roleToDelete)
 		{
 			var user = this.CurrentUser();
-			UserService.DeleteRole(roleToDelete, user, HttpContext.Request.UserHostAddress);
+			_userService.DeleteRole(roleToDelete, user, HttpContext.Request.UserHostAddress);
 			return RedirectToAction("UserRoles");
 		}
 
 		public ViewResult Search()
 		{
-			ViewData["Interval"] = SettingsManager.Current.SearchIndexingInterval;
-			ViewData["JunkWords"] = SearchService.GetJunkWords();
+			ViewData["Interval"] = _settingsManager.Current.SearchIndexingInterval;
+			ViewData["JunkWords"] = _searchService.GetJunkWords();
 			return View();
 		}
 
@@ -346,20 +346,20 @@ namespace PopForums.Controllers
 		public ViewResult Search(FormCollection collection)
 		{
 			SaveFormValuesToSettings(collection);
-			ViewData["Interval"] = SettingsManager.Current.SearchIndexingInterval;
-			ViewData["JunkWords"] = SearchService.GetJunkWords();
+			ViewData["Interval"] = _settingsManager.Current.SearchIndexingInterval;
+			ViewData["JunkWords"] = _searchService.GetJunkWords();
 			return View();
 		}
 
 		public RedirectToRouteResult CreateJunkWord(string newWord)
 		{
-			SearchService.CreateJunkWord(newWord);
+			_searchService.CreateJunkWord(newWord);
 			return RedirectToAction("Search");
 		}
 
 		public RedirectToRouteResult DeleteJunkWord(string deleteWord)
 		{
-			SearchService.DeleteJunkWord(deleteWord);
+			_searchService.DeleteJunkWord(deleteWord);
 			return RedirectToAction("Search");
 		}
 
@@ -376,11 +376,11 @@ namespace PopForums.Controllers
 			switch(userSearch.SearchType)
 			{
 				case UserSearch.UserSearchType.Email:
-					return View(UserService.SearchByEmail(userSearch.SearchText));
+					return View(_userService.SearchByEmail(userSearch.SearchText));
 				case UserSearch.UserSearchType.Name:
-					return View(UserService.SearchByName(userSearch.SearchText));
+					return View(_userService.SearchByName(userSearch.SearchText));
 				case UserSearch.UserSearchType.Role:
-					return View(UserService.SearchByRole(userSearch.SearchText));
+					return View(_userService.SearchByRole(userSearch.SearchText));
 				default:
 					throw new ArgumentOutOfRangeException("userSearch");
 			}
@@ -388,10 +388,10 @@ namespace PopForums.Controllers
 
 		public ActionResult EditUser(int id)
 		{
-			var user = UserService.GetUser(id);
+			var user = _userService.GetUser(id);
 			if (user == null)
 				throw new Exception(String.Format("UserID {0} not found.", id));
-			var profile = ProfileService.GetProfileForEdit(user);
+			var profile = _profileService.GetProfileForEdit(user);
 			var model = new UserEdit(user, profile);
 			return View(model);
 		}
@@ -400,12 +400,12 @@ namespace PopForums.Controllers
 		public ActionResult EditUser(int id, UserEdit userEdit)
 		{
 			var user = this.CurrentUser();
-			var targetUser = UserService.GetUser(id);
+			var targetUser = _userService.GetUser(id);
 			if (targetUser == null)
 				throw new Exception(String.Format("UserID {0} not found.", id));
 			var avatarFile = Request.Files["avatarFile"];
 			var photoFile = Request.Files["photoFile"];
-			UserService.EditUser(targetUser, userEdit, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile, HttpContext.Request.UserHostAddress, user);
+			_userService.EditUser(targetUser, userEdit, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile, HttpContext.Request.UserHostAddress, user);
 			return RedirectToAction("EditUserSearch");
 		}
 
@@ -423,10 +423,10 @@ namespace PopForums.Controllers
 
 		private RedirectToRouteResult DeleteUser(int id, bool ban)
 		{
-			var targetUser = UserService.GetUser(id);
+			var targetUser = _userService.GetUser(id);
 			if (targetUser == null)
 				throw new Exception(String.Format("UserID {0} not found.", id));
-			UserService.DeleteUser(targetUser, this.CurrentUser(), HttpContext.Request.UserHostAddress, ban);
+			_userService.DeleteUser(targetUser, this.CurrentUser(), HttpContext.Request.UserHostAddress, ban);
 			return RedirectToAction("EditUserSearch");
 		}
 
@@ -442,10 +442,10 @@ namespace PopForums.Controllers
 			switch (searchType.ToLower())
 			{
 				case "userid":
-					list = SecurityLogService.GetLogEntriesByUserID(Convert.ToInt32(searchTerm), startDate, endDate);
+					list = _securityLogService.GetLogEntriesByUserID(Convert.ToInt32(searchTerm), startDate, endDate);
 					break;
 				case "name":
-					list = SecurityLogService.GetLogEntriesByUserName(searchTerm, startDate, endDate);
+					list = _securityLogService.GetLogEntriesByUserName(searchTerm, startDate, endDate);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("searchTerm");
@@ -456,7 +456,7 @@ namespace PopForums.Controllers
 		public ViewResult ErrorLog(int page = 1)
 		{
 			PagerContext pagerContext;
-			var errors = ErrorLogService.GetErrors(page, 20, out pagerContext);
+			var errors = _errorLogService.GetErrors(page, 20, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
 			return View(errors);
 		}
@@ -464,49 +464,49 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public RedirectToRouteResult DeleteAllErrorLog()
 		{
-			ErrorLogService.DeleteAllErrors();
+			_errorLogService.DeleteAllErrors();
 			return RedirectToAction("ErrorLog");
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult DeleteErrorLog(int id)
 		{
-			ErrorLogService.DeleteError(id);
+			_errorLogService.DeleteError(id);
 			return RedirectToAction("ErrorLog");
 		}
 
 		public ViewResult Ban()
 		{
-			ViewBag.EmailList = BanService.GetEmailBans();
-			ViewBag.IPList = BanService.GetIPBans();
+			ViewBag.EmailList = _banService.GetEmailBans();
+			ViewBag.IPList = _banService.GetIPBans();
 			return View();
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult BanIP(string ip)
 		{
-			BanService.BanIP(ip);
+			_banService.BanIP(ip);
 			return RedirectToAction("Ban");
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult RemoveIPBan(string ip)
 		{
-			BanService.RemoveIPBan(ip);
+			_banService.RemoveIPBan(ip);
 			return RedirectToAction("Ban");
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult BanEmail(string email)
 		{
-			BanService.BanEmail(email);
+			_banService.BanEmail(email);
 			return RedirectToAction("Ban");
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult RemoveEmailBan(string email)
 		{
-			BanService.RemoveEmailBan(email);
+			_banService.RemoveEmailBan(email);
 			return RedirectToAction("Ban");
 		}
 
@@ -524,7 +524,7 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ViewResult ModerationLog(DateTime start, DateTime end)
 		{
-			var list = ModerationLogService.GetLog(start, end);
+			var list = _moderationLogService.GetLog(start, end);
 			return View(list);
 		}
 
@@ -536,16 +536,16 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ViewResult IPHistory(string ip, DateTime start, DateTime end)
 		{
-			var list = IPHistoryService.GetHistory(ip, start, end);
+			var list = _ipHistoryService.GetHistory(ip, start, end);
 			return View(list);
 		}
 
 		public ViewResult UserImageApprove()
 		{
-			ViewBag.IsNewUserImageApproved = SettingsManager.Current.IsNewUserImageApproved;
+			ViewBag.IsNewUserImageApproved = _settingsManager.Current.IsNewUserImageApproved;
 			var dictionary = new Dictionary<UserImage, User>();
-			var unapprovedImages = ImageService.GetUnapprovedUserImages();
-			var users = UserService.GetUsersFromIDs(unapprovedImages.Select(i => i.UserID).ToList());
+			var unapprovedImages = _imageService.GetUnapprovedUserImages();
+			var users = _userService.GetUsersFromIDs(unapprovedImages.Select(i => i.UserID).ToList());
 			foreach (var image in unapprovedImages)
 			{
 				dictionary.Add(image, users.Single(u => u.UserID == image.UserID));
@@ -556,14 +556,14 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public RedirectToRouteResult ApproveUserImage(int id)
 		{
-			ImageService.ApproveUserImage(id);
+			_imageService.ApproveUserImage(id);
 			return RedirectToAction("UserImageApprove");
 		}
 
 		[HttpPost]
 		public RedirectToRouteResult DeleteUserImage(int id)
 		{
-			ImageService.DeleteUserImage(id);
+			_imageService.DeleteUserImage(id);
 			return RedirectToAction("UserImageApprove");
 		}
 
@@ -582,79 +582,79 @@ namespace PopForums.Controllers
 				return View();
 			}
 			Func<User, string> unsubscribeLinkGenerator =
-				 user => this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = user.UserID, key = ProfileService.GetUnsubscribeHash(user) });
-			MailingListService.MailUsers(subject, body, htmlBody, unsubscribeLinkGenerator);
+				 user => this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = user.UserID, key = _profileService.GetUnsubscribeHash(user) });
+			_mailingListService.MailUsers(subject, body, htmlBody, unsubscribeLinkGenerator);
 			return View("EmailUsersSuccessful");
 		}
 
 		public ViewResult EventDefinitions()
 		{
-			var model = EventDefinitionService.GetAll();
+			var model = _eventDefinitionService.GetAll();
 			return View(model);
 		}
 
 		[HttpPost]
 		public ActionResult AddEvent(EventDefinition eventDefinition)
 		{
-			EventDefinitionService.Create(eventDefinition);
+			_eventDefinitionService.Create(eventDefinition);
 			return RedirectToAction("EventDefinitions");
 		}
 
 		[HttpPost]
 		public ActionResult DeleteEvent(string id)
 		{
-			EventDefinitionService.Delete(id);
+			_eventDefinitionService.Delete(id);
 			return RedirectToAction("EventDefinitions");
 		}
 
 		public ViewResult AwardDefinitions()
 		{
-			var model = AwardDefinitionService.GetAll();
+			var model = _awardDefinitionService.GetAll();
 			return View(model);
 		}
 
 		[HttpPost]
 		public ActionResult AddAward(AwardDefinition awardDefinition)
 		{
-			AwardDefinitionService.Create(awardDefinition);
+			_awardDefinitionService.Create(awardDefinition);
 			return RedirectToAction("Award", new { id = awardDefinition.AwardDefinitionID });
 		}
 
 		[HttpPost]
 		public ActionResult DeleteAward(string id)
 		{
-			AwardDefinitionService.Delete(id);
+			_awardDefinitionService.Delete(id);
 			return RedirectToAction("AwardDefinitions");
 		}
 
 		public ViewResult Award(string id)
 		{
-			var award = AwardDefinitionService.Get(id);
+			var award = _awardDefinitionService.Get(id);
 			if (award == null)
 				return this.NotFound("NotFound", null);
-			var selectList = new SelectList(EventDefinitionService.GetAll(), "EventDefinitionID", "EventDefinitionID");
+			var selectList = new SelectList(_eventDefinitionService.GetAll(), "EventDefinitionID", "EventDefinitionID");
 			ViewBag.EventList = selectList;
-			ViewBag.Conditions = AwardDefinitionService.GetConditions(id);
+			ViewBag.Conditions = _awardDefinitionService.GetConditions(id);
 			return View(award);
 		}
 
 		[HttpPost]
 		public ActionResult DeleteAwardCondition(string awardDefinitionID, string eventDefinitionID)
 		{
-			AwardDefinitionService.DeleteCondition(awardDefinitionID, eventDefinitionID);
+			_awardDefinitionService.DeleteCondition(awardDefinitionID, eventDefinitionID);
 			return RedirectToAction("Award", new { id = awardDefinitionID});
 		}
 
 		[HttpPost]
 		public ActionResult AddAwardCondition(AwardCondition awardCondition)
 		{
-			AwardDefinitionService.AddCondition(awardCondition);
+			_awardDefinitionService.AddCondition(awardCondition);
 			return RedirectToAction("Award", new { id = awardCondition.AwardDefinitionID });
 		}
 
 		public ViewResult ManualEvent()
 		{
-			var selectList = new SelectList(EventDefinitionService.GetAll(), "EventDefinitionID", "EventDefinitionID");
+			var selectList = new SelectList(_eventDefinitionService.GetAll(), "EventDefinitionID", "EventDefinitionID");
 			ViewBag.EventList = selectList;
 			return View();
 		}
@@ -662,9 +662,9 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ActionResult ManualEvent(int userID, string feedMessage, int points)
 		{
-			var user = UserService.GetUser(userID);
+			var user = _userService.GetUser(userID);
 			if (user != null)
-				EventPublisher.ProcessManualEvent(feedMessage, user, points);
+				_eventPublisher.ProcessManualEvent(feedMessage, user, points);
 			return RedirectToAction("ManualEvent");
 		}
 
@@ -672,23 +672,23 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ActionResult ManualExistingEvent(int userID, string feedMessage, string eventDefinitionID)
 		{
-			var user = UserService.GetUser(userID);
-			var eventDefinition = EventDefinitionService.GetEventDefinition(eventDefinitionID);
+			var user = _userService.GetUser(userID);
+			var eventDefinition = _eventDefinitionService.GetEventDefinition(eventDefinitionID);
 			if (user != null && eventDefinition != null)
-				EventPublisher.ProcessEvent(feedMessage, user, eventDefinition.EventDefinitionID, false);
+				_eventPublisher.ProcessEvent(feedMessage, user, eventDefinition.EventDefinitionID, false);
 			return RedirectToAction("ManualEvent");
 		}
 
 		public JsonResult GetNames(string id)
 		{
-			var users = UserService.SearchByName(id);
+			var users = _userService.SearchByName(id);
 			var projection = users.Select(u => new { u.UserID, value = u.Name });
 			return Json(projection, JsonRequestBehavior.AllowGet);
 		}
 
 		public ViewResult ScoringGame()
 		{
-			ViewData["Interval"] = SettingsManager.Current.ScoringGameCalculatorInterval;
+			ViewData["Interval"] = _settingsManager.Current.ScoringGameCalculatorInterval;
 			return View();
 		}
 
@@ -696,7 +696,7 @@ namespace PopForums.Controllers
 		public ViewResult ScoringGame(FormCollection collection)
 		{
 			SaveFormValuesToSettings(collection);
-			ViewData["Interval"] = SettingsManager.Current.ScoringGameCalculatorInterval;
+			ViewData["Interval"] = _settingsManager.Current.ScoringGameCalculatorInterval;
 			return View();
 		}
 	}

@@ -14,26 +14,26 @@ namespace PopForums.Controllers
 		public ImageController()
 		{
 			var container = PopForumsActivation.Kernel;
-			ImageService = container.Get<IImageService>();
+			_imageService = container.Get<IImageService>();
 		}
 
 		protected internal ImageController(IImageService imageService)
 		{
-			ImageService = imageService;
+			_imageService = imageService;
 		}
 
-		public IImageService ImageService { get; private set; }
+		private readonly IImageService _imageService;
 
 		[PopForumsAuthorizationIgnore]
 		public ActionResult Avatar(int id)
 		{
-			return SetupImageResult(ImageService.GetAvatarImageData, ImageService.GetAvatarImageLastModification, id);
+			return SetupImageResult(_imageService.GetAvatarImageData, _imageService.GetAvatarImageLastModification, id);
 		}
 
 		[PopForumsAuthorizationIgnore]
 		public ActionResult UserImage(int id)
 		{
-			return SetupImageResult(ImageService.GetUserImageData, ImageService.GetUserImageLastModifcation, id);
+			return SetupImageResult(_imageService.GetUserImageData, _imageService.GetUserImageLastModifcation, id);
 		}
 
 		private ActionResult SetupImageResult(Func<int, byte[]> imageDataFetch, Func<int, DateTime?> imageLastMod, int id)

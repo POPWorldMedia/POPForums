@@ -13,29 +13,29 @@ namespace PopForums.Controllers
 		public SubscriptionController()
 		{
 			var container = PopForumsActivation.Kernel;
-			SubService = container.Get<ISubscribedTopicsService>();
-			TopicService = container.Get<ITopicService>();
-			UserService = container.Get<IUserService>();
-			LastReadService = container.Get<ILastReadService>();
-			ForumService = container.Get<IForumService>();
+			_subService = container.Get<ISubscribedTopicsService>();
+			_topicService = container.Get<ITopicService>();
+			_userService = container.Get<IUserService>();
+			_lastReadService = container.Get<ILastReadService>();
+			_forumService = container.Get<IForumService>();
 		}
 
 		protected internal SubscriptionController(ISubscribedTopicsService subService, ITopicService topicService, IUserService userService, ILastReadService lastReadService, IForumService forumService)
 		{
-			SubService = subService;
-			TopicService = topicService;
-			UserService = userService;
-			LastReadService = lastReadService;
-			ForumService = forumService;
+			_subService = subService;
+			_topicService = topicService;
+			_userService = userService;
+			_lastReadService = lastReadService;
+			_forumService = forumService;
 		}
 
 		public static string Name = "Subscription";
 
-		public ISubscribedTopicsService SubService { get; private set; }
-		public ITopicService TopicService { get; private set; }
-		public IUserService UserService { get; private set; }
-		public ILastReadService LastReadService { get; private set; }
-		public IForumService ForumService { get; private set; }
+		private readonly ISubscribedTopicsService _subService;
+		private readonly ITopicService _topicService;
+		private readonly IUserService _userService;
+		private readonly ILastReadService _lastReadService;
+		private readonly IForumService _forumService;
 
 		public ViewResult Topics(int page = 1)
 		{
@@ -43,10 +43,10 @@ namespace PopForums.Controllers
 			if (user == null)
 				return View();
 			PagerContext pagerContext;
-			var topics = SubService.GetTopics(user, page, out pagerContext);
-			var titles = ForumService.GetAllForumTitles();
+			var topics = _subService.GetTopics(user, page, out pagerContext);
+			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 
@@ -56,9 +56,9 @@ namespace PopForums.Controllers
 			Guid parsedKey;
 			if (!Guid.TryParse(authKey, out parsedKey))
 				return View(container);
-			container.User = UserService.GetUserByAuhtorizationKey(parsedKey);
-			container.Topic = TopicService.Get(topicID);
-			SubService.TryRemoveSubscribedTopic(container.User, container.Topic);
+			container.User = _userService.GetUserByAuhtorizationKey(parsedKey);
+			container.Topic = _topicService.Get(topicID);
+			_subService.TryRemoveSubscribedTopic(container.User, container.Topic);
 			return View(container);
 		}
 
@@ -66,8 +66,8 @@ namespace PopForums.Controllers
 		public RedirectToRouteResult Unsubscribe(int id)
 		{
 			var user = this.CurrentUser();
-			var topic = TopicService.Get(id);
-			SubService.TryRemoveSubscribedTopic(user, topic);
+			var topic = _topicService.Get(id);
+			_subService.TryRemoveSubscribedTopic(user, topic);
 			return RedirectToAction("Topics");
 		}
 
@@ -77,15 +77,15 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return Json(new BasicJsonMessage{ Message = Resources.LoginToPost, Result = false });
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-			if (SubService.IsTopicSubscribed(user, topic))
+			if (_subService.IsTopicSubscribed(user, topic))
 			{
-				SubService.RemoveSubscribedTopic(user, topic);
+				_subService.RemoveSubscribedTopic(user, topic);
 				return Json(new BasicJsonMessage { Data = new { isSubscribed = false }, Result = true });
 			}
-			SubService.AddSubscribedTopic(user, topic);
+			_subService.AddSubscribedTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isSubscribed = true }, Result = true });
 		}
 	}

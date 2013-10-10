@@ -15,61 +15,61 @@ namespace PopForums.Controllers
 		public ForumController()
 		{
 			var container = PopForumsActivation.Kernel;
-			SettingsManager = container.Get<ISettingsManager>();
-			ForumService = container.Get<IForumService>();
-			TopicService = container.Get<ITopicService>();
-			PostService = container.Get<IPostService>();
-			TopicViewCountService = container.Get<ITopicViewCountService>();
-			SubService = container.Get<ISubscribedTopicsService>();
-			LastReadService = container.Get<ILastReadService>();
-			FavoriteTopicService = container.Get<IFavoriteTopicService>();
-			ProfileService = container.Get<IProfileService>();
-			MobileDetectionWrapper = container.Get<IMobileDetectionWrapper>();
+			_settingsManager = container.Get<ISettingsManager>();
+			_forumService = container.Get<IForumService>();
+			_topicService = container.Get<ITopicService>();
+			_postService = container.Get<IPostService>();
+			_topicViewCountService = container.Get<ITopicViewCountService>();
+			_subService = container.Get<ISubscribedTopicsService>();
+			_lastReadService = container.Get<ILastReadService>();
+			_favoriteTopicService = container.Get<IFavoriteTopicService>();
+			_profileService = container.Get<IProfileService>();
+			_mobileDetectionWrapper = container.Get<IMobileDetectionWrapper>();
 		}
 
 		protected internal ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IMobileDetectionWrapper mobileDetectionWrapper)
 		{
-			SettingsManager = settingsManager;
-			ForumService = forumService;
-			TopicService = topicService;
-			PostService = postService;
-			TopicViewCountService = topicViewCountService;
-			SubService = subService;
-			LastReadService = lastReadService;
-			FavoriteTopicService = favoriteTopicService;
-			ProfileService = profileService;
-			MobileDetectionWrapper = mobileDetectionWrapper;
+			_settingsManager = settingsManager;
+			_forumService = forumService;
+			_topicService = topicService;
+			_postService = postService;
+			_topicViewCountService = topicViewCountService;
+			_subService = subService;
+			_lastReadService = lastReadService;
+			_favoriteTopicService = favoriteTopicService;
+			_profileService = profileService;
+			_mobileDetectionWrapper = mobileDetectionWrapper;
 		}
 
 		public static string Name = "Forum";
 
-		public ISettingsManager SettingsManager { get; private set; }
-		public IForumService ForumService { get; private set; }
-		public ITopicService TopicService { get; private set; }
-		public IPostService PostService { get; private set; }
-		public ITopicViewCountService TopicViewCountService { get; private set; }
-		public ISubscribedTopicsService SubService { get; private set; }
-		public ILastReadService LastReadService { get; private set; }
-		public IFavoriteTopicService FavoriteTopicService { get; private set; }
-		public IProfileService ProfileService { get; private set; }
-		public IMobileDetectionWrapper MobileDetectionWrapper { get; private set; }
+		private readonly ISettingsManager _settingsManager;
+		private readonly IForumService _forumService;
+		private readonly ITopicService _topicService;
+		private readonly IPostService _postService;
+		private readonly ITopicViewCountService _topicViewCountService;
+		private readonly ISubscribedTopicsService _subService;
+		private readonly ILastReadService _lastReadService;
+		private readonly IFavoriteTopicService _favoriteTopicService;
+		private readonly IProfileService _profileService;
+		private readonly IMobileDetectionWrapper _mobileDetectionWrapper;
 
 		public ActionResult Index(string urlName, int page = 1)
 		{
-			var forum = ForumService.Get(urlName);
+			var forum = _forumService.Get(urlName);
 			if (forum == null)
 				return this.NotFound("NotFound", null);
 			var user = this.CurrentUser();
-			var permissionContext = ForumService.GetPermissionContext(forum, user);
+			var permissionContext = _forumService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
 			}
 
 			PagerContext pagerContext;
-			var topics = TopicService.GetTopics(forum, permissionContext.UserCanModerate, page, out pagerContext);
+			var topics = _topicService.GetTopics(forum, permissionContext.UserCanModerate, page, out pagerContext);
 			var container = new ForumTopicContainer {Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext};
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			var adapter = new ForumAdapterFactory(forum);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -93,8 +93,8 @@ namespace PopForums.Controllers
 			if (!permissionContext.UserCanPost)
 				return Content(Resources.ForumNoPost);
 
-			var profile = ProfileService.GetProfile(user);
-			var newPost = new NewPost { ItemID = forum.ForumID, IncludeSignature = profile.Signature.Length > 0, IsPlainText = MobileDetectionWrapper.IsMobileDevice(HttpContext) || profile.IsPlainText, IsImageEnabled = SettingsManager.Current.AllowImages };
+			var profile = _profileService.GetProfile(user);
+			var newPost = new NewPost { ItemID = forum.ForumID, IncludeSignature = profile.Signature.Length > 0, IsPlainText = _mobileDetectionWrapper.IsMobileDevice(HttpContext) || profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages };
 			return View("NewTopic", newPost);
 		}
 
@@ -110,8 +110,8 @@ namespace PopForums.Controllers
 				return Json(new BasicJsonMessage {Message = Resources.ForumNoView, Result = false});
 			if (!permissionContext.UserCanPost)
 				return Json(new BasicJsonMessage {Message = Resources.ForumNoPost, Result = false});
-			if (PostService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
-				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, SettingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
+			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
+				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
             if (String.IsNullOrEmpty(newPost.FullText))
                 return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 
@@ -119,34 +119,34 @@ namespace PopForums.Controllers
 			var urlHelper = new UrlHelper(ControllerContext.RequestContext);
 			var userProfileUrl = urlHelper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
-			var topic = ForumService.PostNewTopic(forum, user, permissionContext, newPost, Request.UserHostAddress, userProfileUrl, topicLinkGenerator);
-			TopicViewCountService.SetViewedTopic(topic, HttpContext);
+			var topic = _forumService.PostNewTopic(forum, user, permissionContext, newPost, Request.UserHostAddress, userProfileUrl, topicLinkGenerator);
+			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
 		}
 
 		private Forum GetForumByIdWithPermissionContext(int forumID, out ForumPermissionContext permissionContext)
 		{
-			var forum = ForumService.Get(forumID);
+			var forum = _forumService.Get(forumID);
 			if (forum == null)
 				throw new Exception(String.Format("Forum {0} not found", forumID));
-			permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser());
+			permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser());
 			return forum;
 		}
 
 		private ForumPermissionContext GetPermissionContextByTopicID(int topicID, out Topic topic)
 		{
-			topic = TopicService.Get(topicID);
+			topic = _topicService.Get(topicID);
 			if (topic == null)
 				throw new Exception(String.Format("Topic {0} not found", topicID));
-			var forum = ForumService.Get(topic.ForumID);
+			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("Forum {0} not found", topic.ForumID));
-			return ForumService.GetPermissionContext(forum, this.CurrentUser());
+			return _forumService.GetPermissionContext(forum, this.CurrentUser());
 		}
 
 		public ActionResult TopicID(int id)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return this.NotFound("NotFound", null);
 			return RedirectToActionPermanent("Topic", new {id = topic.UrlName});
@@ -154,15 +154,15 @@ namespace PopForums.Controllers
 
 		public ViewResult Topic(string id, int page = 1)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return this.NotFound("NotFound", null);
-			var forum = ForumService.Get(topic.ForumID);
+			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 
 			var adapter = new ForumAdapterFactory(forum);
-			var permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
@@ -174,23 +174,23 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user != null)
 			{
-				isFavorite = FavoriteTopicService.IsTopicFavorite(user, topic);
-				isSubscribed = SubService.IsTopicSubscribed(user, topic);
+				isFavorite = _favoriteTopicService.IsTopicFavorite(user, topic);
+				isSubscribed = _subService.IsTopicSubscribed(user, topic);
 				if (isSubscribed)
-					SubService.MarkSubscribedTopicViewed(user, topic);
+					_subService.MarkSubscribedTopicViewed(user, topic);
 				if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
-					LastReadService.MarkTopicRead(user, topic);
+					_lastReadService.MarkTopicRead(user, topic);
 				if (user.IsInRole(PermanentRoles.Moderator))
-					ViewBag.CategorizedForums = ForumService.GetCategorizedForumContainer();
+					ViewBag.CategorizedForums = _forumService.GetCategorizedForumContainer();
 			}
-			var posts = PostService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
+			var posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
 			if (posts.Count == 0)
 				return this.NotFound("NotFound", null);
-			var signatures = ProfileService.GetSignatures(posts);
-			var avatars = ProfileService.GetAvatars(posts);
-			var votedIDs = PostService.GetVotedPostIDs(this.CurrentUser(), posts);
+			var signatures = _profileService.GetSignatures(posts);
+			var avatars = _profileService.GetAvatars(posts);
+			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs);
-			TopicViewCountService.ProcessView(topic, HttpContext);
+			_topicViewCountService.ProcessView(topic, HttpContext);
 			if (adapter.IsAdapterEnabled)
 			{
 				adapter.ForumAdapter.AdaptTopic(this, container);
@@ -203,28 +203,28 @@ namespace PopForums.Controllers
 
 		public ActionResult TopicPage(int id, int page, int low, int high)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return this.NotFound("NotFound", null);
-			var forum = ForumService.Get(topic.ForumID);
+			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 
-			var permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
 			}
 
 			PagerContext pagerContext;
-			var posts = PostService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
+			var posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
 			if (posts.Count == 0)
 				return this.NotFound("NotFound", null);
-			var signatures = ProfileService.GetSignatures(posts);
-			var avatars = ProfileService.GetAvatars(posts);
-			var votedIDs = PostService.GetVotedPostIDs(this.CurrentUser(), posts);
+			var signatures = _profileService.GetSignatures(posts);
+			var avatars = _profileService.GetAvatars(posts);
+			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs);
-			TopicViewCountService.ProcessView(topic, HttpContext);
+			_topicViewCountService.ProcessView(topic, HttpContext);
 			ViewBag.Low = low;
 			ViewBag.High = high;
 			return View(container);
@@ -235,15 +235,15 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return Content(Resources.LoginToPost);
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return Content(Resources.TopicNotExist);
-			var forum = ForumService.Get(topic.ForumID);
+			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			if (topic.IsClosed)
 				return Content(Resources.Closed);
-			var permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
 			if (!permissionContext.UserCanView)
 				return Content(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -252,14 +252,14 @@ namespace PopForums.Controllers
 			var title = topic.Title;
 			if (!title.ToLower().StartsWith("re:"))
 				title = "Re: " + title;
-			var profile = ProfileService.GetProfile(user);
-			var forcePlainText = MobileDetectionWrapper.IsMobileDevice(HttpContext);
-			var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = forcePlainText || profile.IsPlainText, IsImageEnabled = SettingsManager.Current.AllowImages, ParentPostID = replyID };
+			var profile = _profileService.GetProfile(user);
+			var forcePlainText = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
+			var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = forcePlainText || profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages, ParentPostID = replyID };
 
 			if (quotePostID != 0)
 			{
-				var post = PostService.Get(quotePostID);
-				newPost.FullText = PostService.GetPostForQuote(post, user, forcePlainText);
+				var post = _postService.Get(quotePostID);
+				newPost.FullText = _postService.GetPostForQuote(post, user, forcePlainText);
 			}
 			return View("NewReply", newPost);
 		}
@@ -271,7 +271,7 @@ namespace PopForums.Controllers
 			if (this.CurrentUser() == null)
 				return Json(new BasicJsonMessage { Message = Resources.LoginToPost, Result = false });
 			ForumPermissionContext permissionContext;
-			var topic = TopicService.Get(newPost.ItemID);
+			var topic = _topicService.Get(newPost.ItemID);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
 			if (topic.IsClosed)
@@ -281,13 +281,13 @@ namespace PopForums.Controllers
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
 			if (!permissionContext.UserCanPost)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
-			if (PostService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
-				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, SettingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
+			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
+				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
 			if (String.IsNullOrEmpty(newPost.FullText))
 				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 			if (newPost.ParentPostID != 0)
 			{
-				var parentPost = PostService.Get(newPost.ParentPostID);
+				var parentPost = _postService.Get(newPost.ParentPostID);
 				if (parentPost == null || parentPost.TopicID != topic.TopicID)
 					return Json(new BasicJsonMessage { Message = "This reply attempt is being made to a post in another topic", Result = false });
 			}
@@ -299,18 +299,18 @@ namespace PopForums.Controllers
 			var helper = new UrlHelper(Request.RequestContext);
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
-			var post = TopicService.PostReply(topic, user, newPost.ParentPostID, Request.UserHostAddress, false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
-			TopicViewCountService.SetViewedTopic(topic, HttpContext);
+			var post = _topicService.PostReply(topic, user, newPost.ParentPostID, Request.UserHostAddress, false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
+			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			var currentUser = this.CurrentUser();
 			if (newPost.CloseOnReply && currentUser.IsInRole(PermanentRoles.Moderator))
-				TopicService.CloseTopic(topic, currentUser);
+				_topicService.CloseTopic(topic, currentUser);
 			var urlHelper = new UrlHelper(ControllerContext.RequestContext);
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "PostLink", id = post.PostID }) });
 		}
 
 		public ViewResult Post(int id)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (post == null)
 				return this.NotFound("NotFound", null);
 			Topic topic;
@@ -319,24 +319,24 @@ namespace PopForums.Controllers
 				return this.Forbidden("Forbidden", null);
 			var user = this.CurrentUser();
 			var postList = new List<Post> {post};
-			ViewBag.Signatures = ProfileService.GetSignatures(postList);
-			ViewBag.Avatars = ProfileService.GetAvatars(postList);
-			ViewBag.VotedPostIDs = PostService.GetVotedPostIDs(user, postList);
+			ViewBag.Signatures = _profileService.GetSignatures(postList);
+			ViewBag.Avatars = _profileService.GetAvatars(postList);
+			ViewBag.VotedPostIDs = _postService.GetVotedPostIDs(user, postList);
 			ViewData[ViewDataDictionaries.ViewDataUserKey] = user;
-			LastReadService.MarkTopicRead(user, topic);
+			_lastReadService.MarkTopicRead(user, topic);
 			return View("PostItem", post);
 		}
 
 		public JsonResult FirstPostPreview(int id)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage {Message = Resources.TopicNotExist, Result = false}, JsonRequestBehavior.AllowGet);
 			ForumPermissionContext permissionContext;
 			GetForumByIdWithPermissionContext(topic.ForumID, out permissionContext);
 			if (!permissionContext.UserCanView)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false }, JsonRequestBehavior.AllowGet);
-			var post = PostService.GetFirstInTopic(topic);
+			var post = _postService.GetFirstInTopic(topic);
 			var result = new BasicJsonMessage {Result = true, Data = new {post.FullText, post.Name, post.UserID}};
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
@@ -347,11 +347,11 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var titles = ForumService.GetAllForumTitles();
+			var titles = _forumService.GetAllForumTitles();
 			PagerContext pagerContext;
-			var topics = ForumService.GetRecentTopics(user, includeDeleted, page, out pagerContext);
+			var topics = _forumService.GetRecentTopics(user, includeDeleted, page, out pagerContext);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 
@@ -361,10 +361,10 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				throw new Exception("There is no logged in user. Can't mark forum read.");
-			var forum = ForumService.Get(id);
+			var forum = _forumService.Get(id);
 			if (forum == null)
 				throw new Exception(String.Format("There is no ForumID {0} to mark as read.", id));
-			LastReadService.MarkForumRead(user, forum);
+			_lastReadService.MarkForumRead(user, forum);
 			return RedirectToAction("Index", ForumHomeController.Name);
 		}
 
@@ -374,7 +374,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				throw new Exception("There is no logged in user. Can't mark forum read.");
-			LastReadService.MarkAllForumsRead(user);
+			_lastReadService.MarkAllForumsRead(user);
 			return RedirectToAction("Index", ForumHomeController.Name);
 		}
 
@@ -384,12 +384,12 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (post == null || (post.IsDeleted && (user == null || !user.IsInRole(PermanentRoles.Moderator))))
 				return this.NotFound("NotFound", null);
 			Topic topic;
-			var page = PostService.GetTopicPageForPost(post, includeDeleted, out topic);
-			var forum = ForumService.Get(topic.ForumID);
+			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
+			var forum = _forumService.Get(topic.ForumID);
 			var adapter = new ForumAdapterFactory(forum);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -403,7 +403,7 @@ namespace PopForums.Controllers
 
 		public ActionResult GoToNewestPost(int id)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return this.NotFound("NotFound", null);
 			var includeDeleted = false;
@@ -412,21 +412,21 @@ namespace PopForums.Controllers
 				includeDeleted = true;
 			if (user == null)
 				return RedirectToAction("Topic", new {id = topic.UrlName});
-			var post = LastReadService.GetFirstUnreadPost(user, topic);
-			var page = PostService.GetTopicPageForPost(post, includeDeleted, out topic);
+			var post = _lastReadService.GetFirstUnreadPost(user, topic);
+			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
 			var url = Url.Action("Topic", new { id = topic.UrlName, page }) + "#" + post.PostID;
 			return Redirect(url);
 		}
 
 		public ActionResult Edit(int id)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (post == null)
 				return this.NotFound("NotFound", null);
 			if (!User.IsPostEditable(post))
 				return this.Forbidden("Forbidden", null);
-			var isMobile = MobileDetectionWrapper.IsMobileDevice(HttpContext);
-			var postEdit = PostService.GetPostForEdit(post, this.CurrentUser(), isMobile);
+			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
+			var postEdit = _postService.GetPostForEdit(post, this.CurrentUser(), isMobile);
 			return View(postEdit);
 		}
 
@@ -434,25 +434,25 @@ namespace PopForums.Controllers
 		[ValidateInput(false)]
 		public ActionResult Edit(int id, PostEdit postEdit)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (!User.IsPostEditable(post))
 				return this.Forbidden("Forbidden", null);
-			PostService.EditPost(post, postEdit, this.CurrentUser());
+			_postService.EditPost(post, postEdit, this.CurrentUser());
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
 
 		[HttpPost]
 		public ActionResult DeletePost(int id)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (!User.IsPostEditable(post))
 				return this.Forbidden("Forbidden", null);
 			var user = this.CurrentUser();
-			PostService.Delete(post, user);
+			_postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
 			{
-				var topic = TopicService.Get(post.TopicID);
-				var forum = ForumService.Get(topic.ForumID);
+				var topic = _topicService.Get(post.TopicID);
+				var forum = _forumService.Get(topic.ForumID);
 				return RedirectToAction("Index", "Forum", new { urlName = forum.UrlName });
 			}
 			return RedirectToAction("PostLink", "Forum", new { id = post.PostID });
@@ -460,31 +460,31 @@ namespace PopForums.Controllers
 
 		public ContentResult IsLastPostInTopic(int id, int lastPostID)
 		{
-			var last = PostService.GetLastPostID(id);
+			var last = _postService.GetLastPostID(id);
 			var result = last == lastPostID;
 			return Content(result.ToString());
 		}
 
 		public ActionResult TopicPartial(int id, int lastPost, int lowPage)
 		{
-			var topic = TopicService.Get(id);
+			var topic = _topicService.Get(id);
 			if (topic == null)
 				return this.NotFound("NotFound", null);
-			var forum = ForumService.Get(topic.ForumID);
+			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 
-			var permissionContext = ForumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
 			}
 
 			PagerContext pagerContext;
-			var posts = PostService.GetPosts(topic, lastPost, permissionContext.UserCanModerate, out pagerContext);
-			var signatures = ProfileService.GetSignatures(posts);
-			var avatars = ProfileService.GetAvatars(posts);
-			var votedIDs = PostService.GetVotedPostIDs(this.CurrentUser(), posts);
+			var posts = _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate, out pagerContext);
+			var signatures = _profileService.GetSignatures(posts);
+			var avatars = _profileService.GetAvatars(posts);
+			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs);
 			ViewBag.Low = lowPage;
 			ViewBag.High = pagerContext.PageCount;
@@ -493,20 +493,20 @@ namespace PopForums.Controllers
 
 		public ActionResult Voters(int id)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (post == null)
 				return HttpNotFound();
-			var voters = PostService.GetVoters(post);
+			var voters = _postService.GetVoters(post);
 			return View(voters);
 		}
 
 		[HttpPost]
 		public ActionResult VotePost(int id)
 		{
-			var post = PostService.Get(id);
+			var post = _postService.Get(id);
 			if (post == null)
 				return HttpNotFound();
-			var topic = TopicService.Get(post.TopicID);
+			var topic = _topicService.Get(post.TopicID);
 			if (topic == null)
 				throw new Exception(String.Format("Post {0} appears to be orphaned from a topic.", post.PostID));
 			var user = this.CurrentUser();
@@ -515,8 +515,8 @@ namespace PopForums.Controllers
 			var helper = new UrlHelper(Request.RequestContext);
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new {id = user.UserID});
 			var topicUrl = helper.Action("PostLink", "Forum", new {id = post.PostID});
-			PostService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
-			var count = PostService.GetVoteCount(post);
+			_postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
+			var count = _postService.GetVoteCount(post);
 			return View("Votes", count);
 		}
 

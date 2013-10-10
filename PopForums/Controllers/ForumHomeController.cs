@@ -16,32 +16,32 @@ namespace PopForums.Controllers
 		public ForumHomeController()
 		{
 			var container = PopForumsActivation.Kernel;
-			ForumService = container.Get<IForumService>();
-			UserService = container.Get<IUserService>();
-			UserSessionService = container.Get<IUserSessionService>();
+			_forumService = container.Get<IForumService>();
+			_userService = container.Get<IUserService>();
+			_userSessionService = container.Get<IUserSessionService>();
 		}
 
 		protected internal ForumHomeController(IForumService forumService, IUserService userService, IUserSessionService userSessionService)
 		{
-			ForumService = forumService;
-			UserService = userService;
-			UserSessionService = userSessionService;
+			_forumService = forumService;
+			_userService = userService;
+			_userSessionService = userSessionService;
 		}
 
 		public static string Name = "ForumHome";
 
-		public IForumService ForumService { get; private set; }
-		public IUserService UserService { get; private set; }
-		public IUserSessionService UserSessionService { get; private set; }
+		private readonly IForumService _forumService;
+		private readonly IUserService _userService;
+		private readonly IUserSessionService _userSessionService;
 
 		public ViewResult Index()
 		{
-			ViewBag.OnlineUsers = UserService.GetUsersOnline();
-			ViewBag.TotalUsers = UserSessionService.GetTotalSessionCount().ToString("N0");
-			ViewBag.TopicCount = ForumService.GetAggregateTopicCount().ToString("N0");
-			ViewBag.PostCount = ForumService.GetAggregatePostCount().ToString("N0");
-			ViewBag.RegisteredUsers = UserService.GetTotalUsers().ToString("N0");
-			return View(ForumService.GetCategorizedForumContainerFilteredForUser(this.CurrentUser()));
+			ViewBag.OnlineUsers = _userService.GetUsersOnline();
+			ViewBag.TotalUsers = _userSessionService.GetTotalSessionCount().ToString("N0");
+			ViewBag.TopicCount = _forumService.GetAggregateTopicCount().ToString("N0");
+			ViewBag.PostCount = _forumService.GetAggregatePostCount().ToString("N0");
+			ViewBag.RegisteredUsers = _userService.GetTotalUsers().ToString("N0");
+			return View(_forumService.GetCategorizedForumContainerFilteredForUser(this.CurrentUser()));
 		}
 
 		public RedirectToRouteResult SwitchView(bool mobile)

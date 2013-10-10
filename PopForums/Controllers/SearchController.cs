@@ -14,21 +14,21 @@ namespace PopForums.Controllers
 		public SearchController()
 		{
 			var container = PopForumsActivation.Kernel;
-			SearchService = container.Get<ISearchService>();
-			ForumService = container.Get<IForumService>();
-			LastReadService = container.Get<ILastReadService>();
+			_searchService = container.Get<ISearchService>();
+			_forumService = container.Get<IForumService>();
+			_lastReadService = container.Get<ILastReadService>();
 		}
 
 		protected internal SearchController(ISearchService searchService, IForumService forumService, ILastReadService lastReadService)
 		{
-			SearchService = searchService;
-			ForumService = forumService;
-			LastReadService = lastReadService;
+			_searchService = searchService;
+			_forumService = forumService;
+			_lastReadService = lastReadService;
 		}
 
-		public ISearchService SearchService { get; private set; }
-		public IForumService ForumService { get; private set; }
-		public ILastReadService LastReadService { get; private set; }
+		private readonly ISearchService _searchService;
+		private readonly IForumService _forumService;
+		private readonly ILastReadService _lastReadService;
 
 		public static string Name = "Search";
 
@@ -55,11 +55,11 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var titles = ForumService.GetAllForumTitles();
+			var titles = _forumService.GetAllForumTitles();
 			PagerContext pagerContext;
-			var topics = SearchService.GetTopics(query, searchType, user, includeDeleted, page, out pagerContext);
+			var topics = _searchService.GetTopics(query, searchType, user, includeDeleted, page, out pagerContext);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			return View("Index", container);
 		}
 	}
