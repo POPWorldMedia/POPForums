@@ -11,6 +11,8 @@ namespace PopForums.ExternalLogin
 		public async Task<ExternalAuthenticationResult> GetAuthenticationResult(IAuthenticationManager authenticationManager)
 		{
 			var authResult = await authenticationManager.AuthenticateAsync(ExternalCookieName);
+			if (authResult == null)
+				return null;
 			if (!authResult.Identity.IsAuthenticated)
 				return null;
 			var externalIdentity = authResult.Identity;

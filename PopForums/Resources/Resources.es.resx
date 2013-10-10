@@ -1206,4 +1206,10 @@
   <data name="ExternalLogins" xml:space="preserve">
     <value>Conexiones externas</value>
   </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Usar cuenta del foro existente</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>Esa conexión ha caducado o no es válido</value>
+  </data>
 </root>

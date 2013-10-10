@@ -53,9 +53,17 @@ PopForums.checkScroll = function () {
 	}
 };
 
-PopForums.processLogin = function () {
+PopForums.processLogin = function() {
+	PopForums.processLoginBase("/Authorization/Login");
+};
+
+PopForums.processLoginExternal = function () {
+	PopForums.processLoginBase("/Authorization/LoginAndAssociate");
+};
+
+PopForums.processLoginBase = function (path) {
 	$.ajax({
-		url: PopForums.areaPath + "/Authorization/Login",
+		url: PopForums.areaPath + path,
 		type: "POST",
 		data: { email: $("#EmailLogin").val(), password: $("#PasswordLogin").val(), persistCookie: $("#PersistCookie").is(":checked") },
 		dataType: "json",

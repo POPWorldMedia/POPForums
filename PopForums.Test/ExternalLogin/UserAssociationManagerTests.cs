@@ -21,6 +21,14 @@ namespace PopForums.Test.ExternalLogin
 		private Mock<IUserRepository> _userRepo;
 
 		[Test]
+		public void ExternalUserAssociationCheckThrowsWithNullArg()
+		{
+			var manager = GetManager();
+
+			Assert.Throws<ArgumentNullException>(() => manager.ExternalUserAssociationCheck(null));
+		}
+
+		[Test]
 		public void ExternalUserAssociationCheckResultFalseWithNullsIfNoMatchingAssociation()
 		{
 			var manager = GetManager();

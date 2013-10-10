@@ -28,7 +28,7 @@
 {
 <table class="account">
 	<tr>
-		<td colspan="2"><span id="LoginResult" class="warning"></span></td>
+		<td colspan="2"><span id="LoginResult" class="warning">@Request.QueryString["error"]</span></td>
 	</tr>
 	<tr>
 		<td>@PopForums.Resources.Email</td>

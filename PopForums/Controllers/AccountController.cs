@@ -428,16 +428,16 @@ namespace PopForums.Controllers
 		{
 			var authentication = OwinContext.Authentication;
 			var authResult = await ExternalAuthentication.GetAuthenticationResult(authentication);
+			if (authResult == null)
+				return RedirectToAction("Login", new { error = Resources.ExpiredLogin });
 			var matchResult = UserAssociationManager.ExternalUserAssociationCheck(authResult);
 			if (matchResult.Successful)
 			{
 				UserService.Login(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
-
-			// TODO: offer standard login to associate, or go to create
-
-			return RedirectToAction("Create");
+			ViewBag.Referrer = returnUrl;
+			return View();
 		}
 
 		public ViewResult EmailUser(int id)

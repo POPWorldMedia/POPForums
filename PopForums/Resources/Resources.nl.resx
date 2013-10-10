@@ -1195,4 +1195,10 @@
   <data name="ExternalLogins" xml:space="preserve">
     <value>Externe Logins</value>
   </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Gebruik bestaande forum gehouden</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>Dat login is verlopen of niet geldig is</value>
+  </data>
 </root>

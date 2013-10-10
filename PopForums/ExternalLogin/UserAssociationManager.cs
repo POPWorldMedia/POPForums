@@ -17,6 +17,8 @@ namespace PopForums.ExternalLogin
 
 		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult)
 		{
+			if (externalAuthenticationResult == null)
+				throw new ArgumentNullException("externalAuthenticationResult");
 			var match = _externalUserAssociationRepository.Get(externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey);
 			if (match == null)
 				return new ExternalUserAssociationMatchResult {Successful = false};

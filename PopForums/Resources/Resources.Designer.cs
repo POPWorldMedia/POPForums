@@ -925,6 +925,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to That login has expired or is not valid.
+        /// </summary>
+        public static string ExpiredLogin {
+            get {
+                return ResourceManager.GetString("ExpiredLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to External Logins.
         /// </summary>
         public static string ExternalLogins {
@@ -3000,6 +3009,15 @@ namespace PopForums {
         public static string UseEsmtpCred {
             get {
                 return ResourceManager.GetString("UseEsmtpCred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use existing forum account.
+        /// </summary>
+        public static string UseExistingForumAccount {
+            get {
+                return ResourceManager.GetString("UseExistingForumAccount", resourceCulture);
             }
         }
         

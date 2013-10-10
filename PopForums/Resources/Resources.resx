@@ -1206,4 +1206,10 @@
   <data name="ExternalLogins" xml:space="preserve">
     <value>External Logins</value>
   </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Use existing forum account</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>That login has expired or is not valid</value>
+  </data>
 </root>

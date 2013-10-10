@@ -1195,4 +1195,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="ExternalLogins" xml:space="preserve">
     <value>Externe Logins</value>
   </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Verwenden Sie vorhandene Forum angemeldet</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>Das Login ist abgelaufen oder nicht gültig</value>
+  </data>
 </root>

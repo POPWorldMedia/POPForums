@@ -1,6 +1,9 @@
-﻿using System.Web.Mvc;
+﻿using System.Threading.Tasks;
+using System.Web.Mvc;
+using Microsoft.Owin;
 using Ninject;
 using PopForums.Extensions;
+using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web;
@@ -12,17 +15,26 @@ namespace PopForums.Controllers
 		public AuthorizationController()
 		{
 			var container = PopForumsActivation.Kernel;
-			UserService = container.Get<IUserService>();
+			_userService = container.Get<IUserService>();
+			_owinContext = container.Get<IOwinContext>();
+			_externalAuthentication = container.Get<IExternalAuthentication>();
+			_userAssociationManager = container.Get<IUserAssociationManager>();
 		}
 
-		protected internal AuthorizationController(IUserService userService)
+		protected internal AuthorizationController(IUserService userService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager)
 		{
-			UserService = userService;
+			_userService = userService;
+			_owinContext = owinContext;
+			_externalAuthentication = externalAuthentication;
+			_userAssociationManager = userAssociationManager;
 		}
 
 		public static string Name = "Authorization";
 
-		public IUserService UserService { get; set; }
+		private readonly IUserService _userService;
+		private readonly IOwinContext _owinContext;
+		private readonly IExternalAuthentication _externalAuthentication;
+		private readonly IUserAssociationManager _userAssociationManager;
 
 		[HttpGet]
 		public RedirectResult Logout()
@@ -37,7 +49,7 @@ namespace PopForums.Controllers
 					link = Url.Action("Index", ForumHomeController.Name);
 			}
 			var user = this.CurrentUser();
-			UserService.Logout(user, HttpContext.Request.UserHostAddress);
+			_userService.Logout(user, HttpContext.Request.UserHostAddress);
 			return Redirect(link);
 		}
 
@@ -45,15 +57,31 @@ namespace PopForums.Controllers
 		public JsonResult LogoutAsync()
 		{
 			var user = this.CurrentUser();
-			UserService.Logout(user, HttpContext.Request.UserHostAddress);
+			_userService.Logout(user, HttpContext.Request.UserHostAddress);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		[HttpPost]
 		public JsonResult Login(string email, string password, bool persistCookie)
 		{
-			if (UserService.Login(email, password, persistCookie, HttpContext))
+			if (_userService.Login(email, password, persistCookie, HttpContext))
 			{
+				return Json(new BasicJsonMessage { Result = true });
+			}
+
+			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> LoginAndAssociate(string email, string password, bool persistCookie)
+		{
+			if (_userService.Login(email, password, persistCookie, HttpContext))
+			{
+				var user = _userService.GetUserByEmail(email);
+				var authentication = _owinContext.Authentication;
+				var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
+				if (authResult != null)
+					_userAssociationManager.Associate(user, authResult);
 				return Json(new BasicJsonMessage { Result = true });
 			}
 
