@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using Ninject;
 using PopForums.Configuration;
@@ -107,6 +108,7 @@ namespace PopForums.Controllers
 		public ViewResult ExternalLogins(FormCollection collection)
 		{
 			SaveFormValuesToSettings(collection);
+			HttpRuntime.UnloadAppDomain();
 			return View(SettingsManager.Current);
 		}
 

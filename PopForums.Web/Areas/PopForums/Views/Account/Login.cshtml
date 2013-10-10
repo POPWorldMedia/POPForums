@@ -48,6 +48,8 @@
 	</tr>
 </table>
 
+if (Model.Count > 0)
+{
 using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.Referrer }))
 {
     @Html.AntiForgeryToken()
@@ -60,6 +62,7 @@ using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.Refe
             }
         </p>
     </fieldset>
+}
 }
     
 <p>@PopForums.Resources.NotRegisteredQuestion @Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name). @Html.ActionLink(PopForums.Resources.ForgotPasswordQuestion, "Forgot", AccountController.Name)</p>

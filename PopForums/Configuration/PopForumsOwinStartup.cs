@@ -6,6 +6,7 @@ using Ninject;
 using Owin;
 using PopForums.Configuration;
 using PopForums.ExternalLogin;
+using PopForums.Services;
 using PopForums.Web;
 
 [assembly: OwinStartup(typeof (PopForumsOwinStartup))]
@@ -15,6 +16,10 @@ namespace PopForums.Configuration
 	{
 		public void Configuration(IAppBuilder app)
 		{
+			var setupService = PopForumsActivation.Kernel.Get<ISetupService>();
+			if (!setupService.IsDatabaseSetup())
+				return;
+
 			var settings = PopForumsActivation.Kernel.Get<ISettingsManager>().Current;
 
 			app.SetDefaultSignInAsAuthenticationType(ExternalAuthentication.ExternalCookieName);
