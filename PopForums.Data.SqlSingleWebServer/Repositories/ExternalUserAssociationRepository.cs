@@ -32,6 +32,23 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			return externalUserAssociation;
 		}
 
+		public ExternalUserAssociation Get(int externalUserAssociationID)
+		{
+			ExternalUserAssociation externalUserAssociation = null;
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("SELECT ExternalUserAssociationID, UserID, Issuer, ProviderKey, Name FROM pf_ExternalUserAssociation WHERE ExternalUserAssociationID = @ExternalUserAssociationID")
+					.AddParameter("@ExternalUserAssociationID", externalUserAssociationID)
+					.ExecuteReader()
+					.ReadOne(r => externalUserAssociation = new ExternalUserAssociation
+					{
+						ExternalUserAssociationID = r.GetInt32(0),
+						UserID = r.GetInt32(1),
+						Issuer = r.GetString(2),
+						ProviderKey = r.GetString(3),
+						Name = r.GetString(4)
+					}));
+			return externalUserAssociation;
+		}
+
 		public List<ExternalUserAssociation> GetByUser(int userID)
 		{
 			var userAssociations = new List<ExternalUserAssociation>();

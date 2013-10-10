@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using PopForums.ExternalLogin;
@@ -116,6 +117,65 @@ namespace PopForums.Test.ExternalLogin
 			manager.Associate(user, externalAuthResult);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(user.UserID, externalAuthResult.Issuer, externalAuthResult.ProviderKey, externalAuthResult.Name), Times.Once());
+		}
+
+		[Test]
+		public void GetExternalUserAssociationsCallsRepoByUserID()
+		{
+			var manager = GetManager();
+			var user = new User(123, DateTime.MaxValue);
+
+			manager.GetExternalUserAssociations(user);
+
+			_externalUserAssociationRepo.Verify(x => x.GetByUser(user.UserID), Times.Once());
+		}
+
+		[Test]
+		public void GetExternalUserAssociationsReturnsCollectionFromRepo()
+		{
+			var manager = GetManager();
+			var user = new User(123, DateTime.MaxValue);
+			var collection = new List<ExternalUserAssociation>();
+			_externalUserAssociationRepo.Setup(x => x.GetByUser(user.UserID)).Returns(collection);
+
+			var result = manager.GetExternalUserAssociations(user);
+
+			Assert.AreSame(collection, result);
+		}
+
+		[Test]
+		public void RemoveAssociationNeverCallsRepoIfNoAssociationIsFound()
+		{
+			var manager = GetManager();
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((ExternalUserAssociation) null);
+
+			manager.RemoveAssociation(new User(123, DateTime.MaxValue), 4556);
+
+			_externalUserAssociationRepo.Verify(x => x.Delete(It.IsAny<int>()), Times.Never());
+		}
+
+		[Test]
+		public void GetExternalUserAssociationsThrowsIfAssociationDoesntMatchUser()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = 789};
+			var user = new User(123, DateTime.MaxValue);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+
+			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID));
+		}
+
+		[Test]
+		public void GetExternalUserAssociationsCallsRepoWithMatchingUserIDs()
+		{
+			var manager = GetManager();
+			var user = new User(123, DateTime.MaxValue);
+			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = user.UserID };
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+
+			manager.RemoveAssociation(user, association.ExternalUserAssociationID);
+
+			_externalUserAssociationRepo.Verify(x => x.Delete(association.ExternalUserAssociationID), Times.Once());
 		}
 	}
 }

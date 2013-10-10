@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -46,6 +47,21 @@ namespace PopForums.ExternalLogin
 					throw new NullReferenceException("The identity claims contain no provider key");
 				_externalUserAssociationRepository.Save(user.UserID, externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey, externalAuthenticationResult.Name);
 			}
+		}
+
+		public List<ExternalUserAssociation> GetExternalUserAssociations(User user)
+		{
+			return _externalUserAssociationRepository.GetByUser(user.UserID);
+		}
+
+		public void RemoveAssociation(User user, int externalUserAssociationID)
+		{
+			var association = _externalUserAssociationRepository.Get(externalUserAssociationID);
+			if (association == null)
+				return;
+			if (association.UserID != user.UserID)
+				throw new Exception(String.Format("Can't delete external user association {0} because it doesn't match UserID {1}.", externalUserAssociationID, user.UserID));
+			_externalUserAssociationRepository.Delete(externalUserAssociationID);
 		}
 	}
 }

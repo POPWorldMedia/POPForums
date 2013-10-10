@@ -1,4 +1,5 @@
-﻿using PopForums.Models;
+﻿using System.Collections.Generic;
+using PopForums.Models;
 
 namespace PopForums.ExternalLogin
 {
@@ -6,5 +7,7 @@ namespace PopForums.ExternalLogin
 	{
 		ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult);
 		void Associate(User user, ExternalAuthenticationResult externalAuthenticationResult);
+		List<ExternalUserAssociation> GetExternalUserAssociations(User user);
+		void RemoveAssociation(User user, int externalUserAssociationID);
 	}
 }

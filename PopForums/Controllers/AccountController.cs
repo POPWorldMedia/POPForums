@@ -24,42 +24,42 @@ namespace PopForums.Controllers
 		public AccountController()
 		{
 			var container = PopForumsActivation.Kernel;
-			UserService = container.Get<IUserService>();
-			SettingsManager = container.Get<ISettingsManager>();
-			ProfileService = container.Get<IProfileService>();
-			NewAccountMailer = container.Get<INewAccountMailer>();
-			PostService = container.Get<IPostService>();
-			TopicService = container.Get<ITopicService>();
-			ForumService = container.Get<IForumService>();
-			LastReadService = container.Get<ILastReadService>();
-			ClientSettingsMapper = container.Get<IClientSettingsMapper>();
-			UserEmailer = container.Get<IUserEmailer>();
-			ImageService = container.Get<IImageService>();
-			FeedService = container.Get<IFeedService>();
-			UserAwardService = container.Get<IUserAwardService>();
-			OwinContext = container.Get<IOwinContext>();
-			ExternalAuthentication = container.Get<IExternalAuthentication>();
-			UserAssociationManager = container.Get<IUserAssociationManager>();
+			_userService = container.Get<IUserService>();
+			_settingsManager = container.Get<ISettingsManager>();
+			_profileService = container.Get<IProfileService>();
+			_newAccountMailer = container.Get<INewAccountMailer>();
+			_postService = container.Get<IPostService>();
+			_topicService = container.Get<ITopicService>();
+			_forumService = container.Get<IForumService>();
+			_lastReadService = container.Get<ILastReadService>();
+			_clientSettingsMapper = container.Get<IClientSettingsMapper>();
+			_userEmailer = container.Get<IUserEmailer>();
+			_imageService = container.Get<IImageService>();
+			_feedService = container.Get<IFeedService>();
+			_userAwardService = container.Get<IUserAwardService>();
+			_owinContext = container.Get<IOwinContext>();
+			_externalAuthentication = container.Get<IExternalAuthentication>();
+			_userAssociationManager = container.Get<IUserAssociationManager>();
 		}
 
 		protected internal AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager)
 		{
-			UserService = userService;
-			SettingsManager = settingsManager;
-			ProfileService = profileService;
-			NewAccountMailer = newAccountMailer;
-			PostService = postService;
-			TopicService = topicService;
-			ForumService = forumService;
-			LastReadService = lastReadService;
-			ClientSettingsMapper = clientSettingsMapper;
-			UserEmailer = userEmailer;
-			ImageService = imageService;
-			FeedService = feedService;
-			UserAwardService = userAwardService;
-			OwinContext = owinContext;
-			ExternalAuthentication = externalAuthentication;
-			UserAssociationManager = userAssociationManager;
+			_userService = userService;
+			_settingsManager = settingsManager;
+			_profileService = profileService;
+			_newAccountMailer = newAccountMailer;
+			_postService = postService;
+			_topicService = topicService;
+			_forumService = forumService;
+			_lastReadService = lastReadService;
+			_clientSettingsMapper = clientSettingsMapper;
+			_userEmailer = userEmailer;
+			_imageService = imageService;
+			_feedService = feedService;
+			_userAwardService = userAwardService;
+			_owinContext = owinContext;
+			_externalAuthentication = externalAuthentication;
+			_userAssociationManager = userAssociationManager;
 		}
 
 		public static string Name = "Account";
@@ -67,22 +67,22 @@ namespace PopForums.Controllers
 		public static string TosKey = "TosKey";
 		public static string ServerTimeZoneKey = "ServerTimeZoneKey";
 
-		public IUserService UserService { get; private set; }
-		public ISettingsManager SettingsManager { get; private set; }
-		public IProfileService ProfileService { get; private set; }
-		public INewAccountMailer NewAccountMailer { get; private set; }
-		public IPostService PostService { get; private set; }
-		public ITopicService TopicService { get; private set; }
-		public IForumService ForumService { get; private set; }
-		public ILastReadService LastReadService { get; private set; }
-		public IClientSettingsMapper ClientSettingsMapper { get; private set; }
-		public IUserEmailer UserEmailer { get; private set; }
-		public IImageService ImageService { get; private set; }
-		public IFeedService FeedService { get; private set; }
-		public IUserAwardService UserAwardService { get; private set; }
-		public IOwinContext OwinContext { get; private set; }
-		public IExternalAuthentication ExternalAuthentication { get; private set; }
-		public IUserAssociationManager UserAssociationManager { get; private set; }
+		private readonly IUserService _userService;
+		private readonly ISettingsManager _settingsManager;
+		private readonly IProfileService _profileService;
+		private readonly INewAccountMailer _newAccountMailer;
+		private readonly IPostService _postService;
+		private readonly ITopicService _topicService;
+		private readonly IForumService _forumService;
+		private readonly ILastReadService _lastReadService;
+		private readonly IClientSettingsMapper _clientSettingsMapper;
+		private readonly IUserEmailer _userEmailer;
+		private readonly IImageService _imageService;
+		private readonly IFeedService _feedService;
+		private readonly IUserAwardService _userAwardService;
+		private readonly IOwinContext _owinContext;
+		private readonly IExternalAuthentication _externalAuthentication;
+		private readonly IUserAssociationManager _userAssociationManager;
 
 		public ViewResult Create()
 		{
@@ -91,7 +91,7 @@ namespace PopForums.Controllers
 			                 	{
 			                 		IsDaylightSaving = true,
 			                 		IsSubscribed = true,
-									TimeZone = SettingsManager.Current.ServerTimeZone
+									TimeZone = _settingsManager.Current.ServerTimeZone
 			                 	};
 			return View(signupData);
 		}
@@ -99,34 +99,34 @@ namespace PopForums.Controllers
 		private void SetupCreateData()
 		{
 			ViewData[CoppaDateKey] = SignupData.GetCoppaDate();
-			ViewData[TosKey] = SettingsManager.Current.TermsOfService;
-			ViewData[ServerTimeZoneKey] = SettingsManager.Current.ServerTimeZone;
+			ViewData[TosKey] = _settingsManager.Current.TermsOfService;
+			ViewData[ServerTimeZoneKey] = _settingsManager.Current.ServerTimeZone;
 		}
 
 		[HttpPost]
 		public async Task<ViewResult> Create(SignupData signupData)
 		{
-			signupData.Validate(ModelState, UserService, HttpContext.Request.UserHostAddress);
+			signupData.Validate(ModelState, _userService, HttpContext.Request.UserHostAddress);
 			if (ModelState.IsValid)
 			{
-				var user = UserService.CreateUser(signupData, HttpContext.Request.UserHostAddress);
-				ProfileService.Create(user, signupData);
+				var user = _userService.CreateUser(signupData, HttpContext.Request.UserHostAddress);
+				_profileService.Create(user, signupData);
 				var verifyUrl = this.FullUrlHelper("Verify", "Account");
-				var result = NewAccountMailer.Send(user, verifyUrl);
+				var result = _newAccountMailer.Send(user, verifyUrl);
 				if (result != System.Net.Mail.SmtpStatusCode.Ok)
 					ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
-				if (SettingsManager.Current.IsNewUserApproved)
+				if (_settingsManager.Current.IsNewUserApproved)
 				{
 					ViewData["Result"] = Resources.AccountReady;
-					UserService.Login(user.Email, signupData.Password, false, HttpContext);
+					_userService.Login(user.Email, signupData.Password, false, HttpContext);
 				}
 				else
 					ViewData["Result"] = Resources.AccountReadyCheckEmail;
 
-				var authentication = OwinContext.Authentication;
-				var authResult = await ExternalAuthentication.GetAuthenticationResult(authentication);
+				var authentication = _owinContext.Authentication;
+				var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 				if (authResult != null)
-					UserAssociationManager.Associate(user, authResult);
+					_userAssociationManager.Associate(user, authResult);
 
 				return View("AccountCreated");
 			}
@@ -141,11 +141,11 @@ namespace PopForums.Controllers
 				return View("VerifyFail");
 			if (String.IsNullOrWhiteSpace(id))
 				return View();
-			var user = UserService.VerifyAuthorizationCode(authKey, HttpContext.Request.UserHostAddress);
+			var user = _userService.VerifyAuthorizationCode(authKey, HttpContext.Request.UserHostAddress);
 			if (user == null)
 				return View("VerifyFail");
 			ViewData["Result"] = Resources.AccountVerified;
-			UserService.Login(user, HttpContext);
+			_userService.Login(user, HttpContext);
 			return View();
 		}
 
@@ -157,14 +157,14 @@ namespace PopForums.Controllers
 
 		public ViewResult RequestCode(string email)
 		{
-			var user = UserService.GetUserByEmail(email);
+			var user = _userService.GetUserByEmail(email);
 			if (user == null)
 			{
 				ViewData["Result"] = Resources.NoUserFoundWithEmail;
 				return View("Verify", new { id = String.Empty });
 			}
 			var verifyUrl = this.FullUrlHelper("Verify", "Account");
-			var result = NewAccountMailer.Send(user, verifyUrl);
+			var result = _newAccountMailer.Send(user, verifyUrl);
 			if (result != System.Net.Mail.SmtpStatusCode.Ok)
 				ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
 			else
@@ -180,7 +180,7 @@ namespace PopForums.Controllers
 		[HttpPost]
 		public ViewResult Forgot(FormCollection collection)
 		{
-			var user = UserService.GetUserByEmail(collection["Email"]);
+			var user = _userService.GetUserByEmail(collection["Email"]);
 			if (user == null)
 			{
 				ViewBag.Result = Resources.EmailNotFound;
@@ -189,7 +189,7 @@ namespace PopForums.Controllers
 			{
 				ViewBag.Result = Resources.ForgotInstructionsSent;
 				var resetLink = this.FullUrlHelper("ResetPassword", "Account");
-				UserService.GeneratePasswordResetEmail(user, resetLink);
+				_userService.GeneratePasswordResetEmail(user, resetLink);
 			}
 			return View();
 		}
@@ -199,7 +199,7 @@ namespace PopForums.Controllers
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 				this.Forbidden("Forbidden", null);
-			var user = UserService.GetUserByAuhtorizationKey(authKey);
+			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			var container = new PasswordResetContainer();
 			if (user == null)
 				container.IsValidUser = false;
@@ -214,14 +214,14 @@ namespace PopForums.Controllers
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 				this.Forbidden("Forbidden", null);
-			var user = UserService.GetUserByAuhtorizationKey(authKey);
+			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			resetContainer.IsValidUser = true;
 			if (resetContainer.Password != resetContainer.PasswordRetype)
 				ModelState.AddModelError("PasswordRetype", Resources.RetypePasswordMustMatch);
-			UserService.IsPasswordValid(resetContainer.Password, ModelState);
+			_userService.IsPasswordValid(resetContainer.Password, ModelState);
 			if (!ModelState.IsValid)
 				return View(resetContainer);
-			UserService.ResetPassword(user, resetContainer.Password, HttpContext);
+			_userService.ResetPassword(user, resetContainer.Password, HttpContext);
 			return RedirectToAction("ResetPasswordSuccess");
 		}
 
@@ -238,7 +238,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			var profile = ProfileService.GetProfileForEdit(user);
+			var profile = _profileService.GetProfileForEdit(user);
 			var userEdit = new UserEditProfile(profile);
 			return View(userEdit);
 		}
@@ -249,7 +249,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			UserService.EditUserProfile(user, userEdit);
+			_userService.EditUserProfile(user, userEdit);
 			ViewBag.Result = Resources.ProfileUpdated;
 			return View(userEdit);
 		}
@@ -270,15 +270,15 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			if (!UserService.VerifyPassword(user, userEdit.OldPassword))
+			if (!_userService.VerifyPassword(user, userEdit.OldPassword))
 				ViewBag.PasswordResult = Resources.OldPasswordIncorrect;
 			else if (!userEdit.NewPasswordsMatch())
 				ViewBag.PasswordResult = Resources.RetypePasswordMustMatch;
-			else if (!UserService.IsPasswordValid(userEdit.NewPassword, modelState))
+			else if (!_userService.IsPasswordValid(userEdit.NewPassword, modelState))
 				ViewBag.PasswordResult = modelState["Password"];
 			else
 			{
-				UserService.SetPassword(user, userEdit.NewPassword, HttpContext.Request.UserHostAddress, user);
+				_userService.SetPassword(user, userEdit.NewPassword, HttpContext.Request.UserHostAddress, user);
 				ViewBag.PasswordResult = Resources.NewPasswordSaved;
 			}
 			return View("Security");
@@ -294,18 +294,18 @@ namespace PopForums.Controllers
 				ViewBag.EmailResult = Resources.ValidEmailAddressRequired;
 			else if (userEdit.NewEmail != userEdit.NewEmailRetype)
 				ViewBag.EmailResult = Resources.EmailsMustMatch;
-			else if (UserService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
+			else if (_userService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
 				ViewBag.EmailResult = Resources.EmailInUse;
 			else
 			{
-				UserService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Request.UserHostAddress);
-				if (SettingsManager.Current.IsNewUserApproved)
+				_userService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Request.UserHostAddress);
+				if (_settingsManager.Current.IsNewUserApproved)
 					ViewBag.EmailResult = Resources.EmailChangeSuccess;
 				else
 				{
 					ViewBag.EmailResult = Resources.VerificationEmailSent;
 					var verifyUrl = this.FullUrlHelper("Verify", "Account");
-					var result = NewAccountMailer.Send(user, verifyUrl);
+					var result = _newAccountMailer.Send(user, verifyUrl);
 					if (result != System.Net.Mail.SmtpStatusCode.Ok)
 						ViewBag.EmailResult = Resources.EmailProblemAccount + result;
 				}
@@ -318,10 +318,10 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			var profile = ProfileService.GetProfile(user);
+			var profile = _profileService.GetProfile(user);
 			var userEdit = new UserEditPhoto(profile);
 			if (profile.ImageID.HasValue)
-				userEdit.IsImageApproved = ImageService.IsUserImageApproved(profile.ImageID.Value);
+				userEdit.IsImageApproved = _imageService.IsUserImageApproved(profile.ImageID.Value);
 			return View(userEdit);
 		}
 
@@ -333,54 +333,54 @@ namespace PopForums.Controllers
 				return View("EditAccountNoUser");
 			var avatarFile = Request.Files["avatarFile"];
 			var photoFile = Request.Files["photoFile"];
-			UserService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+			_userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
 			return RedirectToAction("ManagePhotos");
 		}
 
 		public ViewResult MiniProfile(int id)
 		{
-			var user = UserService.GetUser(id);
+			var user = _userService.GetUser(id);
 			if (user == null)
 				return View("MiniUserNotFound");
-			var profile = ProfileService.GetProfile(user);
+			var profile = _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
-				userImage = ImageService.GetUserImage(profile.ImageID.Value);
+				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
-			model.PostCount = PostService.GetPostCount(user);
+			model.PostCount = _postService.GetPostCount(user);
 			return View(model);
 		}
 
 		public ViewResult ViewProfile(int id)
 		{
-			var user = UserService.GetUser(id);
+			var user = _userService.GetUser(id);
 			if (user == null)
 				return this.NotFound("NotFound", null);
-			var profile = ProfileService.GetProfile(user);
+			var profile = _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
-				userImage = ImageService.GetUserImage(profile.ImageID.Value);
+				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
-			model.PostCount = PostService.GetPostCount(user);
-			model.Feed = FeedService.GetFeed(user);
-			model.UserAwards = UserAwardService.GetAwards(user);
+			model.PostCount = _postService.GetPostCount(user);
+			model.Feed = _feedService.GetFeed(user);
+			model.UserAwards = _userAwardService.GetAwards(user);
 			return View(model);
 		}
 
 		public ViewResult Posts(int id, int page = 1)
 		{
-			var postUser = UserService.GetUser(id);
+			var postUser = _userService.GetUser(id);
 			if (postUser == null)
 				return this.NotFound("NotFound", null);
 			var includeDeleted = false;
 			var user = this.CurrentUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var titles = ForumService.GetAllForumTitles();
+			var titles = _forumService.GetAllForumTitles();
 			PagerContext pagerContext;
-			var topics = TopicService.GetTopics(user, postUser, includeDeleted, page, out pagerContext);
+			var topics = _topicService.GetTopics(user, postUser, includeDeleted, page, out pagerContext);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			LastReadService.GetTopicReadStatus(user, container);
+			_lastReadService.GetTopicReadStatus(user, container);
 			ViewBag.PostUserName = postUser.Name;
 			return View(container);
 		}
@@ -389,9 +389,9 @@ namespace PopForums.Controllers
 		{
 			var user = this.CurrentUser();
 			if (user == null)
-				return Json(ClientSettingsMapper.GetDefault(), JsonRequestBehavior.AllowGet);
-			var profile = ProfileService.GetProfile(user);
-			return Json(ClientSettingsMapper.GetClientSettings(profile), JsonRequestBehavior.AllowGet);
+				return Json(_clientSettingsMapper.GetDefault(), JsonRequestBehavior.AllowGet);
+			var profile = _profileService.GetProfile(user);
+			return Json(_clientSettingsMapper.GetClientSettings(profile), JsonRequestBehavior.AllowGet);
 		}
 
 		public ViewResult Login()
@@ -407,14 +407,20 @@ namespace PopForums.Controllers
 			}
 			ViewBag.Referrer = link;
 
-			var externalLoginList = new List<AuthenticationDescription>(HttpContext.GetOwinContext().Authentication.GetAuthenticationTypes((Func<AuthenticationDescription, bool>) (d =>
-				{
-				  if (d.Properties != null)
-					return d.Properties.ContainsKey("Caption");
-					return false;
-				})));
+			var externalLoginList = GetExternalLoginList();
 
 			return View(externalLoginList);
+		}
+
+		private List<AuthenticationDescription> GetExternalLoginList()
+		{
+			var externalLoginList = new List<AuthenticationDescription>(_owinContext.Authentication.GetAuthenticationTypes((d =>
+			{
+				if (d.Properties != null)
+					return d.Properties.ContainsKey("Caption");
+				return false;
+			})));
+			return externalLoginList;
 		}
 
 		[HttpPost]
@@ -426,14 +432,14 @@ namespace PopForums.Controllers
 
 		public async Task<ActionResult> ExternalLoginCallback(string loginProvider, string returnUrl)
 		{
-			var authentication = OwinContext.Authentication;
-			var authResult = await ExternalAuthentication.GetAuthenticationResult(authentication);
+			var authentication = _owinContext.Authentication;
+			var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 			if (authResult == null)
 				return RedirectToAction("Login", new { error = Resources.ExpiredLogin });
-			var matchResult = UserAssociationManager.ExternalUserAssociationCheck(authResult);
+			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(authResult);
 			if (matchResult.Successful)
 			{
-				UserService.Login(matchResult.User, HttpContext);
+				_userService.Login(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
 			ViewBag.Referrer = returnUrl;
@@ -445,10 +451,10 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var toUser = UserService.GetUser(id);
+			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return this.NotFound("NotFound", null);
-			if (!UserEmailer.IsUserEmailable(toUser))
+			if (!_userEmailer.IsUserEmailable(toUser))
 				return this.Forbidden("Forbidden", null);
 			ViewBag.IP = Request.UserHostAddress;
 			return View(toUser);
@@ -460,20 +466,31 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var toUser = UserService.GetUser(id);
+			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return this.NotFound("NotFound", null);
-			if (!UserEmailer.IsUserEmailable(toUser))
+			if (!_userEmailer.IsUserEmailable(toUser))
 				return this.Forbidden("Forbidden", null);
-			UserEmailer.ComposeAndQueue(toUser, user, Request.UserHostAddress, subject, text);
+			_userEmailer.ComposeAndQueue(toUser, user, Request.UserHostAddress, subject, text);
 			return View("EmailSent");
 		}
 
 		public ViewResult Unsubscribe(int id, string key)
 		{
-			var user = UserService.GetUser(id);
-			if (user == null || !ProfileService.Unsubscribe(user, key))
+			var user = _userService.GetUser(id);
+			if (user == null || !_profileService.Unsubscribe(user, key))
 				return View("UnsubscribeFailure");
+			return View();
+		}
+
+		public ViewResult ExternalLogins()
+		{
+			var user = this.CurrentUser();
+			if (user == null)
+				return View("EditAccountNoUser");
+			var externalAssociations = _userAssociationManager.GetExternalUserAssociations(user);
+			var externalLoginList = GetExternalLoginList();
+
 			return View();
 		}
 	}
