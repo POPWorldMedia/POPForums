@@ -5,7 +5,10 @@
 	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
 }
 
-<p>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</p>
+<p>
+    @Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account") | 
+    @Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", "Account")
+</p>
 
 <p class="warning">@ViewData["Result"]</p>
 

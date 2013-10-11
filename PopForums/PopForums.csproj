@@ -167,6 +167,7 @@
     <Compile Include="Messaging\Recent.cs" />
     <Compile Include="Messaging\Topics.cs" />
     <Compile Include="Models\ClientSettings.cs" />
+    <Compile Include="Models\ExternalLoginContainer.cs" />
     <Compile Include="Models\FeedEvent.cs" />
     <Compile Include="Models\IPHistoryEvent.cs" />
     <Compile Include="Models\PasswordResetContainer.cs" />

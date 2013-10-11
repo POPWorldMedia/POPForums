@@ -490,8 +490,8 @@ namespace PopForums.Controllers
 				return View("EditAccountNoUser");
 			var externalAssociations = _userAssociationManager.GetExternalUserAssociations(user);
 			var externalLoginList = GetExternalLoginList();
-
-			return View();
+			var model = new ExternalLoginContainer {ExternalUserAssociations = externalAssociations, AuthenticationDescriptions = externalLoginList};
+			return View(model);
 		}
 	}
 }

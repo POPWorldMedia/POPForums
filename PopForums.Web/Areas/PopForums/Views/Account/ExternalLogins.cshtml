@@ -1,0 +1,25 @@
+﻿@model PopForums.Models.ExternalLoginContainer
+@using PopForums.Controllers
+@{
+    ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div id="TopBreadcrumb" class="navAbsolute">
+    <h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
+    <p>
+        ^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null) |
+        @Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account") | 
+        @Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account") |
+        @Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")
+    </p>
+</div>
+
+@if (Model.AuthenticationDescriptions.Count == 0)
+{
+    <p></p>
+}
+else
+{
+    
+}

@@ -5,7 +5,10 @@
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
 }
 
-<p>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</p>
+<p>
+    @Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account") | 
+    @Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", "Account")
+</p>
 
 @using(Html.BeginForm("ChangePassword", "Account")) {
 	<h2>@PopForums.Resources.ChangePassword</h2>	
