@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
@@ -439,7 +438,7 @@ namespace PopForums.Controllers
 			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(authResult);
 			if (matchResult.Successful)
 			{
-				_userService.Login(matchResult.User, HttpContext);
+				_userService.Login(matchResult.User, true, HttpContext);
 				return Redirect(returnUrl);
 			}
 			ViewBag.Referrer = returnUrl;
@@ -489,9 +488,17 @@ namespace PopForums.Controllers
 			if (user == null)
 				return View("EditAccountNoUser");
 			var externalAssociations = _userAssociationManager.GetExternalUserAssociations(user);
-			var externalLoginList = GetExternalLoginList();
-			var model = new ExternalLoginContainer {ExternalUserAssociations = externalAssociations, AuthenticationDescriptions = externalLoginList};
-			return View(model);
+			ViewBag.Referrer = Url.Action("ExternalLogins");
+			return View(externalAssociations);
+		}
+
+		public ActionResult RemoveExternalLogin(int id)
+		{
+			var user = this.CurrentUser();
+			if (user == null)
+				return View("EditAccountNoUser");
+			_userAssociationManager.RemoveAssociation(user, id);
+			return RedirectToAction("ExternalLogins");
 		}
 	}
 }

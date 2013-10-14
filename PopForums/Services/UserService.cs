@@ -244,7 +244,12 @@ namespace PopForums.Services
 
 		public void Login(User user, HttpContextBase context)
 		{
-			_formsAuthWrapper.SetAuthCookie(context, user, false);
+			Login(user, false, context);
+		}
+
+		public void Login(User user, bool persistCookie, HttpContextBase context)
+		{
+			_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
 			user.LastLoginDate = DateTime.UtcNow;
 			_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 			_securityLogService.CreateLogEntry(null, user, context.Request.UserHostAddress, String.Empty, SecurityLogType.Login);

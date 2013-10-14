@@ -943,6 +943,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to External logins are disabled.
+        /// </summary>
+        public static string ExternalLoginsDisabled {
+            get {
+                return ResourceManager.GetString("ExternalLoginsDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make Favorite.
         /// </summary>
         public static string FavoriteMake {
@@ -1821,6 +1830,15 @@ namespace PopForums {
         public static string NoDataConnection {
             get {
                 return ResourceManager.GetString("NoDataConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have no external logins registered.
+        /// </summary>
+        public static string NoExternalLoginsRegistered {
+            get {
+                return ResourceManager.GetString("NoExternalLoginsRegistered", resourceCulture);
             }
         }
         

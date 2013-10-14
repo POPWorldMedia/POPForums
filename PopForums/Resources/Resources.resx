@@ -1212,4 +1212,10 @@
   <data name="ExpiredLogin" xml:space="preserve">
     <value>That login has expired or is not valid</value>
   </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>External logins are disabled</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>You have no external logins registered</value>
+  </data>
 </root>

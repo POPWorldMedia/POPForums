@@ -1212,4 +1212,10 @@
   <data name="ExpiredLogin" xml:space="preserve">
     <value>Esa conexión ha caducado o no es válido</value>
   </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>Logins externos están desactivadas</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>No tiene conexiones externas registrados</value>
+  </data>
 </root>

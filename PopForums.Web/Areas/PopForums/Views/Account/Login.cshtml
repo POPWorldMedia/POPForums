@@ -1,5 +1,4 @@
-﻿@using Microsoft.Owin.Security
-@using PopForums.Controllers;
+﻿@using PopForums.Controllers;
 @using PopForums.Extensions;
 @model ICollection<Microsoft.Owin.Security.AuthenticationDescription>
 @{
@@ -50,19 +49,17 @@
 
 if (Model.Count > 0)
 {
-using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.Referrer }))
-{
-    @Html.AntiForgeryToken()
-    <fieldset id="socialLoginList">
-        <legend>Use another service to log in.</legend>
-        <p>
-            @foreach (AuthenticationDescription p in Model)
-            {
-                <button type="submit" class="btn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
-            }
-        </p>
-    </fieldset>
-}
+	using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.Referrer }))
+	{
+		@Html.AntiForgeryToken()
+		<h2>@PopForums.Resources.ExternalLogins</h2>
+		<p>
+			@foreach (var authenticationDescription in Model)
+			{
+				<button type="submit" id="@authenticationDescription.AuthenticationType" name="provider" value="@authenticationDescription.AuthenticationType">@authenticationDescription.AuthenticationType</button>
+			}
+		</p>
+	}
 }
     
 <p>@PopForums.Resources.NotRegisteredQuestion @Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name). @Html.ActionLink(PopForums.Resources.ForgotPasswordQuestion, "Forgot", AccountController.Name)</p>

@@ -1201,4 +1201,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="ExpiredLogin" xml:space="preserve">
     <value>Das Login ist abgelaufen oder nicht gültig</value>
   </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>Externe Logins sind deaktiviert</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>Sie haben keine externen Logins registriert</value>
+  </data>
 </root>

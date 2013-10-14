@@ -29,6 +29,7 @@ namespace PopForums.Services
 		void Logout(User user, string ip);
 		bool Login(string email, string password, bool persistCookie, HttpContextBase context);
 		void Login(User user, HttpContextBase context);
+		void Login(User user, bool persistCookie, HttpContextBase context);
 		List<string> GetAllRoles();
 		void CreateRole(string role, User user, string ip);
 		void DeleteRole(string role, User user, string ip);

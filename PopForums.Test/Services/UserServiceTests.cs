@@ -506,6 +506,19 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void LoginWithUserPersistCookie()
+		{
+			var user = UserTest.GetTestUser();
+			var service = GetMockedUserService();
+			var contextMock = new Mock<HttpContextBase>();
+			contextMock.Setup(c => c.Request.UserHostAddress).Returns("123");
+			service.Login(user, true, contextMock.Object);
+			_mockFormsAuth.Verify(f => f.SetAuthCookie(contextMock.Object, user, true), Times.Once());
+			_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
+			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, "123", String.Empty, SecurityLogType.Login), Times.Once());
+		}
+
+		[Test]
 		public void GetAllRoles()
 		{
 			var userService = GetMockedUserService();
