@@ -29,7 +29,7 @@ namespace PopForums.Configuration
 				AuthenticationType = ExternalAuthentication.ExternalCookieName,
 				AuthenticationMode = AuthenticationMode.Passive,
 				CookieName = CookieAuthenticationDefaults.CookiePrefix + ExternalAuthentication.ExternalCookieName,
-				ExpireTimeSpan = TimeSpan.FromMinutes(5),
+				ExpireTimeSpan = TimeSpan.FromMinutes(60)
 			});
 
 			if (settings.UseTwitterLogin)
