@@ -50,7 +50,7 @@ namespace PopForums.Configuration
 			if (settings.UseGoogleLogin)
 				app.UseGoogleAuthentication();
 
-			app.MapHubs();
+			app.MapSignalR();
 		}
 	}
 }

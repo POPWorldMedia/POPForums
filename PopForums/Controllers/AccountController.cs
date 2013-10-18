@@ -422,29 +422,6 @@ namespace PopForums.Controllers
 			return externalLoginList;
 		}
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult ExternalLogin(string provider, string returnUrl)
-		{
-			return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { loginProvider = provider, ReturnUrl = returnUrl }));
-		}
-
-		public async Task<ActionResult> ExternalLoginCallback(string loginProvider, string returnUrl)
-		{
-			var authentication = _owinContext.Authentication;
-			var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
-			if (authResult == null)
-				return RedirectToAction("Login", new { error = Resources.ExpiredLogin });
-			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(authResult);
-			if (matchResult.Successful)
-			{
-				_userService.Login(matchResult.User, true, HttpContext);
-				return Redirect(returnUrl);
-			}
-			ViewBag.Referrer = returnUrl;
-			return View();
-		}
-
 		public ViewResult EmailUser(int id)
 		{
 			var user = this.CurrentUser();
