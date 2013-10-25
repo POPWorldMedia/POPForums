@@ -52,6 +52,8 @@ namespace PopForums.Configuration
 			UseMicrosoftLogin = false;
 			MicrosoftClientID = String.Empty;
 			MicrosoftClientSecret = String.Empty;
+			YouTubeHeight = 360;
+			YouTubeWidth = 640;
 		}
 
 		public virtual string TermsOfService { get; set; }
@@ -100,5 +102,7 @@ namespace PopForums.Configuration
 		public virtual bool UseMicrosoftLogin { get; set; }
 		public virtual string MicrosoftClientID { get; set; }
 		public virtual string MicrosoftClientSecret { get; set; }
+		public virtual int YouTubeHeight { get; set; }
+		public virtual int YouTubeWidth { get; set; }
 	}
 }

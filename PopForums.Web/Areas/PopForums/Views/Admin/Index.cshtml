@@ -52,13 +52,19 @@
 				@PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserImageMaxkBytes, new { @class = "shortValue" })kB
 			</td>
 		</tr>
-		<tr>
-			<td>@PopForums.Resources.UserAvatarMaxDim</td>
-			<td>
-				@Html.TextBoxFor(s => s.UserAvatarMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserAvatarMaxWidth, new { @class = "shortValue" })W<br />
-				@PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserAvatarMaxkBytes, new { @class = "shortValue" })kB
-			</td>
-		</tr>
+	    <tr>
+	        <td>@PopForums.Resources.UserAvatarMaxDim</td>
+	        <td>
+	            @Html.TextBoxFor(s => s.UserAvatarMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserAvatarMaxWidth, new { @class = "shortValue" })W<br />
+	            @PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserAvatarMaxkBytes, new { @class = "shortValue" })kB
+	        </td>
+	    </tr>
+	    <tr>
+	        <td>YouTube</td>
+	        <td>
+	            @Html.TextBoxFor(s => s.YouTubeHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.YouTubeWidth, new { @class = "shortValue" })W
+	        </td>
+	    </tr>
 	</table>
 </fieldset>
 

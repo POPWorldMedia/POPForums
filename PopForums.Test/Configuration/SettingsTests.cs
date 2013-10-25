@@ -161,6 +161,8 @@ namespace PopForums.Test.Configuration
 			const bool useMicrosoftLogin = true;
 			const string microsoftClientID = "hhvcwefwege";
 			const string microsoftClientSecret = "oiwhgoigrccaa";
+			const int youTubeHeight = 360;
+			const int youTubeWidth = 640;
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -208,7 +210,9 @@ namespace PopForums.Test.Configuration
 									{"TwitterConsumerSecret", twitterConsumerSecret},
 									{"UseMicrosoftLogin", useMicrosoftLogin},
 									{"MicrosoftClientID", microsoftClientID},
-									{"MicrosoftClientSecret", microsoftClientSecret}
+									{"MicrosoftClientSecret", microsoftClientSecret},
+									{"YouTubeHeight", youTubeHeight},
+									{"YouTubeWidth", youTubeWidth}
 			                 	};
 
 			var settingsRepo = new Mock<ISettingsRepository>();
@@ -316,6 +320,8 @@ namespace PopForums.Test.Configuration
 			const bool useMicrosoftLogin = true;
 			const string microsoftClientID = "hhvcwefwege";
 			const string microsoftClientSecret = "oiwhgoigrccaa";
+			const int youTubeHeight = 360;
+			const int youTubeWidth = 640;
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -361,7 +367,9 @@ namespace PopForums.Test.Configuration
 									{"TwitterConsumerSecret", twitterConsumerSecret},
 									{"UseMicrosoftLogin", useMicrosoftLogin},
 									{"MicrosoftClientID", microsoftClientID},
-									{"MicrosoftClientSecret", microsoftClientSecret}
+									{"MicrosoftClientSecret", microsoftClientSecret},
+									{"YouTubeHeight", youTubeHeight},
+									{"YouTubeWidth", youTubeWidth}
 			                 	};
 
 			var settingsRepo = new Mock<ISettingsRepository>();

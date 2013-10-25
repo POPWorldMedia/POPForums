@@ -197,5 +197,53 @@ namespace PopForums.Test.Services
 			var result = service.CleanForumCode("blah http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/ blah");
 			Assert.AreEqual("blah [url=http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/]http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/[/url] blah", result);
 		}
+
+		[Test]
+		public void YouTubeHttpOnYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah http://youtube.com/watch?v=12345 blah");
+			Assert.AreEqual(result, "blah [youtube=http://youtube.com/watch?v=12345] blah");
+		}
+
+		[Test]
+		public void YouTubeHttpOnWwwYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah http://www.youtube.com/watch?v=12345 blah");
+			Assert.AreEqual(result, "blah [youtube=http://www.youtube.com/watch?v=12345] blah");
+		}
+
+		[Test]
+		public void YouTubeHttpsOnYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah https://youtube.com/watch?v=12345 blah");
+			Assert.AreEqual(result, "blah [youtube=https://youtube.com/watch?v=12345] blah");
+		}
+
+		[Test]
+		public void YouTubeHttpsOnWwwYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah https://www.youtube.com/watch?v=12345 blah");
+			Assert.AreEqual(result, "blah [youtube=https://www.youtube.com/watch?v=12345] blah");
+		}
+
+		[Test]
+		public void YouTubeHttpOnShortYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah http://youtu.be/12345 blah");
+			Assert.AreEqual(result, "blah [youtube=http://youtu.be/12345] blah");
+		}
+
+		[Test]
+		public void YouTubeHttpsOnShortYouTubeDomain()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
+			Assert.AreEqual(result, "blah [youtube=https://youtu.be/12345] blah");
+		}
 	}
 }

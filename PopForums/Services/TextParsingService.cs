@@ -16,12 +16,13 @@ namespace PopForums.Services
 
 		public ISettingsManager SettingsManager { get; private set; }
 
-		public static string[] AllowedCloseableTags = new []{"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img"};
+		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img", "youtube"};
 		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _wwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _emailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex _youTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>
 		/// Converts forum code from the browser to HTML for storage. This method wraps <see cref="CleanForumCode(string)"/> and <see cref="ForumCodeToHtml(string)"/>, and censors the text.
@@ -207,6 +208,12 @@ namespace PopForums.Services
 							text = text.Remove(tagIndex + indexAdjustment, 6);
 							indexAdjustment -= 6;
 						}
+						else if (tagID == "youtube")
+						{
+							var tagIndex = allMatches.Index;
+							text = text.Remove(tagIndex + indexAdjustment, 10);
+							indexAdjustment -= 10;
+						}
 						else
 						{
 							var opener = String.Format("[{0}]", tagID);
@@ -248,7 +255,8 @@ namespace PopForums.Services
 				stack.Pop();
 			}
 
-			// put URL's in url tags
+			// put URL's in url tags (plus youtube)
+			text = _youTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
 			text = _protocolPattern.Replace(text, match => String.Format("[url={0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
 			text = _wwwPattern.Replace(text, match => String.Format("[url=http://{0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
 			text = _emailPattern.Replace(text, match => String.Format("[url=mailto:{0}]{0}[/url]", match.Value));
