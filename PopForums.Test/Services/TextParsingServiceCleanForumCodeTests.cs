@@ -202,6 +202,7 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpOnYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://youtube.com/watch?v=12345 blah");
 			Assert.AreEqual(result, "blah [youtube=http://youtube.com/watch?v=12345] blah");
 		}
@@ -210,6 +211,7 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpOnWwwYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://www.youtube.com/watch?v=12345 blah");
 			Assert.AreEqual(result, "blah [youtube=http://www.youtube.com/watch?v=12345] blah");
 		}
@@ -218,6 +220,7 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpsOnYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://youtube.com/watch?v=12345 blah");
 			Assert.AreEqual(result, "blah [youtube=https://youtube.com/watch?v=12345] blah");
 		}
@@ -226,6 +229,7 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpsOnWwwYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://www.youtube.com/watch?v=12345 blah");
 			Assert.AreEqual(result, "blah [youtube=https://www.youtube.com/watch?v=12345] blah");
 		}
@@ -234,6 +238,7 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpOnShortYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://youtu.be/12345 blah");
 			Assert.AreEqual(result, "blah [youtube=http://youtu.be/12345] blah");
 		}
@@ -242,8 +247,18 @@ namespace PopForums.Test.Services
 		public void YouTubeHttpsOnShortYouTubeDomain()
 		{
 			var service = GetService();
+			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
 			Assert.AreEqual(result, "blah [youtube=https://youtu.be/12345] blah");
+		}
+
+		[Test]
+		public void YouTubeLinkParsedToLinkWithImagesOff()
+		{
+			var service = GetService();
+			_settings.AllowImages = false;
+			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
+			Assert.AreEqual(result, "blah [url=https://youtu.be/12345]https://youtu.be/12345[/url] blah");
 		}
 	}
 }

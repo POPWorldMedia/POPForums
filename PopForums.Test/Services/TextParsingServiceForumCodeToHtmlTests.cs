@@ -320,5 +320,27 @@ namespace PopForums.Test.Services
 			var result = service.CleanForumCodeToHtml("blah [url=http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/]http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/[/url] blah");
 			Assert.AreEqual("<p>blah <a href=\"http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/\" target=\"_blank\">http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/</a> blah</p>", result);
 		}
+
+		[Test]
+		public void YouTubeTagMainDomainConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("test [youtube=http://youtube.com/watch?v=789] text");
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+		}
+
+		[Test]
+		public void YouTubeTagShortDomainConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("test [youtube=http://youtu.be/789] text");
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+		}
 	}
 }

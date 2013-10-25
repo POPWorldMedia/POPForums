@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.WebPages;
 using PopForums.Configuration;
 using PopForums.Extensions;
 
@@ -11,10 +12,10 @@ namespace PopForums.Services
 	{
 		public TextParsingService(ISettingsManager settingsManager)
 		{
-			SettingsManager = settingsManager;
+			_settingsManager = settingsManager;
 		}
 
-		public ISettingsManager SettingsManager { get; private set; }
+		private ISettingsManager _settingsManager;
 
 		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img", "youtube"};
 		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -78,7 +79,7 @@ namespace PopForums.Services
 			if (String.IsNullOrEmpty(text))
 				return String.Empty;
 			// build the censored words list
-			var words = SettingsManager.Current.CensorWords.Trim();
+			var words = _settingsManager.Current.CensorWords.Trim();
 			if (String.IsNullOrWhiteSpace(words))
 				return text;
 			var cleanedCensorList = words.Replace("  ", " ").Replace("\r", " ");
@@ -89,7 +90,7 @@ namespace PopForums.Services
 			var newWord = String.Empty;
 			for (var i = 0; i < list.Length; i++)
 			{
-				for (var j = 1; j <= list[i].Length; j++) newWord += SettingsManager.Current.CensorCharacter;
+				for (var j = 1; j <= list[i].Length; j++) newWord += _settingsManager.Current.CensorCharacter;
 				text = Regex.Replace(text, list[i], newWord, RegexOptions.IgnoreCase);
 				newWord = String.Empty;
 			}
@@ -176,7 +177,7 @@ namespace PopForums.Services
 			text = Regex.Replace(text, @"(\r\n){3,}", "\r\n\r\n", RegexOptions.Multiline);
 
 			// handle images
-			if (SettingsManager.Current.AllowImages)
+			if (_settingsManager.Current.AllowImages)
 				text = Regex.Replace(text, @"(\[image){1}(?!\=).+?\]", String.Empty, RegexOptions.IgnoreCase);
 			else
 				text = Regex.Replace(text, @"\[image=.+?\]", String.Empty, RegexOptions.IgnoreCase);
@@ -256,7 +257,8 @@ namespace PopForums.Services
 			}
 
 			// put URL's in url tags (plus youtube)
-			text = _youTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
+			if (_settingsManager.Current.AllowImages)
+				text = _youTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
 			text = _protocolPattern.Replace(text, match => String.Format("[url={0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
 			text = _wwwPattern.Replace(text, match => String.Format("[url=http://{0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
 			text = _emailPattern.Replace(text, match => String.Format("[url=mailto:{0}]{0}[/url]", match.Value));
@@ -291,10 +293,11 @@ namespace PopForums.Services
 			text = Regex.Replace(text, @"<(?=a)\b[^>]*>", match => match.Value.Replace("javascript:", String.Empty), RegexOptions.IgnoreCase);
 
 			// replace image tags
-			if (SettingsManager.Current.AllowImages)
+			if (_settingsManager.Current.AllowImages)
 			{
 				text = Regex.Replace(text, @"(\[img\])(\S+?)(\[/img\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
 				text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
+				text = ParseYouTubeTags(text);
 			}
 			else
 				text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", String.Empty, RegexOptions.IgnoreCase);
@@ -334,6 +337,34 @@ namespace PopForums.Services
 			text = Regex.Replace(text, @"</blockquote>(\r\n)*(?!(<p>|<blockquote>|</blockquote>|\Z))", "</blockquote><p>", RegexOptions.IgnoreCase);
 			text = text.Replace("\r\n", "<br />");
 
+			return text;
+		}
+
+		private string ParseYouTubeTags(string text)
+		{
+			var width = _settingsManager.Current.YouTubeWidth;
+			var height = _settingsManager.Current.YouTubeHeight;
+			var youTubeTag = new Regex(@"(\[youtube=""?)(\S+?)(""?\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			var matches = youTubeTag.Matches(text);
+			foreach (Match item in matches)
+			{
+				var url = item.Groups[2].Value;
+				var uri = new Uri(url);
+				if (uri.Host.Contains("youtube"))
+				{
+					var q = uri.Query.Remove(0, 1).Split('&').Where(x => x.Contains("=")).Select(x => new KeyValuePair<string, string>(x.Split('=')[0], x.Split('=')[1]));
+					var dictionary = q.ToDictionary(pair => pair.Key, pair => pair.Value);
+					if (dictionary.Any(x => x.Key == "v"))
+					{
+						text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
+					}
+				}
+				else if (uri.Host.Contains("youtu.be"))
+				{
+					var v = uri.Segments[1];
+					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
+				}
+			}
 			return text;
 		}
 	}
