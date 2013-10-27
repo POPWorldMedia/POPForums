@@ -260,5 +260,14 @@ namespace PopForums.Test.Services
 			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
 			Assert.AreEqual(result, "blah [url=https://youtu.be/12345]https://youtu.be/12345[/url] blah");
 		}
+
+		[Test]
+		public void YouTubeLinkInUrlTagNotParsed()
+		{
+			var service = GetService();
+			_settings.AllowImages = true;
+			var result = service.CleanForumCode("blah [url=https://youtu.be/12345]test[/url] blah");
+			Assert.AreEqual(result, "blah [url=https://youtu.be/12345]test[/url] blah");
+		}
 	}
 }

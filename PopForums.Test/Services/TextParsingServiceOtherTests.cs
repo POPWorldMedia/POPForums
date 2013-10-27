@@ -37,6 +37,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void RemoveYouTubeIframe()
+		{
+			var service = GetService();
+			var result = service.HtmlToClientHtml("<p>test test <iframe width=\"640\" height=\"360\" src=\"http://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>");
+			Assert.AreEqual("<p>test test http://www.youtube.com/watch?v=NL125lBWYc4 test</p>", result);
+		}
+
+		[Test]
 		public void CensorTheNaughty()
 		{
 			var service = GetService();

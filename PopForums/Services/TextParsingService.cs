@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web.WebPages;
 using PopForums.Configuration;
 using PopForums.Extensions;
 
@@ -17,7 +16,7 @@ namespace PopForums.Services
 
 		private ISettingsManager _settingsManager;
 
-		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img", "youtube"};
+		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img"};
 		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -64,6 +63,7 @@ namespace PopForums.Services
 			text = text.Replace("<blockquote>", "[quote]");
 			text = text.Replace("</blockquote>", "[/quote]");
 			text = Regex.Replace(text, @" *target=""[_\w]*""", String.Empty, RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""http://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "http://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
 			return text;
 		}
 
@@ -146,6 +146,7 @@ namespace PopForums.Services
 			// replace img and a tags
 			text = Regex.Replace(text, @"(<a href="")(\S+)""( *target=""?[_\w]*""?)*>", "[url=$2]", RegexOptions.IgnoreCase);
 			text = Regex.Replace(text, @"(<img )(\S+ )*(src="")(\S+)("")( *\S+)*( */?>)", "[image=$4]", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""http://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=http://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
 
 			// catch remaining HTML as invalid
 			text = Regex.Replace(text, @"<.*>", String.Empty, RegexOptions.IgnoreCase);

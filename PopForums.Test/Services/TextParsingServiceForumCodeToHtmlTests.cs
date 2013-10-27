@@ -342,5 +342,16 @@ namespace PopForums.Test.Services
 			var result = service.CleanForumCodeToHtml("test [youtube=http://youtu.be/789] text");
 			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
 		}
+
+		[Test]
+		public void YouTubeTagConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.ForumCodeToHtml("test test [youtube=http://www.youtube.com/watch?v=NL125lBWYc4] test");
+			Assert.AreEqual("<p>test test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>", result);
+		}
 	}
 }

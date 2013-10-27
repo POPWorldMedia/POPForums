@@ -214,12 +214,21 @@ namespace PopForums.Test.Services
 			var result = service.ClientHtmlToForumCode("<p>test &lt; &gt; &amp; &nbsp; test</p>");
 			Assert.AreEqual("test < > &   test", result);
 		}
+
 		[Test]
 		public void RemoveLineBreaksInList()
 		{
 			var service = GetService();
 			var result = service.ClientHtmlToForumCode("<p>blah</p><ul>\n<li>first</li>\n<li>second</li>\n<li>third</li>\n</ul><p>blah</p>");
 			Assert.AreEqual("blah\r\n\r\n[ul][li]first[/li][li]second[/li][li]third[/li][/ul]\r\n\r\nblah", result);
+		}
+
+		[Test]
+		public void YouTubeUnparse()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p>test</p><p><iframe width=\"123\" height=\"545\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe></p><p>test</p>");
+			Assert.AreEqual("test\r\n\r\n[youtube=http://www.youtube.com/watch?v=789]\r\n\r\ntest", result);
 		}
 	}
 }
