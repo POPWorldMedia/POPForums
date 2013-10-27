@@ -1,0 +1,32 @@
+﻿@{
+	ViewBag.Title = @PopForums.Resources.Login + " - " + PopForums.Resources.ExternalLogins;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+@section HeaderContent
+{
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			$("#LoginButton").click(PopForums.processLoginExternal);
+			$("#EmailLogin,#PasswordLogin").keydown(function (e) { if (e.keyCode == 13) PopForums.processLoginExternal(); });
+		});
+	</script>
+}
+
+<h2>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", "Account")</h2>
+
+<hr />
+
+<h2>@PopForums.Resources.UseExistingForumAccount</h2>
+<p id="LoginResult" class="warning"></p>
+
+<label for="EmailLogin" class="pf-label">@PopForums.Resources.Email</label>
+<input id="EmailLogin" name="EmailLogin" class="pf-text" type="text" />
+
+<label for="PasswordLogin" class="pf-label">@PopForums.Resources.Password</label>
+<input id="PasswordLogin" name="PasswordLogin" class="pf-text" type="password" />
+
+<p>@Html.CheckBox("PersistCookie", new { @class = "pf-check" }) <label for="PersistCookie" class="pf-label">@PopForums.Resources.RememberMe</label></p>
+
+<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="pf-button" />
+@Html.Hidden("Referrer", (object)ViewBag.Referrer)

@@ -140,6 +140,8 @@
     <Content Include="Areas\PopForums\Views\Admin\ExternalLogins.cshtml" />
     <Content Include="Areas\PopForums\Views\Authorization\ExternalLoginCallback.cshtml" />
     <Content Include="Areas\PopForums\Views\Account\ExternalLogins.cshtml" />
+    <Content Include="Areas\PopForums\Views\Authorization\ExternalLoginCallback.mobile.cshtml" />
+    <Content Include="Areas\PopForums\Views\Account\ExternalLogins.mobile.cshtml" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />

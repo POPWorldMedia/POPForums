@@ -1,0 +1,26 @@
+﻿@model List<PopForums.ExternalLogin.ExternalUserAssociation>
+@using PopForums.Controllers
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.mobile.cshtml";
+}
+
+<p>
+	@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account") |
+	@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")
+</p>
+
+@if (Model.Count == 0)
+{
+	<p>@PopForums.Resources.NoExternalLoginsRegistered</p>
+}
+else
+{
+	foreach (var item in Model)
+	{
+		using (Html.BeginForm("RemoveExternalLogin", "Account", new { id = item.ExternalUserAssociationID }))
+		{
+			<input type="submit" value="Remove - @item.Issuer - @item.Name" class="pf-button" />
+		}
+	}
+}
