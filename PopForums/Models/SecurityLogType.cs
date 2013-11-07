@@ -18,6 +18,10 @@ namespace PopForums.Models
 		UserSessionEnd = 13,
 		NameChange = 14,
 		IsApproved = 15,
-		IsNotApproved = 16
+		IsNotApproved = 16,
+		ExternalAssociationSet = 17,
+		ExternalAssociationRemoved = 18,
+		ExternalAssociationCheckSuccessful = 19,
+		ExternalAssociationCheckFailed = 20
 	}
 }

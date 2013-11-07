@@ -5,6 +5,7 @@ using NUnit.Framework;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Test.ExternalLogin
 {
@@ -15,18 +16,20 @@ namespace PopForums.Test.ExternalLogin
 		{
 			_externalUserAssociationRepo = new Mock<IExternalUserAssociationRepository>();
 			_userRepo = new Mock<IUserRepository>();
-			return new UserAssociationManager(_externalUserAssociationRepo.Object, _userRepo.Object);
+			_securityLogService = new Mock<ISecurityLogService>();
+			return new UserAssociationManager(_externalUserAssociationRepo.Object, _userRepo.Object, _securityLogService.Object);
 		}
 
 		private Mock<IExternalUserAssociationRepository> _externalUserAssociationRepo;
 		private Mock<IUserRepository> _userRepo;
+		private Mock<ISecurityLogService> _securityLogService;
 
 		[Test]
 		public void ExternalUserAssociationCheckThrowsWithNullArg()
 		{
 			var manager = GetManager();
 
-			Assert.Throws<ArgumentNullException>(() => manager.ExternalUserAssociationCheck(null));
+			Assert.Throws<ArgumentNullException>(() => manager.ExternalUserAssociationCheck(null, ""));
 		}
 
 		[Test]
@@ -35,7 +38,7 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult());
+			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult(), "");
 
 			Assert.IsFalse(result.Successful);
 			Assert.IsNull(result.ExternalUserAssociation);
@@ -49,7 +52,7 @@ namespace PopForums.Test.ExternalLogin
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns(new ExternalUserAssociation());
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult());
+			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult(), "");
 
 			Assert.IsFalse(result.Successful);
 			Assert.IsNull(result.ExternalUserAssociation);
@@ -66,7 +69,7 @@ namespace PopForums.Test.ExternalLogin
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			var authResult = new ExternalAuthenticationResult {Issuer = "Google", ProviderKey = "abc"};
 
-			var result = manager.ExternalUserAssociationCheck(authResult);
+			var result = manager.ExternalUserAssociationCheck(authResult, "");
 
 			Assert.IsTrue(result.Successful);
 			Assert.AreSame(user, result.User);
@@ -74,11 +77,56 @@ namespace PopForums.Test.ExternalLogin
 		}
 
 		[Test]
+		public void ExternalUserAssociationCheckResultTrueCallsSecurityLog()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
+			var user = new User(association.UserID, DateTime.MinValue);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
+			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
+			const string ip = "1.1.1.1";
+			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+
+			manager.ExternalUserAssociationCheck(authResult, ip);
+
+			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckSuccessful));
+		}
+
+		[Test]
+		public void ExternalUserAssociationCheckResultFalseNoMatchCallsSecurityLog()
+		{
+			var manager = GetManager();
+			var user = new User(123, DateTime.MinValue);
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation)null);
+			const string ip = "1.1.1.1";
+			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+
+			manager.ExternalUserAssociationCheck(authResult, ip);
+
+			_securityLogService.Verify(x => x.CreateLogEntry((int?)null, null, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckFailed), Times.Once());
+		}
+
+		[Test]
+		public void ExternalUserAssociationCheckResultFalseNoUserCallsSecurityLog()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
+			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
+			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns((User)null);
+			const string ip = "1.1.1.1";
+			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+
+			manager.ExternalUserAssociationCheck(authResult, ip);
+
+			_securityLogService.Verify(x => x.CreateLogEntry((int?)null, null, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckFailed), Times.Once());
+		}
+
+		[Test]
 		public void AssociateThrowsWithNullUser()
 		{
 			var manager = GetManager();
 
-			Assert.Throws<ArgumentNullException>(() => manager.Associate(null, It.IsAny<ExternalAuthenticationResult>()));
+			Assert.Throws<ArgumentNullException>(() => manager.Associate(null, It.IsAny<ExternalAuthenticationResult>(), String.Empty));
 		}
 
 		[Test]
@@ -86,7 +134,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			manager.Associate(new User(1, DateTime.MinValue), null);
+			manager.Associate(new User(1, DateTime.MinValue), null, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 		}
@@ -96,7 +144,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(1, DateTime.MinValue), new ExternalAuthenticationResult { Issuer = null, ProviderKey = "aoihfe" }));
+			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(1, DateTime.MinValue), new ExternalAuthenticationResult { Issuer = null, ProviderKey = "aoihfe" }, String.Empty));
 		}
 
 		[Test]
@@ -104,7 +152,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(1, DateTime.MinValue), new ExternalAuthenticationResult { Issuer = "waoeifhwe", ProviderKey = null }));
+			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(1, DateTime.MinValue), new ExternalAuthenticationResult { Issuer = "waoeifhwe", ProviderKey = null }, String.Empty));
 		}
 
 		[Test]
@@ -114,9 +162,22 @@ namespace PopForums.Test.ExternalLogin
 			var user = new User(123, DateTime.MinValue);
 			var externalAuthResult = new ExternalAuthenticationResult {Issuer = "weihf", ProviderKey = "weoihf", Name = "woehf"};
 
-			manager.Associate(user, externalAuthResult);
+			manager.Associate(user, externalAuthResult, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(user.UserID, externalAuthResult.Issuer, externalAuthResult.ProviderKey, externalAuthResult.Name), Times.Once());
+		}
+
+		[Test]
+		public void AssociateSuccessCallsSecurityLog()
+		{
+			var manager = GetManager();
+			var user = new User(123, DateTime.MinValue);
+			var externalAuthResult = new ExternalAuthenticationResult { Issuer = "weihf", ProviderKey = "weoihf", Name = "woehf" };
+			const string ip = "1.1.1.1";
+
+			manager.Associate(user, externalAuthResult, ip);
+
+			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationSet), Times.Once());
 		}
 
 		[Test]
@@ -149,9 +210,47 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((ExternalUserAssociation) null);
 
-			manager.RemoveAssociation(new User(123, DateTime.MaxValue), 4556);
+			manager.RemoveAssociation(new User(123, DateTime.MaxValue), 4556, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(It.IsAny<int>()), Times.Never());
+		}
+
+		[Test]
+		public void RemoveAssociationLogsTheRemoval()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation {ExternalUserAssociationID = 123, Issuer = "Google", Name = "Jeffy", ProviderKey = "oihfoihfef", UserID = 456};
+			var user = new User(association.UserID, DateTime.MaxValue);
+			const string ip = "1.1.1.1";
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+
+			manager.RemoveAssociation(user, association.ExternalUserAssociationID, ip);
+
+			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationRemoved), Times.Once());
+		}
+
+		[Test]
+		public void RemoveAssociationThrowsIfUserIDsDontMatch()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
+			var user = new User(789, DateTime.MaxValue);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+
+			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
+		}
+
+		[Test]
+		public void RemoveAssociationCallsRepoOnSuccessfulMatch()
+		{
+			var manager = GetManager();
+			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
+			var user = new User(association.UserID, DateTime.MaxValue);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+
+			manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
+
+			_externalUserAssociationRepo.Verify(x => x.Delete(association.ExternalUserAssociationID), Times.Once());
 		}
 
 		[Test]
@@ -162,7 +261,7 @@ namespace PopForums.Test.ExternalLogin
 			var user = new User(123, DateTime.MaxValue);
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
-			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID));
+			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
 		}
 
 		[Test]
@@ -173,7 +272,7 @@ namespace PopForums.Test.ExternalLogin
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = user.UserID };
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
-			manager.RemoveAssociation(user, association.ExternalUserAssociationID);
+			manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(association.ExternalUserAssociationID), Times.Once());
 		}

@@ -125,7 +125,7 @@ namespace PopForums.Controllers
 				var authentication = _owinContext.Authentication;
 				var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 				if (authResult != null)
-					_userAssociationManager.Associate(user, authResult);
+					_userAssociationManager.Associate(user, authResult, HttpContext.Request.UserHostAddress);
 
 				return View("AccountCreated");
 			}
@@ -474,7 +474,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			_userAssociationManager.RemoveAssociation(user, id);
+			_userAssociationManager.RemoveAssociation(user, id, HttpContext.Request.UserHostAddress);
 			return RedirectToAction("ExternalLogins");
 		}
 	}

@@ -81,7 +81,7 @@ namespace PopForums.Controllers
 				var authentication = _owinContext.Authentication;
 				var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 				if (authResult != null)
-					_userAssociationManager.Associate(user, authResult);
+					_userAssociationManager.Associate(user, authResult, HttpContext.Request.UserHostAddress);
 				return Json(new BasicJsonMessage { Result = true });
 			}
 
@@ -101,7 +101,7 @@ namespace PopForums.Controllers
 			var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 			if (authResult == null)
 				return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
-			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(authResult);
+			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(authResult, HttpContext.Request.UserHostAddress);
 			if (matchResult.Successful)
 			{
 				_userService.Login(matchResult.User, true, HttpContext);

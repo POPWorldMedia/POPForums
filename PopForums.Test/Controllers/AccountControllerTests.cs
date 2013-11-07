@@ -146,7 +146,7 @@ namespace PopForums.Test.Controllers
 
 			var result = controller.Create(signUp).Result;
 
-			_userAssociationManager.Verify(x => x.Associate(user, externalAuthResult), Times.Once());
+			_userAssociationManager.Verify(x => x.Associate(user, externalAuthResult, It.IsAny<string>()), Times.Once());
 		}
 
 		[Test]
@@ -169,7 +169,7 @@ namespace PopForums.Test.Controllers
 
 			var result = controller.Create(signUp).Result;
 
-			_userAssociationManager.Verify(x => x.Associate(user, It.IsAny<ExternalAuthenticationResult>()), Times.Never);
+			_userAssociationManager.Verify(x => x.Associate(user, It.IsAny<ExternalAuthenticationResult>(), It.IsAny<string>()), Times.Never);
 		}
 
 		private void MockUpUrl(AccountController controller)

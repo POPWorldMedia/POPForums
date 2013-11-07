@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -98,13 +99,11 @@ namespace PopForums.Test.Controllers
 			const string password = "fred";
 			var user = new User(12, DateTime.MaxValue) {Email = email};
 			const bool persist = true;
-			var mockContext = new Mock<HttpContextBase>();
-			var mockControllerContext = new Mock<ControllerContext>();
-			mockControllerContext.SetupAllProperties();
-			mockControllerContext.Setup(c => c.HttpContext).Returns(mockContext.Object);
 			var controller = GetController();
-			controller.ControllerContext = mockControllerContext.Object;
-			_userService.Setup(u => u.Login(email, password, persist, mockContext.Object)).Returns(true);
+			var contextHelper = new HttpContextHelper();
+			contextHelper.MockRequest.Setup(x => x.UserHostAddress).Returns(String.Empty);
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			_userService.Setup(u => u.Login(email, password, persist, contextHelper.MockContext.Object)).Returns(true);
 			_userService.Setup(x => x.GetUserByEmail(email)).Returns(user);
 			var authManager = new Mock<IAuthenticationManager>();
 			_owinContext.Setup(x => x.Authentication).Returns(authManager.Object);
@@ -114,8 +113,8 @@ namespace PopForums.Test.Controllers
 
 			var result = controller.LoginAndAssociate(email, password, persist).Result;
 
-			_userAssociation.Verify(x => x.Associate(user, authResult.Result));
-			_userService.Verify(u => u.Login(email, password, persist, mockContext.Object), Times.Once());
+			_userAssociation.Verify(x => x.Associate(user, authResult.Result, It.IsAny<string>()));
+			_userService.Verify(u => u.Login(email, password, persist, contextHelper.MockContext.Object), Times.Once());
 			Assert.IsInstanceOf<JsonResult>(result);
 			var resultObject = (BasicJsonMessage)result.Data;
 			Assert.IsTrue(resultObject.Result);
