@@ -46,15 +46,20 @@ namespace PopForums.Services
 
 		public void SetPassword(User targetUser, string password, string ip, User user)
 		{
-			var hashedPassword = password.GetMD5Hash();
-			_userRepository.SetHashedPassword(targetUser, hashedPassword);
+			var salt = Guid.NewGuid();
+			var hashedPassword = password.GetMD5Hash(salt);
+			_userRepository.SetHashedPassword(targetUser, hashedPassword, salt);
 			_securityLogService.CreateLogEntry(user, targetUser, ip, String.Empty, SecurityLogType.PasswordChange);
 		}
 
-		public bool CheckPassword(string email, string password)
+		public bool CheckPassword(string email, string password, out Guid? salt)
 		{
-			var storedHash = _userRepository.GetHashedPasswordByEmail(email);
-			var hashedPassword =  password.GetMD5Hash();
+			string hashedPassword;
+			var storedHash = _userRepository.GetHashedPasswordByEmail(email, out salt);
+			if (salt.HasValue)
+				hashedPassword = password.GetMD5Hash(salt.Value);
+			else
+				hashedPassword =  password.GetMD5Hash();
 			return storedHash == hashedPassword;
 		}
 
@@ -228,7 +233,8 @@ namespace PopForums.Services
 
 		public bool Login(string email, string password, bool persistCookie, HttpContextBase context)
 		{
-			var result = CheckPassword(email, password);
+			Guid? salt;
+			var result = CheckPassword(email, password, out salt);
 			if (result)
 			{
 				var user = GetUserByEmail(email);
@@ -236,6 +242,8 @@ namespace PopForums.Services
 				user.LastLoginDate = DateTime.UtcNow;
 				_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 				_securityLogService.CreateLogEntry(null, user, context.Request.UserHostAddress, String.Empty, SecurityLogType.Login);
+				if (!salt.HasValue)
+					SetPassword(user, password, context.Request.UserHostAddress, user);
 			}
 			else
 				_securityLogService.CreateLogEntry((User) null, null, context.Request.UserHostAddress, "E-mail attempted: " + email, SecurityLogType.FailedLogin);
@@ -422,8 +430,13 @@ namespace PopForums.Services
 
 		public bool VerifyPassword(User user, string password)
 		{
-			var savedHashedPassword = _userRepository.GetHashedPasswordByEmail(user.Email);
-			var hashedPassword = password.GetMD5Hash();
+			Guid? salt;
+			string hashedPassword;
+			var savedHashedPassword = _userRepository.GetHashedPasswordByEmail(user.Email, out salt);
+			if (salt.HasValue)
+				hashedPassword = password.GetMD5Hash(salt.Value);
+			else
+				hashedPassword = password.GetMD5Hash();
 			return hashedPassword == savedHashedPassword;
 		}
 

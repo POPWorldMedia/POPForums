@@ -28,23 +28,30 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 
 		public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.LastActivityDate, pf_PopForumsUser.LastLoginDate, pf_PopForumsUser.AuthorizationKey";
 
-		public void SetHashedPassword(User user, string hashedPassword)
+		public void SetHashedPassword(User user, string hashedPassword, Guid salt)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("UPDATE pf_PopForumsUser SET Password = @Password WHERE UserID = @UserID")
+				connection.Command("UPDATE pf_PopForumsUser SET Password = @Password, Salt = @Salt WHERE UserID = @UserID")
 					.AddParameter("@Password", hashedPassword)
+					.AddParameter("@Salt", salt)
 					.AddParameter("@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
-		public string GetHashedPasswordByEmail(string email)
+		public string GetHashedPasswordByEmail(string email, out Guid? salt)
 		{
 			string hashedPassword = null;
+			Guid? saltCheck = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT Password FROM pf_PopForumsUser WHERE Email = @Email")
+				connection.Command("SELECT Password, Salt FROM pf_PopForumsUser WHERE Email = @Email")
 					.AddParameter("@Email", email)
 					.ExecuteReader()
-					.ReadOne(r => { hashedPassword = r.GetString(0); }));
+					.ReadOne(r =>
+					         {
+						         hashedPassword = r.GetString(0);
+								 saltCheck = r.NullGuidDbHelper(1);
+					         }));
+			salt = saltCheck;
 			return hashedPassword;
 		}
 

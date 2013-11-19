@@ -17,3 +17,5 @@ CREATE CLUSTERED INDEX [IX_pf_ExternalUserAssociation_UserID] ON [dbo].[pf_Exter
 	[UserID] ASC
 )
 
+ALTER TABLE [pf_PopForumsUser]
+ADD [Salt] [uniqueidentifier] NULL

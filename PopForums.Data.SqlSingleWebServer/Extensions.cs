@@ -90,6 +90,12 @@ namespace PopForums.Data.SqlSingleWebServer
 			return reader.GetString(index);
 		}
 
+		public static Guid? NullGuidDbHelper(this IDataRecord reader, int index)
+		{
+			if (reader.IsDBNull(index)) return null;
+			return reader.GetGuid(index);
+		}
+
 		public static string NullToEmpty(this string text)
 		{
 			if (String.IsNullOrEmpty(text))

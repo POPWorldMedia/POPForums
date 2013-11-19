@@ -20,6 +20,12 @@ namespace PopForums.Extensions
 			return Convert.ToBase64String(output);
 		}
 
+		public static string GetMD5Hash(this string text, Guid salt)
+		{
+			var concatString = text + salt;
+			return GetMD5Hash(concatString);
+		}
+
 		public static bool IsEmailAddress(this string text)
 		{
 			return Regex.IsMatch(text, @"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", RegexOptions.IgnoreCase);

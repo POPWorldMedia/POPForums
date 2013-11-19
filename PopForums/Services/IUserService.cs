@@ -10,7 +10,7 @@ namespace PopForums.Services
 	public interface IUserService
 	{
 		void SetPassword(User targetUser, string password, string ip, User user);
-		bool CheckPassword(string email, string password);
+		bool CheckPassword(string email, string password, out Guid? salt);
 		User GetUser(int userID);
 		User GetUserByName(string name);
 		User GetUserByEmail(string email);

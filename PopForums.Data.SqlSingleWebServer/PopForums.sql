@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 	[LastActivityDate] [datetime] NOT NULL,
 	[LastLoginDate] [datetime] NOT NULL,
 	[Password] [nvarchar](256) NOT NULL,
-	[AuthorizationKey] [uniqueidentifier] NOT NULL DEFAULT ('00000000-0000-0000-0000-000000000000')
+	[AuthorizationKey] [uniqueidentifier] NOT NULL DEFAULT ('00000000-0000-0000-0000-000000000000'),
+	[Salt] [uniqueidentifier] NULL
 ) 
 
 

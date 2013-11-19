@@ -11,14 +11,16 @@ namespace PopForums.Repositories
 		/// </summary>
 		/// <param name="user">User to update with new hashed password.</param>
 		/// <param name="hashedPassword">The string of the hashed password.</param>
-		void SetHashedPassword(User user, string hashedPassword);
+		/// <param name="salt">A Guid that was used in hashing the password.</param>
+		void SetHashedPassword(User user, string hashedPassword, Guid salt);
 
 		/// <summary>
 		/// Gets the hashed password from the data store of the user whose e-mail is matched.
 		/// </summary>
 		/// <param name="email">E-mail of user to match.</param>
+		/// <param name="salt">An output param that was used in salting the hash.</param>
 		/// <returns>Hashed password, or null if no match is found.</returns>
-		string GetHashedPasswordByEmail(string email);
+		string GetHashedPasswordByEmail(string email, out Guid? salt);
 
 		/// <summary>
 		/// Gets a user by its ID.
