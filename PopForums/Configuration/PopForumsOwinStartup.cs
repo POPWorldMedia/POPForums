@@ -1,15 +1,12 @@
 ﻿using System;
-using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Ninject;
 using Owin;
-using PopForums.Configuration;
 using PopForums.ExternalLogin;
 using PopForums.Services;
 using PopForums.Web;
 
-[assembly: OwinStartup(typeof (PopForumsOwinStartup))]
 namespace PopForums.Configuration
 {
 	public class PopForumsOwinStartup
@@ -49,8 +46,6 @@ namespace PopForums.Configuration
 
 			if (settings.UseGoogleLogin)
 				app.UseGoogleAuthentication();
-
-			app.MapSignalR();
 		}
 	}
 }
