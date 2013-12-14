@@ -404,6 +404,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Resources.uk.resx" />
+    <EmbeddedResource Include="Resources\Resources.zh-TW.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
