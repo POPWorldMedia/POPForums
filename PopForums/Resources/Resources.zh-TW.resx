@@ -124,7 +124,7 @@
     <value>建立帳戶</value>
   </data>
   <data name="AccountReady" xml:space="preserve">
-    <value>您的帳號已建立。</value>
+    <value>您的帳號已建立，您可以開始使用了。</value>
   </data>
   <data name="AccountReadyCheckEmail" xml:space="preserve">
     <value>請檢查您的電子郵件中的確認連結。</value>
@@ -136,13 +136,13 @@
     <value>您已經登入，並且擁有一個帳戶。</value>
   </data>
   <data name="AsYouWouldLikeItToAppear" xml:space="preserve">
-    <value>（如你希望它出現）</value>
+    <value>（你想它顯示為什麼）</value>
   </data>
   <data name="AtLeastSixChar" xml:space="preserve">
     <value>（至少6個字符）</value>
   </data>
   <data name="By" xml:space="preserve">
-    <value>透過</value>
+    <value>作者</value>
   </data>
   <data name="CreateAccountButton" xml:space="preserve">
     <value>建立帳戶</value>
@@ -157,7 +157,7 @@
     <value>電子郵件</value>
   </data>
   <data name="EmailProblemAccount" xml:space="preserve">
-    <value>你發送的驗證 Email 有問題：</value>
+    <value>發送您的驗證郵件時出現問題：</value>
   </data>
   <data name="Favorites" xml:space="preserve">
     <value>我的最愛</value>
@@ -190,7 +190,7 @@
     <value>名稱</value>
   </data>
   <data name="NeedToVerifyExistingAccount" xml:space="preserve">
-    <value>需要驗證的現有帳戶？</value>
+    <value>需要驗證現有帳戶？</value>
   </data>
   <data name="PageNotFound" xml:space="preserve">
     <value>找不到網頁</value>
@@ -241,7 +241,7 @@
     <value>主題總數</value>
   </data>
   <data name="UseDaylight" xml:space="preserve">
-    <value>使用日光節約時間</value>
+    <value>使用夏令時</value>
   </data>
   <data name="UsersOnline" xml:space="preserve">
     <value>上線人數</value>
@@ -256,7 +256,7 @@
     <value>請重新輸入您的密碼</value>
   </data>
   <data name="NameRequired" xml:space="preserve">
-    <value>所需的名稱</value>
+    <value>名稱為必填</value>
   </data>
   <data name="NameInUse" xml:space="preserve">
     <value>該名稱已被使用</value>
@@ -295,7 +295,7 @@
     <value>您必須註冊並登入編輯您的帳戶。</value>
   </data>
   <data name="NoUserFoundWithEmail" xml:space="preserve">
-    <value>沒有用戶與電子郵件發現</value>
+    <value>找不到用戶與郵件</value>
   </data>
   <data name="SendEmailWithNewCodeButton" xml:space="preserve">
     <value>發送E-mail隨著新守則</value>
@@ -310,7 +310,7 @@
     <value>如果你需要一個新的驗證碼，請在此輸入您的電子郵件</value>
   </data>
   <data name="VerificationLinkBad" xml:space="preserve">
-    <value>對不起，您跟著你輸入的驗證連結或代碼無效。</value>
+    <value>對不起，您輸入的驗證鏈接或代碼無效。。</value>
   </data>
   <data name="VerifyAccount" xml:space="preserve">
     <value>驗證帳戶</value>
@@ -331,7 +331,7 @@
     <value>更改電子郵件和發送代碼</value>
   </data>
   <data name="ChangeEmailConsequence" xml:space="preserve">
-    <value>改變您的電子郵件地址將導致生成並發送至新的電子郵件地址的新的驗證碼。你將無法發表，直到您用新的代碼驗證您的電子郵件地址。</value>
+    <value>改變您的電子郵件地址將導致生成並發送至新的電子郵件地址一個新的驗證碼。你將無法發表，直到您用新的代碼驗證您的電子郵件地址。</value>
   </data>
   <data name="ChangePassword" xml:space="preserve">
     <value>更改密碼</value>
@@ -355,7 +355,7 @@
     <value>重新輸入新的電子郵件地址</value>
   </data>
   <data name="EmailNotFound" xml:space="preserve">
-    <value>電子郵件沒有發現</value>
+    <value>電子郵件未找到</value>
   </data>
   <data name="EmailSent" xml:space="preserve">
     <value>您的電子郵件已發送</value>
@@ -370,10 +370,10 @@
     <value>強制純文字框</value>
   </data>
   <data name="ForgotInstructions" xml:space="preserve">
-    <value>輸入與您的帳戶關聯的電子郵件地址，接收指令重置您的密碼：</value>
+    <value>輸入與您的帳戶關聯的電子郵件地址，接收重置您的密碼的指令：</value>
   </data>
   <data name="ForgotInstructionsSent" xml:space="preserve">
-    <value>發送到您的電子郵件說明</value>
+    <value>說明已發送到您的電子郵件</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>忘記密碼</value>
@@ -382,7 +382,7 @@
     <value>忘記密碼？</value>
   </data>
   <data name="HideVanity" xml:space="preserve">
-    <value>隱藏虛榮</value>
+    <value>隐藏头像和签名</value>
   </data>
   <data name="In" xml:space="preserve">
     <value>在</value>
@@ -433,7 +433,7 @@
     <value>這不是一個有效的密碼重置連結。</value>
   </data>
   <data name="PasswordResetNote" xml:space="preserve">
-    <value>您的新密碼是主動和你現在登入。</value>
+    <value>你的新密碼生效，現在你已經登錄。</value>
   </data>
   <data name="PasswordResetSuccess" xml:space="preserve">
     <value>密碼重置成功</value>
@@ -445,7 +445,7 @@
     <value>刪除照片</value>
   </data>
   <data name="PhotoNotApproved" xml:space="preserve">
-    <value>（這個影像還未被核准由管理員）</value>
+    <value>（這個影像還未被管理員核准）</value>
   </data>
   <data name="ProfileUpdated" xml:space="preserve">
     <value>資料更新</value>
@@ -523,7 +523,7 @@
     <value>退訂失敗</value>
   </data>
   <data name="UnsubscribeLinkBad" xml:space="preserve">
-    <value>你按照這個連結是無效的。</value>
+    <value>這個退訂連結是無效的。</value>
   </data>
   <data name="UnsubscribeNote" xml:space="preserve">
     <value>您的退訂請求已經被處理。您可以透過登入並進入你的帳戶頁面重新訂閱。</value>
@@ -592,7 +592,7 @@
     <value>編輯用戶</value>
   </data>
   <data name="EmailBan" xml:space="preserve">
-    <value>電子郵件班</value>
+    <value>電子郵件封鎖</value>
   </data>
   <data name="EmailIpBan" xml:space="preserve">
     <value>E-mail/IP封鎖</value>
@@ -634,7 +634,7 @@
     <value>IP歷史記錄</value>
   </data>
   <data name="IsApproved" xml:space="preserve">
-    <value>是否核准</value>
+    <value>已核准</value>
   </data>
   <data name="IsSubscribed" xml:space="preserve">
     <value>已訂閱</value>
@@ -649,7 +649,7 @@
     <value>管理日誌</value>
   </data>
   <data name="LogSecurity" xml:space="preserve">
-    <value>登入安全行動</value>
+    <value>登錄安全活動</value>
   </data>
   <data name="MinimumTimeBetweenPosts" xml:space="preserve">
     <value>發布文章之間的最小時間（秒）</value>
@@ -673,7 +673,7 @@
     <value>新密碼（可選）</value>
   </data>
   <data name="PopForumsAdmin" xml:space="preserve">
-    <value>POP Forums 管理</value>
+    <value>POP 論壇管理</value>
   </data>
   <data name="PostsPerPage" xml:space="preserve">
     <value>每頁主題</value>
@@ -799,7 +799,7 @@
     <value>而試圖移動論壇有未知錯誤</value>
   </data>
   <data name="ForumPermissionInstructions" xml:space="preserve">
-    <value>To remove posting or viewing restrictions, remove all roles from the appropriate box.</value>
+    <value>要刪除張貼或查看限制，從適當的框中刪除所有角色。</value>
   </data>
   <data name="FromEmailAddress" xml:space="preserve">
     <value>從E-mail地址</value>
@@ -820,7 +820,7 @@
     <value>正在運行</value>
   </data>
   <data name="JunkWords" xml:space="preserve">
-    <value>垃圾話</value>
+    <value>垃圾詞</value>
   </data>
   <data name="MarkForumRead" xml:space="preserve">
     <value>標記論壇為已讀</value>
@@ -838,7 +838,7 @@
     <value>（可選）</value>
   </data>
   <data name="PermRoles" xml:space="preserve">
-    <value>管理員和主持人是您永久的作用，而不能被刪除。</value>
+    <value>管理員和主持人是您永久的角色，而不能被刪除。</value>
   </data>
   <data name="PostID" xml:space="preserve">
     <value>資訊ID</value>
@@ -991,7 +991,7 @@
     <value>錯誤</value>
   </data>
   <data name="ErrorSettingUpDb" xml:space="preserve">
-    <value>有一個錯誤設定數據庫</value>
+    <value>設定數據庫有錯誤</value>
   </data>
   <data name="ForumReady" xml:space="preserve">
     <value>您的論壇已準備就緒。</value>
@@ -1015,7 +1015,7 @@
     <value>安裝程序無法連接到數據存儲區。請檢查您的連接字符串和配置。</value>
   </data>
   <data name="SetupConnSuccess" xml:space="preserve">
-    <value>數據庫連接是成功的。請填寫下面的值上手</value>
+    <value>數據庫連接是成功的。請填寫下面的值</value>
   </data>
   <data name="SetupDatabase" xml:space="preserve">
     <value>設定數據庫</value>

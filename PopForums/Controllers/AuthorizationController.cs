@@ -92,7 +92,7 @@ namespace PopForums.Controllers
 		[ValidateAntiForgeryToken]
 		public ActionResult ExternalLogin(string provider, string returnUrl)
 		{
-			return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Authorization", new { loginProvider = provider, ReturnUrl = returnUrl }));
+			return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Authorization", new { loginProvider = provider, ReturnUrl = returnUrl, area = "PopForums" }));
 		}
 
 		public async Task<ActionResult> ExternalLoginCallback(string loginProvider, string returnUrl)
