@@ -9,6 +9,7 @@ Spanish: Mauricio Atanache
 Dutch: Steven van Deursen
 Ukrainian: Nazar Harasym
 German: Manfred Theis
+Taiwanese Mandarin: Cheng Liu
 
 LICENSE:
 
