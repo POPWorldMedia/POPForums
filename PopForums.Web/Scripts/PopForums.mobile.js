@@ -142,6 +142,7 @@ PopForums.topicToolSetup = function(topicID) {
 };
 
 PopForums.postReply = function () {
+	$("#SubmitReply").attr("disabled", "disabled");
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostReply",
 		type: "POST",
@@ -154,16 +155,19 @@ PopForums.postReply = function () {
 					window.location = result.Redirect;
 				default:
 					r.html(result.Message);
+					$("#SubmitReply").removeAttr("disabled");
 			}
 		},
 		error: function () {
 			var r = $("#PostResponseMessage");
 			r.html("There was an unknown error while trying to post");
+			$("#SubmitReply").removeAttr("disabled");
 		}
 	});
 };
 
 PopForums.postNewTopic = function () {
+	$("SubmitNewTopic").attr("disabled", "disabled");
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostTopic",
 		type: "POST",
@@ -176,11 +180,13 @@ PopForums.postNewTopic = function () {
 					window.location = result.Redirect;
 				default:
 					r.html(result.Message);
+					$("#SubmitNewTopic").removeAttr("disabled");
 			}
 		},
 		error: function () {
 			var r = $("#PostResponseMessage");
 			r.html("There was an unknown error while trying to post");
+			$("#SubmitNewTopic").removeAttr("disabled");
 		}
 	});
 };
