@@ -844,7 +844,7 @@
     <value>(optional)</value>
   </data>
   <data name="PermRoles" xml:space="preserve">
-    <value>Admin and Moderator are permanant roles, and can't be deleted.</value>
+    <value>Admin and Moderator are permanent roles, and can't be deleted.</value>
   </data>
   <data name="PostID" xml:space="preserve">
     <value>PostID</value>
