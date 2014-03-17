@@ -157,7 +157,7 @@ ul.pf-list li a {
 	background-color: #dcdcdc;
 }
 .pf-button:disabled {
-    border: #999999;color: #999999;
+    border: solid 2px #999999;color: #999999;
 }
 
 .pf-check {
