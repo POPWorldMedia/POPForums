@@ -156,6 +156,9 @@ ul.pf-list li a {
 .pf-button:hover {
 	background-color: #dcdcdc;
 }
+.pf-button:disabled {
+    border: #999999;color: #999999;
+}
 
 .pf-check {
 }
