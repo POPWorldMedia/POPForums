@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using System.Web.WebPages;
 
 namespace PopForums.Web
 {
@@ -6,7 +7,7 @@ namespace PopForums.Web
 	{
 		public bool IsMobileDevice(HttpContextBase context)
 		{
-			return context.Request.Browser.IsMobileDevice;
+			return context.Request.Browser.IsMobileDevice || context.GetOverriddenBrowser().IsMobileDevice;
 		}
 	}
 }
