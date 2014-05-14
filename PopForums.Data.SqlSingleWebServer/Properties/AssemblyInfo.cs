@@ -5,4 +5,4 @@
 [assembly: AssemblyProduct("PopForums.Data.SqlSingleWebServer")]
 [assembly: AssemblyCopyright("Copyright ©2014, POP World Media, LLC")]
 [assembly: AssemblyTrademark("POP Forums is a trademark of POP World Media, LLC")]
-[assembly: AssemblyVersion("12.1.0.14041")]
+[assembly: AssemblyVersion("13.0.0.14051")]

@@ -21,7 +21,8 @@ namespace PopForums.Web
 			// Got other controller namespaces to register in the PopForums routing and area? (For forum adapters) Set them here.
 			// PopForumsActivation.SetAdditionalControllerNamespaces(new[] {"MyNamespace"});
 
-			// Run the background services in this Web application.
+			// Run the background services in this Web application. If you're running an Azure Web Job,
+			// do not include this line.
 			PopForumsActivation.StartServices();
 
 			RegisterRoutes(RouteTable.Routes);

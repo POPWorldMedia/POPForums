@@ -16,11 +16,6 @@ namespace PopForums.Data.SqlSingleWebServer
 		private readonly Config _config;
 		private readonly Cache _cache;
 
-		public Cache GetCache()
-		{
-			return _cache;
-		}
-
 		public void SetCacheObject(string key, object value)
 		{
 			_cache.Insert(key, value, null, DateTime.Now.AddSeconds(_config.CacheSeconds), Cache.NoSlidingExpiration);
