@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PopForums.WebJob</RootNamespace>
     <AssemblyName>PopForums.WebJob</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +50,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PopForums.Data.Azure\PopForums.Data.Azure.csproj">
+      <Project>{e73e0048-eac5-4290-9485-d44d564da3d2}</Project>
+      <Name>PopForums.Data.Azure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PopForums.Data.SqlSingleWebServer\PopForums.Data.SqlSingleWebServer.csproj">
+      <Project>{84FA6A15-D7B0-4375-B245-723BE20CBE49}</Project>
+      <Name>PopForums.Data.SqlSingleWebServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PopForums\PopForums.csproj">
+      <Project>{9f1bd29b-b85d-49ee-ac67-5337c755e6c2}</Project>
+      <Name>PopForums</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

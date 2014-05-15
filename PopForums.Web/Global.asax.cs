@@ -13,6 +13,9 @@ namespace PopForums.Web
 			// this registers the SQL single Web server repositories for Ninject
 			PopForumsActivation.Kernel.Load(new SqlSingleInjectionModule());
 
+			// this registers the Azure repositories for Ninject
+			// PopForumsActivation.Kernel.Load(new PopForums.Data.Azure.AzureInjectionModule());
+
 			// Sets global filter to set a PopForums.Model.User in the pipeline as an IPrincipal
 			PopForumsActivation.SetUserAttribute();
 			// Remove the previous line and uncomment the following to apply PopForums users to all controllers in the app

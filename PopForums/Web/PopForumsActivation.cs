@@ -28,6 +28,18 @@ namespace PopForums.Web
 			}
 		}
 
+		public static void InitializeOutOfWeb()
+		{
+			lock (_syncRoot)
+			{
+				if (!_isInitialized)
+				{
+					Kernel = new StandardKernel(new CoreInjectionModule());
+					_isInitialized = true;
+				}
+			}
+		}
+
 		public static bool IsServiceRunningInstance;
 
 		public static void StartServices()

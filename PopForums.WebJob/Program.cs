@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading;
+using Ninject;
+using PopForums.Data.Azure;
+using PopForums.Web;
 
 namespace PopForums.WebJob
 {
@@ -7,10 +10,15 @@ namespace PopForums.WebJob
 	{
 		static void Main(string[] args)
 		{
+			PopForumsActivation.InitializeOutOfWeb();
+			PopForumsActivation.Kernel.Load(new AzureInjectionModule());
 			while (true)
 			{
-				Console.WriteLine("Party's over here y'all!");
-				Thread.Sleep(5000);	
+				foreach (var item in PopForumsActivation.ApplicationServices)
+				{
+					Console.WriteLine("{0}, IsRunning: {1}, {2}", item.Name, item.IsRunning, item.LastExecutionTime);
+				}
+				Thread.Sleep(60000);	
 			}
 		}
 	}
