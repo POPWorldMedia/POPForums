@@ -581,8 +581,10 @@ namespace PopForums.Controllers
 				ViewBag.Result = Resources.SubjectAndBodyNotEmpty;
 				return View();
 			}
+			var baseString = this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = "--id--", key = "--key--" });
+			baseString = baseString.Replace("--id--", "{0}").Replace("--key--", "{1}");
 			Func<User, string> unsubscribeLinkGenerator =
-				 user => this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = user.UserID, key = _profileService.GetUnsubscribeHash(user) });
+				user => String.Format(baseString, user.UserID, _profileService.GetUnsubscribeHash(user));
 			_mailingListService.MailUsers(subject, body, htmlBody, unsubscribeLinkGenerator);
 			return View("EmailUsersSuccessful");
 		}

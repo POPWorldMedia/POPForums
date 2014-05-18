@@ -342,7 +342,7 @@
             Prunes this instance.
             </summary>
         </member>
-        <member name="M:Ninject.Activation.Caching.ActivationCache.RemoveDeadObjects(System.Collections.Generic.IDictionary{System.Object,System.Boolean})">
+        <member name="M:Ninject.Activation.Caching.ActivationCache.RemoveDeadObjects(System.Collections.Generic.HashSet{System.Object})">
             <summary>
             Removes all dead objects.
             </summary>
@@ -1828,159 +1828,6 @@
             <param name="type">The type.</param>
             <returns>An enumerable containing the given type and all its base types</returns>
         </member>
-        <member name="T:System.Threading.ReaderWriterLock">
-            <summary>
-            A reader-writer lock implementation that is intended to be simple, yet very
-            efficient.  In particular only 1 interlocked operation is taken for any lock 
-            operation (we use spin locks to achieve this).  The spin lock is never held
-            for more than a few instructions (in particular, we never call event APIs
-            or in fact any non-trivial API while holding the spin lock).   
-            
-            Currently this ReaderWriterLock does not support recurision, however it is 
-            not hard to add 
-            </summary>
-            <remarks>
-            By Vance Morrison
-            Taken from - http://blogs.msdn.com/vancem/archive/2006/03/28/563180.aspx
-            Code at - http://blogs.msdn.com/vancem/attachment/563180.ashx
-            </remarks>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.myLock">
-            <summary>
-            The my lock.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.numReadWaiters">
-            <summary>
-            The number read waiters.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.numUpgradeWaiters">
-            <summary>
-            The number upgrade waiters.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.numWriteWaiters">
-            <summary>
-            The number write waiters.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.owners">
-            <summary>
-            The owners.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.readEvent">
-            <summary>
-            The read event.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.upgradeEvent">
-            <summary>
-            The upgrade event.
-            </summary>
-        </member>
-        <member name="F:System.Threading.ReaderWriterLock.writeEvent">
-            <summary>
-            The write event.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.AcquireReaderLock(System.Int32)">
-            <summary>
-            The acquire reader lock.
-            </summary>
-            <param name="millisecondsTimeout">
-            The milliseconds timeout.
-            </param>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.AcquireWriterLock(System.Int32)">
-            <summary>
-            The acquire writer lock.
-            </summary>
-            <param name="millisecondsTimeout">
-            The milliseconds timeout.
-            </param>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.DowngradeFromWriterLock(System.Int32@)">
-            <summary>
-            The downgrade to reader lock.
-            </summary>
-            <param name="lockCookie">The lock cookie.</param>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.ReleaseReaderLock">
-            <summary>
-            The release reader lock.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.ReleaseWriterLock">
-            <summary>
-            The release writer lock.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.UpgradeToWriterLock(System.Int32)">
-            <summary>
-            The upgrade to writer lock.
-            </summary>
-            <param name="millisecondsTimeout">
-            The milliseconds timeout.
-            </param>
-            <exception cref="T:System.InvalidOperationException">
-            </exception>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.EnterMyLock">
-            <summary>
-            The enter my lock.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.EnterMyLockSpin">
-            <summary>
-            The enter my lock spin.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.ExitAndWakeUpAppropriateWaiters">
-            <summary>
-            Determines the appropriate events to set, leaves the locks, and sets the events. 
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.ExitMyLock">
-            <summary>
-            The exit my lock.
-            </summary>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.LazyCreateEvent(System.Threading.EventWaitHandle@,System.Boolean)">
-            <summary>
-            A routine for lazily creating a event outside the lock (so if errors
-            happen they are outside the lock and that we don't do much work
-            while holding a spin lock).  If all goes well, reenter the lock and
-            set 'waitEvent' 
-            </summary>
-            <param name="waitEvent">
-            The wait Event.
-            </param>
-            <param name="makeAutoResetEvent">
-            The make Auto Reset Event.
-            </param>
-        </member>
-        <member name="M:System.Threading.ReaderWriterLock.WaitOnEvent(System.Threading.EventWaitHandle,System.UInt32@,System.Int32)">
-            <summary>
-            Waits on 'waitEvent' with a timeout of 'millisceondsTimeout.  
-            Before the wait 'numWaiters' is incremented and is restored before leaving this routine.
-            </summary>
-            <param name="waitEvent">
-            The wait Event.
-            </param>
-            <param name="numWaiters">
-            The num Waiters.
-            </param>
-            <param name="millisecondsTimeout">
-            The milliseconds Timeout.
-            </param>
-        </member>
-        <member name="P:System.Threading.ReaderWriterLock.MyLockHeld">
-            <summary>
-            Gets a value indicating whether MyLockHeld.
-            </summary>
-        </member>
         <member name="T:Ninject.Infrastructure.BaseWeakReference">
             <summary>
             Inheritable weak reference base class for Silverlight
@@ -2195,6 +2042,11 @@
             A delegate that can inject values into a constructor.
             </summary>
         </member>
+        <member name="T:Ninject.Injection.DynamicMethodInjectorFactory">
+            <summary>
+            Creates injectors for members via <see cref="T:System.Reflection.Emit.DynamicMethod"/>s.
+            </summary>
+        </member>
         <member name="T:Ninject.Injection.IInjectorFactory">
             <summary>
             Creates injectors from members.
@@ -2215,6 +2067,27 @@
             <returns>The created injector.</returns>
         </member>
         <member name="M:Ninject.Injection.IInjectorFactory.Create(System.Reflection.MethodInfo)">
+            <summary>
+            Gets or creates an injector for the specified method.
+            </summary>
+            <param name="method">The method.</param>
+            <returns>The created injector.</returns>
+        </member>
+        <member name="M:Ninject.Injection.DynamicMethodInjectorFactory.Create(System.Reflection.ConstructorInfo)">
+            <summary>
+            Gets or creates an injector for the specified constructor.
+            </summary>
+            <param name="constructor">The constructor.</param>
+            <returns>The created injector.</returns>
+        </member>
+        <member name="M:Ninject.Injection.DynamicMethodInjectorFactory.Create(System.Reflection.PropertyInfo)">
+            <summary>
+            Gets or creates an injector for the specified property.
+            </summary>
+            <param name="property">The property.</param>
+            <returns>The created injector.</returns>
+        </member>
+        <member name="M:Ninject.Injection.DynamicMethodInjectorFactory.Create(System.Reflection.MethodInfo)">
             <summary>
             Gets or creates an injector for the specified method.
             </summary>
@@ -2257,6 +2130,116 @@
             <param name="method">The method.</param>
             <returns>The created injector.</returns>
         </member>
+        <member name="T:Ninject.Modules.AssemblyNameRetriever">
+            <summary>
+            Retrieves assembly names from file names using a temporary app domain.
+            </summary>
+        </member>
+        <member name="T:Ninject.Modules.IAssemblyNameRetriever">
+            <summary>
+            Retrieves assembly names from file names using a temporary app domain.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.IAssemblyNameRetriever.GetAssemblyNames(System.Collections.Generic.IEnumerable{System.String},System.Predicate{System.Reflection.Assembly})">
+            <summary>
+            Gets all assembly names of the assemblies in the given files that match the filter.
+            </summary>
+            <param name="filenames">The filenames.</param>
+            <param name="filter">The filter.</param>
+            <returns>All assembly names of the assemblies in the given files that match the filter.</returns>
+        </member>
+        <member name="M:Ninject.Modules.AssemblyNameRetriever.GetAssemblyNames(System.Collections.Generic.IEnumerable{System.String},System.Predicate{System.Reflection.Assembly})">
+            <summary>
+            Gets all assembly names of the assemblies in the given files that match the filter.
+            </summary>
+            <param name="filenames">The filenames.</param>
+            <param name="filter">The filter.</param>
+            <returns>All assembly names of the assemblies in the given files that match the filter.</returns>
+        </member>
+        <member name="M:Ninject.Modules.AssemblyNameRetriever.CreateTemporaryAppDomain">
+            <summary>
+            Creates a temporary app domain.
+            </summary>
+            <returns>The created app domain.</returns>
+        </member>
+        <member name="T:Ninject.Modules.AssemblyNameRetriever.AssemblyChecker">
+            <summary>
+            This class is loaded into the temporary appdomain to load and check if the assemblies match the filter.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.AssemblyNameRetriever.AssemblyChecker.GetAssemblyNames(System.Collections.Generic.IEnumerable{System.String},System.Predicate{System.Reflection.Assembly})">
+            <summary>
+            Gets the assembly names of the assemblies matching the filter.
+            </summary>
+            <param name="filenames">The filenames.</param>
+            <param name="filter">The filter.</param>
+            <returns>All assembly names of the assemblies matching the filter.</returns>
+        </member>
+        <member name="T:Ninject.Modules.CompiledModuleLoaderPlugin">
+            <summary>
+            Loads modules from compiled assemblies.
+            </summary>
+        </member>
+        <member name="T:Ninject.Modules.IModuleLoaderPlugin">
+            <summary>
+            Loads modules at runtime by searching external files.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.IModuleLoaderPlugin.LoadModules(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads modules from the specified files.
+            </summary>
+            <param name="filenames">The names of the files to load modules from.</param>
+        </member>
+        <member name="P:Ninject.Modules.IModuleLoaderPlugin.SupportedExtensions">
+            <summary>
+            Gets the file extensions that the plugin understands how to load.
+            </summary>
+        </member>
+        <member name="F:Ninject.Modules.CompiledModuleLoaderPlugin.assemblyNameRetriever">
+            <summary>
+            The assembly name retriever.
+            </summary>
+        </member>
+        <member name="F:Ninject.Modules.CompiledModuleLoaderPlugin.Extensions">
+            <summary>
+            The file extensions that are supported.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.CompiledModuleLoaderPlugin.#ctor(Ninject.IKernel,Ninject.Modules.IAssemblyNameRetriever)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.Modules.CompiledModuleLoaderPlugin"/> class.
+            </summary>
+            <param name="kernel">The kernel into which modules will be loaded.</param>
+            <param name="assemblyNameRetriever">The assembly name retriever.</param>
+        </member>
+        <member name="M:Ninject.Modules.CompiledModuleLoaderPlugin.LoadModules(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads modules from the specified files.
+            </summary>
+            <param name="filenames">The names of the files to load modules from.</param>
+        </member>
+        <member name="P:Ninject.Modules.CompiledModuleLoaderPlugin.Kernel">
+            <summary>
+            Gets the kernel into which modules will be loaded.
+            </summary>
+        </member>
+        <member name="P:Ninject.Modules.CompiledModuleLoaderPlugin.SupportedExtensions">
+            <summary>
+            Gets the file extensions that the plugin understands how to load.
+            </summary>
+        </member>
+        <member name="T:Ninject.Modules.IModuleLoader">
+            <summary>
+            Finds modules defined in external files.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.IModuleLoader.LoadModules(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads any modules found in the files that match the specified patterns.
+            </summary>
+            <param name="patterns">The patterns to search.</param>
+        </member>
         <member name="T:Ninject.Modules.INinjectModule">
             <summary>
             A pluggable unit that can be loaded into an <see cref="T:Ninject.IKernel"/>.
@@ -2282,6 +2265,28 @@
         <member name="P:Ninject.Modules.INinjectModule.Name">
             <summary>
             Gets the module's name.
+            </summary>
+        </member>
+        <member name="T:Ninject.Modules.ModuleLoader">
+            <summary>
+            Automatically finds and loads modules from assemblies.
+            </summary>
+        </member>
+        <member name="M:Ninject.Modules.ModuleLoader.#ctor(Ninject.IKernel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.Modules.ModuleLoader"/> class.
+            </summary>
+            <param name="kernel">The kernel into which modules will be loaded.</param>
+        </member>
+        <member name="M:Ninject.Modules.ModuleLoader.LoadModules(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads any modules found in the files that match the specified patterns.
+            </summary>
+            <param name="patterns">The patterns to search.</param>
+        </member>
+        <member name="P:Ninject.Modules.ModuleLoader.Kernel">
+            <summary>
+            Gets or sets the kernel into which modules will be loaded.
             </summary>
         </member>
         <member name="T:Ninject.Modules.NinjectModule">
@@ -5383,6 +5388,17 @@
             Gets the type of the target.
             </summary>
         </member>
+        <member name="P:Ninject.Planning.Targets.ParameterTarget.HasDefaultValue">
+            <summary>
+            Gets a value indicating whether the target has a default value.
+            </summary>
+        </member>
+        <member name="P:Ninject.Planning.Targets.ParameterTarget.DefaultValue">
+            <summary>
+            Gets the default value for the target.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">If the item does not have a default value.</exception>
+        </member>
         <member name="T:Ninject.Planning.Targets.PropertyTarget">
             <summary>
             Represents an injection target for a <see cref="T:System.Reflection.PropertyInfo"/>.
@@ -5743,6 +5759,20 @@
             <param name="kernel">The kernel.</param>
             <param name="modules">The modules to load.</param>
         </member>
+        <member name="M:Ninject.ModuleLoadExtensions.Load(Ninject.IKernel,System.String[])">
+            <summary>
+            Loads modules from the files that match the specified pattern(s).
+            </summary>
+            <param name="kernel">The kernel.</param>
+            <param name="filePatterns">The file patterns (i.e. "*.dll", "modules/*.rb") to match.</param>
+        </member>
+        <member name="M:Ninject.ModuleLoadExtensions.Load(Ninject.IKernel,System.Reflection.Assembly[])">
+            <summary>
+            Loads modules defined in the specified assemblies.
+            </summary>
+            <param name="kernel">The kernel.</param>
+            <param name="assemblies">The assemblies to search.</param>
+        </member>
         <member name="T:Ninject.ResolutionExtensions">
             <summary>
             Extensions that enhance resolution of services.
@@ -6032,6 +6062,13 @@
             <param name="message">The exception message.</param>
             <param name="innerException">The inner exception.</param>
         </member>
+        <member name="M:Ninject.ActivationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Ninject.ActivationException"/> class.
+            </summary>
+            <param name="info">The serialized object data.</param>
+            <param name="context">The serialization context.</param>
+        </member>
         <member name="T:Ninject.GlobalKernelRegistration">
             <summary>
             Allows to register kernel globally to perform some tasks on all kernels.
@@ -6043,6 +6080,23 @@
             Performs an action on all registered kernels.
             </summary>
             <param name="action">The action.</param>
+        </member>
+        <member name="T:Ninject.GlobalKernelRegistrationModule`1">
+            <summary>
+            Registers the kernel into which the module is loaded on the GlobalKernelRegistry using the
+            type specified by TGlobalKernelRegistry.
+            </summary>
+            <typeparam name="TGlobalKernelRegistry">The type that is used to register the kernel.</typeparam>
+        </member>
+        <member name="M:Ninject.GlobalKernelRegistrationModule`1.Load">
+            <summary>
+            Loads the module into the kernel.
+            </summary>
+        </member>
+        <member name="M:Ninject.GlobalKernelRegistrationModule`1.Unload">
+            <summary>
+            Unloads the module from the kernel.
+            </summary>
         </member>
         <member name="T:Ninject.IInitializable">
             <summary>
@@ -6077,6 +6131,18 @@
             Loads the module(s) into the kernel.
             </summary>
             <param name="m">The modules to load.</param>
+        </member>
+        <member name="M:Ninject.IKernel.Load(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads modules from the files that match the specified pattern(s).
+            </summary>
+            <param name="filePatterns">The file patterns (i.e. "*.dll", "modules/*.rb") to match.</param>
+        </member>
+        <member name="M:Ninject.IKernel.Load(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            Loads modules defined in the specified assemblies.
+            </summary>
+            <param name="assemblies">The assemblies to search.</param>
         </member>
         <member name="M:Ninject.IKernel.Unload(System.String)">
             <summary>
@@ -6149,6 +6215,36 @@
             <summary>
             Gets the default scope callback.
             </summary>
+        </member>
+        <member name="P:Ninject.INinjectSettings.LoadExtensions">
+            <summary>
+            Gets a value indicating whether the kernel should automatically load extensions at startup.
+            </summary>
+        </member>
+        <member name="P:Ninject.INinjectSettings.ExtensionSearchPatterns">
+            <summary>
+            Gets the paths that should be searched for extensions.
+            </summary>
+        </member>
+        <member name="P:Ninject.INinjectSettings.UseReflectionBasedInjection">
+            <summary>
+            Gets a value indicating whether Ninject should use reflection-based injection instead of
+            the (usually faster) lightweight code generation system.
+            </summary>
+        </member>
+        <member name="P:Ninject.INinjectSettings.InjectNonPublic">
+            <summary>
+            Gets a value indicating whether Ninject should inject non public members.
+            </summary>
+        </member>
+        <member name="P:Ninject.INinjectSettings.InjectParentPrivateProperties">
+            <summary>
+            Gets a value indicating whether Ninject should inject private properties of base classes.
+            </summary>
+            <remarks>
+            Activating this setting has an impact on the performance. It is recomended not
+            to use this feature and use constructor injection instead.
+            </remarks>
         </member>
         <member name="P:Ninject.INinjectSettings.ActivationCacheDisabled">
             <summary>
@@ -6261,6 +6357,18 @@
             Loads the module(s) into the kernel.
             </summary>
             <param name="m">The modules to load.</param>
+        </member>
+        <member name="M:Ninject.KernelBase.Load(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Loads modules from the files that match the specified pattern(s).
+            </summary>
+            <param name="filePatterns">The file patterns (i.e. "*.dll", "modules/*.rb") to match.</param>
+        </member>
+        <member name="M:Ninject.KernelBase.Load(System.Collections.Generic.IEnumerable{System.Reflection.Assembly})">
+            <summary>
+            Loads modules defined in the specified assemblies.
+            </summary>
+            <param name="assemblies">The assemblies to search.</param>
         </member>
         <member name="M:Ninject.KernelBase.Unload(System.String)">
             <summary>
@@ -6423,6 +6531,36 @@
             <summary>
             Gets or sets the default scope callback.
             </summary>
+        </member>
+        <member name="P:Ninject.NinjectSettings.LoadExtensions">
+            <summary>
+            Gets or sets a value indicating whether the kernel should automatically load extensions at startup.
+            </summary>
+        </member>
+        <member name="P:Ninject.NinjectSettings.ExtensionSearchPatterns">
+            <summary>
+            Gets or sets the paths that should be searched for extensions.
+            </summary>
+        </member>
+        <member name="P:Ninject.NinjectSettings.UseReflectionBasedInjection">
+            <summary>
+            Gets a value indicating whether Ninject should use reflection-based injection instead of
+            the (usually faster) lightweight code generation system.
+            </summary>
+        </member>
+        <member name="P:Ninject.NinjectSettings.InjectNonPublic">
+            <summary>
+            Gets a value indicating whether Ninject should inject non public members.
+            </summary>
+        </member>
+        <member name="P:Ninject.NinjectSettings.InjectParentPrivateProperties">
+            <summary>
+            Gets a value indicating whether Ninject should inject private properties of base classes.
+            </summary>
+            <remarks>
+            Activating this setting has an impact on the performance. It is recomended not
+            to use this feature and use constructor injection instead.
+            </remarks>
         </member>
         <member name="P:Ninject.NinjectSettings.ActivationCacheDisabled">
             <summary>

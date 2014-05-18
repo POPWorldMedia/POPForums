@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Models;
 
@@ -7,26 +8,37 @@ namespace PopForums.Services
 {
 	public class MailingListService : IMailingListService
 	{
-		public MailingListService(IUserService userService, IMailingListComposer mailingListComposer)
+		public MailingListService(IUserService userService, IMailingListComposer mailingListComposer, IErrorLog errorLog)
 		{
-			UserService = userService;
-			MailingListComposer = mailingListComposer;
+			_userService = userService;
+			_mailingListComposer = mailingListComposer;
+			_errorLog = errorLog;
 		}
 
-		public IUserService UserService { get; private set; }
-		public IMailingListComposer MailingListComposer { get; private set; }
+		private readonly IUserService _userService;
+		private readonly IMailingListComposer _mailingListComposer;
+		private readonly IErrorLog _errorLog;
+		private static Thread _mailWorker;
 
 		public void MailUsers(string subject, string body, string htmlBody, Func<User, string> unsubscribeLinkGenerator)
 		{
-			new Thread(() =>
+			_mailWorker = new Thread(() =>
 			{
-				var users = UserService.GetSubscribedUsers();
+				var users = _userService.GetSubscribedUsers();
 				foreach (var user in users)
 				{
 					var unsubLink = unsubscribeLinkGenerator(user);
-					MailingListComposer.ComposeAndQueue(user, subject, body, htmlBody, unsubLink);
+					try
+					{
+						_mailingListComposer.ComposeAndQueue(user, subject, body, htmlBody, unsubLink);
+					}
+					catch (Exception exc)
+					{
+						_errorLog.Log(exc, ErrorSeverity.Error, "UserID: " + user.UserID);
+					}
 				}
-			}).Start();
+			});
+			_mailWorker.Start();
 		}
 	}
 }
