@@ -17,6 +17,7 @@ namespace PopForums.ExternalLogin
 
 		public override void ExecuteResult(ControllerContext context)
 		{
+			context.RequestContext.HttpContext.Response.SuppressFormsAuthenticationRedirect = true;
 			context.HttpContext.GetOwinContext().Authentication.Challenge(new AuthenticationProperties{ RedirectUri = RedirectUri }, LoginProvider);
 		}
 	}
