@@ -45,7 +45,7 @@ namespace PopForums.Configuration
 				   appSecret: settings.FacebookAppSecret);
 
 			if (settings.UseGoogleLogin)
-				app.UseGoogleAuthentication();
+				app.UseGoogleAuthentication(settings.GoogleClientId, settings.GoogleClientSecret);
 		}
 	}
 }

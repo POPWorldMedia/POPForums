@@ -163,6 +163,8 @@ namespace PopForums.Test.Configuration
 			const string microsoftClientSecret = "oiwhgoigrccaa";
 			const int youTubeHeight = 360;
 			const int youTubeWidth = 640;
+			const string googleClientId = "ohigfewgf";
+			const string googleClientSecret = "y0yt0w4gweg";
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -212,7 +214,9 @@ namespace PopForums.Test.Configuration
 									{"MicrosoftClientID", microsoftClientID},
 									{"MicrosoftClientSecret", microsoftClientSecret},
 									{"YouTubeHeight", youTubeHeight},
-									{"YouTubeWidth", youTubeWidth}
+									{"YouTubeWidth", youTubeWidth},
+									{"GoogleClientId", googleClientId},
+									{"GoogleClientSecret", googleClientSecret}
 			                 	};
 
 			var settingsRepo = new Mock<ISettingsRepository>();
@@ -268,6 +272,8 @@ namespace PopForums.Test.Configuration
 			settings.UseMicrosoftLogin = useMicrosoftLogin;
 			settings.MicrosoftClientID = microsoftClientID;
 			settings.MicrosoftClientSecret = microsoftClientSecret;
+			settings.GoogleClientId = googleClientId;
+			settings.GoogleClientSecret = googleClientSecret;
 			settingsManager.SaveCurrent();
 
 			settingsRepo.Verify(s => s.Save(dictionary), Times.Once());

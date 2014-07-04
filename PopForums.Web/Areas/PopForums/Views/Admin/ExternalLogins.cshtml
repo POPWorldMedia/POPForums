@@ -14,9 +14,17 @@
 
 <table class="settings">
     <tr>
-        <th>Google</th>
-        <td>@Html.CheckBoxFor(x => x.UseGoogleLogin)</td>
+	    <th>Google</th>
+        <td>@Html.CheckBoxFor(x => x.UseGoogleLogin)<br />(registered redirect URI is http://yourdomain/signin-google)</td>
     </tr>
+	<tr>
+		<td>ClientId:</td>
+		<td>@Html.TextBoxFor(x => x.GoogleClientId)</td>
+	</tr>
+	<tr>
+		<td>ClientSecret:</td>
+		<td>@Html.TextBoxFor(x => x.GoogleClientSecret)</td>
+	</tr>
 	<tr>
 		<th>Facebook</th>
 		<td>@Html.CheckBoxFor(x => x.UseFacebookLogin)</td>

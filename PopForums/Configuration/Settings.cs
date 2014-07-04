@@ -54,6 +54,8 @@ namespace PopForums.Configuration
 			MicrosoftClientSecret = String.Empty;
 			YouTubeHeight = 360;
 			YouTubeWidth = 640;
+			GoogleClientId = String.Empty;
+			GoogleClientSecret = String.Empty;
 		}
 
 		public virtual string TermsOfService { get; set; }
@@ -104,5 +106,7 @@ namespace PopForums.Configuration
 		public virtual string MicrosoftClientSecret { get; set; }
 		public virtual int YouTubeHeight { get; set; }
 		public virtual int YouTubeWidth { get; set; }
+		public virtual string GoogleClientId { get; set; }
+		public virtual string GoogleClientSecret { get; set; }
 	}
 }
