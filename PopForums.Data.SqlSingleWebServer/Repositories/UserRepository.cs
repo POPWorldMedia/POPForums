@@ -127,11 +127,11 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			return GetUser("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser WHERE AuthorizationKey = @AuthorizationKey", "@AuthorizationKey", key);
 		}
 
-		public virtual User CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey)
+		public virtual User CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey, Guid salt)
 		{
 			var userID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				userID = Convert.ToInt32(connection.Command("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, LastActivityDate, LastLoginDate, AuthorizationKey, Password) VALUES (@Name, @Email, @CreationDate, @IsApproved, @LastActivityDate, @LastLoginDate, @AuthorizationKey, @Password)")
+				userID = Convert.ToInt32(connection.Command("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, LastActivityDate, LastLoginDate, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @LastActivityDate, @LastLoginDate, @AuthorizationKey, @Password, @Salt)")
 					.AddParameter("@Name", name)
 					.AddParameter("@Email", email)
 					.AddParameter("@CreationDate", creationDate)
@@ -140,6 +140,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 					.AddParameter("@LastLoginDate", creationDate)
 					.AddParameter("@AuthorizationKey", authorizationKey)
 					.AddParameter("@Password", hashedPassword)
+					.AddParameter("@Salt", salt)
 					.ExecuteAndReturnIdentity()));
 			return new User(Convert.ToInt32(userID), creationDate) {Name = name, Email = email, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey};
 		}

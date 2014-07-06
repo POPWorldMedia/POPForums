@@ -254,17 +254,16 @@ namespace PopForums.Test.Services
 			const string nameCensor = "jeffcensor";
 			const string email = "a@b.com";
 			const string password = "fred";
-			const string hashedPassword = "VwqQv7+MfqtdxdTiaDLVsQ==";
 			const string ip = "127.0.0.1";
 			var userService = GetMockedUserService();
 			var dummyUser = GetDummyUser(nameCensor, email);
-			_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, hashedPassword, It.IsAny<Guid>())).Returns(dummyUser);
+			_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(dummyUser);
 			_mockTextParser.Setup(t => t.Censor(name)).Returns(nameCensor);
 			var user = userService.CreateUser(name, email, password, true, ip);
 			Assert.AreEqual(dummyUser.Name, user.Name);
 			Assert.AreEqual(dummyUser.Email, user.Email);
 			_mockTextParser.Verify(t => t.Censor(name), Times.Once());
-			_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, hashedPassword, It.IsAny<Guid>()), Times.Once());
+			_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
 		}
 
@@ -276,17 +275,16 @@ namespace PopForums.Test.Services
 			const string nameCensor = "jeffcensor";
 			const string email = "a@b.com";
 			const string password = "fred";
-			const string hashedPassword = "VwqQv7+MfqtdxdTiaDLVsQ==";
 			const string ip = "127.0.0.1";
 			var userManager = GetMockedUserService();
 			var dummyUser = GetDummyUser(nameCensor, email);
-			_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, hashedPassword, It.IsAny<Guid>())).Returns(dummyUser);
+			_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(dummyUser);
 			_mockTextParser.Setup(t => t.Censor(name)).Returns(nameCensor);
 			var settings = new Settings();
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
 			var signUpdata = new SignupData {Email = email, Name = name, Password = password};
 			var user = userManager.CreateUser(signUpdata, ip);
-			_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, hashedPassword, It.IsAny<Guid>()), Times.Once());
+			_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
 		}
 

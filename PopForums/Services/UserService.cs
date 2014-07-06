@@ -154,8 +154,9 @@ namespace PopForums.Services
 				throw new Exception(String.Format("The e-mail {0} is banned.", email));
 			var creationDate = DateTime.UtcNow;
 			var authorizationKey = Guid.NewGuid();
-			var hashedPassword = password.GetMD5Hash();
-			var user = _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey);
+			var salt = Guid.NewGuid();
+			var hashedPassword = password.GetMD5Hash(salt);
+			var user = _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey, salt);
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated);
 			return user;
 		}

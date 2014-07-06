@@ -54,8 +54,9 @@ namespace PopForums.Repositories
 		/// <param name="isApproved">Boolean indicating user approval.</param>
 		/// <param name="hashedPassword">The hashed password string.</param>
 		/// <param name="authorizationKey">A Guid used for authorization measures.</param>
+		/// <param name="salt">A Guid used to salt the password.</param>
 		/// <returns>A new User object, populated with the data store generated UserID.</returns>
-		User CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey);
+		User CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey, Guid salt);
 
 		/// <summary>
 		/// Updates a user record in the data store with a new LastActivityDate.
