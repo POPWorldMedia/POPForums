@@ -210,6 +210,7 @@
     <Compile Include="Messaging\Topics.cs" />
     <Compile Include="Models\ClientSettings.cs" />
     <Compile Include="Models\FeedEvent.cs" />
+    <Compile Include="Models\Friend.cs" />
     <Compile Include="Models\IPHistoryEvent.cs" />
     <Compile Include="Models\PasswordResetContainer.cs" />
     <Compile Include="Models\PostEdit.cs" />

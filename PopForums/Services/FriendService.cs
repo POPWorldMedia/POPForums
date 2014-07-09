@@ -13,12 +13,12 @@ namespace PopForums.Services
 			_friendRepository = friendRepository;
 		}
 
-		public SortedList<User, bool> GetFriends(User user)
+		public List<Friend> GetFriends(User user)
 		{
 			return _friendRepository.GetFriends(user.UserID);
 		}
 
-		public SortedList<User, bool> GetFriendsOf(User user)
+		public List<Friend> GetFriendsOf(User user)
 		{
 			return _friendRepository.GetFriendsOf(user.UserID);
 		}

@@ -17,27 +17,27 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 		private readonly ICacheHelper _cacheHelper;
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public SortedList<User, bool> GetFriends(int userID)
+		public List<Friend> GetFriends(int userID)
 		{
-			var list = new SortedList<User, bool>();
+			var list = new List<Friend>();
 			_sqlObjectFactory.GetConnection().Using(c =>
 				c.Command("SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE FromUserID = @FromUserID ORDER BY pf_PopForumsUser.Name")
 				.AddParameter("@FromUserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(
-					UserRepository.PopulateUser(r), (bool)r["App"])));
+					new Friend {User = UserRepository.PopulateUser(r), IsApproved = (bool)r["App"]})));
 			return list;
 		}
 
-		public SortedList<User, bool> GetFriendsOf(int userID)
+		public List<Friend> GetFriendsOf(int userID)
 		{
-			var list = new SortedList<User, bool>();
+			var list = new List<Friend>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE ToUserID = @ToUserID ORDER BY pf_PopForumsUser.Name")
+				c.Command("SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.FromUserID = pf_PopForumsUser.UserID WHERE ToUserID = @ToUserID ORDER BY pf_PopForumsUser.Name")
 				.AddParameter("@ToUserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(
-					UserRepository.PopulateUser(r), (bool)r["App"])));
+					new Friend { User = UserRepository.PopulateUser(r), IsApproved = (bool)r["App"] })));
 			return list;
 		}
 

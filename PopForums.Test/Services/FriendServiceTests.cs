@@ -23,7 +23,7 @@ namespace PopForums.Test.Services
 		public void GetFriendsCallsRepoByUserIDAndReturnsList()
 		{
 			var service = GetService();
-			var list = new SortedList<User, bool>();
+			var list = new List<Friend>();
 			var user = new User(123, DateTime.MinValue);
 			_friendRepo.Setup(x => x.GetFriends(user.UserID)).Returns(list);
 			

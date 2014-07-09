@@ -5,8 +5,8 @@ namespace PopForums.Repositories
 {
 	public interface IFriendRepository
 	{
-		SortedList<User, bool> GetFriends(int userID);
-		SortedList<User, bool> GetFriendsOf(int userID);
+		List<Friend> GetFriends(int userID);
+		List<Friend> GetFriendsOf(int userID);
 		List<User> GetUnapprovedFriends(int userID);
 		void AddUnapprovedFriend(int fromUserID, int toUserID);
 		void DeleteFriend(int fromUserID, int toUserID);
