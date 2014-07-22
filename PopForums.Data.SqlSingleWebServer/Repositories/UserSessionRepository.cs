@@ -101,9 +101,9 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 
 		public int GetTotalSessionCount()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject(CacheKeys.CurrentSessionCount);
-			if (cacheObject != null)
-				return (int)cacheObject;
+			var cacheObject = _cacheHelper.GetCacheObject<int>(CacheKeys.CurrentSessionCount);
+			if (cacheObject != 0)
+				return cacheObject;
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(
 				connection.Command("SELECT COUNT(*) FROM pf_UserSession")

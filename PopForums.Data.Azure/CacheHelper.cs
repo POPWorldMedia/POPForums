@@ -1,46 +1,81 @@
 ﻿using System;
-using Microsoft.ApplicationServer.Caching;
+using System.Configuration;
+using Newtonsoft.Json;
 using PopForums.Configuration;
+using StackExchange.Redis;
 
 namespace PopForums.Data.Azure
 {
 	public class CacheHelper : ICacheHelper
 	{
-		public CacheHelper()
+		private readonly IErrorLog _errorLog;
+
+		public CacheHelper(IErrorLog errorLog)
 		{
+			_errorLog = errorLog;
 			_config = new Config();
-			var factory = new DataCacheFactory();
-			_dataCache = factory.GetCache(CacheName);
+			if (connection == null)
+			{
+				var connectionString = ConfigurationManager.ConnectionStrings[_config.CacheConnectionStringName].ConnectionString;
+				if (String.IsNullOrWhiteSpace(connectionString))
+					throw new Exception(String.Format("Can't find a connnection string named '{0}' for the CacheConnectionStringName.", _config.CacheConnectionStringName));
+				connection = ConnectionMultiplexer.Connect(connectionString);
+			}
+			_cache = connection.GetDatabase();
 		}
 
+		private static ConnectionMultiplexer connection;
+
 		private Config _config;
-		private DataCache _dataCache;
-		public const string CacheName = "PopForums";
+		private IDatabase _cache;
 
 		public void SetCacheObject(string key, object value)
 		{
-			_dataCache.Put(key, value, new TimeSpan(0, 0, 0, _config.CacheSeconds));
+			SetCacheObject(key, value, _config.CacheSeconds);
 		}
 
+		[Obsolete("User GetCacheObject<T>(key) instead.")]
 		public object GetCacheObject(string key)
 		{
-			return _dataCache.Get(key);
+			var v = _cache.StringGet(key);
+			return v;
 		}
 
 		public void RemoveCacheObject(string key)
 		{
-			_dataCache.Remove(key);
+			_cache.KeyDelete(key);
 		}
 
 		public void SetCacheObject(string key, object value, double seconds)
 		{
-			_dataCache.Put(key, value, new TimeSpan(0, 0, 0, (int)seconds));
+			if (value == null)
+				return;
+			try
+			{
+				var v = JsonConvert.SerializeObject(value, new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
+				_cache.StringSet(key, v, new TimeSpan(0, 0, 0, (int) seconds));
+			}
+			catch (TimeoutException exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Information);
+			}
 		}
 
 		public T GetCacheObject<T>(string key)
 		{
-			var cacheObject = _dataCache.Get(key);
-			return (T)cacheObject;
+			try
+			{
+				var v = _cache.StringGet(key);
+				if (v.IsNullOrEmpty)
+					return default(T);
+				var value = JsonConvert.DeserializeObject<T>(v);
+				return value;
+			}
+			catch (TimeoutException exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Information);
+				return default (T);
+			}
 		}
 	}
 }

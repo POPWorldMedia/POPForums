@@ -240,9 +240,9 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 
 		public Dictionary<int, List<string>> GetForumPostRestrictionRoleGraph()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject(CacheKeys.ForumPostRoleRestrictions);
+			var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumPostRoleRestrictions);
 			if (cacheObject != null)
-				return (Dictionary<int, List<string>>) cacheObject;
+				return cacheObject;
 			var dictionary = GetForumRestrictionRoleGraph("pf_ForumPostRestrictions");
 			_cacheHelper.SetCacheObject(CacheKeys.ForumPostRoleRestrictions, dictionary);
 			return dictionary;
@@ -250,9 +250,9 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 
 		public Dictionary<int, List<string>> GetForumViewRestrictionRoleGraph()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject(CacheKeys.ForumViewRoleRestrictions);
+			var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumViewRoleRestrictions);
 			if (cacheObject != null)
-				return (Dictionary<int, List<string>>)cacheObject;
+				return cacheObject;
 			var dictionary = GetForumRestrictionRoleGraph("pf_ForumViewRestrictions");
 			_cacheHelper.SetCacheObject(CacheKeys.ForumViewRoleRestrictions, dictionary);
 			return dictionary;

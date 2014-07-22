@@ -469,7 +469,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PopForums.Data.SqlSingleWebServer\PopForums.Data.SqlSingleWebServer.csproj">
-      <Project>{84FA6A15-D7B0-4375-B245-723BE20CBE49}</Project>
+      <Project>{84fa6a15-d7b0-4375-b245-723be20cbe49}</Project>
       <Name>PopForums.Data.SqlSingleWebServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\PopForums\PopForums.csproj">

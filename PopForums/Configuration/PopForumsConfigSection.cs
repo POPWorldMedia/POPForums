@@ -15,5 +15,11 @@ namespace PopForums.Configuration
 		{
 			get { return (int) this["cacheSeconds"]; }
 		}
+
+		[ConfigurationProperty("cacheConnectionStringName", IsRequired = false)]
+		public string CacheConnectionStringName
+		{
+			get { return (string)this["cacheConnectionStringName"]; }
+		}
 	}
 }
