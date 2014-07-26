@@ -19,18 +19,28 @@ namespace PopForums.Services
 
 		public void MarkForumRead(User user, Forum forum)
 		{
+			if (user == null)
+				throw new ArgumentNullException("user");
+			if (forum == null)
+				throw new ArgumentNullException("forum");
 			_lastReadRepository.SetForumRead(user.UserID, forum.ForumID, DateTime.UtcNow);
 			_lastReadRepository.DeleteTopicReadsInForum(user.UserID, forum.ForumID);
 		}
 
 		public void MarkAllForumsRead(User user)
 		{
+			if (user == null)
+				throw new ArgumentNullException("user");
 			_lastReadRepository.SetAllForumsRead(user.UserID, DateTime.UtcNow);
 			_lastReadRepository.DeleteAllTopicReads(user.UserID);
 		}
 
 		public void MarkTopicRead(User user, Topic topic)
 		{
+			if (user == null)
+				throw new ArgumentNullException("user");
+			if (topic == null)
+				throw new ArgumentNullException("topic");
 			_lastReadRepository.SetTopicRead(user.UserID, topic.TopicID, DateTime.UtcNow);
 		}
 

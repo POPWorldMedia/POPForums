@@ -323,7 +323,8 @@ namespace PopForums.Controllers
 			ViewBag.Avatars = _profileService.GetAvatars(postList);
 			ViewBag.VotedPostIDs = _postService.GetVotedPostIDs(user, postList);
 			ViewData[ViewDataDictionaries.ViewDataUserKey] = user;
-			_lastReadService.MarkTopicRead(user, topic);
+			if (user != null)
+				_lastReadService.MarkTopicRead(user, topic);
 			return View("PostItem", post);
 		}
 

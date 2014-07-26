@@ -42,6 +42,41 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void MarkTopicReadThrowsWithoutUser()
+		{
+			var service = GetService();
+			Assert.Throws<ArgumentNullException>(() => service.MarkTopicRead(null, new Topic(1)));
+		}
+
+		[Test]
+		public void MarkTopicReadThrowsWithoutTopic()
+		{
+			var service = GetService();
+			Assert.Throws<ArgumentNullException>(() => service.MarkTopicRead(new User(123, DateTime.MaxValue), null));
+		}
+
+		[Test]
+		public void MarkAllForumReadThrowsWithoutUser()
+		{
+			var service = GetService();
+			Assert.Throws<ArgumentNullException>(() => service.MarkAllForumsRead(null));
+		}
+
+		[Test]
+		public void MarkForumReadThrowsWithoutUser()
+		{
+			var service = GetService();
+			Assert.Throws<ArgumentNullException>(() => service.MarkForumRead(null, new Forum(1)));
+		}
+
+		[Test]
+		public void MarkForumReadThrowsWithoutForum()
+		{
+			var service = GetService();
+			Assert.Throws<ArgumentNullException>(() => service.MarkForumRead(new User(1, DateTime.MaxValue), null));
+		}
+
+		[Test]
 		public void MarkAllForumReadSetsReadTimes()
 		{
 			var service = GetService();
