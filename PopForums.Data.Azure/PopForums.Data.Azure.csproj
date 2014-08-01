@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="AzureInjectionRegistry.cs" />
     <Compile Include="CacheHelper.cs" />
+    <Compile Include="IgnorePropertyContractResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Configuration;
 using Newtonsoft.Json;
 using PopForums.Configuration;
+using PopForums.Models;
 using StackExchange.Redis;
 
 namespace PopForums.Data.Azure
@@ -22,12 +23,16 @@ namespace PopForums.Data.Azure
 				connection = ConnectionMultiplexer.Connect(connectionString);
 			}
 			_cache = connection.GetDatabase();
+			var contractResolver = new IgnorePropertyContractResolver();
+			contractResolver.Ignore(typeof (User), "Identity");
+			_jsonSerializerSettings = new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Ignore, ContractResolver = contractResolver};
 		}
 
 		private static ConnectionMultiplexer connection;
 
 		private Config _config;
 		private IDatabase _cache;
+		private JsonSerializerSettings _jsonSerializerSettings;
 
 		public void SetCacheObject(string key, object value)
 		{
@@ -52,7 +57,7 @@ namespace PopForums.Data.Azure
 				return;
 			try
 			{
-				var v = JsonConvert.SerializeObject(value, new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
+				var v = JsonConvert.SerializeObject(value, _jsonSerializerSettings);
 				_cache.StringSet(key, v, new TimeSpan(0, 0, 0, (int) seconds));
 			}
 			catch (TimeoutException exc)
@@ -68,7 +73,7 @@ namespace PopForums.Data.Azure
 				var v = _cache.StringGet(key);
 				if (v.IsNullOrEmpty)
 					return default(T);
-				var value = JsonConvert.DeserializeObject<T>(v);
+				var value = JsonConvert.DeserializeObject<T>(v, _jsonSerializerSettings);
 				return value;
 			}
 			catch (TimeoutException exc)
