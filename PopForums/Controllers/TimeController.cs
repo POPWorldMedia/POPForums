@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Services;
 using PopForums.Web;
@@ -12,9 +11,9 @@ namespace PopForums.Controllers
 	{
 		public TimeController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_timeFormattingService = container.Get<ITimeFormattingService>();
-			_profileService = container.Get<IProfileService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_timeFormattingService = serviceLocator.GetInstance<ITimeFormattingService>();
+			_profileService = serviceLocator.GetInstance<IProfileService>();
 		}
 
 		protected internal TimeController(ITimeFormattingService timeFormattingService, IProfileService profileService)

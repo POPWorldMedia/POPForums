@@ -1,14 +1,14 @@
-﻿using Ninject;
-using PopForums.Services;
+﻿using PopForums.Services;
+using StructureMap;
 
 namespace PopForums.Configuration
 {
 	public class UserSessionApplicationService : ApplicationServiceBase
 	{
-		public override void Start(IKernel kernel)
+		public override void Start(IContainer container)
 		{
-			_userSessionService = kernel.Get<IUserSessionService>();
-			base.Start(kernel);
+			_userSessionService = container.GetInstance<IUserSessionService>();
+			base.Start(container);
 		}
 
 		private IUserSessionService _userSessionService;

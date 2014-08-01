@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -12,12 +11,12 @@ namespace PopForums.Controllers
 	{
 		public SubscriptionController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_subService = container.Get<ISubscribedTopicsService>();
-			_topicService = container.Get<ITopicService>();
-			_userService = container.Get<IUserService>();
-			_lastReadService = container.Get<ILastReadService>();
-			_forumService = container.Get<IForumService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_subService = serviceLocator.GetInstance<ISubscribedTopicsService>();
+			_topicService = serviceLocator.GetInstance<ITopicService>();
+			_userService = serviceLocator.GetInstance<IUserService>();
+			_lastReadService = serviceLocator.GetInstance<ILastReadService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
 		}
 
 		protected internal SubscriptionController(ISubscribedTopicsService subService, ITopicService topicService, IUserService userService, ILastReadService lastReadService, IForumService forumService)

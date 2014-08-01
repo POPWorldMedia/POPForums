@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using Ninject;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web;
@@ -203,7 +202,7 @@ namespace PopForums.Extensions
 		public static MvcHtmlString RoleCheckBoxes(this HtmlHelper helper, string name, string[] checkedRoles)
 		{
 			var build = new StringBuilder();
-			var userService = PopForumsActivation.Kernel.Get<IUserService>();
+			var userService = PopForumsActivation.ServiceLocator.GetInstance<IUserService>();
 			var roles = userService.GetAllRoles();
 			foreach (var role in roles)
 			{

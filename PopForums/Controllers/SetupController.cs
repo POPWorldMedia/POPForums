@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -12,9 +11,9 @@ namespace PopForums.Controllers
 	{
 		public SetupController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_setupService = container.Get<ISetupService>();
-			_userService = container.Get<IUserService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_setupService = serviceLocator.GetInstance<ISetupService>();
+			_userService = serviceLocator.GetInstance<IUserService>();
 		}
 
 		protected internal SetupController(ISetupService setupService, IUserService userService)

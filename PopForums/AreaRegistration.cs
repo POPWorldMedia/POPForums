@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Controllers;
 using PopForums.Repositories;
 using PopForums.Web;
@@ -35,8 +34,8 @@ namespace PopForums
 
 		public override void RegisterArea(AreaRegistrationContext context)
 		{
-			var kernel = PopForumsActivation.Kernel;
-			var forumRepository = kernel.Get<IForumRepository>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var forumRepository = serviceLocator.GetInstance<IForumRepository>();
 			var nameSpaces = new List<string> {"PopForums.Controllers"};
 			if (PopForumsActivation.AdditionalControllerNamespaces != null)
 				nameSpaces.AddRange(PopForumsActivation.AdditionalControllerNamespaces);

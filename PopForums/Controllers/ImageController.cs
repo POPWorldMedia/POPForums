@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Services;
 using PopForums.Web;
 
@@ -13,8 +12,8 @@ namespace PopForums.Controllers
 	{
 		public ImageController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_imageService = container.Get<IImageService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_imageService = serviceLocator.GetInstance<IImageService>();
 		}
 
 		protected internal ImageController(IImageService imageService)

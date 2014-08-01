@@ -1,16 +1,16 @@
-﻿using Ninject;
-using PopForums.Configuration;
+﻿using PopForums.Configuration;
+using StructureMap;
 
 namespace PopForums.Services
 {
 	public class SearchIndexApplicationService : ApplicationServiceBase
 	{
-		public override void Start(IKernel kernel)
+		public override void Start(IContainer container)
 		{
-			_searchService = kernel.Get<ISearchService>();
-			_settingsManager = kernel.Get<ISettingsManager>();
-			_postService = kernel.Get<IPostService>();
-			base.Start(kernel);
+			_searchService = container.GetInstance<ISearchService>();
+			_settingsManager = container.GetInstance<ISettingsManager>();
+			_postService = container.GetInstance<IPostService>();
+			base.Start(container);
 		}
 
 		private ISearchService _searchService;

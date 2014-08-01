@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -13,10 +12,10 @@ namespace PopForums.Controllers
 	{
 		public SearchController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_searchService = container.Get<ISearchService>();
-			_forumService = container.Get<IForumService>();
-			_lastReadService = container.Get<ILastReadService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_searchService = serviceLocator.GetInstance<ISearchService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_lastReadService = serviceLocator.GetInstance<ILastReadService>();
 		}
 
 		protected internal SearchController(ISearchService searchService, IForumService forumService, ILastReadService lastReadService)

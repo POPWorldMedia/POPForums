@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-using Ninject;
 using PopForums.Configuration;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Email;
 using PopForums.ScoringGame;
 using PopForums.Services;
 using PopForums.Web;
+using StructureMap;
 
 [assembly: PreApplicationStartMethod(typeof(PopForumsActivation), "Initialize")]
 
@@ -21,8 +23,11 @@ namespace PopForums.Web
 			{
 				if (!_isInitialized)
 				{
-					Kernel = new StandardKernel(new CoreInjectionModule());
-					DynamicModuleUtility.RegisterModule(typeof (PopForumsLoggingModule));
+					Container = ContainerFactory.Initialize();
+					ServiceLocator = new StructureMapDependencyScope(Container);
+					StructuremapMvc.StructureMapDependencyScope = new StructureMapDependencyScope(Container);
+					DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));
+					DynamicModuleUtility.RegisterModule(typeof(PopForumsLoggingModule));
 					_isInitialized = true;
 				}
 			}
@@ -34,7 +39,9 @@ namespace PopForums.Web
 			{
 				if (!_isInitialized)
 				{
-					Kernel = new StandardKernel(new CoreInjectionModule());
+					Container = ContainerFactory.Initialize();
+					ServiceLocator = new StructureMapDependencyScope(Container);
+					StructuremapMvc.StructureMapDependencyScope = new StructureMapDependencyScope(Container);
 					_isInitialized = true;
 				}
 			}
@@ -46,7 +53,7 @@ namespace PopForums.Web
 		{
 			Initialize();
 			IsServiceRunningInstance = true;
-			var setupService = Kernel.Get<ISetupService>();
+			var setupService = ServiceLocator.GetInstance<ISetupService>();
 			if (!setupService.IsDatabaseSetup())
 				return;
 			SetupServices();
@@ -60,10 +67,10 @@ namespace PopForums.Web
 
 		private static void SetupServices()
 		{
-			_emailService.Start(Kernel);
-			_userSessionService.Start(Kernel);
-			_searchIndexService.Start(Kernel);
-			_awardCalcService.Start(Kernel);
+			_emailService.Start(Container);
+			_userSessionService.Start(Container);
+			_searchIndexService.Start(Container);
+			_awardCalcService.Start(Container);
 			ApplicationServices.Add(_emailService);
 			ApplicationServices.Add(_userSessionService);
 			ApplicationServices.Add(_searchIndexService);
@@ -79,13 +86,13 @@ namespace PopForums.Web
 
 		public static void SetUserAttribute()
 		{
-			var userAttribute = new PopForumsUserAttribute(Kernel.Get<IUserService>(), Kernel.Get<IUserSessionService>());
+			var userAttribute = new PopForumsUserAttribute(ServiceLocator.GetInstance<IUserService>(), ServiceLocator.GetInstance<IUserSessionService>());
 			GlobalFilters.Filters.Add(userAttribute);
 		}
 
 		public static void SetGlobalUserAttribute()
 		{
-			var userAttribute = new PopForumsGlobalUserAttribute(Kernel.Get<IUserService>(), Kernel.Get<IUserSessionService>());
+			var userAttribute = new PopForumsGlobalUserAttribute(ServiceLocator.GetInstance<IUserService>(), ServiceLocator.GetInstance<IUserSessionService>());
 			GlobalFilters.Filters.Add(userAttribute);
 		}
 
@@ -95,8 +102,8 @@ namespace PopForums.Web
 		}
 
 		public static string[] AdditionalControllerNamespaces { get; private set; }
-
-		public static IKernel Kernel { get; private set; }
+		public static IContainer Container { get; private set; }
+		public static IServiceLocator ServiceLocator { get; private set; }
 
 		private static bool _isInitialized;
 

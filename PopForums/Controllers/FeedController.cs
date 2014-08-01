@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Web.Mvc;
-using Ninject;
+﻿using System.Web.Mvc;
 using PopForums.Feeds;
 using PopForums.Web;
 
@@ -10,8 +8,8 @@ namespace PopForums.Controllers
 	{
 		public FeedController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_feedService = container.Get<IFeedService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_feedService = serviceLocator.GetInstance<IFeedService>();
 		}
 
 		protected internal FeedController(IFeedService feedService)

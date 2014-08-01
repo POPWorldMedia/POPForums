@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Services;
 using PopForums.Web;
@@ -12,11 +11,11 @@ namespace PopForums.Controllers
 	{
 		public ModeratorController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_topicService = container.Get<ITopicService>();
-			_forumService = container.Get<IForumService>();
-			_postService = container.Get<IPostService>();
-			_moderationLogService = container.Get<IModerationLogService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_topicService = serviceLocator.GetInstance<ITopicService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_postService = serviceLocator.GetInstance<IPostService>();
+			_moderationLogService = serviceLocator.GetInstance<IModerationLogService>();
 		}
 
 		protected internal ModeratorController(ITopicService topicService, IForumService forumService, IPostService postService, IModerationLogService moderationLogService)

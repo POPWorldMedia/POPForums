@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using Ninject;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -22,23 +21,23 @@ namespace PopForums.Controllers
 	{
 		public AccountController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_userService = container.Get<IUserService>();
-			_settingsManager = container.Get<ISettingsManager>();
-			_profileService = container.Get<IProfileService>();
-			_newAccountMailer = container.Get<INewAccountMailer>();
-			_postService = container.Get<IPostService>();
-			_topicService = container.Get<ITopicService>();
-			_forumService = container.Get<IForumService>();
-			_lastReadService = container.Get<ILastReadService>();
-			_clientSettingsMapper = container.Get<IClientSettingsMapper>();
-			_userEmailer = container.Get<IUserEmailer>();
-			_imageService = container.Get<IImageService>();
-			_feedService = container.Get<IFeedService>();
-			_userAwardService = container.Get<IUserAwardService>();
-			_owinContext = container.Get<IOwinContext>();
-			_externalAuthentication = container.Get<IExternalAuthentication>();
-			_userAssociationManager = container.Get<IUserAssociationManager>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_userService = serviceLocator.GetInstance<IUserService>();
+			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();
+			_profileService = serviceLocator.GetInstance<IProfileService>();
+			_newAccountMailer = serviceLocator.GetInstance<INewAccountMailer>();
+			_postService = serviceLocator.GetInstance<IPostService>();
+			_topicService = serviceLocator.GetInstance<ITopicService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_lastReadService = serviceLocator.GetInstance<ILastReadService>();
+			_clientSettingsMapper = serviceLocator.GetInstance<IClientSettingsMapper>();
+			_userEmailer = serviceLocator.GetInstance<IUserEmailer>();
+			_imageService = serviceLocator.GetInstance<IImageService>();
+			_feedService = serviceLocator.GetInstance<IFeedService>();
+			_userAwardService = serviceLocator.GetInstance<IUserAwardService>();
+			_owinContext = serviceLocator.GetInstance<IOwinContext>();
+			_externalAuthentication = serviceLocator.GetInstance<IExternalAuthentication>();
+			_userAssociationManager = serviceLocator.GetInstance<IUserAssociationManager>();
 		}
 
 		protected internal AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager)

@@ -1,6 +1,6 @@
 using System;
 using System.Web;
-using Ninject;
+using Microsoft.Practices.ServiceLocation;
 using PopForums.Configuration;
 using PopForums.Services;
 
@@ -31,10 +31,10 @@ namespace PopForums.Web
 			{
 				try
 				{
-					Kernel = PopForumsActivation.Kernel;
-					SettingsManager = Kernel.Get<ISettingsManager>();
-					ErrorLog = Kernel.Get<IErrorLog>();
-					var setupService = Kernel.Get<ISetupService>();
+					ServiceLocator = PopForumsActivation.ServiceLocator;
+					SettingsManager = ServiceLocator.GetInstance<ISettingsManager>();
+					ErrorLog = ServiceLocator.GetInstance<IErrorLog>();
+					var setupService = ServiceLocator.GetInstance<ISetupService>();
 					if (!setupService.IsDatabaseSetup())
 						return;
 					_isInitialized = true;
@@ -66,7 +66,7 @@ namespace PopForums.Web
 			}
 		}
 
-		public IKernel Kernel { get; private set; }
+		public IServiceLocator ServiceLocator { get; private set; }
 		public ISettingsManager SettingsManager { get; private set; }
 		public IErrorLog ErrorLog { get; private set; }
 		public static int ModuleInstanceCount

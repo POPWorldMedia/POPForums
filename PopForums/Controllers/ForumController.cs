@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
@@ -14,17 +13,17 @@ namespace PopForums.Controllers
 	{
 		public ForumController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_settingsManager = container.Get<ISettingsManager>();
-			_forumService = container.Get<IForumService>();
-			_topicService = container.Get<ITopicService>();
-			_postService = container.Get<IPostService>();
-			_topicViewCountService = container.Get<ITopicViewCountService>();
-			_subService = container.Get<ISubscribedTopicsService>();
-			_lastReadService = container.Get<ILastReadService>();
-			_favoriteTopicService = container.Get<IFavoriteTopicService>();
-			_profileService = container.Get<IProfileService>();
-			_mobileDetectionWrapper = container.Get<IMobileDetectionWrapper>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_topicService = serviceLocator.GetInstance<ITopicService>();
+			_postService = serviceLocator.GetInstance<IPostService>();
+			_topicViewCountService = serviceLocator.GetInstance<ITopicViewCountService>();
+			_subService = serviceLocator.GetInstance<ISubscribedTopicsService>();
+			_lastReadService = serviceLocator.GetInstance<ILastReadService>();
+			_favoriteTopicService = serviceLocator.GetInstance<IFavoriteTopicService>();
+			_profileService = serviceLocator.GetInstance<IProfileService>();
+			_mobileDetectionWrapper = serviceLocator.GetInstance<IMobileDetectionWrapper>();
 		}
 
 		protected internal ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IMobileDetectionWrapper mobileDetectionWrapper)

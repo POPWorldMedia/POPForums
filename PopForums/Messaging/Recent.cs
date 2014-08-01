@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.SignalR;
-using Ninject;
 using PopForums.Services;
 using PopForums.Web;
 
@@ -9,9 +8,9 @@ namespace PopForums.Messaging
 	{
 		public Recent()
 		{
-			var container = PopForumsActivation.Kernel;
-			_forumService = container.Get<IForumService>();
-			_userService = container.Get<IUserService>();
+			var container = PopForumsActivation.Container;
+			_forumService = container.GetInstance<IForumService>();
+			_userService = container.GetInstance<IUserService>();
 		}
 
 		private readonly IForumService _forumService;

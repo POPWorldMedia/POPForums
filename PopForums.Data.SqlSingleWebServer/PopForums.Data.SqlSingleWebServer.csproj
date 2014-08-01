@@ -64,9 +64,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.3.0.5.130\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
+    <Reference Include="StructureMap.Net4">
+      <HintPath>..\packages\structuremap.3.0.5.130\lib\net40\StructureMap.Net4.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -75,6 +80,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SqlSingleInjectionRegistry.cs" />
     <Content Include="PopForums9.2andLaterto12.0.sql" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Repositories\AwardCalculationQueueRepository.cs" />
@@ -107,7 +113,6 @@
     <Compile Include="Repositories\UserImageRepository.cs" />
     <Compile Include="Repositories\UserSessionRepository.cs" />
     <Compile Include="SqlObjectFactory.cs" />
-    <Compile Include="SqlSingleInjectionModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ProfileRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />

@@ -1,7 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Ninject;
 using PopForums.Data.SqlSingleWebServer;
 
 namespace PopForums.Web
@@ -10,11 +9,11 @@ namespace PopForums.Web
 	{
 		protected void Application_Start()
 		{
-			// this registers the SQL single Web server repositories for Ninject
-			PopForumsActivation.Kernel.Load(new SqlSingleInjectionModule());
+			// this registers the SQL single Web server repositories for StructureMap
+			PopForumsActivation.Container.Configure(x => x.AddRegistry(new SqlSingleInjectionRegistry()));
 
-			// this registers the Azure repositories for Ninject
-			// PopForumsActivation.Kernel.Load(new PopForums.Data.Azure.AzureInjectionModule());
+			// this registers the Azure repositories for StructureMap
+			//PopForumsActivation.Container.Configure(x => x.AddRegistry(new PopForums.Data.Azure.AzureInjectionRegistry()));
 
 			// Sets global filter to set a PopForums.Model.User in the pipeline as an IPrincipal
 			PopForumsActivation.SetUserAttribute();

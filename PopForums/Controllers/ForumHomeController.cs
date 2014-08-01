@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using System.Web.WebPages;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Services;
 using PopForums.Web;
@@ -15,10 +14,10 @@ namespace PopForums.Controllers
 	{
 		public ForumHomeController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_forumService = container.Get<IForumService>();
-			_userService = container.Get<IUserService>();
-			_userSessionService = container.Get<IUserSessionService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_userService = serviceLocator.GetInstance<IUserService>();
+			_userSessionService = serviceLocator.GetInstance<IUserSessionService>();
 		}
 
 		protected internal ForumHomeController(IForumService forumService, IUserService userService, IUserSessionService userSessionService)

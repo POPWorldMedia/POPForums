@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.SignalR;
-using Ninject;
 using PopForums.Services;
 using PopForums.Web;
 
@@ -9,8 +8,8 @@ namespace PopForums.Messaging
 	{
 		public Topics()
 		{
-			var container = PopForumsActivation.Kernel;
-			_topicService = container.Get<ITopicService>();
+			var container = PopForumsActivation.Container;
+			_topicService = container.GetInstance<ITopicService>();
 		}
 
 		public Topics(ITopicService topicService)

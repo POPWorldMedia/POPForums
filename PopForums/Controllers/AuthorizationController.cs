@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.Owin;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Models;
@@ -14,11 +13,11 @@ namespace PopForums.Controllers
 	{
 		public AuthorizationController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_userService = container.Get<IUserService>();
-			_owinContext = container.Get<IOwinContext>();
-			_externalAuthentication = container.Get<IExternalAuthentication>();
-			_userAssociationManager = container.Get<IUserAssociationManager>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_userService = serviceLocator.GetInstance<IUserService>();
+			_owinContext = serviceLocator.GetInstance<IOwinContext>();
+			_externalAuthentication = serviceLocator.GetInstance<IExternalAuthentication>();
+			_userAssociationManager = serviceLocator.GetInstance<IUserAssociationManager>();
 		}
 
 		protected internal AuthorizationController(IUserService userService, IOwinContext owinContext, IExternalAuthentication externalAuthentication, IUserAssociationManager userAssociationManager)

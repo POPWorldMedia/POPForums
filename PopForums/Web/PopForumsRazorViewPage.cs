@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Models;
 using PopForums.Services;
 
@@ -15,9 +14,9 @@ namespace PopForums.Web
 	{
 		protected PopForumsRazorViewPage()
 		{
-			var container = PopForumsActivation.Kernel;
-			TimeFormattingService = container.Get<ITimeFormattingService>();
-			ProfileService = container.Get<IProfileService>();
+			var container = PopForumsActivation.ServiceLocator;
+			TimeFormattingService = container.GetInstance<ITimeFormattingService>();
+			ProfileService = container.GetInstance<IProfileService>();
 		}
 
 		public ITimeFormattingService TimeFormattingService { get; set; }

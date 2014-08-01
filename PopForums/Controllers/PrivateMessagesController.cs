@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -14,9 +13,9 @@ namespace PopForums.Controllers
 	{
 		public PrivateMessagesController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_privateMessageService = container.Get<IPrivateMessageService>();
-			_userService = container.Get<IUserService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_privateMessageService = serviceLocator.GetInstance<IPrivateMessageService>();
+			_userService = serviceLocator.GetInstance<IUserService>();
 		}
 
 		protected internal PrivateMessagesController(IPrivateMessageService privateMessageService, IUserService userService)

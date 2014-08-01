@@ -1,15 +1,15 @@
-﻿using Ninject;
-using PopForums.Configuration;
+﻿using PopForums.Configuration;
+using StructureMap;
 
 namespace PopForums.ScoringGame
 {
 	public class AwardCalculatorApplicationService : ApplicationServiceBase
 	{
-		public override void Start(IKernel kernel)
+		public override void Start(IContainer container)
 		{
-			_settingsManager = kernel.Get<ISettingsManager>();
-			_awardCalculator = kernel.Get<IAwardCalculator>();
-			base.Start(kernel);
+			_settingsManager = container.GetInstance<ISettingsManager>();
+			_awardCalculator = container.GetInstance<IAwardCalculator>();
+			base.Start(container);
 		}
 
 		private ISettingsManager _settingsManager;

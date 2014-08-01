@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
-using Ninject;
 using Owin;
 using PopForums.ExternalLogin;
 using PopForums.Services;
@@ -13,11 +12,11 @@ namespace PopForums.Configuration
 	{
 		public void Configuration(IAppBuilder app)
 		{
-			var setupService = PopForumsActivation.Kernel.Get<ISetupService>();
+			var setupService = PopForumsActivation.ServiceLocator.GetInstance<ISetupService>();
 			if (!setupService.IsDatabaseSetup())
 				return;
 
-			var settings = PopForumsActivation.Kernel.Get<ISettingsManager>().Current;
+			var settings = PopForumsActivation.ServiceLocator.GetInstance<ISettingsManager>().Current;
 
 			app.SetDefaultSignInAsAuthenticationType(ExternalAuthentication.ExternalCookieName);
 

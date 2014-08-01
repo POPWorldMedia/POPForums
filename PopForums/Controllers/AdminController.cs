@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Ninject;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
@@ -18,23 +17,23 @@ namespace PopForums.Controllers
 	{
 		public AdminController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_userService = container.Get<IUserService>();
-			_profileService = container.Get<IProfileService>();
-			_settingsManager = container.Get<ISettingsManager>();
-			_categoryService = container.Get<ICategoryService>();
-			_forumService = container.Get<IForumService>();
-			_searchService = container.Get<ISearchService>();
-			_securityLogService = container.Get<ISecurityLogService>();
-			_errorLogService = container.Get<IErrorLog>();
-			_banService = container.Get<IBanService>();
-			_moderationLogService = container.Get<IModerationLogService>();
-			_ipHistoryService = container.Get<IIPHistoryService>();
-			_imageService = container.Get<IImageService>();
-			_mailingListService = container.Get<IMailingListService>();
-			_eventDefinitionService = container.Get<IEventDefinitionService>();
-			_awardDefinitionService = container.Get<IAwardDefinitionService>();
-			_eventPublisher = container.Get<IEventPublisher>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_userService = serviceLocator.GetInstance<IUserService>();
+			_profileService = serviceLocator.GetInstance<IProfileService>();
+			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();
+			_categoryService = serviceLocator.GetInstance<ICategoryService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_searchService = serviceLocator.GetInstance<ISearchService>();
+			_securityLogService = serviceLocator.GetInstance<ISecurityLogService>();
+			_errorLogService = serviceLocator.GetInstance<IErrorLog>();
+			_banService = serviceLocator.GetInstance<IBanService>();
+			_moderationLogService = serviceLocator.GetInstance<IModerationLogService>();
+			_ipHistoryService = serviceLocator.GetInstance<IIPHistoryService>();
+			_imageService = serviceLocator.GetInstance<IImageService>();
+			_mailingListService = serviceLocator.GetInstance<IMailingListService>();
+			_eventDefinitionService = serviceLocator.GetInstance<IEventDefinitionService>();
+			_awardDefinitionService = serviceLocator.GetInstance<IAwardDefinitionService>();
+			_eventPublisher = serviceLocator.GetInstance<IEventPublisher>();
 		}
 
 		protected internal AdminController(IUserService userService, IProfileService profileService, ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, ISearchService searchService, ISecurityLogService securityLogService, IErrorLog errorLog, IBanService banService, IModerationLogService modLogService, IIPHistoryService ipHistoryService, IImageService imageService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher)

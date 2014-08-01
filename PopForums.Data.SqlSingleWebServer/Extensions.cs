@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using Ninject;
 using PopForums.Configuration;
 using PopForums.Web;
 
@@ -10,14 +9,14 @@ namespace PopForums.Data.SqlSingleWebServer
 	{
 		public static IDbCommand Command(this IDbConnection connection, string sql)
 		{
-			var factory = PopForumsActivation.Kernel.Get<ISqlObjectFactory>();
+			var factory = PopForumsActivation.Container.GetInstance<ISqlObjectFactory>();
 			var command = factory.GetCommand(sql, connection);
 			return command;
 		}
 
 		public static IDbCommand AddParameter(this IDbCommand command, string parameterName, object value)
 		{
-			var factory = PopForumsActivation.Kernel.Get<ISqlObjectFactory>();
+			var factory = PopForumsActivation.Container.GetInstance<ISqlObjectFactory>();
 			var parameter = factory.GetParameter(parameterName, value);
 			command.Parameters.Add(parameter);
 			return command;

@@ -1,17 +1,17 @@
-﻿using Ninject;
-using PopForums.Configuration;
+﻿using PopForums.Configuration;
 using PopForums.Repositories;
+using StructureMap;
 
 namespace PopForums.Email
 {
 	public class EmailApplicationService : ApplicationServiceBase
 	{
-		public override void Start(IKernel kernel)
+		public override void Start(IContainer container)
 		{
-			_settingsManager = kernel.Get<ISettingsManager>();
-			_smtpWrapper = kernel.Get<ISmtpWrapper>();
-			_queuedEmailRepository = kernel.Get<IQueuedEmailMessageRepository>();
-			base.Start(kernel);
+			_settingsManager = container.GetInstance<ISettingsManager>();
+			_smtpWrapper = container.GetInstance<ISmtpWrapper>();
+			_queuedEmailRepository = container.GetInstance<IQueuedEmailMessageRepository>();
+			base.Start(container);
 		}
 
 		private ISettingsManager _settingsManager;

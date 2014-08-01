@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Ninject;
+using StructureMap;
 
 namespace PopForums.Configuration
 {
@@ -19,9 +19,9 @@ namespace PopForums.Configuration
 			Interval = 1;
 		}
 
-		public virtual void Start(IKernel kernel)
+		public virtual void Start(IContainer container)
 		{
-			ErrorLog = kernel.Get<IErrorLog>();
+			ErrorLog = container.GetInstance<IErrorLog>();
 			IsRunning = true;
 			TimerCallback callback = Execute;
 			Timer = new Timer(callback, this, Interval, Interval);

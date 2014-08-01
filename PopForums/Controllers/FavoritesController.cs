@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using Ninject;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -11,11 +10,11 @@ namespace PopForums.Controllers
 	{
 		public FavoritesController()
 		{
-			var container = PopForumsActivation.Kernel;
-			_favoriteTopicService = container.Get<IFavoriteTopicService>();
-			_forumService = container.Get<IForumService>();
-			_lastReadService = container.Get<ILastReadService>();
-			_topicService = container.Get<ITopicService>();
+			var serviceLocator = PopForumsActivation.ServiceLocator;
+			_favoriteTopicService = serviceLocator.GetInstance<IFavoriteTopicService>();
+			_forumService = serviceLocator.GetInstance<IForumService>();
+			_lastReadService = serviceLocator.GetInstance<ILastReadService>();
+			_topicService = serviceLocator.GetInstance<ITopicService>();
 		}
 
 		protected internal FavoritesController(IFavoriteTopicService favoriteTopicService, IForumService forumService, ILastReadService lastReadService, ITopicService topicService)
