@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.Practices.ServiceLocation;
@@ -40,8 +41,7 @@ namespace PopForums.Web
 				if (!_isInitialized)
 				{
 					Container = ContainerFactory.Initialize();
-					ServiceLocator = new StructureMapDependencyScope(Container);
-					StructuremapMvc.StructureMapDependencyScope = new StructureMapDependencyScope(Container);
+					Container.Configure(x => x.AddRegistry<PopForumsRegistry>());
 					_isInitialized = true;
 				}
 			}
@@ -56,6 +56,17 @@ namespace PopForums.Web
 			var setupService = ServiceLocator.GetInstance<ISetupService>();
 			if (!setupService.IsDatabaseSetup())
 				return;
+			SetupServices();
+		}
+
+		public static void StartServicesOutOfWeb()
+		{
+			var setupService = Container.GetInstance<ISetupService>();
+			if (!setupService.IsDatabaseSetup())
+			{
+				Trace.WriteLine("Database is not setup.");
+				return;
+			}
 			SetupServices();
 		}
 

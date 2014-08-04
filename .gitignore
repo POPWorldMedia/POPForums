@@ -1,1 +1,4 @@
 packages
+/PopForums.AzureWorker/csx/Debug
+/PopForums.AzureWorker/csx/Release
+/PopForums.AzureWorker/rcf/Debug/PopForums.BackgroundWorkerContent
