@@ -40,7 +40,7 @@ namespace PopForums.Controllers
 				var time = DateTime.Parse(item);
 				list.Add(new TimePairs {Key = item, Value = _timeFormattingService.GetFormattedTime(time)});
 			}
-			return Json(list);
+			return Json(list, JsonRequestBehavior.AllowGet);
 		}
 
 		private class TimePairs
