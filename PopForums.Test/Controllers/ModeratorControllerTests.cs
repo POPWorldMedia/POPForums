@@ -177,8 +177,10 @@ namespace PopForums.Test.Controllers
 		public void DeleteTopicPermanentlyCallsTopicServiceForDelete()
 		{
 			var controller = GetController();
-			var topic = new Topic(123);
+			var forum = new Forum(456);
+			var topic = new Topic(123) { ForumID = forum.ForumID };
 			_mockTopicService.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+			_mockForumService.Setup(x => x.Get(topic.ForumID)).Returns(forum);
 			controller.DeleteTopicPermanently(topic.TopicID);
 			_mockTopicService.Verify(x => x.HardDeleteTopic(topic, It.IsAny<User>()), Times.Once());
 		}

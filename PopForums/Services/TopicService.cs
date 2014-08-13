@@ -119,6 +119,7 @@ namespace PopForums.Services
 			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
 			_forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 			_forumRepository.IncrementPostCount(topic.ForumID);
+			_topicRepository.MarkTopicForIndexing(topic.TopicID);
 			_profileRepository.SetLastPostID(user.UserID, postID);
 			if (unsubscribeLinkGenerator != null)
 				_subscribedTopicService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
@@ -236,6 +237,7 @@ namespace PopForums.Services
 				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
 				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
+				_topicRepository.MarkTopicForIndexing(topic.TopicID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
 				var oldForum = _forumService.Get(oldTopic.ForumID);

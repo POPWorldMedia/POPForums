@@ -234,6 +234,19 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void PostReplyMarksTopicForIndexing()
+		{
+			var topic = new Topic(1) { ForumID = 2 };
+			var user = GetUser();
+			var postTime = DateTime.UtcNow;
+			var topicService = GetTopicService();
+			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
+		}
+
+		[Test]
 		public void PostReplyNotifiesBroker()
 		{
 			var topic = new Topic(1) { ForumID = 2 };
@@ -555,6 +568,20 @@ namespace PopForums.Test.Services
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, "new title", "new-title"), Times.Exactly(1));
+		}
+
+		[Test]
+		public void UpdateTopicMarksTopicForIndexingWithMod()
+		{
+			var forum = new Forum(2);
+			var topic = new Topic(1) { ForumID = forum.ForumID };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2 });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
+			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
 		}
 
 		[Test]
