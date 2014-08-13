@@ -10,10 +10,10 @@ namespace PopForums.Web
 		protected void Application_Start()
 		{
 			// this registers the SQL single Web server repositories for StructureMap
-			//PopForumsActivation.Container.Configure(x => x.AddRegistry(new SqlSingleInjectionRegistry()));
+			PopForumsActivation.Container.Configure(x => x.AddRegistry(new SqlSingleInjectionRegistry()));
 
 			// this registers the Azure repositories for StructureMap
-			PopForumsActivation.Container.Configure(x => x.AddRegistry(new PopForums.Data.Azure.AzureInjectionRegistry()));
+			//PopForumsActivation.Container.Configure(x => x.AddRegistry(new PopForums.Data.Azure.AzureInjectionRegistry()));
 
 			// Sets global filter to set a PopForums.Model.User in the pipeline as an IPrincipal
 			PopForumsActivation.SetUserAttribute();

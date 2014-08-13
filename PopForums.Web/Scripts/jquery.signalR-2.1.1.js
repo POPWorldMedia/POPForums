@@ -1,7 +1,7 @@
 /* jquery.signalR.core.js */
 /*global window:false */
 /*!
- * ASP.NET SignalR JavaScript Library v2.1.0
+ * ASP.NET SignalR JavaScript Library v2.1.1
  * http://signalr.net/
  *
  * Copyright (C) Microsoft Corporation. All rights reserved.
@@ -589,57 +589,66 @@
                     }, connection._.totalTransportConnectTimeout);
 
                     transport.start(connection, function () { // success
-                        // Firefox 11+ doesn't allow sync XHR withCredentials: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#withCredentials
-                        var isFirefox11OrGreater = signalR._.firefoxMajorVersion(window.navigator.userAgent) >= 11,
-                            asyncAbort = !!connection.withCredentials && isFirefox11OrGreater;
+                        var onStartSuccess = function () {
+                                // Firefox 11+ doesn't allow sync XHR withCredentials: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#withCredentials
+                                var isFirefox11OrGreater = signalR._.firefoxMajorVersion(window.navigator.userAgent) >= 11,
+                                    asyncAbort = !!connection.withCredentials && isFirefox11OrGreater;
 
-                        // The connection was aborted while initializing transports
-                        if (connection.state === signalR.connectionState.disconnected) {
-                            return;
-                        }
+                                connection.log("The start request succeeded. Transitioning to the connected state.");
+
+                                if (supportsKeepAlive(connection)) {
+                                    signalR.transports._logic.monitorKeepAlive(connection);
+                                }
+
+                                signalR.transports._logic.startHeartbeat(connection);
+
+                                // Used to ensure low activity clients maintain their authentication.
+                                // Must be configured once a transport has been decided to perform valid ping requests.
+                                signalR._.configurePingInterval(connection);
+
+                                if (!changeState(connection,
+                                                 signalR.connectionState.connecting,
+                                                 signalR.connectionState.connected)) {
+                                    connection.log("WARNING! The connection was not in the connecting state.");
+                                }
+
+                                // Drain any incoming buffered messages (messages that came in prior to connect)
+                                connection._.connectingMessageBuffer.drain();
+
+                                $(connection).triggerHandler(events.onStart);
+
+                                // wire the stop handler for when the user leaves the page
+                                _pageWindow.bind("unload", function () {
+                                    connection.log("Window unloading, stopping the connection.");
+
+                                    connection.stop(asyncAbort);
+                                });
+
+                                if (isFirefox11OrGreater) {
+                                    // Firefox does not fire cross-domain XHRs in the normal unload handler on tab close.
+                                    // #2400
+                                    _pageWindow.bind("beforeunload", function () {
+                                        // If connection.stop() runs runs in beforeunload and fails, it will also fail
+                                        // in unload unless connection.stop() runs after a timeout.
+                                        window.setTimeout(function () {
+                                            connection.stop(asyncAbort);
+                                        }, 0);
+                                    });
+                                }
+                            };
 
                         if (!initializationComplete) {
                             initializationComplete = true;
-
+                            // Prevent transport fallback
                             window.clearTimeout(connection._.onFailedTimeoutHandle);
 
-                            if (supportsKeepAlive(connection)) {
-                                signalR.transports._logic.monitorKeepAlive(connection);
+                            // The connection was aborted while initializing transports
+                            if (connection.state === signalR.connectionState.disconnected) {
+                                return;
                             }
 
-                            signalR.transports._logic.startHeartbeat(connection);
-
-                            // Used to ensure low activity clients maintain their authentication.
-                            // Must be configured once a transport has been decided to perform valid ping requests.
-                            signalR._.configurePingInterval(connection);
-
-                            changeState(connection,
-                                        signalR.connectionState.connecting,
-                                        signalR.connectionState.connected);
-
-                            // Drain any incoming buffered messages (messages that came in prior to connect)
-                            connection._.connectingMessageBuffer.drain();
-
-                            $(connection).triggerHandler(events.onStart);
-
-                            // wire the stop handler for when the user leaves the page
-                            _pageWindow.bind("unload", function () {
-                                connection.log("Window unloading, stopping the connection.");
-
-                                connection.stop(asyncAbort);
-                            });
-
-                            if (isFirefox11OrGreater) {
-                                // Firefox does not fire cross-domain XHRs in the normal unload handler on tab close.
-                                // #2400
-                                _pageWindow.bind("beforeunload", function () {
-                                    // If connection.stop() runs runs in beforeunload and fails, it will also fail
-                                    // in unload unless connection.stop() runs after a timeout.
-                                    window.setTimeout(function () {
-                                        connection.stop(asyncAbort);
-                                    }, 0);
-                                });
-                            }
+                            connection.log(transport.name + " transport selected. Initiating start request.");
+                            signalR.transports._logic.ajaxStart(connection, onStartSuccess);
                         }
                     }, onFailed);
                 }
@@ -1312,62 +1321,57 @@
             connection.log("Fired ajax abort async = " + async + ".");
         },
 
-        tryInitialize: function (connection, persistentResponse, onInitialized) {
-            var startUrl,
-                xhr,
-                rejectDeferred = function (error) {
+        ajaxStart: function (connection, onSuccess) {
+            var rejectDeferred = function (error) {
                     var deferred = connection._deferral;
                     if (deferred) {
                         deferred.reject(error);
                     }
                 },
                 triggerStartError = function (error) {
+                    connection.log("The start request failed. Stopping the connection.");
                     $(connection).triggerHandler(events.onError, [error]);
                     rejectDeferred(error);
                     connection.stop();
                 };
 
-            if (persistentResponse.Initialized) {
-                startUrl = getAjaxUrl(connection, "/start");
+            connection._.startRequest = transportLogic.ajax(connection, {
+                url: getAjaxUrl(connection, "/start"),
+                success: function (result, statusText, xhr) {
+                    var data;
 
-                xhr = transportLogic.ajax(connection, {
-                    url: startUrl,
-                    success: function (result) {
-                        var data;
-
-                        try {
-                            data = connection._parseResponse(result);
-                        } catch (error) {
-                            triggerStartError(signalR._.error(
-                                signalR._.format(signalR.resources.errorParsingStartResponse, result),
-                                error, xhr));
-                            return;
-                        }
-
-                        if (data.Response === "started") {
-                            onInitialized();
-                        } else {
-                            triggerStartError(signalR._.error(
-                                signalR._.format(signalR.resources.invalidStartResponse, result),
-                                null /* error */, xhr));
-                        }
-                    },
-                    error: function (error, statusText) {
-                        if (statusText !== startAbortText) {
-                            triggerStartError(signalR._.error(
-                                signalR.resources.errorDuringStartRequest,
-                                error, xhr));
-                        } else {
-                            // Stop has been called
-                            rejectDeferred(signalR._.error(
-                                signalR.resources.stoppedDuringStartRequest,
-                                null /* error */, xhr));
-                        }
+                    try {
+                        data = connection._parseResponse(result);
+                    } catch (error) {
+                        triggerStartError(signalR._.error(
+                            signalR._.format(signalR.resources.errorParsingStartResponse, result),
+                            error, xhr));
+                        return;
                     }
-                });
 
-                connection._.startRequest = xhr;
-            }
+                    if (data.Response === "started") {
+                        onSuccess();
+                    } else {
+                        triggerStartError(signalR._.error(
+                            signalR._.format(signalR.resources.invalidStartResponse, result),
+                            null /* error */, xhr));
+                    }
+                },
+                error: function (xhr, statusText, error) {
+                    if (statusText !== startAbortText) {
+                        triggerStartError(signalR._.error(
+                            signalR.resources.errorDuringStartRequest,
+                            error, xhr));
+                    } else {
+                        // Stop has been called, no need to trigger the error handler
+                        // or stop the connection again with onStartError
+                        connection.log("The start request aborted because connection.stop() was called.");
+                        rejectDeferred(signalR._.error(
+                            signalR.resources.stoppedDuringStartRequest,
+                            null /* error */, xhr));
+                    }
+                }
+            });
         },
 
         tryAbortStartRequest: function (connection) {
@@ -1375,6 +1379,12 @@
                 // If the start request has already completed this will noop.
                 connection._.startRequest.abort(startAbortText);
                 delete connection._.startRequest;
+            }
+        },
+
+        tryInitialize: function (persistentResponse, onInitialized) {
+            if (persistentResponse.Initialized) {
+                onInitialized();
             }
         },
 
@@ -1404,7 +1414,7 @@
                         transportLogic.triggerReceived(connection, message);
                     });
 
-                    transportLogic.tryInitialize(connection, data, onInitialized);
+                    transportLogic.tryInitialize(data, onInitialized);
                 }
             }
         },
@@ -2814,5 +2824,5 @@
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
 (function ($, undefined) {
-    $.signalR.version = "2.1.0";
+    $.signalR.version = "2.1.1";
 }(window.jQuery));
