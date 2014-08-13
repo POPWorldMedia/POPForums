@@ -1207,4 +1207,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="NoExternalLoginsRegistered" xml:space="preserve">
     <value>Sie haben keine externen Logins registriert</value>
   </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Dauerhaft löschen</value>
+  </data>
 </root>

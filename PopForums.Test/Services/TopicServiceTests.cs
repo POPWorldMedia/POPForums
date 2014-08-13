@@ -25,6 +25,7 @@ namespace PopForums.Test.Services
 		private Mock<IForumService> _forumService;
 		private Mock<IEventPublisher> _eventPublisher;
 		private Mock<IBroker> _broker;
+		private Mock<ISearchRepository> _searchRepo;
 
 		private TopicService GetTopicService()
 		{
@@ -39,7 +40,8 @@ namespace PopForums.Test.Services
 			_forumService = new Mock<IForumService>();
 			_eventPublisher = new Mock<IEventPublisher>();
 			_broker = new Mock<IBroker>();
-			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object);
+			_searchRepo = new Mock<ISearchRepository>();
+			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object);
 		}
 
 		private static User GetUser()
@@ -627,6 +629,67 @@ namespace PopForums.Test.Services
 			_postRepo.Setup(x => x.GetLastInTopic(post.TopicID)).Returns(post);
 			service.UpdateLast(topic);
 			_topicRepo.Verify(x => x.UpdateLastTimeAndUser(topic.TopicID, post.UserID, post.Name, post.PostTime), Times.Once());
+		}
+
+		[Test]
+		public void HardDeleteThrowsIfUserNotAdmin()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string>() };
+			var topic = new Topic(45);
+			var service = GetTopicService();
+			Assert.Throws<InvalidOperationException>(() => service.HardDeleteTopic(topic, user));
+		}
+
+		[Test]
+		public void HardDeleteDoesNotThrowIfUserIsAdmin()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> {"Admin"} };
+			var topic = new Topic(45);
+			var service = GetTopicService();
+			Assert.DoesNotThrow(() => service.HardDeleteTopic(topic, user));
+		}
+
+		[Test]
+		public void HardDeleteCallsModerationService()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
+			var topic = new Topic(45);
+			var service = GetTopicService();
+			service.HardDeleteTopic(topic, user);
+			_modService.Verify(x => x.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null), Times.Once());
+		}
+
+		[Test]
+		public void HardDeleteCallsSearchRepoToDeleteSearchWords()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
+			var topic = new Topic(45);
+			var service = GetTopicService();
+			service.HardDeleteTopic(topic, user);
+			_searchRepo.Verify(x => x.DeleteAllIndexedWordsForTopic(topic.TopicID), Times.Once());
+		}
+
+		[Test]
+		public void HardDeleteCallsTopiRepoToDeleteTopic()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
+			var topic = new Topic(45);
+			var service = GetTopicService();
+			service.HardDeleteTopic(topic, user);
+			_topicRepo.Verify(x => x.HardDeleteTopic(topic.TopicID), Times.Once());
+		}
+
+		[Test]
+		public void HardDeleteCallsForumServiceToUpdateLastAndCounts()
+		{
+			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
+			var topic = new Topic(45) {ForumID = 67};
+			var forum = new Forum(topic.ForumID);
+			var service = GetTopicService();
+			_forumService.Setup(x => x.Get(topic.ForumID)).Returns(forum);
+			service.HardDeleteTopic(topic, user);
+			_forumService.Verify(x => x.UpdateCounts(forum), Times.Once());
+			_forumService.Verify(x => x.UpdateLast(forum), Times.Once());
 		}
 	}
 }

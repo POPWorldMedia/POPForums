@@ -91,6 +91,13 @@ else
 			{
 				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" />
 			}
+			@if (this.IsUserInRole(PermanentRoles.Admin))
+			{
+				using (Html.BeginForm("DeleteTopicPermanently", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
+				{
+					<input type="submit" value="@PopForums.Resources.DeletePermanently" />
+				}
+			}
 		</p>
 		@using (Html.BeginForm("UpdateTopic", "Moderator"))
 		{

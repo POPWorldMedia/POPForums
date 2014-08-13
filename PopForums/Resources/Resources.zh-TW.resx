@@ -1194,4 +1194,7 @@
   <data name="NoExternalLoginsRegistered" xml:space="preserve">
     <value>你有沒有註冊的外部登入</value>
   </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>永久删除</value>
+  </data>
 </root>

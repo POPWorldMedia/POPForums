@@ -31,5 +31,7 @@ namespace PopForums.Repositories
 		void UpdateTitleAndForum(int topicID, int forumID, string newTitle, string newUrlName);
 		void UpdateReplyCount(int topicID, int replyCount);
 		DateTime? GetLastPostTime(int topicID);
+		void HardDeleteTopic(int topicID);
+		void MarkTopicForIndexing(int topicID);
 	}
 }

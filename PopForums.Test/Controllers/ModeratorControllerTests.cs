@@ -164,5 +164,23 @@ namespace PopForums.Test.Controllers
 			var result = controller.PostModerationLog(post.PostID);
 			Assert.AreSame(list, result.Model);
 		}
+
+		[Test]
+		public void DeleteTopicPermanentlyThrowsIfTopicNotFound()
+		{
+			var controller = GetController();
+			_mockTopicService.Setup(x => x.Get(It.IsAny<int>())).Returns((Topic) null);
+			Assert.Throws<Exception>(() => controller.DeleteTopicPermanently(123));
+		}
+
+		[Test]
+		public void DeleteTopicPermanentlyCallsTopicServiceForDelete()
+		{
+			var controller = GetController();
+			var topic = new Topic(123);
+			_mockTopicService.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+			controller.DeleteTopicPermanently(topic.TopicID);
+			_mockTopicService.Verify(x => x.HardDeleteTopic(topic, It.IsAny<User>()), Times.Once());
+		}
 	}
 }

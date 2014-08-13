@@ -324,6 +324,13 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 				.ExecuteNonQuery());
 		}
 
+		public void MarkTopicForIndexing(int topicID)
+		{
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsIndexed = 0 WHERE TopicID = @TopicID")
+				.AddParameter("@TopicID", topicID)
+				.ExecuteNonQuery());
+		}
+
 		public void UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET LastPostUserID = @LastPostUserID, LastPostName = @LastPostName, LastPostTime = @LastPostTime WHERE TopicID = @TopicID")
@@ -372,6 +379,13 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 		public void UndeleteTopic(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsDeleted = 0 WHERE TopicID = @TopicID")
+				.AddParameter("@TopicID", topicID)
+				.ExecuteNonQuery());
+		}
+
+		public void HardDeleteTopic(int topicID)
+		{
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("DELETE FROM pf_Topic WHERE TopicID = @TopicID")
 				.AddParameter("@TopicID", topicID)
 				.ExecuteNonQuery());
 		}

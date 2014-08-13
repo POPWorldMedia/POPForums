@@ -24,5 +24,6 @@ namespace PopForums.Services
 		List<Topic> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
+		void HardDeleteTopic(Topic topic, User user);
 	}
 }

@@ -1207,4 +1207,7 @@
   <data name="NoExternalLoginsRegistered" xml:space="preserve">
     <value>Je hebt geen externe logins geregistreerd</value>
   </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Permanent verwijderen</value>
+  </data>
 </root>

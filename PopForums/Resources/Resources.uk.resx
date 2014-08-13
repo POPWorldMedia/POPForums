@@ -1218,4 +1218,7 @@
   <data name="NoExternalLoginsRegistered" xml:space="preserve">
     <value>У вас немає зовнішніх логінів зареєстрованих</value>
   </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Видалити файл</value>
+  </data>
 </root>

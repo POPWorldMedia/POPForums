@@ -122,5 +122,17 @@ namespace PopForums.Controllers
 			var log = _moderationLogService.GetLog(post);
 			return View(log);
 		}
+
+		[HttpPost]
+		public RedirectToRouteResult DeleteTopicPermanently(int id)
+		{
+			var topic = _topicService.Get(id);
+			if (topic == null)
+				throw new Exception(String.Format("Topic with ID {0} not found. Can't undelete.", id));
+			var user = this.CurrentUser();
+			var forum = _forumService.Get(topic.ForumID);
+			_topicService.HardDeleteTopic(topic, user);
+			return RedirectToAction("Index", "Forum", new { urlName = forum.UrlName });
+		}
 	}
 }

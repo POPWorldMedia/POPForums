@@ -12,7 +12,7 @@ namespace PopForums.Services
 {
 	public class TopicService : ITopicService
 	{
-		public TopicService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IBroker broker)
+		public TopicService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IBroker broker, ISearchRepository searchRepository)
 		{
 			_forumRepository = forumRepository;
 			_topicRepository = topicRepository;
@@ -25,6 +25,7 @@ namespace PopForums.Services
 			_forumService = forumService;
 			_eventPublisher = eventPublisher;
 			_broker = broker;
+			_searchRepository = searchRepository;
 		}
 
 		private readonly IForumRepository _forumRepository;
@@ -38,6 +39,7 @@ namespace PopForums.Services
 		private readonly IForumService _forumService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IBroker _broker;
+		private readonly ISearchRepository _searchRepository;
 
 		public List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -190,6 +192,21 @@ namespace PopForums.Services
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator or topic starter to delete topic.");
+		}
+
+		public void HardDeleteTopic(Topic topic, User user)
+		{
+			if (user.IsInRole(PermanentRoles.Admin))
+			{
+				_moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
+				_searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
+				_topicRepository.HardDeleteTopic(topic.TopicID);
+				var forum = _forumService.Get(topic.ForumID);
+				_forumService.UpdateCounts(forum);
+				_forumService.UpdateLast(forum);
+			}
+			else
+				throw new InvalidOperationException("User must be Admin to hard delete topic.");
 		}
 
 		public void UndeleteTopic(Topic topic, User user)

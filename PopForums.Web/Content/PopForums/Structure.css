@@ -68,7 +68,7 @@ fieldset, form, label, legend, table, caption, tbody, tr, th, td {
 }
 #ForumContainer .inlineModForm input[type="submit"]
 {
-	width: 90px;
+	width: 120px;font-size: 10px;
 }
 
 #ForumContainer .deletePostForm
