@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http.Dependencies;
 using Microsoft.Practices.ServiceLocation;
 using StructureMap;
 
@@ -27,7 +28,7 @@ namespace PopForums.Configuration.DependencyResolution
 	/// <summary>
 	/// The structure map dependency scope.
 	/// </summary>
-	public class StructureMapDependencyScope : ServiceLocatorImplBase
+	public class StructureMapDependencyScope : ServiceLocatorImplBase, IDependencyScope
 	{
 		#region Constants and Fields
 

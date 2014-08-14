@@ -26,6 +26,7 @@ namespace PopForums.Web
 				{
 					Container = ContainerFactory.Initialize();
 					ServiceLocator = new StructureMapDependencyScope(Container);
+					DependencyResolver = new StructureMapDependencyResolver(Container);
 					StructuremapMvc.StructureMapDependencyScope = new StructureMapDependencyScope(Container);
 					DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));
 					DynamicModuleUtility.RegisterModule(typeof(PopForumsLoggingModule));
@@ -115,6 +116,7 @@ namespace PopForums.Web
 		public static string[] AdditionalControllerNamespaces { get; private set; }
 		public static IContainer Container { get; private set; }
 		public static IServiceLocator ServiceLocator { get; private set; }
+		public static System.Web.Http.Dependencies.IDependencyResolver DependencyResolver { get; private set; }
 
 		private static bool _isInitialized;
 

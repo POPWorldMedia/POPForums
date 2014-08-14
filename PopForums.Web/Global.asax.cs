@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using PopForums.Data.SqlSingleWebServer;
@@ -26,6 +27,10 @@ namespace PopForums.Web
 			// Run the background services in this Web application. If you're running an Azure Web Job,
 			// do not include this line.
 			PopForumsActivation.StartServices();
+
+			// Optional: User the PopForums StructureMap DI resolver in your own app
+			//DependencyResolver.SetResolver(PopForumsActivation.DependencyResolver);
+			//GlobalConfiguration.Configuration.DependencyResolver = PopForumsActivation.DependencyResolver;
 
 			RegisterRoutes(RouteTable.Routes);
 		}
