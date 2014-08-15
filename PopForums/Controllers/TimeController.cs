@@ -27,6 +27,7 @@ namespace PopForums.Controllers
 		private readonly ITimeFormattingService _timeFormattingService;
 		private readonly IProfileService _profileService;
 
+		[HttpPost]
 		public JsonResult GetTimes(string[] times)
 		{
 			var list = new List<TimePairs>();
@@ -40,7 +41,7 @@ namespace PopForums.Controllers
 				var time = DateTime.Parse(item);
 				list.Add(new TimePairs {Key = item, Value = _timeFormattingService.GetFormattedTime(time)});
 			}
-			return Json(list, JsonRequestBehavior.AllowGet);
+			return Json(list);
 		}
 
 		private class TimePairs
