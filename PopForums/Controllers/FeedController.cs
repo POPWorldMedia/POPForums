@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Feeds;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -8,7 +8,7 @@ namespace PopForums.Controllers
 	{
 		public FeedController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_feedService = serviceLocator.GetInstance<IFeedService>();
 		}
 
@@ -24,7 +24,7 @@ namespace PopForums.Controllers
 		public ViewResult Index()
 		{
 			var feed = _feedService.GetFeed();
-			 return View(feed);
-		 }
+			return View(feed);
+		}
 	}
 }

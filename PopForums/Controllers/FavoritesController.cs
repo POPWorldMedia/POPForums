@@ -1,8 +1,8 @@
 ﻿using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -10,7 +10,7 @@ namespace PopForums.Controllers
 	{
 		public FavoritesController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_favoriteTopicService = serviceLocator.GetInstance<IFavoriteTopicService>();
 			_forumService = serviceLocator.GetInstance<IForumService>();
 			_lastReadService = serviceLocator.GetInstance<ILastReadService>();

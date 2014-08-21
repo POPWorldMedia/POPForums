@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -11,7 +11,7 @@ namespace PopForums.Controllers
 	{
 		public TimeController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_timeFormattingService = serviceLocator.GetInstance<ITimeFormattingService>();
 			_profileService = serviceLocator.GetInstance<IProfileService>();
 		}

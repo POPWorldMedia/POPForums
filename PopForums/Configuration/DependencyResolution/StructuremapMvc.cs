@@ -1,3 +1,5 @@
+using StructureMap;
+
 namespace PopForums.Configuration.DependencyResolution
 {
 	public static class StructuremapMvc
@@ -11,7 +13,7 @@ namespace PopForums.Configuration.DependencyResolution
 
 		public static void Start()
 		{
-			var container = ContainerFactory.Initialize();
+			var container = new Container(x => x.AddRegistry<PopForumsRegistry>());
 			StructureMapDependencyScope = new StructureMapDependencyScope(container);
 		}
 	}

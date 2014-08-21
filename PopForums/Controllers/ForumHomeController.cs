@@ -1,8 +1,8 @@
 ﻿using System.Web.Mvc;
 using System.Web.WebPages;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -14,7 +14,7 @@ namespace PopForums.Controllers
 	{
 		public ForumHomeController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_forumService = serviceLocator.GetInstance<IForumService>();
 			_userService = serviceLocator.GetInstance<IUserService>();
 			_userSessionService = serviceLocator.GetInstance<IUserSessionService>();

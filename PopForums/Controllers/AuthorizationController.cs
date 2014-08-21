@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.Owin;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -13,7 +13,7 @@ namespace PopForums.Controllers
 	{
 		public AuthorizationController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_userService = serviceLocator.GetInstance<IUserService>();
 			_owinContext = serviceLocator.GetInstance<IOwinContext>();
 			_externalAuthentication = serviceLocator.GetInstance<IExternalAuthentication>();

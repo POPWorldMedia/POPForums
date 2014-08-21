@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using PopForums.Configuration;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Email;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
@@ -12,7 +13,6 @@ using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.ScoringGame;
 using PopForums.Services;
-using PopForums.Web;
 using FormCollection = System.Web.Mvc.FormCollection;
 
 namespace PopForums.Controllers
@@ -21,7 +21,7 @@ namespace PopForums.Controllers
 	{
 		public AccountController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_userService = serviceLocator.GetInstance<IUserService>();
 			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();
 			_profileService = serviceLocator.GetInstance<IProfileService>();

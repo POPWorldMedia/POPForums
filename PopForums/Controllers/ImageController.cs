@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Services;
 using PopForums.Web;
 
@@ -12,7 +13,7 @@ namespace PopForums.Controllers
 	{
 		public ImageController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_imageService = serviceLocator.GetInstance<IImageService>();
 		}
 

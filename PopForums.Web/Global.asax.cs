@@ -29,8 +29,9 @@ namespace PopForums.Web
 			PopForumsActivation.StartServices();
 
 			// Optional: User the PopForums StructureMap DI resolver in your own app
-			//DependencyResolver.SetResolver(PopForumsActivation.DependencyResolver);
-			//GlobalConfiguration.Configuration.DependencyResolver = PopForumsActivation.DependencyResolver;
+			//var resolver = new StructureMapDependencyResolver(PopForumsActivation.Container);
+			//DependencyResolver.SetResolver(resolver);
+			//GlobalConfiguration.Configuration.DependencyResolver = resolver;
 
 			RegisterRoutes(RouteTable.Routes);
 		}

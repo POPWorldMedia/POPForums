@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using PopForums.Configuration;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
@@ -13,7 +14,7 @@ namespace PopForums.Controllers
 	{
 		public ForumController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();
 			_forumService = serviceLocator.GetInstance<IForumService>();
 			_topicService = serviceLocator.GetInstance<ITopicService>();

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -12,7 +12,7 @@ namespace PopForums.Controllers
 	{
 		public SearchController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_searchService = serviceLocator.GetInstance<ISearchService>();
 			_forumService = serviceLocator.GetInstance<IForumService>();
 			_lastReadService = serviceLocator.GetInstance<ILastReadService>();

@@ -1,7 +1,6 @@
-﻿using PopForums.Configuration.DependencyResolution;
-using StructureMap;
+﻿using StructureMap;
 
-namespace PopForums.Configuration
+namespace PopForums.Configuration.DependencyResolution
 {
 	public static class ContainerFactory
 	{

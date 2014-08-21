@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PopForums.Configuration;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.ScoringGame;
@@ -17,7 +18,7 @@ namespace PopForums.Controllers
 	{
 		public AdminController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_userService = serviceLocator.GetInstance<IUserService>();
 			_profileService = serviceLocator.GetInstance<IProfileService>();
 			_settingsManager = serviceLocator.GetInstance<ISettingsManager>();

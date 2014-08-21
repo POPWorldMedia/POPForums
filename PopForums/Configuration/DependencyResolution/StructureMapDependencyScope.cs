@@ -30,13 +30,7 @@ namespace PopForums.Configuration.DependencyResolution
 	/// </summary>
 	public class StructureMapDependencyScope : ServiceLocatorImplBase, IDependencyScope
 	{
-		#region Constants and Fields
-
 		private const string NestedContainerKey = "Nested.Container.Key";
-
-		#endregion
-
-		#region Constructors and Destructors
 
 		public StructureMapDependencyScope(IContainer container)
 		{
@@ -47,34 +41,21 @@ namespace PopForums.Configuration.DependencyResolution
 			Container = container;
 		}
 
-		#endregion
-
-		#region Public Properties
-
 		public IContainer Container { get; set; }
-
 		public IContainer CurrentNestedContainer
 		{
 			get { return (IContainer) HttpContext.Items[NestedContainerKey]; }
 			set { HttpContext.Items[NestedContainerKey] = value; }
 		}
 
-		#endregion
-
-		#region Properties
-
 		private HttpContextBase HttpContext
 		{
 			get
 			{
-				var ctx = Container.TryGetInstance<HttpContextBase>();
-				return ctx ?? new HttpContextWrapper(System.Web.HttpContext.Current);
+				var context = Container.TryGetInstance<HttpContextBase>();
+				return context ?? new HttpContextWrapper(System.Web.HttpContext.Current);
 			}
 		}
-
-		#endregion
-
-		#region Public Methods and Operators
 
 		public void CreateNestedContainer()
 		{
@@ -108,10 +89,6 @@ namespace PopForums.Configuration.DependencyResolution
 			return DoGetAllInstances(serviceType);
 		}
 
-		#endregion
-
-		#region Methods
-
 		protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
 		{
 			return (CurrentNestedContainer ?? Container).GetAllInstances(serviceType).Cast<object>();
@@ -119,7 +96,7 @@ namespace PopForums.Configuration.DependencyResolution
 
 		protected override object DoGetInstance(Type serviceType, string key)
 		{
-			IContainer container = (CurrentNestedContainer ?? Container);
+			var container = (CurrentNestedContainer ?? Container);
 
 			if (string.IsNullOrEmpty(key))
 			{
@@ -130,7 +107,5 @@ namespace PopForums.Configuration.DependencyResolution
 
 			return container.GetInstance(serviceType, key);
 		}
-
-		#endregion
 	}
 }

@@ -2,10 +2,10 @@
 using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
+using PopForums.Configuration.DependencyResolution;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Services;
-using PopForums.Web;
 
 namespace PopForums.Controllers
 {
@@ -13,7 +13,7 @@ namespace PopForums.Controllers
 	{
 		public PrivateMessagesController()
 		{
-			var serviceLocator = PopForumsActivation.ServiceLocator;
+			var serviceLocator = StructuremapMvc.StructureMapDependencyScope;
 			_privateMessageService = serviceLocator.GetInstance<IPrivateMessageService>();
 			_userService = serviceLocator.GetInstance<IUserService>();
 		}
