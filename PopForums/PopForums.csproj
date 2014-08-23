@@ -188,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\DependencyResolution\ContainerFactory.cs" />
+    <Compile Include="Configuration\DependencyResolution\ControllerConvention.cs" />
     <Compile Include="Configuration\DependencyResolution\StructureMapDependencyResolver.cs" />
     <Compile Include="Configuration\DependencyResolution\StructuremapMvc.cs" />
     <Compile Include="AreaRegistration.cs" />

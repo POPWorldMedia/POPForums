@@ -1,6 +1,5 @@
 using System.Web;
 using Microsoft.Owin;
-using PopForums.Controllers;
 using StructureMap.Configuration.DSL;
 using StructureMap.Graph;
 
@@ -14,9 +13,9 @@ namespace PopForums.Configuration.DependencyResolution
 				{
 					scan.TheCallingAssembly();
 					scan.WithDefaultConventions();
+					scan.With(new ControllerConvention());
 				});
 			For<IOwinContext>().Use(x => HttpContext.Current.GetOwinContext());
-			For<ForumController>().AlwaysUnique();
 		}
 	}
 }
