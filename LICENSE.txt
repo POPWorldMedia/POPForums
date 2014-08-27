@@ -40,10 +40,9 @@ http://jquery.org/license
 
 
 
-Ninject also uses the Ms-PL license.
-http://ninject.org/
-
-Copyright ©2007-2010 Enkari, Ltd and contributors.
+Ninject uses the Apache License, Version 2.0.
+http://structuremap.github.io/structuremap/
+Copyright 2004-2009 Jeremy D. Miller
 
 
 
