@@ -3,6 +3,11 @@
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@helper PMCount()
+{
+	var count = Html.Action("NewPMCount", PrivateMessagesController.Name).ToString();
+	if (count != "0"){ <span class="badge">@count</span>}
+}
 
 @section HeaderContent {
     @RenderSection("HeaderContent", required: false)
@@ -10,27 +15,30 @@
 
 <div id="ForumContainer" class="container-fluid">
 	<div class="row">
-		<div id="AccountBox" class="col-xs-12 text-right">
-			@if (this.GetUserFromViewData() == null)
-			{
-				@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)@: |
-				@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)
-			}
-			else
-			{
-				@Html.ActionLink(this.GetUserFromViewData().Name, "ViewProfile", AccountController.Name, new { id = this.GetUserFromViewData().UserID }, null)@: |
-				@Html.ActionLink(PopForums.Resources.Account, "EditProfile", AccountController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)@: |
-				@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1 }, null)@: |
-				@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)@: |
-				@Html.ActionLink(PopForums.Resources.PrivateMessages, "Index", PrivateMessagesController.Name)<text> </text>@Html.Action("NewPMCount", PrivateMessagesController.Name) @: | 
-				@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)
-			}
+		<div id="AccountBox" class="collapse navbar-collapse">
+			<ul class="nav navbar-nav pull-right">
+				@if (this.GetUserFromViewData() == null)
+				{
+					<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+					<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)</li>
+				}
+				else
+				{
+					<li>@Html.ActionLink(this.GetUserFromViewData().Name, "ViewProfile", AccountController.Name, new { id = this.GetUserFromViewData().UserID }, null)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Account, "EditProfile", AccountController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1 }, null)</li>
+					<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+					<li>@Html.ActionLink(PopForums.Resources.Search, "Index", SearchController.Name)</li>
+					<li><a href="@Url.Action("Index", PrivateMessagesController.Name)">@PopForums.Resources.PrivateMessages @PMCount()</a>
+					</li>
+					<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
+				}
+			</ul>
 		</div>
 	</div>
 	<div class="row">
