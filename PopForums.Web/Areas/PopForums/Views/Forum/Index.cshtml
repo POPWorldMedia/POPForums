@@ -31,10 +31,15 @@
 	{
 		<p class="bg-warning callout">@Model.PermissionContext.DenialReason</p>
 	}
-	<ol class="breadcrumb">
+	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
 		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
-	</ol>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@Model.Forum.Title</li>
+	</ul>
 </div>
 
 @Html.PagerLinks("Forum", "Index", Model.PagerContext, "pagerLinks", "morePager", "currentPager")

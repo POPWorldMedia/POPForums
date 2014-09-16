@@ -1,10 +1,7 @@
 ﻿$(function () {
-	$("table.stripe tr:even").addClass("stripe");
-
 	var crumbs = $("#ForumContainer #TopBreadcrumb");
 	if (crumbs.length > 0) {
 		PopForums.crumbTop = crumbs.offset().top + PopForums.navOffset;
-		crumbs.css("width", $("#ForumContainer").width());
 		$(window).scroll(function () {
 			PopForums.checkScroll();
 		});
@@ -18,7 +15,7 @@
 		if ($("#PostStream").has(tag).length > 0) {
 			var offset = tag.offset();
 			if (offset) {
-				var crumb = $("#TopBreadcrumb");
+				var crumb = $("#ForumContainer #FixedBreadcrumb");
 				var height = crumb.outerHeight();
 				var margin = parseInt($(".postItem").css("margin-top"), 10);
 				var tagTop = offset.top;
@@ -37,19 +34,16 @@ PopForums.currentTopicState = null;
 PopForums.navOffset = 0;
 
 PopForums.checkScroll = function () {
-	var crumb = $("#ForumContainer #TopBreadcrumb");
+	var crumb = $("#ForumContainer #FixedBreadcrumb");
 	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	if (scrollTop > PopForums.crumbTop && crumb.hasClass("navAbsolute")) {
-		var holder = $("<div id='TopBreadcrumbHolder'/>");
-		holder.height(crumb.height());
-		crumb.addClass("navFixed");
-		crumb.removeClass("navAbsolute");
-		crumb.after(holder);
+	if (scrollTop > PopForums.crumbTop) {
+		var width = $("#ForumContainer #TopBreadcrumb").outerWidth();
+		crumb.css("width", width + "px");
+		crumb.css("top", PopForums.navOffset);
+		crumb.fadeIn(150);
 	}
-	else if (scrollTop < PopForums.crumbTop && crumb.hasClass("navFixed")) {
-		crumb.addClass("navAbsolute");
-		crumb.removeClass("navFixed");
-		$("#TopBreadcrumbHolder").remove();
+	else if (scrollTop < PopForums.crumbTop) {
+		crumb.fadeOut(150);
 	}
 };
 

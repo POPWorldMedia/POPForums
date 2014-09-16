@@ -25,6 +25,11 @@
 	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
 }
 
+#ForumContainer #FixedBreadcrumb {
+	position: fixed;top: 0;display: none;
+	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
+}
+
 /* Bootstrap overrides */
 
 .badge {
