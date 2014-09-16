@@ -1,0 +1,36 @@
+﻿#ForumContainer .grid {
+	margin: 20px 0;
+}
+#ForumContainer .grid h1, #ForumContainer .grid h2, #ForumContainer .grid h3 {
+	margin: 0;
+}
+
+#ForumContainer .newIndicator {
+	width: 40px;
+}
+
+#ForumContainer .callout {
+	padding: 8px; border-radius: 4px;
+}
+
+#ForumContainer #ForumFooter {
+	margin-top: 30px;
+}
+
+#ForumContainer .topicPreviewButton {
+	cursor: help;
+}
+
+#ForumContainer .topicPreview {
+	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
+}
+
+/* Bootstrap overrides */
+
+.badge {
+	background-color: #ff0000;color: white;
+}
+
+.pagination .glyphicon {
+	top: 0;
+}

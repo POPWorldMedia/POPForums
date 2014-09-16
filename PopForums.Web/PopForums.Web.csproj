@@ -154,16 +154,14 @@
     <Content Include="Content\PopForums\Admin.css" />
     <Content Include="Content\PopForums\ClosedIndicator.png" />
     <Content Include="Content\PopForums\ClosedPinnedIndicator.png" />
+    <Content Include="Content\PopForums\PopForums.css" />
     <Content Include="Content\PopForums\quotebg.jpg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="packages.config" />
     <Content Include="Areas\PopForums\Views\Feed\Index.cshtml" />
-    <Content Include="Areas\PopForums\Views\Feed\Index.mobile.cshtml" />
     <Content Include="Areas\PopForums\Views\Admin\ExternalLogins.cshtml" />
     <Content Include="Areas\PopForums\Views\Authorization\ExternalLoginCallback.cshtml" />
     <Content Include="Areas\PopForums\Views\Account\ExternalLogins.cshtml" />
-    <Content Include="Areas\PopForums\Views\Authorization\ExternalLoginCallback.mobile.cshtml" />
-    <Content Include="Areas\PopForums\Views\Account\ExternalLogins.mobile.cshtml" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -177,15 +175,12 @@
     <Content Include="Scripts\jquery-ui-1.10.0.popforums.min.js" />
     <Content Include="Scripts\jquery.signalR-2.1.1.js" />
     <Content Include="Scripts\jquery.signalR-2.1.1.min.js" />
-    <Content Include="Scripts\PopForums.mobile.js" />
     <Content Include="Content\PopForums\NewClosedIndicator.png" />
     <Content Include="Content\PopForums\NewClosedPinnedIndicator.png" />
     <Content Include="Content\PopForums\NewIndicator.png" />
     <Content Include="Content\PopForums\NewPinnedIndicator.png" />
     <Content Include="Content\PopForums\NoNewIndicator.png" />
     <Content Include="Content\PopForums\PinnedIndicator.png" />
-    <Content Include="Content\PopForums\Style.css" />
-    <Content Include="Content\PopForums\Structure.css" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\tiny_mce\jquery.tinymce.js" />
     <Content Include="Scripts\tiny_mce\langs\en.js" />
@@ -518,124 +513,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Shared\PopForumsMaster.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\ForumHome\Index.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Login.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\Index.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\Topic.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\PostItem.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\NewReply.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\NewTopic.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Create.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\AccountCreated.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\EditAccountNoUser.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\EditProfile.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Security.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\ManagePhotos.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\ViewProfile.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\UnsubscribeFailure.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Unsubscribe.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\VerifyFail.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Verify.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\ResetPasswordSuccess.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\ResetPassword.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Forgot.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\EmailSent.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\EmailUser.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Shared\Forbidden.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Shared\NotFound.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\PrivateMessages\Index.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\PrivateMessages\Archive.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\PrivateMessages\Create.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\PrivateMessages\View.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Favorites\Topics.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Subscription\Topics.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Subscription\Unsubscribe.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\Edit.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\Recent.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Search\Index.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Account\Posts.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="App_Browsers\Ipad.browser" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\_Layout.mobile.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Areas\PopForums\Views\Forum\Votes.mobile.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
+using System.Web.Routing;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web;
@@ -29,20 +31,26 @@ namespace PopForums.Extensions
 			if (pagerContext.PageCount <= 1)
 				return MvcHtmlString.Create(String.Empty);
 
-			if (String.IsNullOrEmpty(cssClass)) builder.Append("<div>");
-			else builder.Append(String.Format("<div class=\"{0}\">", cssClass));
-			if (String.IsNullOrEmpty(moreTextCssClass)) builder.Append(String.Format("<span>{0}</span>", moreText));
-			else builder.Append(String.Format("<span class=\"{0}\">{1}</span>", moreTextCssClass, moreText));
+			if (String.IsNullOrEmpty(cssClass)) builder.Append("<ul class=\"pagination\">");
+			else builder.Append(String.Format("<ul class=\"pagination {0}\">", cssClass));
+			if (String.IsNullOrEmpty(moreTextCssClass)) builder.Append(String.Format("<li><span>{0}</span></li>", moreText));
+			else builder.Append(String.Format("<li class=\"{0}\"><span>{1}</span></li>", moreTextCssClass, moreText));
 
 			if (pagerContext.PageIndex != 1)
 			{
 				// first page link
-				builder.Append(htmlHelper.RouteLink("|<", new { controller = controllerName, action = actionName, page = 1 }, new { title = firstPage }));
+				builder.Append("<li>");
+				var firstLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, new RouteValueDictionary(new { controller = controllerName, action = actionName, page = 1 }), new Dictionary<string, object> { { "title", firstPage }, { "class", "glyphicon glyphicon-step-backward" } });
+				builder.Append(firstLink);
+				builder.Append("</li>");
 				if (pagerContext.PageIndex > 2)
 				{
 					// previous page link
-					var previousLink = pagerContext.PageIndex - 1;
-					builder.Append(htmlHelper.RouteLink("<<", new { controller = controllerName, action = actionName, page = previousLink }, new { title = previousPage, rel = "prev" }));
+					var previousIndex = pagerContext.PageIndex - 1;
+					builder.Append("<li>");
+					var previousLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, new RouteValueDictionary(new { controller = controllerName, action = actionName, page = previousIndex }), new Dictionary<string, object> { { "title", previousPage }, { "rel", "prev" }, { "class", "glyphicon glyphicon-chevron-left" } });
+					builder.Append(previousLink);
+					builder.Append("</li>");
 				}
 			}
 
@@ -59,12 +67,14 @@ namespace PopForums.Extensions
 				if (x == pagerContext.PageIndex)
 				{
 					if (String.IsNullOrEmpty(currentPageCssClass))
-						builder.Append(String.Format("<span>{0} of {1}</span>", x, pagerContext.PageCount));
-					else builder.Append(String.Format("<span class=\"{0}\">{1} of {2}</span>", currentPageCssClass, x, pagerContext.PageCount));
+						builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, pagerContext.PageCount));
+					else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", currentPageCssClass, x, pagerContext.PageCount));
 				}
 				else
 				{
+					builder.Append("<li>");
 					builder.Append(htmlHelper.RouteLink(x.ToString(), new { controller = controllerName, action = actionName, page = x }));
+					builder.Append("</li>");
 				}
 			}
 			if (pagerContext.PageIndex != pagerContext.PageCount)
@@ -72,13 +82,19 @@ namespace PopForums.Extensions
 				if (pagerContext.PageIndex < pagerContext.PageCount - 1)
 				{
 					// next page link
-					var nextLink = pagerContext.PageIndex + 1;
-					builder.Append(htmlHelper.RouteLink(">>", new { controller = controllerName, action = actionName, page = nextLink }, new { title = nextPage, rel = "next" }));
+					var nextIndex = pagerContext.PageIndex + 1;
+					builder.Append("<li>");
+					var nextLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, new RouteValueDictionary(new { controller = controllerName, action = actionName, page = nextIndex }), new Dictionary<string, object> { { "title", nextPage }, { "rel", "next" }, { "class", "glyphicon glyphicon-chevron-right" } });
+					builder.Append(nextLink);
+					builder.Append("</li>");
 				}
 				// last page link
-				builder.Append(htmlHelper.RouteLink(">|", new { controller = controllerName, action = actionName, page = pagerContext.PageCount }, new { title = lastPage }));
+				builder.Append("<li>");
+				var lastLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, new RouteValueDictionary(new { controller = controllerName, action = actionName, page = pagerContext.PageCount }), new Dictionary<string, object> { { "title", lastPage }, { "class", "glyphicon glyphicon-step-forward" } });
+				builder.Append(lastLink);
+				builder.Append("</li>");
 			}
-			builder.Append("</div>");
+			builder.Append("</ul>");
 
 			return MvcHtmlString.Create(builder.ToString());
 		}
@@ -145,49 +161,6 @@ namespace PopForums.Extensions
 				// last page link
 				builder.Append(htmlHelper.RouteLink(">|", new { id, controller = controllerName, action = actionName, page = pagerContext.PageCount }, new { title = lastPage }));
 			}
-			builder.Append("</div>");
-
-			return MvcHtmlString.Create(builder.ToString());
-		}
-
-		public static MvcHtmlString PagerLinksMobile(this HtmlHelper htmlHelper, UrlHelper urlHelper, string controllerName, string actionName, PagerContext pagerContext)
-		{
-			var builder = new StringBuilder();
-			if (String.IsNullOrEmpty(controllerName) || String.IsNullOrEmpty(actionName))
-				throw new Exception("controllerName and actionName must be specified for PageLinks.");
-			if (pagerContext.PageCount <= 1)
-				return MvcHtmlString.Create(String.Empty);
-
-			builder.Append("<div class=\"pf-pagerlinks\">");
-
-			if (pagerContext.PageIndex != 1)
-			{
-				// previous page link
-				var previousLink = pagerContext.PageIndex - 1;
-				builder.Append("<div><a href=\"");
-				builder.Append(urlHelper.Action(actionName, controllerName, new { controller = controllerName, action = actionName, page = previousLink }));
-				builder.Append(String.Format("\" title=\"{0}\">&nbsp;</a></div>", Resources.Previous));
-			}
-			else
-				builder.Append("<div> </div>");
-
-			builder.Append("<div>");
-			builder.Append(pagerContext.PageIndex);
-			builder.Append(" of ");
-			builder.Append(pagerContext.PageCount);
-			builder.Append("</div>");
-
-			if (pagerContext.PageIndex != pagerContext.PageCount)
-			{
-				// next page link
-				var nextLink = pagerContext.PageIndex + 1;
-				builder.Append("<div><a href=\"");
-				builder.Append(urlHelper.Action(actionName, controllerName, new { controller = controllerName, action = actionName, page = nextLink }));
-				builder.Append(String.Format("\" title=\"{0}\">&nbsp;</a></div>", Resources.Next));
-			}
-			else
-				builder.Append("<div> </div>");
-
 			builder.Append("</div>");
 
 			return MvcHtmlString.Create(builder.ToString());

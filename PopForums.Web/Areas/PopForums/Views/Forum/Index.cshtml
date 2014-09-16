@@ -21,20 +21,21 @@
 </script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
-	<h1>@Model.Forum.Title</h1>
-	<p>
-		@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+<div>
+	<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.PostNewTopic" id="NewTopicButton" class="btn" />}</h1>
+	@if (Model.PermissionContext.UserCanPost)
+	{
+		<div id="NewTopic" style="display: none;"></div>
+	}
+	else
+	{
+		<p class="bg-warning callout">@Model.PermissionContext.DenialReason</p>
+	}
+	<ol class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ol>
 </div>
-
-@if (Model.PermissionContext.UserCanPost) {
-	<div id="NewTopic" style="display: none;"></div>
-	<input type="button" value="@PopForums.Resources.PostNewTopic" id="NewTopicButton" class="toolButton" />
-} else {
-	<p>@Model.PermissionContext.DenialReason</p>
-}
 
 @Html.PagerLinks("Forum", "Index", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
 
@@ -42,13 +43,14 @@
 {
 	using (Html.BeginForm("MarkForumRead", "Forum", new { id = Model.Forum.ForumID }))
 	{
-		<input type="submit" value="@PopForums.Resources.MarkForumRead" class="toolButton" />
+		<input type="submit" value="@PopForums.Resources.MarkForumRead" class="btn" />
 	}
 }
 
-<table class="forumGrid">
-	@foreach (var topic in Model.Topics) {
-		<tr @if(topic.IsDeleted) {<text> class="deletedItem"</text> } data-topicID="@topic.TopicID">
+<table id="TopicList" class="table grid table-hover">
+	@foreach (var topic in Model.Topics)
+	{
+		<tr @if (topic.IsDeleted) { <text> class="warning" </text>  } data-topicid="@topic.TopicID">
 			<td class="newIndicator">
 				@if (this.GetUserFromViewData() == null)
 				{
@@ -60,24 +62,24 @@
 				}
 			</td>
 			<td>
-				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton" title="@PopForums.Resources.PreviewTopic" topicID="@topic.TopicID">&gt;&gt;</span></h2>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right small" title="@PopForums.Resources.PreviewTopic" topicid="@topic.TopicID"></span></h2>
 				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
-				<p class="forumStatData">
+				<small class="pull-right">
 					@PopForums.Resources.StartedBy: @topic.StartedByName | @PopForums.Resources.Views: @topic.ViewCount.ToString("N0") | @PopForums.Resources.Replies: @topic.ReplyCount.ToString("N0") | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(topic.LastPostTime)">@FormatTime(topic.LastPostTime)</span> @PopForums.Resources.By @topic.LastPostName
-				</p>
+				</small>
 			</td>
 		</tr>
 	}
-	<tr id="TopicTemplate" data-topicID="">
+	<tr id="TopicTemplate" data-topicid="" class="hidden">
 		<td class="newIndicator">
-			<a class="indicatorLink" href=""><img src=""/></a>
+			<a class="indicatorLink" href=""><img src="" /></a>
 		</td>
 		<td>
-			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton" title="@PopForums.Resources.PreviewTopic" topicID="">&gt;&gt;</span></h2>
+			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right small" title="@PopForums.Resources.PreviewTopic" topicid=""></span></h2>
 			<div id="" class="topicPreview"></div>
-			<p class="forumStatData">
+			<small class="pull-right">
 				@PopForums.Resources.StartedBy: <span class="startedByName"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
-			</p>
+			</small>
 		</td>
 	</tr>
 </table>

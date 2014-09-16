@@ -537,17 +537,18 @@ PopForums.recentListen = function (pageSize) {
 PopForums.forumListen = function (pageSize, forumID) {
 	var hub = $.connection.forums;
 	hub.client.notifyUpdatedTopic = function (data) {
-		var removal = $('.forumGrid tr[data-topicID="' + data.TopicID + '"]');
+		var removal = $('#TopicList tr[data-topicID="' + data.TopicID + '"]');
 		if (removal.length != 0) {
 			removal.fadeOut();
 			removal.remove();
 		} else {
-			var rows = $(".forumGrid tr:not('#TopicTemplate')");
+			var rows = $("#TopicList tr:not('#TopicTemplate')");
 			if (rows.length == pageSize)
 				rows.last().remove();
 		}
 		var row = PopForums.populateTopicRow(data).hide();
-		$(".forumGrid").prepend(row);
+		row.removeClass("hidden");
+		$("#TopicList").prepend(row);
 		row.fadeIn();
 	};
 	$.connection.hub.start().done(function () {

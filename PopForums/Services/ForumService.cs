@@ -171,7 +171,10 @@ namespace PopForums.Services
 
 			// post
 			if (user == null || !context.UserCanView)
+			{
 				context.UserCanPost = false;
+				context.DenialReason = Resources.LoginToPost;
+			}
 			else
 				if (!user.IsApproved)
 				{
