@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -18,6 +19,8 @@ namespace PopForums.Services
 		private readonly ISearchRepository _searchRepository;
 		private readonly ISettingsManager _settingsManager;
 		private readonly IForumService _forumService;
+
+		public static Regex SearchWordPattern = new Regex(@"[\w'\@\#\$\%\^\&\*]{2,}", RegexOptions.Compiled);
 
 		public List<Topic> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{

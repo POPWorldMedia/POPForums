@@ -56,7 +56,7 @@ namespace PopForums.Services
 
 				var junkList = searchService.GetJunkWords();
 				var wordList = new List<SearchWord>();
-				var alphaNum = new Regex(@"[\w']{2,}", RegexOptions.Compiled);
+				var alphaNum = SearchService.SearchWordPattern;
 				var posts = postService.GetPosts(topic, false);
 
 				foreach (var post in posts)

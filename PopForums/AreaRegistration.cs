@@ -70,12 +70,6 @@ namespace PopForums
 				new[] { "PopForums.Controllers" }
 				);
 			context.MapRoute(
-				RouteName.SearchQuery,
-				"Forums/Search/Result/{query}/{searchType}/{page}",
-				new { controller = SearchController.Name, action = "Result", page = 1 },
-				new[] { "PopForums.Controllers" }
-				);
-			context.MapRoute(
 				RouteName.SubscribedTopics,
 				"Forums/Subscription/Topics/{page}",
 				new { controller = SubscriptionController.Name, action = "Topics", page = 1 },

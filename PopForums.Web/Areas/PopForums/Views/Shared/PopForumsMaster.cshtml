@@ -18,11 +18,12 @@
 <div id="ForumContainer" class="container-fluid">
 	<div class="row">
 		<div id="AccountBox" class="collapse navbar-collapse">
-			<form class="navbar-form pull-right" role="search">
+			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object>{{"class","navbar-form pull-right"}, {"role","search"}}))
+			{
 				<div class="form-group">
-					<input type="search" class="form-control" placeholder="Search">
+					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
 				</div>
-			</form>
+			}
 			<ul class="nav navbar-nav pull-right">
 				@if (this.GetUserFromViewData() == null)
 				{

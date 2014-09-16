@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Data.SqlSingleWebServer.Repositories
 {
@@ -95,7 +96,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			var wordArray = searchTerm.Split(new [] { ' ' });
 			var wordList = new List<string>();
 			var junkWords = GetJunkWords();
-			var alphaNum = new Regex(@"[\w']{2,}", RegexOptions.Compiled);
+			var alphaNum = SearchService.SearchWordPattern;
 			for (var x = 0; x < wordArray.Length; x++)
 			{
 				foreach (Match match in alphaNum.Matches(wordArray[x]))

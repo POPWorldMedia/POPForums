@@ -46,7 +46,8 @@ namespace PopForums.Controllers
 			return RedirectToAction("Result", new { query, searchType });
 		}
 
-		public ViewResult Result(string query, SearchType searchType, int page = 1)
+		[ValidateInput(false)]
+		public ViewResult Result(string query, SearchType searchType = SearchType.Rank, int page = 1)
 		{
 			ViewBag.SearchTypes = new SelectList(Enum.GetValues(typeof(SearchType)));
 			ViewBag.Query = query;
