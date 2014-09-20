@@ -16,35 +16,41 @@
 </script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@Model.Topic.Title</h1>
-	<p>
-		@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-		-&gt; @Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null)</li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@Html.ActionLink(Model.Forum.Title, "Index", "Forum", new { urlName = Model.Forum.UrlName, page = 1 }, null)</li>
+		<li>@Model.Topic.Title</li>
+	</ul>
 </div>
 
 @if (this.GetUserFromViewData() != null) {
 	<p id="AsyncResponse"></p>
-	<div class="topicUserTools">
-		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="toolButton" />
-		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="toolButton" />
+	<div>
+		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="btn" />
+		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn" />
+		@if (this.IsUserInRole(PermanentRoles.Moderator))
+		{
+			<input id="TopicModLogButton" class="btn" type="button" value="@PopForums.Resources.ModerationLog" />
+			<div id="TopicModerationLog"></div>
+		}
 	</div>
 }
 
-@if (this.IsUserInRole(PermanentRoles.Moderator))
-{
-	<input id="TopicModLogButton" class="toolButton" type="button" value="@PopForums.Resources.ModerationLog" />
-	<div class="moderationLog" id="TopicModerationLog"></div>
-}
 
 @Html.PagerLinks("Forum", "Topic", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
 
 <div id="PostStream">
 @if (Model.PagerContext.PageIndex > 1)
 {
-	<input type="button" class="previousPostsButton" value="@PopForums.Resources.ShowPreviousPosts" />
+	<input type="button" class="btn previousPostsButton" value="@PopForums.Resources.ShowPreviousPosts" />
 }
 
 @foreach(var post in Model.Posts) {
@@ -53,7 +59,7 @@
 
 @if (Model.PagerContext.PageIndex < Model.PagerContext.PageCount)
 {
-	<input type="button" class="morePostsButton" value="@PopForums.Resources.ShowMorePosts" />
+	<input type="button" class=" btn morePostsButton" value="@PopForums.Resources.ShowMorePosts" />
 }
 </div>
 
@@ -66,58 +72,76 @@
 @if (Model.PermissionContext.UserCanPost)
 {
 	<div id="NewReply" style="display: none;"></div>
-	<input type="button" value="@PopForums.Resources.PostReply" id="ReplyButton" class="toolButton" />
+	<input type="button" value="@PopForums.Resources.PostReply" id="ReplyButton" class="btn" />
 }
 else
 {
-	<p>@Model.PermissionContext.DenialReason</p>
+	<p class="bg-danger callout">@Model.PermissionContext.DenialReason</p>
 }
 
 @if (this.IsUserInRole(PermanentRoles.Moderator))
 {
 	<div id="ModeratorPanel">
 		<h3>@PopForums.Resources.Moderator</h3>
-		<p>
-			@Html.CheckBox("CloseOnReply") <label for="CloseOnReply">@PopForums.Resources.CloseOnReply</label><br />
-			@using (Html.BeginForm("ToggleDeleted", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
+		<div class="checkbox">
+			<label for="CloseOnReply">
+				@Html.CheckBox("CloseOnReply", new { @class = "checkbox" })
+				@PopForums.Resources.CloseOnReply
+			</label>
+		</div>
+		<ul class="list-inline">
+			<li>@using (Html.BeginForm("ToggleDeleted", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" />
-			}
-			@using (Html.BeginForm("TogglePin", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
+				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn" />
+			}</li>
+			<li>@using (Html.BeginForm("TogglePin", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" />
-			}
-			@using (Html.BeginForm("ToggleClosed", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
+				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn" />
+			}</li>
+			<li>@using (Html.BeginForm("ToggleClosed", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" />
-			}
+				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn" />
+			}</li>
 			@if (this.IsUserInRole(PermanentRoles.Admin))
 			{
-				using (Html.BeginForm("DeleteTopicPermanently", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
+				<li>@using (Html.BeginForm("DeleteTopicPermanently", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 				{
-					<input type="submit" value="@PopForums.Resources.DeletePermanently" />
-				}
+					<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn" />
+				}</li>
 			}
-		</p>
-		@using (Html.BeginForm("UpdateTopic", "Moderator"))
+		</ul>
+		@using (Html.BeginForm("UpdateTopic", "Moderator", FormMethod.Post, new {@class = "form-horizontal", role = "form"}))
 		{
-			<p>
-				@Html.Hidden("TopicID", Model.Topic.TopicID)
-				@PopForums.Resources.Title: @Html.TextBox("NewTitle", Model.Topic.Title)<br />
-				@PopForums.Resources.Forum: 				
-				<select id="NewForum" name="NewForum">
-					@foreach (var forum in ((CategorizedForumContainer)ViewBag.CategorizedForums).UncategorizedForums)
-						{<option value="@forum.ForumID"@Html.Raw(forum.ForumID == Model.Topic.ForumID ? @" selected=""selected""" : "")>@forum.Title</option>}
-					@foreach (var category in ((CategorizedForumContainer)ViewBag.CategorizedForums).CategoryDictionary)
-					{
-						<optgroup label="@category.Key.Title">
-							@foreach (var forum in category.Value)
-								{<option value="@forum.ForumID"@Html.Raw(forum.ForumID == Model.Topic.ForumID ? @" selected=""selected""" : "")>@forum.Title</option>}
-						</optgroup>
-					}
-				</select>
-				<input type="submit" value="@PopForums.Resources.Update" />
-			</p>
+			@Html.Hidden("TopicID", Model.Topic.TopicID)
+			<div class="form-group">
+				<label for="NewTitle" class="col-sm-2 control-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-6">
+					@Html.TextBox("NewTitle", Model.Topic.Title, new {@class = "form-control"})
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="NewForum" class="col-sm-2 control-label">@PopForums.Resources.Forum</label>
+				<div class="col-sm-6">
+					<select id="NewForum" name="NewForum" class="form-control">
+						@foreach (var forum in ((CategorizedForumContainer)ViewBag.CategorizedForums).UncategorizedForums)
+						{
+							<option value="@forum.ForumID" @Html.Raw(forum.ForumID == Model.Topic.ForumID ? @" selected=""selected""" : "")>@forum.Title</option>}
+						@foreach (var category in ((CategorizedForumContainer)ViewBag.CategorizedForums).CategoryDictionary)
+						{
+							<optgroup label="@category.Key.Title">
+								@foreach (var forum in category.Value)
+								{
+									<option value="@forum.ForumID" @Html.Raw(forum.ForumID == Model.Topic.ForumID ? @" selected=""selected""" : "")>@forum.Title</option>}
+							</optgroup>
+						}
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-6">
+					<input type="submit" value="@PopForums.Resources.Update" class="btn" />
+				</div>
+			</div>
 		}
 	</div>
 }

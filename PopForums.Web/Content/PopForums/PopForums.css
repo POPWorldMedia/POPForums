@@ -18,17 +18,99 @@
 }
 
 #ForumContainer .topicPreviewButton {
-	cursor: help;
+	cursor: pointer;
+}
+
+#ForumContainer #PostResponseMessage {
+	display: none;
 }
 
 #ForumContainer .topicPreview {
 	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
 }
 
+#ForumContainer #TopicModerationLog {
+	display: none;
+}
+
+#ForumContainer .postTools form {
+	display: inline-block;
+}
+
 #ForumContainer #FixedBreadcrumb {
 	position: fixed;top: 0;display: none;
 	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
 }
+
+#ForumContainer .twirl {
+	font-size: 75%;
+}
+
+/* post item */
+
+#ForumContainer .postItem {
+	margin: 20px 0;
+}
+#ForumContainer .avatar {
+	margin: 0 0 20px 20px;
+}
+#ForumContainer .postUserData {
+	border-radius: 4px;
+	padding: 8px 15px;
+	margin-bottom: 10px;
+}
+#ForumContainer .postUserData h3 {
+	margin: 0;cursor: pointer;
+}
+#ForumContainer blockquote {
+	font-size: 100%;
+}
+#ForumContainer .postItem hr {
+	margin: 10px 0;
+}
+#ForumContainer .postItem .signature {
+	color: #aaaaaa;
+}
+#ForumContainer .postItem .miniProfileBox {
+	padding: 8px 15px;
+	margin-bottom: 10px;
+	display: none;
+	border-radius: 4px;
+}
+#ForumContainer .postItem .voteCount {
+	display: inline-block;
+	cursor: pointer;
+	position: absolute;
+	margin-top: 5px;
+}
+#ForumContainer .postItem .voters {
+	max-height: 120px;
+	width: 150px;
+	overflow: auto;
+	position: relative;
+	display: none;
+	padding: 4px;
+	text-align: left;
+	border-radius: 2px;
+}
+#ForumContainer .postItem .voters ul {
+	margin: 4px;padding: 0;
+}
+#ForumContainer .voters li { list-style: none;font-size: 100%; }
+#ForumContainer .postItem .postTools {
+	display: inline-block;
+	margin-left: 40px;
+}
+#ForumContainer .postItem .postTools input {
+	padding: 0;
+}
+#ForumContainer .postItem .moderationLog {
+	padding: 8px 15px;
+	margin-bottom: 10px;
+	display: none;
+	border-radius: 4px;
+}
+
 
 /* Bootstrap overrides */
 

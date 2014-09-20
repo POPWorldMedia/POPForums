@@ -44,7 +44,7 @@ namespace PopForums.Services
 					return String.Format(Resources.TodayTime, input.ToString("t"));
 				if (now.Date.AddDays(-1) == input.Date)
 					return String.Format(Resources.YesterdayTime, input.ToString("t"));
-				return input.ToString("MMMM d, yyyy, h:mmt");
+				return input.ToString("f");
 			}
 			if (difference > new TimeSpan(0, 2, 00))
 				return String.Format(Resources.MinutesAgo, difference.Minutes);

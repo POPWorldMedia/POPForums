@@ -67,7 +67,7 @@
 				}
 			</td>
 			<td>
-				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right small" title="@PopForums.Resources.PreviewTopic" topicid="@topic.TopicID"></span></h2>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
 				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
 				<small class="pull-right">
 					@PopForums.Resources.StartedBy: @topic.StartedByName | @PopForums.Resources.Views: @topic.ViewCount.ToString("N0") | @PopForums.Resources.Replies: @topic.ReplyCount.ToString("N0") | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(topic.LastPostTime)">@FormatTime(topic.LastPostTime)</span> @PopForums.Resources.By @topic.LastPostName
@@ -80,7 +80,7 @@
 			<a class="indicatorLink" href=""><img src="" /></a>
 		</td>
 		<td>
-			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right small" title="@PopForums.Resources.PreviewTopic" topicid=""></span></h2>
+			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid=""></span></h2>
 			<div id="" class="topicPreview"></div>
 			<small class="pull-right">
 				@PopForums.Resources.StartedBy: <span class="startedByName"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>

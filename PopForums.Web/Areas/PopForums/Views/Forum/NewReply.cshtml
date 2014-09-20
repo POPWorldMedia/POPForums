@@ -2,7 +2,7 @@
 
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
-<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" /></p>
+<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn" /></p>
 
 <p class="postForm">
 	@PopForums.Resources.Title: @Html.TextBoxFor(p => p.Title)<br />
@@ -12,6 +12,6 @@
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	@Html.HiddenFor(p => p.ParentPostID)
-	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" />
-	<span id="PostResponseMessage" class="warning"></span>
+	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn" />
+	<span id="PostResponseMessage" class="bg-danger callout"></span>
 </p>
