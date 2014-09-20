@@ -286,6 +286,75 @@ namespace PopForums.Test.Controllers
         }
 
 		[Test]
+		public void NewTopicPostEmptyFullText()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			var forum = new Forum(1);
+			var topic = new Topic(2);
+			var ip = "127.0.0.1";
+			var permissionContext = new ForumPermissionContext { UserCanPost = true, UserCanView = true };
+			var newPost = new NewPost { Title = "blah", FullText = " ", IncludeSignature = true, ItemID = 2 };
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(forum);
+			_forumService.Setup(f => f.GetPermissionContext(forum, user)).Returns(permissionContext);
+			var contextHelper = new HttpContextHelper();
+			contextHelper.MockRequest.Setup(r => r.UserHostAddress).Returns(ip);
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var result = controller.PostTopic(newPost);
+			Assert.IsInstanceOf<JsonResult>(result);
+			var data = (BasicJsonMessage)result.Data;
+			Assert.IsFalse(data.Result);
+			_topicViewCountService.Verify(t => t.SetViewedTopic(topic, contextHelper.MockContext.Object), Times.Never());
+		}
+
+		[Test]
+		public void NewTopicPostEmptyTitle()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			var forum = new Forum(1);
+			var topic = new Topic(2);
+			var ip = "127.0.0.1";
+			var permissionContext = new ForumPermissionContext { UserCanPost = true, UserCanView = true };
+			var newPost = new NewPost { Title = " ", FullText = "oihoah ao;huvauhv", IncludeSignature = true, ItemID = 2 };
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(forum);
+			_forumService.Setup(f => f.GetPermissionContext(forum, user)).Returns(permissionContext);
+			var contextHelper = new HttpContextHelper();
+			contextHelper.MockRequest.Setup(r => r.UserHostAddress).Returns(ip);
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var result = controller.PostTopic(newPost);
+			Assert.IsInstanceOf<JsonResult>(result);
+			var data = (BasicJsonMessage)result.Data;
+			Assert.IsFalse(data.Result);
+			_topicViewCountService.Verify(t => t.SetViewedTopic(topic, contextHelper.MockContext.Object), Times.Never());
+		}
+
+		[Test]
+		public void NewTopicPostNullTitle()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			var forum = new Forum(1);
+			var topic = new Topic(2);
+			var ip = "127.0.0.1";
+			var permissionContext = new ForumPermissionContext { UserCanPost = true, UserCanView = true };
+			var newPost = new NewPost { Title = " ", FullText = "oihoah ao;huvauhv", IncludeSignature = true, ItemID = 2 };
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(forum);
+			_forumService.Setup(f => f.GetPermissionContext(forum, user)).Returns(permissionContext);
+			var contextHelper = new HttpContextHelper();
+			contextHelper.MockRequest.Setup(r => r.UserHostAddress).Returns(ip);
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var result = controller.PostTopic(newPost);
+			Assert.IsInstanceOf<JsonResult>(result);
+			var data = (BasicJsonMessage)result.Data;
+			Assert.IsFalse(data.Result);
+			_topicViewCountService.Verify(t => t.SetViewedTopic(topic, contextHelper.MockContext.Object), Times.Never());
+		}
+
+		[Test]
 		public void NewTopicPostUserCanPostCanView()
 		{
 			var controller = GetForumController();

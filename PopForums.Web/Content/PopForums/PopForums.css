@@ -110,7 +110,32 @@
 	display: none;
 	border-radius: 4px;
 }
+#ForumContainer .postItem .postImage {
+	max-width: 100%;height: auto;
+}
+#ForumContainer .postItem iframe {
+	max-width: 100%;
+}
 
+/* text editor */
+
+#ForumContainer #FullText {
+	height: 300px;width: 400px;
+}
+#tinymce {
+	padding: 10px !important;
+}
+#ForumContainer .postForm {
+	margin: 10px 0;
+}
+
+/* queries */
+
+@media(max-width:768px) {
+	#ForumContainer .avatar {
+		display: none;
+	}
+}
 
 /* Bootstrap overrides */
 

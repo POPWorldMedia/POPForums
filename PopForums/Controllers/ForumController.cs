@@ -112,8 +112,8 @@ namespace PopForums.Controllers
 				return Json(new BasicJsonMessage {Message = Resources.ForumNoPost, Result = false});
 			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
 				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
-            if (String.IsNullOrEmpty(newPost.FullText))
-                return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
+			if (String.IsNullOrWhiteSpace(newPost.FullText) || String.IsNullOrWhiteSpace(newPost.Title))
+				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 
 			var user = this.CurrentUser();
 			var urlHelper = new UrlHelper(ControllerContext.RequestContext);

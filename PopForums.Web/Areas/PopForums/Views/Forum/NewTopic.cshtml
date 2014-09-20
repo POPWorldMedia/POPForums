@@ -2,13 +2,20 @@
 
 <h2>@PopForums.Resources.CreateNewTopic</h2>
 
-<p class="postForm">
-	@PopForums.Resources.Title: @Html.TextBoxFor(p => p.Title)<br />
-	@Html.TextAreaFor(p => p.FullText)<br />
-	@Html.CheckBoxFor(p => p.IncludeSignature)<label for="IncludeSignature">@PopForums.Resources.IncludeSignature</label>
+<div class="postForm" role="form">
+	<div class="form-group">
+		@Html.TextBoxFor(p => p.Title, new { @class = "form-control", placeholder = PopForums.Resources.Title })
+	</div>
+	@Html.TextAreaFor(p => p.FullText)
+	<div class="checkbox">
+		<label for="IncludeSignature">
+			@Html.CheckBoxFor(p => p.IncludeSignature)
+			@PopForums.Resources.IncludeSignature
+		</label>
+	</div>
 	@Html.HiddenFor(p => p.ItemID)
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
-	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" />
-	<span id="PostResponseMessage" class="bg-danger callout"></span>
-</p>
+	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn" />
+	<p id="PostResponseMessage" class="bg-danger callout"></p>
+</div>
