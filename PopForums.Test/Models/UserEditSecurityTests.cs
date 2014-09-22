@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using PopForums.Models;
 
 namespace PopForums.Test.Models
@@ -40,6 +41,13 @@ namespace PopForums.Test.Models
 			edit.NewEmail = "blah";
 			edit.NewEmailRetype = "bloidsvosah";
 			Assert.IsFalse(edit.NewEmailsMatch());
+		}
+
+		[Test]
+		public void IsNewUserApprovedMapped()
+		{
+			var edit = new UserEditSecurity(new User(1, DateTime.MaxValue), true);
+			Assert.IsTrue(edit.IsNewUserApproved);
 		}
 	}
 }

@@ -22,6 +22,7 @@ namespace PopForums.Services
 		void DeleteUser(User targetUser, User user, string ip, bool ban);
 		void UpdateLastActicityDate(User user);
 		void ChangeEmail(User targetUser, string newEmail, User user, string ip);
+		void ChangeEmail(User targetUser, string newEmail, User user, string ip, bool isUserApproved);
 		void ChangeName(User targetUser, string newName, User user, string ip);
 		void UpdateIsApproved(User targetUser, bool isApproved, User user, string ip);
 		void UpdateAuthorizationKey(User user, Guid key);

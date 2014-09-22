@@ -5,34 +5,31 @@
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.EmailUser - @Model.Name</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
 </div>
 
-@using (Html.BeginForm()) {
-<table class="account stripe">
-	<tr>
-		<td>@PopForums.Resources.To</td>
-		<td>@Model.Name</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.YourIP</td>
-		<td>@ViewBag.IP</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Subject</td>
-		<td>@Html.TextBox("subject")</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Text</td>
-		<td>@Html.TextArea("text")</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="submit" value="@PopForums.Resources.SendEmailButton" /></td>
-	</tr>
-</table>
+@using (Html.BeginForm("EmailUser", "Account", FormMethod.Post, new { role = "form" })) {
+	<div class="form-group">
+		<label>@PopForums.Resources.To</label>
+		<p class="form-control-static">@Model.Name</p>
+	</div>
+	<div class="form-group">
+		<label>@PopForums.Resources.YourIP</label>
+		<p class="form-control-static">@ViewBag.IP</p>
+	</div>
+	<div class="form-group">
+		<label for="subject">@PopForums.Resources.Subject</label>
+		@Html.TextBox("subject", null, new { @class = "form-control" })
+	</div>
+	<div class="form-group">
+		<label for="text">@PopForums.Resources.Text</label>
+		@Html.TextArea("text", new { @class = "form-control", rows = 6 })
+	</div>
+	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn" />
+	if (ViewBag.EmailResult != null){ <span class="bg-danger callout">@ViewBag.EmailResult</span> }
+	@Html.AntiForgeryToken()
 }

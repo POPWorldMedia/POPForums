@@ -6,17 +6,19 @@ namespace PopForums.Models
 	{
 		public UserEditSecurity() {}
 
-		public UserEditSecurity(User user)
+		public UserEditSecurity(User user, bool isNewUserApproved)
 		{
 			OldEmail = user.Email;
+			IsNewUserApproved = isNewUserApproved;
 		}
 
 		public string OldPassword { get; set; }
 		public string NewPassword { get; set; }
 		public string NewPasswordRetype { get; set; }
-		public string OldEmail { get; set; }
+		public string OldEmail { get; private set; }
 		public string NewEmail { get; set; }
 		public string NewEmailRetype { get; set; }
+		public bool IsNewUserApproved { get; set; }
 
 		public bool NewPasswordsMatch()
 		{

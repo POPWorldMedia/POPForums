@@ -396,5 +396,16 @@ namespace PopForums.Extensions
 				return Resources.DeleteTopic;
 			return Resources.Delete;
 		}
+
+		public static string AddValidationClass(this HtmlHelper helper, string fieldName, string cssClass)
+		{
+			if (!helper.ViewContext.ViewData.ModelState.ContainsKey(fieldName))
+				return String.Empty;
+			var result = String.Empty;
+			var field = helper.ViewContext.ViewData.ModelState.SingleOrDefault(x => x.Key == fieldName);
+			if (field.Value.Errors.Count > 0)
+				result = cssClass;
+			return result;
+		}
 	}
 }

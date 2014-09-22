@@ -379,6 +379,7 @@ namespace PopForums.Test.Services
 			var userManager = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).Returns(GetDummyUser(oldName, oldEmail));
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns((User)null);
+			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(false);
 			var targetUser = GetDummyUser(oldName, oldEmail);
 			var user = new User(34243, DateTime.MinValue);
 			userManager.ChangeEmail(targetUser, newEmail, user, "123");
@@ -396,6 +397,7 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).Returns(GetDummyUser(oldName, oldEmail));
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns(GetDummyUser("Diana", newEmail));
+			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser(oldName, oldEmail);
 			Assert.Throws(typeof(Exception), () => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()), "The e-mail \"" + newEmail + "\" is already in use.");
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
@@ -406,9 +408,27 @@ namespace PopForums.Test.Services
 		{
 			const string badEmail = "a b @ c";
 			var userManager = GetMockedUserService();
+			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser("", "");
 			Assert.Throws(typeof(Exception), () => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()), "E-mail address invalid.");
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		}
+
+		[Test]
+		public void ChangeEmailMapsIsApprovedFromSettingsToUserRepoCall()
+		{
+			const string oldName = "Jeff";
+			const string oldEmail = "a@b.com";
+			const string newEmail = "c@d.com";
+
+			var userManager = GetMockedUserService();
+			_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).Returns(GetDummyUser(oldName, oldEmail));
+			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns((User)null);
+			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
+			var targetUser = GetDummyUser(oldName, oldEmail);
+			var user = new User(34243, DateTime.MinValue);
+			userManager.ChangeEmail(targetUser, newEmail, user, "123");
+			_mockUserRepo.Verify(x => x.UpdateIsApproved(targetUser, true), Times.Once());
 		}
 
 		[Test]

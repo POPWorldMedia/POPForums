@@ -177,6 +177,11 @@ namespace PopForums.Services
 
 		public void ChangeEmail(User targetUser, string newEmail, User user, string ip)
 		{
+			ChangeEmail(targetUser, newEmail, user, ip, _settingsManager.Current.IsNewUserApproved);
+		}
+
+		public void ChangeEmail(User targetUser, string newEmail, User user, string ip, bool isUserApproved)
+		{
 			if (!newEmail.IsEmailAddress())
 				throw new Exception("E-mail address invalid.");
 			if (IsEmailInUse(newEmail))
@@ -184,6 +189,7 @@ namespace PopForums.Services
 			var oldEmail = targetUser.Email;
 			_userRepository.ChangeEmail(targetUser, newEmail);
 			targetUser.Email = newEmail;
+			_userRepository.UpdateIsApproved(targetUser, isUserApproved);
 			_securityLogService.CreateLogEntry(user, targetUser, ip, String.Format("Old: {0}, New: {1}", oldEmail, newEmail), SecurityLogType.EmailChange);
 		}
 
@@ -321,7 +327,7 @@ namespace PopForums.Services
 		public void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, HttpPostedFileBase avatarFile, HttpPostedFileBase photoFile, string ip, User user)
 		{
 			if (!String.IsNullOrWhiteSpace(userEdit.NewEmail))
-				ChangeEmail(targetUser, userEdit.NewEmail, user, ip);
+				ChangeEmail(targetUser, userEdit.NewEmail, user, ip, userEdit.IsApproved);
 			if (!String.IsNullOrWhiteSpace(userEdit.NewPassword))
 				SetPassword(targetUser, userEdit.NewPassword, ip, user);
 			if (targetUser.IsApproved != userEdit.IsApproved)

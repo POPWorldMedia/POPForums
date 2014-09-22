@@ -37,8 +37,8 @@
 			@Html.Password("PasswordLogin", null, new { @class = "form-control" })
 		</div>
 		<div class="checkbox">
-			<label for="PersistCookie">
-				@Html.CheckBox("PersistCookie", new { @class = "checkbox" })@PopForums.Resources.RememberMe
+			<label>
+				@Html.CheckBox("PersistCookie") @PopForums.Resources.RememberMe
 			</label>
 		</div>
 		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn" />

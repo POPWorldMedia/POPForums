@@ -6,76 +6,106 @@
     Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.CreateAnAccount</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
 </div>
 
 <p>@Html.ActionLink(PopForums.Resources.NeedToVerifyExistingAccount, "Verify")</p>
 
 @if (this.GetUserFromViewData() == null) {
-	using (Html.BeginForm()) {
-	<table class="stripe account">
-		<tr>
-			<td>
-				@PopForums.Resources.Name<br />
-				@PopForums.Resources.AsYouWouldLikeItToAppear
-			</td>
-			<td>@Html.TextBoxFor(m => m.Name)<br />@Html.ValidationMessageFor(m => m.Name)</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.Email</td>
-			<td>@Html.TextBoxFor(m => m.Email)<br />@Html.ValidationMessageFor(m => m.Email)</td>
-		</tr>
-		<tr>
-			<td>
-				@PopForums.Resources.Password<br />
-				@PopForums.Resources.AtLeastSixChar
-			</td>
-			<td>@Html.PasswordFor(m => m.Password)<br />@Html.ValidationMessageFor(m => m.Password)</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.RetypePassword</td>
-			<td>@Html.PasswordFor(m => m.PasswordRetype)<br />@Html.ValidationMessageFor(m => m.PasswordRetype)</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.TimeZone</td>
-			<td>
-				@Html.TimeZoneDropDown("TimeZone", null, ViewData[AccountController.ServerTimeZoneKey])
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-				@Html.CheckBoxFor(m => m.IsDaylightSaving) <label for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label><br />
-				@Html.CheckBoxFor(m => m.IsSubscribed) <label for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>@Html.CheckBoxFor(m => m.IsCoppa) <label for="IsCoppa">@String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label> @Html.ValidationMessageFor(m => m.IsCoppa)</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<p>
-					@PopForums.Resources.TermsOfService<br />
-					<textarea disabled="disabled" rows="6" cols="60" id="TOS">@ViewData[AccountController.TosKey]</textarea>
-				</p>
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>@Html.CheckBoxFor(m => m.IsTos) <label for="IsTos">@PopForums.Resources.HaveReadTOS</label> @Html.ValidationMessageFor(m => m.IsTos)</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><input type="submit" value="@PopForums.Resources.CreateAccountButton" /></td>
-		</tr>
-	</table>
+	using (Html.BeginForm("Create", "Account", FormMethod.Post, new { role = "form" })) {
+		<div class="form-horizontal">
+			<div class="form-group @Html.AddValidationClass("Name", "has-error")">
+				<label for="Name" class="col-xs-2 control-label">
+					@PopForums.Resources.Name<br />
+					@PopForums.Resources.AsYouWouldLikeItToAppear
+				</label>
+				<div class="col-xs-10">
+					@Html.TextBoxFor(m => m.Name, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Name)
+				</div>
+			</div>
+			<div class="form-group @Html.AddValidationClass("Email", "has-error")">
+				<label for="Email" class="col-xs-2 control-label">
+					@PopForums.Resources.Email
+				</label>
+				<div class="col-xs-10">
+					@Html.TextBoxFor(m => m.Email, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Email)
+				</div>
+			</div>
+			<div class="form-group @Html.AddValidationClass("Password", "has-error")">
+				<label for="Password" class="col-xs-2 control-label">
+					@PopForums.Resources.Password<br />
+					@PopForums.Resources.AtLeastSixChar
+				</label>
+				<div class="col-xs-10">
+					@Html.PasswordFor(m => m.Password, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Password)
+				</div>
+			</div>
+			<div class="form-group @Html.AddValidationClass("PasswordRetype", "has-error")">
+				<label for="PasswordRetype" class="col-xs-2 control-label">
+					@PopForums.Resources.RetypePassword
+				</label>
+				<div class="col-xs-10">
+					@Html.PasswordFor(m => m.PasswordRetype, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.PasswordRetype)
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="TimeZone" class="col-xs-2 control-label">
+					@PopForums.Resources.TimeZone
+				</label>
+				<div class="col-xs-10">
+					@Html.TimeZoneDropDown("TimeZone", new { @class = "form-control" }, ViewData[AccountController.ServerTimeZoneKey])
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="checkbox">
+						<label>@Html.CheckBoxFor(m => m.IsDaylightSaving) @PopForums.Resources.UseDaylight</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="checkbox">
+						<label>@Html.CheckBoxFor(m => m.IsSubscribed) @PopForums.Resources.SubscribeToList</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group @Html.AddValidationClass("IsCoppa", "has-error")">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="checkbox">
+						<label>@Html.CheckBoxFor(m => m.IsCoppa) @String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label>
+						@Html.ValidationMessageFor(m => m.IsCoppa)
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="Password" class="col-xs-2 control-label">
+					@PopForums.Resources.TermsOfService
+				</label>
+				<div class="col-xs-10">
+					<textarea class="form-control" disabled="disabled" rows="6" id="TOS">@ViewData[AccountController.TosKey]</textarea>
+				</div>
+			</div>
+			<div class="form-group @Html.AddValidationClass("IsTos", "has-error")">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="checkbox">
+						<label>@Html.CheckBoxFor(m => m.IsTos) @PopForums.Resources.HaveReadTOS</label>
+						@Html.ValidationMessageFor(m => m.IsTos)
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input type="submit" value="@PopForums.Resources.CreateAccountButton" class="btn" />
+				</div>
+			</div>
+		</div>
 }
 } else {
-	<p class="warning">@PopForums.Resources.AlreadyCreatedAccount</p>
+	<p class="bg-danger callout">@PopForums.Resources.AlreadyCreatedAccount</p>
 }
 

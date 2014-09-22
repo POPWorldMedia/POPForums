@@ -257,7 +257,8 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			var userEdit = new UserEditSecurity(user);
+			var isNewUserApproved = _settingsManager.Current.IsNewUserApproved;
+			var userEdit = new UserEditSecurity(user, isNewUserApproved);
 			return View(userEdit);
 		}
 
@@ -288,7 +289,7 @@ namespace PopForums.Controllers
 			var user = this.CurrentUser();
 			if (user == null)
 				return View("EditAccountNoUser");
-			if (!userEdit.NewEmail.IsEmailAddress())
+			if (String.IsNullOrWhiteSpace(userEdit.NewEmail) || !userEdit.NewEmail.IsEmailAddress())
 				ViewBag.EmailResult = Resources.ValidEmailAddressRequired;
 			else if (userEdit.NewEmail != userEdit.NewEmailRetype)
 				ViewBag.EmailResult = Resources.EmailsMustMatch;
@@ -308,7 +309,7 @@ namespace PopForums.Controllers
 						ViewBag.EmailResult = Resources.EmailProblemAccount + result;
 				}
 			}
-			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty });
+			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 		}
 
 		public ViewResult ManagePhotos()
@@ -436,6 +437,7 @@ namespace PopForums.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public ViewResult EmailUser(int id, string subject, string text)
 		{
 			var user = this.CurrentUser();
@@ -446,6 +448,12 @@ namespace PopForums.Controllers
 				return this.NotFound("NotFound", null);
 			if (!_userEmailer.IsUserEmailable(toUser))
 				return this.Forbidden("Forbidden", null);
+			if (String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(text))
+			{
+				ViewBag.EmailResult = Resources.PMCreateWarnings;
+				ViewBag.IP = Request.UserHostAddress;
+				return View(toUser);
+			}
 			_userEmailer.ComposeAndQueue(toUser, user, Request.UserHostAddress, subject, text);
 			return View("EmailSent");
 		}

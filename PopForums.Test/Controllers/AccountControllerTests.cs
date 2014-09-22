@@ -338,6 +338,9 @@ namespace PopForums.Test.Controllers
 		public void EditSecurityView()
 		{
 			var controller = GetController();
+			var settings = new Mock<Settings>();
+			settings.Setup(x => x.IsNewUserApproved).Returns(true);
+			_settingsManager.Setup(x => x.Current).Returns(settings.Object);
 			var contextHelper = new HttpContextHelper();
 			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
 			var user = UserTest.GetTestUser();
@@ -449,6 +452,7 @@ namespace PopForums.Test.Controllers
 			var controller = GetController();
 			var contextHelper = new HttpContextHelper();
 			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = UserTest.GetTestUser();
 			controller.SetUser(user);
 			var result = controller.ChangeEmail(new UserEditSecurity { NewEmail = "asdfg", NewEmailRetype = "asdfg" });
@@ -461,6 +465,7 @@ namespace PopForums.Test.Controllers
 		public void ChangeEmailNoMatchy()
 		{
 			var controller = GetController();
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var contextHelper = new HttpContextHelper();
 			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
 			var user = UserTest.GetTestUser();

@@ -13,11 +13,11 @@
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@Model.Name</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
 </div>
 
 <div id="ProfileTabs">

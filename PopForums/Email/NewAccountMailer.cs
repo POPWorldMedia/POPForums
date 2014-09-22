@@ -27,9 +27,9 @@ namespace PopForums.Email
 			message.Subject = String.Format(Resources.RegisterEmailSubject, settings.ForumTitle);
 			string body;
 			if (settings.IsNewUserApproved)
-				body = String.Format(NewUserApprovedEmail, settings.ForumTitle, settings.MailSignature, Environment.NewLine);
+				body = String.Format(NewUserApprovedEmail, settings.ForumTitle, settings.MailSignature, "\r\n");
 			else
-				body = String.Format(NewUserVerifyEmail, settings.ForumTitle, verifyUrl + "/" + user.AuthorizationKey, verifyUrl, user.AuthorizationKey, settings.MailSignature, Environment.NewLine);
+				body = String.Format(NewUserVerifyEmail, settings.ForumTitle, verifyUrl + "/" + user.AuthorizationKey, verifyUrl, user.AuthorizationKey, settings.MailSignature, "\r\n");
 			message.Body = body;
 			return _smtpWrapper.Send(message);
 		}
@@ -41,7 +41,7 @@ namespace PopForums.Email
 
 		public virtual string NewUserVerifyEmail
 		{
-			get { return Resources.RegisterEmailThankYou; }
+			get { return Resources.RegisterEmailThankYouVerify; }
 		}
 	}
 }
