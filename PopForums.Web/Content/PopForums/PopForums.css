@@ -1,4 +1,8 @@
-﻿#ForumContainer .grid {
+﻿#ForumContainer dd, #ForumContainer dt {
+	margin-bottom: 5px;
+}
+
+#ForumContainer .grid {
 	margin: 20px 0;
 }
 #ForumContainer .grid h1, #ForumContainer .grid h2, #ForumContainer .grid h3 {
@@ -51,8 +55,21 @@
 	text-align: center;
 }
 
-#ForumContainer #FeedList > div {
+#ForumContainer #FeedList > div, #ForumContainer #ActivityFeed > div, #ForumContainer #Awards > div {
 	margin-bottom: 10px;
+}
+
+#ForumContainer #Profile > div {
+	padding-top: 20px;
+}
+
+#ForumContainer .activityFeedPoints {
+	font-size: 200%;
+	font-weight: bold;
+	text-align: center;
+	width: 60px;
+	float: left;
+	margin-right: 10px;
 }
 
 /* post item */
