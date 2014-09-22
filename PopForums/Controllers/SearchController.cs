@@ -51,6 +51,7 @@ namespace PopForums.Controllers
 		{
 			ViewBag.SearchTypes = new SelectList(Enum.GetValues(typeof(SearchType)));
 			ViewBag.Query = query;
+			ViewBag.SearchType = searchType;
 			var includeDeleted = false;
 			var user = this.CurrentUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))

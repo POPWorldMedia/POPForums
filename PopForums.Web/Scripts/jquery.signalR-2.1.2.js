@@ -1,7 +1,7 @@
 /* jquery.signalR.core.js */
 /*global window:false */
 /*!
- * ASP.NET SignalR JavaScript Library v2.1.1
+ * ASP.NET SignalR JavaScript Library v2.1.2
  * http://signalr.net/
  *
  * Copyright (C) Microsoft Corporation. All rights reserved.
@@ -705,7 +705,9 @@
                     connection.id = res.ConnectionId;
                     connection.token = res.ConnectionToken;
                     connection.webSocketServerUrl = res.WebSocketServerUrl;
-                    connection._.longPollDelay = res.LongPollDelay * 1000; // in ms
+
+                    // The long poll timeout is the ConnectionTimeout plus 10 seconds
+                    connection._.pollTimeout = res.ConnectionTimeout * 1000 + 10000; // in ms
 
                     // Once the server has labeled the PersistentConnection as Disconnected, we should stop attempting to reconnect
                     // after res.DisconnectTimeout seconds.
@@ -960,7 +962,6 @@
             delete connection._.pingIntervalId;
             delete connection._.lastMessageAt;
             delete connection._.lastActiveAt;
-            delete connection._.longPollDelay;
 
             // Clear out our message buffer
             connection._.connectingMessageBuffer.clear();
@@ -2150,27 +2151,13 @@
         events = $.signalR.events,
         changeState = $.signalR.changeState,
         isDisconnecting = $.signalR.isDisconnecting,
-        transportLogic = signalR.transports._logic,
-        browserSupportsXHRProgress = (function () {
-                try {
-                    return "onprogress" in new window.XMLHttpRequest();
-                } catch (e) {
-                    // No XHR means no XHR progress event
-                    return false;
-                }
-            })();
+        transportLogic = signalR.transports._logic;
 
     signalR.transports.longPolling = {
         name: "longPolling",
 
-        supportsKeepAlive: function (connection) {
-            return browserSupportsXHRProgress &&
-                   connection.ajaxDataType !== "jsonp" &&
-                   // Don't check for keep alives if there is a delay configured between poll requests.
-                   // Don't check for keep alives if the server didn't send back the "LongPollDelay" as
-                   // part of the response to /negotiate. That indicates the server is running an older
-                   // version of SignalR that doesn't send long polling keep alives.
-                   connection._.longPollDelay === 0;
+        supportsKeepAlive: function () {
+            return false;
         },
 
         reconnectDelay: 3000,
@@ -2245,6 +2232,7 @@
                             }
                         },
                         url: url,
+                        timeout: connection._.pollTimeout,
                         success: function (result) {
                             var minData,
                                 delay = 0,
@@ -2486,6 +2474,8 @@
                 callbackMap: {}
             };
         },
+
+        constructor: hubProxy,
 
         hasSubscriptions: function () {
             return hasMembers(this._.callbackMap);
@@ -2824,5 +2814,5 @@
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
 (function ($, undefined) {
-    $.signalR.version = "2.1.1";
+    $.signalR.version = "2.1.2";
 }(window.jQuery));

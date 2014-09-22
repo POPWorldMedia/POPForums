@@ -7,19 +7,12 @@
 
 @section HeaderContent
 {
-	<script type="text/javascript" src="@Url.Content("~/scripts/tiny_mce/jquery.tinymce.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/scripts/tinymce/jquery.tinymce.min.js")"></script>
 	<script language="javascript" type="text/javascript">
 		$(function () {
 			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
 			if (!usePlainText) {
-				$("#FullText").tinymce({
-					script_url: "/scripts/tiny_mce/tiny_mce.js",
-					theme: "advanced",
-					plugins: "paste,inlinepopups",
-					content_css: "/Content/PopForums/Style.css",
-					gecko_spellcheck: true,
-					mode: "exact"
-				});
+				$("#FullText").tinymce(PopForums.editorSettings);
 			}
 		});
 	</script>
@@ -29,14 +22,22 @@
 
 @using (Html.BeginForm())
 {
-	<p class="postForm">
-		@PopForums.Resources.Title: @Html.TextBoxFor(p => p.Title)<br />
-		@Html.TextAreaFor(p => p.FullText)<br />
-		@Html.CheckBoxFor(p => p.ShowSig)<label for="IncludeSignature">@PopForums.Resources.IncludeSignature
-		</label><br />
-		@PopForums.Resources.CommentsOptional:<br />
-		@Html.TextAreaFor(p => p.Comment)
+	<div class="postForm" role="form">
+		<div class="form-group">
+			@Html.TextBoxFor(p => p.Title, new { @class = "form-control", placeholder = PopForums.Resources.Title })
+		</div>
+		@Html.TextAreaFor(p => p.FullText)
+		<div class="checkbox">
+			<label for="IncludeSignature">
+				@Html.CheckBoxFor(p => p.ShowSig)
+				@PopForums.Resources.IncludeSignature
+			</label>
+		</div>
+		<div class="form-group">
+			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
+			@Html.TextAreaFor(p => p.Comment, new { @class = "form-control", rows = "3" })
+		</div>
 		@Html.HiddenFor(p => p.IsPlainText)
-	</p>
-	<input type="submit" value="@PopForums.Resources.Save" />
+	</div>
+	<input type="submit" value="@PopForums.Resources.Save" class="btn" />
 }

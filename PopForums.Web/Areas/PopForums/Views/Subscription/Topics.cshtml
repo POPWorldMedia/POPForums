@@ -15,12 +15,17 @@
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.SubscribedTopics</h1>
-	<p>
-		@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@PopForums.Resources.SubscribedTopics</li>
+	</ul>
 </div>
 
 @if (Model == null)
@@ -36,26 +41,26 @@ else
  
 	@Html.PagerLinks("Subscription", "Topics", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
 
-	<table class="forumGrid">
+	<table id="TopicList" class="table grid table-hover">
 		@foreach (var topic in Model.Topics)
-  {
-			<tr @if (topic.IsDeleted){<text> class="deletedItem"</text> }>
+		{
+			<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>  }>
 				<td class="newIndicator"><a href="@Url.Action("GoToNewestPost", "Forum", new { id = topic.TopicID })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a></td>
 				<td class="topicListButton">
 					@using (Html.BeginForm("Unsubscribe", "Subscription"))
-	 {
+					{
 						@Html.Hidden("id", topic.TopicID)
-						<input type="submit" value="@PopForums.Resources.Unsubscribe" />
-	 }
+						<input type="submit" value="@PopForums.Resources.Unsubscribe" class="btn" />
+					}
 				</td>
 				<td>
-					<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton" title="@PopForums.Resources.PreviewTopic" topicID="@topic.TopicID">&gt;&gt;</span></h2>
+					<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
 					<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
-					<p class="forumStatData">
+					<small class="pull-right">
 						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(topic.LastPostTime)">@FormatTime(topic.LastPostTime)</span> @PopForums.Resources.By @topic.LastPostName
-					</p>
+					</small>
 				</td>
 			</tr>
-  }
+		}
 	</table>
 }

@@ -46,6 +46,15 @@
 	font-size: 75%;
 }
 
+#ForumContainer .topicListButton {
+	width: 100px;
+	text-align: center;
+}
+
+#ForumContainer #FeedList > div {
+	margin-bottom: 10px;
+}
+
 /* post item */
 
 #ForumContainer .postItem {

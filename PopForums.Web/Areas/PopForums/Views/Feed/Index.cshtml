@@ -14,24 +14,24 @@
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.ActivityFeed</h1>
-	<p>
-		@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
 </div>
 
 <div id="FeedList">
 @foreach (var item in Model)
 {
-	<div class="activityFeedEvent">
+	<div class="bg-info callout">
 		<div class="feedItemText">@Html.Raw(item.Message)</div>
-		<div class="forumStatData fTime" data-utc="@FormatTime8601(item.TimeStamp)">@FormatTime(item.TimeStamp)</div>
+		<div class="text-right small fTime" data-utc="@FormatTime8601(item.TimeStamp)">@FormatTime(item.TimeStamp)</div>
 	</div>
 }
-	<div id="ActivityFeedTemplate" class="activityFeedEvent">
+	<div id="ActivityFeedTemplate" class="bg-info callout" style="display: none;">
 		<div class="feedItemText"></div>
-		<div class="forumStatData fTime" data-utc=""></div>
+		<div class="text-right small fTime" data-utc=""></div>
 	</div>
 </div>

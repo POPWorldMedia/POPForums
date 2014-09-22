@@ -12,6 +12,13 @@
 	</p>
 </div>
 
+<div>
+	<h1>@PopForums.Resources.Unsubscribe</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>
+
 @if (Model.Topic != null && Model.User != null)
 {
 	<p>@Model.User.Name is unsubscribed from @Html.ActionLink(Model.Topic.Title, "Topic", "Forum", new { id = Model.Topic.UrlName, page = 1 }, null)</p>

@@ -4,17 +4,15 @@
 <html>
 <head>
     <title>@PopForums.Resources.PopForumsSetup - @PopForums.Resources.Success</title>
-	<link href="/Content/PopForums/Structure.css" rel="stylesheet" type="text/css" />
-	<link href="/Content/PopForums/Style.css" rel="stylesheet" type="text/css" />
+	<link href="/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<div id="ForumContainer">
-		<div id="TopBreadcrumb" class="navAbsolute">
+	<div class="container">
+		<div class="row">
 			<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
 			<p>Congratulations!</p>
+			<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
 		</div>
-
-		<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
     </div>
 </body>
 </html>
