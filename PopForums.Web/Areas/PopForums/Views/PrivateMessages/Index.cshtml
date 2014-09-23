@@ -15,31 +15,33 @@
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.PrivateMessages</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-		-&gt; @Html.ActionLink(PopForums.Resources.SendPM, "Create")
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
 </div>
 
-@Html.PagerLinks("PrivateMessages", "Index", (PagerContext)ViewBag.PagerContext, "pagerLinks", "morePager", "currentPager")
+<p>@Html.ActionLink(PopForums.Resources.SendPM, "Create")</p>
 
-<table class="forumGrid">
+@Html.PagerLinks("PrivateMessages", "Index", (PagerContext)ViewBag.PagerContext, null, null, "currentPager")
+
+<table class="table grid table-hover">
 	@foreach (var pm in Model)
 	{
 		<tr>
 			<td class="newIndicator">
 				<a href="@Url.Action("View", new { id = pm.PMID })">@Html.PMReadIndicator(pm, "/Content/PopForums/")</a>
 			</td>
-			<td>
-				@using(Html.BeginForm("ArchivePM", "PrivateMessages", new { id = pm.PMID })) {
-					<input type="submit" value="@PopForums.Resources.Archive" />
+			<td class="topicListButton">
+				@using (Html.BeginForm("ArchivePM", "PrivateMessages", new { id = pm.PMID }))
+				{
+					<input type="submit" value="@PopForums.Resources.Archive" class="btn" />
 				}
 			</td>
 			<td>@Html.ActionLink(pm.Subject, "View", new { id = pm.PMID })</td>
 			<td>@pm.UserNames</td>
-			<td><span class="lastPostTime fTime" data-utc="@FormatTime8601(pm.LastPostTime)">@FormatTime(pm.LastPostTime)</span></td>
+			<td><small class="fTime" data-utc="@FormatTime8601(pm.LastPostTime)">@FormatTime(pm.LastPostTime)</small></td>
 		</tr>
 	}
 </table>

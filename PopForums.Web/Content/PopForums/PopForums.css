@@ -72,6 +72,10 @@
 	margin-right: 10px;
 }
 
+#ForumContainer .toLabelX {
+	cursor: pointer;
+}
+
 /* post item */
 
 #ForumContainer .postItem {

@@ -9,72 +9,104 @@
 	<script type="text/javascript" language="javascript">
 		$(function () {
 			var toText = $("#ToText");
-			var toContainer = $("#ToContainer");
-			toText.keydown(function (data) {
-				if (data.keyCode == 8) {
-					var names = $("#ToContainer .autoItem:last").remove();
-					serializeIDs();
+			var toList = $("#ToList");
+			toText.on("keyup", function() {
+				var q = $(this).val();
+				if (q.length > 1) {
+					$.getJSON(PopForums.areaPath + "/PrivateMessages/GetNames", { id: q })
+						.done(function (data) {
+						toList.empty();
+						$.each(data, function(i, item) {
+							toList.append('<li><a href="#" data-userID="' + item.UserID + '" class="callout toItem">' + item.value + '</a></li>');
+						});
+					});
+				} else {
+					toList.empty();
 				}
 			});
-			toText.autocomplete({
-				source: function (request, response) { $.getJSON(PopForums.areaPath + "/PrivateMessages/GetNames", { id: request.term }, response); },
-				minLength: 2,
-				select: function (event, ui) { toContainer.append('<span userID="' + ui.item.UserID + '" class="autoItem">' + ui.item.value + '</span>'); },
-				close: function (event, ui) { toText.val(''); serializeIDs(); },
-				messages:  {
-					noResults: null,
-					results: function() {}
-			}
+
+			$(document).on("click", ".toItem", function () {
+				var item = $(this);
+				var userID = item.attr("data-userID");
+				var label = '<div data-userID="' + userID + '" class="label label-primary toLabel">' + item[0].innerHTML + ' <span class="glyphicon glyphicon-remove toLabelX"></span></div>';
+				$("#PMToBox").append(label);
+				toList.empty();
+				toText.val("");
+				$("#ToModal").modal("hide");
+				serializeIDs();
 			});
+
+			$(document).on("click", ".toLabelX", function () {
+				$(this).parent().remove();
+				serializeIDs();
+			});
+
+			$("#ToModal").on("shown.bs.modal", function() {
+				$("#ToText").focus();
+			});
+
+			serializeIDs();
 		});
 
+
 		function serializeIDs() {
-			var items = $("#ToContainer span");
+			var items = $("#PMToBox div");
 			var ids = [];
-			items.each(function () { ids.push($(this).attr("userID")); });
+			items.each(function () { ids.push($(this).attr("data-userID")); });
 			$("#UserIDs").val(ids);
 		}
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@PopForums.Resources.NewPM</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-		-&gt; @Html.ActionLink("Private Messages", "Index") 
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@Html.ActionLink("Private Messages", "Index")</li>
+	</ul>
 </div>
 
-<p class="warning">@ViewBag.Warning</p>
+@if (ViewBag.Warning != null) { <p class="bg-danger callout">@ViewBag.Warning</p> }
+																				  
+<div class="modal fade" id="ToModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel">@PopForums.Resources.To</h4>
+			</div>
+			<div class="modal-body">
+				<input id="ToText" type="text" class="form-control" placeholder="@PopForums.Resources.Search" />
+				<ul id="ToList" class="list-unstyled"></ul>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 @using (Html.BeginForm())
 {
-@Html.Hidden("UserIDs")
-<table class="postForm">
-	<tr>
-		<td>@PopForums.Resources.To</td>
-		<td>
-			<div id="PMToBox">
-				<span id="ToContainer">
-					@if (ViewBag.TargetUserID != null) {
-						<span userID="@ViewBag.TargetUserID" class="autoItem">@ViewBag.TargetUserName</span>
-					}
-				</span>
-				<input id="ToText" type="text" />
+	@Html.Hidden("UserIDs")
+	<div role="form">
+		<div class="form-group">
+			<label><input type="button" class="btn" data-toggle="modal" data-target="#ToModal" value="@PopForums.Resources.To" /></label>
+			<div id="PMToBox" class="form-control">
+				@if (ViewBag.TargetUserID != null)
+				{
+					<div data-userid="@ViewBag.TargetUserID" class="label label-primary toLabel">@ViewBag.TargetUserName <span class="glyphicon glyphicon-remove toLabelX"></span></div>
+				}
 			</div>
-		</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Subject</td>
-		<td>@Html.TextBox("Subject")</td>
-	</tr>
-	<tr>
-		<td class="label">@PopForums.Resources.Message</td>
-		<td>@Html.TextArea("FullText")</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input id="SendButton" type="submit" value="@PopForums.Resources.Send" /></td>
-	</tr>
-</table>
+		</div>
+		<div class="form-group">
+			<label for="Subject">@PopForums.Resources.Subject</label>
+			@Html.TextBox("Subject", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="FullText">@PopForums.Resources.Message</label>
+			@Html.TextArea("FullText", new { @class = "form-control" })
+		</div>
+		<input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="btn" />
+	</div>
 }

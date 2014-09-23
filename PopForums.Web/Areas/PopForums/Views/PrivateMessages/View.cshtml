@@ -13,22 +13,20 @@
 	</script>
 }
 
-<div id="TopBreadcrumb" class="navAbsolute">
+<div>
 	<h1>@Model.PrivateMessage.Subject</h1>
-	<p>
-		^ @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)
-		-&gt; @Html.ActionLink("Private Messages", "Index") 
-	</p>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@Html.ActionLink("Private Messages", "Index")</li>
+	</ul>
 </div>
 
 @foreach (var post in Model.Posts)
 {
 	<div class="postItem">
-		<div class="postUserData">
-			<p class="postTime">
-				<span class="lastPostTime fTime" data-utc="@FormatTime8601(post.PostTime)">@FormatTime(post.PostTime)</span>
-			</p>
-			<p>@Html.ActionLink(post.Name, "ViewProfile", "Account", new { id = post.UserID }, null)</p>
+		<div class="postUserData bg-primary">
+			<small class="pull-right fTime" data-utc="@FormatTime8601(post.PostTime)">@FormatTime(post.PostTime)</small>
+			<h3 class="postNameLink bg-primary">@Html.ActionLink(post.Name, "ViewProfile", "Account", new { id = post.UserID }, new { @class = "bg-primary"})</h3>
 		</div>
 
 		@Html.Raw(post.FullText)
@@ -36,17 +34,15 @@
 }
 
 @using(Html.BeginForm("ArchivePM", "PrivateMessages", new { id = Model.PrivateMessage.PMID })) {
-	<p><input type="submit" value="@PopForums.Resources.Archive" /></p>
+	<p><input type="submit" value="@PopForums.Resources.Archive" class="btn" /></p>
 }
 
 <h2>Reply</h2>
-@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post)) {
-<table class="postForm">
-	<tr>
-		<td>@Html.TextArea("FullText")</td>
-	</tr>
-	<tr>
-		<td><input id="SendButton" type="submit" value="@PopForums.Resources.Reply" /></td>
-	</tr>
-</table>
+@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post, new { role="form" })) {
+	<div class="form-group">
+		<div class="col-xs-12">
+			<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>
+		</div>
+	</div>
+	<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn" />
 }
