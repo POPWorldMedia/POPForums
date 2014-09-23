@@ -189,7 +189,6 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
-    <Content Include="Scripts\jquery-ui-1.10.0.popforums.min.js" />
     <Content Include="Content\PopForums\NewClosedIndicator.png" />
     <Content Include="Content\PopForums\NewClosedPinnedIndicator.png" />
     <Content Include="Content\PopForums\NewIndicator.png" />
