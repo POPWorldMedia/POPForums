@@ -7,3 +7,6 @@ An MVC forum application with real-time updating and multiple languages.
 
 For the latest information and documentation, check the wiki:
 https://github.com/POPWorldMedia/POPForums/wiki
+
+Demo here:
+http://popforums.com/Forums
