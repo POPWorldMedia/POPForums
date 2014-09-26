@@ -1,7 +1,9 @@
 ﻿@using PopForums.Controllers;
 @using PopForums.Extensions;
+@using PopForums.Models
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	var user = this.GetUserFromViewData();
 }
 @helper PMCount()
 {
@@ -34,7 +36,7 @@
 					</div>
 				}
 				<ul class="nav navbar-nav navbar-right">
-					@if (this.GetUserFromViewData() == null)
+					@if (user == null)
 					{
 						<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)</li>
 						<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)</li>
@@ -54,6 +56,11 @@
 								<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", AccountController.Name)</li>
 								<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", AccountController.Name)</li>
 								<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", AccountController.Name)</li>
+								@if (user.IsInRole(PermanentRoles.Admin))
+								{
+									<li class="divider"></li>
+									<li>@Html.ActionLink(PopForums.Resources.PopForumsAdmin, "Index", AdminController.Name)</li>
+								}
 								<li class="divider"></li>
 								<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
 							</ul>
