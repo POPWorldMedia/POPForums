@@ -33,7 +33,7 @@
 
 @if (this.GetUserFromViewData() != null) {
 	<p id="AsyncResponse"></p>
-	<div>
+	<div id="TopicTools">
 		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="btn" />
 		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn" />
 		@if (this.IsUserInRole(PermanentRoles.Moderator))

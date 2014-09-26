@@ -1,10 +1,9 @@
 ﻿@using PopForums.Controllers
 @model PopForums.Models.PrivateMessageView
 @{
-    ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
+	Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
 }
-
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
 		$(function () {
@@ -12,7 +11,6 @@
 		});
 	</script>
 }
-
 <div>
 	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
@@ -20,25 +18,23 @@
 		<li>@Html.ActionLink("Private Messages", "Index")</li>
 	</ul>
 </div>
-
 @foreach (var post in Model.Posts)
 {
 	<div class="postItem">
 		<div class="postUserData bg-primary">
-			<small class="pull-right fTime" data-utc="@FormatTime8601(post.PostTime)">@FormatTime(post.PostTime)</small>
-			<h3 class="postNameLink bg-primary">@Html.ActionLink(post.Name, "ViewProfile", "Account", new { id = post.UserID }, new { @class = "bg-primary"})</h3>
+			<h3 class="postNameLink bg-primary">@Html.ActionLink(post.Name, "ViewProfile", "Account", new { id = post.UserID }, new { @class = "bg-primary" })</h3>
+			<small class="postTime text-right fTime" data-utc="@FormatTime8601(post.PostTime)">@FormatTime(post.PostTime)</small>
 		</div>
-
 		@Html.Raw(post.FullText)
 	</div>
 }
-
-@using(Html.BeginForm("ArchivePM", "PrivateMessages", new { id = Model.PrivateMessage.PMID })) {
+@using (Html.BeginForm("ArchivePM", "PrivateMessages", new { id = Model.PrivateMessage.PMID }))
+{
 	<p><input type="submit" value="@PopForums.Resources.Archive" class="btn" /></p>
 }
-
 <h2>Reply</h2>
-@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post, new { role="form" })) {
+@using (Html.BeginForm("Reply", "PrivateMessages", new { id = Model.PrivateMessage.PMID }, FormMethod.Post, new { role = "form" }))
+{
 	<div class="form-group">
 		<div class="col-xs-12">
 			<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>

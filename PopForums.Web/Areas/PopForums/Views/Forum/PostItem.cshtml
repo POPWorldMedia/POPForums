@@ -1,32 +1,30 @@
 ﻿@using PopForums.Extensions;
 @using PopForums.Models;
 @model Post
-
 <a name="@Model.PostID"></a>
-<div class="@(Model.IsDeleted ? "bg-danger " : "")postItem" data-postID="@Model.PostID" data-userID="@Model.UserID">
+<div class="@(Model.IsDeleted ? "bg-danger " : "")postItem" data-postid="@Model.PostID" data-userid="@Model.UserID">
 	<div class="postUserData bg-primary">
-		<small class="postTime pull-right">
-			@if (this.IsUserInRole(PermanentRoles.Moderator)) {
+		<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Name</h3>
+		<div class="miniProfileBox bg-info text-info"></div>
+		<small class="postTime text-right">
+			@if (this.IsUserInRole(PermanentRoles.Moderator))
+			{
 				@:IP: @Model.IP -
 			}
 			<span class="fTime" data-utc="@FormatTime8601(Model.PostTime)">@FormatTime(Model.PostTime)</span>
 		</small>
-		<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Name</h3>
 	</div>
-	<div class="miniProfileBox bg-info"></div>
-
 	@if (!this.HideVanity() && ((Dictionary<int, int>)ViewBag.Avatars).ContainsKey(Model.UserID))
 	{
 		<img src="@Url.Action("Avatar", "Image", new {id = ((Dictionary<int, int>)ViewBag.Avatars)[Model.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Name)" class="avatar pull-right" />
 	}
-	
-	@Html.Raw(Model.FullText)
 
+	@Html.Raw(Model.FullText)
 	@if (Model.IsEdited && Model.LastEditTime.HasValue)
 	{
 		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.LastEditName), <span class="fTime" data-utc="@FormatTime8601(Model.LastEditTime.Value)">@FormatTime(Model.LastEditTime.Value)</span></small>
 	}
-	
+
 	@if (Model.ShowSig && !this.HideVanity() && ((Dictionary<int, string>)ViewBag.Signatures).ContainsKey(Model.UserID))
 	{
 		<hr />

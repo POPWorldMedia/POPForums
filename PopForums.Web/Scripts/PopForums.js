@@ -5,7 +5,7 @@
 		$(window).scroll(function () {
 			PopForums.checkScroll();
 		});
-		$(window).on("resize", function() {
+		$(window).on("resize", function () {
 			PopForums.checkScroll();
 		});
 		PopForums.checkScroll();
@@ -55,7 +55,7 @@ PopForums.editorSettings = {
 PopForums.checkScroll = function () {
 	var crumb = $("#ForumContainer #FixedBreadcrumb");
 	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	if (scrollTop > PopForums.crumbTop) {
+	if ((scrollTop > PopForums.crumbTop) && crumb.css("display") == "none") {
 		var width = $("#ForumContainer #TopBreadcrumb").outerWidth();
 		crumb.css("width", width + "px");
 		crumb.css("top", PopForums.navOffset);
@@ -66,7 +66,7 @@ PopForums.checkScroll = function () {
 	}
 };
 
-PopForums.processLogin = function() {
+PopForums.processLogin = function () {
 	PopForums.processLoginBase("/Authorization/Login");
 };
 
@@ -485,7 +485,7 @@ PopForums.postReply = function () {
 
 PopForums.loadMiniProfile = function (userID, d, chev) {
 	if (d.is(":hidden"))
-		d.load(PopForums.areaPath + "/Account/MiniProfile/" + userID, function() {
+		d.load(PopForums.areaPath + "/Account/MiniProfile/" + userID, function () {
 			d.slideDown();
 		});
 	else {
