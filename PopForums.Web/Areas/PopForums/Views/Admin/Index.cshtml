@@ -7,123 +7,144 @@
 
 <h2>@PopForums.Resources.GeneralSettings</h2>
 
-@using (Html.BeginForm()) {
-<fieldset>
-	<legend>@PopForums.Resources.ForumSettings</legend>
-	<table class="stripe settings">
-		<tr>
-			<td>@PopForums.Resources.Title</td>
-			<td>@Html.TextBoxFor(s => s.ForumTitle)</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.TopicsPerPage</td>
-			<td>@Html.TextBoxFor(s => s.TopicsPerPage, new { @class = "shortValue" })</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.PostsPerPage</td>
-			<td>@Html.TextBoxFor(s => s.PostsPerPage, new { @class = "shortValue" })</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.SessionLength</td>
-			<td>@Html.TextBoxFor(s => s.SessionLength, new { @class = "shortValue" })</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.MinimumTimeBetweenPosts</td>
-			<td>@Html.TextBoxFor(s => s.MinimumSecondsBetweenPosts, new { @class = "shortValue" })</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-				@Html.CheckBoxFor(s => s.IsNewUserApproved)
-				<label for="IsNewUserApproved">@PopForums.Resources.NewUserApprovedWithoutVerification</label>
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-				@Html.CheckBoxFor(s => s.IsNewUserImageApproved)
-				<label for="IsNewUserImageApproved">@PopForums.Resources.NewUserImageApprovedWithoutMod</label>
-			</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.UserImageMaxDim</td>
-			<td>
-				@Html.TextBoxFor(s => s.UserImageMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserImageMaxWidth, new { @class = "shortValue" })W<br />
-				@PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserImageMaxkBytes, new { @class = "shortValue" })kB
-			</td>
-		</tr>
-	    <tr>
-	        <td>@PopForums.Resources.UserAvatarMaxDim</td>
-	        <td>
-	            @Html.TextBoxFor(s => s.UserAvatarMaxHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.UserAvatarMaxWidth, new { @class = "shortValue" })W<br />
-	            @PopForums.Resources.Size: @Html.TextBoxFor(s => s.UserAvatarMaxkBytes, new { @class = "shortValue" })kB
-	        </td>
-	    </tr>
-	    <tr>
-	        <td>YouTube</td>
-	        <td>
-	            @Html.TextBoxFor(s => s.YouTubeHeight, new { @class = "shortValue" })H x @Html.TextBoxFor(s => s.YouTubeWidth, new { @class = "shortValue" })W
-	        </td>
-	    </tr>
-	</table>
-</fieldset>
+<div class="form-horizontal" role="form">
+	@using (Html.BeginForm())
+	{
+		<h3>@PopForums.Resources.ForumSettings</h3>
+		<div class="form-group">
+			<label for="ForumTitle" class="col-sm-4 control-label">@PopForums.Resources.Title</label>
+			<div class="col-sm-8">@Html.TextBoxFor(s => s.ForumTitle, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label for="TopicsPerPage" class="col-sm-4 control-label">@PopForums.Resources.TopicsPerPage</label>
+			<div class="col-sm-2">@Html.TextBoxFor(s => s.TopicsPerPage, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label for="PostsPerPage" class="col-sm-4 control-label">@PopForums.Resources.PostsPerPage</label>
+			<div class="col-sm-2">@Html.TextBoxFor(s => s.PostsPerPage, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label for="SessionLength" class="col-sm-4 control-label">@PopForums.Resources.SessionLength</label>
+			<div class="col-sm-2">@Html.TextBoxFor(s => s.SessionLength, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label for="MinimumSecondsBetweenPosts" class="col-sm-4 control-label">@PopForums.Resources.MinimumTimeBetweenPosts</label>
+			<div class="col-sm-2">@Html.TextBoxFor(s => s.MinimumSecondsBetweenPosts, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="IsNewUserApproved">@Html.CheckBoxFor(s => s.IsNewUserApproved) @PopForums.Resources.NewUserApprovedWithoutVerification</label></div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="IsNewUserImageApproved">@Html.CheckBoxFor(s => s.IsNewUserImageApproved) @PopForums.Resources.NewUserImageApprovedWithoutMod</label></div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">@PopForums.Resources.UserImageMaxDim</label>
+			<div class="col-sm-8 form-inline">
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.UserImageMaxHeight, new { @class = "form-control" })
+					<span class="input-group-addon">H</span>
+				</div>
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.UserImageMaxWidth, new { @class = "form-control" })
+					<span class="input-group-addon">W</span>
+				</div>
+			</div>
+			<div class="col-sm-8 form-inline">
+				<div class="input-group col-sm-8">
+					@Html.TextBoxFor(s => s.UserImageMaxkBytes, new { @class = "form-control", placeholder = PopForums.Resources.Size })
+					<span class="input-group-addon">kB</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">@PopForums.Resources.UserAvatarMaxDim</label>
+			<div class="col-sm-8 form-inline">
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.UserAvatarMaxHeight, new { @class = "form-control" })
+					<span class="input-group-addon">H</span>
+				</div>
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.UserAvatarMaxWidth, new { @class = "form-control" })
+					<span class="input-group-addon">W</span>
+				</div>
+			</div>
+			<div class="col-sm-8 form-inline">
+				<div class="input-group col-sm-8">
+					@Html.TextBoxFor(s => s.UserAvatarMaxkBytes, new { @class = "form-control", placeholder = PopForums.Resources.Size })
+					<span class="input-group-addon">kB</span>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">YouTube</label>
+			<div class="col-sm-8 form-inline">
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.YouTubeHeight, new { @class = "form-control" })
+					<span class="input-group-addon">H</span>
+				</div>
+				<div class="input-group col-sm-4">
+					@Html.TextBoxFor(s => s.YouTubeWidth, new { @class = "form-control" })
+					<span class="input-group-addon">W</span>
+				</div>
+			</div>
+		</div>
+		
+		<h3>@PopForums.Resources.Parsing</h3>
 
-<fieldset>
-	<legend>@PopForums.Resources.Parsing</legend>
-	<table class="stripe settings">
-		<tr>
-			<td class="label">@PopForums.Resources.CensorWords</td>
-			<td>@Html.TextAreaFor(s => s.CensorWords)</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.CensorReplacementChar</td>
-			<td>@Html.TextBoxFor(s => s.CensorCharacter, new { @class = "shortValue" })</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-				@Html.CheckBoxFor(s => s.AllowImages)
-				<label for="AllowImages">@PopForums.Resources.AllowImages / YouTube</label>
-			</td>
-		</tr>
-	</table>
-</fieldset>
+		<div class="form-group">
+			<label for="CensorWords" class="col-sm-4 control-label">@PopForums.Resources.CensorWords</label>
+			<div class="col-sm-8">@Html.TextAreaFor(s => s.CensorWords, new { @class = "form-control", rows = 3 })</div>
+		</div>
+		<div class="form-group">
+			<label for="CensorCharacter" class="col-sm-4 control-label">@PopForums.Resources.Title</label>
+			<div class="col-sm-3">@Html.TextBoxFor(s => s.CensorCharacter, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="AllowImages">@Html.CheckBoxFor(s => s.AllowImages) @PopForums.Resources.AllowImages / YouTube</label></div>
+			</div>
+		</div>
 
-<fieldset>
-	<legend>@PopForums.Resources.Logging</legend>
-	<p>
-		@Html.CheckBoxFor(s => s.LogSecurity)
-		<label for="LogSecurity">@PopForums.Resources.LogSecurity</label><br />
-		@Html.CheckBoxFor(s => s.LogModeration)
-		<label for="LogSecurity">@PopForums.Resources.LogMod</label><br />
-		@Html.CheckBoxFor(s => s.LogErrors)
-		<label for="LogSecurity">@PopForums.Resources.LogErrors</label>
-	</p>
-</fieldset>
+		<h3>@PopForums.Resources.Logging</h3>
 
-<fieldset>
-	<legend>@PopForums.Resources.ServerTime</legend>
-	<table class="stripe settings">
-		<tr>
-			<td>@PopForums.Resources.TimeZone</td>
-			<td>
-				@Html.TimeZoneDropDown("ServerTimeZone", null, Model.ServerTimeZone)
-			</td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>
-				@Html.CheckBoxFor(s => s.ServerDaylightSaving)
-				<label for="ServerDaylightSaving">@PopForums.Resources.UseDaylight</label>
-			</td>
-		</tr>
-	</table>
-</fieldset>
-	
-<fieldset>
-	<legend>@PopForums.Resources.TermsOfService</legend>
-		@Html.TextAreaFor(s => s.TermsOfService)
-</fieldset>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="LogSecurity">@Html.CheckBoxFor(s => s.LogSecurity) @PopForums.Resources.LogSecurity</label></div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="LogModeration">@Html.CheckBoxFor(s => s.LogModeration) @PopForums.Resources.LogMod</label></div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="LogErrors">@Html.CheckBoxFor(s => s.LogErrors) @PopForums.Resources.LogErrors</label></div>
+			</div>
+		</div>
+		
+		<h3>@PopForums.Resources.ServerTime</h3>
 
-<input type="submit" value="@PopForums.Resources.Save" />
-}
+		<div class="form-group">
+			<label for="ServerTimeZone" class="col-sm-4 control-label">@PopForums.Resources.TimeZone</label>
+			<div class="col-sm-8">@Html.TimeZoneDropDown("ServerTimeZone", new { @class = "form-control" }, Model.ServerTimeZone)</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-4">
+				<div class="checkbox"><label for="ServerDaylightSaving">@Html.CheckBoxFor(s => s.ServerDaylightSaving) @PopForums.Resources.UseDaylight</label></div>
+			</div>
+		</div>
+
+		<h3>@PopForums.Resources.TermsOfService</h3>
+
+		<div class="form-group">
+			<div class="col-sm-12">@Html.TextAreaFor(s => s.TermsOfService, new { @class = "form-control", rows = 6 })</div>
+		</div>
+
+		<input type="submit" value="@PopForums.Resources.Save" class="btn" />
+	}
+</div>

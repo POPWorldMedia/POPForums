@@ -8,11 +8,6 @@
 	<script src="~/Scripts/PopForums.js" type="text/javascript"></script>
 	<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
 	<link href="~/Content/PopForums/Admin.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript">
-		$(function () {
-			$("table.stripe tr:even").addClass("stripe");
-		});
-	</script>
 	@RenderSection("HeaderContent", required: false)
 </head>
 	<body>
@@ -64,7 +59,10 @@
 					</nav>
 				</div>
 				<div class="col-sm-9">
-					<p id="PostResult">@ViewData["PostResult"]</p>
+					@if (ViewData["PostResult"] != null)
+					{
+						<p id="PostResult" class="bg-warning callout">@ViewData["PostResult"]</p>
+					}
 					@RenderBody()
 				</div>
 			</div>
