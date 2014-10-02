@@ -29,7 +29,7 @@
 		<label for="text">@PopForums.Resources.Text</label>
 		@Html.TextArea("text", new { @class = "form-control", rows = 6 })
 	</div>
-	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn" />
+	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-default" />
 	if (ViewBag.EmailResult != null){ <span class="bg-danger callout">@ViewBag.EmailResult</span> }
 	@Html.AntiForgeryToken()
 }

@@ -50,7 +50,7 @@ else
 					@using (Html.BeginForm("RemoveFavorite", "Favorites"))
 					{
 						@Html.Hidden("id", topic.TopicID)
-						<input type="submit" value="@PopForums.Resources.Remove" class="btn" />
+						<input type="submit" value="@PopForums.Resources.Remove" class="btn btn-default" />
 					}
 				</td>
 				<td>

@@ -25,7 +25,7 @@
 					<label for="authorizationCode">@PopForums.Resources.EnterVerificationCode</label>
 					@Html.TextBox("authorizationCode", null, new { @class = "form-control" })
 				</div>
-				<input type="submit" value="@PopForums.Resources.VerifyCodeButton" class="btn" />
+				<input type="submit" value="@PopForums.Resources.VerifyCodeButton" class="btn btn-default" />
 			</div>
 		}
 	</div>
@@ -37,7 +37,7 @@
 					<label for="email">@PopForums.Resources.VerificationIfYouNeed</label>
 					@Html.TextBox("email", null, new { @class = "form-control" })
 				</div>
-				<input type="submit" value="@PopForums.Resources.SendEmailWithNewCodeButton" class="btn" />
+				<input type="submit" value="@PopForums.Resources.SendEmailWithNewCodeButton" class="btn btn-default" />
 			</div>
 		}
 	</div>

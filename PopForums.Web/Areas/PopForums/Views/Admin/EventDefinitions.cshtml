@@ -25,7 +25,7 @@
 		<td>
 			@if (!PopForums.ScoringGame.EventDefinitionService.StaticEvents.ContainsKey(item.EventDefinitionID)) {
 				using (Html.BeginForm("DeleteEvent", "Admin", new { id = item.EventDefinitionID })) {
-					<input type="submit" value="Delete" class="btn" />
+					<input type="submit" value="Delete" class="btn btn-default" />
 				}
 			}
 		</td>
@@ -59,6 +59,6 @@
 				</div>
 			</div>
 		</div>
-		<input type="submit" value="Add Event" class="btn" />
+		<input type="submit" value="Add Event" class="btn btn-default" />
 	</div>
 }

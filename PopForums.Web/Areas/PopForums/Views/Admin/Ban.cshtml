@@ -12,7 +12,7 @@
 		<td>
 			@using(Html.BeginForm("BanEmail", "Admin", FormMethod.Post, new { @class = "form-inline"} )) {
 				@Html.TextBox("email", null, new { @class = "form-control" })
-				<input type="submit" value="@PopForums.Resources.Ban" class="btn" />
+				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-default" />
 			}
 		</td>
 		<td>
@@ -22,7 +22,7 @@
 						<option>@item</option>
 					}
 				</select><br />
-				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn" />
+				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn btn-default" />
 			}
 		</td>
 	</tr>
@@ -35,7 +35,7 @@
 		<td>
 			@using(Html.BeginForm("BanIP", "Admin")) {
 				@Html.TextBox("ip")
-				<input type="submit" value="@PopForums.Resources.Ban" class="btn" />
+				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-default" />
 			}
 		</td>
 		<td>
@@ -45,7 +45,7 @@
 						<option>@item</option>
 					}
 				</select><br />
-				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn" />
+				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn btn-default" />
 			}
 		</td>
 	</tr>

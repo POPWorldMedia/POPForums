@@ -24,7 +24,7 @@
 			<td><input type="checkbox" disabled="disabled" @if (item.IsSingleTimeAward){<text>checked="checked" </text>}/></td>
 			<td>
 				@using (Html.BeginForm("DeleteAward", "Admin", new { id = item.AwardDefinitionID })) {
-					<input type="submit" value="Delete" class="btn" />
+					<input type="submit" value="Delete" class="btn btn-default" />
 				}
 			</td>
 		</tr>
@@ -53,6 +53,6 @@
 				<label for="IsSingleTimeAward">@Html.CheckBox("IsSingleTimeAward") Single-time award</label>
 			</div>
 		</div>
-		<input type="submit" value="Add Award" class="btn" />
+		<input type="submit" value="Add Award" class="btn btn-default" />
 	</div>
 }

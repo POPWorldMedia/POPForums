@@ -36,7 +36,7 @@
 			<td class="topicListButton">
 				@using (Html.BeginForm("ArchivePM", "PrivateMessages", new { id = pm.PMID }))
 				{
-					<input type="submit" value="@PopForums.Resources.Archive" class="btn" />
+					<input type="submit" value="@PopForums.Resources.Archive" class="btn btn-default" />
 				}
 			</td>
 			<td>@Html.ActionLink(pm.Subject, "View", new { id = pm.PMID })</td>

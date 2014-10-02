@@ -5,5 +5,5 @@
 @using(Html.BeginForm("EditCategory", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
 	@Html.TextBox("newTitle", Model.Title, new { @class = "form-control" })
 	@Html.Hidden("categoryID", Model.CategoryID, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.Save" class="btn" />
+	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-default" />
 }

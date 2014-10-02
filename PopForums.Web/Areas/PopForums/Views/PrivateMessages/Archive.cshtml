@@ -35,7 +35,7 @@
 			<td class="topicListButton">
 				@using (Html.BeginForm("UnarchivePM", "PrivateMessages", new { id = pm.PMID }))
 				{
-					<input type="submit" value="@PopForums.Resources.Unarchive" class="btn" />
+					<input type="submit" value="@PopForums.Resources.Unarchive" class="btn btn-default" />
 				}
 			</td>
 			<td>@Html.ActionLink(pm.Subject, "View", new { id = pm.PMID })</td>

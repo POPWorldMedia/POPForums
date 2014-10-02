@@ -17,8 +17,8 @@
 	<p>
 		@item.Value.Name | <a href="mailto:@item.Value.Email">@item.Value.Email</a><br />
 		<img src="@Url.Action("UserImage", "Image", new {id = item.Key.UserImageID})" alt="User image" /><br />
-		@using (Html.BeginForm("ApproveUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="Approve" class="btn" /> }
-		@using (Html.BeginForm("DeleteUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="@PopForums.Resources.Delete" class="btn" /> }
+		@using (Html.BeginForm("ApproveUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="Approve" class="btn btn-default" /> }
+		@using (Html.BeginForm("DeleteUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="@PopForums.Resources.Delete" class="btn btn-default" /> }
 	</p>
 	<hr />
 }

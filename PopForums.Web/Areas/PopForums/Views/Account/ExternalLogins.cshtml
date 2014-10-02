@@ -35,7 +35,7 @@ else
 				<td class="col-xs-2">
 					@using (Html.BeginForm("RemoveExternalLogin", "Account", new {id = item.ExternalUserAssociationID}))
 					{
-						<input type="submit" value="Remove" class="btn"/>
+						<input type="submit" value="Remove" class="btn btn-default"/>
 					}
 				</td>
 				<td class="col-xs-4">@item.Issuer</td>

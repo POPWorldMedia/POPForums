@@ -208,15 +208,15 @@
 			@Html.CheckBoxFor(m => m.DeleteImage) <label for="DeleteImage">@PopForums.Resources.PhotoDelete</label>
 		</p>
 	}
-	<p><input type="submit" value="@PopForums.Resources.Save" class="btn" /></p>
+	<p><input type="submit" value="@PopForums.Resources.Save" class="btn btn-default" /></p>
 }
 
 <p><em>@PopForums.Resources.UserDeleteWarning</em></p>
 @using (Html.BeginForm("DeleteAndBanUser", "Admin")) {
 	@Html.Hidden("id", Model.UserID)
-	<p><input type="submit" value="@PopForums.Resources.DeleteAndBanButton" class="confirm btn" /></p>
+	<p><input type="submit" value="@PopForums.Resources.DeleteAndBanButton" class="confirm btn btn-default" /></p>
 }
 @using (Html.BeginForm("DeleteUser", "Admin")) {
 	@Html.Hidden("id", Model.UserID)
-	<p><input type="submit" value="@PopForums.Resources.DeleteUserButton" class="confirm btn" /></p>
+	<p><input type="submit" value="@PopForums.Resources.DeleteUserButton" class="confirm btn btn-default" /></p>
 }

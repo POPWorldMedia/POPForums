@@ -40,7 +40,7 @@
 
 @using (Html.BeginForm("AddCategory", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
 	@Html.TextBox("newCategoryTitle", null, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.AddNew" class="btn" />
+	<input type="submit" value="@PopForums.Resources.AddNew" class="btn btn-default" />
 }
 
 <div id="CategoryList" style="margin-top: 20px;">

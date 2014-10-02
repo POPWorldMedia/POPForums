@@ -22,7 +22,7 @@
 }
 
 <div>
-	<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.PostNewTopic" id="NewTopicButton" class="btn" />}</h1>
+	<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.PostNewTopic" id="NewTopicButton" class="btn btn-default" />}</h1>
 	@if (Model.PermissionContext.UserCanPost)
 	{
 		<div id="NewTopic" style="display: none;"></div>
@@ -48,7 +48,7 @@
 {
 	using (Html.BeginForm("MarkForumRead", "Forum", new { id = Model.Forum.ForumID }))
 	{
-		<input type="submit" value="@PopForums.Resources.MarkForumRead" class="btn" />
+		<input type="submit" value="@PopForums.Resources.MarkForumRead" class="btn btn-default" />
 	}
 }
 

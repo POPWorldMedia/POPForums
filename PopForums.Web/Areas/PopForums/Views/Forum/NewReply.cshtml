@@ -2,7 +2,7 @@
 
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
-<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn" /></p>
+<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn btn-default" /></p>
 
 <div class="postForm" role="form">
 	<div class="form-group">
@@ -19,6 +19,6 @@
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	@Html.HiddenFor(p => p.ParentPostID)
-	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn" />
+	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-default" />
 	<span id="PostResponseMessage" class="bg-danger callout"></span>
 </div>
