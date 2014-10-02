@@ -11,7 +11,7 @@
 
 <h1>Award - @Model.Title</h1>
 
-<table class="stripe settings">
+<table class="table">
 	<tr>
 		<td>Award Definition ID</td>
 		<td>@Model.AwardDefinitionID</td>
@@ -32,7 +32,7 @@
 
 <h2>Conditions</h2>
 
-<table class="stripe settings">
+<table class="table">
 	<tr>
 		<td>Event DefinitionID</td>
 		<td>Event Count</td>
@@ -46,7 +46,7 @@
 			<td>
 				@using (Html.BeginForm("DeleteAwardCondition", "Admin", new { awardDefinitionID = item.AwardDefinitionID, eventDefinitionID = item.EventDefinitionID }))
 				{
-					<input type="submit" value="Delete" />
+					<input type="submit" value="Delete" class="btn" />
 				}
 			</td>
 		</tr>
@@ -58,18 +58,15 @@
 @using (Html.BeginForm("AddAwardCondition", "Admin"))
 {
 @Html.Hidden("AwardDefinitionID", Model.AwardDefinitionID)
-<table class="stripe settings">
-	<tr>
-		<td>Event Definition ID</td>
-		<td>@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList)</td>
-	</tr>
-	<tr>
-		<td>Event Count</td>
-		<td>@Html.TextBox("EventCount", String.Empty, new { @class = "shortValue" })</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td><input type="submit" value="Add Condition" /></td>
-	</tr>
-</table>
+	<div role="form">
+		<div class="form-group">
+			<label for="EventDefinitionID">Event Definition ID</label>
+			@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="EventCount">Event Count</label>
+			@Html.TextBox("EventCount", String.Empty, new { @class = "form-control" })
+		</div>
+		<input type="submit" value="Add Condition" class="btn" />
+	</div>
 }

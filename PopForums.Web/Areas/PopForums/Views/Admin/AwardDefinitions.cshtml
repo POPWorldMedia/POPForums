@@ -7,7 +7,7 @@
 
 <h1>@PopForums.Resources.AwardDefinitions</h1>
 
-<table class="stripe settings">
+<table class="table">
 	<tr>
 		<th>Award Definition ID</th>
 		<th>@PopForums.Resources.Title</th>
@@ -24,7 +24,7 @@
 			<td><input type="checkbox" disabled="disabled" @if (item.IsSingleTimeAward){<text>checked="checked" </text>}/></td>
 			<td>
 				@using (Html.BeginForm("DeleteAward", "Admin", new { id = item.AwardDefinitionID })) {
-					<input type="submit" value="Delete" />
+					<input type="submit" value="Delete" class="btn" />
 				}
 			</td>
 		</tr>
@@ -35,26 +35,24 @@
 
 @using (Html.BeginForm("AddAward", "Admin"))
 {
-<table class="stripe settings">
-	<tr>
-		<td>Award Definition ID</td>
-		<td>@Html.TextBox("AwardDefinitionID", String.Empty, new { @class = "shortValue" })</td>
-	</tr>
-	<tr>
-		<td>Title</td>
-		<td>@Html.TextBox("Title")</td>
-	</tr>
-	<tr>
-		<td>Description</td>
-		<td>@Html.TextArea("Description")</td>
-	</tr>
-	<tr>
-		<td>Single-time award</td>
-		<td>@Html.CheckBox("IsSingleTimeAward")</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td><input type="submit" value="Add Award" /></td>
-	</tr>
-</table>
+	<div role="form">
+		<div class="form-group">
+			<label for="AwardDefinitionID">Award Definition ID</label>
+			@Html.TextBox("AwardDefinitionID", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="Title">Title</label>
+			@Html.TextBox("Title", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="Description">Description</label>
+			@Html.TextBox("Description", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<div class="checkbox">
+				<label for="IsSingleTimeAward">@Html.CheckBox("IsSingleTimeAward") Single-time award</label>
+			</div>
+		</div>
+		<input type="submit" value="Add Award" class="btn" />
+	</div>
 }

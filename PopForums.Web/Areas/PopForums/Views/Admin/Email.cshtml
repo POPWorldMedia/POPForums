@@ -26,52 +26,73 @@
 <h2>@PopForums.Resources.Email</h2>
 
 @using (Html.BeginForm()) {
-
-<table class="stripe settings">
-	<tr>
-		<td>@PopForums.Resources.SmtpServer</td>
-		<td>@Html.TextBoxFor(s => s.SmtpServer)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.SmtpPort</td>
-		<td>@Html.TextBoxFor(s => s.SmtpPort, new { @class = "shortValue"})</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.FromEmailAddress</td>
-		<td>@Html.TextBoxFor(s => s.MailerAddress)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.UseSsl</td>
-		<td>@Html.CheckBoxFor(s => s.UseSslSmtp)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.UseEsmtpCred</td>
-		<td>@Html.CheckBoxFor(s => s.UseEsmtp)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.SmtpUser</td>
-		<td>@Html.TextBoxFor(s => s.SmtpUser)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.SmtpPassword</td>
-		<td>@Html.TextBoxFor(s => s.SmtpPassword)</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.SendingInterval</td>
-		<td>@Html.TextBoxFor(s => s.MailSendingInverval, new { @class = "shortValue" })</td>
-	</tr>
-	<tr>
-		<td>Mailer quantity</td>
-		<td>@Html.TextBoxFor(s => s.MailerQuantity, new { @class = "shortValue" })</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Signature</td>
-		<td>@Html.TextAreaFor(s => s.MailSignature)</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="submit" value="@PopForums.Resources.Save" /></td>
-	</tr>
-</table>
-
+	<div class="form-horizontal" role="form">
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.SmtpServer</label>
+			<div class="col-xs-8">
+				@Html.TextBoxFor(s => s.SmtpServer, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.SmtpPort</label>
+			<div class="col-xs-3">
+				@Html.TextBoxFor(s => s.SmtpPort, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.FromEmailAddress</label>
+			<div class="col-xs-8">
+				@Html.TextBoxFor(s => s.MailerAddress, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-xs-push-4 col-xs-8">
+				<div class="checkbox">
+					<label>
+						@Html.CheckBoxFor(m => m.UseSslSmtp) @PopForums.Resources.UseSsl
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-xs-push-4 col-xs-8">
+				<div class="checkbox">
+					<label>
+						@Html.CheckBoxFor(m => m.UseEsmtp) @PopForums.Resources.UseEsmtpCred
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.SmtpUser</label>
+			<div class="col-xs-8">
+				@Html.TextBoxFor(s => s.SmtpUser, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.SmtpPassword</label>
+			<div class="col-xs-8">
+				@Html.TextBoxFor(s => s.SmtpPassword, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.SendingInterval</label>
+			<div class="col-xs-3">
+				@Html.TextBoxFor(s => s.MailSendingInverval, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">Mailer quantity</label>
+			<div class="col-xs-3">
+				@Html.TextBoxFor(s => s.MailerQuantity, new { @class = "form-control" })
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-xs-4 control-label">@PopForums.Resources.Signature</label>
+			<div class="col-xs-8">
+				@Html.TextAreaFor(s => s.MailSignature, new { @class = "form-control", rows = "4" })
+			</div>
+		</div>
+		<input type="submit" value="@PopForums.Resources.Save" class="btn" />
+	</div>
 }

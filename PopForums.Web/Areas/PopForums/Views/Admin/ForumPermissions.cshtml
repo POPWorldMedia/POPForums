@@ -72,9 +72,9 @@
 
 <h2>@PopForums.Resources.ForumPermisions</h2>
 
-<p>
-	@PopForums.Resources.Forum:
-	<select id="ForumSelect">
+<div class="form-group">
+	<label>@PopForums.Resources.Forum</label>
+	<select id="ForumSelect" class="form-control">
 		@foreach (var forum in Model.UncategorizedForums) {<option value="@forum.ForumID">@forum.Title</option>}
 		@foreach (var category in Model.CategoryDictionary) {
 			<optgroup label="@category.Key.Title">
@@ -82,38 +82,30 @@
 			</optgroup>
 		}
 	</select>
-</p>
+</div>
 
-<table>
-	<tr>
-		<td>@PopForums.Resources.PostingRoles</td>
-		<td colspan="3"></td>
-		<td>@PopForums.Resources.ViewingRoles</td>
-	</tr>
-	<tr>
-		<td>
-			<select id="PostRoles" size="6" class="permissionListBox"></select>
-		</td>
-		<td style="vertical-align: middle;">
-			<input type="button" id="AddPostButton" value="&lt;&lt;" /><br />
-			<input type="button" id="RemovePostButton" value="&gt;&gt;" />
-		</td>
-		<td>
-			<select id="AllRoles" size="6" class="permissionListBox"></select>
-		</td>
-		<td style="vertical-align: middle;">
-			<input type="button" id="AddViewButton" value="&gt;&gt;" /><br />
-			<input type="button" id="RemoveViewButton" value="&lt;&lt;" />
-		</td>
-		<td>
-			<select id="ViewRoles" size="6" class="permissionListBox"></select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="button" id="RemoveAllPostButton" value="@PopForums.Resources.RemoveAll" /></td>
-		<td colspan="3"></td>
-		<td><input type="button" id="RemoveAllViewButton" value="@PopForums.Resources.RemoveAll" /></td>
-	</tr>
-</table>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-xs-3">@PopForums.Resources.PostingRoles</div>
+		<div class="col-xs-push-5 col-xs-3">@PopForums.Resources.ViewingRoles</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3"><select id="PostRoles" size="6" class="permissionListBox form-control"></select></div>
+		<div class="col-xs-1">
+			<input type="button" id="AddPostButton" value="&lt;&lt;" class="btn-sm" /><br />
+			<input type="button" id="RemovePostButton" value="&gt;&gt;" class="btn-sm" />
+		</div>
+		<div class="col-xs-3"><select id="AllRoles" size="6" class="permissionListBox form-control"></select></div>
+		<div class="col-xs-1">
+			<input type="button" id="AddViewButton" value="&gt;&gt;" class="btn-sm" /><br />
+			<input type="button" id="RemoveViewButton" value="&lt;&lt;" class="btn-sm" />
+		</div>
+		<div class="col-xs-3"><select id="ViewRoles" size="6" class="permissionListBox form-control"></select></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-3"><input type="button" id="RemoveAllPostButton" value="@PopForums.Resources.RemoveAll" class="btn" /></div>
+		<div class="col-xs-push-5 col-xs-3"><input type="button" id="RemoveAllViewButton" value="@PopForums.Resources.RemoveAll" class="btn" /></div>
+	</div>
+</div>
 
 <p>@PopForums.Resources.ForumPermissionInstructions</p>

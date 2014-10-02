@@ -67,7 +67,7 @@
 	font-size: 200%;
 	font-weight: bold;
 	text-align: center;
-	width: 60px;
+	min-width: 60px;
 	float: left;
 	margin-right: 10px;
 }

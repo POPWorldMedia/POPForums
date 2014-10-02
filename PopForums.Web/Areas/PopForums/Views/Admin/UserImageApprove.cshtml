@@ -9,7 +9,7 @@
 
 @if ((bool)ViewBag.IsNewUserImageApproved)
 {
-	<p class="warning">@PopForums.Resources.UserImageApprovalNotReq</p>
+	<p class="bg-danger callout">@PopForums.Resources.UserImageApprovalNotReq</p>
 }
 
 @foreach (var item in Model)
@@ -17,9 +17,8 @@
 	<p>
 		@item.Value.Name | <a href="mailto:@item.Value.Email">@item.Value.Email</a><br />
 		<img src="@Url.Action("UserImage", "Image", new {id = item.Key.UserImageID})" alt="User image" /><br />
-		@using (Html.BeginForm("ApproveUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="Approve" /> }
-		@using (Html.BeginForm("DeleteUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" }))
-  { <input type="submit" value="@PopForums.Resources.Delete" /> }
+		@using (Html.BeginForm("ApproveUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="Approve" class="btn" /> }
+		@using (Html.BeginForm("DeleteUserImage", "Admin", new { id = item.Key.UserImageID }, FormMethod.Post, new { style = "display: inline;" })) { <input type="submit" value="@PopForums.Resources.Delete" class="btn" /> }
 	</p>
 	<hr />
 }

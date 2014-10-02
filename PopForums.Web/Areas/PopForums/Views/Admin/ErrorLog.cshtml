@@ -9,7 +9,7 @@
 <h1>@PopForums.Resources.ErrorLog</h1>
 
 @using(Html.BeginForm("DeleteAllErrorLog", "Admin")) {
-	<p><input type="submit" value="@PopForums.Resources.DeleteAllErrors" /></p>
+	<p><input type="submit" value="@PopForums.Resources.DeleteAllErrors" class="btn" /></p>
 }
 
 <p>@Html.PagerLinks("Admin", "ErrorLog", (PagerContext)ViewData["PagerContext"], "", "", "")</p>
@@ -18,14 +18,14 @@
 
 	<p>
 		@using(Html.BeginForm("DeleteErrorLog", "Admin")) {
-			<input type="submit" value="@PopForums.Resources.Delete" />@Html.Hidden("id", error.ErrorID)
+			<input type="submit" value="@PopForums.Resources.Delete" class="btn" />@Html.Hidden("id", error.ErrorID)
 		}
 		<b>@error.Severity: @error.TimeStamp - @error.Message</b>
 	</p>
 
-	<p>@MvcHtmlString.Create(error.StackTrace.Replace("\r\n", "<br />"))</p>
+	<p class="small">@MvcHtmlString.Create(error.StackTrace.Replace("\r\n", "<br />"))</p>
 
-	<p>@MvcHtmlString.Create(error.Data.Replace("\r\n", "<br />"))</p>
+	<p class="small">@MvcHtmlString.Create(error.Data.Replace("\r\n", "<br />"))</p>
 
 	<hr />
 

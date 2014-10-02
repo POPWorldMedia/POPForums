@@ -8,19 +8,24 @@
 <h2>@PopForums.Resources.UserRoles</h2>
 
 @using (Html.BeginForm("CreateRole", "Admin")) {
-	<p>
-		<input type="text" id="newRole" name="newRole" />
-		<input type="submit" value="@PopForums.Resources.CreateNewRole" />
-	</p>
+	<div role="form" class="form-inline">
+		<div class="form-group">
+			<input type="text" id="newRole" name="newRole" class="form-control" />
+		</div>
+		<input type="submit" value="@PopForums.Resources.CreateNewRole" class="btn" />
+	</div>
 }
 
 @using (Html.BeginForm("DeleteRole", "Admin")) {
-	<p>
-		<select id="roleToDelete" name="roleToDelete" size="6">
-			@foreach (var role in Model) {<option value="@role">@role</option>}
-		</select><br />
-		<input type="submit" value="@PopForums.Resources.DeleteSelectedRole" />
-	</p>
+	<div role="form" style="margin-top: 20px;">
+		<div class="form-group">
+			<select id="roleToDelete" name="roleToDelete" size="6" class="form-control">
+				@foreach (var role in Model)
+				{<option value="@role">@role</option>}
+			</select>
+		</div>
+		<input type="submit" value="@PopForums.Resources.DeleteSelectedRole" class="btn" />
+	</div>
 }
 
 <p>@PopForums.Resources.PermRoles</p>

@@ -7,33 +7,34 @@
 
 <h1>@PopForums.Resources.SecurityLog</h1>
 
-@using (Html.BeginForm()) {
-	<table class="settings">
-		<tr>
-			<td>@PopForums.Resources.StartDate</td>
-			<td>@Html.TextBox("startDate")</td>
-		</tr>
-		<tr>
-			<td>@PopForums.Resources.EndDate</td>
-			<td>@Html.TextBox("endDate")</td>
-		</tr>
-		<tr>
-			<td>
-				@Html.RadioButton("searchType", "Name", true, new {id="Name"})<label for="Name">@PopForums.Resources.Name</label>
-				@Html.RadioButton("searchType", "UserID", new {id="UserID"})<label for="UserID">@PopForums.Resources.UserID</label>
-			</td>
-			<td>@Html.TextBox("searchTerm")</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><input type="submit" value="@PopForums.Resources.Search" /></td>
-		</tr>
-	</table>
+@using (Html.BeginForm())
+{
+	<div role="form">
+		<div class="form-group">
+			<label>@PopForums.Resources.StartDate</label>
+			@Html.TextBox("startDate", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.EndDate</label>
+			@Html.TextBox("endDate", null, new { @class = "form-control" })
+		</div>
+		<div class="radio">
+			<label>@Html.RadioButton("searchType", "Name", true, new { id = "Name" }) @PopForums.Resources.Name</label>
+		</div>
+		<div class="radio">
+			<label>@Html.RadioButton("searchType", "UserID", new { id = "UserID" }) @PopForums.Resources.UserID</label>
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.Search</label>
+			@Html.TextBox("searchTerm", null, new { @class = "form-control" })
+		</div>
+		<input type="submit" value="@PopForums.Resources.Search" class="btn" />
+	</div>
 }
 
-@if (Model != null && Model.Count > 0) {
-
-	<table class="stripe">
+@if (Model != null && Model.Count > 0)
+{
+	<table class="table table-hover" style="margin-top: 20px;">
 		<tr>
 			<th>@PopForums.Resources.EventTime</th>
 			<th>@PopForums.Resources.Event</th>
@@ -42,16 +43,16 @@
 			<th>@PopForums.Resources.IP</th>
 			<th>@PopForums.Resources.Message</th>
 		</tr>
-	@foreach (var entry in Model) {
-		<tr>
-			<td style="white-space: nowrap">@entry.ActivityDate</td>
-			<td>@entry.SecurityLogType.ToString()</td>
-			<td>@entry.UserID</td>
-			<td>@entry.TargetUserID</td>
-			<td>@entry.IP</td>
-			<td>@entry.Message</td>
-		</tr>
-	}
+		@foreach (var entry in Model)
+		{
+			<tr>
+				<td style="white-space: nowrap">@entry.ActivityDate</td>
+				<td>@entry.SecurityLogType.ToString()</td>
+				<td>@entry.UserID</td>
+				<td>@entry.TargetUserID</td>
+				<td>@entry.IP</td>
+				<td>@entry.Message</td>
+			</tr>
+		}
 	</table>
-
 }

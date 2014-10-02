@@ -5,26 +5,24 @@
 
 <h1>@PopForums.Resources.EmailUsers</h1>
 
-<p class="warning">@ViewBag.Result</p>
+@if (ViewBag.Result != null)
+{<p class="bg-danger callout">@ViewBag.Result</p>}
 
 @using (Html.BeginForm())
 {
-<table class="settings stripe">
-	<tr>
-		<td>@PopForums.Resources.Subject</td>
-		<td>@Html.TextBox("Subject")</td>
-	</tr>
-	<tr>
-		<td class="label">@PopForums.Resources.Body</td>
-		<td>@Html.TextArea("Body")</td>
-	</tr>
-	<tr>
-		<td class="label">@PopForums.Resources.BodyHtml<br />@PopForums.Resources.Optional</td>
-		<td>@Html.TextArea("HtmlBody")</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="submit" value="Send" /></td>
-	</tr>
-</table>
+	<div role="form">
+		<div class="form-group">
+			<label>@PopForums.Resources.Subject</label>
+			@Html.TextBox("Subject", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.Body</label>
+			@Html.TextArea("Body", null, new { @class = "form-control", rows = "10" })
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.BodyHtml @PopForums.Resources.Optional</label>
+			@Html.TextArea("HtmlBody", null, new { @class = "form-control", rows = "10" })
+		</div>
+		<input type="submit" value="Send" class="btn" />
+	</div>
 }

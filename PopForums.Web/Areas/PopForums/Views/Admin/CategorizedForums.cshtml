@@ -1,6 +1,6 @@
 ﻿@model PopForums.Models.CategorizedForumContainer
 
-<table>
+<table class="table">
 	<tr>
 		<th colspan="2">@PopForums.Resources.Move</th>
 		<th>@PopForums.Resources.Forum</th>
@@ -8,7 +8,7 @@
 		<th>@PopForums.Resources.Archived</th>
 		<th>&nbsp;</th>
 	</tr>
-	<tr class="category">
+	<tr class="bg-primary">
 		<td colspan="6">@PopForums.Resources.ForumsUncat</td>
 	</tr>
 	@foreach(var forum in Model.UncategorizedForums) {
@@ -22,7 +22,7 @@
 		</tr>
 	}
 	@foreach(var category in Model.CategoryDictionary) {
-		<tr class="category">
+		<tr class="bg-primary">
 			<td colspan="6">@category.Key.Title</td>
 		</tr>
 		foreach(var forum in category.Value) {

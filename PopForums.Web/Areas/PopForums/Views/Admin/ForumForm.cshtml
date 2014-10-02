@@ -1,25 +1,26 @@
-﻿<table class="stripe settings">
-	<tr>
-		<td>@PopForums.Resources.Title</td>
-		<td>@Html.TextBox("title")</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Description</td>
-		<td>@Html.TextBox("description")</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.Category</td>
-		<td>@Html.DropDownList("categoryID")</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-		<td>
-			@Html.CheckBox("isVisible")<label for="isVisible">@PopForums.Resources.Visible</label><br />
-			@Html.CheckBox("isArchived")<label for="isArchived">@PopForums.Resources.Archived</label>
-		</td>
-	</tr>
-	<tr>
-		<td>@PopForums.Resources.ForumAdapter</td>
-		<td>@Html.TextBox("forumAdapterName")</td>
-	</tr>
-</table>
+﻿<div class="form-group">
+	<label for="title" class="col-sm-2 control-label">@PopForums.Resources.Title</label>
+	<div class="col-sm-10">@Html.TextBox("title", null, new { @class = "form-control" })</div>
+</div>
+<div class="form-group">
+	<label for="description" class="col-sm-2 control-label">@PopForums.Resources.Description</label>
+	<div class="col-sm-10">@Html.TextBox("description", null, new { @class = "form-control" })</div>
+</div>
+<div class="form-group">
+	<label for="categoryID" class="col-sm-2 control-label">@PopForums.Resources.Category</label>
+	<div class="col-sm-10">@Html.DropDownList("categoryID", null, new { @class = "form-control" })</div>
+</div>
+<div class="form-group">
+	<div class="col-sm-push-2 col-sm-10 checkbox">
+		<label for="isVisible">@Html.CheckBox("isVisible") @PopForums.Resources.Visible</label>
+	</div>
+</div>
+<div class="form-group">
+	<div class="col-sm-push-2 col-sm-10 checkbox">
+		<label for="isArchived">@Html.CheckBox("isArchived") @PopForums.Resources.Archived</label>
+	</div>
+</div>
+<div class="form-group">
+	<label for="forumAdapterName" class="control-label">@PopForums.Resources.ForumAdapter</label>
+	@Html.TextBox("forumAdapterName", null, new { @class = "form-control" })
+</div>

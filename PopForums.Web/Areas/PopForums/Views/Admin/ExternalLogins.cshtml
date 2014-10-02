@@ -12,10 +12,10 @@
 
 @using (Html.BeginForm()) {
 
-<table class="settings">
+<table class="table">
     <tr>
 	    <th>Google</th>
-        <td>@Html.CheckBoxFor(x => x.UseGoogleLogin)<br />(registered redirect URI is http://yourdomain/signin-google)</td>
+        <td>@Html.CheckBoxFor(x => x.UseGoogleLogin) (registered redirect URI is http://yourdomain/signin-google)</td>
     </tr>
 	<tr>
 		<td>ClientId:</td>
@@ -63,7 +63,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td><input type="submit" value="@PopForums.Resources.Save" /></td>
+		<td><input type="submit" value="@PopForums.Resources.Save" class="btn" /></td>
 	</tr>
 </table>
 

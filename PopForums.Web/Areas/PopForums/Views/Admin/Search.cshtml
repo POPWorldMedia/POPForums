@@ -7,37 +7,37 @@
 
 <h2>@PopForums.Resources.Search</h2>
 
-<fieldset>
-	<legend>@PopForums.Resources.IndexingInterval</legend>
-	@using (Html.BeginForm()) {
-		<table>
-			<tr>
-				<td>@PopForums.Resources.Millseconds</td>
-				<td>@Html.TextBox("SearchIndexingInterval", ViewData["Interval"])</td>
-			</tr>
-		</table>
-		<input type="submit" value="@PopForums.Resources.Save" />
-	}
-</fieldset>
+<h3>@PopForums.Resources.IndexingInterval</h3>
+@using (Html.BeginForm()) {
+	<div role="form">
+		<div class="form-group">
+			<label>@PopForums.Resources.Millseconds</label>
+			@Html.TextBox("SearchIndexingInterval", ViewData["Interval"])
+		</div>
+		<input type="submit" value="@PopForums.Resources.Save" class="btn" />
+	</div>
+}
 
-<fieldset>
-	<legend>@PopForums.Resources.JunkWords</legend>
+<h3>@PopForums.Resources.JunkWords</h3>
 
-	@using (Html.BeginForm("CreateJunkWord", "Admin")) {
-		<p>
-			<input type="text" id="newWord" name="newWord" />
-			<input type="submit" value="@PopForums.Resources.CreateJunkWordButton" />
-		</p>
- }
+@using (Html.BeginForm("CreateJunkWord", "Admin")) {
+	<div role="form" class="form-inline">
+		<div class="form-group">
+			<input type="text" id="newWord" name="newWord" class="form-control" />
+		</div>
+		<input type="submit" value="@PopForums.Resources.CreateJunkWordButton" class="btn" />
+	</div>
+}
 
-	@using (Html.BeginForm("DeleteJunkWord", "Admin"))
- {
-		<p>
-			<select id="deleteWord" name="deleteWord" size="10">
+@using (Html.BeginForm("DeleteJunkWord", "Admin"))
+{
+	<div role="form">
+		<div class="form-group">
+			<select id="deleteWord" name="deleteWord" size="10" class="form-control">
 				@foreach (var word in (List<string>)ViewData["JunkWords"])
-	{<option value="@word">@word</option>}
-			</select><br />
-			<input type="submit" value="@PopForums.Resources.DeleteJunkWordButton" />
-		</p>
-	}
-</fieldset>
+				{<option value="@word">@word</option>}
+			</select>
+		</div>
+		<input type="submit" value="@PopForums.Resources.DeleteJunkWordButton" />
+	</div>
+}
