@@ -54,7 +54,7 @@
 	<div role="form" id="PointsForm">
 		@Html.Hidden("UserID", String.Empty)
 		<div class="form-group">
-			<label><input type="button" class="btn btn-default modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="PointsForm" value="@PopForums.Resources.Name" /></label>
+			<label><input type="button" class="btn btn-primary modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="PointsForm" value="@PopForums.Resources.Name" /></label>
 			@Html.TextBox("Name", String.Empty, new { @class = "form-control", disabled = "disabled" })
 		</div>
 		<div class="form-group">
@@ -65,7 +65,7 @@
 			<label>Points</label>
 			@Html.TextBox("Points", String.Empty, new { @class = "form-control" })
 		</div>
-		<input type="submit" value="Publish Points" class="btn btn-default" />
+		<input type="submit" value="Publish Points" class="btn btn-primary" />
 	</div>
 }
 
@@ -76,7 +76,7 @@
 	<div role="form" id="EventForm">
 		@Html.Hidden("UserID", String.Empty)
 		<div class="form-group">
-			<label><input type="button" class="btn btn-default modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="EventForm" value="@PopForums.Resources.Name" /></label>
+			<label><input type="button" class="btn btn-primary modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="EventForm" value="@PopForums.Resources.Name" /></label>
 			@Html.TextBox("Name", String.Empty, new { @class = "form-control", disabled = "disabled" })
 		</div>
 		<div class="form-group">
@@ -87,7 +87,7 @@
 			<label>Event Definition ID</label>
 			@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList, new { @class = "form-control" })
 		</div>
-		<input type="submit" value="Publish Event" class="btn btn-default" />
+		<input type="submit" value="Publish Event" class="btn btn-primary" />
 	</div>
 }
 
@@ -106,7 +106,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

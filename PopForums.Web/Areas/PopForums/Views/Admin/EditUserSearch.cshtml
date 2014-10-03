@@ -9,7 +9,7 @@
 
 @using (Html.BeginForm("EditUserSearch", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
 	@Html.TextBox("SearchText", null, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.Search" class="btn btn-default" /><br />
+	<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" /><br />
 	@Html.RadioButton("SearchType", "Name", new {id="Name", @checked="checked"})<label for="Name">@PopForums.Resources.Name</label>
 	@Html.RadioButton("SearchType", "Email", new { id = "Email" })<label for="Email">@PopForums.Resources.Email</label>
 	@Html.RadioButton("SearchType", "Role", new { id = "Role" })<label for="Role">@PopForums.Resources.Role</label>

@@ -18,7 +18,7 @@
 	<div class="form-group">
 		@Html.TextBox("Email", null, new { @class = "form-control" })
 	</div>
-	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-default" />
+	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
 	if (ViewBag.Result != null) { <span class="bg-danger callout">@ViewBag.Result</span> }
 }
 

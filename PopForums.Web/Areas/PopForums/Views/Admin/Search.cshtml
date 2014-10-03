@@ -14,7 +14,7 @@
 			<label>@PopForums.Resources.Millseconds</label>
 			@Html.TextBox("SearchIndexingInterval", ViewData["Interval"])
 		</div>
-		<input type="submit" value="@PopForums.Resources.Save" class="btn btn-default" />
+		<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	</div>
 }
 
@@ -25,7 +25,7 @@
 		<div class="form-group">
 			<input type="text" id="newWord" name="newWord" class="form-control" />
 		</div>
-		<input type="submit" value="@PopForums.Resources.CreateJunkWordButton" class="btn btn-default" />
+		<input type="submit" value="@PopForums.Resources.CreateJunkWordButton" class="btn btn-primary" />
 	</div>
 }
 
@@ -38,6 +38,6 @@
 				{<option value="@word">@word</option>}
 			</select>
 		</div>
-		<input type="submit" value="@PopForums.Resources.DeleteJunkWordButton" class="btn btn-default" />
+		<input type="submit" value="@PopForums.Resources.DeleteJunkWordButton" class="btn btn-primary" />
 	</div>
 }

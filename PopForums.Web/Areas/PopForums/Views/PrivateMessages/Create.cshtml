@@ -82,7 +82,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
@@ -93,7 +93,7 @@
 	@Html.Hidden("UserIDs")
 	<div role="form">
 		<div class="form-group">
-			<label><input type="button" class="btn btn-default" data-toggle="modal" data-target="#ToModal" value="@PopForums.Resources.To" /></label>
+			<label><input type="button" class="btn btn-primary" data-toggle="modal" data-target="#ToModal" value="@PopForums.Resources.To" /></label>
 			<div id="PMToBox" class="form-control">
 				@if (ViewBag.TargetUserID != null)
 				{
@@ -109,6 +109,6 @@
 			<label for="FullText">@PopForums.Resources.Message</label>
 			@Html.TextArea("FullText", new { @class = "form-control" })
 		</div>
-		<input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="btn btn-default" />
+		<input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="btn btn-primary" />
 	</div>
 }

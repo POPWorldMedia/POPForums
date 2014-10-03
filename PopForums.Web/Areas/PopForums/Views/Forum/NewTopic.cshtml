@@ -16,8 +16,8 @@
 	@Html.HiddenFor(p => p.ItemID)
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
-	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn btn-default" />
-	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-default" data-toggle="modal" data-target="#PreviewModal" />
+	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn btn-primary" />
+	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
 	<p id="PostResponseMessage" class="bg-danger callout"></p>
 </div>
 
@@ -32,7 +32,7 @@
 				<div id="ParsedFullText" class="postItem"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

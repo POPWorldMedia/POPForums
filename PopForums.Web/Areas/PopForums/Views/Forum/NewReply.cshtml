@@ -2,7 +2,7 @@
 
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
-<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn btn-default" /></p>
+<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn btn-primary" /></p>
 
 <div class="postForm" role="form">
 	<div class="form-group">
@@ -19,8 +19,8 @@
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	@Html.HiddenFor(p => p.ParentPostID)
-	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-default" />
-	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-default" data-toggle="modal" data-target="#PreviewModal" />
+	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-primary" />
+	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
 	<span id="PostResponseMessage" class="bg-danger callout"></span>
 </div>
 
@@ -35,7 +35,7 @@
 				<div id="ParsedFullText" class="postItem"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

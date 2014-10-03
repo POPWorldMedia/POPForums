@@ -46,7 +46,7 @@
 			<td>
 				@using (Html.BeginForm("DeleteAwardCondition", "Admin", new { awardDefinitionID = item.AwardDefinitionID, eventDefinitionID = item.EventDefinitionID }))
 				{
-					<input type="submit" value="Delete" class="btn btn-default" />
+					<input type="submit" value="Delete" class="btn btn-primary" />
 				}
 			</td>
 		</tr>
@@ -67,6 +67,6 @@
 			<label for="EventCount">Event Count</label>
 			@Html.TextBox("EventCount", String.Empty, new { @class = "form-control" })
 		</div>
-		<input type="submit" value="Add Condition" class="btn btn-default" />
+		<input type="submit" value="Add Condition" class="btn btn-primary" />
 	</div>
 }

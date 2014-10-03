@@ -34,11 +34,11 @@
 @if (this.GetUserFromViewData() != null) {
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
-		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="btn btn-default" />
-		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn btn-default" />
+		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="btn btn-primary" />
+		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn btn-primary" />
 		@if (this.IsUserInRole(PermanentRoles.Moderator))
 		{
-			<input id="TopicModLogButton" class="btn btn-default" type="button" value="@PopForums.Resources.ModerationLog" />
+			<input id="TopicModLogButton" class="btn btn-primary" type="button" value="@PopForums.Resources.ModerationLog" />
 			<div id="TopicModerationLog"></div>
 		}
 	</div>
@@ -50,7 +50,7 @@
 <div id="PostStream">
 @if (Model.PagerContext.PageIndex > 1)
 {
-	<input type="button" class="btn btn-default previousPostsButton" value="@PopForums.Resources.ShowPreviousPosts" />
+	<input type="button" class="btn btn-primary previousPostsButton" value="@PopForums.Resources.ShowPreviousPosts" />
 }
 
 @foreach(var post in Model.Posts) {
@@ -59,7 +59,7 @@
 
 @if (Model.PagerContext.PageIndex < Model.PagerContext.PageCount)
 {
-	<input type="button" class=" btn btn-default morePostsButton" value="@PopForums.Resources.ShowMorePosts" />
+	<input type="button" class=" btn btn-primary morePostsButton" value="@PopForums.Resources.ShowMorePosts" />
 }
 </div>
 
@@ -72,7 +72,7 @@
 @if (Model.PermissionContext.UserCanPost)
 {
 	<div id="NewReply" style="display: none;"></div>
-	<input type="button" value="@PopForums.Resources.PostReply" id="ReplyButton" class="btn btn-default" />
+	<input type="button" value="@PopForums.Resources.PostReply" id="ReplyButton" class="btn btn-primary" />
 }
 else
 {
@@ -92,21 +92,21 @@ else
 		<ul class="list-inline">
 			<li>@using (Html.BeginForm("ToggleDeleted", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-default" />
+				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-primary" />
 			}</li>
 			<li>@using (Html.BeginForm("TogglePin", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-default" />
+				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-primary" />
 			}</li>
 			<li>@using (Html.BeginForm("ToggleClosed", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-default" />
+				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-primary" />
 			}</li>
 			@if (this.IsUserInRole(PermanentRoles.Admin))
 			{
 				<li>@using (Html.BeginForm("DeleteTopicPermanently", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 				{
-					<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-default" />
+					<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-primary" />
 				}</li>
 			}
 		</ul>
@@ -139,7 +139,7 @@ else
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-6">
-					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-default" />
+					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-primary" />
 				</div>
 			</div>
 		}

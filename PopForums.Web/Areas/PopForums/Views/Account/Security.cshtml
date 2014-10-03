@@ -38,7 +38,7 @@
 		<label for="NewPasswordRetype">@PopForums.Resources.PasswordNewRetype</label>
 		@Html.Password("NewPasswordRetype", null, new { @class = "form-control" })
 	</div>
-	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-default" />
+	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary" />
 	if (ViewBag.PasswordResult != null) { <span class="bg-danger callout">@ViewBag.PasswordResult</span> }
 }
 
@@ -63,6 +63,6 @@
 		<label for="NewEmailRetype">@PopForums.Resources.EmailNewRetype</label>
 		@Html.TextBox("NewEmailRetype", null, new { @class = "form-control" })
 	</div>
-	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-default" />
+	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary" />
 	if (ViewBag.EmailResult != null) { <span class="bg-danger callout">@ViewBag.EmailResult</span> }
 }

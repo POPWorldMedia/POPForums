@@ -41,7 +41,7 @@
 				@Html.CheckBox("PersistCookie") @PopForums.Resources.RememberMe
 			</label>
 		</div>
-		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-default" />
+		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
 	</div>
 
 if (Model.Count > 0)
@@ -53,7 +53,7 @@ if (Model.Count > 0)
 		<p>
 			@foreach (var authenticationDescription in Model)
 			{
-				<button type="submit" id="@authenticationDescription.AuthenticationType" name="provider" value="@authenticationDescription.AuthenticationType" class="btn btn-default">@authenticationDescription.AuthenticationType</button>
+				<button type="submit" id="@authenticationDescription.AuthenticationType" name="provider" value="@authenticationDescription.AuthenticationType" class="btn btn-primary">@authenticationDescription.AuthenticationType</button>
 			}
 		</p>
 	}
