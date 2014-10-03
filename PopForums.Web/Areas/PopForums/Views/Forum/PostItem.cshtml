@@ -1,6 +1,13 @@
 ﻿@using PopForums.Extensions;
 @using PopForums.Models;
 @model Post
+@{
+	Topic topic = null;
+	if (ViewBag.Topic != null)
+	{
+		topic = (Topic) ViewBag.Topic;
+	}
+}
 <a name="@Model.PostID"></a>
 <div class="@(Model.IsDeleted ? "bg-danger " : "")postItem" data-postid="@Model.PostID" data-userid="@Model.UserID">
 	<div class="postUserData bg-primary">
@@ -44,7 +51,7 @@
 					<li class="voteUp btn-link">Vote up</li>}
 			}
 			<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.PostID }, null)</li>
-			@if (User != null)
+			@if (User != null && topic != null && topic.IsClosed == false)
 			{
 				<li><input type="button" class="replyLink btn-link" value="@PopForums.Resources.Reply" /></li>
 				<li><input type="button" class="quoteLink btn-link" value="@PopForums.Resources.Quote" /></li>

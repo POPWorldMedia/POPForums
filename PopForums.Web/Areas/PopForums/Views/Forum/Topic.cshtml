@@ -54,7 +54,7 @@
 }
 
 @foreach(var post in Model.Posts) {
-	Html.RenderPartial("PostItem", post, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()} });
+	Html.RenderPartial("PostItem", post, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()}, { "Topic", Model.Topic } });
 }
 
 @if (Model.PagerContext.PageIndex < Model.PagerContext.PageCount)
@@ -64,7 +64,7 @@
 </div>
 
 @Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
-	
+
 @Html.PagerLinks("Forum", "Topic", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
 
 <div id="StreamBottom"></div>

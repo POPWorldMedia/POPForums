@@ -63,7 +63,7 @@ namespace PopForums.Services
 			text = text.Replace("<blockquote>", "[quote]");
 			text = text.Replace("</blockquote>", "[/quote]");
 			text = Regex.Replace(text, @" *target=""[_\w]*""", String.Empty, RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""http://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "http://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""http://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "http://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
 			return text;
 		}
 
