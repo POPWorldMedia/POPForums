@@ -1197,4 +1197,7 @@
   <data name="DeletePermanently" xml:space="preserve">
     <value>永久删除</value>
   </data>
+  <data name="Preview" xml:space="preserve">
+    <value>預覽</value>
+  </data>
 </root>

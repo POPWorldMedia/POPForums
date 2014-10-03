@@ -1210,4 +1210,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="DeletePermanently" xml:space="preserve">
     <value>Dauerhaft löschen</value>
   </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Vorschau</value>
+  </data>
 </root>

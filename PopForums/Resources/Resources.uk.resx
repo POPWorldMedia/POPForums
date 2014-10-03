@@ -1221,4 +1221,7 @@
   <data name="DeletePermanently" xml:space="preserve">
     <value>Видалити файл</value>
   </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Попередній</value>
+  </data>
 </root>

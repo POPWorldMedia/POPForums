@@ -176,11 +176,23 @@
 	margin: 10px 0;
 }
 
+#ForumContainer #ParsedFullText {
+	overflow-y: scroll;overflow-x: hidden;
+	max-height: 350px;
+}
 /* queries */
 
 @media(max-width:479px) {
 	#ForumContainer .avatar {
 		display: none;
+	}
+}
+
+@media(min-width:1px) {
+	#ForumContainer #PreviewModal .modal-dialog {
+		width: 90%!important;
+		max-height: 95% !important;
+		margin: 10px auto;
 	}
 }
 

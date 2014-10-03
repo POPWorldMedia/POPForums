@@ -655,5 +655,29 @@ namespace PopForums.Test.Services
 			Assert.True(message.Contains(topicUrl));
 			Assert.True(message.Contains(title));
 		}
+
+		[Test]
+		public void GenerateParsedTextPreviewCallsForumCodeForPlainText()
+		{
+			var service = GetService();
+			const string input = "ohgorigh";
+			const string output = "90eyuw";
+			_textParsingService.Setup(x => x.ForumCodeToHtml(input)).Returns(output);
+			var result = service.GenerateParsedTextPreview(input, true);
+			Assert.AreEqual(output, result);
+			_textParsingService.Verify(x => x.ForumCodeToHtml(input), Times.Once());
+		}
+
+		[Test]
+		public void GenerateParsedTextPreviewCallsHtmlForRichText()
+		{
+			var service = GetService();
+			const string input = "ohgorigh";
+			const string output = "90eyuw";
+			_textParsingService.Setup(x => x.ClientHtmlToHtml(input)).Returns(output);
+			var result = service.GenerateParsedTextPreview(input, false);
+			Assert.AreEqual(output, result);
+			_textParsingService.Verify(x => x.ClientHtmlToHtml(input), Times.Once());
+		}
 	}
 }

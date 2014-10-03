@@ -26,5 +26,6 @@ namespace PopForums.Services
 		VotePostContainer GetVoters(Post post);
 		int GetVoteCount(Post post);
 		List<int> GetVotedPostIDs(User user, List<Post> posts);
+		string GenerateParsedTextPreview(string text, bool isPlainText);
 	}
 }

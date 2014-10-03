@@ -1210,4 +1210,7 @@
   <data name="DeletePermanently" xml:space="preserve">
     <value>Permanent verwijderen</value>
   </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Voorbeeld</value>
+  </data>
 </root>

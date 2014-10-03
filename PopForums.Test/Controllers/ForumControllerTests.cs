@@ -1487,6 +1487,27 @@ namespace PopForums.Test.Controllers
 			_postService.Setup(x => x.GetLastPostID(123)).Returns(456);
 			Assert.IsFalse(Convert.ToBoolean(controller.IsLastPostInTopic(123, 789).Content));
 		}
+
+		[Test]
+		public void PreviewTextMapsParametersToService()
+		{
+			var controller = GetForumController();
+			const string text = "whoa";
+			const bool isPlainText = true;
+			controller.PreviewText(text, isPlainText);
+			_postService.Verify(x => x.GenerateParsedTextPreview(text, isPlainText), Times.Once());
+		}
+
+		[Test]
+		public void PreviewTextReturnsResultFromService()
+		{
+			var controller = GetForumController();
+			const string serviceResult = "test";
+			_postService.Setup(x => x.GenerateParsedTextPreview(It.IsAny<string>(), It.IsAny<bool>())).Returns(serviceResult);
+			var result = controller.PreviewText("whoa", true);
+			Assert.AreEqual(serviceResult, result.Content);
+			Assert.AreEqual("text/html", result.ContentType);
+		}
 	}
 
 	public class TestAdapter : IForumAdapter

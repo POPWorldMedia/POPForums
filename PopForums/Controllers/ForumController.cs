@@ -521,6 +521,14 @@ namespace PopForums.Controllers
 			return View("Votes", count);
 		}
 
+		[HttpPost]
+		[ValidateInput(false)]
+		public ContentResult PreviewText(string fullText, bool isPlainText)
+		{
+			var result = _postService.GenerateParsedTextPreview(fullText, isPlainText);
+			return Content(result, "text/html");
+		}
+
 		private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, bool isSubscribed, List<Post> posts, PagerContext pagerContext, bool isFavorite, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs)
 		{
 			return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs };

@@ -271,5 +271,11 @@ namespace PopForums.Services
 			var ids = posts.Select(x => x.PostID).ToList();
 			return _postRepository.GetVotedPostIDs(user.UserID, ids);
 		}
+
+		public string GenerateParsedTextPreview(string text, bool isPlainText)
+		{
+			var result = isPlainText ? _textParsingService.ForumCodeToHtml(text) : _textParsingService.ClientHtmlToHtml(text);
+			return result;
+		}
 	}
 }
