@@ -1,7 +1,6 @@
 ﻿$(function () {
 	var crumbs = $("#ForumContainer #TopBreadcrumb");
 	if (crumbs.length > 0) {
-		PopForums.crumbTop = crumbs.offset().top + PopForums.navOffset;
 		$(window).scroll(function () {
 			PopForums.checkScroll();
 		});
@@ -54,16 +53,20 @@ PopForums.editorSettings = {
 };
 
 PopForums.checkScroll = function () {
-	var crumb = $("#ForumContainer #FixedBreadcrumb");
+	var fCrumb = $("#ForumContainer #FixedBreadcrumb");
+	var tCrumb = $("#ForumContainer #TopBreadcrumb");
+	if (tCrumb.length > 0) {
+		PopForums.crumbTop = tCrumb.offset().top + PopForums.navOffset;
+	}
 	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	if ((scrollTop > PopForums.crumbTop) && crumb.css("display") == "none") {
+	if ((scrollTop > PopForums.crumbTop) && fCrumb.css("display") == "none") {
 		var width = $("#ForumContainer #TopBreadcrumb").outerWidth();
-		crumb.css("width", width + "px");
-		crumb.css("top", PopForums.navOffset);
-		crumb.fadeIn(150);
+		fCrumb.css("width", width + "px");
+		fCrumb.css("top", PopForums.navOffset);
+		fCrumb.fadeIn(150);
 	}
 	else if (scrollTop < PopForums.crumbTop) {
-		crumb.fadeOut(150);
+		fCrumb.fadeOut(150);
 	}
 };
 
