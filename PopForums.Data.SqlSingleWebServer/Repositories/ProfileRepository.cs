@@ -40,15 +40,16 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				Aim = reader.GetString(8),
 				Icq = reader.GetString(9),
 				YahooMessenger = reader.GetString(10),
-				MsnMessenger = reader.GetString(11),
-				IsTos = reader.GetBoolean(12),
-				TimeZone = reader.GetInt32(13),
-				IsDaylightSaving = reader.GetBoolean(14),
-				AvatarID = reader.NullIntDbHelper(15),
-				ImageID = reader.NullIntDbHelper(16),
-				HideVanity = reader.GetBoolean(17),
-				LastPostID = reader.NullIntDbHelper(18),
-				Points = reader.GetInt32(19)
+				Facebook = reader.NullStringDbHelper(11),
+				Twitter = reader.NullStringDbHelper(12),
+				IsTos = reader.GetBoolean(13),
+				TimeZone = reader.GetInt32(14),
+				IsDaylightSaving = reader.GetBoolean(15),
+				AvatarID = reader.NullIntDbHelper(16),
+				ImageID = reader.NullIntDbHelper(17),
+				HideVanity = reader.GetBoolean(18),
+				LastPostID = reader.NullIntDbHelper(19),
+				Points = reader.GetInt32(20)
 			};
 		}
 
@@ -59,7 +60,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				return cacheObject;
 			Profile profile = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, AIM, ICQ, YahooMessenger, MSNMessenger, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID")
+				connection.Command("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, AIM, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID")
 					.AddParameter("@UserID", userID)
 					.ExecuteReader()
 					.ReadOne(r => { profile = PopulateFromReader(r); }));
@@ -71,7 +72,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 		public void Create(Profile profile)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, AIM, ICQ, YahooMessenger, MSNMessenger, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @AIM, @ICQ, @YahooMessenger, @MSNMessenger, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)")
+				connection.Command("INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, AIM, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @AIM, @ICQ, @YahooMessenger, @Facebook, @Twitter, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)")
 					.AddParameter("@UserID", profile.UserID)
 					.AddParameter("@IsSubscribed", profile.IsSubscribed)
 					.AddParameter("@Signature", profile.Signature.NullToEmpty())
@@ -83,7 +84,8 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 					.AddParameter("@AIM", profile.Aim.NullToEmpty())
 					.AddParameter("@ICQ", profile.Icq.NullToEmpty())
 					.AddParameter("@YahooMessenger", profile.YahooMessenger.NullToEmpty())
-					.AddParameter("@MSNMessenger", profile.MsnMessenger.NullToEmpty())
+					.AddParameter("@Facebook", profile.Facebook.NullToEmpty())
+					.AddParameter("@Twitter", profile.Twitter.NullToEmpty())
 					.AddParameter("@IsTos", profile.IsTos)
 					.AddParameter("@TimeZone", profile.TimeZone)
 					.AddParameter("@IsDaylightSaving", profile.IsDaylightSaving)
@@ -99,7 +101,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 		{
 			var success = false;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				success = connection.Command("UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, AIM = @AIM, ICQ = @ICQ, YahooMessenger = @YahooMessenger, MSNMessenger = @MSNMessenger, IsTos = @IsTos, TimeZone = @TimeZone, IsDaylightSaving = @IsDaylightSaving, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points WHERE UserID = @UserID")
+				success = connection.Command("UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, AIM = @AIM, ICQ = @ICQ, YahooMessenger = @YahooMessenger, Facebook = @Facebook, Twitter = @Twitter, IsTos = @IsTos, TimeZone = @TimeZone, IsDaylightSaving = @IsDaylightSaving, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points WHERE UserID = @UserID")
 					.AddParameter("@IsSubscribed", profile.IsSubscribed)
 					.AddParameter("@Signature", profile.Signature.NullToEmpty())
 					.AddParameter("@ShowDetails", profile.ShowDetails)
@@ -110,7 +112,8 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 					.AddParameter("@AIM", profile.Aim.NullToEmpty())
 					.AddParameter("@ICQ", profile.Icq.NullToEmpty())
 					.AddParameter("@YahooMessenger", profile.YahooMessenger.NullToEmpty())
-					.AddParameter("@MSNMessenger", profile.MsnMessenger.NullToEmpty())
+					.AddParameter("@Facebook", profile.Facebook.NullToEmpty())
+					.AddParameter("@Twitter", profile.Twitter.NullToEmpty())
 					.AddParameter("@IsTos", profile.IsTos)
 					.AddParameter("@TimeZone", profile.TimeZone)
 					.AddParameter("@IsDaylightSaving", profile.IsDaylightSaving)

@@ -347,7 +347,8 @@ namespace PopForums.Services
 			profile.Aim = userEdit.Aim;
 			profile.Icq = userEdit.Icq;
 			profile.YahooMessenger = userEdit.YahooMessenger;
-			profile.MsnMessenger = userEdit.MsnMessenger;
+			profile.Facebook = userEdit.Facebook;
+			profile.Twitter = userEdit.Twitter;
 			if (removeAvatar)
 				profile.AvatarID = null;
 			if (removePhoto)
@@ -431,7 +432,8 @@ namespace PopForums.Services
 			profile.Aim = userEditProfile.Aim;
 			profile.Icq = userEditProfile.Icq;
 			profile.YahooMessenger = userEditProfile.YahooMessenger;
-			profile.MsnMessenger = userEditProfile.MsnMessenger;
+			profile.Facebook = userEditProfile.Facebook;
+			profile.Twitter = userEditProfile.Twitter;
 			_profileRepository.Update(profile);
 		}
 

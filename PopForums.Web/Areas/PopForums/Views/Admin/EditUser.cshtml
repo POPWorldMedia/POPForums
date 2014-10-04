@@ -138,6 +138,24 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<label for="Facebook" class="col-xs-2 control-label">Facebook</label>
+		<div class="col-xs-10">
+			<div class="input-group">
+				<span class="input-group-addon">https://facebook.com/</span>
+				@Html.TextBoxFor(m => m.Facebook, new { @class = "form-control" })
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Twitter" class="col-xs-2 control-label">Twitter</label>
+		<div class="col-xs-10">
+			<div class="input-group">
+				<span class="input-group-addon">&#64;</span>
+				@Html.TextBoxFor(m => m.Twitter, new { @class = "form-control" })
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
 		<label for="Web" class="col-xs-2 control-label">@PopForums.Resources.Web</label>
 		<div class="col-xs-10">
 			@Html.TextBoxFor(m => m.Web, new { @class = "form-control" })
@@ -159,12 +177,6 @@
 		<label for="YahooMessenger" class="col-xs-2 control-label">Yahoo Messenger</label>
 		<div class="col-xs-10">
 			@Html.TextBoxFor(m => m.YahooMessenger, new { @class = "form-control" })
-		</div>
-	</div>
-	<div class="form-group">
-		<label for="MsnMessenger" class="col-xs-2 control-label">MSN Messenger</label>
-		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.MsnMessenger, new { @class = "form-control" })
 		</div>
 	</div>
 

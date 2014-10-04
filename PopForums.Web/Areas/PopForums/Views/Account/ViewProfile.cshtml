@@ -50,6 +50,18 @@
 					<dt>@PopForums.Resources.Location</dt>
 					<dd>@Model.Location</dd>
 				}
+
+				@if (!String.IsNullOrWhiteSpace(Model.Facebook))
+				{
+					<dt>Facebook</dt>
+					<dd><a href="https://facebook.com/@Model.Facebook" target="_blank">https://facebook.com/@Model.Facebook</a></dd>
+				}
+
+				@if (!String.IsNullOrWhiteSpace(Model.Twitter))
+				{
+					<dt>Twitter</dt>
+					<dd><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></dd>
+				}
 				
 				@if (!String.IsNullOrWhiteSpace(Model.Web))
 				{
@@ -73,12 +85,6 @@
 				{
 					<dt>ICQ</dt>
 					<dd><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></dd>
-				}
-				
-				@if (!String.IsNullOrWhiteSpace(Model.MsnMessenger))
-				{
-					<dt>MSN Messenger</dt>
-					<dd>@Model.MsnMessenger</dd>
 				}
 				
 				@if (Model.AvatarID.HasValue)

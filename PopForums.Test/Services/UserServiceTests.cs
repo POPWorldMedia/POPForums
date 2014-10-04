@@ -788,7 +788,8 @@ namespace PopForums.Test.Services
 			                      	Aim = userEdit.Aim,
 			                      	Icq = userEdit.Icq,
 			                      	YahooMessenger = userEdit.YahooMessenger,
-			                      	MsnMessenger = userEdit.MsnMessenger
+									Facebook = userEdit.Facebook,
+									Twitter = userEdit.Twitter
 			                      };
 		}
 
@@ -975,7 +976,7 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
 			var userEdit = new UserEditProfile
 			               	{
-			               		Aim = "a", Dob = new DateTime(2000,1,1), HideVanity = true, Icq = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", MsnMessenger = "m", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w", YahooMessenger = "y"
+			               		Aim = "a", Dob = new DateTime(2000,1,1), HideVanity = true, Icq = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w", YahooMessenger = "y"
 			               	};
 			service.EditUserProfile(user, userEdit);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
@@ -987,7 +988,8 @@ namespace PopForums.Test.Services
 			Assert.IsTrue(profile.IsPlainText);
 			Assert.IsTrue(profile.IsSubscribed);
 			Assert.AreEqual("l", profile.Location);
-			Assert.AreEqual("m", profile.MsnMessenger);
+			Assert.AreEqual("fb", profile.Facebook);
+			Assert.AreEqual("tw", profile.Twitter);
 			Assert.IsTrue(profile.ShowDetails);
 			Assert.AreEqual("parsed", profile.Signature);
 			Assert.AreEqual(-7, profile.TimeZone);

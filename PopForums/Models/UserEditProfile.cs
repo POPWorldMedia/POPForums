@@ -18,7 +18,8 @@ namespace PopForums.Models
 			Aim = profile.Aim;
 			Icq = profile.Icq;
 			YahooMessenger = profile.YahooMessenger;
-			MsnMessenger = profile.MsnMessenger;
+			Facebook = profile.Facebook;
+			Twitter = profile.Twitter;
 			TimeZone = profile.TimeZone;
 			IsDaylightSaving = profile.IsDaylightSaving;
 			HideVanity = profile.HideVanity;
@@ -34,7 +35,8 @@ namespace PopForums.Models
 		public string Aim { get; set; }
 		public string Icq { get; set; }
 		public string YahooMessenger { get; set; }
-		public string MsnMessenger { get; set; }
+		public string Facebook { get; set; }
+		public string Twitter { get; set; }
 		public int TimeZone { get; set; }
 		public bool IsDaylightSaving { get; set; }
 		public bool HideVanity { get; set; }

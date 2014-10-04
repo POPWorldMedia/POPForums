@@ -24,7 +24,8 @@ namespace PopForums.Models
 		public string Aim { get; set; }
 		public string Icq { get; set; }
 		public string YahooMessenger { get; set; }
-		public string MsnMessenger { get; set; }
+		public string Facebook { get; set; }
+		public string Twitter { get; set; }
 		public bool IsTos { get; set; }
 		public int TimeZone { get; set; }
 		public bool IsDaylightSaving { get; set; }

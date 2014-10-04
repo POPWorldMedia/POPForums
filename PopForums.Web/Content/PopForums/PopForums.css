@@ -198,7 +198,7 @@
 
 /* Bootstrap overrides */
 
-.badge {
+#ForumContainer #AccountBox .badge {
 	background-color: #ff0000;color: white;
 }
 

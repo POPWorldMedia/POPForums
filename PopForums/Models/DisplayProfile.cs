@@ -17,7 +17,8 @@ namespace PopForums.Models
 			Aim = profile.Aim;
 			YahooMessenger = profile.YahooMessenger;
 			Icq = profile.Icq;
-			MsnMessenger = profile.MsnMessenger;
+			Facebook = profile.Facebook;
+			Twitter = profile.Twitter;
 			AvatarID = profile.AvatarID;
 			ImageID = profile.ImageID;
 			ShowDetails = profile.ShowDetails;
@@ -36,7 +37,8 @@ namespace PopForums.Models
 		public string Aim { get; set; }
 		public string YahooMessenger { get; set; }
 		public string Icq { get; set; }
-		public string MsnMessenger { get; set; }
+		public string Facebook { get; set; }
+		public string Twitter { get; set; }
 		public int? AvatarID { get; set; }
 		public int? ImageID { get; set; }
 		public bool ShowDetails { get; set; }
