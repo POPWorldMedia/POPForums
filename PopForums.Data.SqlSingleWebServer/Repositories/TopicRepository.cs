@@ -15,7 +15,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 		}
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
-		internal const string TopicFields = "pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName";
+		internal const string TopicFields = "pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID";
 
 		public Topic GetLastUpdatedTopic(int forumID)
 		{
@@ -135,13 +135,13 @@ WITH Entries AS (
 SELECT ROW_NUMBER() OVER (ORDER BY IsPinned DESC, LastPostTime DESC)
 AS Row, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ForumID = @ForumID 
 AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0)))
 
 SELECT TopicID, ForumID, Title, ReplyCount, ViewCount, 
 StartedByUserID, StartedByName, LastPostUserID, LastPostName, 
-LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName
+LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1
@@ -171,7 +171,7 @@ WITH FirstEntries AS (
 SELECT ROW_NUMBER() OVER (PARTITION BY pf_Topic.TopicID ORDER BY IsPinned DESC, LastPostTime DESC)
 AS GroupRow, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount,
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName,
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID
 FROM pf_Topic JOIN pf_Post ON pf_Topic.TopicID = pf_Post.TopicID
 WHERE pf_Post.UserID = @UserID AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND pf_Topic.IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
@@ -184,7 +184,7 @@ WHERE  GroupRow = 1)
 
 SELECT TopicID, Entries.ForumID, Entries.Title, ReplyCount, ViewCount,
 StartedByUserID, StartedByName, LastPostUserID, Entries.LastPostName,
-Entries.LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName
+Entries.LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
@@ -214,13 +214,13 @@ WITH Entries AS (
 SELECT ROW_NUMBER() OVER (ORDER BY LastPostTime DESC)
 AS Row, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			sql += @")
 SELECT TopicID, ForumID, Title, ReplyCount, ViewCount, 
 StartedByUserID, StartedByName, LastPostUserID, LastPostName, 
-LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName
+LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1
@@ -242,7 +242,7 @@ SET ROWCOUNT 0";
 			var sql = @"
 SELECT pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			var topics = new List<Topic>();
@@ -272,7 +272,8 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			       		IsPinned = reader.GetBoolean(11),
 			       		IsDeleted = reader.GetBoolean(12),
 			       		IsIndexed = reader.GetBoolean(13),
-			       		UrlName = reader.GetString(14)
+			       		UrlName = reader.GetString(14),
+						AnswerPostID = reader.NullIntDbHelper(15)
 			       	};
 		}
 

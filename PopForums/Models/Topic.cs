@@ -24,5 +24,6 @@ namespace PopForums.Models
 		public bool IsDeleted { get; set; }
 		public bool IsIndexed { get; set; }
 		public string UrlName { get; set; }
+		public int? AnswerPostID { get; set; }
 	}
 }

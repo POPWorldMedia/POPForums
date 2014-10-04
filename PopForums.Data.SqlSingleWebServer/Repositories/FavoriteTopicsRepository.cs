@@ -28,13 +28,13 @@ WITH Entries AS (
 SELECT ROW_NUMBER() OVER (ORDER BY IsPinned DESC, LastPostTime DESC)
 AS Row, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic JOIN pf_Favorite F ON pf_Topic.TopicID = F.TopicID 
 WHERE F.UserID = @UserID AND pf_Topic.IsDeleted = 0)
 
 SELECT TopicID, ForumID, Title, ReplyCount, ViewCount, 
 StartedByUserID, StartedByName, LastPostUserID, LastPostName, 
-LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName
+LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1

@@ -194,6 +194,7 @@ CREATE TABLE [dbo].[pf_Topic](
 	[IsDeleted] [bit] NOT NULL,
 	[IsIndexed] [bit] NOT NULL,
 	[UrlName] [nvarchar](256) NOT NULL,
+	[AnswerPostID] [int] NULL,
 	CONSTRAINT [PK_pf_Topic] PRIMARY KEY NONCLUSTERED 
 		( [TopicID] ASC ) 
 ) 
