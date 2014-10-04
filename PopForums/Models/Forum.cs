@@ -22,5 +22,6 @@ namespace PopForums.Models
 		public string LastPostName { get; set; }
 		public string UrlName { get; set; }
 		public string ForumAdapterName { get; set; }
+		public bool IsQAForum { get; set; }
 	}
 }

@@ -48,22 +48,22 @@ namespace PopForums.Services
 			return _forumRepository.Get(urlName);
 		}
 
-		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName)
+		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName, bool isQAForum)
 		{
 			var urlName = title.ToUniqueUrlName(_forumRepository.GetUrlNamesThatStartWith(title.ToUrlName()));
-			var forum = _forumRepository.Create(categoryID, title, description, isVisible, isArchived, sortOrder, urlName, forumAdapterName);
+			var forum = _forumRepository.Create(categoryID, title, description, isVisible, isArchived, sortOrder, urlName, forumAdapterName, isQAForum);
 			forum.UrlName = urlName;
 			var forums = _forumRepository.GetAll().ToList();
 			SortAndUpdateForums(forums);
 			return forum;
 		}
 
-		public void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName)
+		public void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum)
 		{
 			var urlName = forum.UrlName;
 			if (forum.Title != title)
 				urlName = title.ToUniqueUrlName(_forumRepository.GetUrlNamesThatStartWith(title.ToUrlName()));
-			_forumRepository.Update(forum.ForumID, categoryID, title, description, isVisible, isArchived, urlName, forumAdapterName);
+			_forumRepository.Update(forum.ForumID, categoryID, title, description, isVisible, isArchived, urlName, forumAdapterName, isQAForum);
 		}
 
 		public void UpdateLast(Forum forum)

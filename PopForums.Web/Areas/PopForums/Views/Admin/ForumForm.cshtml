@@ -21,6 +21,11 @@
 	</div>
 </div>
 <div class="form-group">
+	<div class="col-sm-push-2 col-sm-10 checkbox">
+		<label for="isQAForum">@Html.CheckBox("isQAForum") Q&amp;A @PopForums.Resources.Forum</label>
+	</div>
+</div>
+<div class="form-group">
 	<label for="forumAdapterName" class="control-label">@PopForums.Resources.ForumAdapter</label>
 	@Html.TextBox("forumAdapterName", null, new { @class = "form-control" })
 </div>

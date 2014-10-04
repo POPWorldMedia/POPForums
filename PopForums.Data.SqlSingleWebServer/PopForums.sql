@@ -161,7 +161,8 @@ CREATE TABLE [dbo].[pf_Forum](
 	[LastPostTime] [datetime] NOT NULL,
 	[LastPostName] [nvarchar](256) NOT NULL,
 	[UrlName] [nvarchar](256) NOT NULL,
-	[ForumAdapterName] [varchar](256) NULL
+	[ForumAdapterName] [varchar](256) NULL,
+	[IsQAForum] [bit] NOT NULL DEFAULT ((0))
 ) 
 
 

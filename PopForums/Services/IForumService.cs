@@ -8,7 +8,7 @@ namespace PopForums.Services
 	{
 		Forum Get(int forumID);
 		Forum Get(string urlName);
-		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName);
+		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName, bool isQAForum);
 		void UpdateLast(Forum forum);
 		void UpdateLast(Forum forum, DateTime lastTime, string lastName);
 		void UpdateCounts(Forum forum);
@@ -20,7 +20,7 @@ namespace PopForums.Services
 		ForumPermissionContext GetPermissionContext(Forum forum, User user);
 		ForumPermissionContext GetPermissionContext(Forum forum, User user, Topic topic);
 		Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator);
-		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName);
+		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum);
 		void MoveForumUp(Forum forum);
 		void MoveForumDown(Forum forum);
 		List<string> GetForumPostRoles(Forum forum);

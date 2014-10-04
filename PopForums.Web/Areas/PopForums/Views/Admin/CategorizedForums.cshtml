@@ -6,10 +6,11 @@
 		<th>@PopForums.Resources.Forum</th>
 		<th>@PopForums.Resources.Visible</th>
 		<th>@PopForums.Resources.Archived</th>
+		<th>Q&amp;A</th>
 		<th>&nbsp;</th>
 	</tr>
 	<tr class="bg-primary">
-		<td colspan="6">@PopForums.Resources.ForumsUncat</td>
+		<td colspan="7">@PopForums.Resources.ForumsUncat</td>
 	</tr>
 	@foreach(var forum in Model.UncategorizedForums) {
 		<tr>
@@ -18,12 +19,13 @@
 			<td>@forum.Title</td>
 			<td>@Html.CheckBox("v", forum.IsVisible, new { disabled = "disabled" })</td>
 			<td>@Html.CheckBox("a", forum.IsArchived, new { disabled = "disabled" })</td>
+			<td>@Html.CheckBox("qa", forum.IsQAForum, new { disabled = "disabled"})</td>
 			<td>@Html.ActionLink(PopForums.Resources.Edit, "EditForum", new { id = forum.ForumID })</td>
 		</tr>
 	}
 	@foreach(var category in Model.CategoryDictionary) {
 		<tr class="bg-primary">
-			<td colspan="6">@category.Key.Title</td>
+			<td colspan="7">@category.Key.Title</td>
 		</tr>
 		foreach(var forum in category.Value) {
 		<tr>
@@ -33,6 +35,7 @@
 			<td>@forum.Title</td>
 			<td>@Html.CheckBox("v", forum.IsVisible, new { disabled = "disabled" })</td>
 			<td>@Html.CheckBox("a", forum.IsArchived, new { disabled = "disabled" })</td>
+			<td>@Html.CheckBox("qa", forum.IsQAForum, new { disabled = "disabled" })</td>
 			<td>@Html.ActionLink(PopForums.Resources.Edit, "EditForum", new { id = forum.ForumID })</td>
 		</tr>
 		}

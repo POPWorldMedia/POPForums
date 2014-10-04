@@ -8,10 +8,10 @@ namespace PopForums.Repositories
 	{
 		Forum Get(int forumID);
 		Forum Get(string urlName);
-		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName);
+		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName, bool isQAForum);
 		List<Forum> GetForumsInCategory(int? categoryID);
 		List<string> GetUrlNamesThatStartWith(string urlName);
-		void Update(int forumID, int? categoryID, string title, string description, bool isVisible, bool isArchived, string urlName, string forumAdapterName);
+		void Update(int forumID, int? categoryID, string title, string description, bool isVisible, bool isArchived, string urlName, string forumAdapterName, bool isQAForum);
 		void UpdateSortOrder(int forumID, int newSortOrder);
 		void UpdateCategoryAssociation(int forumID, int? categoryID);
 		void UpdateLastTimeAndUser(int forumID, DateTime lastTime, string lastName);

@@ -18,7 +18,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 
 		private readonly ICacheHelper _cacheHelper;
 		private readonly ISqlObjectFactory _sqlObjectFactory;
-		private const string _forumFields = "ForumID, CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName";
+		private const string _forumFields = "ForumID, CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName, IsQAForum";
 
 		public class CacheKeys
 		{
@@ -45,7 +45,8 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			       		LastPostTime = r.GetDateTime(9),
 			       		LastPostName = r.GetString(10),
 			       		UrlName = r.GetString(11),
-						ForumAdapterName = r.NullStringDbHelper(12)
+						ForumAdapterName = r.NullStringDbHelper(12),
+						IsQAForum = r.GetBoolean(13)
 			       	};
 		}
 
@@ -70,14 +71,14 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			return forum;
 		}
 
-		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName)
+		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName, bool isQAForum)
 		{
 			if (categoryID == 0)
 				categoryID = null;
 			var forumID = 0;
 			var lastPostTime = new DateTime(2000, 1, 1);
 			_sqlObjectFactory.GetConnection().Using(connection => forumID = Convert.ToInt32(
-				connection.Command("INSERT INTO pf_Forum (CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName) VALUES (@CategoryID, @Title, @Description, @IsVisible, @IsArchived, @SortOrder, 0, 0, @LastPostTime, '', @UrlName, @ForumAdapterName)")
+				connection.Command("INSERT INTO pf_Forum (CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName, IsQAForum) VALUES (@CategoryID, @Title, @Description, @IsVisible, @IsArchived, @SortOrder, 0, 0, @LastPostTime, '', @UrlName, @ForumAdapterName, @IsQAForum)")
 				.AddParameter("@CategoryID", categoryID.GetObjectOrDbNull())
 				.AddParameter("@Title", title)
 				.AddParameter("@Description", description)
@@ -87,6 +88,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				.AddParameter("@LastPostTime", lastPostTime)
 				.AddParameter("@UrlName", urlName)
 				.AddParameter("@ForumAdapterName", forumAdapterName)
+				.AddParameter("@IsQAForum", isQAForum)
 				.ExecuteAndReturnIdentity()));
 			var forum = new Forum(forumID)
 			            	{
@@ -100,7 +102,9 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			            		PostCount = 0,
 			            		LastPostTime = lastPostTime,
 			            		LastPostName = String.Empty,
-			            		UrlName = urlName
+			            		UrlName = urlName,
+								ForumAdapterName = forumAdapterName,
+								IsQAForum = isQAForum
 			            	};
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumUrlNames);
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumPostRoleRestrictions);
@@ -137,12 +141,12 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 			return list;
 		}
 
-		public void Update(int forumID, int? categoryID, string title, string description, bool isVisible, bool isArchived, string urlName, string forumAdapterName)
+		public void Update(int forumID, int? categoryID, string title, string description, bool isVisible, bool isArchived, string urlName, string forumAdapterName, bool isQAForum)
 		{
 			if (categoryID == 0)
 				categoryID = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_Forum SET CategoryID = @CategoryID, Title = @Title, Description = @Description, IsVisible = @IsVisible, IsArchived = @IsArchived, UrlName = @UrlName, ForumAdapterName = @ForumAdapterName WHERE ForumID = @ForumID")
+				connection.Command("UPDATE pf_Forum SET CategoryID = @CategoryID, Title = @Title, Description = @Description, IsVisible = @IsVisible, IsArchived = @IsArchived, UrlName = @UrlName, ForumAdapterName = @ForumAdapterName, IsQAForum = @IsQAForum WHERE ForumID = @ForumID")
 				.AddParameter("@CategoryID", categoryID.GetObjectOrDbNull())
 				.AddParameter("@Title", title)
 				.AddParameter("@Description", description)
@@ -151,6 +155,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				.AddParameter("@UrlName", urlName)
 				.AddParameter("@ForumID", forumID)
 				.AddParameter("@ForumAdapterName", forumAdapterName)
+				.AddParameter("@IsQAForum", isQAForum)
 				.ExecuteNonQuery());
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumUrlNames);
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumTitles);

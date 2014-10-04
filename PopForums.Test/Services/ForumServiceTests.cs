@@ -83,13 +83,14 @@ namespace PopForums.Test.Services
 			const int sortOrder = 5;
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
+			const bool isQAForum = true;
 			var forum = new Forum(forumID) {CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder};
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter)).Returns(forum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetAll()).Returns(new List<Forum> { new Forum(1) { SortOrder = 9 }, new Forum(2) { SortOrder = 6 }, forum});
-			var result = forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter);
+			var result = forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
 			Assert.AreEqual(forum, result);
-			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter), Times.Once());
+			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(123, 0), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(2, 2), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(1, 4), Times.Once());
@@ -107,11 +108,12 @@ namespace PopForums.Test.Services
 			const int sortOrder = 5;
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
+			const bool isQAForum = true;
 			var forum = new Forum(forumID) { CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter)).Returns(forum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter);
-			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title", adapter), Times.Once());
+			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
+			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title", adapter, isQAForum), Times.Once());
 		}
 
 		[Test]
@@ -126,11 +128,12 @@ namespace PopForums.Test.Services
 			const int sortOrder = 5;
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
+			const bool isQAForum = true;
 			var forum = new Forum(forumID) { CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter)).Returns(forum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(title.ToUrlName())).Returns(new List<string> {"forum-title", "forum-title-but-not", "forum-title-2"});
-			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter);
-			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title-3", adapter), Times.Once());
+			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
+			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title-3", adapter, isQAForum), Times.Once());
 		}
 
 		[Test]

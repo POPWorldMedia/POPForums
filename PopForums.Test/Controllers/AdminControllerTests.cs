@@ -238,9 +238,9 @@ namespace PopForums.Test.Controllers
 		public void AddForumPost()
 		{
 			var controller = GetController();
-			_forumService.Setup(f => f.Create(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>())).Returns(new Forum(123));
-			var result = controller.AddForum(123, "title", "desc", true, false, ".");
-			_forumService.Verify(f => f.Create(123, "title", "desc", true, false, -2, "."), Times.Once());
+			_forumService.Setup(f => f.Create(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), true)).Returns(new Forum(123));
+			var result = controller.AddForum(123, "title", "desc", true, false, ".", true);
+			_forumService.Verify(f => f.Create(123, "title", "desc", true, false, -2, ".", true), Times.Once());
 			Assert.AreEqual("Forums", result.RouteValues["action"]);
 			Assert.IsInstanceOf<RedirectToRouteResult>(result);
 		}
@@ -263,8 +263,8 @@ namespace PopForums.Test.Controllers
 			var forum = new Forum(123);
 			var controller = GetController();
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			var result = controller.EditForum(forum.ForumID, null, "title", "desc", true, true, ".");
-			_forumService.Verify(f => f.Update(forum, null, "title", "desc", true, true, "."), Times.Once());
+			var result = controller.EditForum(forum.ForumID, null, "title", "desc", true, true, ".", true);
+			_forumService.Verify(f => f.Update(forum, null, "title", "desc", true, true, ".", true), Times.Once());
 			Assert.AreEqual("Forums", result.RouteValues["action"]);
 			Assert.IsInstanceOf<RedirectToRouteResult>(result);
 		}

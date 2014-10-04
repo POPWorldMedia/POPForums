@@ -209,9 +209,9 @@ namespace PopForums.Controllers
 		}
 
 		[HttpPost]
-		public RedirectToRouteResult AddForum(int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName)
+		public RedirectToRouteResult AddForum(int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum)
 		{
-			_forumService.Create(categoryID, title, description, isVisible, isArchived, -2, forumAdapterName);
+			_forumService.Create(categoryID, title, description, isVisible, isArchived, -2, forumAdapterName, isQAForum);
 			return RedirectToAction("Forums");
 		}
 
@@ -223,10 +223,10 @@ namespace PopForums.Controllers
 		}
 
 		[HttpPost]
-		public RedirectToRouteResult EditForum(int id, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName)
+		public RedirectToRouteResult EditForum(int id, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum)
 		{
 			var forum = _forumService.Get(id);
-			_forumService.Update(forum, categoryID, title, description, isVisible, isArchived, forumAdapterName);
+			_forumService.Update(forum, categoryID, title, description, isVisible, isArchived, forumAdapterName, isQAForum);
 			return RedirectToAction("Forums");
 		}
 
