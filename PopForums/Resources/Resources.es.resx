@@ -1224,4 +1224,7 @@
   <data name="Preview" xml:space="preserve">
     <value>Vista preliminar</value>
   </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>Stellen Sie eine Frage</value>
+  </data>
 </root>

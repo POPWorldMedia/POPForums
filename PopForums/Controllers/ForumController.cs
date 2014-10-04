@@ -78,6 +78,8 @@ namespace PopForums.Controllers
 					return View(adapter.ForumAdapter.Model);
 				return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 			}
+			if (forum.IsQAForum)
+				return View("IndexQA", container);
 			return View(container);
 		}
 

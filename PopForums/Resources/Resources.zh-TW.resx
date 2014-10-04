@@ -1200,4 +1200,7 @@
   <data name="Preview" xml:space="preserve">
     <value>預覽</value>
   </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>問一個問題</value>
+  </data>
 </root>

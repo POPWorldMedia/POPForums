@@ -1224,4 +1224,7 @@
   <data name="Preview" xml:space="preserve">
     <value>Попередній</value>
   </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>Задайте питання</value>
+  </data>
 </root>

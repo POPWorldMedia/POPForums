@@ -196,6 +196,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask A Question.
+        /// </summary>
+        public static string AskAQuestion {
+            get {
+                return ResourceManager.GetString("AskAQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (as you would like it to appear).
         /// </summary>
         public static string AsYouWouldLikeItToAppear {
