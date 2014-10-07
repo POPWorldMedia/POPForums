@@ -89,6 +89,20 @@
 #ForumContainer #TopicTools .btn {
 	margin-bottom: 10px;
 }
+#ForumContainer .QAstate {
+	width: 40px;
+}
+#ForumContainer .QAstate span {
+	margin-top: 6px;
+}
+#ForumContainer .QAstate .glyphicon-ok-sign {
+	font-size: 150%;
+	color: green;
+}
+#ForumContainer .QAstate .glyphicon-question-sign {
+	font-size: 150%;
+	color: red;
+}
 
 /* post item */
 
@@ -162,18 +176,6 @@
 }
 #ForumContainer .postItem .postTime {
 	display: block;
-}
-
-#ForumContainer .QAstate span {
-	margin-top: 6px;
-}
-#ForumContainer .QAstate .glyphicon-ok-sign {
-	font-size: 150%;
-	color: green;
-}
-#ForumContainer .QAstate .glyphicon-question-sign {
-	font-size: 150%;
-	color: red;
 }
 
 /* text editor */
