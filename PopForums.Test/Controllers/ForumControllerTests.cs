@@ -450,6 +450,32 @@ namespace PopForums.Test.Controllers
 		}
 
 		[Test]
+		public void TopicFromQAForumReturnsTopicContainerWithAllPosts()
+		{
+			var controller = GetForumController();
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			var forum = new Forum(1) { IsQAForum = true };
+			var topic = new Topic(2);
+			var posts = new List<Post> { new Post(456) };
+			var permissionContext = new ForumPermissionContext { UserCanView = true, UserCanModerate = false };
+			_userService.Setup(u => u.GetUserByName(It.IsAny<string>())).Returns((User)null);
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(forum);
+			_forumService.Setup(f => f.GetPermissionContext(forum, null, topic)).Returns(permissionContext);
+			_topicService.Setup(t => t.Get(It.IsAny<string>())).Returns(topic);
+			_postService.Setup(p => p.GetPosts(topic, permissionContext.UserCanModerate)).Returns(posts);
+			var result = controller.Topic("blah");
+			Assert.IsInstanceOf<ViewResult>(result);
+			Assert.IsInstanceOf<TopicContainer>(result.ViewData.Model);
+			var model = (TopicContainer)result.ViewData.Model;
+			Assert.AreSame(forum, model.Forum);
+			Assert.AreSame(topic, model.Topic);
+			Assert.AreSame(posts, model.Posts);
+			Assert.AreSame(permissionContext, model.PermissionContext);
+			Assert.Null(result.ViewBag.CategorizedForums);
+		}
+
+		[Test]
 		public void TopicCallsMarkTopicReadNoAdapter()
 		{
 			var controller = GetForumController();

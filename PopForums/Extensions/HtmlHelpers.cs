@@ -30,6 +30,8 @@ namespace PopForums.Extensions
 
 		public static MvcHtmlString PagerLinks(this HtmlHelper htmlHelper, string controllerName, string actionName, PagerContext pagerContext, string firstPage, string previousPage, string nextPage, string lastPage, string moreText, string cssClass, string moreTextCssClass, string currentPageCssClass, Dictionary<string, object> routeParameters)
 		{
+			if (pagerContext == null)
+				return null;
 			var builder = new StringBuilder();
 			if (String.IsNullOrEmpty(controllerName) || String.IsNullOrEmpty(actionName))
 				throw new Exception("controllerName and actionName must be specified for PageLinks.");
@@ -126,6 +128,8 @@ namespace PopForums.Extensions
 
 		public static MvcHtmlString PagerLinks(this HtmlHelper htmlHelper, string controllerName, string actionName, PagerContext pagerContext, int low, int high, string id, string firstPage, string previousPage, string nextPage, string lastPage, string moreText, string cssClass, string moreTextCssClass, string currentPageCssClass)
 		{
+			if (pagerContext == null)
+				return null;
 			var builder = new StringBuilder();
 			if (String.IsNullOrEmpty(controllerName) || String.IsNullOrEmpty(actionName))
 				throw new Exception("controllerName and actionName must be specified for PageLinks.");

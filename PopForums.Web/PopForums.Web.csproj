@@ -186,6 +186,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Areas\PopForums\Views\Forum\IndexQA.cshtml" />
+    <Content Include="Areas\PopForums\Views\Forum\TopicQA.cshtml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

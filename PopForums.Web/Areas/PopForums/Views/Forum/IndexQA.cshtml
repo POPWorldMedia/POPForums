@@ -13,10 +13,6 @@
 <script type="text/javascript">
 	$(function () {
 		PopForums.topicListSetup(@Model.Forum.ForumID);
-		@if (Model.PagerContext.PageIndex == 1)
-		{
-			<text>PopForums.forumListen(@Model.PagerContext.PageSize, @Model.Forum.ForumID);</text>
-		}
 	});
 </script>
 }
@@ -85,18 +81,6 @@
 			</td>
 		</tr>
 	}
-	<tr id="TopicTemplate" data-topicid="" class="hidden">
-		<td class="newIndicator">
-			<a class="indicatorLink" href=""><img src="" /></a>
-		</td>
-		<td>
-			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid=""></span></h2>
-			<div id="" class="topicPreview"></div>
-			<small class="pull-right">
-				@PopForums.Resources.StartedBy: <span class="startedByName"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
-			</small>
-		</td>
-	</tr>
 </table>
 
 @Html.PagerLinks("Forum", "Index", Model.PagerContext, "pagerLinks", "morePager", "currentPager")

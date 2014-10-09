@@ -170,7 +170,7 @@ namespace PopForums.Controllers
 				return this.Forbidden("Forbidden", null);
 			}
 
-			PagerContext pagerContext;
+			PagerContext pagerContext = null;
 			var isSubscribed = false;
 			var isFavorite = false;
 			var user = this.CurrentUser();
@@ -185,7 +185,11 @@ namespace PopForums.Controllers
 				if (user.IsInRole(PermanentRoles.Moderator))
 					ViewBag.CategorizedForums = _forumService.GetCategorizedForumContainer();
 			}
-			var posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
+			List<Post> posts;
+			if (forum.IsQAForum)
+				posts = _postService.GetPosts(topic, permissionContext.UserCanModerate);
+			else
+				posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
 			if (posts.Count == 0)
 				return this.NotFound("NotFound", null);
 			var signatures = _profileService.GetSignatures(posts);
@@ -200,6 +204,8 @@ namespace PopForums.Controllers
 					return View(adapter.ForumAdapter.Model);
 				return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 			}
+			if (forum.IsQAForum)
+				return View("TopicQA", container);
 			return View(container);
 		}
 
