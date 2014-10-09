@@ -238,6 +238,7 @@
     <Compile Include="Messaging\Forums.cs" />
     <Compile Include="Messaging\Recent.cs" />
     <Compile Include="Messaging\Topics.cs" />
+    <Compile Include="Models\AnswerWithComments.cs" />
     <Compile Include="Models\ClientSettings.cs" />
     <Compile Include="Models\FeedEvent.cs" />
     <Compile Include="Models\Friend.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="Models\ReadStatus.cs" />
     <Compile Include="Models\SearchWord.cs" />
     <Compile Include="Models\SetupVariables.cs" />
+    <Compile Include="Models\TopicContainerForQA.cs" />
     <Compile Include="Models\TopicUnsubscribeContainer.cs" />
     <Compile Include="Models\VotePostContainer.cs" />
     <Compile Include="Repositories\IAwardCalculationQueueRepository.cs" />

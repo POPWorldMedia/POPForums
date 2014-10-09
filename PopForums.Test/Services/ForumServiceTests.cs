@@ -837,5 +837,152 @@ namespace PopForums.Test.Services
 			service.GetCategorizedForumContainerFilteredForUser(user);
 			_mockLastReadService.Verify(l => l.GetForumReadStatus(user, It.IsAny<CategorizedForumContainer>()), Times.Exactly(1));
 		}
+
+		[Test]
+		public void MapTopicContainerForQAMapsBaseProperties()
+		{
+			var topicContainer = new TopicContainer
+			{
+				Forum = new Forum(1),
+				Topic = new Topic(2),
+				Posts = new List<Post> {new Post(123) { IsFirstInTopic = true }},
+				PagerContext = new PagerContext(),
+				PermissionContext = new ForumPermissionContext(),
+				IsSubscribed = true,
+				IsFavorite = true,
+				Signatures = new Dictionary<int, string>(),
+				Avatars = new Dictionary<int, int>(),
+				VotedPostIDs = new List<int>()
+			};
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.AreSame(topicContainer.Forum, result.Forum);
+			Assert.AreSame(topicContainer.Topic, result.Topic);
+			Assert.AreSame(topicContainer.Posts, result.Posts);
+			Assert.AreSame(topicContainer.PagerContext, result.PagerContext);
+			Assert.AreSame(topicContainer.PermissionContext, result.PermissionContext);
+			Assert.IsTrue(topicContainer.IsSubscribed);
+			Assert.IsTrue(topicContainer.IsFavorite);
+			Assert.AreSame(topicContainer.Signatures, result.Signatures);
+			Assert.AreSame(topicContainer.Avatars, result.Avatars);
+			Assert.AreSame(topicContainer.VotedPostIDs, result.VotedPostIDs);
+		}
+
+		[Test]
+		public void MapTopicContainerGrabsFirstPostForQuestion()
+		{
+			var posts = new List<Post>
+			{
+				new Post(1),
+				new Post(2) {IsFirstInTopic = true}
+			};
+			var topicContainer = new TopicContainer {Posts = posts};
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.AreEqual(2, result.QuestionPost.PostID);
+		}
+
+		[Test]
+		public void MapTopicContainerThrowsWithNoFirstInTopicPost()
+		{
+			var posts = new List<Post>
+			{
+				new Post(1),
+				new Post(2)
+			};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(123) };
+			var service = GetService();
+			Assert.Throws<InvalidOperationException>(() => service.MapTopicContainerForQA(topicContainer));
+		}
+
+		[Test]
+		public void MapTopicContainerThrowsWithMoreThanOneFirstInTopicPost()
+		{
+			var posts = new List<Post>
+			{
+				new Post(1) {IsFirstInTopic = true},
+				new Post(2) {IsFirstInTopic = true}
+			};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(123) };
+			var service = GetService();
+			Assert.Throws<InvalidOperationException>(() => service.MapTopicContainerForQA(topicContainer));
+		}
+
+		[Test]
+		public void MapTopicContainerSetsQuestionsWithNoParentOrParentToQuestionAsAnswers()
+		{
+			var post1 = new Post(1) {ParentPostID = 0};
+			var post2 = new Post(2) {IsFirstInTopic = true};
+			var post3 = new Post(3) {ParentPostID = 2};
+			var post4 = new Post(4) {ParentPostID = 1};
+			var post5 = new Post(5) {ParentPostID = 3};
+			var posts = new List<Post> {post1, post2, post3, post4, post5};
+			var topicContainer = new TopicContainer { Posts = posts };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.AreEqual(2, result.AnswersWithComments.Count);
+			Assert.AreSame(post1, result.AnswersWithComments[0].Answer);
+			Assert.AreSame(post3, result.AnswersWithComments[1].Answer);
+		}
+
+		[Test]
+		public void MapTopicContainerMapsCommentsToParentQuestionsAndAnswers()
+		{
+			var post1 = new Post(1) { ParentPostID = 0 };
+			var post2 = new Post(2) { IsFirstInTopic = true };
+			var post3 = new Post(3) { ParentPostID = 0 };
+			var post4 = new Post(4) { ParentPostID = 1 };
+			var post5 = new Post(5) { ParentPostID = 2 };
+			var post6 = new Post(6) { ParentPostID = 3 };
+			var post7 = new Post(7) { ParentPostID = 3 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var topicContainer = new TopicContainer { Posts = posts };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.IsTrue(result.AnswersWithComments[0].Comments.Count == 1);
+			Assert.IsTrue(result.AnswersWithComments[0].Comments.Contains(post4));
+			Assert.IsTrue(result.AnswersWithComments[1].Comments.Count == 2);
+			Assert.IsTrue(result.AnswersWithComments[1].Comments.Contains(post6));
+			Assert.IsTrue(result.AnswersWithComments[1].Comments.Contains(post7));
+		}
+
+		[Test]
+		public void MapTopicContainerMapsCommentsToQuestion()
+		{
+			var post1 = new Post(1) { ParentPostID = 0 };
+			var post2 = new Post(2) { IsFirstInTopic = true };
+			var post3 = new Post(3) { ParentPostID = 0 };
+			var post4 = new Post(4) { ParentPostID = 1 };
+			var post5 = new Post(5) { ParentPostID = 2 };
+			var post6 = new Post(6) { ParentPostID = 2 };
+			var post7 = new Post(7) { ParentPostID = 3 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var topicContainer = new TopicContainer { Posts = posts };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.IsTrue(result.QuestionComments.Count == 2);
+			Assert.IsTrue(result.QuestionComments.Contains(post5));
+			Assert.IsTrue(result.QuestionComments.Contains(post6));
+		}
+
+		[Test]
+		public void MapTopicContainerOrdersAnswersByAnswerThenVoteThenDate()
+		{
+			var post1 = new Post(1) { IsFirstInTopic = true };
+			var post2 = new Post(2) { Votes = 7, PostTime = new DateTime(2000, 1, 1) };
+			var post3 = new Post(3) { Votes = 7, PostTime = new DateTime(2000, 2, 1) };
+			var post4 = new Post(4) { Votes = 2 };
+			var post5 = new Post(5) { Votes = 3 };
+			var post6 = new Post(6) { Votes = 8 };
+			var post7 = new Post(7) { Votes = 5 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var topic = new Topic(123) {AnswerPostID = 5};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+
+
+
+		}
 	}
 }

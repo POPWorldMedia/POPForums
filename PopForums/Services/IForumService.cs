@@ -36,5 +36,6 @@ namespace PopForums.Services
 		int GetAggregateTopicCount();
 		int GetAggregatePostCount();
 		List<int> GetViewableForumIDsFromViewRestrictedForums(User user);
+		TopicContainerForQA MapTopicContainerForQA(TopicContainer topicContainer);
 	}
 }

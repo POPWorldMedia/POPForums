@@ -205,7 +205,10 @@ namespace PopForums.Controllers
 				return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 			}
 			if (forum.IsQAForum)
-				return View("TopicQA", container);
+			{
+				var containerForQA = _forumService.MapTopicContainerForQA(container);
+				return View("TopicQA", containerForQA);
+			}
 			return View(container);
 		}
 

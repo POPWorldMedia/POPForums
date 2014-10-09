@@ -343,5 +343,39 @@ namespace PopForums.Services
 		{
 			return _forumRepository.GetAggregatePostCount();
 		}
+
+		public TopicContainerForQA MapTopicContainerForQA(TopicContainer topicContainer)
+		{
+			var result = new TopicContainerForQA
+			{
+				Forum = topicContainer.Forum,
+				Topic = topicContainer.Topic,
+				Posts = topicContainer.Posts,
+				PagerContext = topicContainer.PagerContext,
+				PermissionContext = topicContainer.PermissionContext,
+				IsSubscribed = topicContainer.IsSubscribed,
+				IsFavorite = topicContainer.IsFavorite,
+				Signatures = topicContainer.Signatures,
+				Avatars = topicContainer.Avatars,
+				VotedPostIDs = topicContainer.VotedPostIDs
+			};
+			try
+			{
+				result.QuestionPost = result.Posts.Single(x => x.IsFirstInTopic);
+			}
+			catch (InvalidOperationException)
+			{
+				throw new InvalidOperationException(String.Format("There is no post marked as FirstInTopic for TopicID {0}.", topicContainer.Topic.TopicID));
+			}
+			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPost.PostID)).OrderBy(x => x.Votes).ThenBy(x => x.PostTime);
+			result.QuestionComments = new List<Post>(result.Posts.Where(x => x.ParentPostID == result.QuestionPost.PostID));
+			result.AnswersWithComments = new List<AnswerWithComments>();
+			foreach (var item in answers)
+			{
+				var comments = result.Posts.Where(x => x.ParentPostID == item.PostID).ToList();
+				result.AnswersWithComments.Add(new AnswerWithComments { Answer = item, Comments = comments });
+			}
+			return result;
+		}
 	}
 }
