@@ -876,7 +876,7 @@ namespace PopForums.Test.Services
 				new Post(1),
 				new Post(2) {IsFirstInTopic = true}
 			};
-			var topicContainer = new TopicContainer {Posts = posts};
+			var topicContainer = new TopicContainer {Posts = posts, Topic = new Topic(123)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.AreEqual(2, result.QuestionPost.PostID);
@@ -917,7 +917,7 @@ namespace PopForums.Test.Services
 			var post4 = new Post(4) {ParentPostID = 1};
 			var post5 = new Post(5) {ParentPostID = 3};
 			var posts = new List<Post> {post1, post2, post3, post4, post5};
-			var topicContainer = new TopicContainer { Posts = posts };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.AreEqual(2, result.AnswersWithComments.Count);
@@ -936,7 +936,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { ParentPostID = 3 };
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topicContainer = new TopicContainer { Posts = posts };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.IsTrue(result.AnswersWithComments[0].Comments.Count == 1);
@@ -957,12 +957,35 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { ParentPostID = 2 };
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topicContainer = new TopicContainer { Posts = posts };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.IsTrue(result.QuestionComments.Count == 2);
 			Assert.IsTrue(result.QuestionComments.Contains(post5));
 			Assert.IsTrue(result.QuestionComments.Contains(post6));
+		}
+
+		[Test]
+		public void MapTopicContainerOrdersAnswersByVoteThenDate()
+		{
+			var post1 = new Post(1) { IsFirstInTopic = true };
+			var post2 = new Post(2) { Votes = 7, PostTime = new DateTime(2000, 1, 1) };
+			var post3 = new Post(3) { Votes = 7, PostTime = new DateTime(2000, 2, 1) };
+			var post4 = new Post(4) { Votes = 2 };
+			var post5 = new Post(5) { Votes = 3 };
+			var post6 = new Post(6) { Votes = 8 };
+			var post7 = new Post(7) { Votes = 5 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var topic = new Topic(123) { AnswerPostID = null };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.AreSame(post6, result.AnswersWithComments[0].Answer);
+			Assert.AreSame(post3, result.AnswersWithComments[1].Answer);
+			Assert.AreSame(post2, result.AnswersWithComments[2].Answer);
+			Assert.AreSame(post7, result.AnswersWithComments[3].Answer);
+			Assert.AreSame(post5, result.AnswersWithComments[4].Answer);
+			Assert.AreSame(post4, result.AnswersWithComments[5].Answer);
 		}
 
 		[Test]
@@ -980,9 +1003,12 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-
-
-
+			Assert.AreSame(post5, result.AnswersWithComments[0].Answer);
+			Assert.AreSame(post6, result.AnswersWithComments[1].Answer);
+			Assert.AreSame(post3, result.AnswersWithComments[2].Answer);
+			Assert.AreSame(post2, result.AnswersWithComments[3].Answer);
+			Assert.AreSame(post7, result.AnswersWithComments[4].Answer);
+			Assert.AreSame(post4, result.AnswersWithComments[5].Answer);
 		}
 	}
 }

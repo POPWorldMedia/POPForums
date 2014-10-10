@@ -367,7 +367,16 @@ namespace PopForums.Services
 			{
 				throw new InvalidOperationException(String.Format("There is no post marked as FirstInTopic for TopicID {0}.", topicContainer.Topic.TopicID));
 			}
-			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPost.PostID)).OrderBy(x => x.Votes).ThenBy(x => x.PostTime);
+			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPost.PostID)).OrderByDescending(x => x.Votes).ThenByDescending(x => x.PostTime).ToList();
+			if (topicContainer.Topic.AnswerPostID.HasValue)
+			{
+				var acceptedAnswer = answers.SingleOrDefault(x => x.PostID == topicContainer.Topic.AnswerPostID.Value);
+				if (acceptedAnswer != null)
+				{
+					answers.Remove(acceptedAnswer);
+					answers.Insert(0, acceptedAnswer);
+				}
+			}
 			result.QuestionComments = new List<Post>(result.Posts.Where(x => x.ParentPostID == result.QuestionPost.PostID));
 			result.AnswersWithComments = new List<AnswerWithComments>();
 			foreach (var item in answers)
