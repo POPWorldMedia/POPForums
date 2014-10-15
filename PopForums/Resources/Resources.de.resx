@@ -1216,4 +1216,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="AskAQuestion" xml:space="preserve">
     <value>Stellen Sie eine Frage</value>
   </data>
+  <data name="Answers" xml:space="preserve">
+    <value>Antworten</value>
+  </data>
 </root>

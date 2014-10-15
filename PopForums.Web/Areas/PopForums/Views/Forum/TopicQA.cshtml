@@ -44,9 +44,11 @@
 	</div>
 }
 
+<h2>@PopForums.Resources.Answers</h2>
+
 <div id="PostStream">
-@foreach(var post in Model.Posts) {
-	Html.RenderPartial("PostItem", post, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()}, { "Topic", Model.Topic } });
+@foreach(var answer in Model.AnswersWithComments) {
+	Html.RenderPartial("PostItem", answer.Answer, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()}, { "Topic", Model.Topic } });
 }
 </div>
 

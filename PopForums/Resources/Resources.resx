@@ -1227,4 +1227,7 @@
   <data name="AskAQuestion" xml:space="preserve">
     <value>Ask A Question</value>
   </data>
+  <data name="Answers" xml:space="preserve">
+    <value>Answers</value>
+  </data>
 </root>

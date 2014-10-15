@@ -1203,4 +1203,7 @@
   <data name="AskAQuestion" xml:space="preserve">
     <value>問一個問題</value>
   </data>
+  <data name="Answers" xml:space="preserve">
+    <value>答案</value>
+  </data>
 </root>

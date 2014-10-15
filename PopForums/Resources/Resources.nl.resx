@@ -1216,4 +1216,7 @@
   <data name="AskAquestion" xml:space="preserve">
     <value />
   </data>
+  <data name="Answers" xml:space="preserve">
+    <value>Antwoorden</value>
+  </data>
 </root>

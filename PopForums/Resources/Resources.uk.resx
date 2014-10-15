@@ -1227,4 +1227,7 @@
   <data name="AskAQuestion" xml:space="preserve">
     <value>Задайте питання</value>
   </data>
+  <data name="Answers" xml:space="preserve">
+    <value>відповіді</value>
+  </data>
 </root>
