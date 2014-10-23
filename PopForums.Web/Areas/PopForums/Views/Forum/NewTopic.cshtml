@@ -6,7 +6,7 @@
 	<div class="form-group">
 		@Html.TextBoxFor(p => p.Title, new { @class = "form-control", placeholder = PopForums.Resources.Title })
 	</div>
-	@Html.TextAreaFor(p => p.FullText)
+	@Html.TextAreaFor(p => p.FullText, new { @class = "form-control" })
 	<div class="checkbox">
 		<label for="IncludeSignature">
 			@Html.CheckBoxFor(p => p.IncludeSignature)

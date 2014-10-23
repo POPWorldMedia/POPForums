@@ -181,6 +181,29 @@ PopForums.loadReply = function (topicID, postID, replyID) {
 	});
 };
 
+PopForums.loadComment = function (topicID, replyID) {
+	var p = $("[data-postid*='" + replyID + "']");
+	var n = p.find(".commentHolder");
+	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
+	if (replyID != null)
+		path += "?replyID=" + replyID;
+	n.load(path, function () {
+		var allowImage = ($("#IsImageEnabled").val().toLowerCase() == "true");
+		if (!allowImage) {
+			PopForums.editorSettings.toolbar = PopForums.postNoImageToolbar;
+		}
+		var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
+		if (!usePlainText) {
+			$(".postForm #FullText").tinymce(PopForums.editorSettings);
+		}
+		n.slideDown();
+
+		$("#PreviewModal").on("shown.bs.modal", function () {
+			PopForums.previewPost();
+		});
+	});
+};
+
 PopForums.previewPost = function () {
 	var r = $("#ParsedFullText");
 	$.ajax({
@@ -289,54 +312,8 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			}
 		});
 	});
-	var s = $("#SubscribeButton");
-	s.click(function () {
-		var asyncResult = $("#AsyncResponse");
-		$.ajax({
-			url: PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID,
-			type: "POST",
-			dataType: "json",
-			success: function (result) {
-				switch (result.Data.isSubscribed) {
-					case true:
-						s.val("Unsubscribe");
-						break;
-					case false:
-						s.val("Subscribe");
-						break;
-					default:
-						asyncResult.html(result.Message);
-				}
-			},
-			error: function () {
-				asyncResult.html("There was an unknown error while attempting to use subscription");
-			}
-		});
-	});
-	var f = $("#FavoriteButton");
-	f.click(function () {
-		var asyncResult = $("#AsyncResponse");
-		$.ajax({
-			url: PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID,
-			type: "POST",
-			dataType: "json",
-			success: function (result) {
-				switch (result.Data.isFavorite) {
-					case true:
-						f.val("Remove From Favorites");
-						break;
-					case false:
-						f.val("Make Favorite");
-						break;
-					default:
-						asyncResult.html(result.Message);
-				}
-			},
-			error: function () {
-				asyncResult.html("There was an unknown error while attempting to use favorites");
-			}
-		});
-	});
+	PopForums.SetupSubscribeButton(topicID);
+	PopForums.SetupFavoriteButton(topicID);
 	$("#TopicModLogButton").click(function () {
 		var l = $("#TopicModerationLog");
 		if (l.is(":hidden"))
@@ -378,6 +355,109 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		});
 	});
 	$(window).on("scroll", PopForums.ScrollLoad);
+};
+
+PopForums.qaTopicSetup = function (topicID) {
+	PopForums.startTimeUpdater();
+
+	$(".postItem img:not('.avatar')").addClass("postImage");
+	$(document).on("click", ".commentLink", function () {
+		var replyID = $(this).parents(".postContainer").attr("data-postid");
+		PopForums.loadComment(topicID, replyID);
+	});
+	$(document).on("click", ".postNameLink", function () {
+		var box = $(this).parents(".postUserData").find(".miniProfileBox");
+		var userID = $(this).parents(".postUserData").attr("data-userID");
+		var chev = $(this).find(".twirl");
+		PopForums.loadMiniProfile(userID, box, chev);
+	});
+	$(document).on("click", ".voteUp", function () {
+		var parent = $(this).parents(".postItem");
+		var postID = parent.attr("data-postID");
+		var countBox = $(this).closest(".postToolContainer").children(".voteCount");
+		$.ajax({
+			url: PopForums.areaPath + "/Forum/VotePost/" + postID,
+			type: "POST",
+			success: function (result) {
+				countBox.html(result);
+				var voted = parent.find(".voteUp");
+				voted.replaceWith('<li>Voted</li>');
+			}
+		});
+	});
+	PopForums.SetupSubscribeButton(topicID);
+	PopForums.SetupFavoriteButton(topicID);
+	$("#TopicModLogButton").click(function () {
+		var l = $("#TopicModerationLog");
+		if (l.is(":hidden"))
+			l.load(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID, function () {
+				l.slideDown();
+			});
+		else l.slideUp();
+	});
+	$(document).on("click", ".postModLogButton", function () {
+		var id = $(this).attr("data-postID");
+		var l = $(this).closest(".postToolContainer").find(".moderationLog");
+		if (l.is(":hidden"))
+			l.load(PopForums.areaPath + "/Moderator/PostModerationLog/" + id, function () {
+				l.slideDown();
+			});
+		else l.slideUp();
+	});
+};
+
+PopForums.SetupSubscribeButton = function (topicID) {
+	var s = $("#SubscribeButton");
+	s.click(function () {
+		var asyncResult = $("#AsyncResponse");
+		$.ajax({
+			url: PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID,
+			type: "POST",
+			dataType: "json",
+			success: function (result) {
+				switch (result.Data.isSubscribed) {
+					case true:
+						s.val("Unsubscribe");
+						break;
+					case false:
+						s.val("Subscribe");
+						break;
+					default:
+						asyncResult.html(result.Message);
+				}
+			},
+			error: function () {
+				asyncResult.html("There was an unknown error while attempting to use subscription");
+			}
+		});
+	});
+};
+
+PopForums.SetupFavoriteButton = function(topicID) {
+	var f = $("#FavoriteButton");
+	f.click(function () {
+		var asyncResult = $("#AsyncResponse");
+		$.ajax({
+			url: PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID,
+			type: "POST",
+			dataType: "json",
+			success: function (result) {
+				switch (result.Data.isFavorite) {
+					case true:
+						f.val("Remove From Favorites");
+						break;
+					case false:
+						f.val("Make Favorite");
+						break;
+					default:
+						asyncResult.html(result.Message);
+				}
+			},
+			error: function () {
+				asyncResult.html("There was an unknown error while attempting to use favorites");
+			}
+		});
+	});
 };
 
 PopForums.ScrollLoad = function () {

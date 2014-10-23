@@ -53,14 +53,7 @@
 	{
 		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>  } data-topicid="@topic.TopicID">
 			<td class="newIndicator">
-				@if (this.GetUserFromViewData() == null)
-				{
-					<a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName, page = 1 })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a>
-				}
-				else
-				{
-					<a href="@Url.Action("GoToNewestPost", "Forum", new { id = topic.TopicID })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a>
-				}
+				<a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName, page = 1 })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a>
 			</td>
 			<td class="QAstate">
 				@if (topic.AnswerPostID.HasValue)

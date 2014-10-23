@@ -361,13 +361,15 @@ namespace PopForums.Services
 			};
 			try
 			{
-				result.QuestionPost = result.Posts.Single(x => x.IsFirstInTopic);
+				var questionPost = result.Posts.Single(x => x.IsFirstInTopic);
+				var questionComments = result.Posts.Where(x => x.ParentPostID == questionPost.PostID).ToList();
+				result.QuestionPostWithComments = new PostWithChildren { Post = questionPost, Children = questionComments };
 			}
 			catch (InvalidOperationException)
 			{
 				throw new InvalidOperationException(String.Format("There is no post marked as FirstInTopic for TopicID {0}.", topicContainer.Topic.TopicID));
 			}
-			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPost.PostID)).OrderByDescending(x => x.Votes).ThenByDescending(x => x.PostTime).ToList();
+			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPostWithComments.Post.PostID)).OrderByDescending(x => x.Votes).ThenByDescending(x => x.PostTime).ToList();
 			if (topicContainer.Topic.AnswerPostID.HasValue)
 			{
 				var acceptedAnswer = answers.SingleOrDefault(x => x.PostID == topicContainer.Topic.AnswerPostID.Value);
@@ -377,12 +379,11 @@ namespace PopForums.Services
 					answers.Insert(0, acceptedAnswer);
 				}
 			}
-			result.QuestionComments = new List<Post>(result.Posts.Where(x => x.ParentPostID == result.QuestionPost.PostID));
-			result.AnswersWithComments = new List<AnswerWithComments>();
+			result.AnswersWithComments = new List<PostWithChildren>();
 			foreach (var item in answers)
 			{
 				var comments = result.Posts.Where(x => x.ParentPostID == item.PostID).ToList();
-				result.AnswersWithComments.Add(new AnswerWithComments { Answer = item, Comments = comments });
+				result.AnswersWithComments.Add(new PostWithChildren { Post = item, Children = comments });
 			}
 			return result;
 		}

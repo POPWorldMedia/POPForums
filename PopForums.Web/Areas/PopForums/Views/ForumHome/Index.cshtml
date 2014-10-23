@@ -32,7 +32,7 @@
 				<td>
 					<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 					<p>@forum.Description</p>
-					<small class="pull-right">
+					<small class="pull-right forumDetails">
 						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(forum.LastPostTime)">@FormatTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 					</small>
 				</td>
@@ -50,7 +50,7 @@
 					<td>
 						<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 						<p>@forum.Description</p>
-						<small class="pull-right">
+						<small class="pull-right forumDetails">
 							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@FormatTime8601(forum.LastPostTime)">@FormatTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 						</small>
 					</td>

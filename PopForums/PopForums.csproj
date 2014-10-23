@@ -238,7 +238,7 @@
     <Compile Include="Messaging\Forums.cs" />
     <Compile Include="Messaging\Recent.cs" />
     <Compile Include="Messaging\Topics.cs" />
-    <Compile Include="Models\AnswerWithComments.cs" />
+    <Compile Include="Models\PostWithChildren.cs" />
     <Compile Include="Models\ClientSettings.cs" />
     <Compile Include="Models\FeedEvent.cs" />
     <Compile Include="Models\Friend.cs" />

@@ -11,7 +11,7 @@
 <script src="~/scripts/tinymce/jquery.tinymce.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 	$(function () {
-		PopForums.topicSetup(@Model.Topic.TopicID, null, null);
+		PopForums.qaTopicSetup(@Model.Topic.TopicID);
 	});
 </script>
 }
@@ -44,15 +44,13 @@
 	</div>
 }
 
-<h2>@PopForums.Resources.Answers</h2>
-
-<div id="PostStream">
-@foreach(var answer in Model.AnswersWithComments) {
-	Html.RenderPartial("PostItem", answer.Answer, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()}, { "Topic", Model.Topic } });
-}
+<div class="row">
+	<div class="col-sm-12">
+		@{
+			Html.RenderPartial("QAPost", Model.QuestionPostWithComments, new ViewDataDictionary { { "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, { ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData() }, { "Topic", Model.Topic } });
+		}
+	</div>
 </div>
-
-@Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
 
 @if (Model.PermissionContext.UserCanPost)
 {
@@ -62,6 +60,12 @@
 else
 {
 	<p class="bg-danger callout">@Model.PermissionContext.DenialReason</p>
+}
+
+<h2>@PopForums.Resources.Answers</h2>
+
+@foreach(var answer in Model.AnswersWithComments) {
+	Html.RenderPartial("QAPost", answer, new ViewDataDictionary {{ "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, {ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData()}, { "Topic", Model.Topic } });
 }
 
 @if (this.IsUserInRole(PermanentRoles.Moderator))

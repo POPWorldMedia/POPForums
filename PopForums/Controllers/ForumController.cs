@@ -272,6 +272,12 @@ namespace PopForums.Controllers
 				var post = _postService.Get(quotePostID);
 				newPost.FullText = _postService.GetPostForQuote(post, user, forcePlainText);
 			}
+
+			if (forum.IsQAForum)
+			{
+				newPost.IncludeSignature = false;
+				return View("NewComment", newPost);
+			}
 			return View("NewReply", newPost);
 		}
 

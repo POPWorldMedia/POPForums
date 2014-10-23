@@ -187,6 +187,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Areas\PopForums\Views\Forum\IndexQA.cshtml" />
     <Content Include="Areas\PopForums\Views\Forum\TopicQA.cshtml" />
+    <Content Include="Areas\PopForums\Views\Forum\QAPost.cshtml" />
+    <Content Include="Areas\PopForums\Views\Forum\NewComment.cshtml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

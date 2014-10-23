@@ -879,7 +879,7 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer {Posts = posts, Topic = new Topic(123)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.AreEqual(2, result.QuestionPost.PostID);
+			Assert.AreEqual(2, result.QuestionPostWithComments.Post.PostID);
 		}
 
 		[Test]
@@ -921,8 +921,8 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.AreEqual(2, result.AnswersWithComments.Count);
-			Assert.AreSame(post1, result.AnswersWithComments[0].Answer);
-			Assert.AreSame(post3, result.AnswersWithComments[1].Answer);
+			Assert.AreSame(post1, result.AnswersWithComments[0].Post);
+			Assert.AreSame(post3, result.AnswersWithComments[1].Post);
 		}
 
 		[Test]
@@ -939,11 +939,11 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.IsTrue(result.AnswersWithComments[0].Comments.Count == 1);
-			Assert.IsTrue(result.AnswersWithComments[0].Comments.Contains(post4));
-			Assert.IsTrue(result.AnswersWithComments[1].Comments.Count == 2);
-			Assert.IsTrue(result.AnswersWithComments[1].Comments.Contains(post6));
-			Assert.IsTrue(result.AnswersWithComments[1].Comments.Contains(post7));
+			Assert.IsTrue(result.AnswersWithComments[0].Children.Count == 1);
+			Assert.IsTrue(result.AnswersWithComments[0].Children.Contains(post4));
+			Assert.IsTrue(result.AnswersWithComments[1].Children.Count == 2);
+			Assert.IsTrue(result.AnswersWithComments[1].Children.Contains(post6));
+			Assert.IsTrue(result.AnswersWithComments[1].Children.Contains(post7));
 		}
 
 		[Test]
@@ -960,9 +960,9 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.IsTrue(result.QuestionComments.Count == 2);
-			Assert.IsTrue(result.QuestionComments.Contains(post5));
-			Assert.IsTrue(result.QuestionComments.Contains(post6));
+			Assert.IsTrue(result.QuestionPostWithComments.Children.Count == 2);
+			Assert.IsTrue(result.QuestionPostWithComments.Children.Contains(post5));
+			Assert.IsTrue(result.QuestionPostWithComments.Children.Contains(post6));
 		}
 
 		[Test]
@@ -980,12 +980,12 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.AreSame(post6, result.AnswersWithComments[0].Answer);
-			Assert.AreSame(post3, result.AnswersWithComments[1].Answer);
-			Assert.AreSame(post2, result.AnswersWithComments[2].Answer);
-			Assert.AreSame(post7, result.AnswersWithComments[3].Answer);
-			Assert.AreSame(post5, result.AnswersWithComments[4].Answer);
-			Assert.AreSame(post4, result.AnswersWithComments[5].Answer);
+			Assert.AreSame(post6, result.AnswersWithComments[0].Post);
+			Assert.AreSame(post3, result.AnswersWithComments[1].Post);
+			Assert.AreSame(post2, result.AnswersWithComments[2].Post);
+			Assert.AreSame(post7, result.AnswersWithComments[3].Post);
+			Assert.AreSame(post5, result.AnswersWithComments[4].Post);
+			Assert.AreSame(post4, result.AnswersWithComments[5].Post);
 		}
 
 		[Test]
@@ -1003,12 +1003,12 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.AreSame(post5, result.AnswersWithComments[0].Answer);
-			Assert.AreSame(post6, result.AnswersWithComments[1].Answer);
-			Assert.AreSame(post3, result.AnswersWithComments[2].Answer);
-			Assert.AreSame(post2, result.AnswersWithComments[3].Answer);
-			Assert.AreSame(post7, result.AnswersWithComments[4].Answer);
-			Assert.AreSame(post4, result.AnswersWithComments[5].Answer);
+			Assert.AreSame(post5, result.AnswersWithComments[0].Post);
+			Assert.AreSame(post6, result.AnswersWithComments[1].Post);
+			Assert.AreSame(post3, result.AnswersWithComments[2].Post);
+			Assert.AreSame(post2, result.AnswersWithComments[3].Post);
+			Assert.AreSame(post7, result.AnswersWithComments[4].Post);
+			Assert.AreSame(post4, result.AnswersWithComments[5].Post);
 		}
 	}
 }
