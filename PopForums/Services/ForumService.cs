@@ -369,7 +369,7 @@ namespace PopForums.Services
 			{
 				throw new InvalidOperationException(String.Format("There is no post marked as FirstInTopic for TopicID {0}.", topicContainer.Topic.TopicID));
 			}
-			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0 || x.ParentPostID == result.QuestionPostWithComments.Post.PostID)).OrderByDescending(x => x.Votes).ThenByDescending(x => x.PostTime).ToList();
+			var answers = result.Posts.Where(x => !x.IsFirstInTopic && (x.ParentPostID == 0)).OrderByDescending(x => x.Votes).ThenByDescending(x => x.PostTime).ToList();
 			if (topicContainer.Topic.AnswerPostID.HasValue)
 			{
 				var acceptedAnswer = answers.SingleOrDefault(x => x.PostID == topicContainer.Topic.AnswerPostID.Value);

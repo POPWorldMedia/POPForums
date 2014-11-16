@@ -909,7 +909,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
-		public void MapTopicContainerSetsQuestionsWithNoParentOrParentToQuestionAsAnswers()
+		public void MapTopicContainerSetsQuestionsWithNoParentAsAnswers()
 		{
 			var post1 = new Post(1) {ParentPostID = 0};
 			var post2 = new Post(2) {IsFirstInTopic = true};
@@ -920,9 +920,8 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.AreEqual(2, result.AnswersWithComments.Count);
+			Assert.AreEqual(1, result.AnswersWithComments.Count);
 			Assert.AreSame(post1, result.AnswersWithComments[0].Post);
-			Assert.AreSame(post3, result.AnswersWithComments[1].Post);
 		}
 
 		[Test]
@@ -1009,6 +1008,23 @@ namespace PopForums.Test.Services
 			Assert.AreSame(post2, result.AnswersWithComments[3].Post);
 			Assert.AreSame(post7, result.AnswersWithComments[4].Post);
 			Assert.AreSame(post4, result.AnswersWithComments[5].Post);
+		}
+
+		[Test]
+		public void MapTopicContainerDoesNotMapCommentsForTopQuestionAsReplies()
+		{
+			var post1 = new Post(1) { ParentPostID = 0 };
+			var post2 = new Post(2) { IsFirstInTopic = true };
+			var post3 = new Post(3) { ParentPostID = 0 };
+			var post4 = new Post(4) { ParentPostID = 1 };
+			var post5 = new Post(5) { ParentPostID = 2 };
+			var post6 = new Post(6) { ParentPostID = 3 };
+			var post7 = new Post(7) { ParentPostID = 3 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234) };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.IsFalse(result.AnswersWithComments.Any(x => x.Post.PostID == post5.PostID));
 		}
 	}
 }

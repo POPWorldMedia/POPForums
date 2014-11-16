@@ -86,6 +86,7 @@
 		</div>
 		@if (Model.Children != null && Model.Children.Count > 0)
 		{
+			<hr />
 			foreach (var comment in Model.Children)
 			{
 				<a name="@comment.PostID"></a>

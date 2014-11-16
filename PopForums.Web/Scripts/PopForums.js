@@ -361,7 +361,7 @@ PopForums.qaTopicSetup = function (topicID) {
 	PopForums.startTimeUpdater();
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
-	$(document).on("click", ".commentLink", function () {
+	$(document).on("click", ".commentLink, #ReplyButton", function () {
 		var replyID = $(this).parents(".postContainer").attr("data-postid");
 		PopForums.loadComment(topicID, replyID);
 	});

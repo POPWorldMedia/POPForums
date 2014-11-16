@@ -203,6 +203,11 @@
 	overflow-y: scroll;overflow-x: hidden;
 	max-height: 350px;
 }
+
+#ForumContainer .qaComment {
+	margin-left: 20px;
+}
+
 /* queries */
 
 @media(max-width:479px) {
