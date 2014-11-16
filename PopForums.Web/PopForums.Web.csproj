@@ -652,10 +652,6 @@
     </When>
   </Choose>
   <ItemGroup>
-    <ProjectReference Include="..\PopForums.Data.Azure\PopForums.Data.Azure.csproj">
-      <Project>{e73e0048-eac5-4290-9485-d44d564da3d2}</Project>
-      <Name>PopForums.Data.Azure</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PopForums.Data.SqlSingleWebServer\PopForums.Data.SqlSingleWebServer.csproj">
       <Project>{84fa6a15-d7b0-4375-b245-723be20cbe49}</Project>
       <Name>PopForums.Data.SqlSingleWebServer</Name>

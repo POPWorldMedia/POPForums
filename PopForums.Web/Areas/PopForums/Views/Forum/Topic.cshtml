@@ -92,21 +92,21 @@ else
 		<ul class="list-inline">
 			<li>@using (Html.BeginForm("ToggleDeleted", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-primary" />
+				<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-warning" />
 			}</li>
 			<li>@using (Html.BeginForm("TogglePin", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-primary" />
+				<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-warning" />
 			}</li>
 			<li>@using (Html.BeginForm("ToggleClosed", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 			{
-				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-primary" />
+				<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-warning" />
 			}</li>
 			@if (this.IsUserInRole(PermanentRoles.Admin))
 			{
 				<li>@using (Html.BeginForm("DeleteTopicPermanently", "Moderator", new { id = Model.Topic.TopicID }, FormMethod.Post, new { @class = "inlineModForm" }))
 				{
-					<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-primary" />
+					<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-warning" />
 				}</li>
 			}
 		</ul>
@@ -139,7 +139,7 @@ else
 			</div>
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-6">
-					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-primary" />
+					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-warning" />
 				</div>
 			</div>
 		}
