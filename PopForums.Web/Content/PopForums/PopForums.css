@@ -159,6 +159,7 @@
 	padding: 4px;
 	text-align: left;
 	border-radius: 2px;
+	z-index: 1000;
 }
 #ForumContainer .postItem .voters ul {
 	margin: 4px;padding: 0;
@@ -234,6 +235,8 @@
 
 #ForumContainer #AccountBox .badge {
 	background-color: #ff0000;color: white;
+	position: relative;
+	top: -2px;
 }
 
 .pagination .glyphicon {
