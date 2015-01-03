@@ -1,4 +1,5 @@
-﻿@using PopForums.Extensions;
+﻿@using PopForums.Controllers
+@using PopForums.Extensions;
 @using PopForums.Models;
 @model PostWithChildren
 @{
@@ -32,7 +33,7 @@
 				@if (this.IsUserInRole(PermanentRoles.Moderator))
 				{
 					@:IP: @Model.Post.IP -
-			}
+				}
 				<span class="fTime" data-utc="@FormatTime8601(Model.Post.PostTime)">@FormatTime(Model.Post.PostTime)</span>
 			</small>
 		</div>
@@ -86,12 +87,16 @@
 		</div>
 		@if (Model.Children != null && Model.Children.Count > 0)
 		{
-			<hr />
 			foreach (var comment in Model.Children)
 			{
+				<hr />
 				<a name="@comment.PostID"></a>
 				<div class="qaComment">
 					@Html.Raw(comment.FullText)
+					<p class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@FormatTime8601(comment.PostTime)">@FormatTime(comment.PostTime)</span>
+						@if (this.IsUserInRole(PermanentRoles.Moderator))
+						{<text> - IP: </text>@comment.IP}
+					</p>
 				</div>
 			}
 		}
