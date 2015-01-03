@@ -44,8 +44,9 @@ namespace PopForums.Controllers
 			if (!String.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
 			{
 				var provider = CultureInfo.InvariantCulture;
-				var lastMod = DateTime.ParseExact(Request.Headers["If-Modified-Since"], "r", provider);
-				if (lastMod == timeStamp.Value.AddMilliseconds(-timeStamp.Value.Millisecond))
+				DateTime lastMod;
+				var couldParse = DateTime.TryParseExact(Request.Headers["If-Modified-Since"], "r", provider, DateTimeStyles.None, out lastMod);
+				if (couldParse && lastMod == timeStamp.Value.AddMilliseconds(-timeStamp.Value.Millisecond))
 				{
 					Response.StatusCode = 304;
 					Response.StatusDescription = "Not Modified";
