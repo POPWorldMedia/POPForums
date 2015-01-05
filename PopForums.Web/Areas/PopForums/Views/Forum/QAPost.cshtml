@@ -12,7 +12,7 @@
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID">
 	<div class="answerData col-xs-12 col-sm-1">
-		<h3><span class="label label-default">@Model.Post.Votes</span></h3>
+		<h3><span class="label label-default voteCount">@Model.Post.Votes</span></h3>
 		@if (User != null && ((User)User).UserID != Model.Post.UserID)
 		{
 			if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.Post.PostID))
@@ -92,12 +92,16 @@
 				<hr />
 				<a name="@comment.PostID"></a>
 				<div class="qaComment">
-					@Html.Raw(comment.FullText)
 					<p class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@FormatTime8601(comment.PostTime)">@FormatTime(comment.PostTime)</span>
 						@if (this.IsUserInRole(PermanentRoles.Moderator))
 						{<text> - IP: </text>@comment.IP}
 					</p>
+					@Html.Raw(comment.FullText)
 				</div>
+			}
+			if (Model.Children.Count > 0 && !topic.IsClosed)
+			{
+				<p><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></p>
 			}
 		}
 		<div class="commentHolder"></div>

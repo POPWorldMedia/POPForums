@@ -150,7 +150,7 @@
 	position: absolute;
 	margin-top: 5px;
 }
-#ForumContainer .postItem .voters {
+#ForumContainer .voters {
 	max-height: 120px;
 	width: 150px;
 	overflow: auto;

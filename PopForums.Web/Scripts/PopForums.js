@@ -372,16 +372,16 @@ PopForums.qaTopicSetup = function (topicID) {
 		PopForums.loadMiniProfile(userID, box, chev);
 	});
 	$(document).on("click", ".voteUp", function () {
-		var parent = $(this).parents(".postItem");
-		var postID = parent.attr("data-postID");
-		var countBox = $(this).closest(".postToolContainer").children(".voteCount");
+		var parent = $(this).parents(".postContainer");
+		var postID = parent.attr("data-postid");
+		var countBox = $(this).parents(".answerData").find(".voteCount");
 		$.ajax({
 			url: PopForums.areaPath + "/Forum/VotePost/" + postID,
 			type: "POST",
 			success: function (result) {
 				countBox.html(result);
 				var voted = parent.find(".voteUp");
-				voted.replaceWith('<li>Voted</li>');
+				voted.replaceWith("Voted");
 			}
 		});
 	});
