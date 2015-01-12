@@ -49,7 +49,8 @@ PopForums.editorSettings = {
 	target_list: false,
 	link_title: false,
 	image_description: false,
-	image_dimensions: false
+	image_dimensions: false,
+	browser_spellcheck : true
 };
 
 PopForums.checkScroll = function () {
