@@ -8,12 +8,13 @@
 	{
 		topic = (Topic) ViewBag.Topic;
 	}
+	var user = (User) User;
 }
 <a name="@Model.Post.PostID"></a>
-<div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID">
+<div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@topic.TopicID">
 	<div class="answerData col-xs-12 col-sm-1">
 		<h3><span class="label label-default voteCount">@Model.Post.Votes</span></h3>
-		@if (User != null && ((User)User).UserID != Model.Post.UserID)
+		@if (User != null && user.UserID != Model.Post.UserID)
 		{
 			if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.Post.PostID))
 			{
@@ -23,6 +24,10 @@
 			{
 				<span class="voteUp answerVote btn-link">Vote up</span>
 			}
+		}
+		@if (User != null && user.UserID == topic.StartedByUserID && !Model.Post.IsFirstInTopic)
+		{
+			<p class="answerButton">make me answer!</p>
 		}
 	</div>
 	<div class="col-xs-12 col-sm-11">

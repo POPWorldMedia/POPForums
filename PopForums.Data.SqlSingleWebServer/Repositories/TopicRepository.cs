@@ -417,5 +417,13 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 				.ExecuteScalar()));
 			return result;
 		}
+
+		public void UpdateAnswerPostID(int topicID, int? postID)
+		{
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET AnswerPostID = @AnswerPostID WHERE TopicID = @TopicID")
+				.AddParameter("@AnswerPostID", postID.HasValue ? (object)postID.Value : DBNull.Value)
+				.AddParameter("@TopicID", topicID)
+				.ExecuteNonQuery());
+		}
 	}
 }

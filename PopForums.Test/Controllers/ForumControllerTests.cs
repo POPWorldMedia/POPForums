@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
@@ -1572,6 +1573,69 @@ namespace PopForums.Test.Controllers
 			var result = controller.PreviewText("whoa", true);
 			Assert.AreEqual(serviceResult, result.Content);
 			Assert.AreEqual("text/html", result.ContentType);
+		}
+
+		[Test]
+		public void SetAnswerNotFoundWithBadPost()
+		{
+			var controller = GetForumController();
+			_postService.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
+			var result = controller.SetAnswer(123, 456);
+			Assert.IsInstanceOf<HttpNotFoundResult>(result);
+		}
+
+		[Test]
+		public void SetAnswerNotFoundWithBadTopic()
+		{
+			var controller = GetForumController();
+			_postService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Post(123));
+			_topicService.Setup(x => x.Get(It.IsAny<int>())).Returns((Topic) null);
+			var result = controller.SetAnswer(123, 456);
+			Assert.IsInstanceOf<HttpNotFoundResult>(result);
+		}
+
+		[Test]
+		public void SetAnswer403WhenNoUser()
+		{
+			var controller = GetForumController();
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			_postService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Post(123));
+			_topicService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic(456));
+			var result = (ViewResult)controller.SetAnswer(123, 456);
+			Assert.AreEqual("Forbidden", result.ViewName);
+			contextHelper.MockResponse.VerifySet(r => r.StatusCode = (int)HttpStatusCode.Forbidden);
+		}
+
+		[Test]
+		public void SetAnswer403WhenServiceThrows()
+		{
+			var controller = GetForumController();
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			_postService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Post(123));
+			_topicService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic(456));
+			_topicService.Setup(x => x.SetAnswer(It.IsAny<User>(), It.IsAny<Topic>(), It.IsAny<Post>()))
+				.Throws<SecurityException>();
+			var result = (ViewResult)controller.SetAnswer(123, 456);
+			Assert.AreEqual("Forbidden", result.ViewName);
+			contextHelper.MockResponse.VerifySet(r => r.StatusCode = (int)HttpStatusCode.Forbidden);
+		}
+
+		[Test]
+		public void SetAnswerCallsService()
+		{
+			var controller = GetForumController();
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			var post = new Post(123);
+			var topic = new Topic(456);
+			var user = new User(789, DateTime.MinValue) { Roles = new List<string>() };
+			controller.SetUser(user);
+			_postService.Setup(x => x.Get(post.PostID)).Returns(post);
+			_topicService.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+			controller.SetAnswer(topic.TopicID, post.PostID);
+			_topicService.Verify(x => x.SetAnswer(user, topic, post), Times.Once());
 		}
 	}
 

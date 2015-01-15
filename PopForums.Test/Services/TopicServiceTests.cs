@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 using Moq;
 using NUnit.Framework;
 using PopForums.Configuration;
@@ -717,6 +718,48 @@ namespace PopForums.Test.Services
 			service.HardDeleteTopic(topic, user);
 			_forumService.Verify(x => x.UpdateCounts(forum), Times.Once());
 			_forumService.Verify(x => x.UpdateLast(forum), Times.Once());
+		}
+
+		[Test]
+		public void SetAnswerThrowsWhenUserNotTopicStarter()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 789 };
+			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post(789)));
+		}
+
+		[Test]
+		public void SetAnswerThrowsIfPostIDOfAnswerDoesntExist()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123 };
+			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
+			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post(789)));
+		}
+
+		[Test]
+		public void SetAnswerThrowsIfPostIsNotPartOfTopic()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123 };
+			var post = new Post(789) { TopicID = 111 };
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post));
+		}
+
+		[Test]
+		public void SetAnswerCallsTopicRepoWithUpdatedValue()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123 };
+			var post = new Post(789) { TopicID = topic.TopicID };
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			service.SetAnswer(user, topic, post);
+			_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
 		}
 	}
 }

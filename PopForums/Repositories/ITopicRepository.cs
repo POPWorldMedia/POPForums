@@ -33,5 +33,6 @@ namespace PopForums.Repositories
 		DateTime? GetLastPostTime(int topicID);
 		void HardDeleteTopic(int topicID);
 		void MarkTopicForIndexing(int topicID);
+		void UpdateAnswerPostID(int topicID, int? postID);
 	}
 }

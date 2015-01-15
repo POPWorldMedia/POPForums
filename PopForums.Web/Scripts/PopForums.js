@@ -386,6 +386,19 @@ PopForums.qaTopicSetup = function (topicID) {
 			}
 		});
 	});
+	$(document).on("click", ".answerButton", function () {
+		var parent = $(this).parents(".postContainer");
+		var postID = parent.attr("data-postid");
+		var topicID = parent.attr("data-topicid");
+		$.ajax({
+			url: PopForums.areaPath + "/Forum/SetAnswer/",
+			type: "POST",
+			data: {postID: postID, topicID: topicID},
+			success: function () {
+
+			}
+		});
+	});
 	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
 	$("#TopicModLogButton").click(function () {

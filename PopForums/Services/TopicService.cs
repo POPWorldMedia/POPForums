@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Messaging;
@@ -271,6 +272,15 @@ namespace PopForums.Services
 			if (post == null)
 				return 0;
 			return post.PostID;
+		}
+
+		public void SetAnswer(User user, Topic topic, Post post)
+		{
+			if (user.UserID != topic.StartedByUserID)
+				throw new SecurityException("Only the user that started a topic may set its answer.");
+			if (post == null || post.TopicID != topic.TopicID)
+				throw new InvalidOperationException("You can't use a post as an answer unless it's a child of the topic.");
+			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}
 	}
 }

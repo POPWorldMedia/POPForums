@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Web.Mvc;
 using PopForums.Configuration;
 using PopForums.Configuration.DependencyResolution;
@@ -549,6 +550,29 @@ namespace PopForums.Controllers
 		private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, bool isSubscribed, List<Post> posts, PagerContext pagerContext, bool isFavorite, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs)
 		{
 			return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs };
+		}
+
+		[HttpPost]
+		public ActionResult SetAnswer(int topicID, int postID)
+		{
+			var post = _postService.Get(postID);
+			if (post == null)
+				return HttpNotFound();
+			var topic = _topicService.Get(topicID);
+			if (topic == null)
+				return HttpNotFound();
+			var user = this.CurrentUser();
+			if (user == null)
+				return this.Forbidden("Forbidden", null);
+			try
+			{
+				_topicService.SetAnswer(user, topic, post);
+			}
+			catch (SecurityException securityException)
+			{
+				return this.Forbidden("Forbidden", null);
+			}
+			return new EmptyResult();
 		}
 	}
 }
