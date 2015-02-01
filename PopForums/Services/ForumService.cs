@@ -209,6 +209,12 @@ namespace PopForums.Services
 					context.UserCanView = false;
 				context.DenialReason += "Topic is deleted. ";
 			}
+
+			if (forum.IsArchived)
+			{
+				context.UserCanPost = false;
+				context.DenialReason += Resources.Archived + ". ";
+			}
 			
 			// moderate
 			context.UserCanModerate = false;

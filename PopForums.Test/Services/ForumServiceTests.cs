@@ -425,6 +425,28 @@ namespace PopForums.Test.Services
 		}
 
 		[Test]
+		public void GetPermissionForumNotArchived()
+		{
+			var user = GetUser();
+			var forumService = GetService();
+			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
+			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
+			var premission = forumService.GetPermissionContext(new Forum(1) { IsArchived = false }, user, new Topic(4));
+			Assert.True(premission.UserCanPost);
+		}
+
+		[Test]
+		public void GetPermissionForumIsArchived()
+		{
+			var user = GetUser();
+			var forumService = GetService();
+			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
+			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
+			var premission = forumService.GetPermissionContext(new Forum(1) { IsArchived = true }, user, new Topic(4));
+			Assert.False(premission.UserCanPost);
+		}
+
+		[Test]
 		public void UserWithoutPermissionThrowsOnPost()
 		{
 			var topicService = GetService();
