@@ -770,7 +770,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = null};
+			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null};
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID};
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
@@ -783,7 +783,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = null };
+			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null };
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = 777 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
@@ -797,10 +797,23 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = 666 };
+			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = 666 };
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
+			service.SetAnswer(user, topic, post, "", "");
+			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
+		}
+
+		[Test]
+		public void SetAnswerDoesNotCallEventPubWhenTopicUserIDIsSameAsAnswerUserID()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null };
+			var post = new Post(789) { TopicID = topic.TopicID, UserID = user.UserID };
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_userRepo.Setup(x => x.GetUser(user.UserID)).Returns(user);
 			service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}

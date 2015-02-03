@@ -283,7 +283,9 @@ namespace PopForums.Services
 			if (post == null || post.TopicID != topic.TopicID)
 				throw new InvalidOperationException("You can't use a post as an answer unless it's a child of the topic.");
 			var answerUser = _userRepository.GetUser(post.UserID);
-			if (answerUser != null && !topic.AnswerPostID.HasValue)
+			if (answerUser != null // answer user is still valid
+				&& !topic.AnswerPostID.HasValue && // an answer wasn't already chosen
+				topic.StartedByUserID != post.UserID) // the answer isn't coming from the question asker
 			{
 				// TODO: translations for QuestionAnswered
 				// <a href="{0}">{1}</a> chose an answer for the question: <a href="{2}">{3}</a>
