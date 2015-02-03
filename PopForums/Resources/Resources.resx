@@ -1234,4 +1234,7 @@
     <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; chose an answer for the question: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
     <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
   </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Choose answer</value>
+  </data>
 </root>

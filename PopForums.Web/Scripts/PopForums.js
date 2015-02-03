@@ -391,7 +391,8 @@ PopForums.qaTopicSetup = function (topicID) {
 		});
 	});
 	$(document).on("click", ".answerButton", function () {
-		var parent = $(this).parents(".postContainer");
+		var button = $(this);
+		var parent = button.parents(".postContainer");
 		var postID = parent.attr("data-postid");
 		var topicID = parent.attr("data-topicid");
 		$.ajax({
@@ -399,7 +400,8 @@ PopForums.qaTopicSetup = function (topicID) {
 			type: "POST",
 			data: {postID: postID, topicID: topicID},
 			success: function () {
-
+				$(".answerButton").removeClass("text-success glyphicon-ok").addClass("text-muted glyphicon-asterisk");
+				button.addClass("text-success glyphicon-ok");
 			}
 		});
 	});

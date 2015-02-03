@@ -421,6 +421,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose answer.
+        /// </summary>
+        public static string ChooseAnswer {
+            get {
+                return ResourceManager.GetString("ChooseAnswer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to load newer posts before you reply.
         /// </summary>
         public static string ClickToLoadMorePosts {

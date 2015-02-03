@@ -287,7 +287,7 @@ namespace PopForums.Services
 				&& !topic.AnswerPostID.HasValue && // an answer wasn't already chosen
 				topic.StartedByUserID != post.UserID) // the answer isn't coming from the question asker
 			{
-				// TODO: translations for QuestionAnswered
+				// TODO: translations for QuestionAnswered, ChooseAnswer
 				// <a href="{0}">{1}</a> chose an answer for the question: <a href="{2}">{3}</a>
 				var message = String.Format(Resources.QuestionAnswered, userUrl, user.Name, topicUrl, topic.Title);
 				_eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);

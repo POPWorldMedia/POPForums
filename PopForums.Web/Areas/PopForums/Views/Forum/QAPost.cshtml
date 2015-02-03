@@ -27,7 +27,7 @@
 		}
 		@if (User != null && user.UserID == topic.StartedByUserID && !Model.Post.IsFirstInTopic)
 		{
-			<p class="answerButton">make me answer!</p>
+			<p class="answerButton glyphicon @if(topic.AnswerPostID.HasValue && topic.AnswerPostID.Value == Model.Post.PostID){<text>text-success glyphicon-ok</text>}else{<text>text-muted glyphicon-asterisk</text>}" title="@PopForums.Resources.ChooseAnswer"></p>
 		}
 	</div>
 	<div class="col-xs-12 col-sm-11">

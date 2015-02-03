@@ -209,6 +209,11 @@
 	margin-left: 20px;
 }
 
+#ForumContainer .answerButton {
+	margin: 20px;font-size: 200%;
+	cursor: pointer;
+}
+
 /* queries */
 
 @media(max-width:479px) {
