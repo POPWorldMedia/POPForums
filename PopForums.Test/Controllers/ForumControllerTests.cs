@@ -1615,7 +1615,7 @@ namespace PopForums.Test.Controllers
 			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
 			_postService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Post(123));
 			_topicService.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic(456));
-			_topicService.Setup(x => x.SetAnswer(It.IsAny<User>(), It.IsAny<Topic>(), It.IsAny<Post>()))
+			_topicService.Setup(x => x.SetAnswer(It.IsAny<User>(), It.IsAny<Topic>(), It.IsAny<Post>(), It.IsAny<string>(), It.IsAny<string>()))
 				.Throws<SecurityException>();
 			var result = (ViewResult)controller.SetAnswer(123, 456);
 			Assert.AreEqual("Forbidden", result.ViewName);
@@ -1635,7 +1635,7 @@ namespace PopForums.Test.Controllers
 			_postService.Setup(x => x.Get(post.PostID)).Returns(post);
 			_topicService.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 			controller.SetAnswer(topic.TopicID, post.PostID);
-			_topicService.Verify(x => x.SetAnswer(user, topic, post), Times.Once());
+			_topicService.Verify(x => x.SetAnswer(user, topic, post, It.IsAny<string>(), It.IsAny<string>()), Times.Once());
 		}
 	}
 

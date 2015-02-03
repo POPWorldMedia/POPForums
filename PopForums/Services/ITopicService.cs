@@ -25,6 +25,6 @@ namespace PopForums.Services
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
 		void HardDeleteTopic(Topic topic, User user);
-		void SetAnswer(User user, Topic topic, Post post);
+		void SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
 	}
 }

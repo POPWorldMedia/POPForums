@@ -27,6 +27,7 @@ namespace PopForums.Test.Services
 		private Mock<IEventPublisher> _eventPublisher;
 		private Mock<IBroker> _broker;
 		private Mock<ISearchRepository> _searchRepo;
+		private Mock<IUserRepository> _userRepo;
 
 		private TopicService GetTopicService()
 		{
@@ -42,7 +43,8 @@ namespace PopForums.Test.Services
 			_eventPublisher = new Mock<IEventPublisher>();
 			_broker = new Mock<IBroker>();
 			_searchRepo = new Mock<ISearchRepository>();
-			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object);
+			_userRepo = new Mock<IUserRepository>();
+			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object, _userRepo.Object);
 		}
 
 		private static User GetUser()
@@ -726,7 +728,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic(456) { StartedByUserID = 789 };
-			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post(789)));
+			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
 		}
 
 		[Test]
@@ -736,7 +738,7 @@ namespace PopForums.Test.Services
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic(456) { StartedByUserID = 123 };
 			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
-			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post(789)));
+			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
 		}
 
 		[Test]
@@ -747,7 +749,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic(456) { StartedByUserID = 123 };
 			var post = new Post(789) { TopicID = 111 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
-			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post));
+			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post, "", ""));
 		}
 
 		[Test]
@@ -758,8 +760,49 @@ namespace PopForums.Test.Services
 			var topic = new Topic(456) { StartedByUserID = 123 };
 			var post = new Post(789) { TopicID = topic.TopicID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
-			service.SetAnswer(user, topic, post);
+			service.SetAnswer(user, topic, post, "", "");
 			_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
+		}
+
+		[Test]
+		public void SetAnswerCallsEventPubWhenThereIsNoPreviousAnswerOnTheTopic()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var answerUser = new User(777, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = null};
+			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID};
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
+			service.SetAnswer(user, topic, post, "", "");
+			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false), Times.Once());
+		}
+
+		[Test]
+		public void SetAnswerDoesNotCallEventPubWhenTheAnswerUserDoesNotExist()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = null };
+			var post = new Post(789) { TopicID = topic.TopicID, UserID = 777 };
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
+			service.SetAnswer(user, topic, post, "", "");
+			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
+		}
+
+		[Test]
+		public void SetAnswerDoesNotCallEventPubWhenTheTopicAlreadyHasAnAnswer()
+		{
+			var service = GetTopicService();
+			var user = new User(123, DateTime.MaxValue);
+			var answerUser = new User(777, DateTime.MaxValue);
+			var topic = new Topic(456) { StartedByUserID = 123, AnswerPostID = 666 };
+			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID };
+			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
+			service.SetAnswer(user, topic, post, "", "");
+			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}
 	}
 }

@@ -362,9 +362,13 @@ PopForums.qaTopicSetup = function (topicID) {
 	PopForums.startTimeUpdater();
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
-	$(document).on("click", ".commentLink, #ReplyButton", function () {
+	$(document).on("click", ".commentLink", function () {
 		var replyID = $(this).parents(".postContainer").attr("data-postid");
 		PopForums.loadComment(topicID, replyID);
+	});
+	$(document).on("click", "#ReplyButton", function () {
+		var replyID = $(this).parents(".postContainer").attr("data-postid");
+		PopForums.loadReply(topicID, null, replyID);
 	});
 	$(document).on("click", ".postNameLink", function () {
 		var box = $(this).parents(".postUserData").find(".miniProfileBox");

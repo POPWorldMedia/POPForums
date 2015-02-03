@@ -13,7 +13,7 @@ namespace PopForums.Services
 {
 	public class TopicService : ITopicService
 	{
-		public TopicService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IBroker broker, ISearchRepository searchRepository)
+		public TopicService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IBroker broker, ISearchRepository searchRepository, IUserRepository userRepository)
 		{
 			_forumRepository = forumRepository;
 			_topicRepository = topicRepository;
@@ -27,6 +27,7 @@ namespace PopForums.Services
 			_eventPublisher = eventPublisher;
 			_broker = broker;
 			_searchRepository = searchRepository;
+			_userRepository = userRepository;
 		}
 
 		private readonly IForumRepository _forumRepository;
@@ -41,6 +42,7 @@ namespace PopForums.Services
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IBroker _broker;
 		private readonly ISearchRepository _searchRepository;
+		private readonly IUserRepository _userRepository;
 
 		public List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -274,12 +276,20 @@ namespace PopForums.Services
 			return post.PostID;
 		}
 
-		public void SetAnswer(User user, Topic topic, Post post)
+		public void SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl)
 		{
 			if (user.UserID != topic.StartedByUserID)
 				throw new SecurityException("Only the user that started a topic may set its answer.");
 			if (post == null || post.TopicID != topic.TopicID)
 				throw new InvalidOperationException("You can't use a post as an answer unless it's a child of the topic.");
+			var answerUser = _userRepository.GetUser(post.UserID);
+			if (answerUser != null && !topic.AnswerPostID.HasValue)
+			{
+				// TODO: translations for QuestionAnswered
+				// <a href="{0}">{1}</a> chose an answer for the question: <a href="{2}">{3}</a>
+				var message = String.Format(Resources.QuestionAnswered, userUrl, user.Name, topicUrl, topic.Title);
+				_eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
+			}
 			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}
 	}

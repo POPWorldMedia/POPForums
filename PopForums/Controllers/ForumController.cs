@@ -566,7 +566,10 @@ namespace PopForums.Controllers
 				return this.Forbidden("Forbidden", null);
 			try
 			{
-				_topicService.SetAnswer(user, topic, post);
+				var helper = new UrlHelper(Request.RequestContext);
+				var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
+				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
+				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
 			}
 			catch (SecurityException securityException)
 			{

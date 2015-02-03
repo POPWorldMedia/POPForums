@@ -45,7 +45,7 @@ namespace PopForums.Test.ScoringGame
 			var list = new List<EventDefinition> {new EventDefinition {EventDefinitionID = "aaa"}, new EventDefinition {EventDefinitionID = "zzz"}};
 			_eventDefRepo.Setup(x => x.GetAll()).Returns(list);
 			var result = service.GetAll();
-			Assert.AreEqual(5, result.Count);
+			Assert.AreEqual(6, result.Count);
 			Assert.IsTrue(result.Where(x => x.EventDefinitionID == "aaa").Count() == 1);
 			Assert.IsTrue(result.Where(x => x.EventDefinitionID == "zzz").Count() == 1);
 			Assert.IsTrue(result.Where(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.NewPost).Count() == 1);
@@ -60,12 +60,12 @@ namespace PopForums.Test.ScoringGame
 			var list = new List<EventDefinition> { new EventDefinition { EventDefinitionID = "aaa" }, new EventDefinition { EventDefinitionID = "zzz" } };
 			_eventDefRepo.Setup(x => x.GetAll()).Returns(list);
 			var result = service.GetAll();
-			Assert.AreEqual(5, result.Count);
+			Assert.AreEqual(6, result.Count);
 			Assert.AreEqual("aaa", result[0].EventDefinitionID);
 			Assert.AreEqual(EventDefinitionService.StaticEventIDs.NewPost, result[1].EventDefinitionID);
 			Assert.AreEqual(EventDefinitionService.StaticEventIDs.NewTopic, result[2].EventDefinitionID);
 			Assert.AreEqual(EventDefinitionService.StaticEventIDs.PostVote, result[3].EventDefinitionID);
-			Assert.AreEqual("zzz", result[4].EventDefinitionID);
+			Assert.AreEqual("zzz", result[5].EventDefinitionID);
 		}
 
 		[Test]
