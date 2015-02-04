@@ -277,6 +277,11 @@ namespace PopForums.Controllers
 			if (forum.IsQAForum)
 			{
 				newPost.IncludeSignature = false;
+				if (newPost.ParentPostID == 0)
+				{
+					ViewBag.IsQA = true;
+					return View("NewReply", newPost);
+				}
 				return View("NewComment", newPost);
 			}
 			return View("NewReply", newPost);

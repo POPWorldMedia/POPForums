@@ -1237,4 +1237,10 @@
   <data name="ChooseAnswer" xml:space="preserve">
     <value>Choose answer</value>
   </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>Post answer</value>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>Submit answer</value>
+  </data>
 </root>

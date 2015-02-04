@@ -130,7 +130,7 @@ PopForums.topicListSetup = function (forumID) {
 	});
 };
 
-PopForums.loadReply = function (topicID, postID, replyID) {
+PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 	$(window).off("scroll", PopForums.ScrollLoad);
 	var n = $("#NewReply");
 	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
@@ -169,10 +169,12 @@ PopForums.loadReply = function (topicID, postID, replyID) {
 			});
 		});
 
-		var hub = $.connection.topics; // already started in topicsetup
-		hub.server.getLastPostID(topicID).done(function (result) {
-			PopForums.setReplyMorePosts(result);
-		});
+		if (setupMorePosts) {
+			var hub = $.connection.topics; // already started in topicsetup
+			hub.server.getLastPostID(topicID).done(function (result) {
+				PopForums.setReplyMorePosts(result);
+			});
+		}
 
 		$("#PreviewModal").on("shown.bs.modal", function () {
 			PopForums.previewPost();
@@ -277,11 +279,11 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
 	$(document).on("click", "#ReplyButton,.replyLink", function () {
-		PopForums.loadReply(topicID, null, replyID);
+		PopForums.loadReply(topicID, null, replyID, true);
 	});
 	$(document).on("click", ".quoteLink", function () {
 		var postID = $(this).parents(".postItem").attr("data-postID");
-		PopForums.loadReply(topicID, postID, replyID);
+		PopForums.loadReply(topicID, postID, replyID, true);
 	});
 	$(document).on("click", ".postNameLink", function () {
 		var box = $(this).parents(".postItem").find(".miniProfileBox");

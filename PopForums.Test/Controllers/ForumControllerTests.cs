@@ -836,7 +836,7 @@ namespace PopForums.Test.Controllers
 		}
 
 		[Test]
-		public void ReplyPartialUserCanPostCanViewQAForum()
+		public void ReplyPartialUserCanPostCanViewQAForumLoadsNewComment()
 		{
 			var controller = GetForumController();
 			var user = Models.UserTest.GetTestUser();
@@ -847,11 +847,30 @@ namespace PopForums.Test.Controllers
 			var contextHelper = new HttpContextHelper();
 			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
 			controller.SetUser(user);
-			var result = controller.PostReply(1);
+			var result = controller.PostReply(1, 0, 123);
 			Assert.IsInstanceOf<ViewResult>(result);
 			var viewResult = (ViewResult)result;
 			Assert.False(((NewPost)viewResult.Model).IncludeSignature);
 			Assert.AreEqual("NewComment", viewResult.ViewName);
+		}
+
+		[Test]
+		public void ReplyPartialUserCanPostCanViewQAForumLoadsNewReply()
+		{
+			var controller = GetForumController();
+			var user = Models.UserTest.GetTestUser();
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(new Forum(1) { IsQAForum = true });
+			_forumService.Setup(f => f.GetPermissionContext(It.IsAny<Forum>(), It.IsAny<User>(), It.IsAny<Topic>())).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_topicService.Setup(t => t.Get(1)).Returns(new Topic(2) { Title = "blah" });
+			_profileService.Setup(p => p.GetProfile(user)).Returns(new Profile { Signature = "wo;heif", IsPlainText = true });
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			controller.SetUser(user);
+			var result = controller.PostReply(1);
+			Assert.IsInstanceOf<ViewResult>(result);
+			var viewResult = (ViewResult)result;
+			Assert.False(((NewPost)viewResult.Model).IncludeSignature);
+			Assert.AreEqual("NewReply", viewResult.ViewName);
 		}
 
 		[Test]
