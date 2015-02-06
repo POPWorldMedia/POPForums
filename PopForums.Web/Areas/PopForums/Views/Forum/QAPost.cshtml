@@ -12,7 +12,7 @@
 }
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@topic.TopicID">
-	<div class="answerData col-xs-12 col-sm-1">
+	<div class="answerData pull-left">
 		<h3><span class="label label-default voteCount">@Model.Post.Votes</span></h3>
 		@if (User != null && user.UserID != Model.Post.UserID)
 		{
@@ -37,7 +37,7 @@
 			}
 		}
 	</div>
-	<div class="col-xs-12 col-sm-11">
+	<div class="answerBody">
 		<div class="postUserData bg-primary" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Post.Name</h3>
 			<div class="miniProfileBox bg-info text-info"></div>

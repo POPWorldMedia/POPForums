@@ -215,6 +215,15 @@
 #ForumContainer .answerButton {
 	cursor: pointer;
 }
+#ForumContainer .answerData {
+	min-width: 70px;
+}
+#ForumContainer .answerBody {
+	margin-left: 100px;
+}
+#ForumContainer .answerData span {
+	display: block;text-align: center;
+}
 
 /* queries */
 
