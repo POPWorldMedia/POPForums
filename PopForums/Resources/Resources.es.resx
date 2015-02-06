@@ -1230,4 +1230,17 @@
   <data name="Answers" xml:space="preserve">
     <value>Respuestas</value>
   </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Elija respuesta</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>Publicar respuesta</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; optó por una respuesta para la pregunta: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>Enviar respuesta</value>
+  </data>
 </root>

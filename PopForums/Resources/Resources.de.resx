@@ -1219,4 +1219,17 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="Answers" xml:space="preserve">
     <value>Antworten</value>
   </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Wählen Sie Antwort</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>Beitrag Antwort</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; wählte eine Antwort auf die Frage: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>Antwort abschicken</value>
+  </data>
 </root>

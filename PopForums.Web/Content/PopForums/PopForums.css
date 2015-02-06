@@ -209,8 +209,10 @@
 	margin-left: 20px;
 }
 
-#ForumContainer .answerButton {
+#ForumContainer .answerButton, #ForumContainer .answerCheck {
 	margin: 20px;font-size: 200%;
+}
+#ForumContainer .answerButton {
 	cursor: pointer;
 }
 
