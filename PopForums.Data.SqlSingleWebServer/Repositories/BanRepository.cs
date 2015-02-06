@@ -43,7 +43,7 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Command("SELECT * FROM pf_IPBan WHERE IPBan = @IPBan")
+				result = connection.Command("SELECT * FROM pf_IPBan WHERE CHARINDEX(pf_IPBan.IPBan, @IPBan) > 0")
 					.AddParameter("@IPBan", ip)
 					.ExecuteReader()
 					.Read());
