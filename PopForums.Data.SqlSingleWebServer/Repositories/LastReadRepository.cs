@@ -74,7 +74,12 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				connection.Command("SELECT ForumID, LastForumViewDate FROM pf_LastForumView WHERE UserID = @UserID")
 				.AddParameter("@UserID", userID)
 				.ExecuteReader()
-				.ReadAll(r => dictionary.Add(r.GetInt32(0), r.GetDateTime(1))));
+				.ReadAll(r =>
+				         {
+					         var key = r.GetInt32(0);
+							 if (!dictionary.ContainsKey(key))
+								dictionary.Add(key, r.GetDateTime(1));
+				         }));
 			return dictionary;
 		}
 
@@ -109,7 +114,12 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				connection.Command(sql)
 				.AddParameter("@UserID", userID)
 				.ExecuteReader()
-				.ReadAll(r => dictionary.Add(r.GetInt32(0), r.GetDateTime(1))));
+				.ReadAll(r =>
+						{
+							var key = r.GetInt32(0);
+							if (!dictionary.ContainsKey(key))
+								dictionary.Add(key, r.GetDateTime(1));
+				         }));
 			return dictionary;
 		}
 
