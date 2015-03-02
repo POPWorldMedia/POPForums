@@ -82,6 +82,9 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="SqlSingleInjectionRegistry.cs" />
     <Content Include="PopForums9.2andLaterto12.0.sql" />
     <Compile Include="Extensions.cs" />

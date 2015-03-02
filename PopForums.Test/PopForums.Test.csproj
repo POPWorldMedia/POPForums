@@ -115,6 +115,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="Configuration\ForumRouteConstraintTest.cs" />
     <Compile Include="Configuration\SettingsTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
