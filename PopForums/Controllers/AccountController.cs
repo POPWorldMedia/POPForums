@@ -280,7 +280,7 @@ namespace PopForums.Controllers
 				_userService.SetPassword(user, userEdit.NewPassword, HttpContext.Request.UserHostAddress, user);
 				ViewBag.PasswordResult = Resources.NewPasswordSaved;
 			}
-			return View("Security");
+			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 		}
 
 		[HttpPost]
