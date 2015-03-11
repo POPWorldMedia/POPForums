@@ -353,5 +353,13 @@ namespace PopForums.Test.Services
 			var result = service.ForumCodeToHtml("test test [youtube=http://www.youtube.com/watch?v=NL125lBWYc4] test");
 			Assert.AreEqual("<p>test test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>", result);
 		}
+
+		[Test]
+		public void UrlWithBangParsesCorrectly()
+		{
+			var service = GetService();
+			var result = service.ForumCodeToHtml("(and [url=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\"]'millennium' is spelled with two n's[/url] regardless of whether the new one starts in 2000 or 2001.)");
+			Assert.AreEqual("<p>(and <a href=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\" target=\"_blank\">'millennium' is spelled with two n's</a> regardless of whether the new one starts in 2000 or 2001.)</p>", result);
+		}
 	}
 }

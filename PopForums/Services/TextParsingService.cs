@@ -17,7 +17,7 @@ namespace PopForums.Services
 		private ISettingsManager _settingsManager;
 
 		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img"};
-		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private readonly static Regex _wwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);

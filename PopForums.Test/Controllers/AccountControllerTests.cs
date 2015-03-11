@@ -379,6 +379,7 @@ namespace PopForums.Test.Controllers
 			var user = UserTest.GetTestUser();
 			controller.SetUser(user);
 			_userService.Setup(u => u.VerifyPassword(user, It.IsAny<string>())).Returns(false);
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var result = controller.ChangePassword(new UserEditSecurity { OldPassword = "no" });
 			Assert.IsNotNullOrEmpty(result.ViewData["PasswordResult"].ToString());
 			Assert.AreNotEqual("EditAccountNoUser", result.ViewName);
@@ -394,6 +395,7 @@ namespace PopForums.Test.Controllers
 			var user = UserTest.GetTestUser();
 			controller.SetUser(user);
 			_userService.Setup(u => u.VerifyPassword(user, It.IsAny<string>())).Returns(true);
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var result = controller.ChangePassword(new UserEditSecurity{ NewPassword = "blah", NewPasswordRetype = "blah2"});
 			Assert.IsNotNullOrEmpty(result.ViewData["PasswordResult"].ToString());
 			Assert.AreNotEqual("EditAccountNoUser", result.ViewName);
@@ -411,6 +413,7 @@ namespace PopForums.Test.Controllers
 			_userService.Setup(u => u.VerifyPassword(user, It.IsAny<string>())).Returns(true);
 			_userService.Setup(u => u.IsPasswordValid(It.IsAny<string>(), It.IsAny<ModelStateDictionary>())).Returns(false).Callback<string, ModelStateDictionary>((p, m) => m.AddModelError("Password", "whatever"));
 			var password = "awesome";
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var result = controller.ChangePassword(new UserEditSecurity { NewPassword = password, NewPasswordRetype = password });
 			Assert.IsNotNullOrEmpty(result.ViewData["PasswordResult"].ToString());
 			Assert.AreNotEqual("EditAccountNoUser", result.ViewName);
@@ -429,6 +432,7 @@ namespace PopForums.Test.Controllers
 			_userService.Setup(u => u.VerifyPassword(user, It.IsAny<string>())).Returns(true);
 			_userService.Setup(u => u.IsPasswordValid(It.IsAny<string>(), It.IsAny<ModelStateDictionary>())).Returns(true);
 			var password = "awesome";
+			_settingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var result = controller.ChangePassword(new UserEditSecurity { NewPassword = password, NewPasswordRetype = password });
 			Assert.IsNotNullOrEmpty(result.ViewData["PasswordResult"].ToString());
 			Assert.AreNotEqual("EditAccountNoUser", result.ViewName);
