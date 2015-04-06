@@ -25,7 +25,9 @@
 				$("html,body").animate({ scrollTop: newPosition }, "fast");
 			}
 		}
-		$(window).load(function () { PopForums.checkScroll(); });
+		$(window).load(function () {
+			setTimeout(function () { PopForums.checkScroll(); }, 1000);
+		});
 	}
 });
 
