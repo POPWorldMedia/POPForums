@@ -57,6 +57,8 @@ namespace PopForums.Controllers
 
 		public ActionResult Index(string urlName, int page = 1)
 		{
+			if (String.IsNullOrWhiteSpace(urlName))
+				return HttpNotFound();
 			var forum = _forumService.Get(urlName);
 			if (forum == null)
 				return this.NotFound("NotFound", null);
