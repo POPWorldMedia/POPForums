@@ -224,6 +224,9 @@
 #ForumContainer .answerData span {
 	display: block;text-align: center;
 }
+#ForumContainer .voteCount .voters {
+	display: none;
+}
 
 /* queries */
 

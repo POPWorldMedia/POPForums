@@ -13,7 +13,7 @@
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@topic.TopicID">
 	<div class="answerData pull-left">
-		<h3><span class="label label-default voteCount">@Model.Post.Votes</span></h3>
+		<h3><span class="label label-default voteCount">@Html.Partial("~/Areas/PopForums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
 		@if (User != null && user.UserID != Model.Post.UserID)
 		{
 			if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.Post.PostID))

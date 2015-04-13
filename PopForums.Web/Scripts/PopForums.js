@@ -391,7 +391,8 @@ PopForums.qaTopicSetup = function (topicID) {
 			success: function (result) {
 				countBox.html(result);
 				var voted = parent.find(".voteUp");
-				voted.replaceWith("Voted");
+				voted.html("Voted");
+				voted.removeClass("btn-link");
 			}
 		});
 	});
