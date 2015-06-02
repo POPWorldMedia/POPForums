@@ -267,7 +267,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			$.get(PopForums.areaPath + "/Forum/Post/" + postID, function (data) {
 				var post = $(data);
 				post.appendTo("#PostStream");
-				post.effect("highlight", 1500);
 			});
 			$("#LastPostID").val(postID);
 			PopForums.currentTopicState.lastVisiblePost = postID;
@@ -350,7 +349,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			var stuff = $(result);
 			var links = stuff.find(".pagerLinks").detach();
 			postStream.prepend(stuff);
-			stuff.effect("highlight", 1500);
 			links.replaceAll(".pagerLinks");
 			if (PopForums.currentTopicState.lowPage > 1)
 				postStream.prepend(button);
