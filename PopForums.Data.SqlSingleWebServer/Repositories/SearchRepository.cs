@@ -132,9 +132,10 @@ namespace PopForums.Data.SqlSingleWebServer.Repositories
 				sb.Append(xstring);
 				sb.Append(".TopicID");
 			}
+			sb.Append(" WHERE NOT pf_Topic.IsDeleted = 1");
 			if (hiddenForums.Count > 0)
 			{
-				sb.Append(" WHERE");
+				sb.Append(" AND");
 				for (int x = 0; x < hiddenForums.Count; x++)
 				{
 					if (x > 0) sb.Append(" AND");
