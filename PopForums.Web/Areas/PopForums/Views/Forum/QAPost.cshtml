@@ -10,6 +10,13 @@
 	}
 	var user = (User) User;
 }
+@helper NewPostIndicator(User user, Post post)
+{
+	if (user == null)
+	{}
+	else if (Model.LastReadTime.HasValue && post.PostTime > Model.LastReadTime)
+	{<text>newPostBlock</text>}
+}
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@topic.TopicID">
 	<div class="answerData pull-left">
@@ -54,7 +61,7 @@
 			<img src="@Url.Action("Avatar", "Image", new { id = ((Dictionary<int, int>)ViewBag.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar pull-right" />
 		}
 
-		@Html.Raw(Model.Post.FullText)
+		<div class="@NewPostIndicator(user, Model.Post)">@Html.Raw(Model.Post.FullText)</div>
 		@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
 		{
 			<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@FormatTime8601(Model.Post.LastEditTime.Value)">@FormatTime(Model.Post.LastEditTime.Value)</span></small>
@@ -102,7 +109,7 @@
 			foreach (var comment in Model.Children)
 			{
 				<a name="@comment.PostID"></a>
-				<div class="@if(comment.IsDeleted){<text>bg-danger</text>}else{<text>well</text>} qaComment">
+				<div class="@if(comment.IsDeleted){<text>bg-danger</text>}else{<text>well</text>} qaComment @NewPostIndicator(user, comment)">
 					<p class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@FormatTime8601(comment.PostTime)">@FormatTime(comment.PostTime)</span>
 						@if (this.IsUserInRole(PermanentRoles.Moderator))
 						{<text> - IP: </text>@comment.IP}

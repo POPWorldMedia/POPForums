@@ -1048,5 +1048,25 @@ namespace PopForums.Test.Services
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.IsFalse(result.AnswersWithComments.Any(x => x.Post.PostID == post5.PostID));
 		}
+
+		[Test]
+		public void MapTopicContainerMapsLastReadTimeToQuestionAndAnswerSets()
+		{
+			var post1 = new Post(1) { ParentPostID = 0 };
+			var post2 = new Post(2) { IsFirstInTopic = true };
+			var post3 = new Post(3) { ParentPostID = 0 };
+			var post4 = new Post(4) { ParentPostID = 1 };
+			var post5 = new Post(5) { ParentPostID = 2 };
+			var post6 = new Post(6) { ParentPostID = 3 };
+			var post7 = new Post(7) { ParentPostID = 3 };
+			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
+			var lastRead = new DateTime(2000, 1, 1);
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234), LastReadTime = lastRead };
+			var service = GetService();
+			var result = service.MapTopicContainerForQA(topicContainer);
+			Assert.AreEqual(lastRead, result.AnswersWithComments[0].LastReadTime);
+			Assert.AreEqual(lastRead, result.AnswersWithComments[1].LastReadTime);
+			Assert.AreEqual(lastRead, result.QuestionPostWithComments.LastReadTime);
+		}
 	}
 }

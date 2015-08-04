@@ -369,7 +369,7 @@ namespace PopForums.Services
 			{
 				var questionPost = result.Posts.Single(x => x.IsFirstInTopic);
 				var questionComments = result.Posts.Where(x => x.ParentPostID == questionPost.PostID).ToList();
-				result.QuestionPostWithComments = new PostWithChildren { Post = questionPost, Children = questionComments };
+				result.QuestionPostWithComments = new PostWithChildren { Post = questionPost, Children = questionComments, LastReadTime = topicContainer.LastReadTime };
 			}
 			catch (InvalidOperationException)
 			{
@@ -389,7 +389,7 @@ namespace PopForums.Services
 			foreach (var item in answers)
 			{
 				var comments = result.Posts.Where(x => x.ParentPostID == item.PostID).ToList();
-				result.AnswersWithComments.Add(new PostWithChildren { Post = item, Children = comments });
+				result.AnswersWithComments.Add(new PostWithChildren { Post = item, Children = comments, LastReadTime = topicContainer.LastReadTime });
 			}
 			return result;
 		}

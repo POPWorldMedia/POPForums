@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PopForums.Models
 {
@@ -6,5 +7,6 @@ namespace PopForums.Models
 	{
 		public Post Post { get; set; }
 		public List<Post> Children { get; set; } 
+		public DateTime? LastReadTime { get; set; }
 	}
 }

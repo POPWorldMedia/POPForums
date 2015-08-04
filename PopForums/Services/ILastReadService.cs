@@ -13,5 +13,6 @@ namespace PopForums.Services
 		Post GetFirstUnreadPost(User user, Topic topic);
 		DateTime? GetTopicReadStatus(User user, Topic topic);
 		DateTime? GetForumReadStatus(User user, Forum forum);
+		DateTime? GetLastReadTime(User user, Topic topic);
 	}
 }

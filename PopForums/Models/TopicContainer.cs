@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PopForums.Models
 {
@@ -14,5 +15,6 @@ namespace PopForums.Models
 		public Dictionary<int, string> Signatures { get; set; }
 		public Dictionary<int, int> Avatars { get; set; }
 		public List<int> VotedPostIDs { get; set; }
+		public DateTime? LastReadTime { get; set; }
 	}
 }

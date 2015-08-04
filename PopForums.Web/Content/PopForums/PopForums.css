@@ -113,6 +113,11 @@
 	color: red;
 }
 
+#ForumContainer .newPostBlock {
+	border-left: solid 4px #d3d3d3;
+	padding-left: 10px;
+}
+
 /* post item */
 
 #ForumContainer .postItem {

@@ -451,6 +451,39 @@ namespace PopForums.Test.Controllers
 		}
 
 		[Test]
+		public void TopicReturnsTopicContainerWithLastReadTimeWhenUserPresent()
+		{
+			var controller = GetForumController();
+			var contextHelper = new HttpContextHelper();
+			controller.ControllerContext = new ControllerContext(contextHelper.MockContext.Object, new RouteData(), controller);
+			var user = new User(555, DateTime.MaxValue) { Name = "Jeff", Roles = new List<string>()};
+			var forum = new Forum(1);
+			var topic = new Topic(2);
+			var posts = new List<Post> { new Post(456) };
+			var lastRead = new DateTime(2000, 1, 1);
+			var permissionContext = new ForumPermissionContext { UserCanView = true, UserCanModerate = false };
+			controller.SetUser(user);
+			_userService.Setup(u => u.GetUserByName(user.Name)).Returns(user);
+			_forumService.Setup(f => f.Get(It.IsAny<int>())).Returns(forum);
+			_forumService.Setup(f => f.GetPermissionContext(forum, user, topic)).Returns(permissionContext);
+			_topicService.Setup(t => t.Get(It.IsAny<string>())).Returns(topic);
+			var pagerContext = new PagerContext();
+			_postService.Setup(p => p.GetPosts(topic, permissionContext.UserCanModerate, 1, out pagerContext)).Returns(posts);
+			_lastReadService.Setup(x => x.GetLastReadTime(user, topic)).Returns(lastRead);
+			var result = controller.Topic("blah");
+			Assert.IsInstanceOf<ViewResult>(result);
+			Assert.IsInstanceOf<TopicContainer>(result.ViewData.Model);
+			var model = (TopicContainer)result.ViewData.Model;
+			Assert.AreSame(forum, model.Forum);
+			Assert.AreSame(topic, model.Topic);
+			Assert.AreSame(posts, model.Posts);
+			Assert.AreSame(permissionContext, model.PermissionContext);
+			Assert.AreSame(pagerContext, model.PagerContext);
+			Assert.Null(result.ViewBag.CategorizedForums);
+			Assert.AreEqual(lastRead, model.LastReadTime);
+		}
+
+		[Test]
 		public void TopicFromQAForumReturnsTopicContainerForQAAndCalledForAllPosts()
 		{
 			var controller = GetForumController();

@@ -418,5 +418,35 @@ namespace PopForums.Test.Services
 			service.MarkTopicRead(user, topic);
 			_lastReadRepo.Verify(l => l.SetTopicRead(user.UserID, topic.TopicID, It.IsAny<DateTime>()), Times.Exactly(1));
 		}
+
+		[Test]
+		public void GetLastReadTimeReturnsTopicTimeWhenAvailable()
+		{
+			var service = GetService();
+			var user = new User(1, DateTime.MinValue);
+			var topic = new Topic(2);
+			var lastRead = new DateTime(2010, 1, 1);
+			_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).Returns(lastRead);
+
+			var result = service.GetLastReadTime(user, topic);
+
+			Assert.AreEqual(lastRead, result);
+			_lastReadRepo.Verify(x => x.GetLastReadTimesForForum(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public void GetLastReadTimeReturnsForumTimeWhenNoTopicTimeAvailable()
+		{
+			var service = GetService();
+			var user = new User(1, DateTime.MinValue);
+			var topic = new Topic(2) {ForumID = 3};
+			var lastRead = new DateTime(2010, 1, 1);
+			_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).Returns((DateTime?)null);
+			_lastReadRepo.Setup(x => x.GetLastReadTimesForForum(user.UserID, topic.ForumID)).Returns(lastRead);
+
+			var result = service.GetLastReadTime(user, topic);
+
+			Assert.AreEqual(lastRead, result);
+		}
 	}
 }

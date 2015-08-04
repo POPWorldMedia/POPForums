@@ -137,5 +137,13 @@ namespace PopForums.Services
 			var firstNew = postIDs.First(p => p.PostTime > lastRead.Value);
 			return _postRepository.Get(firstNew.PostID);
 		}
+
+		public DateTime? GetLastReadTime(User user, Topic topic)
+		{
+			var lastRead = _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
+			if (!lastRead.HasValue)
+				lastRead = _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
+			return lastRead;
+		}
 	}
 }

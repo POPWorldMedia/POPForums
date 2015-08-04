@@ -177,8 +177,10 @@ namespace PopForums.Controllers
 			var isSubscribed = false;
 			var isFavorite = false;
 			var user = this.CurrentUser();
+			DateTime? lastReadTime = DateTime.UtcNow;
 			if (user != null)
 			{
+				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
 				isFavorite = _favoriteTopicService.IsTopicFavorite(user, topic);
 				isSubscribed = _subService.IsTopicSubscribed(user, topic);
 				if (isSubscribed)
@@ -198,7 +200,7 @@ namespace PopForums.Controllers
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
-			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs);
+			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic, HttpContext);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -223,11 +225,18 @@ namespace PopForums.Controllers
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+			var user = this.CurrentUser();
 
-			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
+			}
+
+			DateTime? lastReadTime = DateTime.UtcNow;
+			if (user != null)
+			{
+				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
 			}
 
 			PagerContext pagerContext;
@@ -237,7 +246,7 @@ namespace PopForums.Controllers
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
-			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs);
+			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic, HttpContext);
 			ViewBag.Low = low;
 			ViewBag.High = high;
@@ -499,11 +508,18 @@ namespace PopForums.Controllers
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+			var user = this.CurrentUser();
 
-			var permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser(), topic);
+			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return this.Forbidden("Forbidden", null);
+			}
+
+			DateTime? lastReadTime = DateTime.UtcNow;
+			if (user != null)
+			{
+				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
 			}
 
 			PagerContext pagerContext;
@@ -511,7 +527,7 @@ namespace PopForums.Controllers
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(this.CurrentUser(), posts);
-			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs);
+			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			ViewBag.Low = lowPage;
 			ViewBag.High = pagerContext.PageCount;
 			return View("TopicPage", container);
@@ -554,9 +570,9 @@ namespace PopForums.Controllers
 			return Content(result, "text/html");
 		}
 
-		private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, bool isSubscribed, List<Post> posts, PagerContext pagerContext, bool isFavorite, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs)
+		private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, bool isSubscribed, List<Post> posts, PagerContext pagerContext, bool isFavorite, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs, DateTime? lastreadTime)
 		{
-			return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs };
+			return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime};
 		}
 
 		[HttpPost]
