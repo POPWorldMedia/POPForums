@@ -1,0 +1,1222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account" xml:space="preserve">
+    <value>帳戶</value>
+  </data>
+  <data name="AccountCreated" xml:space="preserve">
+    <value>建立帳戶</value>
+  </data>
+  <data name="AccountReady" xml:space="preserve">
+    <value>您的帳號已建立，您可以開始使用了。</value>
+  </data>
+  <data name="AccountReadyCheckEmail" xml:space="preserve">
+    <value>請檢查您的電子郵件中的確認連結。</value>
+  </data>
+  <data name="AccountVerified" xml:space="preserve">
+    <value>您的帳戶已確認完畢</value>
+  </data>
+  <data name="AlreadyCreatedAccount" xml:space="preserve">
+    <value>您已經登入，並且擁有一個帳戶。</value>
+  </data>
+  <data name="AsYouWouldLikeItToAppear" xml:space="preserve">
+    <value>（你想它顯示為什麼）</value>
+  </data>
+  <data name="AtLeastSixChar" xml:space="preserve">
+    <value>（至少6個字符）</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>建立帳戶</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>建立新帳戶</value>
+  </data>
+  <data name="EditYourProfile" xml:space="preserve">
+    <value>編輯您的個人資料</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>電子郵件</value>
+  </data>
+  <data name="EmailProblemAccount" xml:space="preserve">
+    <value>發送您的驗證郵件時出現問題：</value>
+  </data>
+  <data name="Favorites" xml:space="preserve">
+    <value>我的最愛</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>很抱歉，您沒有權限。</value>
+  </data>
+  <data name="Forums" xml:space="preserve">
+    <value>論壇</value>
+  </data>
+  <data name="HaveReadTOS" xml:space="preserve">
+    <value>我已閱讀並接受服務條款</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>最後</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>註冊</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>登出</value>
+  </data>
+  <data name="MarkAllForumsRead" xml:space="preserve">
+    <value>標記所有論壇為已讀</value>
+  </data>
+  <data name="MyBirthdayIsOnOrBefore" xml:space="preserve">
+    <value>我的生日是在或之前{0}</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="NeedToVerifyExistingAccount" xml:space="preserve">
+    <value>需要驗證現有帳戶？</value>
+  </data>
+  <data name="PageNotFound" xml:space="preserve">
+    <value>找不到網頁</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>主題</value>
+  </data>
+  <data name="PrivateMessages" xml:space="preserve">
+    <value>私人訊息</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>最近</value>
+  </data>
+  <data name="RegisteredUsers" xml:space="preserve">
+    <value>註冊用戶</value>
+  </data>
+  <data name="RetypePassword" xml:space="preserve">
+    <value>重新輸入密碼</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>搜尋</value>
+  </data>
+  <data name="SubscribeToList" xml:space="preserve">
+    <value>訂閱郵件列表</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>訂閱</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>服務條款</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>時區</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>主題</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>總數</value>
+  </data>
+  <data name="TotalPosts" xml:space="preserve">
+    <value>文章總數</value>
+  </data>
+  <data name="TotalTopics" xml:space="preserve">
+    <value>主題總數</value>
+  </data>
+  <data name="UseDaylight" xml:space="preserve">
+    <value>使用夏令時</value>
+  </data>
+  <data name="UsersOnline" xml:space="preserve">
+    <value>上線人數</value>
+  </data>
+  <data name="MustBe13" xml:space="preserve">
+    <value>您必須年滿13歲才能註冊</value>
+  </data>
+  <data name="MustAcceptTOS" xml:space="preserve">
+    <value>您必須接受服務條款</value>
+  </data>
+  <data name="RetypeYourPassword" xml:space="preserve">
+    <value>請重新輸入您的密碼</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>名稱為必填</value>
+  </data>
+  <data name="NameInUse" xml:space="preserve">
+    <value>該名稱已被使用</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-mail為必填</value>
+  </data>
+  <data name="ValidEmailAddressRequired" xml:space="preserve">
+    <value>E-mail無效</value>
+  </data>
+  <data name="EmailInUse" xml:space="preserve">
+    <value>該E-mail地址已被使用</value>
+  </data>
+  <data name="EmailBanned" xml:space="preserve">
+    <value>該E-mail地址已被封鎖</value>
+  </data>
+  <data name="IPBanned" xml:space="preserve">
+    <value>您的IP地址已被封鎖</value>
+  </data>
+  <data name="RetypePasswordMustMatch" xml:space="preserve">
+    <value>您輸入的密碼不一致</value>
+  </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>編輯帳戶</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>編輯個人資料</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>請輸入您的驗證碼</value>
+  </data>
+  <data name="ForumHomePage" xml:space="preserve">
+    <value>論壇首頁</value>
+  </data>
+  <data name="MustBeRegisteredToEditAccount" xml:space="preserve">
+    <value>您必須註冊並登入編輯您的帳戶。</value>
+  </data>
+  <data name="NoUserFoundWithEmail" xml:space="preserve">
+    <value>找不到用戶與郵件</value>
+  </data>
+  <data name="SendEmailWithNewCodeButton" xml:space="preserve">
+    <value>發送E-mail隨著新守則</value>
+  </data>
+  <data name="VerificationEmailSent" xml:space="preserve">
+    <value>您的驗證郵件已發送</value>
+  </data>
+  <data name="VerificationFailure" xml:space="preserve">
+    <value>驗證失敗</value>
+  </data>
+  <data name="VerificationIfYouNeed" xml:space="preserve">
+    <value>如果你需要一個新的驗證碼，請在此輸入您的電子郵件</value>
+  </data>
+  <data name="VerificationLinkBad" xml:space="preserve">
+    <value>對不起，您輸入的驗證鏈接或代碼無效。。</value>
+  </data>
+  <data name="VerifyAccount" xml:space="preserve">
+    <value>驗證帳戶</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>驗證碼</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>頭像</value>
+  </data>
+  <data name="AvatarDelete" xml:space="preserve">
+    <value>刪除此頭像</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>更改電子郵件</value>
+  </data>
+  <data name="ChangeEmailButton" xml:space="preserve">
+    <value>更改電子郵件和發送代碼</value>
+  </data>
+  <data name="ChangeEmailConsequence" xml:space="preserve">
+    <value>改變您的電子郵件地址將導致生成並發送至新的電子郵件地址一個新的驗證碼。你將無法發表，直到您用新的代碼驗證您的電子郵件地址。</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>更改密碼</value>
+  </data>
+  <data name="ChangeYourEmailPassword" xml:space="preserve">
+    <value>更改您的電子郵件或密碼</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>出生日期</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>詳細資訊</value>
+  </data>
+  <data name="EmailChangeSuccess" xml:space="preserve">
+    <value>您的電子郵件已成功更改</value>
+  </data>
+  <data name="EmailNew" xml:space="preserve">
+    <value>新的E-mail地址</value>
+  </data>
+  <data name="EmailNewRetype" xml:space="preserve">
+    <value>重新輸入新的電子郵件地址</value>
+  </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>電子郵件未找到</value>
+  </data>
+  <data name="EmailSent" xml:space="preserve">
+    <value>您的電子郵件已發送</value>
+  </data>
+  <data name="EmailsMustMatch" xml:space="preserve">
+    <value>這些電子郵件地址不匹配</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>E-mail用戶</value>
+  </data>
+  <data name="ForcePlainTextBox" xml:space="preserve">
+    <value>強制純文字框</value>
+  </data>
+  <data name="ForgotInstructions" xml:space="preserve">
+    <value>輸入與您的帳戶關聯的電子郵件地址，接收重置您的密碼的指令：</value>
+  </data>
+  <data name="ForgotInstructionsSent" xml:space="preserve">
+    <value>說明已發送到您的電子郵件</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>忘記密碼</value>
+  </data>
+  <data name="ForgotPasswordQuestion" xml:space="preserve">
+    <value>忘記密碼？</value>
+  </data>
+  <data name="HideVanity" xml:space="preserve">
+    <value>隐藏头像和签名</value>
+  </data>
+  <data name="In" xml:space="preserve">
+    <value>在</value>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>已加入</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="LoginAlready" xml:space="preserve">
+    <value>您已經登入。</value>
+  </data>
+  <data name="LoginBad" xml:space="preserve">
+    <value>錯誤的電子郵件或密碼</value>
+  </data>
+  <data name="ManagePhotos" xml:space="preserve">
+    <value>管理照片</value>
+  </data>
+  <data name="ManageYourPhotos" xml:space="preserve">
+    <value>管理您的照片</value>
+  </data>
+  <data name="NewPasswordSaved" xml:space="preserve">
+    <value>新密碼已儲存</value>
+  </data>
+  <data name="NotRegisteredQuestion" xml:space="preserve">
+    <value>沒有註冊？</value>
+  </data>
+  <data name="OldPasswordIncorrect" xml:space="preserve">
+    <value>舊密碼不正確</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>選項</value>
+  </data>
+  <data name="PasswordNew" xml:space="preserve">
+    <value>新密碼</value>
+  </data>
+  <data name="PasswordNewRetype" xml:space="preserve">
+    <value>重新輸入新密碼</value>
+  </data>
+  <data name="PasswordOld" xml:space="preserve">
+    <value>舊密碼</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>重設密碼</value>
+  </data>
+  <data name="PasswordResetLinkInvalid" xml:space="preserve">
+    <value>這不是一個有效的密碼重置連結。</value>
+  </data>
+  <data name="PasswordResetNote" xml:space="preserve">
+    <value>你的新密碼生效，現在你已經登錄。</value>
+  </data>
+  <data name="PasswordResetSuccess" xml:space="preserve">
+    <value>密碼重置成功</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>照片</value>
+  </data>
+  <data name="PhotoDelete" xml:space="preserve">
+    <value>刪除照片</value>
+  </data>
+  <data name="PhotoNotApproved" xml:space="preserve">
+    <value>（這個影像還未被管理員核准）</value>
+  </data>
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>資料更新</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>還記得我嗎？</value>
+  </data>
+  <data name="Replies" xml:space="preserve">
+    <value>回覆</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="SendEmailButton" xml:space="preserve">
+    <value>發送E-mail</value>
+  </data>
+  <data name="SendPM" xml:space="preserve">
+    <value>發送私人訊息</value>
+  </data>
+  <data name="ShowProfileDetails" xml:space="preserve">
+    <value>顯示您的個人資料（但不是電子郵件）</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>簽名</value>
+  </data>
+  <data name="StartedBy" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>主題</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>文字</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>至</value>
+  </data>
+  <data name="UploadNew" xml:space="preserve">
+    <value>上傳新項目</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>找不到用戶</value>
+  </data>
+  <data name="Views" xml:space="preserve">
+    <value>瀏覽次數</value>
+  </data>
+  <data name="Web" xml:space="preserve">
+    <value>Web</value>
+  </data>
+  <data name="WebVisit" xml:space="preserve">
+    <value>用戶訪問的Web站點</value>
+  </data>
+  <data name="YourIP" xml:space="preserve">
+    <value>您的IP地址</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>生日</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>聯絡</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>個人資料</value>
+  </data>
+  <data name="SendNameEmail" xml:space="preserve">
+    <value>發送{0}的電子郵件</value>
+  </data>
+  <data name="SendNamePM" xml:space="preserve">
+    <value>發送{0}私人訊息</value>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>退訂</value>
+  </data>
+  <data name="UnsubscribeFail" xml:space="preserve">
+    <value>退訂失敗</value>
+  </data>
+  <data name="UnsubscribeLinkBad" xml:space="preserve">
+    <value>這個退訂連結是無效的。</value>
+  </data>
+  <data name="UnsubscribeNote" xml:space="preserve">
+    <value>您的退訂請求已經被處理。您可以透過登入並進入你的帳戶頁面重新訂閱。</value>
+  </data>
+  <data name="AddForum" xml:space="preserve">
+    <value>加入論壇</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>新增項目</value>
+  </data>
+  <data name="AllowImages" xml:space="preserve">
+    <value>允許圖片</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>已封存</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>你確定嗎？</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>封鎖</value>
+  </data>
+  <data name="BanRemove" xml:space="preserve">
+    <value>移除封鎖</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>分類</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>類別</value>
+  </data>
+  <data name="CategoryEditTitle" xml:space="preserve">
+    <value>編輯類別名稱</value>
+  </data>
+  <data name="CategoryMoveError" xml:space="preserve">
+    <value>嘗試移動類別發生錯誤</value>
+  </data>
+  <data name="CensorReplacementChar" xml:space="preserve">
+    <value>審查替換字元</value>
+  </data>
+  <data name="CensorWords" xml:space="preserve">
+    <value>審查文字</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="DeleteAndBanButton" xml:space="preserve">
+    <value>刪除和封鎖用戶</value>
+  </data>
+  <data name="DeleteUserButton" xml:space="preserve">
+    <value>刪除用戶</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>向下</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="EditForum" xml:space="preserve">
+    <value>編輯論壇</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>編輯用戶</value>
+  </data>
+  <data name="EmailBan" xml:space="preserve">
+    <value>電子郵件封鎖</value>
+  </data>
+  <data name="EmailIpBan" xml:space="preserve">
+    <value>E-mail/IP封鎖</value>
+  </data>
+  <data name="EmailNewOptional" xml:space="preserve">
+    <value>新的電子郵件（可選）</value>
+  </data>
+  <data name="EmailUsers" xml:space="preserve">
+    <value>電子郵箱用戶</value>
+  </data>
+  <data name="ErrorLog" xml:space="preserve">
+    <value>錯誤紀錄</value>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>論壇</value>
+  </data>
+  <data name="ForumAdapter" xml:space="preserve">
+    <value>論壇適配器（可選，使用「 Namespace.Type ，的AssemblyName 」 ）</value>
+  </data>
+  <data name="ForumHome" xml:space="preserve">
+    <value>論壇首頁</value>
+  </data>
+  <data name="ForumPermisions" xml:space="preserve">
+    <value>論壇權限</value>
+  </data>
+  <data name="ForumSettings" xml:space="preserve">
+    <value>論壇設定</value>
+  </data>
+  <data name="ForumsUncat" xml:space="preserve">
+    <value>未分類論壇</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>一般設定</value>
+  </data>
+  <data name="IpBan" xml:space="preserve">
+    <value>封鎖的IP</value>
+  </data>
+  <data name="IpHistory" xml:space="preserve">
+    <value>IP歷史記錄</value>
+  </data>
+  <data name="IsApproved" xml:space="preserve">
+    <value>已核准</value>
+  </data>
+  <data name="IsSubscribed" xml:space="preserve">
+    <value>已訂閱</value>
+  </data>
+  <data name="LogErrors" xml:space="preserve">
+    <value>記錄錯誤</value>
+  </data>
+  <data name="Logging" xml:space="preserve">
+    <value>日誌</value>
+  </data>
+  <data name="LogMod" xml:space="preserve">
+    <value>管理日誌</value>
+  </data>
+  <data name="LogSecurity" xml:space="preserve">
+    <value>登錄安全活動</value>
+  </data>
+  <data name="MinimumTimeBetweenPosts" xml:space="preserve">
+    <value>發布文章之間的最小時間（秒）</value>
+  </data>
+  <data name="ModerationLog" xml:space="preserve">
+    <value>管理日誌</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>移動</value>
+  </data>
+  <data name="NewUserApprovedWithoutVerification" xml:space="preserve">
+    <value>新用戶將被核准無需驗證</value>
+  </data>
+  <data name="NewUserImageApprovedWithoutMod" xml:space="preserve">
+    <value>新用戶圖像核准無須管理</value>
+  </data>
+  <data name="Parsing" xml:space="preserve">
+    <value>解析</value>
+  </data>
+  <data name="PasswordNewOptional" xml:space="preserve">
+    <value>新密碼（可選）</value>
+  </data>
+  <data name="PopForumsAdmin" xml:space="preserve">
+    <value>POP 論壇管理</value>
+  </data>
+  <data name="PostsPerPage" xml:space="preserve">
+    <value>每頁主題</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>角色</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>安全</value>
+  </data>
+  <data name="SecurityLog" xml:space="preserve">
+    <value>安全日誌</value>
+  </data>
+  <data name="ServerTime" xml:space="preserve">
+    <value>伺服器時間</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>服務</value>
+  </data>
+  <data name="SessionLength" xml:space="preserve">
+    <value>Session長度（分鐘）</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="SubjectAndBodyNotEmpty" xml:space="preserve">
+    <value>主題和內文不能為空</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>標題</value>
+  </data>
+  <data name="TopicsPerPage" xml:space="preserve">
+    <value>每頁主題</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>向上</value>
+  </data>
+  <data name="UserAvatarMaxDim" xml:space="preserve">
+    <value>頭像最大尺寸</value>
+  </data>
+  <data name="UserDeleteWarning" xml:space="preserve">
+    <value>警告！刪除帳戶是無法復原的</value>
+  </data>
+  <data name="UserImageApproval" xml:space="preserve">
+    <value>用戶圖像核可</value>
+  </data>
+  <data name="UserImageMaxDim" xml:space="preserve">
+    <value>用戶圖片最大尺寸</value>
+  </data>
+  <data name="UserRoles" xml:space="preserve">
+    <value>用戶角色</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>可見</value>
+  </data>
+  <data name="AddNewForum" xml:space="preserve">
+    <value>新增一個新的論壇</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>內文</value>
+  </data>
+  <data name="BodyHtml" xml:space="preserve">
+    <value>HTML內文</value>
+  </data>
+  <data name="ClickToLoadMorePosts" xml:space="preserve">
+    <value>點擊載入更多主題</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>評論</value>
+  </data>
+  <data name="CommentsOptional" xml:space="preserve">
+    <value>評論（可選）</value>
+  </data>
+  <data name="CreateJunkWordButton" xml:space="preserve">
+    <value>建立垃圾字</value>
+  </data>
+  <data name="CreateNewReply" xml:space="preserve">
+    <value>建立您的回覆</value>
+  </data>
+  <data name="CreateNewRole" xml:space="preserve">
+    <value>建立新角色</value>
+  </data>
+  <data name="CreateNewTopic" xml:space="preserve">
+    <value>建立新主題</value>
+  </data>
+  <data name="DeleteAllErrors" xml:space="preserve">
+    <value>刪除所有的錯誤</value>
+  </data>
+  <data name="DeleteJunkWordButton" xml:space="preserve">
+    <value>刪除選定垃圾字</value>
+  </data>
+  <data name="DeleteSelectedRole" xml:space="preserve">
+    <value>刪除選定的角色</value>
+  </data>
+  <data name="EditPost" xml:space="preserve">
+    <value>編輯主題</value>
+  </data>
+  <data name="EmailUsersQueued" xml:space="preserve">
+    <value>寄給訂閱用戶的 Email 已加入佇列</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>結束日期</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>事件</value>
+  </data>
+  <data name="EventTime" xml:space="preserve">
+    <value>活動時間</value>
+  </data>
+  <data name="FavoriteMustBeLoggedIn" xml:space="preserve">
+    <value>您必須先登入才能查看喜愛的主題。</value>
+  </data>
+  <data name="FavoritesDontHave" xml:space="preserve">
+    <value>你沒有任何喜歡的主題。</value>
+  </data>
+  <data name="FavoriteTopics" xml:space="preserve">
+    <value>最喜歡的主題</value>
+  </data>
+  <data name="ForumMoveError" xml:space="preserve">
+    <value>而試圖移動論壇有未知錯誤</value>
+  </data>
+  <data name="ForumPermissionInstructions" xml:space="preserve">
+    <value>要刪除張貼或查看限制，從適當的框中刪除所有角色。</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>從E-mail地址</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="IncludeSignature" xml:space="preserve">
+    <value>包含簽名</value>
+  </data>
+  <data name="IndexingInterval" xml:space="preserve">
+    <value>索引間隔</value>
+  </data>
+  <data name="IP" xml:space="preserve">
+    <value>知識產權</value>
+  </data>
+  <data name="IsRunning" xml:space="preserve">
+    <value>正在運行</value>
+  </data>
+  <data name="JunkWords" xml:space="preserve">
+    <value>垃圾詞</value>
+  </data>
+  <data name="MarkForumRead" xml:space="preserve">
+    <value>標記論壇為已讀</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>資訊</value>
+  </data>
+  <data name="Millseconds" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="NamePosts" xml:space="preserve">
+    <value>{0}的主題</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>（可選）</value>
+  </data>
+  <data name="PermRoles" xml:space="preserve">
+    <value>管理員和主持人是您永久的角色，而不能被刪除。</value>
+  </data>
+  <data name="PostID" xml:space="preserve">
+    <value>資訊ID</value>
+  </data>
+  <data name="PostingRoles" xml:space="preserve">
+    <value>張貼角色</value>
+  </data>
+  <data name="PostNewTopic" xml:space="preserve">
+    <value>發表新主題</value>
+  </data>
+  <data name="PreviewTopic" xml:space="preserve">
+    <value>預覽主題</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="RemoveAll" xml:space="preserve">
+    <value>全部刪除</value>
+  </data>
+  <data name="SendingInterval" xml:space="preserve">
+    <value>發送間隔</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>SMTP密碼</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>端口（默認為25 ）</value>
+  </data>
+  <data name="SmtpServer" xml:space="preserve">
+    <value>SMTP伺服器</value>
+  </data>
+  <data name="SmtpUser" xml:space="preserve">
+    <value>SMTP用戶</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>開始日期</value>
+  </data>
+  <data name="SubmitNewTopic" xml:space="preserve">
+    <value>提交新話題</value>
+  </data>
+  <data name="SubmitReply" xml:space="preserve">
+    <value>提交回覆</value>
+  </data>
+  <data name="TopicID" xml:space="preserve">
+    <value>TopicID</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="UseEsmtpCred" xml:space="preserve">
+    <value>使用ESMTP憑證</value>
+  </data>
+  <data name="UserID" xml:space="preserve">
+    <value>帳號</value>
+  </data>
+  <data name="UserIDTarget" xml:space="preserve">
+    <value>目標帳號</value>
+  </data>
+  <data name="UserImageApprovalNotReq" xml:space="preserve">
+    <value>用戶上傳的圖片目前不需要核准</value>
+  </data>
+  <data name="UseSsl" xml:space="preserve">
+    <value>使用SSL</value>
+  </data>
+  <data name="ViewingRoles" xml:space="preserve">
+    <value>查看角色</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="CloseOnReply" xml:space="preserve">
+    <value>關閉回應</value>
+  </data>
+  <data name="FavoriteMake" xml:space="preserve">
+    <value>設為收藏</value>
+  </data>
+  <data name="FavoriteRemove" xml:space="preserve">
+    <value>從收藏夾中刪除</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>連結</value>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>管理者</value>
+  </data>
+  <data name="NameAvatar" xml:space="preserve">
+    <value>{0}的頭像</value>
+  </data>
+  <data name="NameLastEdit" xml:space="preserve">
+    <value>最後編輯: {0}</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>開</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>釘選</value>
+  </data>
+  <data name="PostReply" xml:space="preserve">
+    <value>發表回覆</value>
+  </data>
+  <data name="Quote" xml:space="preserve">
+    <value>引用</value>
+  </data>
+  <data name="RecentTopics" xml:space="preserve">
+    <value>最近的話題</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>回覆</value>
+  </data>
+  <data name="ShowMorePosts" xml:space="preserve">
+    <value>顯示更多主題</value>
+  </data>
+  <data name="ShowPreviousPosts" xml:space="preserve">
+    <value>顯示以前的主題</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>訂閱</value>
+  </data>
+  <data name="Undelete" xml:space="preserve">
+    <value>取消刪除</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>取消固定</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>封存</value>
+  </data>
+  <data name="NewPM" xml:space="preserve">
+    <value>新的私人資訊</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>沒有找到結果</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>發送</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>取消封存</value>
+  </data>
+  <data name="ViewArchivedMessages" xml:space="preserve">
+    <value>查看已歸檔的消息</value>
+  </data>
+  <data name="DisplayName" xml:space="preserve">
+    <value>顯示名稱</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="ErrorSettingUpDb" xml:space="preserve">
+    <value>設定數據庫有錯誤</value>
+  </data>
+  <data name="ForumReady" xml:space="preserve">
+    <value>您的論壇已準備就緒。</value>
+  </data>
+  <data name="ForumTitle" xml:space="preserve">
+    <value>論壇標題</value>
+  </data>
+  <data name="GoAdmin" xml:space="preserve">
+    <value>進入管理部分來完成設定您的論壇。</value>
+  </data>
+  <data name="InvalidLink" xml:space="preserve">
+    <value>該連結不再有效。</value>
+  </data>
+  <data name="NoDataConnection" xml:space="preserve">
+    <value>沒有數據連接</value>
+  </data>
+  <data name="PopForumsSetup" xml:space="preserve">
+    <value>POP Forums 設定</value>
+  </data>
+  <data name="SetupCantConnect" xml:space="preserve">
+    <value>安裝程序無法連接到數據存儲區。請檢查您的連接字符串和配置。</value>
+  </data>
+  <data name="SetupConnSuccess" xml:space="preserve">
+    <value>數據庫連接是成功的。請填寫下面的值</value>
+  </data>
+  <data name="SetupDatabase" xml:space="preserve">
+    <value>設定數據庫</value>
+  </data>
+  <data name="SetupFirstUser" xml:space="preserve">
+    <value>設定您的第一個用戶（將被授予管理員和主持人權）</value>
+  </data>
+  <data name="SubscribedTopics" xml:space="preserve">
+    <value>訂閱主題</value>
+  </data>
+  <data name="SubscribeLoggedIn" xml:space="preserve">
+    <value>您必須先登入才能查看訂閱的主題。</value>
+  </data>
+  <data name="SubscribeNone" xml:space="preserve">
+    <value>您還沒有訂閱任何主題。</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>成功！</value>
+  </data>
+  <data name="UnsubscribeTopic" xml:space="preserve">
+    <value>{0}是{1}退訂</value>
+  </data>
+  <data name="ArchivedNewPosts" xml:space="preserve">
+    <value>封存新主題</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>鎖定的主題</value>
+  </data>
+  <data name="ClosedPinned" xml:space="preserve">
+    <value>封閉的，固定的話題</value>
+  </data>
+  <data name="DeleteTopic" xml:space="preserve">
+    <value>刪除主題</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>第一</value>
+  </data>
+  <data name="ForgotPasswordEmail" xml:space="preserve">
+    <value>要在{0}重置您的密碼，請點擊此連結： {3} {3} {3} {2} {1}</value>
+  </data>
+  <data name="ForgotPasswordSubject" xml:space="preserve">
+    <value>您的密碼重置說明{0}</value>
+  </data>
+  <data name="ForumNoPost" xml:space="preserve">
+    <value>你不可以在這個論壇發佈</value>
+  </data>
+  <data name="ForumNoView" xml:space="preserve">
+    <value>您無權查看該論壇</value>
+  </data>
+  <data name="LessThanMinute" xml:space="preserve">
+    <value>不到一分鐘</value>
+  </data>
+  <data name="LoginToPost" xml:space="preserve">
+    <value>您必須登入後才能發表</value>
+  </data>
+  <data name="MinutesAgo" xml:space="preserve">
+    <value>{0}分鐘前</value>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="NewPosts" xml:space="preserve">
+    <value>新主題</value>
+  </data>
+  <data name="NewPostsClosed" xml:space="preserve">
+    <value>新主題已關閉</value>
+  </data>
+  <data name="NewPostsClosedPinned" xml:space="preserve">
+    <value>新主題已關閉已釘選</value>
+  </data>
+  <data name="NewPostsPinned" xml:space="preserve">
+    <value>新主題已釘選</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>下一個</value>
+  </data>
+  <data name="NoNewPosts" xml:space="preserve">
+    <value>沒有新主題</value>
+  </data>
+  <data name="NotLoggedIn" xml:space="preserve">
+    <value>您還沒有登入</value>
+  </data>
+  <data name="OneMinuteAgo" xml:space="preserve">
+    <value>1分鐘前</value>
+  </data>
+  <data name="Pinned" xml:space="preserve">
+    <value>已釘選</value>
+  </data>
+  <data name="PMCreateWarnings" xml:space="preserve">
+    <value>必須包含主旨、訊息或至少一個用戶</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>主題不能為空白</value>
+  </data>
+  <data name="PostWait" xml:space="preserve">
+    <value>你必須等待{0}秒才能再次發表新的主題</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>以前</value>
+  </data>
+  <data name="RegisterEmailSubject" xml:space="preserve">
+    <value>論壇註冊 - {0}</value>
+  </data>
+  <data name="RegisterEmailThankYou" xml:space="preserve">
+    <value>感謝您與{0}註冊{2} {2} {1}</value>
+  </data>
+  <data name="RegisterEmailThankYouVerify" xml:space="preserve">
+    <value>感謝您與{0}註冊。請點擊此連結以確認您的註冊： {5} {5} {1} {5} {5} 如果你不能按照這個連結，請訪問以下頁面，剪切和粘貼的確認代碼： {5} {5}友情連結： {2} {5} 代碼： {3} {5} {5} {4}</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>設定已儲存</value>
+  </data>
+  <data name="SubscribedEmailBody" xml:space="preserve">
+    <value>一個或多個回應已發佈至下列線程{0} ： {5} {5} {1} {5} {2} {5} {5}要停止接收通知請訪問此連結： {5} {3} {5} {5} {4}</value>
+  </data>
+  <data name="SubscribedEmailSubject" xml:space="preserve">
+    <value>新回覆： {0}</value>
+  </data>
+  <data name="TodayTime" xml:space="preserve">
+    <value>今天， {0}</value>
+  </data>
+  <data name="TopicNotExist" xml:space="preserve">
+    <value>該主題不存在</value>
+  </data>
+  <data name="YesterdayTime" xml:space="preserve">
+    <value>昨天， {0}</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>載入中</value>
+  </data>
+  <data name="Voted" xml:space="preserve">
+    <value>投票</value>
+  </data>
+  <data name="VoteUpPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt; 投票給主題： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+  </data>
+  <data name="ScoringGame" xml:space="preserve">
+    <value>得分王</value>
+  </data>
+  <data name="Awards" xml:space="preserve">
+    <value>獎項</value>
+  </data>
+  <data name="EventDefinitions" xml:space="preserve">
+    <value>事件定義</value>
+  </data>
+  <data name="AwardDefinitions" xml:space="preserve">
+    <value>獎項定義</value>
+  </data>
+  <data name="ManualEvent" xml:space="preserve">
+    <value>手動事件</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ActivityFeed" xml:space="preserve">
+    <value>活動資訊</value>
+  </data>
+  <data name="NewReplyPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt;的所做的主題在後： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+  </data>
+  <data name="NewPostPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt;的開始一個新的話題： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>外部登入</value>
+  </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>利用現有的論壇帳號</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>該登入已過期或無效</value>
+  </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>外部登入被禁用</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>你有沒有註冊的外部登入</value>
+  </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>永久删除</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>預覽</value>
+  </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>問一個問題</value>
+  </data>
+  <data name="Answers" xml:space="preserve">
+    <value>答案</value>
+  </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>选择答案</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>邮政的答案</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; 选择的问题的答案： &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>提交答案</value>
+  </data>
+</root>

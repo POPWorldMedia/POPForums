@@ -1,0 +1,1246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account" xml:space="preserve">
+    <value>Акаунт</value>
+  </data>
+  <data name="AccountCreated" xml:space="preserve">
+    <value>Акаунт створений</value>
+  </data>
+  <data name="AccountReady" xml:space="preserve">
+    <value>Ваш акаунт був створений, і ви можете почати роботу з форумом.</value>
+  </data>
+  <data name="AccountReadyCheckEmail" xml:space="preserve">
+    <value>Будь ласка перевірте вашу електронну скриньку на наявність підтверджуючого повідомлення для початку користування форумом.</value>
+  </data>
+  <data name="AccountVerified" xml:space="preserve">
+    <value>Ваш акаунт був підтверджений</value>
+  </data>
+  <data name="AlreadyCreatedAccount" xml:space="preserve">
+    <value>Ви вже є залоговані і маєте акаунт.</value>
+  </data>
+  <data name="AsYouWouldLikeItToAppear" xml:space="preserve">
+    <value>(Як би ви хотіли, щоб він з'явився)</value>
+  </data>
+  <data name="AtLeastSixChar" xml:space="preserve">
+    <value>(як мінімум 6 символів)</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value />
+    <comment>context: "Last post: 12am by Jeff"</comment>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>Створити Акаунт</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Створити акаунт</value>
+  </data>
+  <data name="EditYourProfile" xml:space="preserve">
+    <value>Редагувати ваш профіль</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailProblemAccount" xml:space="preserve">
+    <value>Відбулась проблема з надсиланням листа з перевіркою електронної пошти:</value>
+  </data>
+  <data name="Favorites" xml:space="preserve">
+    <value>Улюблені</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>На жаль, у вас немає дозволу для перегляду цього.</value>
+  </data>
+  <data name="Forums" xml:space="preserve">
+    <value>Форуми</value>
+  </data>
+  <data name="HaveReadTOS" xml:space="preserve">
+    <value>Я прочитав і згоден з умовами надання послуг</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Останній</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Вхід</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="MarkAllForumsRead" xml:space="preserve">
+    <value>Позначити всі форуми як прочитані</value>
+  </data>
+  <data name="MyBirthdayIsOnOrBefore" xml:space="preserve">
+    <value>Мій день народження {0}</value>
+    <comment>where {0} is a date</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
+  <data name="NeedToVerifyExistingAccount" xml:space="preserve">
+    <value>Потрібно підтвердити існуючий акаунт?</value>
+  </data>
+  <data name="PageNotFound" xml:space="preserve">
+    <value>Сторінку не знайдено</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
+  <data name="PrivateMessages" xml:space="preserve">
+    <value>Приватні повідомлення</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>Останні</value>
+  </data>
+  <data name="RegisteredUsers" xml:space="preserve">
+    <value>Зареєстровані користувачі</value>
+  </data>
+  <data name="RetypePassword" xml:space="preserve">
+    <value>Повторіть пароль</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="SubscribeToList" xml:space="preserve">
+    <value>Підписатися на розсилку</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Підписки</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Загальні положення та умови</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Часова зона</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Теми</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Сума</value>
+  </data>
+  <data name="TotalPosts" xml:space="preserve">
+    <value>Загальна кількість повідомлень</value>
+  </data>
+  <data name="TotalTopics" xml:space="preserve">
+    <value>Загальна кількість тем</value>
+  </data>
+  <data name="UseDaylight" xml:space="preserve">
+    <value>Використовувати N.America/Europe Daylight Saving</value>
+  </data>
+  <data name="UsersOnline" xml:space="preserve">
+    <value>Користувачі онлайн</value>
+  </data>
+  <data name="MustBe13" xml:space="preserve">
+    <value>Ви повинні бути 13-річним або старше, щоб зареєструватися</value>
+  </data>
+  <data name="MustAcceptTOS" xml:space="preserve">
+    <value>Ви повинні прийняти умови надання послуг</value>
+  </data>
+  <data name="RetypeYourPassword" xml:space="preserve">
+    <value>Введіть пароль ще раз</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Ім'я потрібно</value>
+  </data>
+  <data name="NameInUse" xml:space="preserve">
+    <value>Дане ім'я вже використовується</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-mail потрібний</value>
+  </data>
+  <data name="ValidEmailAddressRequired" xml:space="preserve">
+    <value>Дійсна адреса електронної пошти потрібна</value>
+  </data>
+  <data name="EmailInUse" xml:space="preserve">
+    <value>Дана електронна скринька вже використовується</value>
+  </data>
+  <data name="EmailBanned" xml:space="preserve">
+    <value>Даний e-mail був забанений</value>
+  </data>
+  <data name="IPBanned" xml:space="preserve">
+    <value>Ваша IP адреса була забанена</value>
+  </data>
+  <data name="RetypePasswordMustMatch" xml:space="preserve">
+    <value>Введені паролі не співпадають</value>
+  </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>Редагувати Акаунт</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Редагувати Профіль</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>Будь ласка, введіть код підтвердження</value>
+  </data>
+  <data name="ForumHomePage" xml:space="preserve">
+    <value>Домашня сторінка форуму</value>
+  </data>
+  <data name="MustBeRegisteredToEditAccount" xml:space="preserve">
+    <value>Ви повинні бути зареєстровані та залоговані щоб редагувати ваш акаунт.</value>
+  </data>
+  <data name="NoUserFoundWithEmail" xml:space="preserve">
+    <value>Не знайдено користувача з таким e-mail</value>
+  </data>
+  <data name="SendEmailWithNewCodeButton" xml:space="preserve">
+    <value>Надіслати E-mail З Новим Кодом</value>
+  </data>
+  <data name="VerificationEmailSent" xml:space="preserve">
+    <value>Підтвердження було надіслане на вашу скриньку</value>
+  </data>
+  <data name="VerificationFailure" xml:space="preserve">
+    <value>Підтвердження провалено</value>
+  </data>
+  <data name="VerificationIfYouNeed" xml:space="preserve">
+    <value>Якщо вам потрібен новий код підтвердження, введіть свою адресу електронної пошти тут</value>
+  </data>
+  <data name="VerificationLinkBad" xml:space="preserve">
+    <value>Вибачте, підтверджуюче посилання, за яким ви пробуєте перейти не є коректне.</value>
+  </data>
+  <data name="VerifyAccount" xml:space="preserve">
+    <value>Підтвердити Акаунт</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Підтвердити Код</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Аватарка</value>
+  </data>
+  <data name="AvatarDelete" xml:space="preserve">
+    <value>Видалити цей аватар</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Змінити E-mail</value>
+  </data>
+  <data name="ChangeEmailButton" xml:space="preserve">
+    <value>Змінити e-mail і надіслати код</value>
+  </data>
+  <data name="ChangeEmailConsequence" xml:space="preserve">
+    <value>Зміна вашої електронної пошти викличе генерацію нового коду підтвердження, який буде надісланий на нову адресу. Ви не будете мати змогу залишати повідомлення, поки ви не підтвердите вашу електронну адресу з новим кодом.</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Змінити Пароль</value>
+  </data>
+  <data name="ChangeYourEmailPassword" xml:space="preserve">
+    <value>Змінити вашу електронну скриньку або пароль</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Дата Народження</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Деталі</value>
+  </data>
+  <data name="EmailChangeSuccess" xml:space="preserve">
+    <value>Ваш e-mail був успішно змінений</value>
+  </data>
+  <data name="EmailNew" xml:space="preserve">
+    <value>Нова e-mail адреса</value>
+  </data>
+  <data name="EmailNewRetype" xml:space="preserve">
+    <value>Повторіть нову e-mail адресу</value>
+  </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>E-mail не було знайдено</value>
+  </data>
+  <data name="EmailSent" xml:space="preserve">
+    <value>Ваш e-mail був відправлений</value>
+  </data>
+  <data name="EmailsMustMatch" xml:space="preserve">
+    <value>Дані e-mail адреси не співпадають</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>E-mail Користувача</value>
+  </data>
+  <data name="ForcePlainTextBox" xml:space="preserve">
+    <value>Прості текстові поля</value>
+  </data>
+  <data name="ForgotInstructions" xml:space="preserve">
+    <value>Введіть адресу електронної пошти, пов'язану з вашим аккаунтом, щоб отримати інструкції по зміні пароля:</value>
+  </data>
+  <data name="ForgotInstructionsSent" xml:space="preserve">
+    <value>Інструкції були надіслані на електронну скриньку</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Забули Пароль</value>
+  </data>
+  <data name="ForgotPasswordQuestion" xml:space="preserve">
+    <value>Забули пароль?</value>
+  </data>
+  <data name="HideVanity" xml:space="preserve">
+    <value>Hide vanity</value>
+  </data>
+  <data name="In" xml:space="preserve">
+    <value>в</value>
+    <comment>context: started by Jeff in General Forum</comment>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>Зареєструвався</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="LoginAlready" xml:space="preserve">
+    <value>Ви вже залоговані.</value>
+  </data>
+  <data name="LoginBad" xml:space="preserve">
+    <value>Погана скринька або пароль</value>
+  </data>
+  <data name="ManagePhotos" xml:space="preserve">
+    <value>Керування фотографіями</value>
+  </data>
+  <data name="ManageYourPhotos" xml:space="preserve">
+    <value>Керування вашими фотографіями</value>
+  </data>
+  <data name="NewPasswordSaved" xml:space="preserve">
+    <value>Новий пароль збережено</value>
+  </data>
+  <data name="NotRegisteredQuestion" xml:space="preserve">
+    <value>Не зареєстровані?</value>
+  </data>
+  <data name="OldPasswordIncorrect" xml:space="preserve">
+    <value>Старий пароль невірний</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Опції</value>
+  </data>
+  <data name="PasswordNew" xml:space="preserve">
+    <value>Новий пароль</value>
+  </data>
+  <data name="PasswordNewRetype" xml:space="preserve">
+    <value>Підтвердіть ваш новий пароль</value>
+  </data>
+  <data name="PasswordOld" xml:space="preserve">
+    <value>Старий пароль</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Скинути Пароль</value>
+  </data>
+  <data name="PasswordResetLinkInvalid" xml:space="preserve">
+    <value>Дане посилання на скидання паролю не є коректне.</value>
+  </data>
+  <data name="PasswordResetNote" xml:space="preserve">
+    <value>Ваш новий пароль активний і ви тепер увійшли в систему</value>
+  </data>
+  <data name="PasswordResetSuccess" xml:space="preserve">
+    <value>Скидання Паролю Пройшло Успішно</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Фото</value>
+  </data>
+  <data name="PhotoDelete" xml:space="preserve">
+    <value>Видалити це фото</value>
+  </data>
+  <data name="PhotoNotApproved" xml:space="preserve">
+    <value>(дана картинка не була підтверджена адміністратором)</value>
+  </data>
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>Профіль збережено</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Запамятати мене?</value>
+  </data>
+  <data name="Replies" xml:space="preserve">
+    <value>Відповіді</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SendEmailButton" xml:space="preserve">
+    <value>Надіслати E-mail</value>
+  </data>
+  <data name="SendPM" xml:space="preserve">
+    <value>Надіслати Приватне Повідомлення</value>
+  </data>
+  <data name="ShowProfileDetails" xml:space="preserve">
+    <value>Показати деталі вашого профілю (але не e-mail)</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Підпис</value>
+  </data>
+  <data name="StartedBy" xml:space="preserve">
+    <value>Автор</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="UploadNew" xml:space="preserve">
+    <value>Завантажити нову</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Користувача не знайдено</value>
+  </data>
+  <data name="Views" xml:space="preserve">
+    <value>Переглядів</value>
+  </data>
+  <data name="Web" xml:space="preserve">
+    <value>Веб</value>
+  </data>
+  <data name="WebVisit" xml:space="preserve">
+    <value>Відвідати сайт користувача</value>
+  </data>
+  <data name="YourIP" xml:space="preserve">
+    <value>Ваша IP адреса</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>День Народження</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профіль</value>
+  </data>
+  <data name="SendNameEmail" xml:space="preserve">
+    <value>Надіслати {0} an e-mail message</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="SendNamePM" xml:space="preserve">
+    <value>Надіслати {0} приватне повідомлення</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Відписатись</value>
+  </data>
+  <data name="UnsubscribeFail" xml:space="preserve">
+    <value>Відписування від теми невдалось</value>
+  </data>
+  <data name="UnsubscribeLinkBad" xml:space="preserve">
+    <value>Дане посилання не є правильним.</value>
+  </data>
+  <data name="UnsubscribeNote" xml:space="preserve">
+    <value>Ваш запит на відписування прийнято для обробки. Ви можете підписатись знову,залогувавшись і перейшовши на сторінку вашого акаунта.</value>
+  </data>
+  <data name="AddForum" xml:space="preserve">
+    <value>Додати Форум</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>Додати Новий</value>
+  </data>
+  <data name="AllowImages" xml:space="preserve">
+    <value>Дозволити зображення</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>В архіві</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Ви впевнені?</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Забанити</value>
+  </data>
+  <data name="BanRemove" xml:space="preserve">
+    <value>Розбанити</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="CategoryEditTitle" xml:space="preserve">
+    <value>Редагувати Заголовок Категорії</value>
+  </data>
+  <data name="CategoryMoveError" xml:space="preserve">
+    <value>Була невідома помилка при спробі перемістити категорію</value>
+  </data>
+  <data name="CensorReplacementChar" xml:space="preserve">
+    <value>Символи заміни цензури</value>
+  </data>
+  <data name="CensorWords" xml:space="preserve">
+    <value>Цензурні слова</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteAndBanButton" xml:space="preserve">
+    <value>Видалити і Забанити Користувача</value>
+  </data>
+  <data name="DeleteUserButton" xml:space="preserve">
+    <value>Видалити Користувача</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Вниз</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="EditForum" xml:space="preserve">
+    <value>Редагувати Форум</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Редагувати Користувача</value>
+  </data>
+  <data name="EmailBan" xml:space="preserve">
+    <value>Забанити E-mail</value>
+  </data>
+  <data name="EmailIpBan" xml:space="preserve">
+    <value>E-mail/IP Бан</value>
+  </data>
+  <data name="EmailNewOptional" xml:space="preserve">
+    <value>Новий e-mail (бажано)</value>
+  </data>
+  <data name="EmailUsers" xml:space="preserve">
+    <value>E-mail Користувачів</value>
+  </data>
+  <data name="ErrorLog" xml:space="preserve">
+    <value>ЛогПомилок</value>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>Форум</value>
+  </data>
+  <data name="ForumAdapter" xml:space="preserve">
+    <value>Forum Adapter (optional, use "Namespace.Type, AssemblyName")</value>
+  </data>
+  <data name="ForumHome" xml:space="preserve">
+    <value>Домашня Форуму</value>
+  </data>
+  <data name="ForumPermisions" xml:space="preserve">
+    <value>Дозволи форуму</value>
+  </data>
+  <data name="ForumSettings" xml:space="preserve">
+    <value>Налаштування Форуму</value>
+  </data>
+  <data name="ForumsUncat" xml:space="preserve">
+    <value>Форуми без категорій</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>Загальні Налаштування</value>
+  </data>
+  <data name="IpBan" xml:space="preserve">
+    <value>IP Бан</value>
+  </data>
+  <data name="IpHistory" xml:space="preserve">
+    <value>IP Історія</value>
+  </data>
+  <data name="IsApproved" xml:space="preserve">
+    <value>Є підтверджений</value>
+  </data>
+  <data name="IsSubscribed" xml:space="preserve">
+    <value>Є підписаний</value>
+  </data>
+  <data name="LogErrors" xml:space="preserve">
+    <value>Помилки логування</value>
+  </data>
+  <data name="Logging" xml:space="preserve">
+    <value>Логування</value>
+  </data>
+  <data name="LogMod" xml:space="preserve">
+    <value>Лог модерації</value>
+  </data>
+  <data name="LogSecurity" xml:space="preserve">
+    <value>Лог дій безпеки</value>
+  </data>
+  <data name="MinimumTimeBetweenPosts" xml:space="preserve">
+    <value>Мінімальний час між відповідями (секунд)</value>
+  </data>
+  <data name="ModerationLog" xml:space="preserve">
+    <value>Лог Модерації</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Перемістити</value>
+  </data>
+  <data name="NewUserApprovedWithoutVerification" xml:space="preserve">
+    <value>Новий користувач затверджений без підтвердження</value>
+  </data>
+  <data name="NewUserImageApprovedWithoutMod" xml:space="preserve">
+    <value>Нове зображення користувача затверджене без модерації</value>
+  </data>
+  <data name="Parsing" xml:space="preserve">
+    <value>Розбір</value>
+  </data>
+  <data name="PasswordNewOptional" xml:space="preserve">
+    <value>Новий пароль (бажано)</value>
+  </data>
+  <data name="PopForumsAdmin" xml:space="preserve">
+    <value>POP Forums Administration</value>
+  </data>
+  <data name="PostsPerPage" xml:space="preserve">
+    <value>Повідомлень на сторінку</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ролі</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Безпека</value>
+  </data>
+  <data name="SecurityLog" xml:space="preserve">
+    <value>Лог Безпеки</value>
+  </data>
+  <data name="ServerTime" xml:space="preserve">
+    <value>Час Серверу</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Послуги</value>
+  </data>
+  <data name="SessionLength" xml:space="preserve">
+    <value>Довжина сесії (хвилини)</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="SubjectAndBodyNotEmpty" xml:space="preserve">
+    <value>Тема і тіло не повинні бути порожніми</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="TopicsPerPage" xml:space="preserve">
+    <value>Тем на сторінку</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Вгору</value>
+  </data>
+  <data name="UserAvatarMaxDim" xml:space="preserve">
+    <value>Максимальний розмір картинки користувача</value>
+  </data>
+  <data name="UserDeleteWarning" xml:space="preserve">
+    <value>УВАГА! Видалення акаунту є необоротнє</value>
+  </data>
+  <data name="UserImageApproval" xml:space="preserve">
+    <value>Підтвердження Картинки Користувача</value>
+  </data>
+  <data name="UserImageMaxDim" xml:space="preserve">
+    <value>Максимальний розмір картинки користувача</value>
+  </data>
+  <data name="UserRoles" xml:space="preserve">
+    <value>Ролі Користувача</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>Видимий</value>
+  </data>
+  <data name="AddNewForum" xml:space="preserve">
+    <value>Додати новий форум</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>Тіло</value>
+  </data>
+  <data name="BodyHtml" xml:space="preserve">
+    <value>HTML Тіло</value>
+  </data>
+  <data name="ClickToLoadMorePosts" xml:space="preserve">
+    <value>Натисніть щоб завантажити нові повідомлення перед вашою відповіддю</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Коментар</value>
+  </data>
+  <data name="CommentsOptional" xml:space="preserve">
+    <value>Коментарі (за бажанням)</value>
+  </data>
+  <data name="CreateJunkWordButton" xml:space="preserve">
+    <value>Створити New Junk Word</value>
+  </data>
+  <data name="CreateNewReply" xml:space="preserve">
+    <value>Створити вашу відповідь</value>
+  </data>
+  <data name="CreateNewRole" xml:space="preserve">
+    <value>Створити Нову Роль</value>
+  </data>
+  <data name="CreateNewTopic" xml:space="preserve">
+    <value>Створити Нову Тему</value>
+  </data>
+  <data name="DeleteAllErrors" xml:space="preserve">
+    <value>Видалити всі помилки</value>
+  </data>
+  <data name="DeleteJunkWordButton" xml:space="preserve">
+    <value>Видалити Вибраний Junk Word</value>
+  </data>
+  <data name="DeleteSelectedRole" xml:space="preserve">
+    <value>Видалити Вибрану Роль</value>
+  </data>
+  <data name="EditPost" xml:space="preserve">
+    <value>Редагувати Повідомлення</value>
+  </data>
+  <data name="EmailUsersQueued" xml:space="preserve">
+    <value>E-mail queued to subscribed users.</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Кінцева дата</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Подія</value>
+  </data>
+  <data name="EventTime" xml:space="preserve">
+    <value>Час Події</value>
+  </data>
+  <data name="FavoriteMustBeLoggedIn" xml:space="preserve">
+    <value>Ви повинні залогуватись щоб переглядати улюблені теми.</value>
+  </data>
+  <data name="FavoritesDontHave" xml:space="preserve">
+    <value>У вас немає улюблених тем.</value>
+  </data>
+  <data name="FavoriteTopics" xml:space="preserve">
+    <value>Улюблені Теми</value>
+  </data>
+  <data name="ForumMoveError" xml:space="preserve">
+    <value>Відбулась невідома помилка при спробі перемістити форум</value>
+  </data>
+  <data name="ForumPermissionInstructions" xml:space="preserve">
+    <value>Для видалення публікації або обмежень перегляду, видаліть всі ролі з відповідної скриньки.</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>З e-mail адреси</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="IncludeSignature" xml:space="preserve">
+    <value>Додати підпис</value>
+  </data>
+  <data name="IndexingInterval" xml:space="preserve">
+    <value>Інтервал індексу</value>
+  </data>
+  <data name="IP" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="IsRunning" xml:space="preserve">
+    <value>Is Running</value>
+  </data>
+  <data name="JunkWords" xml:space="preserve">
+    <value>Junk Words</value>
+  </data>
+  <data name="MarkForumRead" xml:space="preserve">
+    <value>Позначити форум як прочитаний</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
+  <data name="Millseconds" xml:space="preserve">
+    <value>Мілісекунд</value>
+  </data>
+  <data name="NamePosts" xml:space="preserve">
+    <value>Повідомлення {0}</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>(бажано)</value>
+  </data>
+  <data name="PermRoles" xml:space="preserve">
+    <value>Адміністратор і Модератор є постійними ролями, і не можуть бути видалені.</value>
+  </data>
+  <data name="PostID" xml:space="preserve">
+    <value>ID повідомлення </value>
+  </data>
+  <data name="PostingRoles" xml:space="preserve">
+    <value>Posting Roles</value>
+  </data>
+  <data name="PostNewTopic" xml:space="preserve">
+    <value>Створити нову тему</value>
+  </data>
+  <data name="PreviewTopic" xml:space="preserve">
+    <value>Попередній перегляд теми</value>
+    <comment>preview the verb, not adjective</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="RemoveAll" xml:space="preserve">
+    <value>Видалити Все</value>
+  </data>
+  <data name="SendingInterval" xml:space="preserve">
+    <value>Інтервал Відправки</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>SMTP Пароль</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>Порт (25 є за замовчуванням)</value>
+  </data>
+  <data name="SmtpServer" xml:space="preserve">
+    <value>SMTP Сервер</value>
+  </data>
+  <data name="SmtpUser" xml:space="preserve">
+    <value>SMTP Користувач</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Дата початку</value>
+  </data>
+  <data name="SubmitNewTopic" xml:space="preserve">
+    <value>Додати нову тему</value>
+  </data>
+  <data name="SubmitReply" xml:space="preserve">
+    <value>Надіслати відповідь</value>
+  </data>
+  <data name="TopicID" xml:space="preserve">
+    <value>ID Теми</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="UseEsmtpCred" xml:space="preserve">
+    <value>Використовувати ESMTP for credentials</value>
+  </data>
+  <data name="UserID" xml:space="preserve">
+    <value>ID користувача</value>
+  </data>
+  <data name="UserIDTarget" xml:space="preserve">
+    <value>Target UserID</value>
+  </data>
+  <data name="UserImageApprovalNotReq" xml:space="preserve">
+    <value>Завантажені картинки користувача зараз не потребують схвалення.</value>
+  </data>
+  <data name="UseSsl" xml:space="preserve">
+    <value>Використовувати SSL</value>
+  </data>
+  <data name="ViewingRoles" xml:space="preserve">
+    <value>Перегляд Ролей</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="CloseOnReply" xml:space="preserve">
+    <value>Закрити після відповіді</value>
+  </data>
+  <data name="FavoriteMake" xml:space="preserve">
+    <value>Додати до Улюблених</value>
+  </data>
+  <data name="FavoriteRemove" xml:space="preserve">
+    <value>Видалити з Улюблених</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Посилання</value>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>Модератор</value>
+  </data>
+  <data name="NameAvatar" xml:space="preserve">
+    <value>Аватарка {0}</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="NameLastEdit" xml:space="preserve">
+    <value>Редаговане {0}</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Відкрити</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>Закріпити</value>
+  </data>
+  <data name="PostReply" xml:space="preserve">
+    <value>Дати відповідь</value>
+  </data>
+  <data name="Quote" xml:space="preserve">
+    <value>Цитата</value>
+  </data>
+  <data name="RecentTopics" xml:space="preserve">
+    <value>Останні теми</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Відповідь</value>
+  </data>
+  <data name="ShowMorePosts" xml:space="preserve">
+    <value>Показати більше повідомлень</value>
+  </data>
+  <data name="ShowPreviousPosts" xml:space="preserve">
+    <value>Показати попередні повідомлення</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Підписатись</value>
+  </data>
+  <data name="Undelete" xml:space="preserve">
+    <value>Відновити</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>Відкріпити</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Архів</value>
+  </data>
+  <data name="NewPM" xml:space="preserve">
+    <value>Нове приватне повідомлення</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Результатів не знайдено</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Надіслати</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Перенести з архіву</value>
+  </data>
+  <data name="ViewArchivedMessages" xml:space="preserve">
+    <value>Переглянути Повідомлення в Архіві</value>
+  </data>
+  <data name="DisplayName" xml:space="preserve">
+    <value>Показати Ім'я</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="ErrorSettingUpDb" xml:space="preserve">
+    <value>Сталась помилка налаштовування вашої бази даних</value>
+  </data>
+  <data name="ForumReady" xml:space="preserve">
+    <value>Ваш форум готовий до використання.</value>
+  </data>
+  <data name="ForumTitle" xml:space="preserve">
+    <value>Заголовок форуму</value>
+  </data>
+  <data name="GoAdmin" xml:space="preserve">
+    <value>Перейдіть на адмін панель щоб завершити налаштування вашого Форуму.</value>
+  </data>
+  <data name="InvalidLink" xml:space="preserve">
+    <value>Дане посилання вже не є коректним.</value>
+  </data>
+  <data name="NoDataConnection" xml:space="preserve">
+    <value>Немає Підключення До Даних</value>
+  </data>
+  <data name="PopForumsSetup" xml:space="preserve">
+    <value>POP Forums Setup</value>
+  </data>
+  <data name="SetupCantConnect" xml:space="preserve">
+    <value>Програма установки не може підключитися до сховища даних. Будь ласка, перевірте ваш рядок підключення та налаштування.</value>
+  </data>
+  <data name="SetupConnSuccess" xml:space="preserve">
+    <value>З'єднання з базою даних було успішне. Будь ласка, заповніть наступні поля, щоб почати роботу</value>
+  </data>
+  <data name="SetupDatabase" xml:space="preserve">
+    <value>Налаштування бази даних</value>
+  </data>
+  <data name="SetupFirstUser" xml:space="preserve">
+    <value>Налаштуйте вашого першого користувача (який буде наділаний привілегіями адміна і модератора)</value>
+  </data>
+  <data name="SubscribedTopics" xml:space="preserve">
+    <value>Підписані теми</value>
+  </data>
+  <data name="SubscribeLoggedIn" xml:space="preserve">
+    <value>Ви повинні увійти в систему для перегляду підписаних тем.</value>
+  </data>
+  <data name="SubscribeNone" xml:space="preserve">
+    <value>Ви не підписані на жодну тему.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Успіх!</value>
+  </data>
+  <data name="UnsubscribeTopic" xml:space="preserve">
+    <value>{0} відписався від {1}</value>
+    <comment>{0} is a name, {1} is a topic title</comment>
+  </data>
+  <data name="ArchivedNewPosts" xml:space="preserve">
+    <value>В архіві з новими повідомленнями</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрита тема</value>
+  </data>
+  <data name="ClosedPinned" xml:space="preserve">
+    <value>Закрита, прикріплена тема</value>
+  </data>
+  <data name="DeleteTopic" xml:space="preserve">
+    <value>Видалити Тему</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>Перший</value>
+  </data>
+  <data name="ForgotPasswordEmail" xml:space="preserve">
+    <value>Щоб скинути ваш пароль на {0}, будь ласка перейдіть за посиланням:{3}{1}{3}{3}{2}</value>
+    <comment>{0}=title of forum, {1}=email link, {2}=signature, {3}=new line</comment>
+  </data>
+  <data name="ForgotPasswordSubject" xml:space="preserve">
+    <value>Інструкції скидання вашого паролю для {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="ForumNoPost" xml:space="preserve">
+    <value>Ви не можете писати в цьому форумі</value>
+  </data>
+  <data name="ForumNoView" xml:space="preserve">
+    <value>Ви не можете переглядати цей форум</value>
+  </data>
+  <data name="LessThanMinute" xml:space="preserve">
+    <value>Менше хвилини назад</value>
+  </data>
+  <data name="LoginToPost" xml:space="preserve">
+    <value>Вам потрібно залогінитись аби відповісти</value>
+  </data>
+  <data name="MinutesAgo" xml:space="preserve">
+    <value>{0} хвилин назад</value>
+    <comment>{0} is a number</comment>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>Більше</value>
+  </data>
+  <data name="NewPosts" xml:space="preserve">
+    <value>Нові повідомлення</value>
+  </data>
+  <data name="NewPostsClosed" xml:space="preserve">
+    <value>Нові повідомлення, закрита тема</value>
+  </data>
+  <data name="NewPostsClosedPinned" xml:space="preserve">
+    <value>Нові повідомлення, закрита і прикріплена тема</value>
+  </data>
+  <data name="NewPostsPinned" xml:space="preserve">
+    <value>Нові повідомлення, прикріплена тема</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Наступний</value>
+  </data>
+  <data name="NoNewPosts" xml:space="preserve">
+    <value>Ніяких нових повідомлень</value>
+  </data>
+  <data name="NotLoggedIn" xml:space="preserve">
+    <value>Ви не залоговані</value>
+  </data>
+  <data name="OneMinuteAgo" xml:space="preserve">
+    <value>1 хвилину назад</value>
+  </data>
+  <data name="Pinned" xml:space="preserve">
+    <value>Закріпити тему</value>
+  </data>
+  <data name="PMCreateWarnings" xml:space="preserve">
+    <value>Повинна включати заголовок, повідомлення та хоча б одного користувача</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>Ви не можете відправити пусте повідомлення</value>
+  </data>
+  <data name="PostWait" xml:space="preserve">
+    <value>Вам потрібно почекати {0} секунд між створенням повідомлень і не можете повторювати ваше попереднє повідомлення</value>
+    <comment>{0} is a number for seconds</comment>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Попередній</value>
+  </data>
+  <data name="RegisterEmailSubject" xml:space="preserve">
+    <value>Реєстрація на форумі - {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="RegisterEmailThankYou" xml:space="preserve">
+    <value>Дякуємо за реєстрацію на {0}.{2}{2}{1}</value>
+    <comment>{0}=name of forum, {1}=forum link, {2}=new line</comment>
+  </data>
+  <data name="RegisterEmailThankYouVerify" xml:space="preserve">
+    <value>Дякуємо за реєстрацію на {0}. Будь ласка підтвердіть вашу реєстрацію за наступним посиланням:{5}{5}{1} {5}{5}Якщо ви не можете перейти за вказаним посиланням, будь ласка відвідайте наступну сторінку і скопіюйте підтверджуючий код:{5}{5}Посилання: {2} {5}Код: {3} {5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=auth link, {2}=verify link, {3}=auth code, {4}=sig, {5}new line</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування збережено</value>
+  </data>
+  <data name="SubscribedEmailBody" xml:space="preserve">
+    <value>Одна або більше відповідей було додано в гілці {0}:{5}{5}{1}{5}{2}{5}{5}Щоб перестати отримувати сповіщення відвідайте наступне посилання:{5}{3}{5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
+  </data>
+  <data name="SubscribedEmailSubject" xml:space="preserve">
+    <value>Нові відповіді: {0}</value>
+    <comment>{0}=topic title</comment>
+  </data>
+  <data name="TodayTime" xml:space="preserve">
+    <value>Сьогодні, {0}</value>
+    <comment>{0} is a time like 1:43pm</comment>
+  </data>
+  <data name="TopicNotExist" xml:space="preserve">
+    <value>Така тема не існує</value>
+  </data>
+  <data name="YesterdayTime" xml:space="preserve">
+    <value>Вчора, {0}</value>
+    <comment>{0} a time like 1:43pm</comment>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Завантаження</value>
+  </data>
+  <data name="Voted" xml:space="preserve">
+    <value>Проголосований</value>
+  </data>
+  <data name="VoteUpPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt;проголосував за повідомлення в темі: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="ScoringGame" xml:space="preserve">
+    <value>Scoring game</value>
+  </data>
+  <data name="Awards" xml:space="preserve">
+    <value>Нагорода</value>
+  </data>
+  <data name="EventDefinitions" xml:space="preserve">
+    <value>Опис Події</value>
+  </data>
+  <data name="AwardDefinitions" xml:space="preserve">
+    <value>Опис Нагороди</value>
+  </data>
+  <data name="ManualEvent" xml:space="preserve">
+    <value>Керівництво подіями</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Жоден</value>
+  </data>
+  <data name="ActivityFeed" xml:space="preserve">
+    <value>Стрічка Актовиності</value>
+  </data>
+  <data name="NewReplyPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; зробив повідомлення в темі: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="NewPostPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; розпочав нову тему: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to topic{3} is topic name</comment>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>зовнішні логінів</value>
+  </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Використання існуючої облікової форум</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>Цей логін завершився, або не застосовується</value>
+  </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>Зовнішні входи відключені</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>У вас немає зовнішніх логінів зареєстрованих</value>
+  </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Видалити файл</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Попередній</value>
+  </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>Задайте питання</value>
+  </data>
+  <data name="Answers" xml:space="preserve">
+    <value>відповіді</value>
+  </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Виберіть відповідь</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>повідомлення Відповідь</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; обрали відповідь на питання: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>Додати відповідь</value>
+  </data>
+</root>

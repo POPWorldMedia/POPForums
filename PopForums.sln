@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Web", "PopForums.Web\PopForums.Web.xproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums", "PopForums\PopForums.xproj", "{1787FE89-F023-482E-ABBA-996554DD332D}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Data.Sql", "PopForums.Sql\PopForums.Data.Sql.xproj", "{229CDD35-A4A5-44F2-8937-61AB286D6A77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{044AC2DE-7D9D-4C1A-8C83-38AF448B5A61}"
+	ProjectSection(SolutionItems) = preProject
+		PopForums.Sql\global.json = PopForums.Sql\global.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78900BC9-3B9B-42C1-9112-8412A7AACFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78900BC9-3B9B-42C1-9112-8412A7AACFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78900BC9-3B9B-42C1-9112-8412A7AACFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78900BC9-3B9B-42C1-9112-8412A7AACFB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1787FE89-F023-482E-ABBA-996554DD332D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1787FE89-F023-482E-ABBA-996554DD332D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1787FE89-F023-482E-ABBA-996554DD332D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1787FE89-F023-482E-ABBA-996554DD332D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

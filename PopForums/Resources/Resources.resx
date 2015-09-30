@@ -1,0 +1,1246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AccountCreated" xml:space="preserve">
+    <value>Account Created</value>
+  </data>
+  <data name="AccountReady" xml:space="preserve">
+    <value>Your account was created and you may begin using the forum.</value>
+  </data>
+  <data name="AccountReadyCheckEmail" xml:space="preserve">
+    <value>Please check your e-mail for a verification link to begin using the forum.</value>
+  </data>
+  <data name="AccountVerified" xml:space="preserve">
+    <value>Your account has been verified</value>
+  </data>
+  <data name="AlreadyCreatedAccount" xml:space="preserve">
+    <value>You are already logged in and have an account.</value>
+  </data>
+  <data name="AsYouWouldLikeItToAppear" xml:space="preserve">
+    <value>(as you would like it to appear)</value>
+  </data>
+  <data name="AtLeastSixChar" xml:space="preserve">
+    <value>(at least six characters)</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value>by</value>
+    <comment>context: "Last post: 12am by Jeff"</comment>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>Create Account</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="EditYourProfile" xml:space="preserve">
+    <value>Edit your profile</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailProblemAccount" xml:space="preserve">
+    <value>There was a problem sending your verification e-mail: </value>
+  </data>
+  <data name="Favorites" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>Sorry, you don't have permission to view this.</value>
+  </data>
+  <data name="Forums" xml:space="preserve">
+    <value>Forums</value>
+  </data>
+  <data name="HaveReadTOS" xml:space="preserve">
+    <value>I have read and accept the terms of service</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="MarkAllForumsRead" xml:space="preserve">
+    <value>Mark all forums read</value>
+  </data>
+  <data name="MyBirthdayIsOnOrBefore" xml:space="preserve">
+    <value>My birthday is on or before {0}</value>
+    <comment>where {0} is a date</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NeedToVerifyExistingAccount" xml:space="preserve">
+    <value>Need to verify an existing account?</value>
+  </data>
+  <data name="PageNotFound" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="PrivateMessages" xml:space="preserve">
+    <value>Private Messages</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>Recent</value>
+  </data>
+  <data name="RegisteredUsers" xml:space="preserve">
+    <value>Registered users</value>
+  </data>
+  <data name="RetypePassword" xml:space="preserve">
+    <value>Retype password</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SubscribeToList" xml:space="preserve">
+    <value>Subscribe to mailing list</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Subscriptions</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Terms of service</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Time zone</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Topics</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalPosts" xml:space="preserve">
+    <value>Total posts</value>
+  </data>
+  <data name="TotalTopics" xml:space="preserve">
+    <value>Total topics</value>
+  </data>
+  <data name="UseDaylight" xml:space="preserve">
+    <value>Use N.America/Europe Daylight Saving</value>
+  </data>
+  <data name="UsersOnline" xml:space="preserve">
+    <value>Users Online</value>
+  </data>
+  <data name="MustBe13" xml:space="preserve">
+    <value>You must be 13 or older to register</value>
+  </data>
+  <data name="MustAcceptTOS" xml:space="preserve">
+    <value>You must accept the terms of service</value>
+  </data>
+  <data name="RetypeYourPassword" xml:space="preserve">
+    <value>Retype your password</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Name required</value>
+  </data>
+  <data name="NameInUse" xml:space="preserve">
+    <value>That name is already in use</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-mail required</value>
+  </data>
+  <data name="ValidEmailAddressRequired" xml:space="preserve">
+    <value>Valid e-mail address required</value>
+  </data>
+  <data name="EmailInUse" xml:space="preserve">
+    <value>That e-mail address is already in use</value>
+  </data>
+  <data name="EmailBanned" xml:space="preserve">
+    <value>That e-mail address has been banned</value>
+  </data>
+  <data name="IPBanned" xml:space="preserve">
+    <value>Your IP address has been banned</value>
+  </data>
+  <data name="RetypePasswordMustMatch" xml:space="preserve">
+    <value>Retyped password must match</value>
+  </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>Edit Account</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Edit Profile</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>Please enter your verification code</value>
+  </data>
+  <data name="ForumHomePage" xml:space="preserve">
+    <value>Forum home page</value>
+  </data>
+  <data name="MustBeRegisteredToEditAccount" xml:space="preserve">
+    <value>You must be registered and logged in to edit your account.</value>
+  </data>
+  <data name="NoUserFoundWithEmail" xml:space="preserve">
+    <value>No user found with that e-mail</value>
+  </data>
+  <data name="SendEmailWithNewCodeButton" xml:space="preserve">
+    <value>Send E-mail With New Code</value>
+  </data>
+  <data name="VerificationEmailSent" xml:space="preserve">
+    <value>Your verification e-mail has been sent</value>
+  </data>
+  <data name="VerificationFailure" xml:space="preserve">
+    <value>Verification Failure</value>
+  </data>
+  <data name="VerificationIfYouNeed" xml:space="preserve">
+    <value>If you need a new verification code, enter your e-mail here</value>
+  </data>
+  <data name="VerificationLinkBad" xml:space="preserve">
+    <value>Sorry, the verification link you followed or code you entered is not valid.</value>
+  </data>
+  <data name="VerifyAccount" xml:space="preserve">
+    <value>Verify Account</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Verify Code</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="AvatarDelete" xml:space="preserve">
+    <value>Delete this avatar</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Change E-mail</value>
+  </data>
+  <data name="ChangeEmailButton" xml:space="preserve">
+    <value>Change e-mail and send code</value>
+  </data>
+  <data name="ChangeEmailConsequence" xml:space="preserve">
+    <value>Changing your e-mail address will cause a new verification code to be generated and sent to the new e-mail address. You will not be able to post until you verify your e-mail address with the new code.</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangeYourEmailPassword" xml:space="preserve">
+    <value>Change your e-mail or password</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Date of birth</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="EmailChangeSuccess" xml:space="preserve">
+    <value>Your e-mail was changed successfully</value>
+  </data>
+  <data name="EmailNew" xml:space="preserve">
+    <value>New e-mail address</value>
+  </data>
+  <data name="EmailNewRetype" xml:space="preserve">
+    <value>Retype new e-mail address</value>
+  </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>E-mail not found</value>
+  </data>
+  <data name="EmailSent" xml:space="preserve">
+    <value>Your e-mail has been sent</value>
+  </data>
+  <data name="EmailsMustMatch" xml:space="preserve">
+    <value>Those e-mail addresses don't match</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>E-mail User</value>
+  </data>
+  <data name="ForcePlainTextBox" xml:space="preserve">
+    <value>Force plain text boxes</value>
+  </data>
+  <data name="ForgotInstructions" xml:space="preserve">
+    <value>Enter the e-mail address associated with your account to receive instructions for resetting your password:</value>
+  </data>
+  <data name="ForgotInstructionsSent" xml:space="preserve">
+    <value>Instructions sent to your e-mail</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="ForgotPasswordQuestion" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="HideVanity" xml:space="preserve">
+    <value>Hide vanity</value>
+  </data>
+  <data name="In" xml:space="preserve">
+    <value>in</value>
+    <comment>context: started by Jeff in General Forum</comment>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>Joined</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="LoginAlready" xml:space="preserve">
+    <value>You are already logged in.</value>
+  </data>
+  <data name="LoginBad" xml:space="preserve">
+    <value>Bad e-mail or password</value>
+  </data>
+  <data name="ManagePhotos" xml:space="preserve">
+    <value>Manage Photos</value>
+  </data>
+  <data name="ManageYourPhotos" xml:space="preserve">
+    <value>Manage your photos</value>
+  </data>
+  <data name="NewPasswordSaved" xml:space="preserve">
+    <value>New password saved</value>
+  </data>
+  <data name="NotRegisteredQuestion" xml:space="preserve">
+    <value>Not registered?</value>
+  </data>
+  <data name="OldPasswordIncorrect" xml:space="preserve">
+    <value>Old password incorrect</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="PasswordNew" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="PasswordNewRetype" xml:space="preserve">
+    <value>Retype new password</value>
+  </data>
+  <data name="PasswordOld" xml:space="preserve">
+    <value>Old password</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Reset Password</value>
+  </data>
+  <data name="PasswordResetLinkInvalid" xml:space="preserve">
+    <value>This is not a valid password reset link.</value>
+  </data>
+  <data name="PasswordResetNote" xml:space="preserve">
+    <value>Your new password is active and you're now logged in.</value>
+  </data>
+  <data name="PasswordResetSuccess" xml:space="preserve">
+    <value>Password Reset Successful</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="PhotoDelete" xml:space="preserve">
+    <value>Delete this photo</value>
+  </data>
+  <data name="PhotoNotApproved" xml:space="preserve">
+    <value>(this image has not yet been approved by an administrator)</value>
+  </data>
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>Profile updated</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember me?</value>
+  </data>
+  <data name="Replies" xml:space="preserve">
+    <value>Replies</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SendEmailButton" xml:space="preserve">
+    <value>Send E-mail</value>
+  </data>
+  <data name="SendPM" xml:space="preserve">
+    <value>Send Private Message</value>
+  </data>
+  <data name="ShowProfileDetails" xml:space="preserve">
+    <value>Show your profile details (but not e-mail)</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="StartedBy" xml:space="preserve">
+    <value>Started by</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="UploadNew" xml:space="preserve">
+    <value>Upload new</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="Views" xml:space="preserve">
+    <value>Views</value>
+  </data>
+  <data name="Web" xml:space="preserve">
+    <value>Web</value>
+  </data>
+  <data name="WebVisit" xml:space="preserve">
+    <value>Visit user Web site</value>
+  </data>
+  <data name="YourIP" xml:space="preserve">
+    <value>Your IP address</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>Birthday</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="SendNameEmail" xml:space="preserve">
+    <value>Send {0} an e-mail message</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="SendNamePM" xml:space="preserve">
+    <value>Send {0} a private message</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
+  <data name="UnsubscribeFail" xml:space="preserve">
+    <value>Unsubscribe Failure</value>
+  </data>
+  <data name="UnsubscribeLinkBad" xml:space="preserve">
+    <value>The link you followed is not valid.</value>
+  </data>
+  <data name="UnsubscribeNote" xml:space="preserve">
+    <value>Your unsubscribe request has been processed. You can re-subscribe by logging in and going to your account page.</value>
+  </data>
+  <data name="AddForum" xml:space="preserve">
+    <value>Add Forum</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>Add New</value>
+  </data>
+  <data name="AllowImages" xml:space="preserve">
+    <value>Allow images</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Ban</value>
+  </data>
+  <data name="BanRemove" xml:space="preserve">
+    <value>Remove Ban</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="CategoryEditTitle" xml:space="preserve">
+    <value>Edit Category Title</value>
+  </data>
+  <data name="CategoryMoveError" xml:space="preserve">
+    <value>There was an unknown error while attempting to move category</value>
+  </data>
+  <data name="CensorReplacementChar" xml:space="preserve">
+    <value>Censor replacement character</value>
+  </data>
+  <data name="CensorWords" xml:space="preserve">
+    <value>Censor words</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteAndBanButton" xml:space="preserve">
+    <value>Delete and Ban User</value>
+  </data>
+  <data name="DeleteUserButton" xml:space="preserve">
+    <value>Delete User</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditForum" xml:space="preserve">
+    <value>Edit Forum</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Edit User</value>
+  </data>
+  <data name="EmailBan" xml:space="preserve">
+    <value>E-mail Ban</value>
+  </data>
+  <data name="EmailIpBan" xml:space="preserve">
+    <value>E-mail/IP Ban</value>
+  </data>
+  <data name="EmailNewOptional" xml:space="preserve">
+    <value>New e-mail (optional)</value>
+  </data>
+  <data name="EmailUsers" xml:space="preserve">
+    <value>E-mail Users</value>
+  </data>
+  <data name="ErrorLog" xml:space="preserve">
+    <value>ErrorLog</value>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>Forum</value>
+  </data>
+  <data name="ForumAdapter" xml:space="preserve">
+    <value>Forum Adapter (optional, use "Namespace.Type, AssemblyName")</value>
+  </data>
+  <data name="ForumHome" xml:space="preserve">
+    <value>Forum Home</value>
+  </data>
+  <data name="ForumPermisions" xml:space="preserve">
+    <value>Forum Permissions</value>
+  </data>
+  <data name="ForumSettings" xml:space="preserve">
+    <value>Forum Settings</value>
+  </data>
+  <data name="ForumsUncat" xml:space="preserve">
+    <value>Uncategorized Forums</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>General Settings</value>
+  </data>
+  <data name="IpBan" xml:space="preserve">
+    <value>IP Ban</value>
+  </data>
+  <data name="IpHistory" xml:space="preserve">
+    <value>IP History</value>
+  </data>
+  <data name="IsApproved" xml:space="preserve">
+    <value>Is approved</value>
+  </data>
+  <data name="IsSubscribed" xml:space="preserve">
+    <value>Is subscribed</value>
+  </data>
+  <data name="LogErrors" xml:space="preserve">
+    <value>Log errors</value>
+  </data>
+  <data name="Logging" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="LogMod" xml:space="preserve">
+    <value>Log moderation</value>
+  </data>
+  <data name="LogSecurity" xml:space="preserve">
+    <value>Log security actions</value>
+  </data>
+  <data name="MinimumTimeBetweenPosts" xml:space="preserve">
+    <value>Minimum time between posts (seconds)</value>
+  </data>
+  <data name="ModerationLog" xml:space="preserve">
+    <value>Moderation Log</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="NewUserApprovedWithoutVerification" xml:space="preserve">
+    <value>New user is approved without verification</value>
+  </data>
+  <data name="NewUserImageApprovedWithoutMod" xml:space="preserve">
+    <value>New user image approved without moderation</value>
+  </data>
+  <data name="Parsing" xml:space="preserve">
+    <value>Parsing</value>
+  </data>
+  <data name="PasswordNewOptional" xml:space="preserve">
+    <value>New password (optional)</value>
+  </data>
+  <data name="PopForumsAdmin" xml:space="preserve">
+    <value>POP Forums Administration</value>
+  </data>
+  <data name="PostsPerPage" xml:space="preserve">
+    <value>Posts per page</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="SecurityLog" xml:space="preserve">
+    <value>Security Log</value>
+  </data>
+  <data name="ServerTime" xml:space="preserve">
+    <value>Server Time</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="SessionLength" xml:space="preserve">
+    <value>Session length (minutes)</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="SubjectAndBodyNotEmpty" xml:space="preserve">
+    <value>Subject and body must not be empty</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TopicsPerPage" xml:space="preserve">
+    <value>Topics per page</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="UserAvatarMaxDim" xml:space="preserve">
+    <value>User avatar max dimensions</value>
+  </data>
+  <data name="UserDeleteWarning" xml:space="preserve">
+    <value>WARNNG! Deleting an account is permanent</value>
+  </data>
+  <data name="UserImageApproval" xml:space="preserve">
+    <value>User Image Approval</value>
+  </data>
+  <data name="UserImageMaxDim" xml:space="preserve">
+    <value>User image max dimensions</value>
+  </data>
+  <data name="UserRoles" xml:space="preserve">
+    <value>User Roles</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>Visible</value>
+  </data>
+  <data name="AddNewForum" xml:space="preserve">
+    <value>Add a new forum</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>Body</value>
+  </data>
+  <data name="BodyHtml" xml:space="preserve">
+    <value>HTML Body</value>
+  </data>
+  <data name="ClickToLoadMorePosts" xml:space="preserve">
+    <value>Click to load newer posts before you reply</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CommentsOptional" xml:space="preserve">
+    <value>Comments (optional)</value>
+  </data>
+  <data name="CreateJunkWordButton" xml:space="preserve">
+    <value>Create New Junk Word</value>
+  </data>
+  <data name="CreateNewReply" xml:space="preserve">
+    <value>Create your reply</value>
+  </data>
+  <data name="CreateNewRole" xml:space="preserve">
+    <value>Create New Role</value>
+  </data>
+  <data name="CreateNewTopic" xml:space="preserve">
+    <value>Create your new topic</value>
+  </data>
+  <data name="DeleteAllErrors" xml:space="preserve">
+    <value>Delete all errors</value>
+  </data>
+  <data name="DeleteJunkWordButton" xml:space="preserve">
+    <value>Delete Selected Junk Word</value>
+  </data>
+  <data name="DeleteSelectedRole" xml:space="preserve">
+    <value>Delete Selected Role</value>
+  </data>
+  <data name="EditPost" xml:space="preserve">
+    <value>Edit Post</value>
+  </data>
+  <data name="EmailUsersQueued" xml:space="preserve">
+    <value>E-mail queued to subscribed users.</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="EventTime" xml:space="preserve">
+    <value>Event Time</value>
+  </data>
+  <data name="FavoriteMustBeLoggedIn" xml:space="preserve">
+    <value>You must be logged in to view favorite topics.</value>
+  </data>
+  <data name="FavoritesDontHave" xml:space="preserve">
+    <value>You don't have any favorite topics.</value>
+  </data>
+  <data name="FavoriteTopics" xml:space="preserve">
+    <value>Favorite Topics</value>
+  </data>
+  <data name="ForumMoveError" xml:space="preserve">
+    <value>There was an unknown error while attempting to move forum</value>
+  </data>
+  <data name="ForumPermissionInstructions" xml:space="preserve">
+    <value>To remove posting or viewing restrictions, remove all roles from the appropriate box.</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>From e-mail address</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="IncludeSignature" xml:space="preserve">
+    <value>Include signature</value>
+  </data>
+  <data name="IndexingInterval" xml:space="preserve">
+    <value>Indexing Interval</value>
+  </data>
+  <data name="IP" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="IsRunning" xml:space="preserve">
+    <value>Is Running</value>
+  </data>
+  <data name="JunkWords" xml:space="preserve">
+    <value>Junk Words</value>
+  </data>
+  <data name="MarkForumRead" xml:space="preserve">
+    <value>Mark forum read</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Millseconds" xml:space="preserve">
+    <value>Milliseconds</value>
+  </data>
+  <data name="NamePosts" xml:space="preserve">
+    <value>{0}'s posts</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>(optional)</value>
+  </data>
+  <data name="PermRoles" xml:space="preserve">
+    <value>Admin and Moderator are permanent roles, and can't be deleted.</value>
+  </data>
+  <data name="PostID" xml:space="preserve">
+    <value>PostID</value>
+  </data>
+  <data name="PostingRoles" xml:space="preserve">
+    <value>Posting Roles</value>
+  </data>
+  <data name="PostNewTopic" xml:space="preserve">
+    <value>Post a new topic</value>
+  </data>
+  <data name="PreviewTopic" xml:space="preserve">
+    <value>Preview topic</value>
+    <comment>preview the verb, not adjective</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveAll" xml:space="preserve">
+    <value>Remove All</value>
+  </data>
+  <data name="SendingInterval" xml:space="preserve">
+    <value>Sending interval</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>SMTP Password</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>Port (default is 25)</value>
+  </data>
+  <data name="SmtpServer" xml:space="preserve">
+    <value>SMTP Server</value>
+  </data>
+  <data name="SmtpUser" xml:space="preserve">
+    <value>SMTP User</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="SubmitNewTopic" xml:space="preserve">
+    <value>Submit new topic</value>
+  </data>
+  <data name="SubmitReply" xml:space="preserve">
+    <value>Submit reply</value>
+  </data>
+  <data name="TopicID" xml:space="preserve">
+    <value>TopicID</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="UseEsmtpCred" xml:space="preserve">
+    <value>Use ESMTP for credentials</value>
+  </data>
+  <data name="UserID" xml:space="preserve">
+    <value>UserID</value>
+  </data>
+  <data name="UserIDTarget" xml:space="preserve">
+    <value>Target UserID</value>
+  </data>
+  <data name="UserImageApprovalNotReq" xml:space="preserve">
+    <value>User uploaded images currently do not require approval</value>
+  </data>
+  <data name="UseSsl" xml:space="preserve">
+    <value>Use SSL</value>
+  </data>
+  <data name="ViewingRoles" xml:space="preserve">
+    <value>Viewing Roles</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CloseOnReply" xml:space="preserve">
+    <value>Close on reply</value>
+  </data>
+  <data name="FavoriteMake" xml:space="preserve">
+    <value>Make Favorite</value>
+  </data>
+  <data name="FavoriteRemove" xml:space="preserve">
+    <value>Remove From Favorites</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>Moderator</value>
+  </data>
+  <data name="NameAvatar" xml:space="preserve">
+    <value>{0}'s avatar</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="NameLastEdit" xml:space="preserve">
+    <value>Last edited by {0}</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="PostReply" xml:space="preserve">
+    <value>Post a reply</value>
+  </data>
+  <data name="Quote" xml:space="preserve">
+    <value>Quote</value>
+  </data>
+  <data name="RecentTopics" xml:space="preserve">
+    <value>Recent Topics</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="ShowMorePosts" xml:space="preserve">
+    <value>Show more posts</value>
+  </data>
+  <data name="ShowPreviousPosts" xml:space="preserve">
+    <value>Show previous posts</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="Undelete" xml:space="preserve">
+    <value>Undelete</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>Unpin</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="NewPM" xml:space="preserve">
+    <value>New Private Message</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>No results found</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Unarchive</value>
+  </data>
+  <data name="ViewArchivedMessages" xml:space="preserve">
+    <value>View archived messages</value>
+  </data>
+  <data name="DisplayName" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ErrorSettingUpDb" xml:space="preserve">
+    <value>There was an error setting up your database</value>
+  </data>
+  <data name="ForumReady" xml:space="preserve">
+    <value>Your forum is ready.</value>
+  </data>
+  <data name="ForumTitle" xml:space="preserve">
+    <value>Forum title</value>
+  </data>
+  <data name="GoAdmin" xml:space="preserve">
+    <value>Go to the admin section to finish setting up your Forum.</value>
+  </data>
+  <data name="InvalidLink" xml:space="preserve">
+    <value>That link is no longer valid.</value>
+  </data>
+  <data name="NoDataConnection" xml:space="preserve">
+    <value>No Data Connection</value>
+  </data>
+  <data name="PopForumsSetup" xml:space="preserve">
+    <value>POP Forums Setup</value>
+  </data>
+  <data name="SetupCantConnect" xml:space="preserve">
+    <value>The setup can't connect to the data store. Please check your connection string and configuration.</value>
+  </data>
+  <data name="SetupConnSuccess" xml:space="preserve">
+    <value>A database connection has been successful. Please fill out the following values to get started</value>
+  </data>
+  <data name="SetupDatabase" xml:space="preserve">
+    <value>Setup the database</value>
+  </data>
+  <data name="SetupFirstUser" xml:space="preserve">
+    <value>Setup your first user (will be granted admin and moderator rights)</value>
+  </data>
+  <data name="SubscribedTopics" xml:space="preserve">
+    <value>Subscribed Topics</value>
+  </data>
+  <data name="SubscribeLoggedIn" xml:space="preserve">
+    <value>You must be logged in to view subscribed topics.</value>
+  </data>
+  <data name="SubscribeNone" xml:space="preserve">
+    <value>You aren't subscribed to any topics.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success!</value>
+  </data>
+  <data name="UnsubscribeTopic" xml:space="preserve">
+    <value>{0} is unsubscribed from {1}</value>
+    <comment>{0} is a name, {1} is a topic title</comment>
+  </data>
+  <data name="ArchivedNewPosts" xml:space="preserve">
+    <value>Archived with new posts</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Closed topic</value>
+  </data>
+  <data name="ClosedPinned" xml:space="preserve">
+    <value>Closed, pinned topic</value>
+  </data>
+  <data name="DeleteTopic" xml:space="preserve">
+    <value>Delete Topic</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="ForgotPasswordEmail" xml:space="preserve">
+    <value>To reset your password on {0}, please follow this link:{3}{1}{3}{3}{2}</value>
+    <comment>{0}=title of forum, {1}=email link, {2}=signature, {3}=new line</comment>
+  </data>
+  <data name="ForgotPasswordSubject" xml:space="preserve">
+    <value>Your password reset instructions for {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="ForumNoPost" xml:space="preserve">
+    <value>You aren't allowed to post in this forum</value>
+  </data>
+  <data name="ForumNoView" xml:space="preserve">
+    <value>You aren't allowed to view this forum</value>
+  </data>
+  <data name="LessThanMinute" xml:space="preserve">
+    <value>Less than a minute ago</value>
+  </data>
+  <data name="LoginToPost" xml:space="preserve">
+    <value>You must be logged in to post</value>
+  </data>
+  <data name="MinutesAgo" xml:space="preserve">
+    <value>{0} minutes ago</value>
+    <comment>{0} is a number</comment>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="NewPosts" xml:space="preserve">
+    <value>New posts</value>
+  </data>
+  <data name="NewPostsClosed" xml:space="preserve">
+    <value>New posts, closed topic</value>
+  </data>
+  <data name="NewPostsClosedPinned" xml:space="preserve">
+    <value>New posts, closed &amp; pinned topic</value>
+  </data>
+  <data name="NewPostsPinned" xml:space="preserve">
+    <value>New posts, pinned topic</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NoNewPosts" xml:space="preserve">
+    <value>No new posts</value>
+  </data>
+  <data name="NotLoggedIn" xml:space="preserve">
+    <value>You are not logged in</value>
+  </data>
+  <data name="OneMinuteAgo" xml:space="preserve">
+    <value>1 minute ago</value>
+  </data>
+  <data name="Pinned" xml:space="preserve">
+    <value>Pinned topic</value>
+  </data>
+  <data name="PMCreateWarnings" xml:space="preserve">
+    <value>Must include subject, message and at least one user</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>Can't make an empty post</value>
+  </data>
+  <data name="PostWait" xml:space="preserve">
+    <value>You must wait {0} seconds between posts and may not duplicate your last post</value>
+    <comment>{0} is a number for seconds</comment>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="RegisterEmailSubject" xml:space="preserve">
+    <value>Forum registration - {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="RegisterEmailThankYou" xml:space="preserve">
+    <value>Thank you for registering with {0}.{2}{2}{1}</value>
+    <comment>{0}=name of forum, {1}=forum link, {2}=new line</comment>
+  </data>
+  <data name="RegisterEmailThankYouVerify" xml:space="preserve">
+    <value>Thank you for registering with {0}. Please follow this link to confirm your registration:{5}{5}{1} {5}{5}If you can't follow this link, please visit the following page, and cut and paste the confirmation code:{5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=auth link, {2}=verify link, {3}=auth code, {4}=sig, {5}new line</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings saved</value>
+  </data>
+  <data name="SubscribedEmailBody" xml:space="preserve">
+    <value>One or more responses have been posted to the following thread on {0}:{5}{5}{1}{5}{2}{5}{5}To stop receiving notifications visit this link:{5}{3}{5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
+  </data>
+  <data name="SubscribedEmailSubject" xml:space="preserve">
+    <value>New replies: {0}</value>
+    <comment>{0}=topic title</comment>
+  </data>
+  <data name="TodayTime" xml:space="preserve">
+    <value>Today, {0}</value>
+    <comment>{0} is a time like 1:43pm</comment>
+  </data>
+  <data name="TopicNotExist" xml:space="preserve">
+    <value>That topic doesn't exist</value>
+  </data>
+  <data name="YesterdayTime" xml:space="preserve">
+    <value>Yesterday, {0}</value>
+    <comment>{0} a time like 1:43pm</comment>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Voted" xml:space="preserve">
+    <value>Voted</value>
+  </data>
+  <data name="VoteUpPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; voted for a post in the topic: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="ScoringGame" xml:space="preserve">
+    <value>Scoring game</value>
+  </data>
+  <data name="Awards" xml:space="preserve">
+    <value>Awards</value>
+  </data>
+  <data name="EventDefinitions" xml:space="preserve">
+    <value>Event Definitions</value>
+  </data>
+  <data name="AwardDefinitions" xml:space="preserve">
+    <value>Award Definitions</value>
+  </data>
+  <data name="ManualEvent" xml:space="preserve">
+    <value>Manual Event</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ActivityFeed" xml:space="preserve">
+    <value>Activity Feed</value>
+  </data>
+  <data name="NewReplyPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; made a post in the topic: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="NewPostPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; started a new topic: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to topic{3} is topic name</comment>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>External Logins</value>
+  </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Use existing forum account</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>That login has expired or is not valid</value>
+  </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>External logins are disabled</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>You have no external logins registered</value>
+  </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Delete Permanently</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="AskAQuestion" xml:space="preserve">
+    <value>Ask A Question</value>
+  </data>
+  <data name="Answers" xml:space="preserve">
+    <value>Answers</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; chose an answer for the question: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Choose answer</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>Post answer</value>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>Submit answer</value>
+  </data>
+</root>
