@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Framework.Caching.Memory;
 using PopForums.Configuration;
 
 namespace PopForums.Data.Sql
@@ -7,42 +8,43 @@ namespace PopForums.Data.Sql
 	{
 		public CacheHelper()
 		{
-			//_config = new Config();
-			//_cache = HttpRuntime.Cache;
+			_config = new Config();
+			if (_cache == null)
+			{
+				var options = new MemoryCacheOptions();
+				_cache = new MemoryCache(options);
+			}
 		}
 
-		//private readonly Config _config;
-		//private readonly Cache _cache;
+		private readonly Config _config;
+		private static IMemoryCache _cache;
 
 		public void SetCacheObject(string key, object value)
 		{
-			throw new NotImplementedException();
-			//_cache.Insert(key, value, null, DateTime.Now.AddSeconds(_config.CacheSeconds), Cache.NoSlidingExpiration);
+			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_config.CacheSeconds) };
+			_cache.Set(key, value, options);
 		}
 
 		public void SetCacheObject(string key, object value, double seconds)
 		{
-			throw new NotImplementedException();
-			//_cache.Insert(key, value, null, DateTime.Now.AddSeconds(seconds), Cache.NoSlidingExpiration);
+			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(seconds) };
+			_cache.Set(key, value, options);
 		}
 
 		public object GetCacheObject(string key)
 		{
-			throw new NotImplementedException();
-			//return _cache.Get(key);
+			return _cache.Get(key);
 		}
 
 		public T GetCacheObject<T>(string key)
 		{
-			throw new NotImplementedException();
-			//var cacheObject = _cache.Get(key);
-			//return cacheObject != null ? (T)cacheObject : default(T);
+			var cacheObject = _cache.Get(key);
+			return cacheObject != null ? (T)cacheObject : default(T);
 		}
 
 		public void RemoveCacheObject(string key)
 		{
-			throw new NotImplementedException();
-			//_cache.Remove(key);
+			_cache.Remove(key);
 		}
 	}
 }

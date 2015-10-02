@@ -10,11 +10,9 @@ namespace PopForums.Data.Sql
 		public DbConnection GetConnection()
 		{
 			var config = new Config();
-			//if (ConfigurationManager.ConnectionStrings[config.ConnectionStringName] == null)
-			//	throw new Exception(String.Format("Can't find a connection string for PopForums by the name \"{0}\"", config.ConnectionStringName));
-			//var connectionString = ConfigurationManager.ConnectionStrings[config.ConnectionStringName].ConnectionString;
-			// TODO: connectionstring
-			var connectionString = "";
+			if (String.IsNullOrWhiteSpace(config.DatabaseConnectionString))
+				throw new Exception("No database connection string found for POP Forums.");
+			var connectionString = config.DatabaseConnectionString;
             return new SqlConnection(connectionString);
 		}
 

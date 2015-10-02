@@ -1,24 +1,27 @@
-﻿
-namespace PopForums.Configuration
+﻿namespace PopForums.Configuration
 {
 	public interface IConfig
 	{
-		string ConnectionStringName { get; }
-	}
+		string DatabaseConnectionString { get; }
+		int CacheSeconds { get; }
+		string CacheConnectionString { get; }
+    }
 
 	public class Config : IConfig
 	{
 		public Config()
 		{
-			// TODO: new up config
-			//var section = (PopForumsConfigSection)ConfigurationManager.GetSection("popForums");
-			//ConnectionStringName = section.ConnectionStringName;
-			//CacheSeconds = section.CacheSeconds;
-			//CacheConnectionStringName = section.CacheConnectionStringName;
+			if (_configContainer == null)
+			{
+				var loader = new ConfigLoader();
+				_configContainer = loader.GetConfig();
+			}
 		}
 
-		public string ConnectionStringName { get; private set; }
-		public int CacheSeconds { get; private set; }
-		public string CacheConnectionStringName { get; private set; }
+		private static ConfigContainer _configContainer;
+
+		public string DatabaseConnectionString => _configContainer.DatabaseConnectionString;
+		public int CacheSeconds => _configContainer.CacheSeconds;
+		public string CacheConnectionString => _configContainer.CacheConnectionString;
 	}
 }
