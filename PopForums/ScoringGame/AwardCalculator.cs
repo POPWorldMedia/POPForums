@@ -5,6 +5,12 @@ using PopForums.Repositories;
 
 namespace PopForums.ScoringGame
 {
+	public interface IAwardCalculator
+	{
+		void QueueCalculation(User user, EventDefinition eventDefinition);
+		void ProcessOneCalculation();
+	}
+
 	public class AwardCalculator : IAwardCalculator
 	{
 		public AwardCalculator(IAwardCalculationQueueRepository awardCalcRepository, IEventDefinitionService eventDefinitionService, IUserRepository userRepository, IErrorLog errorLog, IAwardDefinitionService awardDefinitionService, IUserAwardService userAwardService, IPointLedgerRepository pointLedgerRepository)

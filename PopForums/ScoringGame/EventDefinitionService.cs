@@ -4,6 +4,14 @@ using PopForums.Repositories;
 
 namespace PopForums.ScoringGame
 {
+	public interface IEventDefinitionService
+	{
+		EventDefinition GetEventDefinition(string eventDefinitionID);
+		List<EventDefinition> GetAll();
+		void Create(EventDefinition eventDefinition);
+		void Delete(string eventDefinitionID);
+	}
+
 	public class EventDefinitionService : IEventDefinitionService
 	{
 		public static Dictionary<string, EventDefinition> StaticEvents = new Dictionary<string, EventDefinition>

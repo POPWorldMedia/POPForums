@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using PopForums.Services;
 
 namespace PopForums.Web.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
-        {
+	    private readonly IForumService _forumService;
+
+	    public HomeController(IForumService forumService)
+	    {
+		    _forumService = forumService;
+	    }
+
+	    public IActionResult Index()
+	    {
+		    var model = _forumService.GetCategorizedForumContainer();
             return View();
         }
 

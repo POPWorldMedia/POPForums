@@ -5,6 +5,13 @@ using PopForums.Repositories;
 
 namespace PopForums.ScoringGame
 {
+	public interface IUserAwardService
+	{
+		void IssueAward(User user, AwardDefinition awardDefinition);
+		bool IsAwarded(User user, AwardDefinition awardDefinition);
+		List<UserAward> GetAwards(User user);
+	}
+
 	public class UserAwardService : IUserAwardService
 	{
 		public UserAwardService(IUserAwardRepository userAwardRepository)

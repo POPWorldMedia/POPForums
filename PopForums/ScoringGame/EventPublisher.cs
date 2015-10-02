@@ -6,6 +6,12 @@ using PopForums.Services;
 
 namespace PopForums.ScoringGame
 {
+	public interface IEventPublisher
+	{
+		void ProcessEvent(string feedMessage, User user, string eventDefinitionID, bool overridePublishToActivityFeed);
+		void ProcessManualEvent(string feedMessage, User user, int pointValue);
+	}
+
 	public class EventPublisher : IEventPublisher
 	{
 		public EventPublisher(IEventDefinitionService eventDefinitionService, IPointLedgerRepository pointLedgerRepository, IFeedService feedService, IAwardCalculator awardCalculator, IProfileService profileService)

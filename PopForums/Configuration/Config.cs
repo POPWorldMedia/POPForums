@@ -14,10 +14,16 @@
 			if (_configContainer == null)
 			{
 				var loader = new ConfigLoader();
-				_configContainer = loader.GetConfig();
+				_configContainer = loader.GetConfig(_basePath);
 			}
 		}
 
+		public static void SetPopForumsAppEnvironment(string basePath)
+		{
+			_basePath = basePath;
+		}
+
+		private static string _basePath;
 		private static ConfigContainer _configContainer;
 
 		public string DatabaseConnectionString => _configContainer.DatabaseConnectionString;

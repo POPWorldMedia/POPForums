@@ -8,6 +8,9 @@ using Microsoft.Dnx.Runtime;
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Logging;
+using PopForums.Configuration;
+using PopForums.Data.Sql;
+using PopForums.Extensions;
 
 namespace PopForums.Web
 {
@@ -20,6 +23,8 @@ namespace PopForums.Web
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+
+			Config.SetPopForumsAppEnvironment(appEnv.ApplicationBasePath);
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -29,6 +34,9 @@ namespace PopForums.Web
         {
             // Add MVC services to the services container.
             services.AddMvc();
+
+			services.AddPopForumsBase();
+			services.AddPopForumsSql();
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
