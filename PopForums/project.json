@@ -23,5 +23,8 @@
         }
     },
 	"dependencies": {
-	}
+	},
+    "configurations": {
+        "CI": { }
+    }
 }

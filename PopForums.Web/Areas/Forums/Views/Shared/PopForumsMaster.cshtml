@@ -1,0 +1,94 @@
+﻿@using PopForums.Controllers;
+@using PopForums.Extensions;
+@using PopForums.Models
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	var user = this.GetUserFromViewData();
+}
+@helper PMCount()
+{
+	var count = Html.Action("NewPMCount", PrivateMessagesController.Name).ToString();
+	if (count != "0"){ <span class="badge">@count</span>}
+}
+
+@section HeaderContent {
+    @RenderSection("HeaderContent", required: false)
+	<script src="~/Scripts/PopForums.js"></script>
+	<link href="~/Content/PopForums/PopForums.css" rel="stylesheet" />
+}
+
+<div id="ForumContainer" class="container-fluid">
+	<div class="row">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#AccountBox">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+			<div id="AccountBox" class="collapse navbar-collapse">
+				@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "navbar-form navbar-right" }, { "role", "search" } }))
+				{
+					<div class="form-group">
+						<input type="search" class="form-control" placeholder="Search" id="query" name="query">
+					</div>
+				}
+				<ul class="nav navbar-nav navbar-right">
+					@if (user == null)
+					{
+						<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)</li>
+						<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)</li>
+						<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+						<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+					}
+					else
+					{
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">@this.GetUserFromViewData().Name <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>@Html.ActionLink(PopForums.Resources.Profile, "ViewProfile", AccountController.Name, new { id = this.GetUserFromViewData().UserID }, null)</li>
+								<li>@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1 }, null)</li>
+								<li class="divider"></li>
+								<li>@Html.ActionLink(PopForums.Resources.EditProfile, "EditProfile", AccountController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", AccountController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", AccountController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", AccountController.Name)</li>
+								@if (user.IsInRole(PermanentRoles.Admin))
+								{
+									<li class="divider"></li>
+									<li>@Html.ActionLink(PopForums.Resources.PopForumsAdmin, "Index", AdminController.Name)</li>
+								}
+								<li class="divider"></li>
+								<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", ForumHomeController.Name)</li>
+							</ul>
+						</li>
+						<li>
+							<a href="@Url.Action("Index", PrivateMessagesController.Name)" title="@PopForums.Resources.PrivateMessages"><span class="glyphicon glyphicon-envelope"></span>@PMCount()</a>
+						</li>
+					}
+				</ul>
+			</div>
+		</nav>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				@RenderBody()
+			</div>
+		</div>
+		<div class="row">
+			<div id="ForumFooter" class="col-xs-12">
+				<small><a href="http://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
+			</div>
+		</div>
+	</div>

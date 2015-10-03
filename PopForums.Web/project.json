@@ -1,10 +1,11 @@
 {
   "webroot": "wwwroot",
   "version": "1.0.0-*",
-
     "dependencies": {
-        "Microsoft.AspNet.Diagnostics": "1.0.0-beta7",
+        "Microsoft.AspNet.Authentication.Cookies": "1.0.0-beta7",
+		"Microsoft.AspNet.Diagnostics": "1.0.0-beta7",
         "Microsoft.AspNet.Mvc": "6.0.0-beta7",
+        "Microsoft.AspNet.Mvc.Localization": "6.0.0-beta7",
         "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-beta7",
         "Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
         "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
@@ -18,15 +19,12 @@
         "PopForums": "14.0.0-*",
         "PopForums.Sql": "14.0.0-*"
     },
-
   "commands": {
     "web": "Microsoft.AspNet.Hosting --config hosting.ini"
   },
-
   "frameworks": {
     "dnxcore50": { }
   },
-
   "exclude": [
     "wwwroot",
     "node_modules",
@@ -39,7 +37,10 @@
     "**.user",
     "**.vspscc"
   ],
-  "scripts": {
-    "prepublish": [ "npm install", "bower install", "gulp clean", "gulp min" ]
-  }
+    "scripts": {
+        "prepublish": [ "npm install", "bower install", "gulp clean", "gulp min" ]
+    },
+    "configurations": {
+        "CI": { }
+    }
 }

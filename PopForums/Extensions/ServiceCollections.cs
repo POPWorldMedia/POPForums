@@ -65,7 +65,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<ITopicService, TopicService>();
 		    //services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 		    services.AddTransient<IUserService, UserService>();
-		    //services.AddTransient<IUserSessionService, UserSessionService>();
+		    services.AddTransient<IUserSessionService, UserSessionService>();
 	    }
     }
 }

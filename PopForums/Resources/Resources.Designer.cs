@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Reflection;
+
 namespace PopForums {
     using System;
     
@@ -38,11 +40,12 @@ namespace PopForums {
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
-                //if (object.ReferenceEquals(resourceMan, null)) {
-                //    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PopForums.Resources.Resources", typeof(Resources).Assembly);
-                //    resourceMan = temp;
-                //}
-                return resourceMan;
+				if (object.ReferenceEquals(resourceMan, null))
+				{
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PopForums.Resources.Resources", typeof(Resources).GetTypeInfo().Assembly);
+					resourceMan = temp;
+				}
+				return resourceMan;
             }
         }
         

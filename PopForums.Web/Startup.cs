@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
@@ -68,10 +69,19 @@ namespace PopForums.Web
             // Add static files to the request pipeline.
             app.UseStaticFiles();
 
+	        app.UseCookieAuthentication(options =>
+	        {
+				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+		        options.AutomaticAuthentication = true;
+	        });
+			
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
+				routes.MapRoute(
+					name: "areaRoute",
+					template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+				routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 

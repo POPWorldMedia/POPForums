@@ -20,6 +20,37 @@
           "lib/dnxcore50/Microsoft.AspNet.Antiforgery.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-beta7",
+          "Microsoft.AspNet.Http": "1.0.0-beta7",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta7",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta7",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta7"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.AspNet.Authentication.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.AspNet.Authentication.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Cookies/1.0.0-beta7": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-beta7",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta7",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authorization/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -2570,6 +2601,36 @@
         "Microsoft.AspNet.Antiforgery.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Antiforgery.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Antiforgery.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Authentication/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "Z3UEugE53Kg0rZCEz2wHCEDmHrb9k9OVSzZG5OTSqs8K0fz06wvMoHYvSl/AVSAp6Tw9b7tqvATr9usP7Hpgyg==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.xml",
+        "Microsoft.AspNet.Authentication.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Authentication.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.nuspec",
+        "repo.json"
+      ]
+    },
+    "Microsoft.AspNet.Authentication.Cookies/1.0.0-beta7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "ObK6iDhEfaXSWfvu1RUgQUSz6WeNe8dicXOL11E7sP/RsmQv0wxXkueZ22++MMN+dEYjKRDimqtTb5TIaLuO5g==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Cookies.xml",
+        "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta7.nupkg",
+        "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta7.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.Cookies.nuspec",
         "repo.json"
       ]
     },
@@ -5518,8 +5579,10 @@
   },
   "projectFileDependencyGroups": {
     "": [
+      "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-beta7",
       "Microsoft.AspNet.Diagnostics >= 1.0.0-beta7",
       "Microsoft.AspNet.Mvc >= 6.0.0-beta7",
+      "Microsoft.AspNet.Mvc.Localization >= 6.0.0-beta7",
       "Microsoft.AspNet.Mvc.TagHelpers >= 6.0.0-beta7",
       "Microsoft.AspNet.Server.IIS >= 1.0.0-beta7",
       "Microsoft.AspNet.Server.WebListener >= 1.0.0-beta7",

@@ -1,0 +1,12 @@
+﻿@using PopForums.Controllers
+@{
+	ViewBag.Title = PopForums.Resources.Forbidden;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Forbidden</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>

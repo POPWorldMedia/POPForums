@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -28,13 +27,10 @@ namespace PopForums.Services
 		void ChangeName(User targetUser, string newName, User user, string ip);
 		void UpdateIsApproved(User targetUser, bool isApproved, User user, string ip);
 		void UpdateAuthorizationKey(User user, Guid key);
-		// TODO: SetupUserViewData
-		//User SetupUserViewData(IPrincipal principal, ViewDataDictionary viewData);
-		// TODO: Logins
-		//void Logout(User user, string ip);
-		//bool Login(string email, string password, bool persistCookie, HttpContextBase context);
-		//void Login(User user, HttpContextBase context);
-		//void Login(User user, bool persistCookie, HttpContextBase context);
+		void Logout(User user, string ip);
+		bool Login(string email, string password, bool persistCookie, string ip);
+		void Login(User user, string ip);
+		void Login(User user, bool persistCookie, string ip);
 		List<string> GetAllRoles();
 		void CreateRole(string role, User user, string ip);
 		void DeleteRole(string role, User user, string ip);
@@ -276,54 +272,46 @@ namespace PopForums.Services
 			_userRepository.UpdateAuthorizationKey(user, key);
 		}
 
-		//public User SetupUserViewData(IPrincipal principal, ViewDataDictionary viewData)
-		//{
-		//	User user = null;
-		//	if (principal != null)
-		//	{
-		//		user = GetUserByName(principal.Identity.Name);
-		//		viewData.SetUserInViewData(user);
-		//	}
-		//	return user;
-		//}
+		public void Logout(User user, string ip)
+		{
+			// TODO: web project needs to delete cookie
+			//_formsAuthWrapper.SignOut();
+			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Logout);
+		}
 
-		//public void Logout(User user, string ip)
-		//{
-		//	_formsAuthWrapper.SignOut();
-		//	_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Logout);
-		//}
+		public bool Login(string email, string password, bool persistCookie, string ip)
+		{
+			Guid? salt;
+			var result = CheckPassword(email, password, out salt);
+			if (result)
+			{
+				var user = GetUserByEmail(email);
+				// TODO: web project needs to do signin cookie
+				//_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
+				user.LastLoginDate = DateTime.UtcNow;
+				_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+				_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
+				if (!salt.HasValue)
+					SetPassword(user, password, ip, user);
+			}
+			else
+				_securityLogService.CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin);
+			return result;
+		}
 
-		//public bool Login(string email, string password, bool persistCookie, HttpContextBase context)
-		//{
-		//	Guid? salt;
-		//	var result = CheckPassword(email, password, out salt);
-		//	if (result)
-		//	{
-		//		var user = GetUserByEmail(email);
-		//		_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
-		//		user.LastLoginDate = DateTime.UtcNow;
-		//		_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
-		//		_securityLogService.CreateLogEntry(null, user, context.Request.UserHostAddress, String.Empty, SecurityLogType.Login);
-		//		if (!salt.HasValue)
-		//			SetPassword(user, password, context.Request.UserHostAddress, user);
-		//	}
-		//	else
-		//		_securityLogService.CreateLogEntry((User)null, null, context.Request.UserHostAddress, "E-mail attempted: " + email, SecurityLogType.FailedLogin);
-		//	return result;
-		//}
+		public void Login(User user, string ip)
+		{
+			Login(user, false, ip);
+		}
 
-		//public void Login(User user, HttpContextBase context)
-		//{
-		//	Login(user, false, context);
-		//}
-
-		//public void Login(User user, bool persistCookie, HttpContextBase context)
-		//{
-		//	_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
-		//	user.LastLoginDate = DateTime.UtcNow;
-		//	_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
-		//	_securityLogService.CreateLogEntry(null, user, context.Request.UserHostAddress, String.Empty, SecurityLogType.Login);
-		//}
+		public void Login(User user, bool persistCookie, string ip)
+		{
+			// TODO: web project needs to do this
+			//_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
+			user.LastLoginDate = DateTime.UtcNow;
+			_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
+		}
 
 		public List<string> GetAllRoles()
 		{
