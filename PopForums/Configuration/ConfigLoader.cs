@@ -9,7 +9,8 @@ namespace PopForums.Configuration
 		{
 			if (String.IsNullOrWhiteSpace(basePath))
 				throw new ArgumentException("Can't setup PopForums configuration without specifying the base path of the app, where PopForums.json should be found.", nameof(basePath));
-			var builder = new ConfigurationBuilder(basePath);
+			var builder = new ConfigurationBuilder();
+			builder.SetBasePath(basePath);
 			builder.AddJsonFile("PopForums.json");
 			var config = builder.Build();
 			var container = new ConfigContainer();

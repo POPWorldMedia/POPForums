@@ -28,7 +28,7 @@ namespace PopForums.Services
 		void UpdateIsApproved(User targetUser, bool isApproved, User user, string ip);
 		void UpdateAuthorizationKey(User user, Guid key);
 		void Logout(User user, string ip);
-		bool Login(string email, string password, bool persistCookie, string ip);
+		bool Login(string email, string password, bool persistCookie, string ip, out User user);
 		void Login(User user, string ip);
 		void Login(User user, bool persistCookie, string ip);
 		List<string> GetAllRoles();
@@ -44,15 +44,13 @@ namespace PopForums.Services
 		UserEdit GetUserEdit(User user);
 		void EditUserProfile(User user, UserEditProfile userEditProfile);
 		bool VerifyPassword(User user, string password);
-		// TODO: IsPasswordValid depends on modelstatedictionary
-		//bool IsPasswordValid(string password, ModelStateDictionary modelStateDictionary);
-		bool IsEmailInUseByDifferentUser(User user, string email);
+		bool IsPasswordValid(string password, out string errorMessage);
+        bool IsEmailInUseByDifferentUser(User user, string email);
 		List<User> GetUsersOnline();
 		bool IsIPBanned(string ip);
 		bool IsEmailBanned(string email);
 		void GeneratePasswordResetEmail(User user, string resetLink);
-		// TODO: ResetPassword requres httpcontext
-		//void ResetPassword(User user, string newPassword, HttpContextBase httpContext);
+		void ResetPassword(User user, string newPassword, string ip);
 		List<User> GetUsersFromIDs(IList<int> ids);
 		int GetTotalUsers();
 		List<User> GetSubscribedUsers();
@@ -64,7 +62,6 @@ namespace PopForums.Services
 		private readonly IUserRepository _userRepository;
 		private readonly IRoleRepository _roleRepository;
 		private readonly IProfileRepository _profileRepository;
-		//private readonly IFormsAuthenticationWrapper _formsAuthWrapper;
 		private readonly ISettingsManager _settingsManager;
 		private readonly IUserAvatarRepository _userAvatarRepository;
 		private readonly IUserImageRepository _userImageRepository;
@@ -75,16 +72,13 @@ namespace PopForums.Services
 		//private readonly IImageService _imageService;
 
 			// TODO: Dependencies on formsauth wrapper and imageservice
-		public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, 
-			//IFormsAuthenticationWrapper formsAuthWrapper, 
-			ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer 
+		public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer 
 			//IImageService imageService
 			)
 		{
 			_userRepository = userRepository;
 			_roleRepository = roleRepository;
 			_profileRepository = profileRepository;
-			//_formsAuthWrapper = formsAuthWrapper;
 			_settingsManager = settingsManager;
 			_userAvatarRepository = userAvatarRepository;
 			_userImageRepository = userImageRepository;
@@ -279,15 +273,13 @@ namespace PopForums.Services
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Logout);
 		}
 
-		public bool Login(string email, string password, bool persistCookie, string ip)
+		public bool Login(string email, string password, bool persistCookie, string ip, out User user)
 		{
 			Guid? salt;
 			var result = CheckPassword(email, password, out salt);
 			if (result)
 			{
-				var user = GetUserByEmail(email);
-				// TODO: web project needs to do signin cookie
-				//_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
+				user = GetUserByEmail(email);
 				user.LastLoginDate = DateTime.UtcNow;
 				_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 				_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
@@ -295,7 +287,10 @@ namespace PopForums.Services
 					SetPassword(user, password, ip, user);
 			}
 			else
+			{
+				user = null;
 				_securityLogService.CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin);
+			}
 			return result;
 		}
 
@@ -492,16 +487,17 @@ namespace PopForums.Services
 			return hashedPassword == savedHashedPassword;
 		}
 
-		//public bool IsPasswordValid(string password, ModelStateDictionary modelStateDictionary)
-		//{
-		//	var result = true;
-		//	if (String.IsNullOrEmpty(password) || password.Length < 6)
-		//	{
-		//		modelStateDictionary.AddModelError("Password", "Password must be at least six characters");
-		//		result = false;
-		//	}
-		//	return result;
-		//}
+		public bool IsPasswordValid(string password, out string errorMessage)
+		{
+			var result = true;
+			if (String.IsNullOrEmpty(password) || password.Length < 6)
+			{
+				errorMessage = "Password must be at least six characters";
+				result = false;
+			}
+			errorMessage = null;
+			return result;
+		}
 
 		public List<User> GetUsersOnline()
 		{
@@ -524,12 +520,12 @@ namespace PopForums.Services
 			_forgotPasswordMailer.ComposeAndQueue(user, link);
 		}
 
-		//public void ResetPassword(User user, string newPassword, HttpContextBase httpContext)
-		//{
-		//	SetPassword(user, newPassword, httpContext.Request.UserHostAddress, null);
-		//	UpdateAuthorizationKey(user, Guid.NewGuid());
-		//	Login(user, httpContext);
-		//}
+		public void ResetPassword(User user, string newPassword, string ip)
+		{
+			SetPassword(user, newPassword, ip, null);
+			UpdateAuthorizationKey(user, Guid.NewGuid());
+			Login(user, ip);
+		}
 
 		public List<User> GetSubscribedUsers()
 		{

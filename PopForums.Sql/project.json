@@ -8,19 +8,17 @@
     "frameworks": {
         "dnxcore50": {
 			"dependencies": {
-				"Microsoft.CSharp": "4.0.1-beta-23225",
-				"System.Collections": "4.0.11-beta-23225",
-				"System.Linq": "4.0.1-beta-23225",
-				"System.Runtime": "4.0.21-beta-23225",
-				"System.Threading": "4.0.11-beta-23225",
-				"System.Data.Common": "4.0.1-beta-23225",
-				"System.Data.SqlClient": "4.0.0-beta-23225"
+				"Microsoft.Framework.Caching.Memory": "1.0.0-beta8",
+				"System.Data.Common": "4.0.1-beta-23409",
+				"System.Data.SqlClient": "4.0.0-beta-23409",
+				"System.Linq": "4.0.1-beta-23409",
+				"System.Runtime": "4.0.21-beta-23409",
+				"System.Threading": "4.0.11-beta-23409",
+				"PopForums": "14.0.0-*"
 			}
         }
     },
     "dependencies": {
-        "Microsoft.Framework.Caching.Memory": "1.0.0-beta7",
-        "PopForums": "14.0.0-*"
     },
     "configurations": {
         "CI": { }

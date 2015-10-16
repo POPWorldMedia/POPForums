@@ -13,7 +13,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			_userSessionService = userSessionService;
 		}
 
-		public static string Name = "ForumHome";
+		public static string Name = "Home";
 
 		private readonly IForumService _forumService;
 		private readonly IUserService _userService;

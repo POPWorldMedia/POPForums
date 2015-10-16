@@ -40,7 +40,7 @@ namespace PopForums.Web.Controllers
 		    };
 
 		    var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-			await Context.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
+			await HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
 			return RedirectToAction("Index");
 	    }
 
