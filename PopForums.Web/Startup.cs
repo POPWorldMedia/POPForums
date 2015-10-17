@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authentication.Cookies;
+﻿using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Localization;
 using Microsoft.Framework.Logging;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
@@ -42,6 +36,7 @@ namespace PopForums.Web
 
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
+			// TODO: how to package mappings in web project
 	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 
 	        // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

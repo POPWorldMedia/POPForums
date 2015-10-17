@@ -1,11 +1,13 @@
 ﻿@using PopForums.Services;
+@using PopForums.Web.Areas.Forums.Services
 @using PopForums.Web.Extensions;
+@inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @model PopForums.Models.CategorizedForumContainer
 @{
 	ViewBag.Title = Model.ForumTitle;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	TimeFormattingService.Init(null);
+	var profile = UserRetrievalShim.GetProfile(Context);
 }
 
 @section HeaderContent{
@@ -36,7 +38,7 @@
 					<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 					<p>@forum.Description</p>
 					<small class="pull-right forumDetails">
-						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
+						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 					</small>
 				</td>
 			</tr>
@@ -54,7 +56,7 @@
 						<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 						<p>@forum.Description</p>
 						<small class="pull-right forumDetails">
-							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
+							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 						</small>
 					</td>
 				</tr>

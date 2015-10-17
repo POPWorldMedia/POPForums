@@ -25,6 +25,9 @@ namespace PopForums.Web
 			    if (user != null)
 			    {
 				    context.Items["PopForumsUser"] = user;
+				    var profileService = context.ApplicationServices.GetService<IProfileService>();
+				    var profile = profileService.GetProfile(user);
+				    context.Items["PopForumsProfile"] = profile;
 			    }
 		    }
 		    await _next(context);

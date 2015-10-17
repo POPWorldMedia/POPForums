@@ -6,10 +6,7 @@ namespace PopForums.Services
 {
 	public interface ITimeFormattingService
 	{
-		void Init(Profile profile);
-		string GetFormattedTime(DateTime utcDateTime);
-		int UtcOffset { get; }
-		bool UsesDaylightSaving { get; }
+		string GetFormattedTime(DateTime utcDateTime, Profile profile);
 	}
 
 	public class TimeFormattingService : ITimeFormattingService
@@ -17,32 +14,23 @@ namespace PopForums.Services
 		public TimeFormattingService(ISettingsManager settingsManager)
 		{
 			if (settingsManager == null)
-				throw new ArgumentNullException("settingsManager");
-			SettingsManager = settingsManager;
+				throw new ArgumentNullException(nameof(settingsManager));
+			_settingsManager = settingsManager;
 		}
 
-		public ISettingsManager SettingsManager { get; private set; }
-		public int UtcOffset { get; private set; }
-		public bool UsesDaylightSaving { get; private set; }
+		private readonly ISettingsManager _settingsManager;
+		private int _utcOffset;
+		private bool _usesDaylightSaving;
 
-		private bool _isInit;
-
-		public void Init(Profile profile)
+		public string GetFormattedTime(DateTime utcDateTime, Profile profile)
 		{
-			UtcOffset = SettingsManager.Current.ServerTimeZone;
-			UsesDaylightSaving = SettingsManager.Current.ServerDaylightSaving;
+			_utcOffset = _settingsManager.Current.ServerTimeZone;
+			_usesDaylightSaving = _settingsManager.Current.ServerDaylightSaving;
 			if (profile != null)
 			{
-				UtcOffset = profile.TimeZone;
-				UsesDaylightSaving = profile.IsDaylightSaving;
+				_utcOffset = profile.TimeZone;
+				_usesDaylightSaving = profile.IsDaylightSaving;
 			}
-			_isInit = true;
-		}
-
-		public string GetFormattedTime(DateTime utcDateTime)
-		{
-			if (!_isInit)
-				throw new Exception("Must call Init() method before getting a formatted time.");
 			var now = GetAdjustedTime(DateTime.UtcNow);
 			var input = GetAdjustedTime(utcDateTime);
 			var difference = now.Subtract(input);
@@ -63,8 +51,8 @@ namespace PopForums.Services
 
 		private DateTime GetAdjustedTime(DateTime dateTime)
 		{
-			double offset = UtcOffset;
-			if (UsesDaylightSaving && IsDaylightSaving(dateTime)) offset++;
+			double offset = _utcOffset;
+			if (_usesDaylightSaving && IsDaylightSaving(dateTime)) offset++;
 			return dateTime.AddHours(offset);
 		}
 
@@ -72,7 +60,7 @@ namespace PopForums.Services
 		{
 			DateTime startDate;
 			DateTime endDate;
-			if ((UtcOffset < -4) && (UtcOffset > -11))
+			if ((_utcOffset < -4) && (_utcOffset > -11))
 			{
 				// us dst
 				if (localTime.Year < 2007)
@@ -87,7 +75,7 @@ namespace PopForums.Services
 				}
 				if ((localTime > startDate) && (localTime < endDate)) return true;
 			}
-			if ((UtcOffset > -1) && (UtcOffset < 5))
+			if ((_utcOffset > -1) && (_utcOffset < 5))
 			{
 				// european dst
 				startDate = new DateTime(localTime.Year, 3, Convert.ToInt32(31 - (Math.Floor((double)localTime.Year * 5 / 4) + 1) % 7), 1, 0, 0);
