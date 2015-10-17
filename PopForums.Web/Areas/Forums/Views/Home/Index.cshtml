@@ -5,6 +5,7 @@
 @{
 	ViewBag.Title = Model.ForumTitle;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	TimeFormattingService.Init(null);
 }
 
 @section HeaderContent{
@@ -30,7 +31,7 @@
 		@foreach (var forum in Model.UncategorizedForums)
 		{
 			<tr data-forumid="@forum.ForumID">
-				<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/")</a></td>
+				<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/lib/PopForums/")</a></td>
 				<td>
 					<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 					<p>@forum.Description</p>
@@ -48,7 +49,7 @@
 			foreach (var forum in category.Value)
 			{
 				<tr data-forumid="@forum.ForumID">
-					<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/Content/PopForums/")</a></td>
+					<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/lib/PopForums/")</a></td>
 					<td>
 						<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
 						<p>@forum.Description</p>

@@ -1,0 +1,47 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Models
+@using PopForums.Web.Areas.Forums.Controllers
+@using PopForums.Web.Areas.Forums.Models
+@model UserNavigationContainer
+
+@if (Model.User == null)
+{
+	<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name)</li>
+						<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name)</li>
+						<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+						<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+}
+else
+{
+	<li class="dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#">@Model.User.Name <span class="caret"></span></a>
+		<ul class="dropdown-menu" role="menu">
+			<li>@Html.ActionLink(PopForums.Resources.Profile, "ViewProfile", AccountController.Name, new { id = Model.User.UserID }, null)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1 }, null)</li>
+			<li class="divider"></li>
+			<li>@Html.ActionLink(PopForums.Resources.EditProfile, "EditProfile", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", AccountController.Name)</li>
+			<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", AccountController.Name)</li>
+			@if (Model.User.IsInRole(PermanentRoles.Admin))
+			{
+				<li class="divider"></li>
+									<li>@Html.ActionLink(PopForums.Resources.PopForumsAdmin, "Index", AdminController.Name)</li>
+			}
+			<li class="divider"></li>
+			<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
+		</ul>
+	</li>
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum <span class="caret"></span></a>
+							<ul class="dropdown-menu" role="menu">
+								<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+								<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", HomeController.Name)</li>
+							</ul>
+						</li>
+						<li>
+							<a href="@Url.Action("Index", PrivateMessagesController.Name)" title="@PopForums.Resources.PrivateMessages"><span class="glyphicon glyphicon-envelope"></span> @Html.Raw(Model.PMCount)</a>
+						</li>
+}

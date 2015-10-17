@@ -44,10 +44,10 @@ namespace PopForums.Web.Extensions
 		//	return url;
 		//}
 		
-		public static User CurrentUser(this Controller controller)
-		{
-			var user = controller.HttpContext.Items["PopForumsUser"] as User;
-			return user;
-		}
+		//public static User CurrentUser(this Controller controller)
+		//{
+		//	var user = controller.HttpContext.Items["PopForumsUser"] as User;
+		//	return user;
+		//}
 	}
 }

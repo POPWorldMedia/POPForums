@@ -24,7 +24,13 @@
     },
 	"dependencies": {
 	},
-    "configurations": {
-        "CI": { }
-    }
+	"configurations": {
+		"CI": { }
+	},
+	"resource": [
+		"Resources/*.resx"
+	],
+	"namedResource": {
+		"PopForums.Resources" : "Resources/Resources.resx"
+	}
 }

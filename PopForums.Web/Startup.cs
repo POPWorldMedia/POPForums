@@ -4,14 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Diagnostics;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
 using Microsoft.Framework.Configuration;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.Localization;
 using Microsoft.Framework.Logging;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
+using PopForums.Web.Areas.Forums.Services;
 
 namespace PopForums.Web
 {
@@ -39,10 +42,11 @@ namespace PopForums.Web
 
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
+	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 
-            // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-            // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-            // services.AddWebApiConventions();
+	        // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
+	        // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
+	        // services.AddWebApiConventions();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -60,7 +64,9 @@ namespace PopForums.Web
 			// Add static files to the request pipeline.
 			app.UseStaticFiles();
 
-	        app.UseCookieAuthentication(options =>
+			app.UseDeveloperExceptionPage();
+
+			app.UseCookieAuthentication(options =>
 	        {
 				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 		        options.AutomaticAuthentication = true;

@@ -8,6 +8,7 @@ using Microsoft.AspNet.Mvc;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Services;
+using PopForums.Web.Areas.Forums.Services;
 using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
@@ -18,12 +19,13 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		// TODO: owincontext and/or external auth
 		public AuthorizationController(IUserService userService, 
 			//IOwinContext owinContext, IExternalAuthentication externalAuthentication, 
-			IUserAssociationManager userAssociationManager)
+			IUserAssociationManager userAssociationManager, IUserRetrievalShim userRetrievalShim)
 		{
 			_userService = userService;
 			//_owinContext = owinContext;
 			//_externalAuthentication = externalAuthentication;
 			_userAssociationManager = userAssociationManager;
+			_userRetrievalShim = userRetrievalShim;
 		}
 
 		public static string Name = "Authorization";
@@ -32,6 +34,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		//private readonly IOwinContext _owinContext;
 		//private readonly IExternalAuthentication _externalAuthentication;
 		private readonly IUserAssociationManager _userAssociationManager;
+		private readonly IUserRetrievalShim _userRetrievalShim;
 
 		[HttpGet]
 		public async Task<RedirectResult> Logout()
@@ -45,7 +48,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				if (!link.Contains(Request.Host.Value))
 					link = Url.Action("Index", HomeController.Name);
 			}
-			var user = this.CurrentUser();
+			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			return Redirect(link);
@@ -54,7 +57,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<JsonResult> LogoutAsync()
 		{
-			var user = this.CurrentUser();
+			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });
