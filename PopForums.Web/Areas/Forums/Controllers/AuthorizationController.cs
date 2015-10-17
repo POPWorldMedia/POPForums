@@ -12,7 +12,7 @@ using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {
-	[Area("forums")]
+	[Area("Forums")]
 	public class AuthorizationController : Controller
 	{
 		// TODO: owincontext and/or external auth

@@ -30,27 +30,24 @@ namespace PopForums.Web.Extensions
 			return result;
 		}
 
-		public static string FullUrlHelper(this Controller controller, string actionName, string controllerName, object routeValues = null)
-		{
-			var helper = new UrlHelper(controller.Request.RequestContext);
-			var requestUrl = controller.Request.Url;
-			if (requestUrl == null)
-				return String.Empty;
-			var url = requestUrl.Scheme + "://";
-			url += requestUrl.Host;
-			url += (requestUrl.Port != 80 ? ":" + requestUrl.Port : "");
-			url += helper.Action(actionName, controllerName, routeValues);
-			return url;
-		}
-
+		// TODO: FullUrlHelper
+		//public static string FullUrlHelper(this Controller controller, string actionName, string controllerName, object routeValues = null)
+		//{
+		//	var helper = new UrlHelper(controller.Request.RequestContext);
+		//	var requestUrl = controller.Request.Url;
+		//	if (requestUrl == null)
+		//		return String.Empty;
+		//	var url = requestUrl.Scheme + "://";
+		//	url += requestUrl.Host;
+		//	url += (requestUrl.Port != 80 ? ":" + requestUrl.Port : "");
+		//	url += helper.Action(actionName, controllerName, routeValues);
+		//	return url;
+		//}
+		
 		public static User CurrentUser(this Controller controller)
 		{
-			var principal = controller.User;
-			if (principal == null)
-				return null;
-			if (principal is User)
-				return (User)principal;
-			throw new Exception("The IPrincipal being accessed by the controller is not of type PopForums.Models.User.");
+			var user = controller.HttpContext.Items["PopForumsUser"] as User;
+			return user;
 		}
 	}
 }

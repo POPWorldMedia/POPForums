@@ -65,6 +65,8 @@ namespace PopForums.Web
 				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 		        options.AutomaticAuthentication = true;
 	        });
+
+	        app.UseMiddleware<PopForumsMiddleware>();
 			
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>

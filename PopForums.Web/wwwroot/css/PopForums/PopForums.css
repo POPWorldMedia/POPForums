@@ -1,0 +1,268 @@
+﻿#ForumContainer dd, #ForumContainer dt {
+	margin-bottom: 5px;
+}
+
+#ForumContainer .grid {
+	margin: 20px 0;
+}
+#ForumContainer .grid h1, #ForumContainer .grid h2, #ForumContainer .grid h3 {
+	margin: 0;
+}
+
+#ForumContainer .newIndicator {
+	width: 40px;
+}
+
+#ForumContainer .callout {
+	padding: 8px; border-radius: 4px;
+}
+
+#ForumContainer #ForumFooter {
+	margin-top: 30px;
+}
+
+#ForumContainer .topicPreviewButton {
+	cursor: pointer;
+}
+
+#ForumContainer #PostResponseMessage {
+	display: none;
+}
+
+#ForumContainer .topicPreview {
+	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
+}
+
+#ForumContainer #TopicModerationLog {
+	display: none;
+}
+
+#ForumContainer .postTools form {
+	display: inline-block;
+}
+
+#ForumContainer #FixedBreadcrumb {
+	position: fixed;top: 0;display: none;
+	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
+}
+
+#ForumContainer .twirl {
+	font-size: 75%;
+}
+
+#ForumContainer .topicListButton {
+	width: 100px;
+	text-align: center;
+}
+
+#ForumContainer #FeedList > div, #ForumContainer #ActivityFeed > div, #ForumContainer #Awards > div {
+	margin-bottom: 10px;
+}
+
+#ForumContainer #Profile > div {
+	padding-top: 20px;
+}
+
+#ForumContainer .activityFeedPoints {
+	font-size: 200%;
+	font-weight: bold;
+	text-align: center;
+	min-width: 60px;
+	float: left;
+	margin-right: 10px;
+}
+
+#ForumContainer .toLabelX {
+	cursor: pointer;
+}
+
+#ForumContainer #ToModal #ToResultList {
+	height: 200px;
+	overflow-y: scroll;
+	margin-top: 10px;
+}
+
+#ForumContainer #PMToBox div {
+	margin-right: 5px;
+}
+
+#ForumContainer .answerData {
+	min-width: 70px;
+	text-align: center;
+}
+
+#ForumContainer .answerVote {
+	white-space: nowrap;
+}
+
+#ForumContainer #TopicTools .btn {
+	margin-bottom: 10px;
+}
+#ForumContainer .QAstate {
+	width: 40px;
+}
+#ForumContainer .QAstate span {
+	margin-top: 6px;
+}
+#ForumContainer .QAstate .glyphicon-ok-sign {
+	font-size: 150%;
+	color: green;
+}
+#ForumContainer .QAstate .glyphicon-question-sign {
+	font-size: 150%;
+	color: red;
+}
+
+#ForumContainer .newPostBlock {
+	border-left: solid 4px #d3d3d3;
+	padding-left: 10px;
+}
+
+/* post item */
+
+#ForumContainer .postItem {
+	margin: 20px 0;
+}
+#ForumContainer .avatar {
+	margin: 0 0 20px 20px;
+}
+#ForumContainer .postUserData {
+	border-radius: 4px;
+	padding: 8px 15px;
+	margin-bottom: 10px;
+}
+#ForumContainer .postUserData h3 {
+	margin: 0;cursor: pointer;
+}
+#ForumContainer blockquote {
+	font-size: 100%;
+}
+#ForumContainer .postItem hr {
+	margin: 10px 0;
+}
+#ForumContainer .postItem .signature {
+	color: #aaaaaa;
+}
+#ForumContainer .miniProfileBox {
+	padding: 8px 15px;
+	margin-bottom: 10px;
+	display: none;
+	border-radius: 4px;
+}
+#ForumContainer .postItem .voteCount {
+	display: inline-block;
+	cursor: pointer;
+	position: absolute;
+	margin-top: 5px;
+}
+#ForumContainer .voters {
+	max-height: 120px;
+	width: 150px;
+	overflow: auto;
+	position: relative;
+	display: none;
+	padding: 4px;
+	text-align: left;
+	border-radius: 2px;
+	z-index: 1000;
+}
+#ForumContainer .postItem .voters ul {
+	margin: 4px;padding: 0;
+}
+#ForumContainer .voters li { list-style: none;font-size: 100%; }
+#ForumContainer .postItem .postTools {
+	display: inline-block;
+	margin-left: 40px;
+}
+#ForumContainer .postItem .postTools input {
+	padding: 0;
+}
+#ForumContainer .postItem .moderationLog {
+	padding: 8px 15px;
+	margin-bottom: 10px;
+	display: none;
+	border-radius: 4px;
+}
+#ForumContainer .postItem .postImage {
+	max-width: 100%;height: auto;
+}
+#ForumContainer .postItem iframe {
+	max-width: 100%;
+}
+#ForumContainer .postTime {
+	display: block;
+}
+
+/* text editor */
+
+#ForumContainer #FullText {
+	height: 300px;
+}
+#tinymce {
+	padding: 10px !important;
+}
+#ForumContainer .postForm {
+	margin: 10px 0;
+}
+
+#ForumContainer #ParsedFullText {
+	overflow-y: scroll;overflow-x: hidden;
+	max-height: 350px;
+}
+
+#ForumContainer .qaComment {
+	margin-left: 20px;padding: 10px;
+}
+
+#ForumContainer .answerButton, #ForumContainer .answerCheck {
+	margin: 20px;font-size: 200%;
+}
+#ForumContainer .answerButton {
+	cursor: pointer;
+}
+#ForumContainer .answerData {
+	min-width: 70px;
+}
+#ForumContainer .answerBody {
+	margin-left: 100px;
+}
+#ForumContainer .answerData span {
+	display: block;text-align: center;
+}
+#ForumContainer .voteCount .voters {
+	display: none;
+}
+
+/* queries */
+
+@media(max-width:479px) {
+	#ForumContainer .avatar {
+		display: none;
+	}
+}
+
+@media(max-width:639px) {
+	#ForumContainer .forumDetails {
+		display: none;
+	}
+}
+
+@media(min-width:1px) {
+	#ForumContainer #PreviewModal .modal-dialog {
+		width: 90%!important;
+		max-height: 95% !important;
+		margin: 10px auto;
+	}
+}
+
+/* Bootstrap overrides */
+
+#ForumContainer #AccountBox .badge {
+	background-color: #ff0000;color: white;
+	position: relative;
+	top: -2px;
+}
+
+.pagination .glyphicon {
+	top: 0;
+}
