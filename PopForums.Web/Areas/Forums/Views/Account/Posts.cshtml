@@ -1,0 +1,45 @@
+﻿@model PopForums.Models.PagedTopicContainer
+@using PopForums.Controllers
+@using PopForums.Extensions;
+
+@{
+	ViewBag.Title = ViewBag.PostUserName + "'s " + PopForums.Resources.Posts;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent {
+<script type="text/javascript">
+	$(function () {
+		PopForums.topicPreviewSetup();
+	});
+</script>
+}
+
+<div>
+	<h1>@ViewBag.PostUserName's @PopForums.Resources.Posts</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@ViewBag.PostUserName's @PopForums.Resources.Posts</li>
+	</ul>
+</div>
+
+@Html.PagerLinks(PopForums.Resources.Account, "Posts", Model.PagerContext, null, null, "currentPager")
+
+<table id="TopicList" class="table grid table-hover">
+	@foreach (var topic in Model.Topics)
+	{
+		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text> } data-topicid="@topic.TopicID">
+			<td class="newIndicator"><a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName })">@Html.TopicReadIndicator(topic, Model, "/Content/PopForums/")</a></td>
+			<td>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="Preview topic" data-topicid="@topic.TopicID"></span></h2>
+				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+				<small class="pull-right">
+					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: @FormatTime(topic.LastPostTime) @PopForums.Resources.By @topic.LastPostName
+				</small>
+			</td>
+		</tr>
+	}
+</table>

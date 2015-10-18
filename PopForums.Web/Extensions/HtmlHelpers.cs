@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.AspNet.Html.Abstractions;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.AspNet.Routing;
+using Microsoft.Framework.DependencyInjection;
 using PopForums.Models;
 using PopForums.Services;
 
@@ -214,30 +215,29 @@ namespace PopForums.Web.Extensions
 			var result = helper.DropDownList(name, new SelectList(DataCollections.TimeZones(), "Key", "Value", selectedValue), htmlAttributes);
 			return result;
 		}
-
-		// TODO: RoleCheckBoxes
-		//public static HtmlString RoleCheckBoxes(this IHtmlHelper helper, string name, string[] checkedRoles)
-		//{
-		//	var build = new StringBuilder();
-		//	var userService = PopForumsActivation.ServiceLocator.GetInstance<IUserService>();
-		//	var roles = userService.GetAllRoles();
-		//	foreach (var role in roles)
-		//	{
-		//		build.Append("<input type=\"checkbox\" name=\"");
-		//		build.Append(name);
-		//		build.Append("\" value=\"");
-		//		build.Append(role);
-		//		build.Append("\"");
-		//		if (checkedRoles.Contains(role))
-		//			build.Append(" checked=\"checked\"");
-		//		build.Append(" /><label for=\"");
-		//		build.Append(role);
-		//		build.Append("\">");
-		//		build.Append(role);
-		//		build.Append("</label><br />");
-		//	}
-		//	return new HtmlString(build.ToString());
-		//}
+		
+		public static HtmlString RoleCheckBoxes(this IHtmlHelper helper, string name, string[] checkedRoles)
+		{
+			var build = new StringBuilder();
+			var userService = helper.ViewContext.HttpContext.ApplicationServices.GetService<IUserService>();
+			var roles = userService.GetAllRoles();
+			foreach (var role in roles)
+			{
+				build.Append("<input type=\"checkbox\" name=\"");
+				build.Append(name);
+				build.Append("\" value=\"");
+				build.Append(role);
+				build.Append("\"");
+				if (checkedRoles.Contains(role))
+					build.Append(" checked=\"checked\"");
+				build.Append(" /><label for=\"");
+				build.Append(role);
+				build.Append("\">");
+				build.Append(role);
+				build.Append("</label><br />");
+			}
+			return new HtmlString(build.ToString());
+		}
 
 		public static HtmlString ForumReadIndicator(this IHtmlHelper helper, Forum forum, CategorizedForumContainer container, string path)
 		{

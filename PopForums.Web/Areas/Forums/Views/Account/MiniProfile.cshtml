@@ -1,0 +1,20 @@
+﻿@using PopForums.Extensions;
+@model PopForums.Models.DisplayProfile
+
+<div class="miniProfile">
+	@PopForums.Resources.Joined: @FormatTime(Model.Joined)<br />
+	@if (!String.IsNullOrWhiteSpace(Model.Location)) {
+		@PopForums.Resources.Location<text>: </text>@Model.Location<br />
+	}
+	@PopForums.Resources.Posts: @Html.ActionLink(Model.PostCount.ToString("N0"), "Posts", "Account", new { id = Model.UserID }, new { target = "_blank" }), @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
+	@Html.ActionLink("Full Profile", "ViewProfile", new { id = Model.UserID }, new { target = "_blank" })
+	@if (User != null && Model.ShowDetails)
+ { @:| 
+		@Html.ActionLink(PopForums.Resources.SendPM, "Create", "PrivateMessages", new { id = Model.UserID }, null) @:| 
+		@Html.ActionLink(PopForums.Resources.SendEmailButton, "EmailUser", "Account", new { id = Model.UserID }, null)
+ }
+	@if (!String.IsNullOrWhiteSpace(Model.Web))
+ {
+		<text>| </text><a href="@Model.Web" target="_blank">@PopForums.Resources.WebVisit: @Model.Web</a>
+ }
+</div>

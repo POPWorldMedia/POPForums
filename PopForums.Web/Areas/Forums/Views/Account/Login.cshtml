@@ -1,0 +1,69 @@
+﻿@using PopForums.Controllers;
+@using PopForums.Extensions;
+@model ICollection<Microsoft.Owin.Security.AuthenticationDescription>
+@{
+    ViewBag.Title = PopForums.Resources.Login;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			$("#LoginButton").click(PopForums.processLogin);
+			$("#EmailLogin,#PasswordLogin").keydown(function (e) { if (e.keyCode == 13) PopForums.processLogin(); });
+		});
+	</script>
+}
+
+<div>
+	<h1>@PopForums.Resources.Login</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>
+
+<div id="LoginResult" class="bg-danger callout @if (@Request.QueryString["error"] == null){<text> hide</text>}">@Request.QueryString["error"]</div>
+
+@if (this.GetUserFromViewData() == null)
+{
+	<div role="form">
+		<div class="form-group">
+			<label for="EmailLogin">@PopForums.Resources.Email</label>
+			@Html.TextBox("EmailLogin", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="PasswordLogin">@PopForums.Resources.Password</label>
+			@Html.Password("PasswordLogin", null, new { @class = "form-control" })
+		</div>
+		<div class="checkbox">
+			<label>
+				@Html.CheckBox("PersistCookie") @PopForums.Resources.RememberMe
+			</label>
+		</div>
+		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
+	</div>
+
+if (Model.Count > 0)
+{
+	using (Html.BeginForm("ExternalLogin", "Authorization", new { ReturnUrl = ViewBag.Referrer }))
+	{
+		@Html.AntiForgeryToken()
+		<h2>@PopForums.Resources.ExternalLogins</h2>
+		<p>
+			@foreach (var authenticationDescription in Model)
+			{
+				<button type="submit" id="@authenticationDescription.AuthenticationType" name="provider" value="@authenticationDescription.AuthenticationType" class="btn btn-primary">@authenticationDescription.AuthenticationType</button>
+			}
+		</p>
+	}
+}
+    
+<p>@PopForums.Resources.NotRegisteredQuestion @Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name). @Html.ActionLink(PopForums.Resources.ForgotPasswordQuestion, "Forgot", AccountController.Name)</p>
+
+@Html.Hidden("Referrer", (object)ViewBag.Referrer)
+}
+else
+{
+	<p>@PopForums.Resources.LoginAlready</p>
+}

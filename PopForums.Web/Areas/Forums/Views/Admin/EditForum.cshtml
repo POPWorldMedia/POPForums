@@ -1,0 +1,20 @@
+﻿@model PopForums.Models.Forum
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.EditForum;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.EditForum</h2>
+
+@using (Html.BeginForm())
+{
+	<div class="form-horizontal" role="form">
+		@Html.Partial("ForumForm")
+		<div class="form-group">
+			<div class="col-sm-push-2 col-sm-10">
+				<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
+			</div>
+		</div>
+	</div>
+}

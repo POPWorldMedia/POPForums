@@ -1,0 +1,59 @@
+﻿@using PopForums.Controllers
+@model PopForums.Models.UserEditPhoto
+
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@PopForums.Resources.Account</li>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ManagePhotos <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu">
+				<li>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", "Account")</li>
+			</ul>
+		</li>
+
+	</ul>
+</div>
+
+@using (Html.BeginForm("ManagePhotos", "Account", FormMethod.Post, new { enctype = "multipart/form-data", role = "form" })) {
+	<h2>@PopForums.Resources.Avatar</h2>
+	<div class="form-group">
+		<label for="avatarFile">@PopForums.Resources.UploadNew</label>
+		<input type="file" id="avatarFile" name="avatarFile" class="form-control" />
+	</div>
+	if (Model.AvatarID.HasValue)
+	{
+		<p><img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" /></p>
+		<div class="checkbox">
+			<label for="DeleteAvatar">@Html.CheckBoxFor(m => m.DeleteAvatar) @PopForums.Resources.AvatarDelete</label>
+		</div>
+	}
+		
+	<h2>@PopForums.Resources.Photo</h2>
+	<div class="form-group">
+		<label for="avatarFile">@PopForums.Resources.UploadNew</label>
+		<input type="file" id="photoFile" name="photoFile" class="form-control" />
+	</div>
+	if (Model.ImageID.HasValue)
+	{
+		<p><img src="@Url.Action("UserImage", "Image", new {id = Model.ImageID})" alt="User image" /></p>
+		<div class="checkbox">
+			<label for="DeleteImage">@Html.CheckBoxFor(m => m.DeleteImage)  @PopForums.Resources.PhotoDelete</label>
+		</div>
+		if (Model.IsImageApproved.HasValue && !Model.IsImageApproved.Value)
+		{
+			<p class="bg-warning callout">@PopForums.Resources.PhotoNotApproved</p>
+		}
+	}
+
+	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
+
+}

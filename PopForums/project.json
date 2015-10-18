@@ -6,23 +6,26 @@
   "projectUrl": "",
   "licenseUrl": "",
     "frameworks": {
-		"dnxcore50": {
-			"dependencies": {
-				"Microsoft.CSharp": "4.0.1-beta-23409",
-				"Microsoft.Framework.Configuration": "1.0.0-beta8",
-				"Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
-				"Microsoft.Framework.DependencyInjection": "1.0.0-beta8",
-				"System.Collections": "4.0.11-beta-23409",
-				"System.Linq": "4.0.1-beta-23409",
-				"System.Runtime": "4.0.21-beta-23409",
-				"System.Security.Cryptography.Algorithms": "4.0.0-beta-23409",
-				"System.Text.RegularExpressions": "4.0.11-beta-23409",
-				"System.Threading": "4.0.11-beta-23409",
-				"System.Threading.Thread": "4.0.0-beta-23409"
-			}
+		"dnx46": {
+            "frameworkAssemblies": {
+                "PresentationCore": "4.0.0.0",
+                "System.Net": "4.0.0.0",
+                "WindowsBase": "4.0.0.0"
+            }
 		}
     },
 	"dependencies": {
+		"Microsoft.CSharp": "4.0.1-beta-23409",
+		"Microsoft.Framework.Configuration": "1.0.0-beta8",
+		"Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
+		"Microsoft.Framework.DependencyInjection": "1.0.0-beta8",
+		"System.Collections": "4.0.11-beta-23409",
+		"System.Linq": "4.0.1-beta-23409",
+		"System.Runtime": "4.0.21-beta-23409",
+		"System.Security.Cryptography.Algorithms": "4.0.0-beta-23409",
+		"System.Text.RegularExpressions": "4.0.11-beta-23409",
+		"System.Threading": "4.0.11-beta-23409",
+		"System.Threading.Thread": "4.0.0-beta-23409"
 	},
 	"configurations": {
 		"CI": { }

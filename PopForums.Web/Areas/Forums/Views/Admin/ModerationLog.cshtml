@@ -1,0 +1,65 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Web.Areas.Forums.Controllers
+@inject PopForums.Services.ITimeFormattingService TimeFormattingService
+@inject PopForums.Web.Areas.Forums.Services.IUserRetrievalShim UserRetrievalShim
+@model List<PopForums.Models.ModerationLogEntry>
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.ModerationLog;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
+
+<h1>@PopForums.Resources.ModerationLog</h1>
+
+@using (Html.BeginForm())
+{
+	<div role="form">
+		<div class="form-group">
+			<label>@PopForums.Resources.StartDate</label>
+			@Html.TextBox("start", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.EndDate</label>
+			@Html.TextBox("end", null, new { @class = "form-control" })
+		</div>
+		<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" />
+	</div>
+}
+
+@if (Model != null)
+{
+	<table class="table table-hover" style="margin-top: 20px;">
+		<tr>
+			<th>@PopForums.Resources.EventTime</th>
+			<th>@PopForums.Resources.Name</th>
+			<th>@PopForums.Resources.Type</th>
+			<th>@PopForums.Resources.TopicID</th>
+			<th>@PopForums.Resources.PostID</th>
+		</tr>
+		@foreach (var entry in Model)
+		{
+			<tr>
+				<td class="text-nowrap">@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
+				<td>@Html.ActionLink(entry.UserName, "ViewProfile", AccountController.Name, new { id = entry.UserID }, new { target = "_blank" })</td>
+				<td>@entry.ModerationType</td>
+				<td>@entry.TopicID</td>
+				<td>
+					@if (entry.PostID.HasValue)
+					{
+						@Html.ActionLink(entry.PostID.Value.ToString(), "PostLink", ForumController.Name, new { id = entry.PostID.Value }, new { target = "_blank" })
+					}
+				</td>
+			</tr>
+			if (!String.IsNullOrEmpty(entry.Comment) || !String.IsNullOrEmpty(entry.Comment))
+			{
+				<tr>
+					<td colspan="5" style="border-bottom: solid 1px black;">
+						<p>@PopForums.Resources.Comment: @entry.Comment</p>
+						@Html.Raw(entry.OldText)
+					</td>
+				</tr>
+			}
+		}
+	</table>
+}

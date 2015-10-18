@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -38,9 +39,8 @@ namespace PopForums.Services
 		List<User> SearchByEmail(string email);
 		List<User> SearchByName(string name);
 		List<User> SearchByRole(string role);
-		// TODO: Edit user and image
-		//void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, HttpPostedFileBase avatarFile, HttpPostedFileBase photoFile, string ip, User user);
-		//void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, HttpPostedFileBase avatarFile, HttpPostedFileBase photoFile);
+		void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
+		void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
 		UserEdit GetUserEdit(User user);
 		void EditUserProfile(User user, UserEditProfile userEditProfile);
 		bool VerifyPassword(User user, string password);
@@ -69,11 +69,10 @@ namespace PopForums.Services
 		private readonly ITextParsingService _textParsingService;
 		private readonly IBanRepository _banRepository;
 		private readonly IForgotPasswordMailer _forgotPasswordMailer;
-		//private readonly IImageService _imageService;
+		private readonly IImageService _imageService;
 
 			// TODO: Dependencies on formsauth wrapper and imageservice
-		public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer 
-			//IImageService imageService
+		public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IImageService imageService
 			)
 		{
 			_userRepository = userRepository;
@@ -86,7 +85,7 @@ namespace PopForums.Services
 			_textParsingService = textParsingService;
 			_banRepository = banRepository;
 			_forgotPasswordMailer = forgotPasswordMailer;
-			//_imageService = imageService;
+			_imageService = imageService;
 		}
 
 		public void SetPassword(User targetUser, string password, string ip, User user)
@@ -362,94 +361,94 @@ namespace PopForums.Services
 			return new UserEdit(user, profile);
 		}
 
-		//public void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, HttpPostedFileBase avatarFile, HttpPostedFileBase photoFile, string ip, User user)
-		//{
-		//	if (!String.IsNullOrWhiteSpace(userEdit.NewEmail))
-		//		ChangeEmail(targetUser, userEdit.NewEmail, user, ip, userEdit.IsApproved);
-		//	if (!String.IsNullOrWhiteSpace(userEdit.NewPassword))
-		//		SetPassword(targetUser, userEdit.NewPassword, ip, user);
-		//	if (targetUser.IsApproved != userEdit.IsApproved)
-		//		UpdateIsApproved(targetUser, userEdit.IsApproved, user, ip);
+		public void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user)
+		{
+			if (!String.IsNullOrWhiteSpace(userEdit.NewEmail))
+				ChangeEmail(targetUser, userEdit.NewEmail, user, ip, userEdit.IsApproved);
+			if (!String.IsNullOrWhiteSpace(userEdit.NewPassword))
+				SetPassword(targetUser, userEdit.NewPassword, ip, user);
+			if (targetUser.IsApproved != userEdit.IsApproved)
+				UpdateIsApproved(targetUser, userEdit.IsApproved, user, ip);
 
-		//	var profile = _profileRepository.GetProfile(targetUser.UserID);
-		//	profile.IsSubscribed = userEdit.IsSubscribed;
-		//	profile.ShowDetails = userEdit.ShowDetails;
-		//	profile.IsPlainText = userEdit.IsPlainText;
-		//	profile.HideVanity = userEdit.HideVanity;
-		//	profile.TimeZone = userEdit.TimeZone;
-		//	profile.IsDaylightSaving = userEdit.IsDaylightSaving;
-		//	profile.Signature = _textParsingService.ForumCodeToHtml(userEdit.Signature);
-		//	profile.Location = userEdit.Location;
-		//	profile.Dob = userEdit.Dob;
-		//	profile.Web = userEdit.Web;
-		//	profile.Aim = userEdit.Aim;
-		//	profile.Icq = userEdit.Icq;
-		//	profile.YahooMessenger = userEdit.YahooMessenger;
-		//	profile.Facebook = userEdit.Facebook;
-		//	profile.Twitter = userEdit.Twitter;
-		//	if (removeAvatar)
-		//		profile.AvatarID = null;
-		//	if (removePhoto)
-		//		profile.ImageID = null;
-		//	_profileRepository.Update(profile);
+			var profile = _profileRepository.GetProfile(targetUser.UserID);
+			profile.IsSubscribed = userEdit.IsSubscribed;
+			profile.ShowDetails = userEdit.ShowDetails;
+			profile.IsPlainText = userEdit.IsPlainText;
+			profile.HideVanity = userEdit.HideVanity;
+			profile.TimeZone = userEdit.TimeZone;
+			profile.IsDaylightSaving = userEdit.IsDaylightSaving;
+			profile.Signature = _textParsingService.ForumCodeToHtml(userEdit.Signature);
+			profile.Location = userEdit.Location;
+			profile.Dob = userEdit.Dob;
+			profile.Web = userEdit.Web;
+			profile.Aim = userEdit.Aim;
+			profile.Icq = userEdit.Icq;
+			profile.YahooMessenger = userEdit.YahooMessenger;
+			profile.Facebook = userEdit.Facebook;
+			profile.Twitter = userEdit.Twitter;
+			if (removeAvatar)
+				profile.AvatarID = null;
+			if (removePhoto)
+				profile.ImageID = null;
+			_profileRepository.Update(profile);
 
-		//	var newRoles = userEdit.Roles ?? new string[0];
-		//	_roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
-		//	foreach (var role in targetUser.Roles)
-		//		if (!newRoles.Contains(role))
-		//			_securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
-		//	foreach (var role in newRoles)
-		//		if (!targetUser.Roles.Contains(role))
-		//			_securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
+			var newRoles = userEdit.Roles ?? new string[0];
+			_roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
+			foreach (var role in targetUser.Roles)
+				if (!newRoles.Contains(role))
+					_securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
+			foreach (var role in newRoles)
+				if (!targetUser.Roles.Contains(role))
+					_securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
 
-		//	if (avatarFile != null && avatarFile.ContentLength > 0)
-		//	{
-		//		var avatarID = _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile.GetBytes(), DateTime.UtcNow);
-		//		profile.AvatarID = avatarID;
-		//		_profileRepository.Update(profile);
-		//	}
+			if (avatarFile != null && avatarFile.Length > 0)
+			{
+				var avatarID = _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
+				profile.AvatarID = avatarID;
+				_profileRepository.Update(profile);
+			}
 
-		//	if (photoFile != null && photoFile.ContentLength > 0)
-		//	{
-		//		var imageID = _userImageRepository.SaveNewImage(targetUser.UserID, 0, true, photoFile.GetBytes(), DateTime.UtcNow);
-		//		profile.ImageID = imageID;
-		//		_profileRepository.Update(profile);
-		//	}
-		//}
+			if (photoFile != null && photoFile.Length > 0)
+			{
+				var imageID = _userImageRepository.SaveNewImage(targetUser.UserID, 0, true, photoFile, DateTime.UtcNow);
+				profile.ImageID = imageID;
+				_profileRepository.Update(profile);
+			}
+		}
 
-		//public void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, HttpPostedFileBase avatarFile, HttpPostedFileBase photoFile)
-		//{
-		//	var profile = _profileRepository.GetProfile(user.UserID);
-		//	if (removeAvatar)
-		//	{
-		//		_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
-		//		profile.AvatarID = null;
-		//	}
-		//	if (removePhoto)
-		//	{
-		//		_userImageRepository.DeleteImagesByUserID(user.UserID);
-		//		profile.ImageID = null;
-		//	}
-		//	_profileRepository.Update(profile);
+		public void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile)
+		{
+			var profile = _profileRepository.GetProfile(user.UserID);
+			if (removeAvatar)
+			{
+				_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
+				profile.AvatarID = null;
+			}
+			if (removePhoto)
+			{
+				_userImageRepository.DeleteImagesByUserID(user.UserID);
+				profile.ImageID = null;
+			}
+			_profileRepository.Update(profile);
 
-		//	if (avatarFile != null && avatarFile.ContentLength > 0)
-		//	{
-		//		_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
-		//		var bytes = _imageService.ConstrainResize(avatarFile.GetBytes(), _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70);
-		//		var avatarID = _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
-		//		profile.AvatarID = avatarID;
-		//		_profileRepository.Update(profile);
-		//	}
+			if (avatarFile != null && avatarFile.Length > 0)
+			{
+				_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
+				var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70);
+				var avatarID = _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
+				profile.AvatarID = avatarID;
+				_profileRepository.Update(profile);
+			}
 
-		//	if (photoFile != null && photoFile.ContentLength > 0)
-		//	{
-		//		_userImageRepository.DeleteImagesByUserID(user.UserID);
-		//		var bytes = _imageService.ConstrainResize(photoFile.GetBytes(), _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70);
-		//		var imageID = _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
-		//		profile.ImageID = imageID;
-		//		_profileRepository.Update(profile);
-		//	}
-		//}
+			if (photoFile != null && photoFile.Length > 0)
+			{
+				_userImageRepository.DeleteImagesByUserID(user.UserID);
+				var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70);
+				var imageID = _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
+				profile.ImageID = imageID;
+				_profileRepository.Update(profile);
+			}
+		}
 
 		// TODO: this and some other stuff probably belongs in ProfileService
 		public void EditUserProfile(User user, UserEditProfile userEditProfile)

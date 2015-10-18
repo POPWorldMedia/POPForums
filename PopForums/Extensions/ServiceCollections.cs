@@ -1,6 +1,7 @@
 ﻿using Microsoft.Framework.DependencyInjection;
 using PopForums.Configuration;
 using PopForums.Email;
+using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Messaging;
 using PopForums.ScoringGame;
@@ -20,12 +21,13 @@ namespace PopForums.Extensions
 			// email
 		    services.AddTransient<IForgotPasswordMailer, ForgotPasswordMailer>();
 		    services.AddTransient<IMailingListComposer, MailingListComposer>();
-		    //services.AddTransient<INewAccountMailer, NewAccountMailer>();
-		    //services.AddTransient<ISmtpWrapper, SmtpWrapper>();
+		    services.AddTransient<INewAccountMailer, NewAccountMailer>();
+		    services.AddTransient<ISmtpWrapper, SmtpWrapper>();
 		    services.AddTransient<ISubscribedTopicEmailComposer, SubscribedTopicEmailComposer>();
 		    services.AddTransient<IUserEmailer, UserEmailer>();
 
 			// external auth?
+		    services.AddTransient<IUserAssociationManager, UserAssociationManager>();
 
 			// feeds
 		    services.AddTransient<IFeedService, FeedService>();
@@ -48,10 +50,10 @@ namespace PopForums.Extensions
 		    //services.AddTransient<IForumAdapterFactory, ForumAdapterFactory>();
 		    services.AddTransient<IForumService, ForumService>();
 		    services.AddTransient<IFriendService, FriendService>();
-		    //services.AddTransient<IImageService, ImageService>();
+		    services.AddTransient<IImageService, ImageService>();
 		    services.AddTransient<IIPHistoryService, IPHistoryService>();
 		    services.AddTransient<ILastReadService, LastReadService>();
-		    //services.AddTransient<IMailingListService, MailingListService>();
+		    services.AddTransient<IMailingListService, MailingListService>();
 		    services.AddTransient<IModerationLogService, ModerationLogService>();
 		    services.AddTransient<IPostService, PostService>();
 		    services.AddTransient<IPrivateMessageService, PrivateMessageService>();

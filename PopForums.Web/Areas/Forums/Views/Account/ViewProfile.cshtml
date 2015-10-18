@@ -1,0 +1,136 @@
+﻿@using PopForums.Controllers
+@model PopForums.Models.DisplayProfile
+
+@{
+    ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+@section HeaderContent {
+}
+
+<div>
+	<h1>@Model.Name</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>
+
+<div id="Profile">
+	<ul class="nav nav-tabs" role="tablist" id="ProfileTabs">
+		<li class="active"><a href="#Details" role="tab" data-toggle="tab">@PopForums.Resources.Profile</a></li>
+		<li><a href="#ActivityFeed" role="tab" data-toggle="tab">@PopForums.Resources.ActivityFeed</a></li>
+		<li><a href="#Awards" role="tab" data-toggle="tab">@PopForums.Resources.Awards</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="Details" class="tab-pane active">
+			<dl class="dl-horizontal">
+				@if (Model.ShowDetails)
+				{
+					<dt>@PopForums.Resources.Contact</dt>
+					<dd>
+						@Html.ActionLink(String.Format(PopForums.Resources.SendNamePM, Model.Name), "Create", "PrivateMessages", new { id = Model.UserID }, null)<br />
+						@Html.ActionLink(String.Format(PopForums.Resources.SendNameEmail, Model.Name), "EmailUser", "Account", new { id = Model.UserID }, null)
+					</dd>
+				}
+				
+				<dt></dt>
+				<dd>@Html.ActionLink(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")", "Posts", "Account", new { id = Model.UserID }, null)</dd>
+				
+				<dt>@PopForums.Resources.Joined</dt>
+				<dd>@FormatTime(Model.Joined)</dd>
+
+				@if (Model.Dob.HasValue)
+				{
+					<dt>@PopForums.Resources.Birthday</dt>
+					<dd>@Model.Dob.Value.ToLongDateString()</dd>
+				}
+				
+				@if (!String.IsNullOrWhiteSpace(Model.Location))
+				{
+					<dt>@PopForums.Resources.Location</dt>
+					<dd>@Model.Location</dd>
+				}
+
+				@if (!String.IsNullOrWhiteSpace(Model.Facebook))
+				{
+					<dt>Facebook</dt>
+					<dd><a href="https://facebook.com/@Model.Facebook" target="_blank">https://facebook.com/@Model.Facebook</a></dd>
+				}
+
+				@if (!String.IsNullOrWhiteSpace(Model.Twitter))
+				{
+					<dt>Twitter</dt>
+					<dd><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></dd>
+				}
+				
+				@if (!String.IsNullOrWhiteSpace(Model.Web))
+				{
+					<dt>@PopForums.Resources.Web</dt>
+					<dd><a href="@Model.Web" target="_blank">@Model.Web</a></dd>
+				}
+				
+				@if (!String.IsNullOrWhiteSpace(Model.Aim))
+				{
+					<dt>AIM</dt>
+					<dd><a href="aim:goIM?screenname=@Model.Aim">@Model.Aim</a></dd>
+				}
+				
+				@if (!String.IsNullOrWhiteSpace(Model.YahooMessenger))
+				{
+					<dt>Yahoo Messenger</dt>
+					<dd><a href="ymsgr:sendIM?@Model.YahooMessenger">@Model.YahooMessenger</a></dd>
+				}
+				
+				@if (!String.IsNullOrWhiteSpace(Model.Icq))
+				{
+					<dt>ICQ</dt>
+					<dd><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></dd>
+				}
+				
+				@if (Model.AvatarID.HasValue)
+				{
+					<dt>@PopForums.Resources.Avatar</dt>
+					<dd><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-responsive" /></dd>
+				}
+				
+				<dt>@PopForums.Resources.ScoringGame</dt>
+				<dd>@Model.Points.ToString("N0")</dd>
+			</dl>
+
+			@if (Model.ImageID.HasValue && Model.IsImageApproved)
+			{
+				<div class="col-xs-12">
+					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-responsive" />
+				</div>
+			}
+		</div>
+
+		<div id="ActivityFeed" class="tab-pane">
+			@foreach (var item in Model.Feed)
+			{
+				<div class="bg-info callout">
+					@if (item.Points > 0)
+					{
+						<div class="activityFeedPoints center-block">+@item.Points</div>
+					}
+					<div>@Html.Raw(item.Message)</div>
+					<div class="text-right small">@FormatTime(item.TimeStamp)</div>
+				</div>
+			}
+		</div>
+
+		<div id="Awards" class="tab-pane">
+			@foreach (var item in Model.UserAwards)
+			{
+				<div class="bg-info callout" title="@item.Description">
+					<h2>@item.Title</h2>
+					<div class="text-right small">@FormatTime(item.TimeStamp)</div>
+				</div>
+			}
+			@if (Model.UserAwards.Count == 0)
+			{
+				<div>@PopForums.Resources.None</div>
+			}
+		</div>
+	</div>
+</div>

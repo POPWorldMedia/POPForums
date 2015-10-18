@@ -22,7 +22,7 @@
 	"web": "Microsoft.AspNet.Server.Kestrel"
   },
   "frameworks": {
-    "dnxcore50": { }
+    "dnx46": { }
   },
   "exclude": [
     "wwwroot",

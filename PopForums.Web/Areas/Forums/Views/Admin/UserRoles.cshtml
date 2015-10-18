@@ -1,0 +1,31 @@
+﻿@model List<string>
+
+@{
+    ViewBag.PageTitle = PopForums.Resources.UserRoles;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h2>@PopForums.Resources.UserRoles</h2>
+
+@using (Html.BeginForm("CreateRole", "Admin")) {
+	<div role="form" class="form-inline">
+		<div class="form-group">
+			<input type="text" id="newRole" name="newRole" class="form-control" />
+		</div>
+		<input type="submit" value="@PopForums.Resources.CreateNewRole" class="btn btn-primary" />
+	</div>
+}
+
+@using (Html.BeginForm("DeleteRole", "Admin")) {
+	<div role="form" style="margin-top: 20px;">
+		<div class="form-group">
+			<select id="roleToDelete" name="roleToDelete" size="6" class="form-control">
+				@foreach (var role in Model)
+				{<option value="@role">@role</option>}
+			</select>
+		</div>
+		<input type="submit" value="@PopForums.Resources.DeleteSelectedRole" class="btn btn-primary" />
+	</div>
+}
+
+<p>@PopForums.Resources.PermRoles</p>

@@ -1,0 +1,46 @@
+﻿@model List<PopForums.ExternalLogin.ExternalUserAssociation>
+@using PopForums.Controllers
+@{
+    ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@PopForums.Resources.Account</li>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ExternalLogins <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu">
+				<li>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")</li>
+			</ul>
+		</li>
+
+	</ul>
+</div>
+
+@if (Model.Count == 0)
+{
+	<p class="bg-info callout">@PopForums.Resources.NoExternalLoginsRegistered</p>
+}
+else
+{
+	<table class="table grid table-hover">
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td class="col-xs-2">
+					@using (Html.BeginForm("RemoveExternalLogin", "Account", new {id = item.ExternalUserAssociationID}))
+					{
+						<input type="submit" value="Remove" class="btn btn-primary"/>
+					}
+				</td>
+				<td class="col-xs-4">@item.Issuer</td>
+				<td class="col-xs-6">@item.Name</td>
+			</tr>
+		}
+	</table>
+}

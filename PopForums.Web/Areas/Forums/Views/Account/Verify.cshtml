@@ -1,0 +1,44 @@
+﻿@using PopForums.Controllers
+@{
+	ViewBag.Title = PopForums.Resources.VerifyAccount;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.VerifyAccount</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>
+
+@if (ViewData["EmailProblem"] != null || ViewData["Result"] != null)
+{
+	<div class="bg-danger callout">@ViewData["EmailProblem"] @ViewData["Result"]</div>
+}
+
+<div class="row">
+	<div class="col-xs-6">
+		@using (Html.BeginForm("VerifyCode", "Account"))
+		{
+			<div role="form">
+				<div class="form-group">
+					<label for="authorizationCode">@PopForums.Resources.EnterVerificationCode</label>
+					@Html.TextBox("authorizationCode", null, new { @class = "form-control" })
+				</div>
+				<input type="submit" value="@PopForums.Resources.VerifyCodeButton" class="btn btn-primary" />
+			</div>
+		}
+	</div>
+	<div class="col-xs-6">
+		@using (Html.BeginForm("RequestCode", "Account"))
+		{
+			<div role="form">
+				<div class="form-group">
+					<label for="email">@PopForums.Resources.VerificationIfYouNeed</label>
+					@Html.TextBox("email", null, new { @class = "form-control" })
+				</div>
+				<input type="submit" value="@PopForums.Resources.SendEmailWithNewCodeButton" class="btn btn-primary" />
+			</div>
+		}
+	</div>
+</div>

@@ -9,7 +9,6 @@ using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Services;
-using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {

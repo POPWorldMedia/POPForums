@@ -1,0 +1,58 @@
+﻿@model List<PopForums.ScoringGame.AwardDefinition>
+
+@{
+	ViewBag.PageTitle = PopForums.Resources.AwardDefinitions;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.AwardDefinitions</h1>
+
+<table class="table">
+	<tr>
+		<th>Award Definition ID</th>
+		<th>@PopForums.Resources.Title</th>
+		<th>@PopForums.Resources.Description</th>
+		<th>Single-time award</th>
+		<th>&nbsp;</th>
+	</tr>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>@Html.ActionLink(item.AwardDefinitionID, "Award", new { id = item.AwardDefinitionID })</td>
+			<td>@item.Title</td>
+			<td>@item.Description</td>
+			<td><input type="checkbox" disabled="disabled" @if (item.IsSingleTimeAward){<text>checked="checked" </text>}/></td>
+			<td>
+				@using (Html.BeginForm("DeleteAward", "Admin", new { id = item.AwardDefinitionID })) {
+					<input type="submit" value="Delete" class="btn btn-primary" />
+				}
+			</td>
+		</tr>
+	}
+</table>
+
+<h2>Add Award</h2>
+
+@using (Html.BeginForm("AddAward", "Admin"))
+{
+	<div role="form">
+		<div class="form-group">
+			<label for="AwardDefinitionID">Award Definition ID</label>
+			@Html.TextBox("AwardDefinitionID", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="Title">Title</label>
+			@Html.TextBox("Title", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label for="Description">Description</label>
+			@Html.TextBox("Description", String.Empty, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<div class="checkbox">
+				<label for="IsSingleTimeAward">@Html.CheckBox("IsSingleTimeAward") Single-time award</label>
+			</div>
+		</div>
+		<input type="submit" value="Add Award" class="btn btn-primary" />
+	</div>
+}

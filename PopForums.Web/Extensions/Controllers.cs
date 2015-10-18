@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Routing;
-using PopForums.Models;
 
 namespace PopForums.Web.Extensions
 {
@@ -30,24 +28,15 @@ namespace PopForums.Web.Extensions
 			return result;
 		}
 
-		// TODO: FullUrlHelper
-		//public static string FullUrlHelper(this Controller controller, string actionName, string controllerName, object routeValues = null)
-		//{
-		//	var helper = new UrlHelper(controller.Request.RequestContext);
-		//	var requestUrl = controller.Request.Url;
-		//	if (requestUrl == null)
-		//		return String.Empty;
-		//	var url = requestUrl.Scheme + "://";
-		//	url += requestUrl.Host;
-		//	url += (requestUrl.Port != 80 ? ":" + requestUrl.Port : "");
-		//	url += helper.Action(actionName, controllerName, routeValues);
-		//	return url;
-		//}
-		
-		//public static User CurrentUser(this Controller controller)
-		//{
-		//	var user = controller.HttpContext.Items["PopForumsUser"] as User;
-		//	return user;
-		//}
+		public static string FullUrlHelper(this Controller controller, string actionName, string controllerName, object routeValues = null)
+		{
+			var helper = controller.Url;
+			if (controller.Request == null)
+				return String.Empty;
+			var url = controller.Request.Scheme + "://";
+			url += controller.Request.Host;
+			url += helper.Action(actionName, controllerName, routeValues);
+			return url;
+		}
 	}
 }
