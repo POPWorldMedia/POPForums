@@ -30,7 +30,7 @@ namespace PopForums.ExternalLogin
 		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip)
 		{
 			if (externalAuthenticationResult == null)
-				throw new ArgumentNullException("externalAuthenticationResult");
+				throw new ArgumentNullException(nameof(externalAuthenticationResult));
 			var match = _externalUserAssociationRepository.Get(externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey);
 			if (match == null)
 			{

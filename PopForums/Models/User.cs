@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Security.Principal;
 
 namespace PopForums.Models
 {
-	public class User //: IPrincipal
+	public class User
 	{
 		public User(int userID, DateTime creationDate)
 		{
@@ -28,14 +27,5 @@ namespace PopForums.Models
 				throw new Exception("Roles not set for user.");
 			return Roles.Contains(role);
 		}
-
-		// TODO: IPrincipal on user?
-		//public IIdentity Identity
-		//{
-		//	get
-		//	{
-		//		return new GenericIdentity(Name);
-		//	}
-		//}
 	}
 }

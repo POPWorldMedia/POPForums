@@ -1,14 +1,14 @@
-﻿@model List<PopForums.ExternalLogin.ExternalUserAssociation>
-@using PopForums.Controllers
+﻿@using PopForums.Web.Areas.Forums.Controllers
+@model List<PopForums.ExternalLogin.ExternalUserAssociation>
 @{
     ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
 		<li>@PopForums.Resources.Account</li>
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ExternalLogins <span class="caret"></span></a>

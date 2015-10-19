@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Authentication.Cookies;
+﻿using System;
+using Microsoft.AspNet.Authentication.Cookies;
+using Microsoft.AspNet.Authentication.Google;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Runtime;
@@ -31,17 +33,15 @@ namespace PopForums.Web
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add MVC services to the services container.
-            services.AddMvc();
+	        services.AddAuthentication(options => options.SignInScheme = "pf");
+
+			// Add MVC services to the services container.
+			services.AddMvc();
 
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			// TODO: how to package mappings in web project
 	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
-
-	        // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-	        // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-	        // services.AddWebApiConventions();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -64,10 +64,28 @@ namespace PopForums.Web
 			app.UseCookieAuthentication(options =>
 	        {
 				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-		        options.AutomaticAuthentication = true;
+				options.AutomaticAuthentication = true;
+	        });
+	        app.UseCookieAuthentication(options =>
+	        {
+		        options.AuthenticationScheme = "pf";
+		        options.CookieName = "pf";
+		        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 	        });
 
-	        app.UseMiddleware<PopForumsMiddleware>();
+	        app.UseFacebookAuthentication(options =>
+	        {
+		        options.AppId = "1932812290276605";
+		        options.AppSecret = "d2cfaebc3b565bdcfc7782b72aab98d8";
+	        });
+
+	        app.UseGoogleAuthentication(options =>
+	        {
+		        options.ClientId = "319472452413-ojveqkrcdfufi84le0sm7044sqfqkhfj.apps.googleusercontent.com";
+		        options.ClientSecret = "n_ZhNUpEaGJyhnfIHBSWyhbx";
+			});
+
+			app.UseMiddleware<PopForumsMiddleware>();
 			
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
@@ -78,9 +96,6 @@ namespace PopForums.Web
 				routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-
-                // Uncomment the following line to add a route for porting Web API 2 controllers.
-                // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
             });
         }
     }

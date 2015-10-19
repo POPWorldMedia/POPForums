@@ -69,6 +69,63 @@
           "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication.Facebook/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Google/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.OAuth/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authorization/1.0.0-beta8": {
         "type": "package",
         "dependencies": {
@@ -1845,6 +1902,63 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Facebook/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Google/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.OAuth/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
         }
       },
       "Microsoft.AspNet.Authorization/1.0.0-beta8": {
@@ -3704,6 +3818,63 @@
           "lib/dnx451/Microsoft.AspNet.Authentication.Cookies.dll": {}
         }
       },
+      "Microsoft.AspNet.Authentication.Facebook/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.Google/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication.OAuth": "1.0.0-beta8"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Authentication.OAuth/1.0.0-beta8": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.Authentication": "1.0.0-beta8",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core",
+          "System.Net.Http"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll": {}
+        }
+      },
       "Microsoft.AspNet.Authorization/1.0.0-beta8": {
         "type": "package",
         "dependencies": {
@@ -5544,6 +5715,48 @@
         "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta8.nupkg",
         "Microsoft.AspNet.Authentication.Cookies.1.0.0-beta8.nupkg.sha512",
         "Microsoft.AspNet.Authentication.Cookies.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Authentication.Facebook/1.0.0-beta8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "zCwwHaG0PuOOtYMhtY7y3S8Qb8MTD3TzizBeyhDc1ExnSwN4gQRk59Yrlwmrzb5LpGwmdrwDTMAlir7MVfnLXg==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.Facebook.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Facebook.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Facebook.xml",
+        "Microsoft.AspNet.Authentication.Facebook.1.0.0-beta8.nupkg",
+        "Microsoft.AspNet.Authentication.Facebook.1.0.0-beta8.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.Facebook.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Authentication.Google/1.0.0-beta8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "yxvGupK0V05GHV7vqdBOM5BTxFgPFMEWMuLwK+9DxgZveRx2zoJLGMB8OAW1qp/kBZ8HXLmAKoTW3nAkggzY3Q==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.Google.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.Google.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Google.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.Google.xml",
+        "Microsoft.AspNet.Authentication.Google.1.0.0-beta8.nupkg",
+        "Microsoft.AspNet.Authentication.Google.1.0.0-beta8.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.Google.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.Authentication.OAuth/1.0.0-beta8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "8mwfBMQu8MF2NDFK250d1EUFCH5ZoJI5SmXJ71zTg3nisuTL05x3EWtnhIP9ZRD96CG/jvRQz/WJfRw7sRyeVw==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.dll",
+        "lib/dnx451/Microsoft.AspNet.Authentication.OAuth.xml",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.OAuth.dll",
+        "lib/dnxcore50/Microsoft.AspNet.Authentication.OAuth.xml",
+        "Microsoft.AspNet.Authentication.OAuth.1.0.0-beta8.nupkg",
+        "Microsoft.AspNet.Authentication.OAuth.1.0.0-beta8.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.OAuth.nuspec"
       ]
     },
     "Microsoft.AspNet.Authorization/1.0.0-beta8": {
@@ -7678,6 +7891,8 @@
   "projectFileDependencyGroups": {
     "": [
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-beta8",
+      "Microsoft.AspNet.Authentication.Google >= 1.0.0-beta8",
+      "Microsoft.AspNet.Authentication.Facebook >= 1.0.0-beta8",
       "Microsoft.AspNet.Diagnostics >= 1.0.0-beta8",
       "Microsoft.AspNet.IISPlatformHandler >= 1.0.0-beta8",
       "Microsoft.AspNet.Mvc >= 6.0.0-beta8",
