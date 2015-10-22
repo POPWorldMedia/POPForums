@@ -10,6 +10,7 @@ using Microsoft.Framework.Logging;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
+using PopForums.ExternalLogin;
 using PopForums.Web.Areas.Forums.Services;
 
 namespace PopForums.Web
@@ -33,7 +34,7 @@ namespace PopForums.Web
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
         {
-	        services.AddAuthentication(options => options.SignInScheme = "pf");
+	        services.AddAuthentication(options => options.SignInScheme = ExternalExternalUserAssociationManager.AuthenticationContextName);
 
 			// Add MVC services to the services container.
 			services.AddMvc();
@@ -68,8 +69,8 @@ namespace PopForums.Web
 	        });
 	        app.UseCookieAuthentication(options =>
 	        {
-		        options.AuthenticationScheme = "pf";
-		        options.CookieName = "pf";
+		        options.AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName;
+		        options.CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName;
 		        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 	        });
 

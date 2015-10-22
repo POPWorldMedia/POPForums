@@ -6,17 +6,17 @@ using PopForums.Services;
 
 namespace PopForums.ExternalLogin
 {
-	public interface IUserAssociationManager
+	public interface IExternalUserAssociationManager
 	{
 		ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip);
-		void Associate(User user, ExternalAuthenticationResult externalAuthenticationResult, string ip);
+		void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip);
 		List<ExternalUserAssociation> GetExternalUserAssociations(User user);
 		void RemoveAssociation(User user, int externalUserAssociationID, string ip);
 	}
 
-	public class UserAssociationManager : IUserAssociationManager
+	public class ExternalExternalUserAssociationManager : IExternalUserAssociationManager
 	{
-		public UserAssociationManager(IExternalUserAssociationRepository externalUserAssociationRepository, IUserRepository userRepository, ISecurityLogService securityLogService)
+		public ExternalExternalUserAssociationManager(IExternalUserAssociationRepository externalUserAssociationRepository, IUserRepository userRepository, ISecurityLogService securityLogService)
 		{
 			_externalUserAssociationRepository = externalUserAssociationRepository;
 			_userRepository = userRepository;
@@ -26,6 +26,8 @@ namespace PopForums.ExternalLogin
 		private readonly IExternalUserAssociationRepository _externalUserAssociationRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly ISecurityLogService _securityLogService;
+
+		public static string AuthenticationContextName = "pfauth";
 
 		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip)
 		{
@@ -53,18 +55,18 @@ namespace PopForums.ExternalLogin
 			return result;
 		}
 
-		public void Associate(User user, ExternalAuthenticationResult externalAuthenticationResult, string ip)
+		public void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
-			if (externalAuthenticationResult != null)
+			if (externalLoginInfo != null)
 			{
-				if (String.IsNullOrEmpty(externalAuthenticationResult.Issuer))
-					throw new NullReferenceException("The identity claims contain no issuer.");
-				if (String.IsNullOrEmpty(externalAuthenticationResult.ProviderKey))
-					throw new NullReferenceException("The identity claims contain no provider key");
-				_externalUserAssociationRepository.Save(user.UserID, externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey, externalAuthenticationResult.Name);
-				_securityLogService.CreateLogEntry(user, user, ip, String.Format("Issuer: {0}, Provider: {1}, Name: {2}", externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey, externalAuthenticationResult.Name), SecurityLogType.ExternalAssociationSet);
+				if (String.IsNullOrEmpty(externalLoginInfo.LoginProvider))
+					throw new NullReferenceException("The external login info contains no provider.");
+				if (String.IsNullOrEmpty(externalLoginInfo.ProviderKey))
+					throw new NullReferenceException("The external login info contains no provider key.");
+				_externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
+				_securityLogService.CreateLogEntry(user, user, ip, String.Format("Provider: {0}, DisplayName: {1}", externalLoginInfo.LoginProvider, externalLoginInfo.ProviderDisplayName), SecurityLogType.ExternalAssociationSet);
 			}
 		}
 

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Http.Authentication;
-using Microsoft.AspNet.Http.Features.Authentication;
 using Microsoft.AspNet.Http.Internal;
 using Microsoft.AspNet.Mvc;
 using PopForums.Configuration;
@@ -25,7 +20,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class AccountController : Controller
 	{
-		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IUserAssociationManager userAssociationManager, IUserRetrievalShim userRetrievalShim)
+		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim)
 		{
 			_userService = userService;
 			_settingsManager = settingsManager;
@@ -40,7 +35,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			_imageService = imageService;
 			_feedService = feedService;
 			_userAwardService = userAwardService;
-			_userAssociationManager = userAssociationManager;
+			_externalUserAssociationManager = externalUserAssociationManager;
 			_userRetrievalShim = userRetrievalShim;
 		}
 
@@ -62,7 +57,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		private readonly IImageService _imageService;
 		private readonly IFeedService _feedService;
 		private readonly IUserAwardService _userAwardService;
-		private readonly IUserAssociationManager _userAssociationManager;
+		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 
 		public ViewResult Create()
@@ -108,7 +103,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		//		var authentication = _owinContext.Authentication;
 		//		var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 		//		if (authResult != null)
-		//			_userAssociationManager.Associate(user, authResult, HttpContext.Request.UserHostAddress);
+		//			_externalUserAssociationManager.Associate(user, authResult, HttpContext.Request.UserHostAddress);
 
 		//		return View("AccountCreated");
 		//	}
@@ -455,7 +450,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			var externalAssociations = _userAssociationManager.GetExternalUserAssociations(user);
+			var externalAssociations = _externalUserAssociationManager.GetExternalUserAssociations(user);
 			ViewBag.Referrer = Url.Action("ExternalLogins");
 			return View(externalAssociations);
 		}
@@ -465,98 +460,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			_userAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
+			_externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
 			return RedirectToAction("ExternalLogins");
-		}
-
-
-
-
-
-		// ************* third party auth
-
-		[HttpPost]
-		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
-		public IActionResult ExternalLogin(string provider, string returnUrl = null)
-		{
-			// Request a redirect to the external login provider
-			var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-			var properties = ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-			return new ChallengeResult(provider, properties);
-		}
-
-		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
-		{
-			var info = await GetExternalLoginInfoAsync();
-			if (info == null)
-				return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
-			var email = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Email) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Email).Value : null;
-			var name = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Name) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Name).Value : null;
-			var externalAuthResult = new ExternalAuthenticationResult
-			{
-				Issuer = info.LoginProvider,
-				Email = email,
-				Name = name,
-				ProviderKey = info.ProviderKey
-			};
-			var matchResult = _userAssociationManager.ExternalUserAssociationCheck(externalAuthResult, HttpContext.Connection.RemoteIpAddress.ToString());
-			if (matchResult.Successful)
-			{
-				_userService.Login(matchResult.User, true, HttpContext.Connection.RemoteIpAddress.ToString());
-				return Redirect(returnUrl);
-			}
-			ViewBag.Referrer = returnUrl;
-			return View();
-		}
-
-
-
-
-
-		private const string LoginProviderKey = "LoginProvider";
-		private const string XsrfKey = "XsrfId";
-		public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl, string userId = null)
-		{
-			var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
-			properties.Items[LoginProviderKey] = provider;
-			if (userId != null)
-			{
-				properties.Items[XsrfKey] = userId;
-			}
-			return properties;
-		}
-
-		private async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
-		{
-			var auth = new AuthenticateContext("pf");
-            await HttpContext.Authentication.AuthenticateAsync(auth);
-			if (auth.Principal == null || auth.Properties == null || !auth.Properties.ContainsKey(LoginProviderKey))
-			{
-				return null;
-			}
-
-			if (expectedXsrf != null)
-			{
-				if (!auth.Properties.ContainsKey(XsrfKey))
-				{
-					return null;
-				}
-				var userId = auth.Properties[XsrfKey];
-				if (userId != expectedXsrf)
-				{
-					return null;
-				}
-			}
-
-			var claim = auth.Principal.FindFirst(ClaimTypes.NameIdentifier);
-			var providerKey = claim?.Value;
-			var provider = auth.Properties[LoginProviderKey];
-			if (providerKey == null || provider == null)
-			{
-				return null;
-			}
-			return new ExternalLoginInfo(auth.Principal, provider, providerKey, new AuthenticationDescription(auth.Description).DisplayName);
 		}
 	}
 }

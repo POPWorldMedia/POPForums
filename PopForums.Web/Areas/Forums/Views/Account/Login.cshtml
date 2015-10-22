@@ -53,7 +53,7 @@
 
 if (Model.Count > 0)
 {
-	using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.Referrer }))
+	using (Html.BeginForm("ExternalLogin", AuthorizationController.Name, new { ReturnUrl = ViewBag.Referrer }))
 	{
 		@Html.AntiForgeryToken()
 		<h2>@PopForums.Resources.ExternalLogins</h2>

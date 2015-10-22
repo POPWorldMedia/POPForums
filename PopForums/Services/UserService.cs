@@ -267,8 +267,7 @@ namespace PopForums.Services
 
 		public void Logout(User user, string ip)
 		{
-			// TODO: web project needs to delete cookie
-			//_formsAuthWrapper.SignOut();
+			// used only for logging; controller performs actual logout
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Logout);
 		}
 
