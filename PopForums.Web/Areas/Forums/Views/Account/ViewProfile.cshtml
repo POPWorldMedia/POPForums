@@ -1,9 +1,15 @@
-﻿@using PopForums.Controllers
+﻿@using System.Threading.Tasks
+@using PopForums.Services
+@using PopForums.Web.Areas.Forums.Controllers
+@using PopForums.Web.Areas.Forums.Services
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
 @model PopForums.Models.DisplayProfile
 
 @{
-    ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+	ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var profile = UserRetrievalShim.GetProfile(Context);
 }
 @section HeaderContent {
 }
@@ -11,7 +17,7 @@
 <div>
 	<h1>@Model.Name</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
 	</ul>
 </div>
 
@@ -37,7 +43,7 @@
 				<dd>@Html.ActionLink(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")", "Posts", "Account", new { id = Model.UserID }, null)</dd>
 				
 				<dt>@PopForums.Resources.Joined</dt>
-				<dd>@FormatTime(Model.Joined)</dd>
+				<dd>@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</dd>
 
 				@if (Model.Dob.HasValue)
 				{
@@ -114,7 +120,7 @@
 						<div class="activityFeedPoints center-block">+@item.Points</div>
 					}
 					<div>@Html.Raw(item.Message)</div>
-					<div class="text-right small">@FormatTime(item.TimeStamp)</div>
+					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>
 			}
 		</div>
@@ -124,7 +130,7 @@
 			{
 				<div class="bg-info callout" title="@item.Description">
 					<h2>@item.Title</h2>
-					<div class="text-right small">@FormatTime(item.TimeStamp)</div>
+					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>
 			}
 			@if (Model.UserAwards.Count == 0)

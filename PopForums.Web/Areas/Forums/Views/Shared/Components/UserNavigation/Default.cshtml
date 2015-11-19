@@ -36,7 +36,7 @@ else
 						<li class="dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-								<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
+								<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1, Area = "Forums" }, null)</li>
 								<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
 								<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", HomeController.Name)</li>
 							</ul>

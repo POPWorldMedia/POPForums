@@ -2,7 +2,8 @@
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {
-    public class SearchController : Controller
+	[Area("Forums")]
+	public class SearchController : Controller
     {
 	    public static string Name = "Search";
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Http.Internal;
 using Microsoft.AspNet.Mvc;
@@ -83,10 +84,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		//[HttpPost]
 		//public async Task<ViewResult> Create(SignupData signupData)
 		//{
-		//	signupData.Validate(ModelState, _userService, HttpContext.Request.UserHostAddress);
+		//	var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+		//	signupData.Validate(ModelState, _userService, ip);
 		//	if (ModelState.IsValid)
 		//	{
-		//		var user = _userService.CreateUser(signupData, HttpContext.Request.UserHostAddress);
+		//		var user = _userService.CreateUser(signupData, ip);
 		//		_profileService.Create(user, signupData);
 		//		var verifyUrl = this.FullUrlHelper("Verify", "Account");
 		//		var result = _newAccountMailer.Send(user, verifyUrl);
@@ -95,15 +97,16 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		//		if (_settingsManager.Current.IsNewUserApproved)
 		//		{
 		//			ViewData["Result"] = Resources.AccountReady;
-		//			_userService.Login(user.Email, signupData.Password, false, HttpContext);
+		//			_userService.Login(user, ip);
 		//		}
 		//		else
 		//			ViewData["Result"] = Resources.AccountReadyCheckEmail;
-
-		//		var authentication = _owinContext.Authentication;
+				
 		//		var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
 		//		if (authResult != null)
-		//			_externalUserAssociationManager.Associate(user, authResult, HttpContext.Request.UserHostAddress);
+		//			_externalUserAssociationManager.Associate(user, authResult, ip);
+
+		//		// TODO: do login here!
 
 		//		return View("AccountCreated");
 		//	}

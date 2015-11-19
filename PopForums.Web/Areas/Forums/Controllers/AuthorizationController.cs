@@ -157,6 +157,9 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View();
 		}
 
+		// PopForums doesn't use the Xsrf property, because it associates claims with user accounts, not 
+		// accounts with claims. For example, a user can't add a Facebook association while already logged in.
+		// They must use their PF credentials after getting valid claims from the 3rd party.
 		private async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
 		{
 			var auth = new AuthenticateContext(ExternalExternalUserAssociationManager.AuthenticationContextName);
