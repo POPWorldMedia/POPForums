@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Security;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Routing;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Services;
 using PopForums.Web.Extensions;
+using PopForums.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {
@@ -92,7 +92,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		[ValidateInput(false)]
+		// TODO: [ValidateInput(false)]
 		public JsonResult PostTopic(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -104,15 +104,16 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
 			if (!permissionContext.UserCanPost)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
-			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, this.CurrentUser()))
+			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, user))
 				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
 			if (String.IsNullOrWhiteSpace(newPost.FullText) || String.IsNullOrWhiteSpace(newPost.Title))
 				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
-			
-			var urlHelper = new UrlHelper(ControllerContext.RequestContext);
+
+			// TODO: test link generation
+			var urlHelper = Url;
 			var userProfileUrl = urlHelper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
-			var topic = _forumService.PostNewTopic(forum, user, permissionContext, newPost, Request.UserHostAddress, userProfileUrl, topicLinkGenerator);
+			var topic = _forumService.PostNewTopic(forum, user, permissionContext, newPost, HttpContext.Connection.RemoteIpAddress.ToString(), userProfileUrl, topicLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
 		}
@@ -122,7 +123,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var forum = _forumService.Get(forumID);
 			if (forum == null)
 				throw new Exception(String.Format("Forum {0} not found", forumID));
-			permissionContext = _forumService.GetPermissionContext(forum, this.CurrentUser());
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			permissionContext = _forumService.GetPermissionContext(forum, user);
 			return forum;
 		}
 
@@ -288,7 +290,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		[ValidateInput(false)]
+		// TODO: test validation [ValidateInput(false)]
 		public JsonResult PostReply(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -319,14 +321,14 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var topicLink = this.FullUrlHelper("GoToNewestPost", Name, new { id = topic.TopicID });
 			Func<User, string> unsubscribeLinkGenerator =
 				u => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new { topicID = topic.TopicID, authKey = u.AuthorizationKey });
-			var helper = new UrlHelper(Request.RequestContext);
+			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
-			var post = _topicService.PostReply(topic, user, newPost.ParentPostID, Request.UserHostAddress, false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
+			var post = _topicService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 				_topicService.CloseTopic(topic, user);
-			var urlHelper = new UrlHelper(ControllerContext.RequestContext);
+			var urlHelper = Url;
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "PostLink", id = post.PostID }) });
 		}
 
@@ -344,7 +346,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			ViewBag.Signatures = _profileService.GetSignatures(postList);
 			ViewBag.Avatars = _profileService.GetAvatars(postList);
 			ViewBag.VotedPostIDs = _postService.GetVotedPostIDs(user, postList);
-			ViewData[ViewDataDictionaries.ViewDataUserKey] = user;
+			ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 			if (user != null)
 				_lastReadService.MarkTopicRead(user, topic);
 			return View("PostItem", post);
@@ -446,22 +448,22 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var post = _postService.Get(id);
 			if (post == null)
 				return this.NotFound("NotFound", null);
-			if (!User.IsPostEditable(post))
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			if (user.IsPostEditable(post))
 				return this.Forbidden("Forbidden", null);
 			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
-			var user = _userRetrievalShim.GetUser(HttpContext);
 			var postEdit = _postService.GetPostForEdit(post, user, isMobile);
 			return View(postEdit);
 		}
 
 		[HttpPost]
-		[ValidateInput(false)]
+		// TODO: test validate [ValidateInput(false)]
 		public ActionResult Edit(int id, PostEdit postEdit)
 		{
 			var post = _postService.Get(id);
-			if (!User.IsPostEditable(post))
-				return this.Forbidden("Forbidden", null);
 			var user = _userRetrievalShim.GetUser(HttpContext);
+			if (user.IsPostEditable(post))
+				return this.Forbidden("Forbidden", null);
 			_postService.EditPost(post, postEdit, user);
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
@@ -470,9 +472,9 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		public ActionResult DeletePost(int id)
 		{
 			var post = _postService.Get(id);
-			if (!User.IsPostEditable(post))
-				return this.Forbidden("Forbidden", null);
 			var user = _userRetrievalShim.GetUser(HttpContext);
+			if (user.IsPostEditable(post))
+				return this.Forbidden("Forbidden", null);
 			_postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
 			{
@@ -544,7 +546,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return this.Forbidden("Forbidden", null);
-			var helper = new UrlHelper(Request.RequestContext);
+			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 			_postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
@@ -553,7 +555,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		[ValidateInput(false)]
+		// TODO: test validate [ValidateInput(false)]
 		public ContentResult PreviewText(string fullText, bool isPlainText)
 		{
 			var result = _postService.GenerateParsedTextPreview(fullText, isPlainText);
@@ -579,7 +581,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				return this.Forbidden("Forbidden", null);
 			try
 			{
-				var helper = new UrlHelper(Request.RequestContext);
+				var helper = Url;
 				var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
