@@ -1,4 +1,4 @@
-﻿using Microsoft.Framework.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.ExternalLogin;

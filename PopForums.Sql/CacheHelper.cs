@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Framework.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using PopForums.Configuration;
 
 namespace PopForums.Data.Sql

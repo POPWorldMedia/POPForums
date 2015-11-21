@@ -365,7 +365,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var result = new BasicJsonMessage { Result = true, Data = new { post.FullText, post.Name, post.UserID } };
 			return Json(result);
 		}
-
+		
 		public ViewResult Recent(int page = 1)
 		{
 			var includeDeleted = false;

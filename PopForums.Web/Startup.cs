@@ -3,10 +3,10 @@ using Microsoft.AspNet.Authentication.Cookies;
 using Microsoft.AspNet.Authentication.Google;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.Dnx.Runtime;
-using Microsoft.Framework.Configuration;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
@@ -70,7 +70,7 @@ namespace PopForums.Web
 			app.UseCookieAuthentication(options =>
 	        {
 				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-				options.AutomaticAuthentication = true;
+				options.AutomaticAuthenticate = true;
 	        });
 	        app.UseCookieAuthentication(options =>
 	        {
@@ -96,9 +96,6 @@ namespace PopForums.Web
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
 			{
-				routes.MapRoute(
-					name: "areaRoute",
-					template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 				// forum routes
 
@@ -155,12 +152,12 @@ namespace PopForums.Web
 					"Forums/Admin/ErrorLog/{page?}",
 					new { controller = AdminController.Name, action = "ErrorLog" }
 					);
-				routes.MapRoute(
-					"pfdefault",
-					"Forums/{controller=Home}/{action=Index}/{id?}");
 
 				// app routes
 
+				routes.MapRoute(
+					name: "areaRoute",
+					template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 				routes.MapRoute(
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");

@@ -20,7 +20,7 @@ namespace PopForums.Web.Areas.Forums.ViewComponents
 	    public IViewComponentResult Invoke()
 	    {
 		    var container = new UserNavigationContainer();
-            container.User = _userRetrievalShim.GetUser(Context);
+            container.User = _userRetrievalShim.GetUser(HttpContext);
 		    if (container.User != null)
 		    {
 			    var count = _privateMessageService.GetUnreadCount(container.User);

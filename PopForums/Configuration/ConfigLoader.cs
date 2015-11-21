@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Framework.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace PopForums.Configuration
 {

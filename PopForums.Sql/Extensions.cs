@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.Common;
-using Microsoft.Framework.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
 using PopForums.Data.Sql.Repositories;
 using PopForums.Repositories;

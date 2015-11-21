@@ -1,0 +1,11 @@
+﻿@model PopForums.Models.TopicContainer
+@using PopForums.Extensions;
+<div>
+@foreach (var post in Model.Posts)
+{
+	Html.RenderPartial("PostItem", post, new ViewDataDictionary { { "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, { ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData() }, { "Topic", Model.Topic } });
+}
+@Html.PagerLinks("Forum", "Topic", Model.PagerContext, (int)ViewBag.Low, (int)ViewBag.High, Model.Topic.UrlName, "pagerLinks", null, null)
+@Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
+@Html.Hidden("PageCount", Model.PagerContext.PageCount, new { @class = "pageCount" })
+</div>

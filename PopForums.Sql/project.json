@@ -8,15 +8,15 @@
     "frameworks": {
         "dnx46": { }
     },
-    "dependencies": {
-		"Microsoft.Framework.Caching.Memory": "1.0.0-beta8",
-		"System.Data.Common": "4.0.1-beta-23409",
-		"System.Data.SqlClient": "4.0.0-beta-23409",
-		"System.Linq": "4.0.1-beta-23409",
-		"System.Runtime": "4.0.21-beta-23409",
-		"System.Threading": "4.0.11-beta-23409",
+	"dependencies": {
+		"Microsoft.Extensions.Caching.Memory": "1.0.0-rc1-final",
+		"System.Data.Common": "4.0.1-beta-23516",
+		"System.Data.SqlClient": "4.0.0-beta-23516",
+		"System.Linq": "4.0.1-beta-23516",
+		"System.Runtime": "4.0.21-beta-23516",
+		"System.Threading": "4.0.11-beta-23516",
 		"PopForums": "14.0.0-*"
-    },
+	},
     "configurations": {
         "CI": { }
     }
