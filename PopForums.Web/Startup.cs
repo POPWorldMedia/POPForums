@@ -102,25 +102,25 @@ namespace PopForums.Web
 				routes.MapRoute(
 					"pfsetup",
 					"Forums/Setup",
-					new { controller = "Setup", action = "Index" }
+					new { controller = "Setup", action = "Index", Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pfrecent",
-					"Forums/Recent/{page}",
-					new { controller = ForumController.Name, action = "Recent", page = 1 }
+					"Forums/Recent/{page?}",
+					new { controller = ForumController.Name, action = "Recent", page = 1, Area = "Forums" }
 					);
 	            var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
 	            var forumConstraint = new ForumRouteConstraint(forumRepository);
 				routes.MapRoute(
 					"pfroot",
 					"Forums/{urlName}/{page?}",
-					new { controller = ForumController.Name, action = "Index", page = 1 },
+					new { controller = ForumController.Name, action = "Index", page = 1, Area = "Forums" },
 					new { forum = forumConstraint }
 					);
 				routes.MapRoute(
 					"pftopic",
 					"Forums/Topic/{id}/{page?}",
-					new { controller = ForumController.Name, action = "Topic", page = 1 }
+					new { controller = ForumController.Name, action = "Topic", page = 1, Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pflink",
