@@ -1,6 +1,6 @@
 ﻿@using PopForums.Services;
 @using PopForums.Web.Areas.Forums.Services
-@using PopForums.Web.Extensions;
+@addTagHelper "*, PopForums.Web"
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @model PopForums.Models.CategorizedForumContainer
@@ -22,10 +22,9 @@
 
 @if (User != null)
 {
-	using (Html.BeginForm("MarkAllForumsRead", "Forum"))
-	{
+	<form asp-action="MarkAllForumsRead" asp-controller="Forum" asp-antiforgery="false">
 		<input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="btn btn-primary" />
-	}
+	</form>
 }
 
 <table class="table grid">
@@ -33,9 +32,9 @@
 		@foreach (var forum in Model.UncategorizedForums)
 		{
 			<tr data-forumid="@forum.ForumID">
-				<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/lib/PopForums/")</a></td>
+				<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" imagePath="/lib/PopForums/" class="" /></a></td>
 				<td>
-					<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
+					<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 					<p>@forum.Description</p>
 					<small class="pull-right forumDetails">
 						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
@@ -51,9 +50,9 @@
 			foreach (var forum in category.Value)
 			{
 				<tr data-forumid="@forum.ForumID">
-					<td class="newIndicator"><a href="@Url.Action("Index", "Forum", new { urlName = forum.UrlName })">@Html.ForumReadIndicator(forum, Model, "/lib/PopForums/")</a></td>
+					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" imagePath="/lib/PopForums/" class="" /></a></td>
 					<td>
-						<h2>@Html.ActionLink(forum.Title, "Index", "Forum", new { urlName = forum.UrlName }, null)</h2>
+						<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 						<p>@forum.Description</p>
 						<small class="pull-right forumDetails">
 							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
@@ -68,7 +67,7 @@
 <div>
 	<h3>@PopForums.Resources.UsersOnline</h3>
 	<p>@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var user in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
-		{<text>, </text>@Html.ActionLink(user.Name, "ViewProfile", "Account", new { id = user.UserID }, null)}
+		{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@user.UserID">@user.Name</a>}
 	</p>
 	<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
 </div>

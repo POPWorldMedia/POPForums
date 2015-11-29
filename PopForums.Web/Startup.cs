@@ -48,6 +48,8 @@ namespace PopForums.Web
 	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 	        services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 	        services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
+
+	        //services.AddSignalR();
         }
 
         // Configure is called after ConfigureServices is called.
