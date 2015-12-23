@@ -11,9 +11,11 @@ using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
+using PopForums.Messaging;
 using PopForums.Repositories;
 using PopForums.Web.Areas.Forums;
 using PopForums.Web.Areas.Forums.Controllers;
+using PopForums.Web.Areas.Forums.Messaging;
 using PopForums.Web.Areas.Forums.Services;
 
 namespace PopForums.Web
@@ -42,14 +44,16 @@ namespace PopForums.Web
 			// Add MVC services to the services container.
 			services.AddMvc();
 
+			// TODO: go to primary nuget
+	        services.AddSignalR();
+
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			// TODO: how to package mappings in web project
 	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 	        services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 	        services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
-
-	        //services.AddSignalR();
+	        services.AddTransient<IBroker, Broker>();
         }
 
         // Configure is called after ConfigureServices is called.

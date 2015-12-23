@@ -898,6 +898,47 @@
           "lib/dnx451/Microsoft.AspNet.Server.Kestrel.dll": {}
         }
       },
+      "Microsoft.AspNet.SignalR.Messaging/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Server/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Messaging": "3.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
+        }
+      },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2840,6 +2881,47 @@
         },
         "native": {
           "runtimes/win7-x86/native/libuv.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Messaging/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Server/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Messaging": "3.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
         }
       },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
@@ -4816,6 +4898,47 @@
           "runtimes/win7-x64/native/libuv.dll": {}
         }
       },
+      "Microsoft.AspNet.SignalR.Messaging/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+          "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll": {}
+        }
+      },
+      "Microsoft.AspNet.SignalR.Server/3.0.0-rc1-final": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-rc1-final",
+          "Microsoft.AspNet.SignalR.Messaging": "3.0.0-rc1-final",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll": {}
+        }
+      },
       "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -6527,6 +6650,34 @@
         "runtimes/win7-x64/native/libuv.dll",
         "runtimes/win7-x86/native/libuv.dll",
         "thirdpartynotices.txt"
+      ]
+    },
+    "Microsoft.AspNet.SignalR.Messaging/3.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "BhKeGkpotHrV7u3ZGKPdCvP/h7QgmMUF5pEhwqUmWPHqp7v9aCHHPm392EcPn+1BlXisnuHf+2tgfp3a4jStvQ==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.dll",
+        "lib/dnx451/Microsoft.AspNet.SignalR.Messaging.xml",
+        "lib/dnxcore50/Microsoft.AspNet.SignalR.Messaging.dll",
+        "lib/dnxcore50/Microsoft.AspNet.SignalR.Messaging.xml",
+        "Microsoft.AspNet.SignalR.Messaging.3.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.SignalR.Messaging.3.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.SignalR.Messaging.nuspec"
+      ]
+    },
+    "Microsoft.AspNet.SignalR.Server/3.0.0-rc1-final": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "R6XfG3qvc9drsfIpnK/cRHaYkH+MIOdZsK+O7n1JTa13ztetUBOxLQ8F2Wl9/j4H1Ttg+xsiIFhbgML9729t7A==",
+      "files": [
+        "lib/dnx451/Microsoft.AspNet.SignalR.Server.dll",
+        "lib/dnx451/Microsoft.AspNet.SignalR.Server.xml",
+        "lib/dnxcore50/Microsoft.AspNet.SignalR.Server.dll",
+        "lib/dnxcore50/Microsoft.AspNet.SignalR.Server.xml",
+        "Microsoft.AspNet.SignalR.Server.3.0.0-rc1-final.nupkg",
+        "Microsoft.AspNet.SignalR.Server.3.0.0-rc1-final.nupkg.sha512",
+        "Microsoft.AspNet.SignalR.Server.nuspec"
       ]
     },
     "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
@@ -8348,7 +8499,8 @@
       "Microsoft.Extensions.Logging.Console >= 1.0.0-rc1-final",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0-rc1-final",
       "PopForums >= 14.0.0-*",
-      "PopForums.Sql >= 14.0.0-*"
+      "PopForums.Sql >= 14.0.0-*",
+      "Microsoft.AspNet.SignalR.Server >= 3.0.0-rc1-final"
     ],
     "DNX,Version=v4.6": []
   }

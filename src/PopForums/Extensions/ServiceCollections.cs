@@ -32,9 +32,6 @@ namespace PopForums.Extensions
 			// feeds
 		    services.AddTransient<IFeedService, FeedService>();
 
-			// messaging
-		    services.AddTransient<IBroker, Broker>();
-
 			// scoring game
 		    services.AddTransient<IAwardCalculator, AwardCalculator>();
 		    services.AddTransient<IAwardDefinitionService, AwardDefinitionService>();
