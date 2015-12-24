@@ -98,6 +98,8 @@ namespace PopForums.Web
 			});
 
 			app.UseMiddleware<PopForumsMiddleware>();
+
+	        app.UseSignalR();
 			
             // Add MVC to the request pipeline.
             app.UseMvc(routes =>
