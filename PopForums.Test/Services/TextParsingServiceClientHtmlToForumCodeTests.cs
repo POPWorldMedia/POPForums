@@ -228,7 +228,15 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var result = service.ClientHtmlToForumCode("<p>test</p><p><iframe width=\"123\" height=\"545\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe></p><p>test</p>");
-			Assert.AreEqual("test\r\n\r\n[youtube=http://www.youtube.com/watch?v=789]\r\n\r\ntest", result);
+			Assert.AreEqual("test\r\n\r\n[youtube=https://www.youtube.com/watch?v=789]\r\n\r\ntest", result);
+		}
+
+		[Test]
+		public void YouTubeUnparseHttps()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p>test</p><p><iframe width=\"123\" height=\"545\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe></p><p>test</p>");
+			Assert.AreEqual("test\r\n\r\n[youtube=https://www.youtube.com/watch?v=789]\r\n\r\ntest", result);
 		}
 	}
 }

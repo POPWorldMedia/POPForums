@@ -63,7 +63,7 @@ namespace PopForums.Services
 			text = text.Replace("<blockquote>", "[quote]");
 			text = text.Replace("</blockquote>", "[/quote]");
 			text = Regex.Replace(text, @" *target=""[_\w]*""", String.Empty, RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""http://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "http://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""https?://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "https://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
 			return text;
 		}
 
@@ -146,7 +146,7 @@ namespace PopForums.Services
 			// replace img and a tags
 			text = Regex.Replace(text, @"(<a href="")(\S+)""( *target=""?[_\w]*""?)*>", "[url=$2]", RegexOptions.IgnoreCase);
 			text = Regex.Replace(text, @"(<img )(\S+ )*(src="")(\S+)("")( *\S+)*( */?>)", "[image=$4]", RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""http://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=http://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""https?://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=https://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
 
 			// catch remaining HTML as invalid
 			text = Regex.Replace(text, @"<.*>", String.Empty, RegexOptions.IgnoreCase);
@@ -357,13 +357,13 @@ namespace PopForums.Services
 					var dictionary = q.ToDictionary(pair => pair.Key, pair => pair.Value);
 					if (dictionary.Any(x => x.Key == "v"))
 					{
-						text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
+						text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
 					}
 				}
 				else if (uri.Host.Contains("youtu.be"))
 				{
 					var v = uri.Segments[1];
-					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
+					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
 				}
 			}
 			return text;

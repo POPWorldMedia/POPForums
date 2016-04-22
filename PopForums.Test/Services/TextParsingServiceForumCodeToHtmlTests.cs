@@ -329,7 +329,18 @@ namespace PopForums.Test.Services
 			_settings.YouTubeWidth = 456;
 			_settings.AllowImages = true;
 			var result = service.CleanForumCodeToHtml("test [youtube=http://youtube.com/watch?v=789] text");
-			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+		}
+
+		[Test]
+		public void YouTubeTagMainDomainHttpsConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("test [youtube=https://youtube.com/watch?v=789] text");
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
 		}
 
 		[Test]
@@ -340,7 +351,18 @@ namespace PopForums.Test.Services
 			_settings.YouTubeWidth = 456;
 			_settings.AllowImages = true;
 			var result = service.CleanForumCodeToHtml("test [youtube=http://youtu.be/789] text");
-			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
+		}
+
+		[Test]
+		public void YouTubeTagShortDomainHttpsConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.CleanForumCodeToHtml("test [youtube=https://youtu.be/789] text");
+			Assert.AreEqual("<p>test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe> text</p>", result);
 		}
 
 		[Test]
@@ -351,7 +373,18 @@ namespace PopForums.Test.Services
 			_settings.YouTubeWidth = 456;
 			_settings.AllowImages = true;
 			var result = service.ForumCodeToHtml("test test [youtube=http://www.youtube.com/watch?v=NL125lBWYc4] test");
-			Assert.AreEqual("<p>test test <iframe width=\"456\" height=\"123\" src=\"http://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>", result);
+			Assert.AreEqual("<p>test test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>", result);
+		}
+
+		[Test]
+		public void YouTubeTagHttpsConvertedToIframe()
+		{
+			var service = GetService();
+			_settings.YouTubeHeight = 123;
+			_settings.YouTubeWidth = 456;
+			_settings.AllowImages = true;
+			var result = service.ForumCodeToHtml("test test [youtube=https://www.youtube.com/watch?v=NL125lBWYc4] test");
+			Assert.AreEqual("<p>test test <iframe width=\"456\" height=\"123\" src=\"https://www.youtube.com/embed/NL125lBWYc4\" frameborder=\"0\" allowfullscreen></iframe> test</p>", result);
 		}
 
 		[Test]
