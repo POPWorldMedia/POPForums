@@ -63,13 +63,13 @@ namespace PopForums.Services
 
 		private ISettingsManager _settingsManager;
 
-		public static string[] AllowedCloseableTags = {"b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img"};
-		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.IgnoreCase);
-		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.IgnoreCase);
-		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.IgnoreCase);
-		private readonly static Regex _wwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.IgnoreCase);
-		private readonly static Regex _emailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.IgnoreCase);
-		private static readonly Regex _youTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.IgnoreCase);
+		public static string[] AllowedCloseableTags = { "b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img" };
+		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private readonly static Regex _wwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private readonly static Regex _emailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex _youTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>
 		/// Converts forum code from the browser to HTML for storage. This method wraps <see cref="CleanForumCode(string)"/> and <see cref="ForumCodeToHtml(string)"/>, and censors the text.
@@ -110,7 +110,7 @@ namespace PopForums.Services
 			text = text.Replace("<blockquote>", "[quote]");
 			text = text.Replace("</blockquote>", "[/quote]");
 			text = Regex.Replace(text, @" *target=""[_\w]*""", String.Empty, RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""http://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "http://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""https?://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "https://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
 			return text;
 		}
 
@@ -130,7 +130,7 @@ namespace PopForums.Services
 			if (String.IsNullOrWhiteSpace(words))
 				return text;
 			var cleanedCensorList = words.Replace("  ", " ").Replace("\r", " ");
-			var list = cleanedCensorList.Split(new [] { ' ' });
+			var list = cleanedCensorList.Split(new[] { ' ' });
 			// convert any stand alone words (with * before of after them) to spaces
 			for (var i = 0; i < list.Length; i++) { list[i] = list[i].Replace("*", " "); }
 			// now you've got your list of naughty words, clean them out of the text
@@ -193,7 +193,7 @@ namespace PopForums.Services
 			// replace img and a tags
 			text = Regex.Replace(text, @"(<a href="")(\S+)""( *target=""?[_\w]*""?)*>", "[url=$2]", RegexOptions.IgnoreCase);
 			text = Regex.Replace(text, @"(<img )(\S+ )*(src="")(\S+)("")( *\S+)*( */?>)", "[image=$4]", RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""http://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=http://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""https?://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=https://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
 
 			// catch remaining HTML as invalid
 			text = Regex.Replace(text, @"<.*>", String.Empty, RegexOptions.IgnoreCase);
@@ -392,7 +392,7 @@ namespace PopForums.Services
 		{
 			var width = _settingsManager.Current.YouTubeWidth;
 			var height = _settingsManager.Current.YouTubeHeight;
-			var youTubeTag = new Regex(@"(\[youtube=""?)(\S+?)(""?\])", RegexOptions.IgnoreCase);
+			var youTubeTag = new Regex(@"(\[youtube=""?)(\S+?)(""?\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 			var matches = youTubeTag.Matches(text);
 			foreach (Match item in matches)
 			{
@@ -404,13 +404,13 @@ namespace PopForums.Services
 					var dictionary = q.ToDictionary(pair => pair.Key, pair => pair.Value);
 					if (dictionary.Any(x => x.Key == "v"))
 					{
-						text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
+						text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
 					}
 				}
 				else if (uri.Host.Contains("youtu.be"))
 				{
 					var v = uri.Segments[1];
-					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""http://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
+					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
 				}
 			}
 			return text;
