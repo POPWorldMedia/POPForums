@@ -1,0 +1,23 @@
+﻿.navbar-collapse {
+	padding: 0;
+}
+
+.nav li a {
+	padding: 5px;
+}
+
+#MainNav ul li.divider {
+	border-bottom: 1px solid #e7e7e7;
+}
+
+#Copyright {
+	margin: 20px;
+}
+
+.callout {
+	padding: 8px; border-radius: 4px;
+}
+
+.pagination .glyphicon {
+	top: 0;
+}
