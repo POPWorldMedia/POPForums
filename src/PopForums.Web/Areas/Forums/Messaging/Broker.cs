@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.AspNet.SignalR.Infrastructure;
+using Microsoft.AspNetCore.SignalR.Infrastructure;
 using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Repositories;

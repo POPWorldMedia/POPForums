@@ -1,12 +1,10 @@
 ﻿using System;
-using Microsoft.AspNet.Authentication.Cookies;
-using Microsoft.AspNet.Authentication.Google;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
@@ -20,89 +18,95 @@ using PopForums.Web.Areas.Forums.Services;
 
 namespace PopForums.Web
 {
-    public class Startup
-    {
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
-        {
-            // Setup configuration sources.
-            var builder = new ConfigurationBuilder()
-				.SetBasePath(appEnv.ApplicationBasePath)
+	public class Startup
+	{
+		public Startup(IHostingEnvironment env)
+		{
+			// Setup configuration sources.
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("config.json")
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+				.AddEnvironmentVariables();
+			Configuration = builder.Build();
 
-			Config.SetPopForumsAppEnvironment(appEnv.ApplicationBasePath);
-        }
+			Config.SetPopForumsAppEnvironment(env.ContentRootPath);
+		}
 
-        public IConfigurationRoot Configuration { get; set; }
+		public IConfigurationRoot Configuration { get; set; }
 
-        // This method gets called by the runtime.
-        public void ConfigureServices(IServiceCollection services)
-        {
-	        services.AddAuthentication(options => options.SignInScheme = ExternalExternalUserAssociationManager.AuthenticationContextName);
+		// This method gets called by the runtime.
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddAuthentication(options => options.SignInScheme = ExternalExternalUserAssociationManager.AuthenticationContextName);
 
 			// Add MVC services to the services container.
 			services.AddMvc();
 
 			// TODO: go to primary nuget
-	        services.AddSignalR();
+			services.AddSignalR();
 
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			// TODO: how to package mappings in web project
-	        services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
-	        services.AddTransient<ITopicViewCountService, TopicViewCountService>();
-	        services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
-	        services.AddTransient<IBroker, Broker>();
-        }
+			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
+			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
+			services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
+			services.AddTransient<IBroker, Broker>();
+		}
 
-        // Configure is called after ConfigureServices is called.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
+		// Configure is called after ConfigureServices is called.
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		{
+			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+			loggerFactory.AddDebug();
 
-			// Configure the HTTP request pipeline.
+			if (env.IsDevelopment())
+			{
+				app.UseBrowserLink();
+				app.UseDeveloperExceptionPage();
+				app.UseDatabaseErrorPage();
+			}
+			else
+			{
+				//app.UseExceptionHandler("/Home/Error");
+			}
 
-			// Add the platform handler to the request pipeline.
-			app.UseIISPlatformHandler();
+			app.UseDeveloperExceptionPage();
 
-			// Add static files to the request pipeline.
 			app.UseStaticFiles();
 
 			app.UseDeveloperExceptionPage();
 
-			app.UseCookieAuthentication(options =>
-	        {
-				options.AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-				options.AutomaticAuthenticate = true;
-	        });
-	        app.UseCookieAuthentication(options =>
-	        {
-		        options.AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName;
-		        options.CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName;
-		        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-	        });
+			//app.UseCookieAuthentication(new CookieAuthenticationOptions
+			//{
+			//	AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
+			//	AutomaticAuthenticate = true
+			//});
+			//app.UseCookieAuthentication(new CookieAuthenticationOptions
+			//{
+			//	AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName,
+			//	CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName,
+			//	ExpireTimeSpan = TimeSpan.FromMinutes(5)
+			//});
 
-	        app.UseFacebookAuthentication(options =>
-	        {
-		        options.AppId = "1932812290276605";
-		        options.AppSecret = "d2cfaebc3b565bdcfc7782b72aab98d8";
-	        });
+			//app.UseFacebookAuthentication(new FacebookOptions
+			//{
+			//	AppId = "1932812290276605",
+			//	AppSecret = "d2cfaebc3b565bdcfc7782b72aab98d8"
+			//});
 
-	        app.UseGoogleAuthentication(options =>
-	        {
-		        options.ClientId = "319472452413-ojveqkrcdfufi84le0sm7044sqfqkhfj.apps.googleusercontent.com";
-		        options.ClientSecret = "n_ZhNUpEaGJyhnfIHBSWyhbx";
-			});
+			//app.UseGoogleAuthentication(new GoogleOptions
+			//{
+			//	ClientId = "319472452413-ojveqkrcdfufi84le0sm7044sqfqkhfj.apps.googleusercontent.com",
+			//	ClientSecret = "n_ZhNUpEaGJyhnfIHBSWyhbx"
+			//});
 
 			app.UseMiddleware<PopForumsMiddleware>();
 
-	        app.UseSignalR();
-			
-            // Add MVC to the request pipeline.
-            app.UseMvc(routes =>
+			//app.UseSignalR();
+
+			// Add MVC to the request pipeline.
+			app.UseMvc(routes =>
 			{
 
 				// forum routes
@@ -117,8 +121,8 @@ namespace PopForums.Web
 					"Forums/Recent/{page?}",
 					new { controller = ForumController.Name, action = "Recent", page = 1, Area = "Forums" }
 					);
-	            var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
-	            var forumConstraint = new ForumRouteConstraint(forumRepository);
+				var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
+				var forumConstraint = new ForumRouteConstraint(forumRepository);
 				routes.MapRoute(
 					"pfroot",
 					"Forums/{urlName}/{page?}",
@@ -170,6 +174,6 @@ namespace PopForums.Web
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
-        }
-    }
+		}
+	}
 }

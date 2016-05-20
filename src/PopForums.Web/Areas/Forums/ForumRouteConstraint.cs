@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Routing;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using PopForums.Repositories;
 
 namespace PopForums.Web.Areas.Forums
@@ -16,7 +16,8 @@ namespace PopForums.Web.Areas.Forums
 
 		private readonly IForumRepository _forumRepository;
 
-		public bool Match(HttpContext httpContext, IRouter route, string parameterName, IDictionary<string, object> values, RouteDirection routeDirection)
+		public bool Match(HttpContext httpContext, IRouter route, string routeKey, RouteValueDictionary values,
+			RouteDirection routeDirection)
 		{
 			if (!values.Keys.Contains("urlName"))
 				return false;

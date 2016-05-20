@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.xproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
 EndProject
@@ -33,8 +33,8 @@ Global
 		{1787FE89-F023-482E-ABBA-996554DD332D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1787FE89-F023-482E-ABBA-996554DD332D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1787FE89-F023-482E-ABBA-996554DD332D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.CI|Any CPU.ActiveCfg = CI|Any CPU
-		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.CI|Any CPU.Build.0 = CI|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.CI|Any CPU.ActiveCfg = Release|Any CPU
+		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.CI|Any CPU.Build.0 = Release|Any CPU
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Release|Any CPU.ActiveCfg = Release|Any CPU

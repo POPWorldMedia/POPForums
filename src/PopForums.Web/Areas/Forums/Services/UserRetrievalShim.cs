@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Http;
 using PopForums.Models;
 
 namespace PopForums.Web.Areas.Forums.Services

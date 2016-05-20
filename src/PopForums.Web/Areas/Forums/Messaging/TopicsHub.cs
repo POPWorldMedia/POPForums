@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR.Hubs;
 using PopForums.Services;
 
 namespace PopForums.Web.Areas.Forums.Messaging

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Models;
 using PopForums.Web.Areas.Forums.Services;

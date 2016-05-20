@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Services;

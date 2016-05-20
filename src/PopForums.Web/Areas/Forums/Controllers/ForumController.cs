@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
@@ -46,7 +46,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		public ActionResult Index(string urlName, int page = 1)
 		{
 			if (String.IsNullOrWhiteSpace(urlName))
-				return HttpNotFound();
+				return NotFound();
 			var forum = _forumService.Get(urlName);
 			if (forum == null)
 				return this.NotFound("NotFound", null);
@@ -529,7 +529,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(id);
 			if (post == null)
-				return HttpNotFound();
+				return NotFound();
 			var voters = _postService.GetVoters(post);
 			return View(voters);
 		}
@@ -539,7 +539,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(id);
 			if (post == null)
-				return HttpNotFound();
+				return NotFound();
 			var topic = _topicService.Get(post.TopicID);
 			if (topic == null)
 				throw new Exception(String.Format("Post {0} appears to be orphaned from a topic.", post.PostID));
@@ -572,10 +572,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(postID);
 			if (post == null)
-				return HttpNotFound();
+				return NotFound();
 			var topic = _topicService.Get(topicID);
 			if (topic == null)
-				return HttpNotFound();
+				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return this.Forbidden("Forbidden", null);

@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace PopForums.Web.Areas.Forums.Services
 {

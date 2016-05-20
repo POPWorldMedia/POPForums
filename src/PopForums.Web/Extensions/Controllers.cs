@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PopForums.Web.Extensions
 {
