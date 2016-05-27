@@ -71,23 +71,19 @@ namespace PopForums.Web
 				//app.UseExceptionHandler("/Home/Error");
 			}
 
-			app.UseDeveloperExceptionPage();
-
 			app.UseStaticFiles();
 
-			app.UseDeveloperExceptionPage();
-
-			//app.UseCookieAuthentication(new CookieAuthenticationOptions
-			//{
-			//	AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
-			//	AutomaticAuthenticate = true
-			//});
-			//app.UseCookieAuthentication(new CookieAuthenticationOptions
-			//{
-			//	AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName,
-			//	CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName,
-			//	ExpireTimeSpan = TimeSpan.FromMinutes(5)
-			//});
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+			{
+				AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
+				AutomaticAuthenticate = true
+			});
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+			{
+				AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName,
+				CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName,
+				ExpireTimeSpan = TimeSpan.FromMinutes(5)
+			});
 
 			//app.UseFacebookAuthentication(new FacebookOptions
 			//{
@@ -103,7 +99,7 @@ namespace PopForums.Web
 
 			app.UseMiddleware<PopForumsMiddleware>();
 
-			//app.UseSignalR();
+			app.UseSignalR();
 
 			// Add MVC to the request pipeline.
 			app.UseMvc(routes =>

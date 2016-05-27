@@ -34,14 +34,14 @@
 var PopForums = {};
 
 PopForums.areaPath = "/Forums";
-PopForums.contentPath = "/Content/PopForums";
+PopForums.contentPath = "/lib/PopForums";
 PopForums.currentTopicState = null;
 PopForums.navOffset = 0;
-PopForums.editorCSS = "/Content/bootstrap.min.css,/Content/PopForums/PopForums.css";
+PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/PopForums.css";
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
 
 PopForums.editorSettings = {
-	script_url: "/scripts/tinymce/tinymce.min.js",
+	script_url: "/lib/tinymce/tinymce.min.js",
 	theme: "modern",
 	plugins: "paste lists image link",
 	content_css: PopForums.editorCSS,
