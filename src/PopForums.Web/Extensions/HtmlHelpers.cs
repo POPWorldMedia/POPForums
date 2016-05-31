@@ -239,6 +239,7 @@ namespace PopForums.Web.Extensions
 			return new HtmlString(build.ToString());
 		}
 
+
 		public static HtmlString PMReadIndicator(this IHtmlHelper helper, PrivateMessage pm, string path)
 		{
 			return PMReadIndicator(helper, pm, path, null);

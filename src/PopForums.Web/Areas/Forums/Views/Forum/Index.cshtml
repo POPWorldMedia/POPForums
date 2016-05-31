@@ -49,7 +49,7 @@
 	</ul>
 </div>
 
-@*@Html.PagerLinks("Forum", "Index", Model.PagerContext, "pagerLinks", "morePager", "currentPager")*@
+<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
 
 @if (user != null)
 {
