@@ -239,53 +239,6 @@ namespace PopForums.Web.Extensions
 			return new HtmlString(build.ToString());
 		}
 
-		public static HtmlString ForumReadIndicator(this IHtmlHelper helper, Forum forum, CategorizedForumContainer container, string path)
-		{
-			return ForumReadIndicator(helper, forum, container, path, null);
-		}
-
-		public static HtmlString ForumReadIndicator(this IHtmlHelper helper, Forum forum, CategorizedForumContainer container, string path, string cssClass)
-		{
-			var alt = Resources.NoNewPosts;
-			var image = "NoNewIndicator.png";
-			if (container.ReadStatusLookup.ContainsKey(forum.ForumID))
-			{
-				var status = container.ReadStatusLookup[forum.ForumID];
-				switch (status)
-				{
-					case ReadStatus.Closed | ReadStatus.NoNewPosts:
-						alt = Resources.Archived;
-						image = "ClosedIndicator.png";
-						break;
-					case ReadStatus.Closed | ReadStatus.NewPosts:
-						alt = Resources.ArchivedNewPosts;
-						image = "NewClosedIndicator.png";
-						break;
-					case ReadStatus.NewPosts:
-						alt = Resources.NewPosts;
-						image = "NewIndicator.png";
-						break;
-					default:
-						break;
-				}
-			}
-			var build = new StringBuilder();
-			build.Append("<img src=\"");
-			build.Append(path);
-			build.Append(image);
-			build.Append("\" alt=\"");
-			build.Append(alt);
-			build.Append("\"");
-			if (!String.IsNullOrEmpty(cssClass))
-			{
-				build.Append(" class=\"");
-				build.Append(cssClass);
-				build.Append("\"");
-			}
-			build.Append(" />");
-			return new HtmlString(build.ToString());
-		}
-
 		public static HtmlString PMReadIndicator(this IHtmlHelper helper, PrivateMessage pm, string path)
 		{
 			return PMReadIndicator(helper, pm, path, null);
@@ -324,73 +277,6 @@ namespace PopForums.Web.Extensions
 			if (container.ReadStatusLookup[topic.TopicID] == (ReadStatus.NewPosts | container.ReadStatusLookup[topic.TopicID]))
 				return true;
 			return false;
-		}
-
-		public static HtmlString TopicReadIndicator(this IHtmlHelper helper, Topic topic, PagedTopicContainer container, string path)
-		{
-			return TopicReadIndicator(helper, topic, container, path, null);
-		}
-
-		public static HtmlString TopicReadIndicator(this IHtmlHelper helper, Topic topic, PagedTopicContainer container, string path, string cssClass)
-		{
-			var alt = Resources.NoNewPosts;
-			var image = "NoNewIndicator.png";
-			if (container.ReadStatusLookup.ContainsKey(topic.TopicID))
-			{
-				var status = container.ReadStatusLookup[topic.TopicID];
-				switch (status)
-				{
-					case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.Pinned:
-						image = "NewPinnedIndicator.png";
-						alt = Resources.NewPostsPinned;
-						break;
-					case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.NotPinned:
-						image = "NewIndicator.png";
-						alt = Resources.NewPosts;
-						break;
-					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-						image = "PinnedIndicator.png";
-						alt = Resources.Pinned;
-						break;
-					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-						image = "NoNewIndicator.png";
-						alt = Resources.NoNewPosts;
-						break;
-					case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.Pinned:
-						image = "NewClosedPinnedIndicator.png";
-						alt = Resources.NewPostsClosedPinned;
-						break;
-					case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.NotPinned:
-						image = "NewClosedIndicator.png";
-						alt = Resources.NewPostsClosed;
-						break;
-					case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-						image = "ClosedPinnedIndicator.png";
-						alt = Resources.ClosedPinned;
-						break;
-					case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-						image = "ClosedIndicator.png";
-						alt = Resources.Closed;
-						break;
-					default:
-						break;
-				}
-			}
-			var build = new StringBuilder();
-			build.Append("<img src=\"");
-			build.Append(path);
-			build.Append(image);
-			build.Append("\" alt=\"");
-			build.Append(alt);
-			build.Append("\"");
-			if (!String.IsNullOrEmpty(cssClass))
-			{
-				build.Append(" class=\"");
-				build.Append(cssClass);
-				build.Append("\"");
-			}
-			build.Append(" />");
-			return new HtmlString(build.ToString());
 		}
 
 		public static string PostDeleteLinkFormatter(this IHtmlHelper helper, Post post)

@@ -4,7 +4,7 @@ using PopForums.Models;
 
 namespace PopForums.Web.Areas.Forums.TagHelpers
 {
-	[HtmlTargetElement("pf-forumReadIndicator", Attributes = "forum, categorizedForumContainer, imagePath, class")]
+	[HtmlTargetElement("pf-forumReadIndicator", Attributes = "forum, categorizedForumContainer, imagePath")]
     public class ForumReadIndicatorTagHelper : TagHelper
 	{
 		[HtmlAttributeName("forum")]
