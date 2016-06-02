@@ -180,18 +180,6 @@
           "lib/net451/Microsoft.AspNetCore.Cryptography.Internal.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Cryptography.KeyDerivation/1.0.0-rc2-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNetCore.Cryptography.Internal": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {}
-        }
-      },
       "Microsoft.AspNetCore.DataProtection/1.0.0-rc2-final": {
         "type": "package",
         "dependencies": {
@@ -407,33 +395,6 @@
         },
         "runtime": {
           "lib/net451/Microsoft.AspNetCore.HttpOverrides.dll": {}
-        }
-      },
-      "Microsoft.AspNetCore.Identity/1.0.0-rc2-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-rc2-final",
-          "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.0.0-rc2-final",
-          "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.AspNetCore.Identity.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.AspNetCore.Identity.dll": {}
-        }
-      },
-      "Microsoft.AspNetCore.Identity.EntityFrameworkCore/1.0.0-rc2-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNetCore.Identity": "1.0.0-rc2-final",
-          "Microsoft.EntityFrameworkCore.Relational": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll": {}
         }
       },
       "Microsoft.AspNetCore.JsonPatch/1.0.0-rc2-final": {
@@ -1030,18 +991,6 @@
           "lib/net451/Microsoft.EntityFrameworkCore.Relational.dll": {}
         }
       },
-      "Microsoft.EntityFrameworkCore.Relational.Design/1.0.0-rc2-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Relational.Design.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Relational.Design.dll": {}
-        }
-      },
       "Microsoft.EntityFrameworkCore.SqlServer/1.0.0-rc2-final": {
         "type": "package",
         "dependencies": {
@@ -1052,49 +1001,6 @@
         },
         "runtime": {
           "lib/net451/Microsoft.EntityFrameworkCore.SqlServer.dll": {}
-        }
-      },
-      "Microsoft.EntityFrameworkCore.Tools/1.0.0-preview1-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.Tools.Cli": "1.0.0-preview1-final",
-          "Microsoft.EntityFrameworkCore.Tools.Core": "1.0.0-rc2-final",
-          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.dll": {}
-        }
-      },
-      "Microsoft.EntityFrameworkCore.Tools.Cli/1.0.0-preview1-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.DotNet.Cli.Utils": "1.0.0-preview1-002702",
-          "Microsoft.DotNet.ProjectModel": "1.0.0-rc2-002702",
-          "Microsoft.EntityFrameworkCore.Tools.Core": "1.0.0-rc2-final",
-          "Microsoft.Extensions.CommandLineUtils": "1.0.0-rc2-final",
-          "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.Cli.exe": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.Cli.exe": {}
-        }
-      },
-      "Microsoft.EntityFrameworkCore.Tools.Core/1.0.0-rc2-final": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0-rc2-final",
-          "Microsoft.EntityFrameworkCore.Relational.Design": "1.0.0-rc2-final"
-        },
-        "compile": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.Core.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Microsoft.EntityFrameworkCore.Tools.Core.dll": {}
         }
       },
       "Microsoft.Extensions.Caching.Abstractions/1.0.0-rc2-final": {
@@ -2546,7 +2452,7 @@
           "net46/PopForums.dll": {}
         }
       },
-      "PopForums.Data.Sql/14.0.0": {
+      "PopForums.Sql/14.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6",
         "dependencies": {
@@ -2554,12 +2460,6 @@
           "PopForums": "14.0.0",
           "System.Data.Common": "4.0.1-rc2-24027",
           "System.Data.SqlClient": "4.1.0-rc2-24027"
-        },
-        "compile": {
-          "net46/PopForums.Data.Sql.dll": {}
-        },
-        "runtime": {
-          "net46/PopForums.Data.Sql.dll": {}
         }
       }
     }
@@ -2712,18 +2612,6 @@
         "lib/net451/Microsoft.AspNetCore.Cryptography.Internal.xml",
         "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.Internal.dll",
         "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.Internal.xml"
-      ]
-    },
-    "Microsoft.AspNetCore.Cryptography.KeyDerivation/1.0.0-rc2-final": {
-      "sha512": "PfvisLxSTs/RcOXtG6qQrmGKAnlLFaOuPCpy2Yj4CYoAdYEeYfQn8DF/Io/0Zzqx1lU6FeWNY9ApLz8vvTBhLg==",
-      "type": "package",
-      "files": [
-        "Microsoft.AspNetCore.Cryptography.KeyDerivation.1.0.0-rc2-final.nupkg.sha512",
-        "Microsoft.AspNetCore.Cryptography.KeyDerivation.nuspec",
-        "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
-        "lib/net451/Microsoft.AspNetCore.Cryptography.KeyDerivation.xml",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Cryptography.KeyDerivation.xml"
       ]
     },
     "Microsoft.AspNetCore.DataProtection/1.0.0-rc2-final": {
@@ -2888,30 +2776,6 @@
         "lib/net451/Microsoft.AspNetCore.HttpOverrides.xml",
         "lib/netstandard1.3/Microsoft.AspNetCore.HttpOverrides.dll",
         "lib/netstandard1.3/Microsoft.AspNetCore.HttpOverrides.xml"
-      ]
-    },
-    "Microsoft.AspNetCore.Identity/1.0.0-rc2-final": {
-      "sha512": "yFubDsWj/T3qw4DHTUk2WkXuUjYC43hN4PMrf+SpWHGn0j67G1SwxPstwE2XkOtVfWv8DsHxgqwJLhU/F5TUdQ==",
-      "type": "package",
-      "files": [
-        "Microsoft.AspNetCore.Identity.1.0.0-rc2-final.nupkg.sha512",
-        "Microsoft.AspNetCore.Identity.nuspec",
-        "lib/net451/Microsoft.AspNetCore.Identity.dll",
-        "lib/net451/Microsoft.AspNetCore.Identity.xml",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Identity.dll",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Identity.xml"
-      ]
-    },
-    "Microsoft.AspNetCore.Identity.EntityFrameworkCore/1.0.0-rc2-final": {
-      "sha512": "9qE3O2h7IMLp1YkgrQwk5xHPAdkhQehANYswKRXaPWmhbG21+n/IWkD9hyleWTWLkz8QR6mx2FKdvA2obVd8TQ==",
-      "type": "package",
-      "files": [
-        "Microsoft.AspNetCore.Identity.EntityFrameworkCore.1.0.0-rc2-final.nupkg.sha512",
-        "Microsoft.AspNetCore.Identity.EntityFrameworkCore.nuspec",
-        "lib/net451/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll",
-        "lib/net451/Microsoft.AspNetCore.Identity.EntityFrameworkCore.xml",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll",
-        "lib/netstandard1.3/Microsoft.AspNetCore.Identity.EntityFrameworkCore.xml"
       ]
     },
     "Microsoft.AspNetCore.JsonPatch/1.0.0-rc2-final": {
@@ -3419,20 +3283,6 @@
         "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Relational.xml"
       ]
     },
-    "Microsoft.EntityFrameworkCore.Relational.Design/1.0.0-rc2-final": {
-      "sha512": "3AcZmXbF7vIQc+l1UQ/6oiP/xTJGEZkyc8CURSXx2JLtUh5AhTnuzy/zqf5s6AgisOpkc0gDdsPiqqk+94cXhQ==",
-      "type": "package",
-      "files": [
-        "Microsoft.EntityFrameworkCore.Relational.Design.1.0.0-rc2-final.nupkg.sha512",
-        "Microsoft.EntityFrameworkCore.Relational.Design.nuspec",
-        "lib/net451/Microsoft.EntityFrameworkCore.Relational.Design.dll",
-        "lib/net451/Microsoft.EntityFrameworkCore.Relational.Design.xml",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Relational.Design.dll",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Relational.Design.xml",
-        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Relational.Design.dll",
-        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Relational.Design.xml"
-      ]
-    },
     "Microsoft.EntityFrameworkCore.SqlServer/1.0.0-rc2-final": {
       "sha512": "5BJ9VrgVbP/OqIuRow8nZkwbtr5CKjCyQGaXsBLZbzL8LZRkY1rb8kWYBusTJeZ2LjnnV0liQeNPRs3C15pIPQ==",
       "type": "package",
@@ -3443,56 +3293,6 @@
         "lib/net451/Microsoft.EntityFrameworkCore.SqlServer.xml",
         "lib/netstandard1.3/Microsoft.EntityFrameworkCore.SqlServer.dll",
         "lib/netstandard1.3/Microsoft.EntityFrameworkCore.SqlServer.xml"
-      ]
-    },
-    "Microsoft.EntityFrameworkCore.Tools/1.0.0-preview1-final": {
-      "sha512": "lRQALPgYcf8c6U2xRhgCwbQ1bdcDVe4Xl6a8s1Lo8HDYBn4GVLiKJUbGdJ0hySwX+br1irOoKAG+GdL453Q2mQ==",
-      "type": "package",
-      "files": [
-        "Microsoft.EntityFrameworkCore.Tools.1.0.0-preview1-final.nupkg.sha512",
-        "Microsoft.EntityFrameworkCore.Tools.nuspec",
-        "build/netcore50/Microsoft.EntityFrameworkCore.Tools.props",
-        "build/netcore50/Microsoft.EntityFrameworkCore.Tools.targets",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.dll",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.xml",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Tools.dll",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Tools.xml",
-        "lib/netcoreapp1.0/dotnet-ef.dll",
-        "lib/netcoreapp1.0/dotnet-ef.runtimeconfig.json",
-        "lib/netcoreapp1.0/dotnet-ef.xml",
-        "tools/EntityFramework.psd1",
-        "tools/EntityFramework.psm1",
-        "tools/OperationHandlers.cs",
-        "tools/about_EntityFramework.help.txt",
-        "tools/init.ps1",
-        "tools/install.ps1"
-      ]
-    },
-    "Microsoft.EntityFrameworkCore.Tools.Cli/1.0.0-preview1-final": {
-      "sha512": "rB+lVCt2vZ7ASHweT2ltuNMPR2xLA45WL2CGmQtrR+ZUoVB++WJLGIDQxisKRcViDA5huwpZkcXW0R0kPSlE9g==",
-      "type": "package",
-      "files": [
-        "Microsoft.EntityFrameworkCore.Tools.Cli.1.0.0-preview1-final.nupkg.sha512",
-        "Microsoft.EntityFrameworkCore.Tools.Cli.nuspec",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.Cli.exe",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.Cli.xml",
-        "lib/netcoreapp1.0/Microsoft.EntityFrameworkCore.Tools.Cli.dll",
-        "lib/netcoreapp1.0/Microsoft.EntityFrameworkCore.Tools.Cli.runtimeconfig.json",
-        "lib/netcoreapp1.0/Microsoft.EntityFrameworkCore.Tools.Cli.xml"
-      ]
-    },
-    "Microsoft.EntityFrameworkCore.Tools.Core/1.0.0-rc2-final": {
-      "sha512": "0L30NEnJaFdbc8a+B9nLb2kkMfnz94RFvJ8JWlO1u73wRChEafB7wLozyhCJFZziEEp8IbFYTzF3omR6gDfsmA==",
-      "type": "package",
-      "files": [
-        "Microsoft.EntityFrameworkCore.Tools.Core.1.0.0-rc2-final.nupkg.sha512",
-        "Microsoft.EntityFrameworkCore.Tools.Core.nuspec",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.Core.dll",
-        "lib/net451/Microsoft.EntityFrameworkCore.Tools.Core.xml",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Tools.Core.dll",
-        "lib/netcore50/Microsoft.EntityFrameworkCore.Tools.Core.xml",
-        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Tools.Core.dll",
-        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Tools.Core.xml"
       ]
     },
     "Microsoft.Extensions.Caching.Abstractions/1.0.0-rc2-final": {
@@ -6907,10 +6707,9 @@
       "path": "../PopForums/project.json",
       "msbuildProject": "../PopForums/PopForums.xproj"
     },
-    "PopForums.Data.Sql/14.0.0": {
+    "PopForums.Sql/14.0.0": {
       "type": "project",
-      "path": "../PopForums.Sql/project.json",
-      "msbuildProject": "../PopForums.Sql/PopForums.Data.Sql.xproj"
+      "path": "../PopForums.Sql/project.json"
     }
   },
   "projectFileDependencyGroups": {
@@ -6922,15 +6721,12 @@
       "Microsoft.AspNetCore.Authentication.Twitter >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.Diagnostics >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 1.0.0-rc2-final",
-      "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.Mvc >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.Razor.Tools >= 1.0.0-preview1-final",
       "Microsoft.AspNetCore.Server.IISIntegration >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.Server.Kestrel >= 1.0.0-rc2-final",
       "Microsoft.AspNetCore.SignalR.Server >= 0.1.0-rc2-20896",
       "Microsoft.AspNetCore.StaticFiles >= 1.0.0-rc2-final",
-      "Microsoft.EntityFrameworkCore.SqlServer >= 1.0.0-rc2-final",
-      "Microsoft.EntityFrameworkCore.Tools >= 1.0.0-preview1-final",
       "Microsoft.Extensions.Configuration.EnvironmentVariables >= 1.0.0-rc2-final",
       "Microsoft.Extensions.Configuration.Json >= 1.0.0-rc2-final",
       "Microsoft.Extensions.Configuration.UserSecrets >= 1.0.0-rc2-final",
@@ -6941,7 +6737,7 @@
       "Microsoft.VisualStudio.Web.CodeGeneration.Tools >= 1.0.0-preview1-final",
       "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 1.0.0-preview1-final",
       "PopForums >= 14.0.0",
-      "PopForums.Data.Sql >= 14.0.0"
+      "PopForums.Sql >= 14.0.0"
     ],
     ".NETFramework,Version=v4.6": []
   },

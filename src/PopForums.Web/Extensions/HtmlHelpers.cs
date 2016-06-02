@@ -280,15 +280,6 @@ namespace PopForums.Web.Extensions
 			return false;
 		}
 
-		public static string PostDeleteLinkFormatter(this IHtmlHelper helper, Post post)
-		{
-			if (post.IsDeleted)
-				return Resources.Undelete;
-			if (post.IsFirstInTopic)
-				return Resources.DeleteTopic;
-			return Resources.Delete;
-		}
-
 		public static string AddValidationClass(this IHtmlHelper helper, string fieldName, string cssClass)
 		{
 			if (!helper.ViewContext.ViewData.ModelState.ContainsKey(fieldName))

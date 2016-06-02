@@ -1,29 +1,23 @@
 {
-  "userSecretsId": "aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759",
+	"userSecretsId": "aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759",
 
 	"dependencies": {
 		"Microsoft.AspNetCore.Authentication.Cookies": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Authentication.Facebook": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Authentication.Google": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Authentication.OAuth": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Authentication.Twitter": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
-					"Microsoft.AspNetCore.Razor.Tools": {
-						"version": "1.0.0-preview1-final",
-						"type": "build"
-					},
+		"Microsoft.AspNetCore.Authentication.Facebook": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Authentication.Google": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Authentication.OAuth": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Authentication.Twitter": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
+		"Microsoft.AspNetCore.Razor.Tools": {
+			"version": "1.0.0-preview1-final",
+			"type": "build"
+		},
 		"Microsoft.AspNetCore.Server.IISIntegration": "1.0.0-rc2-final",
 		"Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
 		"Microsoft.AspNetCore.SignalR.Server": "0.1.0-rc2-20896",
 		"Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
-		"Microsoft.EntityFrameworkCore.SqlServer": "1.0.0-rc2-final",
-		"Microsoft.EntityFrameworkCore.Tools": {
-			"version": "1.0.0-preview1-final",
-			"type": "build"
-		},
 		"Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0-rc2-final",
 		"Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
 		"Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc2-final",
@@ -39,56 +33,56 @@
 			"version": "1.0.0-preview1-final",
 			"type": "build"
 		},
-		"PopForums": "14.0.0",
-		"PopForums.Data.Sql": "14.0.0"
+					"PopForums": "14.0.0",
+					"PopForums.Sql": "14.0.0"
 	},
 
-  "tools": {
-    "Microsoft.AspNetCore.Razor.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": "portable-net45+win8+dnxcore50"
-    },
-    "Microsoft.AspNetCore.Server.IISIntegration.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": "portable-net45+win8+dnxcore50"
-    },
-    "Microsoft.EntityFrameworkCore.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": [
-        "portable-net45+win8+dnxcore50",
-        "portable-net45+win8"
-      ]
-    },
-    "Microsoft.Extensions.SecretManager.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": "portable-net45+win8+dnxcore50"
-    },
-    "Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
-      "version": "1.0.0-preview1-final",
-      "imports": [
-        "portable-net45+win8+dnxcore50",
-        "portable-net45+win8"
-      ]
-    }
-  },
+	"tools": {
+		"Microsoft.AspNetCore.Razor.Tools": {
+			"version": "1.0.0-preview1-final",
+			"imports": "portable-net45+win8+dnxcore50"
+		},
+		"Microsoft.AspNetCore.Server.IISIntegration.Tools": {
+			"version": "1.0.0-preview1-final",
+			"imports": "portable-net45+win8+dnxcore50"
+		},
+		"Microsoft.EntityFrameworkCore.Tools": {
+			"version": "1.0.0-preview1-final",
+			"imports": [
+				"portable-net45+win8+dnxcore50",
+				"portable-net45+win8"
+			]
+		},
+		"Microsoft.Extensions.SecretManager.Tools": {
+			"version": "1.0.0-preview1-final",
+			"imports": "portable-net45+win8+dnxcore50"
+		},
+		"Microsoft.VisualStudio.Web.CodeGeneration.Tools": {
+			"version": "1.0.0-preview1-final",
+			"imports": [
+				"portable-net45+win8+dnxcore50",
+				"portable-net45+win8"
+			]
+		}
+	},
 
-  "frameworks": {
-    "net46": { }
-  },
+	"frameworks": {
+		"net46": { }
+	},
 
-  "buildOptions": {
-    "emitEntryPoint": true,
-    "preserveCompilationContext": true
-  },
+	"buildOptions": {
+		"emitEntryPoint": true,
+		"preserveCompilationContext": true
+	},
 
-  "publishOptions": {
-    "include": [
-      "wwwroot",
-      "Views",
-      "appsettings.json",
-      "web.config"
-    ]
-  },
+	"publishOptions": {
+		"include": [
+			"wwwroot",
+			"Views",
+			"appsettings.json",
+			"web.config"
+		]
+	},
 
 	"scripts": {
 		"prepublish": [ "npm install", "bower install", "gulp clean", "gulp min" ],

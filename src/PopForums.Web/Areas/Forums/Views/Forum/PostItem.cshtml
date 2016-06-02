@@ -1,48 +1,52 @@
 ﻿@using PopForums.Extensions;
 @using PopForums.Models;
-@model Post
+@inject ITimeFormattingService TimeFormattingService
+@model PostItemContainer
 @{
-	Topic topic = null;
-	if (ViewBag.Topic != null)
-	{
-		topic = (Topic) ViewBag.Topic;
-	}
+	string deleteLink;
+	if (Model.Post.IsDeleted)
+	{deleteLink = PopForums.Resources.Undelete;}
+	else if (Model.Post.IsFirstInTopic)
+	{deleteLink = PopForums.Resources.DeleteTopic;}
+	else
+	{deleteLink = PopForums.Resources.Delete;}
 }
-<a name="@Model.PostID"></a>
-<div class="@(Model.IsDeleted ? "bg-danger " : "")postItem" data-postid="@Model.PostID" data-userid="@Model.UserID">
+
+<a name="@Model.Post.PostID"></a>
+<div class="@(Model.Post.IsDeleted ? "bg-danger " : "")postItem" data-postid="@Model.Post.PostID" data-userid="@Model.Post.UserID">
 	<div class="postUserData bg-primary">
-		<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Name</h3>
+		<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Post.Name</h3>
 		<div class="miniProfileBox bg-info text-info"></div>
 		<small class="postTime text-right">
-			@if (this.IsUserInRole(PermanentRoles.Moderator))
+			@if (Model.User.IsInRole(PermanentRoles.Moderator))
 			{
-				@:IP: @Model.IP -
+				@:IP: @Model.Post.IP -
 			}
-			<span class="fTime" data-utc="@FormatTime8601(Model.PostTime)">@FormatTime(Model.PostTime)</span>
+			<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, Model.Profile)</span>
 		</small>
 	</div>
-	@if (!this.HideVanity() && ((Dictionary<int, int>)ViewBag.Avatars).ContainsKey(Model.UserID))
+	@if (!Model.Profile.HideVanity && (Model.Avatars).ContainsKey(Model.Post.UserID))
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = ((Dictionary<int, int>)ViewBag.Avatars)[Model.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Name)" class="avatar pull-right" />
+		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar pull-right" />
 	}
 
-	@Html.Raw(Model.FullText)
-	@if (Model.IsEdited && Model.LastEditTime.HasValue)
+	@Html.Raw(Model.Post.FullText)
+	@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
 	{
-		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.LastEditName), <span class="fTime" data-utc="@FormatTime8601(Model.LastEditTime.Value)">@FormatTime(Model.LastEditTime.Value)</span></small>
+		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@Model.Post.LastEditTime.Value.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.LastEditTime.Value, Model.Profile)</span></small>
 	}
 
-	@if (Model.ShowSig && !this.HideVanity() && ((Dictionary<int, string>)ViewBag.Signatures).ContainsKey(Model.UserID))
+	@if (Model.Post.ShowSig && !Model.Profile.HideVanity && (Model.Signatures).ContainsKey(Model.Post.UserID))
 	{
 		<hr />
-		<div class="signature">@Html.Raw(((Dictionary<int, string>)ViewBag.Signatures)[Model.UserID])</div>
+		<div class="signature">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
 	<div class="postToolContainer">
-		<div class="voteCount label label-primary">@Html.Partial("~/Areas/PopForums/Views/Forum/Votes.cshtml", Model.Votes)</div>
+		<div class="voteCount label label-primary">@Html.Partial("Votes.cshtml", Model.Post.Votes)</div>
 		<ul class="postTools list-inline">
-			@if (User != null && ((PopForums.Models.User)User).UserID != Model.UserID)
+			@if (Model.User != null && Model.User.UserID != Model.Post.UserID)
 			{
-				if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.PostID))
+				if (Model.VotedPostIDs.Contains(Model.Post.PostID))
 				{
 					<li>@PopForums.Resources.Voted</li>
 				}
@@ -50,33 +54,31 @@
 				{
 					<li class="voteUp btn-link">Vote up</li>}
 			}
-			<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.PostID }, null)</li>
-			@if (User != null && topic != null && topic.IsClosed == false)
+			<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
+			@if (User != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
 				<li><input type="button" class="replyLink btn-link" value="@PopForums.Resources.Reply" /></li>
 				<li><input type="button" class="quoteLink btn-link" value="@PopForums.Resources.Quote" /></li>
 			}
-			@if (User.IsPostEditable(Model))
+			@if (Model.User.IsPostEditable(Model.Post))
 			{
-				<li>@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.PostID }, null)</li>
-				if (Model.IsDeleted)
+				<li>@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
+				if (Model.Post.IsDeleted)
 				{
 					<li>
-						@using (Html.BeginForm("UndeletePost", "Moderator", new { id = Model.PostID }, FormMethod.Post, new { @class = "deletePostForm" }))
-						{ <input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /> }
+						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /></form>
 					</li>
 				}
 				else
 				{
 					<li>
-						@using (Html.BeginForm("DeletePost", "Forum", new { id = Model.PostID }, FormMethod.Post, new { @class = "deletePostForm" }))
-						{ <input type="submit" value="@Html.PostDeleteLinkFormatter(Model)" class="btn-link" /> }
+						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm"><input type="submit" value="@deleteLink" class="btn-link" /></form>
 					</li>
 				}
 			}
-			@if (Model.IsEdited && this.IsUserInRole(PermanentRoles.Moderator))
+			@if (Model.Post.IsEdited && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
-				<li><input data-postid="@Model.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
+				<li><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
 			}
 		</ul>
 		<div class="moderationLog"></div>
