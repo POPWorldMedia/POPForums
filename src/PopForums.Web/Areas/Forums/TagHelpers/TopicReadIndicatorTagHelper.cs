@@ -4,13 +4,13 @@ using PopForums.Models;
 
 namespace PopForums.Web.Areas.Forums.TagHelpers
 {
-	[HtmlTargetElement("pf-topicReadIndicator", Attributes = "topic, forumTopicContainer, imagePath")]
+	[HtmlTargetElement("pf-topicReadIndicator", Attributes = "topic, pagedTopicContainer, imagePath")]
 	public class TopicReadIndicatorTagHelper : TagHelper
 	{
 		[HtmlAttributeName("topic")]
 		public Topic Topic { get; set; }
-		[HtmlAttributeName("forumTopicContainer")]
-		public ForumTopicContainer ForumTopicContainer { get; set; }
+		[HtmlAttributeName("pagedTopicContainer")]
+		public PagedTopicContainer PagedTopicContainer { get; set; }
 		[HtmlAttributeName("imagePath")]
 		public string ImagePath { get; set; }
 		[HtmlAttributeName("class")]
@@ -20,9 +20,9 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 		{
 			var alt = Resources.NoNewPosts;
 			var image = "NoNewIndicator.png";
-			if (ForumTopicContainer.ReadStatusLookup.ContainsKey(Topic.TopicID))
+			if (PagedTopicContainer.ReadStatusLookup.ContainsKey(Topic.TopicID))
 			{
-				var status = ForumTopicContainer.ReadStatusLookup[Topic.TopicID];
+				var status = PagedTopicContainer.ReadStatusLookup[Topic.TopicID];
 				switch (status)
 				{
 					case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.Pinned:

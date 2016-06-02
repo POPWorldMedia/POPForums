@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -42,12 +44,12 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 		{
 			if (PagerContext == null)
 				return;
-			var builder = new StringBuilder();
 			if (String.IsNullOrEmpty(ControllerName) || String.IsNullOrEmpty(ActionName))
 				throw new Exception("controllerName and actionName must be specified for PageLinks.");
 			if (PagerContext.PageCount <= 1)
 				return;
 			
+			var builder = new StringBuilder();
 			if (String.IsNullOrEmpty(MoreTextClass)) builder.Append($"<li><span>{Resources.More}:</span></li>");
 			else builder.Append($"<li class=\"{MoreTextClass}\"><span>{Resources.More}</span></li>");
 
@@ -59,85 +61,91 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						firstRouteDictionary.Add(item.Key, item.Value);
-				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, Resources.First, ActionName, ControllerName, null, null, null,
+				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null,
 					firstRouteDictionary, new { title = Resources.First, @class = "glyphicon glyphicon-step-backward" });
-				builder.Append(firstLink);
-			//	builder.Append("</li>");
-			//	if (pagerContext.PageIndex > 2)
-			//	{
-			//		// previous page link
-			//		var previousIndex = pagerContext.PageIndex - 1;
-			//		builder.Append("<li>");
-			//		var previousRouteDictionary = new RouteValueDictionary(new { controller = controllerName, action = actionName, page = previousIndex });
-			//		if (routeParameters != null)
-			//			foreach (var item in routeParameters)
-			//				previousRouteDictionary.Add(item.Key, item.Value);
-			//		var previousLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, previousRouteDictionary, new Dictionary<string, object> { { "title", previousPage }, { "rel", "prev" }, { "class", "glyphicon glyphicon-chevron-left" } });
-			//		builder.Append(previousLink);
-			//		builder.Append("</li>");
-			//	}
-			//}
-
-			//// calc low and high limits for numeric links
-			//var low = pagerContext.PageIndex - 1;
-			//var high = pagerContext.PageIndex + 3;
-			//if (low < 1) low = 1;
-			//if (high > pagerContext.PageCount) high = pagerContext.PageCount;
-			//if (high - low < 5) while ((high < low + 4) && high < pagerContext.PageCount) high++;
-			//if (high - low < 5) while ((low > high - 4) && low > 1) low--;
-			//for (var x = low; x < high + 1; x++)
-			//{
-			//	// numeric links
-			//	if (x == pagerContext.PageIndex)
-			//	{
-			//		if (String.IsNullOrEmpty(currentPageCssClass))
-			//			builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, pagerContext.PageCount));
-			//		else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", currentPageCssClass, x, pagerContext.PageCount));
-			//	}
-			//	else
-			//	{
-			//		builder.Append("<li>");
-			//		var numericRouteDictionary = new RouteValueDictionary { { "controller", controllerName }, { "action", actionName }, { "page", x } };
-			//		if (routeParameters != null)
-			//			foreach (var item in routeParameters)
-			//				numericRouteDictionary.Add(item.Key, item.Value);
-			//		builder.Append(htmlHelper.RouteLink(x.ToString(), numericRouteDictionary));
-			//		builder.Append("</li>");
-			//	}
-			//}
-			//if (pagerContext.PageIndex != pagerContext.PageCount)
-			//{
-			//	if (pagerContext.PageIndex < pagerContext.PageCount - 1)
-			//	{
-			//		// next page link
-			//		var nextIndex = pagerContext.PageIndex + 1;
-			//		builder.Append("<li>");
-			//		var nextRouteDictionary = new RouteValueDictionary(new { controller = controllerName, action = actionName, page = nextIndex });
-			//		if (routeParameters != null)
-			//			foreach (var item in routeParameters)
-			//				nextRouteDictionary.Add(item.Key, item.Value);
-			//		var nextLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, nextRouteDictionary, new Dictionary<string, object> { { "title", nextPage }, { "rel", "next" }, { "class", "glyphicon glyphicon-chevron-right" } });
-			//		builder.Append(nextLink);
-			//		builder.Append("</li>");
-			//	}
-			//	// last page link
-			//	builder.Append("<li>");
-			//	var lastRouteDictionary = new RouteValueDictionary(new { controller = controllerName, action = actionName, page = pagerContext.PageCount });
-			//	if (routeParameters != null)
-			//		foreach (var item in routeParameters)
-			//			lastRouteDictionary.Add(item.Key, item.Value);
-			//	var lastLink = HtmlHelper.GenerateRouteLink(htmlHelper.ViewContext.RequestContext, htmlHelper.RouteCollection, "", null, lastRouteDictionary, new Dictionary<string, object> { { "title", lastPage }, { "class", "glyphicon glyphicon-step-forward" } });
-			//	builder.Append(lastLink);
-			//	builder.Append("</li>");
+				builder.Append(GetString(firstLink));
+				builder.Append("</li>");
+				if (PagerContext.PageIndex > 2)
+				{
+					// previous page link
+					var previousIndex = PagerContext.PageIndex - 1;
+					builder.Append("<li>");
+					var previousRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = previousIndex });
+					if (RouteParameters != null)
+						foreach (var item in RouteParameters)
+							previousRouteDictionary.Add(item.Key, item.Value);
+					var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, @class = "glyphicon glyphicon-chevron-left", rel = "prev" });
+					builder.Append(GetString(previousLink));
+					builder.Append("</li>");
+				}
 			}
 
+			// calc low and high limits for numeric links
+			var low = PagerContext.PageIndex - 1;
+			var high = PagerContext.PageIndex + 3;
+			if (low < 1) low = 1;
+			if (high > PagerContext.PageCount) high = PagerContext.PageCount;
+			if (high - low < 5) while ((high < low + 4) && high < PagerContext.PageCount) high++;
+			if (high - low < 5) while ((low > high - 4) && low > 1) low--;
+			for (var x = low; x < high + 1; x++)
+			{
+				// numeric links
+				if (x == PagerContext.PageIndex)
+				{
+					if (String.IsNullOrEmpty(CurrentTextClass))
+						builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, PagerContext.PageCount));
+					else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", CurrentTextClass, x, PagerContext.PageCount));
+				}
+				else
+				{
+					builder.Append("<li>");
+					var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
+					if (RouteParameters != null)
+						foreach (var item in RouteParameters)
+							numericRouteDictionary.Add(item.Key, item.Value);
+					var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
+					builder.Append(GetString(link));
+					builder.Append("</li>");
+				}
+			}
+			if (PagerContext.PageIndex != PagerContext.PageCount)
+			{
+				if (PagerContext.PageIndex < PagerContext.PageCount - 1)
+				{
+					// next page link
+					var nextIndex = PagerContext.PageIndex + 1;
+					builder.Append("<li>");
+					var nextRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = nextIndex });
+					if (RouteParameters != null)
+						foreach (var item in RouteParameters)
+							nextRouteDictionary.Add(item.Key, item.Value);
+					var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, @class = "glyphicon glyphicon-chevron-right", rel = "next" });
+					builder.Append(GetString(nextLink));
+					builder.Append("</li>");
+				}
+				// last page link
+				builder.Append("<li>");
+				var lastRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = PagerContext.PageCount });
+				if (RouteParameters != null)
+					foreach (var item in RouteParameters)
+						lastRouteDictionary.Add(item.Key, item.Value);
+				var lastLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, lastRouteDictionary, new { title = Resources.Last, @class = "glyphicon glyphicon-step-forward", rel = "next" });
+				builder.Append(GetString(lastLink));
+				builder.Append("</li>");
+			}
 
+			output.TagMode = TagMode.StartTagAndEndTag;
 			output.TagName = "ul";
 			if (!String.IsNullOrWhiteSpace(Class))
-				output.Attributes.Add("class", "pagination " + Class);
-			else
-				output.Attributes.Add("class", "pagination");
+				output.Attributes.Add("class", Class);
 			output.Content.AppendHtml(builder.ToString());
+		}
+
+		private static string GetString(IHtmlContent content)
+		{
+			var writer = new System.IO.StringWriter();
+			content.WriteTo(writer, HtmlEncoder.Default);
+			return writer.ToString();
 		}
 	}
 }

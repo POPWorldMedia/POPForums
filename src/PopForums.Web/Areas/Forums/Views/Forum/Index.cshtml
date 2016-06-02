@@ -49,7 +49,7 @@
 	</ul>
 </div>
 
-<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
 
 @if (user != null)
 {
@@ -65,11 +65,11 @@
 			<td class="newIndicator">
 				@if (user == null)
 				{
-					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" forumTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
 				}
 				else
 				{
-					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" forumTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
 				}
 			</td>
 			<td>
@@ -95,5 +95,4 @@
 	</tr>
 </table>
 
-@*@Html.PagerLinks("Forum", "Index", Model.PagerContext, "pagerLinks", "morePager", "currentPager")
-*@
+<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager"/>

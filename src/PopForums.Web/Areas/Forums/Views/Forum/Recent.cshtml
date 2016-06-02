@@ -27,17 +27,15 @@
 }
 
 <div>
-	<h1>@PopForums.Resources.RecentTopics</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
-		<li>@PopForums.Resources.RecentTopics</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
-@*@Html.PagerLinks("Forum", "Recent", Model.PagerContext, "pagerLinks", "morePager", "currentPager")*@
+<pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
 
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)
@@ -46,11 +44,11 @@
 			<td class="newIndicator">
 				@if (user == null)
 				{
-					<a href="@Url.Action("Topic", "Forum", new { id = topic.UrlName, page = 1 })">@Html.TopicReadIndicator(topic, Model, "/lib/PopForums/")</a>
+					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
 				}
 				else
 				{
-					<a href="@Url.Action("GoToNewestPost", "Forum", new { id = topic.TopicID })">@Html.TopicReadIndicator(topic, Model, "/lib/PopForums/")</a>
+					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
 				}
 			</td>
 			<td>
