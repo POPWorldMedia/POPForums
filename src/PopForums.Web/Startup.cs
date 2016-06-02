@@ -133,32 +133,32 @@ namespace PopForums.Web
 				routes.MapRoute(
 					"pflink",
 					"Forums/PostLink/{id}",
-					new { controller = ForumController.Name, action = "PostLink" }
+					new { controller = ForumController.Name, action = "PostLink", Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pfsubtopics",
 					"Forums/Subscription/Topics/{page?}",
-					new { controller = SubscriptionController.Name, action = "Topics", page = 1 }
+					new { controller = SubscriptionController.Name, action = "Topics", page = 1, Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pffavetopics",
 					"Forums/Favorites/Topics/{page?}",
-					new { controller = FavoritesController.Name, action = "Topics", page = 1 }
+					new { controller = FavoritesController.Name, action = "Topics", page = 1, Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pfpagedudertopics",
 					"Forums/Account/Posts/{id}/{page?}",
-					new { controller = AccountController.Name, action = "Posts", page = 1 }
+					new { controller = AccountController.Name, action = "Posts", page = 1, Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pftopicunsub",
 					"Forums/Subscription/Unsubscribe/{topicID}/{authKey}",
-					new { controller = SubscriptionController.Name, action = "Unsubscribe" }
+					new { controller = SubscriptionController.Name, action = "Unsubscribe", Area = "Forums" }
 					);
 				routes.MapRoute(
 					"pfpagedadmin",
 					"Forums/Admin/ErrorLog/{page?}",
-					new { controller = AdminController.Name, action = "ErrorLog" }
+					new { controller = AdminController.Name, action = "ErrorLog", Area = "Forums" }
 					);
 
 				// app routes

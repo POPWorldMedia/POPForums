@@ -1,0 +1,70 @@
+﻿@model PopForums.Models.PagedTopicContainer
+@using PopForums.Web.Areas.Forums.Controllers;
+@using PopForums.Extensions;
+@addTagHelper *, PopForums.Web
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	ViewBag.Title = PopForums.Resources.FavoriteTopics;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser(Context);
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.topicPreviewSetup();
+			PopForums.startTimeUpdater();
+		});
+	</script>
+}
+
+<div>
+	<h1>@PopForums.Resources.FavoriteTopics</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li>@PopForums.Resources.FavoriteTopics</li>
+	</ul>
+</div>
+
+@if (Model == null)
+{
+	<p>@PopForums.Resources.FavoriteMustBeLoggedIn</p>
+}
+else
+{
+	if (Model.Topics.Count == 0)
+	{
+		<p>@PopForums.Resources.FavoritesDontHave</p>
+	}
+
+	<pf-pagerLinks controllerName="Subscription" actionName="Topics" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+
+	<table id="TopicList" class="table grid table-hover">
+		@foreach (var topic in Model.Topics)
+		{
+			<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>    }>
+				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
+				<td class="topicListButton">
+					<form asp-action="RemoveFavorite" asp-controller="Favorites" asp-antiforgery="false">
+						<input type="hidden" value="@topic.TopicID" />
+						<input type="submit" value="@PopForums.Resources.FavoriteRemove" class="btn btn-primary" />
+					</form>
+				</td>
+				<td>
+					<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName">@topic.Title</a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
+					<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+					<small class="pull-right forumDetails">
+						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+					</small>
+				</td>
+			</tr>
+		}
+	</table>
+}
