@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Hubs;
 
-namespace PopForums.Web.Areas.Forums.Messaging
+namespace PopForums.Web.Messaging
 {
 	[HubName("Forums")]
 	public class ForumsHub : Hub
