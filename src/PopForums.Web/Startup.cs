@@ -13,8 +13,8 @@ using PopForums.Messaging;
 using PopForums.Repositories;
 using PopForums.Web.Areas.Forums;
 using PopForums.Web.Areas.Forums.Controllers;
-using PopForums.Web.Areas.Forums.Messaging;
 using PopForums.Web.Areas.Forums.Services;
+using PopForums.Web.Messaging;
 
 namespace PopForums.Web
 {

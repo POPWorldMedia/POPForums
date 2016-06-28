@@ -5,7 +5,7 @@ using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
 
-namespace PopForums.Web.Areas.Forums.Messaging
+namespace PopForums.Web.Messaging
 {
     public class Broker : IBroker
 	{
