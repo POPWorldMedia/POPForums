@@ -1,11 +1,19 @@
 ﻿@model PopForums.Models.TopicContainer
-@using PopForums.Extensions;
+@using System.Threading.Tasks
+@using PopForums.Models
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	var user = UserRetrievalShim.GetUser(Context);
+	var profile = UserRetrievalShim.GetProfile(Context);
+	var routeParameters = new Dictionary<string, object> {{"id", Model.Topic.UrlName}};
+}
 <div>
 @foreach (var post in Model.Posts)
 {
-	Html.RenderPartial("PostItem", post, new ViewDataDictionary { { "VotedPostIDs", Model.VotedPostIDs }, { "Signatures", Model.Signatures }, { "Avatars", Model.Avatars }, { ViewDataDictionaries.ViewDataUserKey, this.GetUserFromViewData() }, { "Topic", Model.Topic } });
+	Html.RenderPartial("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
 }
-@Html.PagerLinks("Forum", "Topic", Model.PagerContext, (int)ViewBag.Low, (int)ViewBag.High, Model.Topic.UrlName, "pagerLinks", null, null)
+<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" low="@ViewBag.Low" high="@ViewBag.High" routeParameters="@routeParameters" />
 @Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
 @Html.Hidden("PageCount", Model.PagerContext.PageCount, new { @class = "pageCount" })
 </div>

@@ -62,7 +62,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 
-		private void SaveFormValuesToSettings(FormCollection collection)
+		private void SaveFormValuesToSettings(IFormCollection collection)
 		{
 			ViewData["PostResult"] = Resources.SettingsSaved;
 			var dictionary = new Dictionary<string, object>();
@@ -80,7 +80,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		//[ValidateInput(false)] TODO: need this?
 		public ViewResult Index(FormCollection collection)
 		{
-			SaveFormValuesToSettings(collection);
+			// TODO: FormCollection can't be used as a parameter
+			SaveFormValuesToSettings(Request.Form);
 			ViewData[TimeZonesKey] = DataCollections.TimeZones();
 			return View(_settingsManager.Current);
 		}

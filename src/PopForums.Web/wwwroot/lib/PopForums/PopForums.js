@@ -751,7 +751,7 @@ PopForums.updateTimes = function () {
 			traditional: true,
 			success: function (result) {
 				$.each(result, function () {
-					$(".fTime[data-utc='" + this.Key + "']").text(this.Value);
+					$(".fTime[data-utc='" + this.key + "']").text(this.value);
 				});
 			},
 			error: function () {

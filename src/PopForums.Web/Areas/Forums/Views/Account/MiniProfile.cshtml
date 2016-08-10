@@ -1,8 +1,13 @@
 ﻿@using PopForums.Extensions;
 @model PopForums.Models.DisplayProfile
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
 
 <div class="miniProfile">
-	@PopForums.Resources.Joined: @FormatTime(Model.Joined)<br />
+	@PopForums.Resources.Joined: @TimeFormattingService.GetFormattedTime(Model.Joined, profile)<br />
 	@if (!String.IsNullOrWhiteSpace(Model.Location)) {
 		@PopForums.Resources.Location<text>: </text>@Model.Location<br />
 	}

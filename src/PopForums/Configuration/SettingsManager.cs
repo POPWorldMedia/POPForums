@@ -89,24 +89,26 @@ namespace PopForums.Configuration
 			{
 				var property = _settings.GetType().GetProperty(item.Key);
 				if (property == null)
-					throw new Exception(String.Format("Tried to save a Settings property called \"{0}\", but it doesn't exist.", item.Key));
+					continue;
+					//throw new Exception(String.Format("Tried to save a Settings property called \"{0}\", but it doesn't exist.", item.Key));
+				var stringValue = Convert.ToString(item.Value);
 				switch (property.PropertyType.FullName)
 				{
 					case "System.Boolean":
-						var state = item.Value.ToString().Contains("true"); // hack to handler double values in MVC checkbox controls
+						var state = stringValue.Contains("true"); // hack to handle double values in MVC checkbox controls
 						property.SetValue(_settings, Convert.ToBoolean(state), null);
 						break;
 					case "System.String":
-						property.SetValue(_settings, item.Value, null);
+						property.SetValue(_settings, stringValue, null);
 						break;
 					case "System.Int32":
-						property.SetValue(_settings, Convert.ToInt32(item.Value), null);
+						property.SetValue(_settings, Convert.ToInt32(stringValue), null);
 						break;
 					case "System.Double":
-						property.SetValue(_settings, Convert.ToDouble(item.Value), null);
+						property.SetValue(_settings, Convert.ToDouble(stringValue), null);
 						break;
 					case "System.DateTime":
-						property.SetValue(_settings, Convert.ToDateTime(item.Value), null);
+						property.SetValue(_settings, Convert.ToDateTime(stringValue), null);
 						break;
 					default:
 						throw new Exception(String.Format("Settings save not coded to convert values of type {0}.", property.PropertyType.FullName));

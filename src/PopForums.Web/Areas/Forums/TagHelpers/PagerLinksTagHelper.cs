@@ -30,6 +30,10 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 		public string CurrentTextClass { get; set; }
 		[HtmlAttributeName("routeParameters")]
 		public Dictionary<string, object> RouteParameters { get; set; }
+		[HtmlAttributeName("low")]
+		public int Low { get; set; }
+		[HtmlAttributeName("high")]
+		public int High { get; set; }
 
 		[HtmlAttributeNotBound]
 		[ViewContext]
@@ -53,7 +57,7 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 			if (String.IsNullOrEmpty(MoreTextClass)) builder.Append($"<li><span>{Resources.More}:</span></li>");
 			else builder.Append($"<li class=\"{MoreTextClass}\"><span>{Resources.More}</span></li>");
 
-			if (PagerContext.PageIndex != 1)
+			if (PagerContext.PageIndex != 1 && Low != 1)
 			{
 				// first page link
 				builder.Append("<li>");
@@ -69,6 +73,8 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 				{
 					// previous page link
 					var previousIndex = PagerContext.PageIndex - 1;
+					if (Low != 0)
+						previousIndex = Low - 1;
 					builder.Append("<li>");
 					var previousRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = previousIndex });
 					if (RouteParameters != null)
@@ -80,35 +86,77 @@ namespace PopForums.Web.Areas.Forums.TagHelpers
 				}
 			}
 
-			// calc low and high limits for numeric links
-			var low = PagerContext.PageIndex - 1;
-			var high = PagerContext.PageIndex + 3;
-			if (low < 1) low = 1;
-			if (high > PagerContext.PageCount) high = PagerContext.PageCount;
-			if (high - low < 5) while ((high < low + 4) && high < PagerContext.PageCount) high++;
-			if (high - low < 5) while ((low > high - 4) && low > 1) low--;
-			for (var x = low; x < high + 1; x++)
+			if (Low == 0 || High == 0)
 			{
-				// numeric links
-				if (x == PagerContext.PageIndex)
+				// not a multipage set of links used in partial page
+				// calc low and high limits for numeric links
+				var low = PagerContext.PageIndex - 1;
+				var high = PagerContext.PageIndex + 3;
+				if (low < 1) low = 1;
+				if (high > PagerContext.PageCount) high = PagerContext.PageCount;
+				if (high - low < 5) while ((high < low + 4) && high < PagerContext.PageCount) high++;
+				if (high - low < 5) while ((low > high - 4) && low > 1) low--;
+				for (var x = low; x < high + 1; x++)
 				{
-					if (String.IsNullOrEmpty(CurrentTextClass))
-						builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, PagerContext.PageCount));
-					else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", CurrentTextClass, x, PagerContext.PageCount));
-				}
-				else
-				{
-					builder.Append("<li>");
-					var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
-					if (RouteParameters != null)
-						foreach (var item in RouteParameters)
-							numericRouteDictionary.Add(item.Key, item.Value);
-					var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
-					builder.Append(GetString(link));
-					builder.Append("</li>");
+					// numeric links
+					if (x == PagerContext.PageIndex)
+					{
+						if (String.IsNullOrEmpty(CurrentTextClass))
+							builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, PagerContext.PageCount));
+						else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", CurrentTextClass, x, PagerContext.PageCount));
+					}
+					else
+					{
+						builder.Append("<li>");
+						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
+						if (RouteParameters != null)
+							foreach (var item in RouteParameters)
+								numericRouteDictionary.Add(item.Key, item.Value);
+						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
+						builder.Append(GetString(link));
+						builder.Append("</li>");
+					}
 				}
 			}
-			if (PagerContext.PageIndex != PagerContext.PageCount)
+			else
+			{
+				// multipage set of links used in partial page
+				// calc low and high limits for numeric links
+				var calcLow = PagerContext.PageIndex - 1;
+				var calcHigh = PagerContext.PageIndex + 3;
+				if (calcLow < 1) calcLow = 1;
+				if (calcHigh > PagerContext.PageCount) calcHigh = PagerContext.PageCount;
+				if (calcHigh - calcLow < 5) while ((calcHigh < calcLow + 4) && calcHigh < PagerContext.PageCount) calcHigh++;
+				if (calcHigh - calcLow < 5) while ((calcLow > calcHigh - 4) && calcLow > 1) calcLow--;
+				var isRangeRendered = false;
+				for (var x = calcLow; x < calcHigh + 1; x++)
+				{
+					// numeric links
+					if (x >= Low && x <= High)
+					{
+						if (!isRangeRendered)
+						{
+							isRangeRendered = true;
+							if (String.IsNullOrEmpty(CurrentTextClass))
+								builder.Append(String.Format("<li class=\"active\"><span>{0}-{1} of {2}</span></li>", Low, High, PagerContext.PageCount));
+							else builder.Append(String.Format("<li class=\"active {0}\"><span>{1}-{2} of {3}</span></li>", CurrentTextClass, Low, High, PagerContext.PageCount));
+						}
+					}
+					else
+					{
+						builder.Append("<li>");
+						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
+						if (RouteParameters != null)
+							foreach (var item in RouteParameters)
+								numericRouteDictionary.Add(item.Key, item.Value);
+						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
+						builder.Append(GetString(link));
+						builder.Append("</li>");
+					}
+				}
+			}
+
+			if (PagerContext.PageIndex != PagerContext.PageCount && High < PagerContext.PageCount)
 			{
 				if (PagerContext.PageIndex < PagerContext.PageCount - 1)
 				{
