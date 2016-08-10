@@ -11,12 +11,12 @@
 	@if (!String.IsNullOrWhiteSpace(Model.Location)) {
 		@PopForums.Resources.Location<text>: </text>@Model.Location<br />
 	}
-	@PopForums.Resources.Posts: @Html.ActionLink(Model.PostCount.ToString("N0"), "Posts", "Account", new { id = Model.UserID }, new { target = "_blank" }), @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
-	@Html.ActionLink("Full Profile", "ViewProfile", new { id = Model.UserID }, new { target = "_blank" })
+	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" target="_blank">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br/>
+	<a asp-action="ViewProfile" asp-route-id="@Model.UserID" target="_blank">Full Profile</a>
 	@if (User != null && Model.ShowDetails)
  { @:| 
-		@Html.ActionLink(PopForums.Resources.SendPM, "Create", "PrivateMessages", new { id = Model.UserID }, null) @:| 
-		@Html.ActionLink(PopForums.Resources.SendEmailButton, "EmailUser", "Account", new { id = Model.UserID }, null)
+		<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@PopForums.Resources.SendPM</a> @:| 
+		<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@PopForums.Resources.SendEmailButton</a>
  }
 	@if (!String.IsNullOrWhiteSpace(Model.Web))
  {

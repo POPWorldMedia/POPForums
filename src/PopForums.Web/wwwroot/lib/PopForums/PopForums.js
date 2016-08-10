@@ -90,13 +90,13 @@ PopForums.processLoginBase = function (path) {
 		dataType: "json",
 		success: function (result) {
 			var loginResult = $("#LoginResult");
-			switch (result.Result) {
+			switch (result.result) {
 				case true:
 					var destination = $("#Referrer").val();
 					location = destination;
 					break;
 				default:
-					loginResult.html(result.Message);
+					loginResult.html(result.message);
 					loginResult.removeClass("hide");
 			}
 		},

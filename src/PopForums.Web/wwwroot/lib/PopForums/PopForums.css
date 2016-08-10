@@ -149,6 +149,9 @@
 	display: none;
 	border-radius: 4px;
 }
+#ForumContainer .miniProfile a {
+	text-decoration: underline;
+}
 #ForumContainer .postItem .voteCount {
 	display: inline-block;
 	cursor: pointer;
