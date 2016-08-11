@@ -134,6 +134,9 @@
 #ForumContainer .postUserData h3 {
 	margin: 0;cursor: pointer;
 }
+#ForumContainer .postUserData h3 a, #ForumContainer .postUserData h3 a:hover {
+	color: white;
+}
 #ForumContainer blockquote {
 	font-size: 100%;
 }

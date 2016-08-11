@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Services;
-using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {
@@ -25,36 +24,36 @@ namespace PopForums.Web.Areas.Forums.Controllers
 
 		public static string Name = "PrivateMessages";
 
-		public ViewResult Index(int page = 1)
+		public ActionResult Index(int page = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			PagerContext pagerContext;
 			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
 
-		public ViewResult Archive(int page = 1)
+		public ActionResult Archive(int page = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			PagerContext pagerContext;
 			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
 
-		public ViewResult View(int id)
+		public ActionResult View(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var model = new PrivateMessageView
 			{
 				PrivateMessage = pm,
@@ -64,11 +63,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ViewResult Create(int? id)
+		public ActionResult Create(int? id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			ViewBag.UserIDs = " ";
 			if (id.HasValue)
 			{
@@ -92,7 +91,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			if (String.IsNullOrWhiteSpace(userIDs) || String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(fullText))
 			{
 				ViewBag.Warning = Resources.PMCreateWarnings;
@@ -109,10 +108,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			_privateMessageService.Reply(pm, fullText, user);
 			return RedirectToAction("View", new { id });
 		}
@@ -129,10 +128,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			_privateMessageService.Archive(user, pm);
 			return RedirectToAction("Index");
 		}
@@ -142,10 +141,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			_privateMessageService.Unarchive(user, pm);
 			return RedirectToAction("Archive");
 		}
