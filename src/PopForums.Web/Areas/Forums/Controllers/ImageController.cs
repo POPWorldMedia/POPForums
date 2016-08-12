@@ -34,6 +34,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var timeStamp = imageLastMod(id);
 			if (!timeStamp.HasValue)
 				return NotFound();
+			Response.Headers["Cache-control"] = "public";
+			Response.Headers["Last-modified"] = DateTime.SpecifyKind(timeStamp.Value, DateTimeKind.Utc).ToString("R");
 			if (!String.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
 			{
 				var provider = CultureInfo.InvariantCulture;
@@ -46,8 +48,6 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				}
 			}
 			var stream = new MemoryStream(imageDataFetch(id));
-			Response.Headers["Cache-control"] = "public";
-			Response.Headers["Last-modified"] = DateTime.SpecifyKind(timeStamp.Value, DateTimeKind.Utc).ToString("R");
 			return File(stream, "image/jpeg");
 		}
 	}
