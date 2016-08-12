@@ -49,12 +49,12 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				return NotFound();
 			var forum = _forumService.Get(urlName);
 			if (forum == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var permissionContext = _forumService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			}
 
 			PagerContext pagerContext;
@@ -144,15 +144,15 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			return RedirectToActionPermanent("Topic", new { id = topic.UrlName });
 		}
 
-		public ViewResult Topic(string id, int page = 1)
+		public ActionResult Topic(string id, int page = 1)
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
@@ -162,7 +162,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			}
 
 			PagerContext pagerContext = null;
@@ -187,7 +187,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			else
 				posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
 			if (posts.Count == 0)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(user, posts);
@@ -212,7 +212,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
@@ -221,7 +221,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			}
 
 			DateTime? lastReadTime = DateTime.UtcNow;
@@ -233,7 +233,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			PagerContext pagerContext;
 			var posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
 			if (posts.Count == 0)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(user, posts);
@@ -332,24 +332,24 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "PostLink", id = post.PostID }) });
 		}
 
-		public ViewResult Post(int id)
+		public ActionResult Post(int id)
 		{
 			var post = _postService.Get(id);
 			if (post == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			Topic topic;
 			var permissionContext = GetPermissionContextByTopicID(post.TopicID, out topic);
 			if (!permissionContext.UserCanView)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var postList = new List<Post> { post };
-			ViewBag.Signatures = _profileService.GetSignatures(postList);
-			ViewBag.Avatars = _profileService.GetAvatars(postList);
-			ViewBag.VotedPostIDs = _postService.GetVotedPostIDs(user, postList);
+			var signatures = _profileService.GetSignatures(postList);
+			var avatars = _profileService.GetAvatars(postList);
+			var votedPostIDs = _postService.GetVotedPostIDs(user, postList);
 			ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 			if (user != null)
 				_lastReadService.MarkTopicRead(user, topic);
-			return View("PostItem", post);
+			return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
 		}
 
 		public JsonResult FirstPostPreview(int id)
@@ -411,7 +411,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				includeDeleted = true;
 			var post = _postService.Get(id);
 			if (post == null || (post.IsDeleted && (user == null || !user.IsInRole(PermanentRoles.Moderator))))
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			Topic topic;
 			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
 			var forum = _forumService.Get(topic.ForumID);
@@ -430,7 +430,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var includeDeleted = false;
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
@@ -447,10 +447,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(id);
 			if (post == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			if (user.IsPostEditable(post))
-				return this.Forbidden("Forbidden", null);
+			if (!user.IsPostEditable(post))
+				return Forbid();
 			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
 			var postEdit = _postService.GetPostForEdit(post, user, isMobile);
 			return View(postEdit);
@@ -462,8 +462,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			if (user.IsPostEditable(post))
-				return this.Forbidden("Forbidden", null);
+			if (!user.IsPostEditable(post))
+				return Forbid();
 			_postService.EditPost(post, postEdit, user);
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
@@ -474,7 +474,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user.IsPostEditable(post))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			_postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
 			{
@@ -496,7 +496,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
@@ -505,7 +505,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			}
 
 			DateTime? lastReadTime = DateTime.UtcNow;
@@ -545,7 +545,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				throw new Exception(String.Format("Post {0} appears to be orphaned from a topic.", post.PostID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
@@ -578,7 +578,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			try
 			{
 				var helper = Url;
@@ -586,9 +586,9 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
 			}
-			catch (SecurityException securityException)
+			catch (SecurityException securityException) // TODO: what is this?
 			{
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			}
 			return new EmptyResult();
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,8 +11,10 @@ using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Messaging;
+using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Web.Areas.Forums;
+using PopForums.Web.Areas.Forums.Authorization;
 using PopForums.Web.Areas.Forums.Controllers;
 using PopForums.Web.Areas.Forums.Services;
 using PopForums.Web.Messaging;
@@ -38,6 +41,13 @@ namespace PopForums.Web
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddAuthentication(options => options.SignInScheme = ExternalExternalUserAssociationManager.AuthenticationContextName);
+
+			services.Configure<AuthorizationOptions>(options =>
+			{
+				// TODO: make this less janky, more magic
+				options.AddPolicy(PermanentRoles.Admin, policy => policy.RequireClaim("ForumClaims", PermanentRoles.Admin));
+				options.AddPolicy(PermanentRoles.Moderator, policy => policy.RequireClaim("ForumClaims", PermanentRoles.Moderator));
+			});
 
 			// Add MVC services to the services container.
 			services.AddMvc();

@@ -546,7 +546,7 @@ PopForums.topicPreviewSetup = function () {
 				type: "GET",
 				dataType: "json",
 				success: function (result) {
-					preview.html(result.Data.FullText);
+					preview.html(result.data.fullText);
 				},
 				error: function () {
 					preview.html("<p>There was an unknown error getting the preview</p>");
@@ -567,9 +567,9 @@ PopForums.postNewTopic = function () {
 		dataType: "json",
 		success: function (result) {
 			var r = $("#PostResponseMessage");
-			switch (result.Result) {
+			switch (result.result) {
 				case true:
-					window.location = result.Redirect;
+					window.location = result.redirect;
 					break;
 				default:
 					r.html(result.Message);
@@ -595,12 +595,12 @@ PopForums.postReply = function () {
 		dataType: "json",
 		success: function (result) {
 			var r = $("#PostResponseMessage");
-			switch (result.Result) {
+			switch (result.result) {
 				case true:
-					window.location = result.Redirect;
+					window.location = result.redirect;
 					break;
 				default:
-					r.html(result.Message);
+					r.html(result.message);
 					$("#SubmitReply").removeAttr("disabled");
 					r.show();
 			}

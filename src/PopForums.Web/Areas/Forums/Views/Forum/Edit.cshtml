@@ -2,12 +2,12 @@
 
 @{
     ViewBag.Title = PopForums.Resources.EditPost;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 @section HeaderContent
 {
-	<script type="text/javascript" src="@Url.Content("~/scripts/tinymce/jquery.tinymce.min.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/jquery.tinymce.min.js")"></script>
 	<script language="javascript" type="text/javascript">
 		$(function () {
 			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
@@ -24,28 +24,27 @@
 
 <h1>@PopForums.Resources.EditPost</h1>
 
-@using (Html.BeginForm())
-{
+<form method="post">
 	<div class="postForm" role="form">
 		<div class="form-group">
-			@Html.TextBoxFor(p => p.Title, new { @class = "form-control", placeholder = PopForums.Resources.Title })
+			<input asp-for="Title" class="form-control" placeholder="@PopForums.Resources.Title"/>
 		</div>
-		@Html.TextAreaFor(p => p.FullText, new { @class = "form-control" })
+		<textarea asp-for="FullText" class="form-control"></textarea>
 		<div class="checkbox">
 			<label for="IncludeSignature">
-				@Html.CheckBoxFor(p => p.ShowSig)
+				<input type="checkbox" asp-for="ShowSig"/>
 				@PopForums.Resources.IncludeSignature
 			</label>
 		</div>
 		<div class="form-group">
 			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
-			@Html.TextAreaFor(p => p.Comment, new { @class = "form-control", rows = "3" })
+			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
 		</div>
-		@Html.HiddenFor(p => p.IsPlainText)
+		<input type="hidden" asp-for="IsPlainText"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
-}
+</form>
 
 <div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog">

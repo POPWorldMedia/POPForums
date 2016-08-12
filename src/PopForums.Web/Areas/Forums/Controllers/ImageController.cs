@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Services;
+using PopForums.Web.Areas.Forums.Authorization;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {

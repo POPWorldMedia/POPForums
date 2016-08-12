@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PopForums.Configuration;
@@ -16,7 +16,7 @@ using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {
-	// TODO: Make admin only
+	[Authorize(Policy = PermanentRoles.Admin)]
 	[Area("Forums")]
     public class AdminController : Controller
 	{
