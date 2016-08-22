@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Mail;
 using PopForums.Configuration;
 using PopForums.Models;
 
@@ -49,9 +48,13 @@ namespace PopForums.Email
 			var settings = _settingsManager.Current;
 			if (String.IsNullOrWhiteSpace(settings.MailerAddress))
 				throw new Exception("There is no MailerAddress to send e-mail from. Perhaps you didn't set up the settings.");
-			var message = new MailMessage(
-				new MailAddress(settings.MailerAddress, settings.ForumTitle),
-				new MailAddress(user.Email, user.Name));
+			var message = new EmailMessage
+			{
+				ToEmail = user.Email,
+				ToName = user.Name,
+				FromEmail = settings.MailerAddress,
+				FromName = settings.ForumTitle
+			};
 			message.Subject = String.Format(Resources.RegisterEmailSubject, settings.ForumTitle);
 			string body;
 			if (settings.IsNewUserApproved)

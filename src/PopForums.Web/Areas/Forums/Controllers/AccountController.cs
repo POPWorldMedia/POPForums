@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -78,40 +79,41 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			ViewData[TosKey] = _settingsManager.Current.TermsOfService;
 			ViewData[ServerTimeZoneKey] = _settingsManager.Current.ServerTimeZone;
 		}
+		
+		[HttpPost]
+		public async Task<ViewResult> Create(SignupData signupData)
+		{
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			// TODO: validate model
+			//signupData.Validate(ModelState, _userService, ip);
+			if (ModelState.IsValid)
+			{
+				var user = _userService.CreateUser(signupData, ip);
+				_profileService.Create(user, signupData);
+				var verifyUrl = this.FullUrlHelper("Verify", "Account");
+				var result = _newAccountMailer.Send(user, verifyUrl);
+				if (result != SmtpStatusCode.Ok)
+					ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
+				if (_settingsManager.Current.IsNewUserApproved)
+				{
+					ViewData["Result"] = Resources.AccountReady;
+					_userService.Login(user, ip);
+				}
+				else
+					ViewData["Result"] = Resources.AccountReadyCheckEmail;
 
-		// TODO: create
-		//[HttpPost]
-		//public async Task<ViewResult> Create(SignupData signupData)
-		//{
-		//	var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-		//	signupData.Validate(ModelState, _userService, ip);
-		//	if (ModelState.IsValid)
-		//	{
-		//		var user = _userService.CreateUser(signupData, ip);
-		//		_profileService.Create(user, signupData);
-		//		var verifyUrl = this.FullUrlHelper("Verify", "Account");
-		//		var result = _newAccountMailer.Send(user, verifyUrl);
-		//		if (result != System.Net.Mail.SmtpStatusCode.Ok)
-		//			ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
-		//		if (_settingsManager.Current.IsNewUserApproved)
-		//		{
-		//			ViewData["Result"] = Resources.AccountReady;
-		//			_userService.Login(user, ip);
-		//		}
-		//		else
-		//			ViewData["Result"] = Resources.AccountReadyCheckEmail;
-				
-		//		var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
-		//		if (authResult != null)
-		//			_externalUserAssociationManager.Associate(user, authResult, ip);
+				// TODO: wireup external auth
+				//var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
+				//if (authResult != null)
+				//	_externalUserAssociationManager.Associate(user, authResult, ip);
 
-		//		// TODO: do login here!
+				// TODO: do login here!
 
-		//		return View("AccountCreated");
-		//	}
-		//	SetupCreateData();
-		//	return View(signupData);
-		//}
+				return View("AccountCreated");
+			}
+			SetupCreateData();
+			return View(signupData);
+		}
 
 		public ViewResult Verify(string id)
 		{
@@ -144,7 +146,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			}
 			var verifyUrl = this.FullUrlHelper("Verify", "Account");
 			var result = _newAccountMailer.Send(user, verifyUrl);
-			if (result != System.Net.Mail.SmtpStatusCode.Ok)
+			if (result != SmtpStatusCode.Ok)
 				ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
 			else
 				ViewData["Result"] = Resources.VerificationEmailSent;
@@ -289,7 +291,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 					ViewBag.EmailResult = Resources.VerificationEmailSent;
 					var verifyUrl = this.FullUrlHelper("Verify", "Account");
 					var result = _newAccountMailer.Send(user, verifyUrl);
-					if (result != System.Net.Mail.SmtpStatusCode.Ok)
+					if (result != SmtpStatusCode.Ok)
 						ViewBag.EmailResult = Resources.EmailProblemAccount + result;
 				}
 			}

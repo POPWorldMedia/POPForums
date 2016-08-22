@@ -3,6 +3,15 @@
   "version": 2,
   "targets": {
     ".NETFramework,Version=v4.6": {
+      "BouncyCastle/1.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        },
+        "runtime": {
+          "lib/BouncyCastle.Crypto.dll": {}
+        }
+      },
       "Libuv/1.9.0": {
         "type": "package",
         "dependencies": {
@@ -41,6 +50,24 @@
             "assetType": "native",
             "rid": "win7-x86"
           }
+        }
+      },
+      "MailKit/1.4.2.1": {
+        "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1",
+          "MimeKit": "1.4.2"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Core",
+          "System.Data"
+        ],
+        "compile": {
+          "lib/net451/MailKit.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MailKit.dll": {}
         }
       },
       "Microsoft.AspNetCore.Antiforgery/1.0.0": {
@@ -1652,6 +1679,24 @@
           "lib/net451/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll": {}
         }
       },
+      "MimeKit/1.4.2": {
+        "type": "package",
+        "dependencies": {
+          "BouncyCastle": "1.8.1"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Core",
+          "System.Data",
+          "System.Security"
+        ],
+        "compile": {
+          "lib/net451/MimeKit.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MimeKit.dll": {}
+        }
+      },
       "Newtonsoft.Json/9.0.1": {
         "type": "package",
         "compile": {
@@ -2642,6 +2687,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.6",
         "dependencies": {
+          "MailKit": "1.4.2.1",
           "Microsoft.Extensions.Configuration": "1.0.0",
           "Microsoft.Extensions.Configuration.Json": "1.0.0",
           "Microsoft.Extensions.DependencyInjection": "1.0.0",
@@ -2650,7 +2696,6 @@
         },
         "frameworkAssemblies": [
           "PresentationCore",
-          "System.Net",
           "WindowsBase"
         ],
         "compile": {
@@ -2673,6 +2718,17 @@
     }
   },
   "libraries": {
+    "BouncyCastle/1.8.1": {
+      "sha512": "r0w4ciJJ916V3dYRdtq8uF4Nz6oAv8Mia1JEAPKgDDRzMTcht8uK/Qam9WtvIg9SaFa+4OTox+GG6huB07nC1g==",
+      "type": "package",
+      "path": "BouncyCastle/1.8.1",
+      "files": [
+        "BouncyCastle.1.8.1.nupkg.sha512",
+        "BouncyCastle.nuspec",
+        "Readme.txt",
+        "lib/BouncyCastle.Crypto.dll"
+      ]
+    },
     "Libuv/1.9.0": {
       "sha512": "9Q7AaqtQhS8JDSIvRBt6ODSLWDBI4c8YxNxyCQemWebBFUtBbc6M5Vi5Gz1ZyIUlTW3rZK9bIr5gnVyv0z7a2Q==",
       "type": "package",
@@ -2689,6 +2745,31 @@
         "runtimes/win7-arm/native/libuv.dll",
         "runtimes/win7-x64/native/libuv.dll",
         "runtimes/win7-x86/native/libuv.dll"
+      ]
+    },
+    "MailKit/1.4.2.1": {
+      "sha512": "ZK8CzuaW5yRD9eGbwiAjUFIQGwyuzYcTmqwq3FJ6rBuQHEcq26LP4FpltxEsV1Y2JKTOlbU+GI4vOu96GPuaXg==",
+      "type": "package",
+      "path": "MailKit/1.4.2.1",
+      "files": [
+        "MailKit.1.4.2.1.nupkg.sha512",
+        "MailKit.nuspec",
+        "lib/MonoAndroid10/MailKit.dll",
+        "lib/MonoAndroid10/MailKit.xml",
+        "lib/Xamarin.iOS10/MailKit.dll",
+        "lib/Xamarin.iOS10/MailKit.xml",
+        "lib/net40/MailKit.dll",
+        "lib/net40/MailKit.xml",
+        "lib/net45/MailKit.dll",
+        "lib/net45/MailKit.xml",
+        "lib/net451/MailKit.dll",
+        "lib/net451/MailKit.xml",
+        "lib/netstandard1.3/MailKit.dll",
+        "lib/netstandard1.3/MailKit.xml",
+        "lib/win81/MailKit.dll",
+        "lib/win81/MailKit.xml",
+        "lib/wpa81/MailKit.dll",
+        "lib/wpa81/MailKit.xml"
       ]
     },
     "Microsoft.AspNetCore.Antiforgery/1.0.0": {
@@ -4154,6 +4235,37 @@
         "lib/net451/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.xml",
         "lib/netstandard1.6/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll",
         "lib/netstandard1.6/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.xml"
+      ]
+    },
+    "MimeKit/1.4.2": {
+      "sha512": "u7W0AJPbTnt+CcVizfCyOA2TjdvUci2tTXI0hMilBtYZXg5NJqSAE2H3oj7wacLMfhCTGu6ve0fSvBAQ94JD+A==",
+      "type": "package",
+      "path": "MimeKit/1.4.2",
+      "files": [
+        "MimeKit.1.4.2.nupkg.sha512",
+        "MimeKit.nuspec",
+        "lib/MonoAndroid10/BouncyCastle.dll",
+        "lib/MonoAndroid10/MimeKit.dll",
+        "lib/MonoAndroid10/MimeKit.xml",
+        "lib/Xamarin.iOS10/BouncyCastle.dll",
+        "lib/Xamarin.iOS10/MimeKit.dll",
+        "lib/Xamarin.iOS10/MimeKit.xml",
+        "lib/net35/MimeKit.dll",
+        "lib/net35/MimeKit.xml",
+        "lib/net40/MimeKit.dll",
+        "lib/net40/MimeKit.xml",
+        "lib/net45/MimeKit.dll",
+        "lib/net45/MimeKit.xml",
+        "lib/net451/MimeKit.dll",
+        "lib/net451/MimeKit.xml",
+        "lib/netstandard1.3/MimeKit.dll",
+        "lib/netstandard1.3/MimeKit.xml",
+        "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/MimeKit.dll",
+        "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/MimeKit.xml",
+        "lib/portable-net45+win+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10/Portable.Text.Encoding.dll",
+        "lib/wpa81/MimeKit.dll",
+        "lib/wpa81/MimeKit.xml",
+        "lib/wpa81/Portable.Text.Encoding.dll"
       ]
     },
     "Newtonsoft.Json/9.0.1": {

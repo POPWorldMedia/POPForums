@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Text;
 using PopForums.Configuration;
 using PopForums.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace PopForums.Email
 {
 	public interface ISmtpWrapper
 	{
 		SmtpStatusCode Send(QueuedEmailMessage message);
-		SmtpStatusCode Send(MailMessage message);
+		SmtpStatusCode Send(EmailMessage message);
 	}
 
 	public class SmtpWrapper : ISmtpWrapper
@@ -29,46 +28,50 @@ namespace PopForums.Email
 		{
 			if (message == null)
 				throw new ArgumentNullException("message");
-			var from = new MailAddress(message.FromEmail, message.FromName);
-			var to = new MailAddress(message.ToEmail, message.ToName);
-			var mailMessage = new MailMessage(from, to)
-			{
-				Subject = message.Subject,
-				Body = message.Body
-			};
-			if (!String.IsNullOrWhiteSpace(message.HtmlBody))
-			{
-				var altView = AlternateView.CreateAlternateViewFromString(message.HtmlBody, Encoding.UTF8, "text/html");
-				altView.TransferEncoding = TransferEncoding.SevenBit;
-				mailMessage.AlternateViews.Add(altView);
-			}
-			mailMessage.Headers.Add("X-MessageID", message.MessageID.ToString());
-			return Send(mailMessage);
+			return Send(message);
 		}
 
-		public SmtpStatusCode Send(MailMessage message)
+		public SmtpStatusCode Send(EmailMessage message)
 		{
-			message.Headers.Add("X-Mailer", "POP Forums v9");
-			SmtpStatusCode result;
+			var parsedMessage = ConvertEmailMessage(message);
 			var settings = _settingsManager.Current;
-			var client = new SmtpClient(settings.SmtpServer, settings.SmtpPort) { EnableSsl = settings.UseSslSmtp };
-			if (settings.UseEsmtp)
-				client.Credentials = new NetworkCredential(settings.SmtpUser, settings.SmtpPassword);
-			try
+			var result = SmtpStatusCode.Ok;
+			using (var client = new SmtpClient())
 			{
-				client.Send(message);
-				result = SmtpStatusCode.Ok;
-			}
-			catch (SmtpException exc)
-			{
-				result = exc.StatusCode;
-				_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.To[0].Address, message.Subject));
-			}
-			finally
-			{
-				client.Dispose();
+
+				client.Connect(settings.SmtpServer, settings.SmtpPort, settings.UseSslSmtp ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
+				if (settings.UseEsmtp)
+					client.Authenticate(settings.SmtpUser, settings.SmtpPassword);
+				try
+				{
+					client.Send(parsedMessage);
+				}
+				catch (SmtpCommandException exc)
+				{
+					var statusCode = (int)exc.StatusCode;
+					result = (SmtpStatusCode)statusCode;
+					_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.ToEmail, message.Subject));
+				}
+				finally
+				{
+					client.Disconnect(true);
+				}
 			}
 			return result;
+		}
+
+		private MimeMessage ConvertEmailMessage(EmailMessage forumMessage)
+		{
+			var message = new MimeMessage();
+			message.Headers.Add("X-Mailer", "POP Forums");
+			message.To.Add(new MailboxAddress(forumMessage.ToName, forumMessage.ToEmail));
+			message.From.Add(new MailboxAddress(forumMessage.FromName, forumMessage.FromEmail));
+			message.Subject = forumMessage.Subject;
+			var builder = new BodyBuilder();
+			builder.TextBody = forumMessage.Body;
+			builder.HtmlBody = forumMessage.HtmlBody;
+			message.Body = builder.ToMessageBody();
+			return message;
 		}
 	}
 }

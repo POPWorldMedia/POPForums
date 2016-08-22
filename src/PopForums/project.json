@@ -6,18 +6,18 @@
 		"net46": {
             "frameworkAssemblies": {
                 "PresentationCore": "4.0.0.0",
-                "System.Net": "4.0.0.0",
                 "WindowsBase": "4.0.0.0"
             }
 		}
     },
-	"dependencies": {
-		"Microsoft.Extensions.Configuration": "1.0.0",
-		"Microsoft.Extensions.Configuration.Json": "1.0.0",
-		"Microsoft.Extensions.DependencyInjection": "1.0.0",
-		"System.Security.Cryptography.Algorithms": "4.2.0",
-		"System.Threading.Thread": "4.0.0"
-	},
+    "dependencies": {
+        "MailKit": "1.4.2.1",
+        "Microsoft.Extensions.Configuration": "1.0.0",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0",
+        "System.Security.Cryptography.Algorithms": "4.2.0",
+        "System.Threading.Thread": "4.0.0"
+    },
 	"resource": [
 		"Resources/*.resx"
 	],

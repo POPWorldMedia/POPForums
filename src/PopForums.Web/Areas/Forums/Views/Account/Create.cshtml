@@ -1,21 +1,23 @@
 ﻿@model PopForums.Models.SignupData
-@using PopForums.Controllers;
 @using PopForums.Extensions;
+@using PopForums.Web.Areas.Forums.Controllers
+@inject IUserRetrievalShim UserRetrievalShim
 @{
 	ViewBag.Title = PopForums.Resources.CreateAnAccount;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser(Context);
 }
 
 <div>
 	<h1>@PopForums.Resources.CreateAnAccount</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
 	</ul>
 </div>
 
 <p>@Html.ActionLink(PopForums.Resources.NeedToVerifyExistingAccount, "Verify")</p>
 
-@if (this.GetUserFromViewData() == null) {
+@if (user == null) {
 	using (Html.BeginForm("Create", "Account", FormMethod.Post, new { role = "form" })) {
 		<div class="form-horizontal">
 			<div class="form-group @Html.AddValidationClass("Name", "has-error")">
