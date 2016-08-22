@@ -9,8 +9,8 @@ namespace PopForums.Email
 {
 	public interface ISmtpWrapper
 	{
-		SmtpStatusCode Send(QueuedEmailMessage message);
-		SmtpStatusCode Send(EmailMessage message);
+		SmtpStatusCode? Send(QueuedEmailMessage message);
+		SmtpStatusCode? Send(EmailMessage message);
 	}
 
 	public class SmtpWrapper : ISmtpWrapper
@@ -24,18 +24,18 @@ namespace PopForums.Email
 		private readonly ISettingsManager _settingsManager;
 		private readonly IErrorLog _errorLog;
 
-		public SmtpStatusCode Send(QueuedEmailMessage message)
+		public SmtpStatusCode? Send(QueuedEmailMessage message)
 		{
 			if (message == null)
 				throw new ArgumentNullException("message");
 			return Send(message);
 		}
 
-		public SmtpStatusCode Send(EmailMessage message)
+		public SmtpStatusCode? Send(EmailMessage message)
 		{
 			var parsedMessage = ConvertEmailMessage(message);
 			var settings = _settingsManager.Current;
-			var result = SmtpStatusCode.Ok;
+			SmtpStatusCode? result = SmtpStatusCode.Ok;
 			using (var client = new SmtpClient())
 			{
 
@@ -48,8 +48,13 @@ namespace PopForums.Email
 				}
 				catch (SmtpCommandException exc)
 				{
-					var statusCode = (int)exc.StatusCode;
-					result = (SmtpStatusCode)statusCode;
+					var statusCode = (int) exc.StatusCode;
+					result = (SmtpStatusCode) statusCode;
+					_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.ToEmail, message.Subject));
+				}
+				catch (Exception exc)
+				{
+					result = null;
 					_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.ToEmail, message.Subject));
 				}
 				finally

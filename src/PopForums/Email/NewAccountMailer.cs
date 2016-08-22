@@ -6,7 +6,7 @@ namespace PopForums.Email
 {
 	public interface INewAccountMailer
 	{
-		SmtpStatusCode Send(User user, string verifyUrl);
+		SmtpStatusCode? Send(User user, string verifyUrl);
 
 		/// <summary>
 		/// Used to deliver the text for a welcome e-mail, where the user is already 
@@ -43,7 +43,7 @@ namespace PopForums.Email
 		private readonly ISettingsManager _settingsManager;
 		private readonly ISmtpWrapper _smtpWrapper;
 
-		public SmtpStatusCode Send(User user, string verifyUrl)
+		public SmtpStatusCode? Send(User user, string verifyUrl)
 		{
 			var settings = _settingsManager.Current;
 			if (String.IsNullOrWhiteSpace(settings.MailerAddress))

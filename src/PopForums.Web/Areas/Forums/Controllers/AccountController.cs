@@ -93,7 +93,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				var verifyUrl = this.FullUrlHelper("Verify", "Account");
 				var result = _newAccountMailer.Send(user, verifyUrl);
 				if (result != SmtpStatusCode.Ok)
-					ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
+					ViewData["EmailProblem"] = Resources.EmailProblemAccount + (result?.ToString() ?? "App exception") + ".";
 				if (_settingsManager.Current.IsNewUserApproved)
 				{
 					ViewData["Result"] = Resources.AccountReady;
