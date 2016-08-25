@@ -3,7 +3,6 @@ using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.ExternalLogin;
 using PopForums.Feeds;
-using PopForums.Messaging;
 using PopForums.ScoringGame;
 using PopForums.Services;
 
@@ -66,5 +65,12 @@ namespace PopForums.Extensions
 		    services.AddTransient<IUserService, UserService>();
 		    services.AddTransient<IUserSessionService, UserSessionService>();
 	    }
-    }
+
+	    public static void AddPopForumsBackgroundServices(this IServiceCollection services)
+	    {
+		    var serviceProvider = services.BuildServiceProvider();
+		    BackgroundServices.SetupServices(serviceProvider);
+	    }
+
+	}
 }

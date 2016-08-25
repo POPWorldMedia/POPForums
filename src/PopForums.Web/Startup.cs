@@ -62,6 +62,8 @@ namespace PopForums.Web
 			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 			services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
 			services.AddTransient<IBroker, Broker>();
+
+			services.AddPopForumsBackgroundServices();
 		}
 
 		// Configure is called after ConfigureServices is called.

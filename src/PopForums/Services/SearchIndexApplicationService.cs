@@ -1,32 +1,31 @@
-﻿// TODO: SearchIndex service
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using PopForums.Configuration;
 
-//using PopForums.Configuration;
-//using StructureMap;
+namespace PopForums.Services
+{
+	public class SearchIndexApplicationService : ApplicationServiceBase
+	{
+		public override void Start(IServiceProvider serviceProvider)
+		{
+			_searchService = serviceProvider.GetService<ISearchService>();
+			_settingsManager = serviceProvider.GetService<ISettingsManager>();
+			_postService = serviceProvider.GetService<IPostService>();
+			base.Start(serviceProvider);
+		}
 
-//namespace PopForums.Services
-//{
-//	public class SearchIndexApplicationService : ApplicationServiceBase
-//	{
-//		public override void Start(IContainer container)
-//		{
-//			_searchService = container.GetInstance<ISearchService>();
-//			_settingsManager = container.GetInstance<ISettingsManager>();
-//			_postService = container.GetInstance<IPostService>();
-//			base.Start(container);
-//		}
+		private ISearchService _searchService;
+		private ISettingsManager _settingsManager;
+		private IPostService _postService;
 
-//		private ISearchService _searchService;
-//		private ISettingsManager _settingsManager;
-//		private IPostService _postService;
+		protected override void ServiceAction()
+		{
+			SearchIndexWorker.Instance.IndexNextTopic(_searchService, _settingsManager, _postService, ErrorLog);
+		}
 
-//		protected override void ServiceAction()
-//		{
-//			SearchIndexWorker.Instance.IndexNextTopic(_searchService, _settingsManager, _postService, ErrorLog);
-//		}
-
-//		protected override int GetInterval()
-//		{
-//			return _settingsManager.Current.SearchIndexingInterval;
-//		}
-//	}
-//}
+		protected override int GetInterval()
+		{
+			return _settingsManager.Current.SearchIndexingInterval;
+		}
+	}
+}
