@@ -1,0 +1,22 @@
+﻿@using PopForums.Web.Areas.Forums.Controllers;
+@model PopForums.Models.TopicUnsubscribeContainer
+@{
+	ViewBag.Title = PopForums.Resources.Unsubscribe;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Unsubscribe</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+</div>
+
+@if (Model.Topic != null && Model.User != null)
+{
+	<p>@Model.User.Name is unsubscribed from <a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@Model.Topic.UrlName">@Model.Topic.Title</a></p>
+}
+else
+{
+	<p>@PopForums.Resources.InvalidLink <a asp-controller="@SubscriptionController.Name" asp-action="Topics">@PopForums.Resources.Unsubscribe</a></p>
+}

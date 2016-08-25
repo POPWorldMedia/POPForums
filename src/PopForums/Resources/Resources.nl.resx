@@ -1,0 +1,1235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AccountCreated" xml:space="preserve">
+    <value>Account Aangemaakt</value>
+  </data>
+  <data name="AccountReady" xml:space="preserve">
+    <value>Je account is aangemaakt en je kunt nu gebruik maken van het forum.</value>
+  </data>
+  <data name="AccountReadyCheckEmail" xml:space="preserve">
+    <value>Controleer a.u.b. je e-mail voor de verificatielink om gebruik te kunnen maken van het forum.</value>
+  </data>
+  <data name="AccountVerified" xml:space="preserve">
+    <value>Je account is geverifieerd</value>
+  </data>
+  <data name="AlreadyCreatedAccount" xml:space="preserve">
+    <value>Je bent reeds ingelogd en hebt een account.</value>
+  </data>
+  <data name="AsYouWouldLikeItToAppear" xml:space="preserve">
+    <value>(zoals je het eruit wilt laten zien)</value>
+  </data>
+  <data name="AtLeastSixChar" xml:space="preserve">
+    <value>(op z'n minst zes karakters)</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value>by</value>
+    <comment>context: "Laatste post: 12am door Jeff"</comment>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>Maak Account</value>
+  </data>
+  <data name="CreateAnAccount" xml:space="preserve">
+    <value>Maak een account</value>
+  </data>
+  <data name="EditYourProfile" xml:space="preserve">
+    <value>Bewerk je profiel</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailProblemAccount" xml:space="preserve">
+    <value>Er was een probleem bij het verzenden van je verificatiemail: </value>
+  </data>
+  <data name="Favorites" xml:space="preserve">
+    <value>Favorieten</value>
+  </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>Sorry, je hebt niet de juiste bevoegdheden om dit te bekijken.</value>
+  </data>
+  <data name="Forums" xml:space="preserve">
+    <value>Forums</value>
+  </data>
+  <data name="HaveReadTOS" xml:space="preserve">
+    <value>Ik heb de algemene voorwaarden gelezen en ga hiermee akkoord</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>Laatste</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="MarkAllForumsRead" xml:space="preserve">
+    <value>Markeer alle forums als gelezen</value>
+  </data>
+  <data name="MyBirthdayIsOnOrBefore" xml:space="preserve">
+    <value>Mijn geboortedatum is voor {0}</value>
+    <comment>where {0} is a date</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naam</value>
+  </data>
+  <data name="NeedToVerifyExistingAccount" xml:space="preserve">
+    <value>Nodig om een bestaand account te verifieren?</value>
+  </data>
+  <data name="PageNotFound" xml:space="preserve">
+    <value>Pagina niet gevonden</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Wachtwoord</value>
+  </data>
+  <data name="Posts" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="PrivateMessages" xml:space="preserve">
+    <value>Privé Berichten</value>
+  </data>
+  <data name="Recent" xml:space="preserve">
+    <value>Recent</value>
+  </data>
+  <data name="RegisteredUsers" xml:space="preserve">
+    <value>Geregistreerde gebruikers</value>
+  </data>
+  <data name="RetypePassword" xml:space="preserve">
+    <value>Type wachtwoord opnieuw</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Zoek</value>
+  </data>
+  <data name="SubscribeToList" xml:space="preserve">
+    <value>Aanmelden voor de mailing list</value>
+  </data>
+  <data name="Subscriptions" xml:space="preserve">
+    <value>Aanmeldingen</value>
+  </data>
+  <data name="TermsOfService" xml:space="preserve">
+    <value>Algemene Voorwaarden</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Tijdzone</value>
+  </data>
+  <data name="Topics" xml:space="preserve">
+    <value>Topics</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Totaal</value>
+  </data>
+  <data name="TotalPosts" xml:space="preserve">
+    <value>Totaal aantal posts</value>
+  </data>
+  <data name="TotalTopics" xml:space="preserve">
+    <value>Totaal aantal topics</value>
+  </data>
+  <data name="UseDaylight" xml:space="preserve">
+    <value>Use N.America/Europe Daylight Saving</value>
+  </data>
+  <data name="UsersOnline" xml:space="preserve">
+    <value>Gebruikers Online</value>
+  </data>
+  <data name="MustBe13" xml:space="preserve">
+    <value>Je moet 13 of ouder zijn om je te kunnen registreren</value>
+  </data>
+  <data name="MustAcceptTOS" xml:space="preserve">
+    <value>Je moet de algemene voorwaarden accepteren</value>
+  </data>
+  <data name="RetypeYourPassword" xml:space="preserve">
+    <value>Voer je wachtwoord opnieuw in</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Naam verplicht</value>
+  </data>
+  <data name="NameInUse" xml:space="preserve">
+    <value>Die naam is reeds in gebruik</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-mail is verplicht</value>
+  </data>
+  <data name="ValidEmailAddressRequired" xml:space="preserve">
+    <value>Geldig e-mail adres is verplicht</value>
+  </data>
+  <data name="EmailInUse" xml:space="preserve">
+    <value>Dat e-mail adres wordt al gebruikt</value>
+  </data>
+  <data name="EmailBanned" xml:space="preserve">
+    <value>Dat e-mail adres is geblokkeerd</value>
+  </data>
+  <data name="IPBanned" xml:space="preserve">
+    <value>Je IP adres is geblokkeerd</value>
+  </data>
+  <data name="RetypePasswordMustMatch" xml:space="preserve">
+    <value>Het opnieuw ingevoerde wachtwoord moet overeenkomen</value>
+  </data>
+  <data name="EditAccount" xml:space="preserve">
+    <value>Bewerk Account</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Bewerk Profiel</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>Voer a.u.b. je verificatiecode in</value>
+  </data>
+  <data name="ForumHomePage" xml:space="preserve">
+    <value>Forum home page</value>
+  </data>
+  <data name="MustBeRegisteredToEditAccount" xml:space="preserve">
+    <value>Je moet geregistreerd en ingelogd zijn om je account te kunnen editen.</value>
+  </data>
+  <data name="NoUserFoundWithEmail" xml:space="preserve">
+    <value>Er is geen gebruiker gevonden met dat e-mail adres</value>
+  </data>
+  <data name="SendEmailWithNewCodeButton" xml:space="preserve">
+    <value>Stuur E-mail Met Nieuwe Code</value>
+  </data>
+  <data name="VerificationEmailSent" xml:space="preserve">
+    <value>Je verificatiemail is verzonden</value>
+  </data>
+  <data name="VerificationFailure" xml:space="preserve">
+    <value>Verificatie Mislukt</value>
+  </data>
+  <data name="VerificationIfYouNeed" xml:space="preserve">
+    <value>Als je een nieuwe verificatiecode nodig hebt, voer dan hier je e-mailadres in</value>
+  </data>
+  <data name="VerificationLinkBad" xml:space="preserve">
+    <value>Sorry, de verificatielink waarop je hebt geklikt of de code die je ingevoerd hebt is ongeldig.</value>
+  </data>
+  <data name="VerifyAccount" xml:space="preserve">
+    <value>Controleer Account</value>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Controleer Code</value>
+  </data>
+  <data name="Avatar" xml:space="preserve">
+    <value>Avatar</value>
+  </data>
+  <data name="AvatarDelete" xml:space="preserve">
+    <value>Verwijder deze avatar</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>Verander E-mailadres</value>
+  </data>
+  <data name="ChangeEmailButton" xml:space="preserve">
+    <value>Verander e-mailadres en verzend code</value>
+  </data>
+  <data name="ChangeEmailConsequence" xml:space="preserve">
+    <value>Bij het veranderen van je e-mailadres, zal er een nieuwe verificatiecode gegenereerd en verstuurd worden naar het nieuwe e-mailadres. Je zult niet meer kunnen posten totdat je e-mailadres is geverifieerd met de nieuwe code.</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Verander Wachtwoord</value>
+  </data>
+  <data name="ChangeYourEmailPassword" xml:space="preserve">
+    <value>Verander je e-mailadres of wachtwoord</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Geboortedatum</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="EmailChangeSuccess" xml:space="preserve">
+    <value>Je e-mailadres is succesvol aangepast</value>
+  </data>
+  <data name="EmailNew" xml:space="preserve">
+    <value>Nieuw e-mailadres</value>
+  </data>
+  <data name="EmailNewRetype" xml:space="preserve">
+    <value>Voer het nieuwe e-mailadres nogmaals in</value>
+  </data>
+  <data name="EmailNotFound" xml:space="preserve">
+    <value>E-mailadres niet gevonden</value>
+  </data>
+  <data name="EmailSent" xml:space="preserve">
+    <value>Je e-mail is verzonden</value>
+  </data>
+  <data name="EmailsMustMatch" xml:space="preserve">
+    <value>De e-mailadressen komen niet overeen</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>Mail Gebruiker</value>
+  </data>
+  <data name="ForcePlainTextBox" xml:space="preserve">
+    <value>Forceer uitsluitend-tekst tekstvelden</value>
+  </data>
+  <data name="ForgotInstructions" xml:space="preserve">
+    <value>Voer het e-mailadres in dat geassocieerd is met je account om de instructies voor het resetten van je wachtwoord te ontvangen:</value>
+  </data>
+  <data name="ForgotInstructionsSent" xml:space="preserve">
+    <value>Instructies zijn verzonden naar je e-mailadres</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Wachtwoord Vergeten</value>
+  </data>
+  <data name="ForgotPasswordQuestion" xml:space="preserve">
+    <value>Je wachtwoord vergeten?</value>
+  </data>
+  <data name="HideVanity" xml:space="preserve">
+    <value>Verberg ijdelheid</value>
+  </data>
+  <data name="In" xml:space="preserve">
+    <value>in</value>
+    <comment>context: gestart door Jeff in General Forum</comment>
+  </data>
+  <data name="Joined" xml:space="preserve">
+    <value>Samengekomen</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Lokatie</value>
+  </data>
+  <data name="LoginAlready" xml:space="preserve">
+    <value>Je was al ingelogd.</value>
+  </data>
+  <data name="LoginBad" xml:space="preserve">
+    <value>Verkeerd e-mailadres of wachtwoord</value>
+  </data>
+  <data name="ManagePhotos" xml:space="preserve">
+    <value>Beheer Foto's</value>
+  </data>
+  <data name="ManageYourPhotos" xml:space="preserve">
+    <value>Beheer je foto's</value>
+  </data>
+  <data name="NewPasswordSaved" xml:space="preserve">
+    <value>Nieuw wachtwoord opgeslagen</value>
+  </data>
+  <data name="NotRegisteredQuestion" xml:space="preserve">
+    <value>Niet geregisteerd?</value>
+  </data>
+  <data name="OldPasswordIncorrect" xml:space="preserve">
+    <value>Het oude wachtwoord is incorrect</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Opties</value>
+  </data>
+  <data name="PasswordNew" xml:space="preserve">
+    <value>Nieuw wachtwoord</value>
+  </data>
+  <data name="PasswordNewRetype" xml:space="preserve">
+    <value>Nieuw wachtwoord nogmaals</value>
+  </data>
+  <data name="PasswordOld" xml:space="preserve">
+    <value>Oud wachtwoord</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Reset Wachtwoord</value>
+  </data>
+  <data name="PasswordResetLinkInvalid" xml:space="preserve">
+    <value>Dit is geen geldige wachtwoord reset link.</value>
+  </data>
+  <data name="PasswordResetNote" xml:space="preserve">
+    <value>Je nieuwe wachtwoord is  actief en je bent nu ingelogd.</value>
+  </data>
+  <data name="PasswordResetSuccess" xml:space="preserve">
+    <value>Wachtwoord Reset Succesvol</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Foto</value>
+  </data>
+  <data name="PhotoDelete" xml:space="preserve">
+    <value>Verwijder deze foto</value>
+  </data>
+  <data name="PhotoNotApproved" xml:space="preserve">
+    <value>(dit plaatje is nog niet goedgekeurd door een beheerder)</value>
+  </data>
+  <data name="ProfileUpdated" xml:space="preserve">
+    <value>Profiel bijgewerkt</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Onthouden?</value>
+  </data>
+  <data name="Replies" xml:space="preserve">
+    <value>Antwoorden</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Opslaan</value>
+  </data>
+  <data name="SendEmailButton" xml:space="preserve">
+    <value>Verstuur Mail</value>
+  </data>
+  <data name="SendPM" xml:space="preserve">
+    <value>Verstuur privébericht</value>
+  </data>
+  <data name="ShowProfileDetails" xml:space="preserve">
+    <value>Toon je profieldetails (met geen e-mail)</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Handtekening</value>
+  </data>
+  <data name="StartedBy" xml:space="preserve">
+    <value>Gestart door</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Onderwerk</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Tekst</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Aan</value>
+  </data>
+  <data name="UploadNew" xml:space="preserve">
+    <value>Upload nieuw</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Gebruiker niet gevonden</value>
+  </data>
+  <data name="Views" xml:space="preserve">
+    <value>Weergaven</value>
+  </data>
+  <data name="Web" xml:space="preserve">
+    <value>Web</value>
+  </data>
+  <data name="WebVisit" xml:space="preserve">
+    <value>Bezoek gebruiker web site</value>
+  </data>
+  <data name="YourIP" xml:space="preserve">
+    <value>Jou IP adres</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>Geboortedatum</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profiel</value>
+  </data>
+  <data name="SendNameEmail" xml:space="preserve">
+    <value>Verstuur {0} een e-mail bericht</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="SendNamePM" xml:space="preserve">
+    <value>Verstuur {0} een privébericht</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Unsubscribe" xml:space="preserve">
+    <value>Afmelden</value>
+  </data>
+  <data name="UnsubscribeFail" xml:space="preserve">
+    <value>Fout bij Afmelden</value>
+  </data>
+  <data name="UnsubscribeLinkBad" xml:space="preserve">
+    <value>De link waarop je klikte is ongeldig.</value>
+  </data>
+  <data name="UnsubscribeNote" xml:space="preserve">
+    <value>Je afmeldingsaanvraag is verwerkt. Je kunt je weer aanmelden door in te loggen en naar je accountpagine te gaan.</value>
+  </data>
+  <data name="AddForum" xml:space="preserve">
+    <value>Forum Toevoegen</value>
+  </data>
+  <data name="AddNew" xml:space="preserve">
+    <value>Nieuwe Toevoegen</value>
+  </data>
+  <data name="AllowImages" xml:space="preserve">
+    <value>Afbeeldingen toestaan</value>
+  </data>
+  <data name="Archived" xml:space="preserve">
+    <value>Gearchiveerd</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Weet je het zeker?</value>
+  </data>
+  <data name="Ban" xml:space="preserve">
+    <value>Blokkeren</value>
+  </data>
+  <data name="BanRemove" xml:space="preserve">
+    <value>Verwijder Blokkade</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categorieën</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categorie</value>
+  </data>
+  <data name="CategoryEditTitle" xml:space="preserve">
+    <value>Bewerk Categorietitel</value>
+  </data>
+  <data name="CategoryMoveError" xml:space="preserve">
+    <value>Er is een onbekende fout opgetreden tijdens het verplaatsen van de categorie</value>
+  </data>
+  <data name="CensorReplacementChar" xml:space="preserve">
+    <value>Censuurvervangingskarakter</value>
+  </data>
+  <data name="CensorWords" xml:space="preserve">
+    <value>Censuurwoorden</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Verwijderen</value>
+  </data>
+  <data name="DeleteAndBanButton" xml:space="preserve">
+    <value>Verwijder en Blokeer Gebruiker</value>
+  </data>
+  <data name="DeleteUserButton" xml:space="preserve">
+    <value>Verwijder Gebruiker</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Omschrijving</value>
+  </data>
+  <data name="Down" xml:space="preserve">
+    <value>Beneden</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bewerk</value>
+  </data>
+  <data name="EditForum" xml:space="preserve">
+    <value>Bewerk Forum</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Bewerk Gebruiker</value>
+  </data>
+  <data name="EmailBan" xml:space="preserve">
+    <value>Blokkeer E-mail</value>
+  </data>
+  <data name="EmailIpBan" xml:space="preserve">
+    <value>Blokkeer E-mail/IP</value>
+  </data>
+  <data name="EmailNewOptional" xml:space="preserve">
+    <value>Nieuwe e-mail (optioneel)</value>
+  </data>
+  <data name="EmailUsers" xml:space="preserve">
+    <value>Mail Gebruikers</value>
+  </data>
+  <data name="ErrorLog" xml:space="preserve">
+    <value>FoutLog</value>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>Forum</value>
+  </data>
+  <data name="ForumAdapter" xml:space="preserve">
+    <value>Forum Adapter (optional, use "Namespace.Type, AssemblyName")</value>
+  </data>
+  <data name="ForumHome" xml:space="preserve">
+    <value>Forum Home</value>
+  </data>
+  <data name="ForumPermisions" xml:space="preserve">
+    <value>Forum Permissies</value>
+  </data>
+  <data name="ForumSettings" xml:space="preserve">
+    <value>Forum Instellingen</value>
+  </data>
+  <data name="ForumsUncat" xml:space="preserve">
+    <value>Ongecatagorizeerde  Forums</value>
+  </data>
+  <data name="GeneralSettings" xml:space="preserve">
+    <value>Algemene Instellingen</value>
+  </data>
+  <data name="IpBan" xml:space="preserve">
+    <value>IP Blokkage</value>
+  </data>
+  <data name="IpHistory" xml:space="preserve">
+    <value>IP Historie</value>
+  </data>
+  <data name="IsApproved" xml:space="preserve">
+    <value>Is goedgekeurd</value>
+  </data>
+  <data name="IsSubscribed" xml:space="preserve">
+    <value>Is aangemeld</value>
+  </data>
+  <data name="LogErrors" xml:space="preserve">
+    <value>Log fouten</value>
+  </data>
+  <data name="Logging" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="LogMod" xml:space="preserve">
+    <value>Log moderatie</value>
+  </data>
+  <data name="LogSecurity" xml:space="preserve">
+    <value>Log beveiligingsacties</value>
+  </data>
+  <data name="MinimumTimeBetweenPosts" xml:space="preserve">
+    <value>Minimale tijd tussen posts (seconden)</value>
+  </data>
+  <data name="ModerationLog" xml:space="preserve">
+    <value>Moderatie Log</value>
+  </data>
+  <data name="Move" xml:space="preserve">
+    <value>Verplaats</value>
+  </data>
+  <data name="NewUserApprovedWithoutVerification" xml:space="preserve">
+    <value>Nieuwe gebruiker is goedgekeurd zonder verificatie</value>
+  </data>
+  <data name="NewUserImageApprovedWithoutMod" xml:space="preserve">
+    <value>Nieuwe gebruikerafbeelding is goedgekeurd zonder moderatie</value>
+  </data>
+  <data name="Parsing" xml:space="preserve">
+    <value>Parsing</value>
+  </data>
+  <data name="PasswordNewOptional" xml:space="preserve">
+    <value>Nieuw wachtwoord (optioneel)</value>
+  </data>
+  <data name="PopForumsAdmin" xml:space="preserve">
+    <value>POP Forums Beheer</value>
+  </data>
+  <data name="PostsPerPage" xml:space="preserve">
+    <value>Posts per pagina</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Beveiliging</value>
+  </data>
+  <data name="SecurityLog" xml:space="preserve">
+    <value>Beveiligingslog</value>
+  </data>
+  <data name="ServerTime" xml:space="preserve">
+    <value>Server Tijd</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="SessionLength" xml:space="preserve">
+    <value>Sessielengte (minuten)</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Grootte</value>
+  </data>
+  <data name="SubjectAndBodyNotEmpty" xml:space="preserve">
+    <value>Onderwerp en inhoud mogen niet leeg zijn</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="TopicsPerPage" xml:space="preserve">
+    <value>Topics per pagina</value>
+  </data>
+  <data name="Up" xml:space="preserve">
+    <value>Omhoog</value>
+  </data>
+  <data name="UserAvatarMaxDim" xml:space="preserve">
+    <value>Gebruiker avatar max dimensies</value>
+  </data>
+  <data name="UserDeleteWarning" xml:space="preserve">
+    <value>WAARSCHUWING! Verwijderen van een account is permanent</value>
+  </data>
+  <data name="UserImageApproval" xml:space="preserve">
+    <value>Gebruikerafbeelding Goedkeuring</value>
+  </data>
+  <data name="UserImageMaxDim" xml:space="preserve">
+    <value>Gebruikerafbeelding max dimensies</value>
+  </data>
+  <data name="UserRoles" xml:space="preserve">
+    <value>Gebruiker Rollen</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>Zichtbaar</value>
+  </data>
+  <data name="AddNewForum" xml:space="preserve">
+    <value>Voeg een nieuw forum toe</value>
+  </data>
+  <data name="Body" xml:space="preserve">
+    <value>Inhoud</value>
+  </data>
+  <data name="BodyHtml" xml:space="preserve">
+    <value>HTML Inhoud</value>
+  </data>
+  <data name="ClickToLoadMorePosts" xml:space="preserve">
+    <value>Klik om nieuwere posts op te halen voor dat je antwoordt</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CommentsOptional" xml:space="preserve">
+    <value>Comments (optineel)</value>
+  </data>
+  <data name="CreateJunkWordButton" xml:space="preserve">
+    <value>Maak Nieuw Junk Woord</value>
+  </data>
+  <data name="CreateNewReply" xml:space="preserve">
+    <value>Maak je antwoord</value>
+  </data>
+  <data name="CreateNewRole" xml:space="preserve">
+    <value>Maak Nieuwe Rol</value>
+  </data>
+  <data name="CreateNewTopic" xml:space="preserve">
+    <value>Maak je nieuwe topic</value>
+  </data>
+  <data name="DeleteAllErrors" xml:space="preserve">
+    <value>Verwijder alle fouten</value>
+  </data>
+  <data name="DeleteJunkWordButton" xml:space="preserve">
+    <value>Verwijder Geselecteerde Junk Woorden</value>
+  </data>
+  <data name="DeleteSelectedRole" xml:space="preserve">
+    <value>Verwijder Geselecteerde Rol</value>
+  </data>
+  <data name="EditPost" xml:space="preserve">
+    <value>Bewerk Post</value>
+  </data>
+  <data name="EmailUsersQueued" xml:space="preserve">
+    <value>E-mail in de wachtrij geplaatst voor de aangemelde gebruikers.</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Einddatum</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Evenement</value>
+  </data>
+  <data name="EventTime" xml:space="preserve">
+    <value>Evenementstijd</value>
+  </data>
+  <data name="FavoriteMustBeLoggedIn" xml:space="preserve">
+    <value>Je moet ingelogd zijn om favoriete topics te kunnen bekijken.</value>
+  </data>
+  <data name="FavoritesDontHave" xml:space="preserve">
+    <value>Je hebt geen favoriete topics.</value>
+  </data>
+  <data name="FavoriteTopics" xml:space="preserve">
+    <value>Favoriete Topics</value>
+  </data>
+  <data name="ForumMoveError" xml:space="preserve">
+    <value>Er is een onbekende fout opgetreden tijdens het verplaatsen van het forum</value>
+  </data>
+  <data name="ForumPermissionInstructions" xml:space="preserve">
+    <value>Om post- en weergaverestricties te verwijderen, verwijder alle rollen van de toepasselijke box.</value>
+  </data>
+  <data name="FromEmailAddress" xml:space="preserve">
+    <value>Van e-mailadres</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="IncludeSignature" xml:space="preserve">
+    <value>Gebruik handtekening</value>
+  </data>
+  <data name="IndexingInterval" xml:space="preserve">
+    <value>Indexeringsinterval</value>
+  </data>
+  <data name="IP" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="IsRunning" xml:space="preserve">
+    <value>Loopt</value>
+  </data>
+  <data name="JunkWords" xml:space="preserve">
+    <value>Junk Woorden</value>
+  </data>
+  <data name="MarkForumRead" xml:space="preserve">
+    <value>Markeer forum als gelezen</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Bericht</value>
+  </data>
+  <data name="Millseconds" xml:space="preserve">
+    <value>Milliseconden</value>
+  </data>
+  <data name="NamePosts" xml:space="preserve">
+    <value>{0}s posts</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>(optioneel)</value>
+  </data>
+  <data name="PermRoles" xml:space="preserve">
+    <value>Beheerder en Moderator zijn permanente rollen en kunnen niet verwijderd worden.</value>
+  </data>
+  <data name="PostID" xml:space="preserve">
+    <value>PostID</value>
+  </data>
+  <data name="PostingRoles" xml:space="preserve">
+    <value>Posting Rollen</value>
+  </data>
+  <data name="PostNewTopic" xml:space="preserve">
+    <value>Plaats een nieuw topic</value>
+  </data>
+  <data name="PreviewTopic" xml:space="preserve">
+    <value>Toon voorbeeld van topic</value>
+    <comment>preview the verb, not adjective</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Verwijder</value>
+  </data>
+  <data name="RemoveAll" xml:space="preserve">
+    <value>Verwijder Alles</value>
+  </data>
+  <data name="SendingInterval" xml:space="preserve">
+    <value>Verzendingsinterval</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>SMTP Wachtwoord</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>Poort (standaard is 25)</value>
+  </data>
+  <data name="SmtpServer" xml:space="preserve">
+    <value>SMTP Server</value>
+  </data>
+  <data name="SmtpUser" xml:space="preserve">
+    <value>SMTP Gebruiker</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Startdatum</value>
+  </data>
+  <data name="SubmitNewTopic" xml:space="preserve">
+    <value>Plaats new topic</value>
+  </data>
+  <data name="SubmitReply" xml:space="preserve">
+    <value>Plaats antwoord</value>
+  </data>
+  <data name="TopicID" xml:space="preserve">
+    <value>TopicID</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="UseEsmtpCred" xml:space="preserve">
+    <value>Use ESMTP for credentials</value>
+  </data>
+  <data name="UserID" xml:space="preserve">
+    <value>UserID</value>
+  </data>
+  <data name="UserIDTarget" xml:space="preserve">
+    <value>Doel UserID</value>
+  </data>
+  <data name="UserImageApprovalNotReq" xml:space="preserve">
+    <value>Door de gebruiker geuploade afbeeldingen hebben momenteel geen goedkeuring nodig</value>
+  </data>
+  <data name="UseSsl" xml:space="preserve">
+    <value>Gebruik SSL</value>
+  </data>
+  <data name="ViewingRoles" xml:space="preserve">
+    <value>Leesrollen</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="CloseOnReply" xml:space="preserve">
+    <value>Sluiten bij antwoord</value>
+  </data>
+  <data name="FavoriteMake" xml:space="preserve">
+    <value>Maak Favoriet</value>
+  </data>
+  <data name="FavoriteRemove" xml:space="preserve">
+    <value>Verwijder Van Favorieten</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="Moderator" xml:space="preserve">
+    <value>Moderator</value>
+  </data>
+  <data name="NameAvatar" xml:space="preserve">
+    <value>{0}s avatar</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="NameLastEdit" xml:space="preserve">
+    <value>Laatst bijgewerkt door {0}</value>
+    <comment>{0} is a name</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>Pin</value>
+  </data>
+  <data name="PostReply" xml:space="preserve">
+    <value>Post een antwoord</value>
+  </data>
+  <data name="Quote" xml:space="preserve">
+    <value>Citaat</value>
+  </data>
+  <data name="RecentTopics" xml:space="preserve">
+    <value>Recente Topics</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Antwoord</value>
+  </data>
+  <data name="ShowMorePosts" xml:space="preserve">
+    <value>Toon meer posts</value>
+  </data>
+  <data name="ShowPreviousPosts" xml:space="preserve">
+    <value>Toon vorige posts</value>
+  </data>
+  <data name="Subscribe" xml:space="preserve">
+    <value>Aanmelden</value>
+  </data>
+  <data name="Undelete" xml:space="preserve">
+    <value>Verwijderen ongedaan maken</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>Unpin</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archief</value>
+  </data>
+  <data name="NewPM" xml:space="preserve">
+    <value>Nieuw Privébericht</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Geen resultaten gevonden</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Verstuur</value>
+  </data>
+  <data name="Unarchive" xml:space="preserve">
+    <value>Onarchiveer</value>
+  </data>
+  <data name="ViewArchivedMessages" xml:space="preserve">
+    <value>Toon gearchiveerde berichten</value>
+  </data>
+  <data name="DisplayName" xml:space="preserve">
+    <value>Weergavenaam</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fout</value>
+  </data>
+  <data name="ErrorSettingUpDb" xml:space="preserve">
+    <value>Er is een fout opgetreden bij het instellen van je database</value>
+  </data>
+  <data name="ForumReady" xml:space="preserve">
+    <value>Je forum is klaar.</value>
+  </data>
+  <data name="ForumTitle" xml:space="preserve">
+    <value>Forumtitel</value>
+  </data>
+  <data name="GoAdmin" xml:space="preserve">
+    <value>Ga naar de beheersecetie om het instellen van je forum af te ronden</value>
+  </data>
+  <data name="InvalidLink" xml:space="preserve">
+    <value>Die link is niet meer geldig.</value>
+  </data>
+  <data name="NoDataConnection" xml:space="preserve">
+    <value>Geen dataconnectie</value>
+  </data>
+  <data name="PopForumsSetup" xml:space="preserve">
+    <value>POP Forums Setup</value>
+  </data>
+  <data name="SetupCantConnect" xml:space="preserve">
+    <value>De setup kan de data store niet benaderen. Controleer a.u.b. de connection string en de configuratie.</value>
+  </data>
+  <data name="SetupConnSuccess" xml:space="preserve">
+    <value>A database connection has been successful. Please fill out the following values to get started</value>
+  </data>
+  <data name="SetupDatabase" xml:space="preserve">
+    <value>Stel de database in</value>
+  </data>
+  <data name="SetupFirstUser" xml:space="preserve">
+    <value>Maak je eerste gebruiker aan (die zal beheer- en moderatorrechten krijgen)</value>
+  </data>
+  <data name="SubscribedTopics" xml:space="preserve">
+    <value>Aangemelde Topics</value>
+  </data>
+  <data name="SubscribeLoggedIn" xml:space="preserve">
+    <value>Je moet ingelogd zijn om aangemelde topics te kunnen zien.</value>
+  </data>
+  <data name="SubscribeNone" xml:space="preserve">
+    <value>Je bent niet aangemeld voor een topic.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Succesvol!</value>
+  </data>
+  <data name="UnsubscribeTopic" xml:space="preserve">
+    <value>{0} is afgemeld van {1}</value>
+    <comment>{0} is a name, {1} is a topic title</comment>
+  </data>
+  <data name="ArchivedNewPosts" xml:space="preserve">
+    <value>Gearchiveerd met nieuwe posts</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Topic gesloten</value>
+  </data>
+  <data name="ClosedPinned" xml:space="preserve">
+    <value>Gesloten, gepind topic</value>
+  </data>
+  <data name="DeleteTopic" xml:space="preserve">
+    <value>Verwijder Topic</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>Eerste</value>
+  </data>
+  <data name="ForgotPasswordEmail" xml:space="preserve">
+    <value>Om je wachtwoord te resetten op {0}, volg a.u.b. deze link:{3}{1}{3}{3}{2}</value>
+    <comment>{0}=title of forum, {1}=email link, {2}=signature, {3}=new line</comment>
+  </data>
+  <data name="ForgotPasswordSubject" xml:space="preserve">
+    <value>Je wachtwoordresetinstructies voor {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="ForumNoPost" xml:space="preserve">
+    <value>Je hebt geen toestemming om in dit forum te posten</value>
+  </data>
+  <data name="ForumNoView" xml:space="preserve">
+    <value>Je hebt geen toestemming om dit forum te bekijken</value>
+  </data>
+  <data name="LessThanMinute" xml:space="preserve">
+    <value>Minder dan een minuut geleden</value>
+  </data>
+  <data name="LoginToPost" xml:space="preserve">
+    <value>Je dient ingelogd te zijn om te kunnen posten</value>
+  </data>
+  <data name="MinutesAgo" xml:space="preserve">
+    <value>{0} minuten geleden</value>
+    <comment>{0} is a number</comment>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>Meer</value>
+  </data>
+  <data name="NewPosts" xml:space="preserve">
+    <value>Nieuwe posts</value>
+  </data>
+  <data name="NewPostsClosed" xml:space="preserve">
+    <value>Nieuwe posts, gesloten topic</value>
+  </data>
+  <data name="NewPostsClosedPinned" xml:space="preserve">
+    <value>Nieuwe posts, gesloten &amp; gepinde topic</value>
+  </data>
+  <data name="NewPostsPinned" xml:space="preserve">
+    <value>Nieuwe posts, gepinde topic</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Volgende</value>
+  </data>
+  <data name="NoNewPosts" xml:space="preserve">
+    <value>Geen nieuwe posts</value>
+  </data>
+  <data name="NotLoggedIn" xml:space="preserve">
+    <value>Je bent niet ingelogd</value>
+  </data>
+  <data name="OneMinuteAgo" xml:space="preserve">
+    <value>1 minuut geleden</value>
+  </data>
+  <data name="Pinned" xml:space="preserve">
+    <value>Gepinde topic</value>
+  </data>
+  <data name="PMCreateWarnings" xml:space="preserve">
+    <value>Je moet een onderwerp, bericht en op z'n minst één gebruiker toevoegen</value>
+  </data>
+  <data name="PostEmpty" xml:space="preserve">
+    <value>Je kunt geen lege post maken</value>
+  </data>
+  <data name="PostWait" xml:space="preserve">
+    <value>Je dient {0} seconden te wachten tussen je posts en je mag je laatste post niet herposten</value>
+    <comment>{0} is a number for seconds</comment>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Vorige</value>
+  </data>
+  <data name="RegisterEmailSubject" xml:space="preserve">
+    <value>Forum registratie - {0}</value>
+    <comment>{0} is name of forum</comment>
+  </data>
+  <data name="RegisterEmailThankYou" xml:space="preserve">
+    <value>Dank je voor je registratie bij {0}.{2}{2}{1}</value>
+    <comment>{0}=name of forum, {1}=forum link, {2}=new line</comment>
+  </data>
+  <data name="RegisterEmailThankYouVerify" xml:space="preserve">
+    <value>Dank je voor je registratie bij {0}. Klikt op de deze link om je registratie te bevestigen :{5}{5}{1} {5}{5}Als de link niet werkt, bezoek dan de volgende pagina, en voer de bevestigingscode in:{5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=auth link, {2}=verify link, {3}=auth code, {4}=sig, {5}new line</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Instellingen opgeslagen</value>
+  </data>
+  <data name="SubscribedEmailBody" xml:space="preserve">
+    <value>Een of meerdere reacties zijn gepost op bij de thread {0}:{5}{5}{1}{5}{2}{5}{5}
+	Als je geen notificaties meer wilt ontvangen, klik dan op de volgende link:{5}{3}{5}{5}{4}</value>
+    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
+  </data>
+  <data name="SubscribedEmailSubject" xml:space="preserve">
+    <value>Nieuwe reacties: {0}</value>
+    <comment>{0}=topic title</comment>
+  </data>
+  <data name="TodayTime" xml:space="preserve">
+    <value>Vandaag, {0}</value>
+    <comment>{0} is a time like 1:43pm</comment>
+  </data>
+  <data name="TopicNotExist" xml:space="preserve">
+    <value>Die topic bestaat niet</value>
+  </data>
+  <data name="YesterdayTime" xml:space="preserve">
+    <value>Gisteren, {0}</value>
+    <comment>{0} a time like 1:43pm</comment>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Laden</value>
+  </data>
+  <data name="Voted" xml:space="preserve">
+    <value>Gestemd</value>
+  </data>
+  <data name="VoteUpPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; gestemd op een post in het topic: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="ScoringGame" xml:space="preserve">
+    <value>Scoren spel</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Geen</value>
+  </data>
+  <data name="ActivityFeed" xml:space="preserve">
+    <value>Activiteitentoevoer</value>
+  </data>
+  <data name="NewReplyPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; maakte een bericht in het onderwerp: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="NewPostPublishMessage" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; begon een nieuw onderwerp: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to topic{3} is topic name</comment>
+  </data>
+  <data name="ExternalLogins" xml:space="preserve">
+    <value>Externe Logins</value>
+  </data>
+  <data name="UseExistingForumAccount" xml:space="preserve">
+    <value>Gebruik bestaande forum gehouden</value>
+  </data>
+  <data name="ExpiredLogin" xml:space="preserve">
+    <value>Dat login is verlopen of niet geldig is</value>
+  </data>
+  <data name="ExternalLoginsDisabled" xml:space="preserve">
+    <value>Externe logins zijn uitgeschakeld</value>
+  </data>
+  <data name="NoExternalLoginsRegistered" xml:space="preserve">
+    <value>Je hebt geen externe logins geregistreerd</value>
+  </data>
+  <data name="DeletePermanently" xml:space="preserve">
+    <value>Permanent verwijderen</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Voorbeeld</value>
+  </data>
+  <data name="AskAquestion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Answers" xml:space="preserve">
+    <value>Antwoorden</value>
+  </data>
+  <data name="ChooseAnswer" xml:space="preserve">
+    <value>Kies antwoord</value>
+  </data>
+  <data name="PostAnswer" xml:space="preserve">
+    <value>bericht antwoord</value>
+  </data>
+  <data name="QuestionAnswered" xml:space="preserve">
+    <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; koos voor een antwoord op de vraag: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
+    <comment>{0} is uri to user, {1} is user name, {2} is uri to post, {3} is topic name</comment>
+  </data>
+  <data name="SubmitAnswer" xml:space="preserve">
+    <value>submit antwoord</value>
+  </data>
+</root>

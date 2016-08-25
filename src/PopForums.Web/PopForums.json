@@ -1,0 +1,11 @@
+﻿{
+	"PopForums": {
+		"Database": {
+			"ConnectionString": "server=localhost;Database=popforums13;Trusted_Connection=True;"
+		},
+		"Cache": {
+			"Seconds": 90,
+			"ConnectionString": ""
+		}
+	}
+}

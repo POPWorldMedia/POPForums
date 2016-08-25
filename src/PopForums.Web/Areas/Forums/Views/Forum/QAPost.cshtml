@@ -1,0 +1,140 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Models;
+@using PopForums.Web.Areas.Forums.Controllers
+@model QAPostItemContainer
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	var user = UserRetrievalShim.GetUser(Context);
+	var profile = UserRetrievalShim.GetProfile(Context);
+	var hideVanity = false;
+	if (profile != null)
+	{ hideVanity = profile.HideVanity; }
+}
+@helper NewPostIndicator(User user, Post post)
+{
+	if (user == null)
+	{}
+	else if (Model.PostWithChildren.LastReadTime.HasValue && post.PostTime > Model.LastReadTime)
+	{<text>newPostBlock</text>}
+}
+<a name="@Model.Post.PostID"></a>
+<div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
+	<div class="answerData pull-left">
+		<h3><span class="label label-default voteCount">@Html.Partial("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
+		@if (User != null && user.UserID != Model.Post.UserID)
+		{
+			if (((List<int>)ViewBag.VotedPostIDs).Contains(Model.Post.PostID))
+			{
+				<span class="answerVote">@PopForums.Resources.Voted</span>
+			}
+			else
+			{
+				<span class="voteUp answerVote btn-link">Vote up</span>
+			}
+		}
+		@if (User != null && user.UserID == Model.Topic.StartedByUserID && !Model.Post.IsFirstInTopic)
+		{
+			<p class="answerButton glyphicon @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>text-success glyphicon-ok</text>}else{<text>text-muted glyphicon-asterisk</text>}" title="@PopForums.Resources.ChooseAnswer"></p>
+		}
+		else
+		{
+			if (Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID)
+			{
+				<p class="answerCheck glyphicon text-success glyphicon-ok"></p>
+			}
+		}
+	</div>
+	<div class="answerBody">
+		<div class="postUserData bg-primary" data-userid="@Model.Post.UserID">
+			<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Post.Name</h3>
+			<div class="miniProfileBox bg-info text-info"></div>
+			<small class="postTime text-right">
+				@if (user.IsInRole(PermanentRoles.Moderator))
+				{
+					@:IP: @Model.Post.IP -
+				}
+				<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, profile)</span>
+			</small>
+		</div>
+		@if (!hideVanity && ((Dictionary<int, int>)ViewBag.Avatars).ContainsKey(Model.Post.UserID))
+		{
+			<img src="@Url.Action("Avatar", "Image", new { id = ((Dictionary<int, int>)ViewBag.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar pull-right" />
+		}
+
+		<div class="@NewPostIndicator(user, Model.Post)">@Html.Raw(Model.Post.FullText)</div>
+		@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
+		{
+			<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@Model.Post.LastEditTime.Value.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.LastEditTime.Value, profile)</span></small>
+		}
+
+		@if (Model.Post.ShowSig && !hideVanity && ((Dictionary<int, string>)ViewBag.Signatures).ContainsKey(Model.Post.UserID))
+		{
+			<hr />
+			<div class="signature">@Html.Raw(((Dictionary<int, string>)ViewBag.Signatures)[Model.Post.UserID])</div>
+		}
+		<div class="postToolContainer">
+			<ul class="postTools list-inline">
+				<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
+				@if (User != null && Model.Topic != null && Model.Topic.IsClosed == false)
+				{
+					<li><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></li>
+				}
+				@if (user.IsPostEditable(Model.Post))
+				{
+					<li>@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
+					if (Model.Post.IsDeleted)
+					{
+						<li>
+							<form asp-controller="Moderator" asp-action="UndeletePost" asp-route-id="@Model.Post.PostID" method="post" class="deletePostForm"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /></form>
+						</li>
+					}
+					else
+					{
+						<li>
+							@using (Html.BeginForm("DeletePost", "Forum", new { id = Model.Post.PostID }, FormMethod.Post, new { @class = "deletePostForm" }))
+							{ <input type="submit" value="@Html.PostDeleteLinkFormatter(Model.Post)" class="btn-link" /> }
+						</li>
+					}
+				}
+				@if (Model.Post.IsEdited && user.IsInRole(PermanentRoles.Moderator))
+				{
+					<li><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
+				}
+			</ul>
+			<div class="moderationLog"></div>
+		</div>
+		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
+		{
+			foreach (var comment in Model.PostWithChildren.Children)
+			{
+				<a name="@comment.PostID"></a>
+				<div class="@if(comment.IsDeleted){<text>bg-danger</text>}else{<text>well</text>} qaComment @NewPostIndicator(user, comment)">
+					<p class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
+						@if (user.IsInRole(PermanentRoles.Moderator))
+						{<text> - IP: </text>@comment.IP}
+					</p>
+					@Html.Raw(comment.FullText)
+					@if (user.IsPostEditable(comment))
+					{
+						if (comment.IsDeleted)
+						{
+							using (Html.BeginForm("UndeletePost", "Moderator", new { id = comment.PostID }, FormMethod.Post))
+							{ <input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /> }
+						}
+						else
+						{
+							using (Html.BeginForm("DeletePost", "Forum", new { id = comment.PostID }, FormMethod.Post))
+							{ <input type="submit" value="@PopForums.Resources.Delete" class="btn-link" /> }
+						}
+					}
+				</div>
+			}
+			if (User != null && Model.PostWithChildren.Children.Count > 0 && !Model.Topic.IsClosed)
+			{
+				<p><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></p>
+			}
+		}
+		<div class="commentHolder"></div>
+	</div>
+</div>

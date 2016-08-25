@@ -1,0 +1,33 @@
+﻿@model PopForums.Models.NewPost
+
+<h2>@PopForums.Resources.CreateNewReply</h2>
+
+<div id="NewReply" class="postForm" role="form">
+	@Html.TextAreaFor(p => p.FullText, new { @class = "form-control" })
+	@Html.HiddenFor(p => p.Title)
+	@Html.HiddenFor(p => p.IncludeSignature)
+	@Html.HiddenFor(p => p.ItemID)
+	@Html.HiddenFor(p => p.IsPlainText)
+	@Html.HiddenFor(p => p.IsImageEnabled)
+	@Html.HiddenFor(p => p.ParentPostID)
+	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-primary" />
+	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
+	<span id="PostResponseMessage" class="bg-danger callout"></span>
+</div>
+
+<div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content" id="PreviewModalContent">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">@PopForums.Resources.Preview</h4>
+			</div>
+			<div class="modal-body">
+				<div id="ParsedFullText" class="postItem"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

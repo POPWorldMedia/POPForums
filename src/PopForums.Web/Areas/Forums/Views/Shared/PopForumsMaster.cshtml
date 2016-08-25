@@ -1,0 +1,47 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Web.Areas.Forums.Controllers
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section HeaderContent {
+    @RenderSection("HeaderContent", required: false)
+	<script src="~/lib/PopForums/PopForums.js"></script>
+	<link href="~/lib/PopForums/PopForums.css" rel="stylesheet" />
+}
+
+<div id="ForumContainer" class="container-fluid">
+	<div class="row">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#AccountBox">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			</div>
+			<div id="AccountBox" class="collapse navbar-collapse">
+				@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "navbar-form navbar-right" }, { "role", "search" } }))
+				{
+					<div class="form-group">
+						<input type="search" class="form-control" placeholder="Search" id="query" name="query">
+					</div>
+				}
+				<ul class="nav navbar-nav navbar-right">
+					@await Component.InvokeAsync("UserNavigation")
+				</ul>
+			</div>
+		</nav>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				@RenderBody()
+			</div>
+		</div>
+		<div class="row">
+			<div id="ForumFooter" class="col-xs-12">
+				<small><a href="http://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
+			</div>
+		</div>
+	</div>

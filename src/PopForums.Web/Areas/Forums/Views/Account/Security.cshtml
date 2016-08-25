@@ -1,0 +1,68 @@
+﻿@using PopForums.Controllers
+@model PopForums.Models.UserEditSecurity
+
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ChangeYourEmailPassword;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Account - @PopForums.Resources.ChangeYourEmailPassword</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li>@PopForums.Resources.Account</li>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ChangeYourEmailPassword <span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu">
+				<li>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")</li>
+				<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", "Account")</li>
+			</ul>
+		</li>
+
+	</ul>
+</div>
+
+@using (Html.BeginForm("ChangePassword", "Account", FormMethod.Post, new { role = "form" }))
+{
+	<div class="form-group"><h2>@PopForums.Resources.ChangePassword</h2></div>
+	<div class="form-group">
+		<label for="OldPassword">@PopForums.Resources.PasswordOld</label>
+		@Html.Password("OldPassword", null, new { @class = "form-control" })
+	</div>
+	<div class="form-group">
+		<label for="NewPassword">@PopForums.Resources.PasswordNew</label>
+		@Html.Password("NewPassword", null, new { @class = "form-control" })
+	</div>
+	<div class="form-group">
+		<label for="NewPasswordRetype">@PopForums.Resources.PasswordNewRetype</label>
+		@Html.Password("NewPasswordRetype", null, new { @class = "form-control" })
+	</div>
+	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary" />
+	if (ViewBag.PasswordResult != null) { <span class="bg-danger callout">@ViewBag.PasswordResult</span> }
+}
+
+@using (Html.BeginForm("ChangeEmail", "Account", FormMethod.Post, new { role = "form" }))
+{
+	<div class="form-group">
+		<h2>@PopForums.Resources.ChangeEmail</h2>
+		@if (!Model.IsNewUserApproved)
+		{
+			<p>@PopForums.Resources.ChangeEmailConsequence</p>
+		}
+	</div>
+	<div class="form-group">
+		<label>@PopForums.Resources.Email</label>
+		<p>@Model.OldEmail</p>
+	</div>
+	<div class="form-group">
+		<label for="NewEmail">@PopForums.Resources.EmailNew</label>
+		@Html.TextBox("NewEmail", null, new { @class = "form-control" })
+	</div>
+	<div class="form-group">
+		<label for="NewEmailRetype">@PopForums.Resources.EmailNewRetype</label>
+		@Html.TextBox("NewEmailRetype", null, new { @class = "form-control" })
+	</div>
+	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary" />
+	if (ViewBag.EmailResult != null) { <span class="bg-danger callout">@ViewBag.EmailResult</span> }
+}

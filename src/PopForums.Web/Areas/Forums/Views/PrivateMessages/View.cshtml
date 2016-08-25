@@ -1,0 +1,48 @@
+﻿@addTagHelper *, PopForums.Web
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@model PopForums.Models.PrivateMessageView
+@{
+	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		});
+	</script>
+}
+<div>
+	<h1>@Model.PrivateMessage.Subject</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
+	</ul>
+</div>
+@foreach (var post in Model.Posts)
+{
+	<div class="postItem">
+		<div class="postUserData bg-primary">
+			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID">@post.Name</a></h3>
+			<small class="postTime text-right fTime" data-utc="@post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(post.PostTime, profile)</small>
+		</div>
+		@Html.Raw(post.FullText)
+	</div>
+}
+
+<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
+	<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
+</form>
+	
+<h2>Reply</h2>
+
+<form asp-action="Reply" asp-route-id="@Model.PrivateMessage.PMID" method="post" role="form">
+	<div class="form-group">
+		<div class="col-xs-12">
+			<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>
+		</div>
+	</div>
+	<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn btn-primary" />
+</form>

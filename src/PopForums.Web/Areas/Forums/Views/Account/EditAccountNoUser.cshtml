@@ -1,0 +1,14 @@
+﻿@using PopForums.Web.Areas.Forums.Controllers
+@{
+	ViewBag.Title = PopForums.Resources.EditAccount;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.EditAccount</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, routeValues: null, htmlAttributes: null)</li>
+	</ul>
+</div>
+
+<p>@PopForums.Resources.MustBeRegisteredToEditAccount</p>

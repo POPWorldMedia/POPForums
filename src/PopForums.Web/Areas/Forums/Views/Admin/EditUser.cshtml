@@ -1,0 +1,235 @@
+﻿@model UserEditWithFiles
+@using PopForums.Web.Areas.Forums.Models
+@using PopForums.Web.Extensions
+@{
+    ViewBag.PageTitle = PopForums.Resources.EditUser;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent {
+<script language="javascript" type="text/javascript">
+	$(function () {
+		$("input.confirm").click(function () {
+			if (confirm("@PopForums.Resources.AreYouSure"))
+				return true;
+			else
+				return false;
+		});
+	});
+</script>
+}
+
+<h2>@PopForums.Resources.EditUser</h2>
+
+@using (Html.BeginForm("EditUser", "Admin", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
+{
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Security</h2>
+	</div>
+	<div class="form-group">
+		<label class="col-xs-4 control-label">@PopForums.Resources.Name</label>
+		<div class="col-xs-8">
+			<p class="form-control-static">@Model.Name</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-xs-4 control-label">@PopForums.Resources.Email</label>
+		<div class="col-xs-8">
+			<p class="form-control-static"><a href="mailto:@Model.Email">@Model.Email</a></p>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="NewEmail" class="col-xs-4 control-label">@PopForums.Resources.EmailNewOptional</label>
+		<div class="col-xs-8">
+			@Html.TextBoxFor(model => model.NewEmail, new { @class = "form-control" })
+			@Html.ValidationMessageFor(model => model.NewEmail)
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="NewPassword" class="col-xs-4 control-label">@PopForums.Resources.PasswordNewOptional</label>
+		<div class="col-xs-8">
+			@Html.PasswordFor(model => model.NewPassword, new { @class = "form-control" })
+			@Html.ValidationMessageFor(model => model.NewPassword)
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-4 col-xs-8">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.IsApproved) @PopForums.Resources.IsApproved
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Options</h2>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-2 col-xs-10">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.IsSubscribed) @PopForums.Resources.SubscribeToList
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-2 col-xs-10">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.ShowDetails) @PopForums.Resources.ShowProfileDetails
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-2 col-xs-10">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.IsPlainText) @PopForums.Resources.ForcePlainTextBox
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-2 col-xs-10">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.HideVanity) @PopForums.Resources.HideVanity
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="TimeZone" class="col-xs-2 control-label">@PopForums.Resources.TimeZone</label>
+		<div class="col-xs-10">
+			@Html.TimeZoneDropDown("TimeZone", new { @class = "form-control" }, Model.TimeZone)
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-push-2 col-xs-10">
+			<div class="checkbox">
+				<label>
+					@Html.CheckBoxFor(m => m.IsDaylightSaving) @PopForums.Resources.UseDaylight
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Details</h2>
+	</div>
+	<div class="form-group">
+		<label for="Signature" class="col-xs-2 control-label">@PopForums.Resources.Signature</label>
+		<div class="col-xs-10">
+			@Html.TextAreaFor(m => m.Signature, new { @class = "form-control", rows = 3 })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Location" class="col-xs-2 control-label">@PopForums.Resources.Location</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Dob" class="col-xs-2 control-label">@PopForums.Resources.DateOfBirth</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.Dob, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Facebook" class="col-xs-2 control-label">Facebook</label>
+		<div class="col-xs-10">
+			<div class="input-group">
+				<span class="input-group-addon">https://facebook.com/</span>
+				@Html.TextBoxFor(m => m.Facebook, new { @class = "form-control" })
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Twitter" class="col-xs-2 control-label">Twitter</label>
+		<div class="col-xs-10">
+			<div class="input-group">
+				<span class="input-group-addon">&#64;</span>
+				@Html.TextBoxFor(m => m.Twitter, new { @class = "form-control" })
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Web" class="col-xs-2 control-label">@PopForums.Resources.Web</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.Web, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Aim" class="col-xs-2 control-label">AIM</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.Aim, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="Icq" class="col-xs-2 control-label">ICQ</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.Icq, new { @class = "form-control" })
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="YahooMessenger" class="col-xs-2 control-label">Yahoo Messenger</label>
+		<div class="col-xs-10">
+			@Html.TextBoxFor(m => m.YahooMessenger, new { @class = "form-control" })
+		</div>
+	</div>
+
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Roles</h2>
+	</div>
+	<div class="form-group">
+		<div class="col-xs-10 col-xs-push-2">
+			@Html.RoleCheckBoxes("Roles", Model.Roles)
+		</div>
+	</div>
+
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Avatar</h2>
+	</div>
+	<div class="form-group">
+		<label for="avatarFile" class="col-xs-4 control-label">@PopForums.Resources.UploadNew</label>
+		<div class="col-xs-8">
+			<input type="file" id="avatarFile" name="avatarFile" class="form-control" />
+		</div>
+	</div>
+	if (Model.AvatarID.HasValue) {
+		<p>
+			<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" /><br />
+			@Html.CheckBoxFor(m => m.DeleteAvatar) <label for="DeleteAvatar">@PopForums.Resources.AvatarDelete</label>
+		</p>
+	}
+
+	<div class="col-xs-12">
+		<h2>@PopForums.Resources.Photo</h2>
+	</div>
+	<div class="form-group">
+		<label for="photoFile" class="col-xs-4 control-label">@PopForums.Resources.UploadNew</label>
+		<div class="col-xs-8">
+			<input type="file" id="photoFile" name="photoFile" class="form-control" />
+		</div>
+	</div>
+	if (Model.ImageID.HasValue) {
+		<p>
+			<img src="@Url.Action("UserImage", "Image", new {id = Model.ImageID})" alt="User photo" /><br />
+			@Html.CheckBoxFor(m => m.DeleteImage) <label for="DeleteImage">@PopForums.Resources.PhotoDelete</label>
+		</p>
+	}
+	<p><input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" /></p>
+}
+
+<p><em>@PopForums.Resources.UserDeleteWarning</em></p>
+@using (Html.BeginForm("DeleteAndBanUser", "Admin")) {
+	@Html.Hidden("id", Model.UserID)
+	<p><input type="submit" value="@PopForums.Resources.DeleteAndBanButton" class="confirm btn btn-primary" /></p>
+}
+@using (Html.BeginForm("DeleteUser", "Admin")) {
+	@Html.Hidden("id", Model.UserID)
+	<p><input type="submit" value="@PopForums.Resources.DeleteUserButton" class="confirm btn btn-primary" /></p>
+}

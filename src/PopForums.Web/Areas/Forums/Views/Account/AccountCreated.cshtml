@@ -1,0 +1,16 @@
+﻿@using PopForums.Controllers
+@{
+    ViewBag.Title = PopForums.Resources.AccountCreated;
+    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.AccountCreated</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+	</ul>
+</div>
+
+<p class="bg-danger callout">@ViewData["EmailProblem"] @ViewData["Result"]</p>
+
+<p>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile")</p>
