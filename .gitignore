@@ -1,3 +1,6 @@
 packages
 /.vs/config
 /.vs
+/src/PopForums.Web/project.lock.json
+/src/PopForums.Sql/project.lock.json
+/src/PopForums/project.lock.json
