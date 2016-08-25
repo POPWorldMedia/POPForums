@@ -13,6 +13,7 @@ using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.ScoringGame;
 using PopForums.Services;
+using PopForums.Web.Areas.Forums.Models;
 using PopForums.Web.Areas.Forums.Services;
 using PopForums.Web.Extensions;
 
@@ -309,19 +310,22 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				userEdit.IsImageApproved = _imageService.IsUserImageApproved(profile.ImageID.Value);
 			return View(userEdit);
 		}
-
-		// TODO: manage photos
-		//[HttpPost]
-		//public ActionResult ManagePhotos(UserEditPhoto userEdit)
-		//{
-		//	var user = this.CurrentUser();
-		//	if (user == null)
-		//		return View("EditAccountNoUser");
-		//	var avatarFile = Request.Files["avatarFile"];
-		//	var photoFile = Request.Files["photoFile"];
-		//	_userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
-		//	return RedirectToAction("ManagePhotos");
-		//}
+		
+		[HttpPost]
+		public ActionResult ManagePhotos(UserEditPhoto userEdit)
+		{
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			if (user == null)
+				return View("EditAccountNoUser");
+			byte[] avatarFile = null;
+			if (userEdit.AvatarFile != null)
+				avatarFile = userEdit.AvatarFile.OpenReadStream().ToBytes();
+			byte[] photoFile = null;
+			if (userEdit.PhotoFile != null)
+				photoFile = userEdit.PhotoFile.OpenReadStream().ToBytes();
+			_userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+			return RedirectToAction("ManagePhotos");
+		}
 
 		public ViewResult MiniProfile(int id)
 		{

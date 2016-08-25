@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Media.Imaging;
+using ImageProcessorCore;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -84,15 +84,13 @@ namespace PopForums.Services
 
 		public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel)
 		{
-			var originalImage = new BitmapImage();
-			originalImage.BeginInit();
-			originalImage.StreamSource = new MemoryStream(bytes);
-			originalImage.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-			originalImage.EndInit();
+			var stream = new MemoryStream(bytes);
+			var originalImage = new Image(stream);
 			int newHeight;
 			int newWidth;
-			CalculateResize(maxWidth, maxHeight, originalImage.PixelWidth, originalImage.PixelHeight, out newWidth, out newHeight);
+			CalculateResize(maxWidth, maxHeight, originalImage.Width, originalImage.Height, out newWidth, out newHeight);
 			var image = Resize(bytes, newWidth, newHeight, qualityLevel);
+			stream.Dispose();
 			return image;
 		}
 
@@ -109,40 +107,18 @@ namespace PopForums.Services
 			newHeight = (int)(originalHeight * ratio);
 		}
 
-		private byte[] Resize(byte[] bytes, int? width, int? height, int qualityLevel)
+		private byte[] Resize(byte[] bytes, int width, int height, int qualityLevel)
 		{
 			if (bytes == null)
 				throw new Exception("Bytes parameter is null.");
-			var image = new BitmapImage();
-			image.BeginInit();
-			if (width.HasValue)
-				image.DecodePixelWidth = width.Value;
-			if (height.HasValue)
-				image.DecodePixelHeight = height.Value;
-			image.StreamSource = new MemoryStream(bytes);
-			image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-			image.EndInit();
-			var transform = new TransformedBitmap();
-			transform.BeginInit();
-			transform.Source = image;
-			transform.EndInit();
-			return ToJpegBytes(transform, qualityLevel);
-		}
-
-		private byte[] ToJpegBytes(BitmapSource image, int qualityLevel)
-		{
-			if (image == null)
-				throw new Exception("Image parameter is null.");
-			var encoder = new JpegBitmapEncoder();
-			var stream = new MemoryStream();
-			encoder.Frames.Add(BitmapFrame.Create(image));
-			encoder.QualityLevel = qualityLevel;
-			encoder.Save(stream);
-			var length = (int)stream.Length;
-			var imageData = new byte[length];
-			stream.Position = 0;
-			stream.Read(imageData, 0, length);
-			return imageData;
+			var output = new MemoryStream();
+			using (var stream = new MemoryStream(bytes))
+			{
+				var image = new Image(stream);
+				image.Resize(width, height)
+					.SaveAsJpeg(output, qualityLevel);
+			}
+			return output.ToArray();
 		}
 	}
 }
