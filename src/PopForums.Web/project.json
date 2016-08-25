@@ -2,6 +2,10 @@
 	"userSecretsId": "aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759",
 
 	"dependencies": {
+		"Microsoft.NETCore.App": {
+			"version": "1.0.0",
+			"type": "platform"
+		},
 		"Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
 		"Microsoft.AspNetCore.Authentication.Facebook": "1.0.0",
 		"Microsoft.AspNetCore.Authentication.Google": "1.0.0",
@@ -38,7 +42,12 @@
 	},
 
 	"frameworks": {
-		"net46": { }
+		"netcoreapp1.0": {
+			"imports": [
+				"dotnet5.6",
+				"portable-net45+win8"
+			]
+		}
 	},
 
 	"buildOptions": {

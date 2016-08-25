@@ -439,7 +439,7 @@ PopForums.SetupSubscribeButton = function (topicID) {
 			type: "POST",
 			dataType: "json",
 			success: function (result) {
-				switch (result.Data.isSubscribed) {
+				switch (result.data.isSubscribed) {
 					case true:
 						s.val("Unsubscribe");
 						break;
@@ -466,7 +466,7 @@ PopForums.SetupFavoriteButton = function(topicID) {
 			type: "POST",
 			dataType: "json",
 			success: function (result) {
-				switch (result.Data.isFavorite) {
+				switch (result.data.isFavorite) {
 					case true:
 						f.val("Remove From Favorites");
 						break;
