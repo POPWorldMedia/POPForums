@@ -7,7 +7,7 @@ namespace PopForums.Services
 {
 	public interface IUserSessionService
 	{
-		//void ProcessUserRequest(User user, HttpContextBase context);
+		int ProcessUserRequest(User user, int? sessionID, string ip, Action deleteSession, Action<int> createSession);
 		void CleanUpExpiredSessions();
 		int GetTotalSessionCount();
 	}
@@ -26,55 +26,56 @@ namespace PopForums.Services
 		private readonly IUserRepository _userRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
 		private readonly ISecurityLogService _securityLogService;
-		private const string _sessionIDCookieName = "pf_sessionID";
 
-		//public void ProcessUserRequest(User user, HttpContextBase context)
-		//{
-		//	if (context.Response.IsRequestBeingRedirected)
-		//		return;
-		//	int? userID = null;
-		//	if (user != null)
-		//		userID = user.UserID;
-		//	if (context.Request.Cookies[_sessionIDCookieName] == null)
-		//	{
-		//		StartNewSession(context, userID);
-		//		if (user != null)
-		//			_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
-		//	}
-		//	else
-		//	{
-		//		var sessionID = Convert.ToInt32(context.Request.Cookies[_sessionIDCookieName].Value);
-		//		if (user != null)
-		//			_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
-		//		var updateSuccess = _userSessionRepository.UpdateSession(sessionID, DateTime.UtcNow);
-		//		if (!updateSuccess)
-		//			StartNewSession(context, userID);
-		//		else
-		//		{
-		//			var isAnon = _userSessionRepository.IsSessionAnonymous(sessionID);
-		//			if (userID.HasValue && isAnon || !userID.HasValue && !isAnon)
-		//			{
-		//				EndAndDeleteSession(new ExpiredUserSession { UserID = null, SessionID = sessionID, LastTime = DateTime.UtcNow });
-		//				StartNewSession(context, userID);
-		//			}
-		//		}
-		//	}
-		//}
+		public const string _sessionIDCookieName = "pf_sessionID";
 
-		//private void StartNewSession(HttpContextBase context, int? userID)
-		//{
-		//	if (userID.HasValue)
-		//	{
-		//		var oldUserSession = _userSessionRepository.GetSessionIDByUserID(userID.Value);
-		//		if (oldUserSession != null)
-		//			EndAndDeleteSession(oldUserSession);
-		//	}
-		//	var random = new Random();
-		//	var sessionID = random.Next(int.MinValue, int.MaxValue);
-		//	context.Response.Cookies.Set(new HttpCookie(_sessionIDCookieName, sessionID.ToString()));
-		//	_securityLogService.CreateLogEntry(null, userID, context.Request.UserHostAddress, sessionID.ToString(), SecurityLogType.UserSessionStart);
-		//	_userSessionRepository.CreateSession(sessionID, userID, DateTime.UtcNow);
-		//}
+		public int ProcessUserRequest(User user, int? sessionID, string ip, Action deleteSession, Action<int> createSession)
+		{
+			int? userID = null;
+			if (user != null)
+				userID = user.UserID;
+			if (sessionID == null)
+			{
+				sessionID = StartNewSession(userID, ip, createSession);
+				if (user != null)
+					_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
+			}
+			else
+			{
+				if (user != null)
+					_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
+				var updateSuccess = _userSessionRepository.UpdateSession(sessionID.Value, DateTime.UtcNow);
+				if (!updateSuccess)
+					sessionID = StartNewSession(userID, ip, createSession);
+				else
+				{
+					var isAnon = _userSessionRepository.IsSessionAnonymous(sessionID.Value);
+					if (userID.HasValue && isAnon || !userID.HasValue && !isAnon)
+					{
+						deleteSession();
+						EndAndDeleteSession(new ExpiredUserSession { UserID = null, SessionID = sessionID.Value, LastTime = DateTime.UtcNow });
+						sessionID = StartNewSession(userID, ip, createSession);
+					}
+				}
+			}
+			return sessionID.Value;
+		}
+
+		private int StartNewSession(int? userID, string ip, Action<int> createSession)
+		{
+			if (userID.HasValue)
+			{
+				var oldUserSession = _userSessionRepository.GetSessionIDByUserID(userID.Value);
+				if (oldUserSession != null)
+					EndAndDeleteSession(oldUserSession);
+			}
+			var random = new Random();
+			var sessionID = random.Next(int.MinValue, int.MaxValue);
+			_securityLogService.CreateLogEntry(null, userID, ip, sessionID.ToString(), SecurityLogType.UserSessionStart);
+			_userSessionRepository.CreateSession(sessionID, userID, DateTime.UtcNow);
+			createSession(sessionID);
+			return sessionID;
+		}
 
 		private void EndAndDeleteSession(ExpiredUserSession oldUserSession)
 		{

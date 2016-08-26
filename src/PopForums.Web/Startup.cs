@@ -50,7 +50,10 @@ namespace PopForums.Web
 			});
 
 			// Add MVC services to the services container.
-			services.AddMvc();
+			services.AddMvc(options =>
+			{
+				options.Filters.Add(typeof(PopForumsUserAttribute));
+			});
 
 			// TODO: go to primary nuget
 			services.AddSignalR();
@@ -108,8 +111,6 @@ namespace PopForums.Web
 			//	ClientId = "319472452413-ojveqkrcdfufi84le0sm7044sqfqkhfj.apps.googleusercontent.com",
 			//	ClientSecret = "n_ZhNUpEaGJyhnfIHBSWyhbx"
 			//});
-
-			app.UseMiddleware<PopForumsMiddleware>();
 
 			app.UseSignalR();
 
