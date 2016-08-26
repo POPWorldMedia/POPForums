@@ -37,7 +37,7 @@ namespace PopForums.Test.Services
 
 			service.ProcessUserRequest(null, null, "1.1.1.1", delete, create);
 			
-			Assert.True(deleteCalled);
+			Assert.False(deleteCalled);
 			Assert.True(createResult.HasValue);
 			_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), null, It.IsAny<DateTime>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry((int?)null, null, "1.1.1.1", createResult.Value.ToString(), SecurityLogType.UserSessionStart), Times.Once());
@@ -59,7 +59,6 @@ namespace PopForums.Test.Services
 			var result = service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
 			Assert.False(deleteCalled);
-			Assert.True(createResult.HasValue);
 			Assert.Equal(sessionID, result);
 			_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
 			_mockUserRepo.Verify(u => u.UpdateLastActivityDate(It.IsAny<User>(), It.IsAny<DateTime>()), Times.Never());
@@ -167,8 +166,7 @@ namespace PopForums.Test.Services
 			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
 			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
-
-			Assert.True(deleteCalled);
+			
 			Assert.Equal(createResult, result);
 			_mockUserSessionRepo.Verify(u => u.DeleteSessions(user.UserID, sessionID));
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, DateTime.MinValue), Times.Once());
@@ -190,8 +188,7 @@ namespace PopForums.Test.Services
 			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
 			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
-
-			Assert.True(deleteCalled);
+			
 			Assert.Equal(createResult, result);
 			_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
 			_mockUserSessionRepo.Verify(u => u.DeleteSessions(user.UserID, sessionID));

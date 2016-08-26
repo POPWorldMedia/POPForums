@@ -497,7 +497,7 @@ namespace PopForums.Test.Services
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, "123", ip, SecurityLogType.Login), Times.Once());
+			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, "", SecurityLogType.Login), Times.Once());
 			_mockUserRepo.Verify(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Never());
 		}
 
@@ -521,7 +521,7 @@ namespace PopForums.Test.Services
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, "123", ip, SecurityLogType.Login), Times.Once());
+			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, "", SecurityLogType.Login), Times.Once());
 			var saltyPassword = password.GetMD5Hash(salt.Value);
 			_mockUserRepo.Verify(x => x.SetHashedPassword(user, saltyPassword, salt.Value), Times.Once());
 		}
