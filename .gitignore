@@ -4,3 +4,4 @@ packages
 /src/PopForums.Web/project.lock.json
 /src/PopForums.Sql/project.lock.json
 /src/PopForums/project.lock.json
+/src/PopForums.Test/project.lock.json

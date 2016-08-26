@@ -40,7 +40,7 @@ namespace PopForums.Web
 		// This method gets called by the runtime.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddAuthentication(options => options.SignInScheme = ExternalExternalUserAssociationManager.AuthenticationContextName);
+			services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
 
 			services.Configure<AuthorizationOptions>(options =>
 			{
@@ -95,8 +95,8 @@ namespace PopForums.Web
 			});
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 			{
-				AuthenticationScheme = ExternalExternalUserAssociationManager.AuthenticationContextName,
-				CookieName = ExternalExternalUserAssociationManager.AuthenticationContextName,
+				AuthenticationScheme = ExternalUserAssociationManager.AuthenticationContextName,
+				CookieName = ExternalUserAssociationManager.AuthenticationContextName,
 				ExpireTimeSpan = TimeSpan.FromMinutes(5)
 			});
 

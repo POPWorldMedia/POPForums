@@ -14,9 +14,9 @@ namespace PopForums.ExternalLogin
 		void RemoveAssociation(User user, int externalUserAssociationID, string ip);
 	}
 
-	public class ExternalExternalUserAssociationManager : IExternalUserAssociationManager
+	public class ExternalUserAssociationManager : IExternalUserAssociationManager
 	{
-		public ExternalExternalUserAssociationManager(IExternalUserAssociationRepository externalUserAssociationRepository, IUserRepository userRepository, ISecurityLogService securityLogService)
+		public ExternalUserAssociationManager(IExternalUserAssociationRepository externalUserAssociationRepository, IUserRepository userRepository, ISecurityLogService securityLogService)
 		{
 			_externalUserAssociationRepository = externalUserAssociationRepository;
 			_userRepository = userRepository;

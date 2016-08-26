@@ -299,8 +299,6 @@ namespace PopForums.Services
 
 		public void Login(User user, bool persistCookie, string ip)
 		{
-			// TODO: web project needs to do this
-			//_formsAuthWrapper.SetAuthCookie(context, user, persistCookie);
 			user.LastLoginDate = DateTime.UtcNow;
 			_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);

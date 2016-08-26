@@ -26,7 +26,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IUserEmailer, UserEmailer>();
 
 			// external auth?
-		    services.AddTransient<IExternalUserAssociationManager, ExternalExternalUserAssociationManager>();
+		    services.AddTransient<IExternalUserAssociationManager, ExternalUserAssociationManager>();
 
 			// feeds
 		    services.AddTransient<IFeedService, FeedService>();

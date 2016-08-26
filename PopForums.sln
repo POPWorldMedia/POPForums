@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.xproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
 	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Test", "src\PopForums.Test\PopForums.Test.xproj", "{AB4006F4-F457-490B-B9FC-8DE9CDA67127}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,12 @@ Global
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{229CDD35-A4A5-44F2-8937-61AB286D6A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.CI|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.CI|Any CPU.Build.0 = Debug|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB4006F4-F457-490B-B9FC-8DE9CDA67127}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

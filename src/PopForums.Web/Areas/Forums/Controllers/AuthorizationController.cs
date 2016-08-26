@@ -163,7 +163,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		// They must use their PF credentials after getting valid claims from the 3rd party.
 		private async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
 		{
-			var auth = new AuthenticateContext(ExternalExternalUserAssociationManager.AuthenticationContextName);
+			var auth = new AuthenticateContext(ExternalUserAssociationManager.AuthenticationContextName);
 			await HttpContext.Authentication.AuthenticateAsync(auth);
 			if (auth.Principal == null || auth.Properties == null || !auth.Properties.ContainsKey(LoginProviderKey))
 			{
