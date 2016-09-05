@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -85,12 +86,12 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		public async Task<ViewResult> Create(SignupData signupData)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			// TODO: validate model
-			//signupData.Validate(ModelState, _userService, ip);
+			ValidateSignupData(signupData, ModelState, ip);
 			if (ModelState.IsValid)
 			{
 				var user = _userService.CreateUser(signupData, ip);
 				_profileService.Create(user, signupData);
+				// TODO: get rid of FullUrlHelper extension
 				var verifyUrl = this.FullUrlHelper("Verify", "Account");
 				var result = _newAccountMailer.Send(user, verifyUrl);
 				if (result != SmtpStatusCode.Ok)
@@ -108,12 +109,41 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				//if (authResult != null)
 				//	_externalUserAssociationManager.Associate(user, authResult, ip);
 
-				// TODO: do login here!
+				await AuthorizationController.PerformSignInAsync(true, user, HttpContext);
 
 				return View("AccountCreated");
 			}
 			SetupCreateData();
 			return View(signupData);
+		}
+
+		private void ValidateSignupData(SignupData signupData, ModelStateDictionary modelState, string ip)
+		{
+			if (!signupData.IsCoppa)
+				modelState.AddModelError("IsCoppa", Resources.MustBe13);
+			if (!signupData.IsTos)
+				modelState.AddModelError("IsTos", Resources.MustAcceptTOS);
+			string passwordError;
+			var passwordValid = _userService.IsPasswordValid(signupData.Password, out passwordError);
+			if (!passwordValid)
+				modelState.AddModelError("Password", passwordError);
+			if (signupData.Password != signupData.PasswordRetype)
+				modelState.AddModelError("PasswordRetype", Resources.RetypeYourPassword);
+			if (String.IsNullOrWhiteSpace(signupData.Name))
+				modelState.AddModelError("Name", Resources.NameRequired);
+			else if (_userService.IsNameInUse(signupData.Name))
+				modelState.AddModelError("Name", Resources.NameInUse);
+			if (String.IsNullOrWhiteSpace(signupData.Email))
+				modelState.AddModelError("Email", Resources.EmailRequired);
+			else
+				if (!signupData.Email.IsEmailAddress())
+				modelState.AddModelError("Email", Resources.ValidEmailAddressRequired);
+			else if (signupData.Email != null && _userService.IsEmailInUse(signupData.Email))
+				modelState.AddModelError("Email", Resources.EmailInUse);
+			if (signupData.Email != null && _userService.IsEmailBanned(signupData.Email))
+				modelState.AddModelError("Email", Resources.EmailBanned);
+			if (_userService.IsIPBanned(ip))
+				modelState.AddModelError("Email", Resources.IPBanned);
 		}
 
 		public ViewResult Verify(string id)

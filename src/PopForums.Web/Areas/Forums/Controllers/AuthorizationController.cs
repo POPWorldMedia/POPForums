@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -63,14 +64,14 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			User user;
 			if (_userService.Login(email, password, persistCookie, HttpContext.Connection.RemoteIpAddress.ToString(), out user))
 			{
-				await PerformSignInAsync(persistCookie, user);
+				await PerformSignInAsync(persistCookie, user, HttpContext);
 				return Json(new BasicJsonMessage { Result = true });
 			}
 
 			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
 
-		private async Task PerformSignInAsync(bool persistCookie, User user)
+		public static async Task PerformSignInAsync(bool persistCookie, User user, HttpContext httpContext)
 		{
 			var claims = new List<Claim>
 			{
@@ -85,7 +86,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 
 			var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 			await
-				HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id),
+				httpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id),
 					props);
 		}
 
@@ -100,7 +101,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				if (authResult != null)
 				{
 					_externalUserAssociationManager.Associate(user, authResult, ip);
-					await PerformSignInAsync(persistCookie, user);
+					await PerformSignInAsync(persistCookie, user, HttpContext);
 					return Json(new BasicJsonMessage { Result = true });
 				}
 			}
@@ -151,7 +152,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			if (matchResult.Successful)
 			{
 				_userService.Login(matchResult.User, true, ip);
-				await PerformSignInAsync(true, matchResult.User);
+				await PerformSignInAsync(true, matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
 			ViewBag.Referrer = returnUrl;

@@ -485,14 +485,13 @@ namespace PopForums.Services
 
 		public bool IsPasswordValid(string password, out string errorMessage)
 		{
-			var result = true;
 			if (String.IsNullOrEmpty(password) || password.Length < 6)
 			{
 				errorMessage = "Password must be at least six characters";
-				result = false;
+				return false;
 			}
 			errorMessage = null;
-			return result;
+			return true;
 		}
 
 		public List<User> GetUsersOnline()
