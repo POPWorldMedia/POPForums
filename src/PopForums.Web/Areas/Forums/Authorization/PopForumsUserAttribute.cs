@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
@@ -41,13 +42,14 @@ namespace PopForums.Web.Areas.Forums.Authorization
 			//	return;
 			//}
 			//_ignore = false;
-			if (context.HttpContext.User?.Identity?.Name == null)
+			var identity = context.HttpContext.User.Identities.SingleOrDefault(x => x.AuthenticationType == PopForumsAuthorizationDefaults.AuthenticationScheme);
+			if (identity == null)
 				return;
-			_user = _userService.GetUserByName(context.HttpContext.User.Identity.Name);
+			_user = _userService.GetUserByName(identity.Name);
 			if (_user != null)
 			{
 				foreach (var role in _user.Roles)
-					((ClaimsIdentity)context.HttpContext.User.Identity).AddClaim(new Claim("ForumClaims", role));
+					identity.AddClaim(new Claim("ForumClaims", role));
 				context.HttpContext.Items["PopForumsUser"] = _user;
 				var profileService = context.HttpContext.RequestServices.GetService<IProfileService>();
 				var profile = profileService.GetProfile(_user);

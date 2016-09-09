@@ -17,6 +17,7 @@ using PopForums.Web.Areas.Forums;
 using PopForums.Web.Areas.Forums.Authorization;
 using PopForums.Web.Areas.Forums.Controllers;
 using PopForums.Web.Areas.Forums.Services;
+using PopForums.Web.Extensions;
 using PopForums.Web.Messaging;
 
 namespace PopForums.Web
@@ -42,12 +43,7 @@ namespace PopForums.Web
 		{
 			services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
 
-			services.Configure<AuthorizationOptions>(options =>
-			{
-				// TODO: make this less janky, more magic
-				options.AddPolicy(PermanentRoles.Admin, policy => policy.RequireClaim("ForumClaims", PermanentRoles.Admin));
-				options.AddPolicy(PermanentRoles.Moderator, policy => policy.RequireClaim("ForumClaims", PermanentRoles.Moderator));
-			});
+			services.ConfigurePopForumsAuthorizationPolicies();
 
 			// Add MVC services to the services container.
 			services.AddMvc(options =>
@@ -88,17 +84,14 @@ namespace PopForums.Web
 
 			app.UseStaticFiles();
 
-			app.UseCookieAuthentication(new CookieAuthenticationOptions
-			{
-				AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
-				AutomaticAuthenticate = true
-			});
-			app.UseCookieAuthentication(new CookieAuthenticationOptions
-			{
-				AuthenticationScheme = ExternalUserAssociationManager.AuthenticationContextName,
-				CookieName = ExternalUserAssociationManager.AuthenticationContextName,
-				ExpireTimeSpan = TimeSpan.FromMinutes(5)
-			});
+			app.UseCookieAuthenticationForPopForums();
+
+			//app.UseCookieAuthentication(new CookieAuthenticationOptions
+			//{
+			//	AuthenticationScheme = ExternalUserAssociationManager.AuthenticationContextName,
+			//	CookieName = ExternalUserAssociationManager.AuthenticationContextName,
+			//	ExpireTimeSpan = TimeSpan.FromMinutes(5)
+			//});
 
 			//app.UseFacebookAuthentication(new FacebookOptions
 			//{

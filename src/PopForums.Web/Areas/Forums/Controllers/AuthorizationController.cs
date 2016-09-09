@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Services;
+using PopForums.Web.Areas.Forums.Authorization;
 using PopForums.Web.Areas.Forums.Services;
 
 namespace PopForums.Web.Areas.Forums.Controllers
@@ -45,7 +46,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			}
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
-			await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			await HttpContext.Authentication.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Redirect(link);
 		}
 
@@ -54,7 +55,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
-			await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			await HttpContext.Authentication.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
@@ -84,9 +85,9 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				ExpiresUtc = DateTime.UtcNow.AddYears(1)
 			};
 
-			var id = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+			var id = new ClaimsIdentity(claims, PopForumsAuthorizationDefaults.AuthenticationScheme);
 			await
-				httpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id),
+				httpContext.Authentication.SignInAsync(PopForumsAuthorizationDefaults.AuthenticationScheme, new ClaimsPrincipal(id),
 					props);
 		}
 
