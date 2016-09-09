@@ -49,7 +49,7 @@ namespace PopForums.Web.Areas.Forums.Authorization
 			if (_user != null)
 			{
 				foreach (var role in _user.Roles)
-					identity.AddClaim(new Claim("ForumClaims", role));
+					identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
 				context.HttpContext.Items["PopForumsUser"] = _user;
 				var profileService = context.HttpContext.RequestServices.GetService<IProfileService>();
 				var profile = profileService.GetProfile(_user);

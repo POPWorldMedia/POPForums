@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,15 +7,8 @@ using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
-using PopForums.Messaging;
-using PopForums.Models;
-using PopForums.Repositories;
-using PopForums.Web.Areas.Forums;
 using PopForums.Web.Areas.Forums.Authorization;
-using PopForums.Web.Areas.Forums.Controllers;
-using PopForums.Web.Areas.Forums.Services;
 using PopForums.Web.Extensions;
-using PopForums.Web.Messaging;
 
 namespace PopForums.Web
 {
@@ -56,11 +46,7 @@ namespace PopForums.Web
 
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
-			// TODO: how to package mappings in web project
-			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
-			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
-			services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
-			services.AddTransient<IBroker, Broker>();
+			services.AddPopForumsWeb();
 
 			services.AddPopForumsBackgroundServices();
 		}
@@ -112,60 +98,7 @@ namespace PopForums.Web
 			{
 
 				// forum routes
-
-				routes.MapRoute(
-					"pfsetup",
-					"Forums/Setup",
-					new { controller = "Setup", action = "Index", Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pfrecent",
-					"Forums/Recent/{page?}",
-					new { controller = ForumController.Name, action = "Recent", page = 1, Area = "Forums" }
-					);
-				var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
-				var forumConstraint = new ForumRouteConstraint(forumRepository);
-				routes.MapRoute(
-					"pfroot",
-					"Forums/{urlName}/{page?}",
-					new { controller = ForumController.Name, action = "Index", page = 1, Area = "Forums" },
-					new { forum = forumConstraint }
-					);
-				routes.MapRoute(
-					"pftopic",
-					"Forums/Topic/{id}/{page?}",
-					new { controller = ForumController.Name, action = "Topic", page = 1, Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pflink",
-					"Forums/PostLink/{id}",
-					new { controller = ForumController.Name, action = "PostLink", Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pfsubtopics",
-					"Forums/Subscription/Topics/{page?}",
-					new { controller = SubscriptionController.Name, action = "Topics", page = 1, Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pffavetopics",
-					"Forums/Favorites/Topics/{page?}",
-					new { controller = FavoritesController.Name, action = "Topics", page = 1, Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pfpagedudertopics",
-					"Forums/Account/Posts/{id}/{page?}",
-					new { controller = AccountController.Name, action = "Posts", page = 1, Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pftopicunsub",
-					"Forums/Subscription/Unsubscribe/{topicID}/{authKey}",
-					new { controller = SubscriptionController.Name, action = "Unsubscribe", Area = "Forums" }
-					);
-				routes.MapRoute(
-					"pfpagedadmin",
-					"Forums/Admin/ErrorLog/{page?}",
-					new { controller = AdminController.Name, action = "ErrorLog", Area = "Forums" }
-					);
+				routes.AddPopForumsRoutes(app);
 
 				// app routes
 
