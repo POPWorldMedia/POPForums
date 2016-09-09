@@ -10,9 +10,9 @@ using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.ScoringGame;
 using PopForums.Services;
+using PopForums.Web.Areas.Forums.Extensions;
 using PopForums.Web.Areas.Forums.Models;
 using PopForums.Web.Areas.Forums.Services;
-using PopForums.Web.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {

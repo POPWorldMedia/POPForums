@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Web.Areas.Forums.Authorization;
+using PopForums.Web.Areas.Forums.Messaging;
 using PopForums.Web.Areas.Forums.Services;
-using PopForums.Web.Messaging;
 
-namespace PopForums.Web.Extensions
+namespace PopForums.Web.Areas.Forums.Extensions
 {
 	public static class ServiceCollections
 	{

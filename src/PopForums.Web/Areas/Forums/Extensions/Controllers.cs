@@ -2,7 +2,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
-namespace PopForums.Web.Extensions
+namespace PopForums.Web.Areas.Forums.Extensions
 {
 	public static class Controllers
 	{

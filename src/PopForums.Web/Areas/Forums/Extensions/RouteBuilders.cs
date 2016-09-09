@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Repositories;
-using PopForums.Web.Areas.Forums;
 using PopForums.Web.Areas.Forums.Controllers;
 
-namespace PopForums.Web.Extensions
+namespace PopForums.Web.Areas.Forums.Extensions
 {
 	public static class RouteBuilders
 	{

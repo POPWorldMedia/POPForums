@@ -8,7 +8,7 @@ using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Web.Areas.Forums.Authorization;
-using PopForums.Web.Extensions;
+using PopForums.Web.Areas.Forums.Extensions;
 
 namespace PopForums.Web
 {

@@ -6,8 +6,8 @@ using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Web.Areas.Forums.Services;
-using PopForums.Web.Extensions;
 using PopForums.Extensions;
+using PopForums.Web.Areas.Forums.Extensions;
 
 namespace PopForums.Web.Areas.Forums.Controllers
 {

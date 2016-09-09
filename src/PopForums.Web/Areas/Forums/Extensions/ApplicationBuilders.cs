@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using PopForums.Web.Areas.Forums.Authorization;
 
-namespace PopForums.Web.Extensions
+namespace PopForums.Web.Areas.Forums.Extensions
 {
 	public static class ApplicationBuilders
 	{
