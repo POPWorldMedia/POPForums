@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Models;
@@ -32,16 +31,21 @@ namespace PopForums.Web.Areas.Forums.Authorization
 
 		public void OnAuthorization(AuthorizationFilterContext context)
 		{
-			// TODO: limit to pf controllers
-			//if (!IsValidToRunOnController(context))
-			//	return;
-			//var attributes = context.ActionDescriptor.GetCustomAttributes(typeof(PopForumsAuthorizationIgnoreAttribute), false);
-			//if (attributes.Length > 0)
-			//{
-			//	_ignore = true;
-			//	return;
-			//}
-			//_ignore = false;
+			var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+			if (controllerActionDescriptor == null)
+				return;
+			if (!IsValidToRunOnController(controllerActionDescriptor.ControllerTypeInfo))
+			{
+				_ignore = true;
+				return;
+			}
+			var attributes = controllerActionDescriptor.MethodInfo.GetCustomAttributes(typeof(PopForumsAuthorizationIgnoreAttribute), false);
+			if (attributes.Any())
+			{
+				_ignore = true;
+				return;
+			}
+			_ignore = false;
 			var identity = context.HttpContext.User.Identities.SingleOrDefault(x => x.AuthenticationType == PopForumsAuthorizationDefaults.AuthenticationScheme);
 			if (identity == null)
 				return;
@@ -59,14 +63,14 @@ namespace PopForums.Web.Areas.Forums.Authorization
 
 		public void OnActionExecuting(ActionExecutingContext filterContext)
 		{
-			//if (_ignore || !IsValidToRunOnController(filterContext.Controller))
-			//	return;
+			if (_ignore)
+				return;
 
 			if (filterContext.HttpContext.Response.StatusCode == StatusCodes.Status301MovedPermanently || filterContext.HttpContext.Response.StatusCode == StatusCodes.Status302Found)
 				return;
 			int cookieSessionID;
 			int.TryParse(filterContext.HttpContext.Request.Cookies[UserSessionService._sessionIDCookieName], out cookieSessionID);
-			int? sessionID = cookieSessionID == 0 ? (int?)null : cookieSessionID;
+			var sessionID = cookieSessionID == 0 ? (int?)null : cookieSessionID;
 			var resultSessionID = _userSessionService.ProcessUserRequest(_user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
 				() => filterContext.HttpContext.Response.Cookies.Delete(UserSessionService._sessionIDCookieName), 
 				s => filterContext.HttpContext.Response.Cookies.Append(UserSessionService._sessionIDCookieName, s.ToString()));
@@ -76,11 +80,11 @@ namespace PopForums.Web.Areas.Forums.Authorization
 		{
 		}
 
-		private bool IsValidToRunOnController(ControllerContext context)
+		private bool IsValidToRunOnController(TypeInfo controllerType)
 		{
 			if (IsGlobalFilter())
 				return true;
-			var controllerNamespace = context.ActionDescriptor.ControllerTypeInfo.Namespace;
+			var controllerNamespace = controllerType.Namespace;
 			return controllerNamespace != null && controllerNamespace.StartsWith("PopForums");
 		}
 	}
