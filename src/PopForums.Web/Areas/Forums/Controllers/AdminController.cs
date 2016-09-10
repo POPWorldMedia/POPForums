@@ -620,11 +620,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return RedirectToAction("AwardDefinitions");
 		}
 
-		public ViewResult Award(string id)
+		public ActionResult Award(string id)
 		{
 			var award = _awardDefinitionService.Get(id);
 			if (award == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var selectList = new SelectList(_eventDefinitionService.GetAll(), "EventDefinitionID", "EventDefinitionID");
 			ViewBag.EventList = selectList;
 			ViewBag.Conditions = _awardDefinitionService.GetConditions(id);

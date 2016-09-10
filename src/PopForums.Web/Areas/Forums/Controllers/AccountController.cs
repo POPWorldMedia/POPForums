@@ -224,7 +224,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
-				this.Forbidden("Forbidden", null);
+				return Forbid();
 			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			resetContainer.IsValidUser = true;
 			if (resetContainer.Password != resetContainer.PasswordRetype)
@@ -239,11 +239,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return RedirectToAction("ResetPasswordSuccess");
 		}
 
-		public ViewResult ResetPasswordSuccess()
+		public ActionResult ResetPasswordSuccess()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			return View();
 		}
 
@@ -370,11 +370,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ViewResult ViewProfile(int id)
+		public ActionResult ViewProfile(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var profile = _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
@@ -386,11 +386,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ViewResult Posts(int id, int page = 1)
+		public ActionResult Posts(int id, int page = 1)
 		{
 			var postUser = _userService.GetUser(id);
 			if (postUser == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			var includeDeleted = false;
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
@@ -438,32 +438,32 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return schemes;
 		}
 
-		public ViewResult EmailUser(int id)
+		public ActionResult EmailUser(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			if (!_userEmailer.IsUserEmailable(toUser))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
 			return View(toUser);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ViewResult EmailUser(int id, string subject, string text)
+		public ActionResult EmailUser(int id, string subject, string text)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
-				return this.NotFound("NotFound", null);
+				return NotFound();
 			if (!_userEmailer.IsUserEmailable(toUser))
-				return this.Forbidden("Forbidden", null);
+				return Forbid();
 			if (String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(text))
 			{
 				ViewBag.EmailResult = Resources.PMCreateWarnings;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,10 @@ namespace PopForums.Web
 		{
 			services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
 
-			services.ConfigurePopForumsAuthorizationPolicies();
+			services.Configure<AuthorizationOptions>(options =>
+			{
+				options.AddPopForumsPolicies();
+			});
 
 			// Add MVC services to the services container.
 			services.AddMvc(options =>
@@ -56,16 +60,13 @@ namespace PopForums.Web
 		{
 			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			loggerFactory.AddDebug();
+			loggerFactory.AddPopForumsLogger(app);
 
 			if (env.IsDevelopment())
 			{
-				app.UseBrowserLink();
+				//app.UseBrowserLink();
 				app.UseDeveloperExceptionPage();
 				app.UseDatabaseErrorPage();
-			}
-			else
-			{
-				//app.UseExceptionHandler("/Home/Error");
 			}
 
 			app.UseStaticFiles();

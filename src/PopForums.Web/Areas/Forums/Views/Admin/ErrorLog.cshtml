@@ -1,5 +1,4 @@
-﻿@model List<PopForums.Models.ErrorLogEntry>
-@using PopForums.Extensions;
+﻿@model List<ErrorLogEntry>
 @using PopForums.Models;
 @{
     ViewBag.PageTitle = PopForums.Resources.ErrorLog;
@@ -8,24 +7,24 @@
 
 <h1>@PopForums.Resources.ErrorLog</h1>
 
-@using(Html.BeginForm("DeleteAllErrorLog", "Admin")) {
+<form asp-action="DeleteAllErrorLog" method="post">
 	<p><input type="submit" value="@PopForums.Resources.DeleteAllErrors" class="btn btn-primary" /></p>
-}
+</form>
 
-<p>@Html.PagerLinks("Admin", "ErrorLog", (PagerContext)ViewData["PagerContext"], "", "", "")</p>
+<pf-pagerlinks actionName="ErrorLog" controllerName="Admin" pagerContext="@((PagerContext)ViewData["PagerContext"])" class="pagination pagerLinks"/>
 
 @foreach(var error in Model) {
 
 	<p>
-		@using(Html.BeginForm("DeleteErrorLog", "Admin")) {
+		<form asp-action="DeleteErrorLog" method="post">
 			<input type="submit" value="@PopForums.Resources.Delete" class="btn btn-primary" />@Html.Hidden("id", error.ErrorID)
-		}
+		</form>
 		<b>@error.Severity: @error.TimeStamp - @error.Message</b>
 	</p>
 
-	<p class="small">@MvcHtmlString.Create(error.StackTrace.Replace("\r\n", "<br />"))</p>
+	<p class="small">@Html.Raw(error.StackTrace.Replace("\r\n", "<br />"))</p>
 
-	<p class="small">@MvcHtmlString.Create(error.Data.Replace("\r\n", "<br />"))</p>
+	<p class="small">@Html.Raw(error.Data.Replace("\r\n", "<br />"))</p>
 
 	<hr />
 

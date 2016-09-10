@@ -32,14 +32,5 @@ namespace PopForums.Web.Areas.Forums.Extensions
 			}
 			return new HtmlString(build.ToString());
 		}
-
-		public static bool IsNewPosts(this IHtmlHelper helper, Topic topic, PagedTopicContainer container)
-		{
-			if (!container.ReadStatusLookup.ContainsKey(topic.TopicID))
-				return false;
-			if (container.ReadStatusLookup[topic.TopicID] == (ReadStatus.NewPosts | container.ReadStatusLookup[topic.TopicID]))
-				return true;
-			return false;
-		}
 	}
 }

@@ -1,7 +1,10 @@
-﻿@model PopForums.Configuration.Settings
+﻿@using System.Threading.Tasks
+@using PopForums.Models
+@model PopForums.Configuration.Settings
 @{
-    ViewBag.PageTitle = PopForums.Resources.GeneralSettings;
-    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+	ViewBag.PageTitle = PopForums.Resources.GeneralSettings;
+	Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
 }
 
 <h2>@PopForums.Resources.GeneralSettings</h2>
@@ -130,7 +133,7 @@
 
 		<div class="form-group">
 			<label for="ServerTimeZone" class="col-sm-4 control-label">@PopForums.Resources.TimeZone</label>
-			<div class="col-sm-8">@Html.TimeZoneDropDown("ServerTimeZone", new { @class = "form-control" }, Model.ServerTimeZone)</div>
+			<div class="col-sm-8"><select asp-for="ServerTimeZone" asp-items="@timeZones" class="form-control"></select></div>
 		</div>
 		<div class="form-group">
 			<div class="col-sm-8 col-sm-offset-4">

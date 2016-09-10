@@ -8,6 +8,12 @@ namespace PopForums.Web.Areas.Forums.Extensions
 {
 	public static class RouteBuilders
 	{
+		/// <summary>
+		/// Adds the POP Forums routes to the application.
+		/// </summary>
+		/// <param name="routes"></param>
+		/// <param name="app"></param>
+		/// <returns></returns>
 		public static IRouteBuilder AddPopForumsRoutes(this IRouteBuilder routes, IApplicationBuilder app)
 		{
 			routes.MapRoute(
