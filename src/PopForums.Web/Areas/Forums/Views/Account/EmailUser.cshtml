@@ -1,18 +1,18 @@
-﻿@using PopForums.Controllers
+﻿@using PopForums.Web.Areas.Forums.Controllers
 @model PopForums.Models.User
 @{
     ViewBag.Title = PopForums.Resources.EmailUser;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.EmailUser - @Model.Name</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
-@using (Html.BeginForm("EmailUser", "Account", FormMethod.Post, new { role = "form" })) {
+<form asp-action="EmailUser" method="post" role="form">
 	<div class="form-group">
 		<label>@PopForums.Resources.To</label>
 		<p class="form-control-static">@Model.Name</p>
@@ -23,13 +23,13 @@
 	</div>
 	<div class="form-group">
 		<label for="subject">@PopForums.Resources.Subject</label>
-		@Html.TextBox("subject", null, new { @class = "form-control" })
+		<input type="text" name="subject" class="form-control"/>
 	</div>
 	<div class="form-group">
 		<label for="text">@PopForums.Resources.Text</label>
-		@Html.TextArea("text", new { @class = "form-control", rows = 6 })
+		<textarea name="text" class="form-control" rows="6"></textarea>
 	</div>
 	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
-	if (ViewBag.EmailResult != null){ <span class="bg-danger callout">@ViewBag.EmailResult</span> }
+	@if (ViewBag.EmailResult != null){ <span class="bg-danger callout">@ViewBag.EmailResult</span> }
 	@Html.AntiForgeryToken()
-}
+</form>

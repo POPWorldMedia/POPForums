@@ -1,22 +1,24 @@
 ﻿@model PopForums.Models.UserEditProfile
-@using PopForums.Controllers
-@using PopForums.Extensions;
+@using System.Linq;
+@using PopForums.Models
+@using PopForums.Web.Areas.Forums.Controllers
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
 }
 
 <div>
 	<h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li>@PopForums.Resources.Account</li>
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.EditProfile <span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu">
-				<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</li>
-				<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")</li>
-				<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", "Account")</li>
+				<li><a asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a></li>
+				<li><a asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a></li>
+				<li><a asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a></li>
 			</ul>
 		</li>
 
@@ -26,7 +28,7 @@
 @if (ViewData["Result"] != null)
 { <p class="bg-danger callout">@ViewData["Result"]</p> }
 
-@using (Html.BeginForm("EditProfile", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" })) {
+<form asp-action="EditProfile" role="form" class="form-horizontal" method="post">
 
 	<div class="col-xs-12">
 		<h2>@PopForums.Resources.Options</h2>
@@ -35,7 +37,7 @@
 		<div class="col-xs-push-2 col-xs-10">
 			<div class="checkbox">
 				<label>
-					@Html.CheckBoxFor(m => m.IsSubscribed) @PopForums.Resources.SubscribeToList
+					<input type="checkbox" asp-for="IsSubscribed"/> @PopForums.Resources.SubscribeToList
 				</label>
 			</div>
 		</div>
@@ -44,7 +46,7 @@
 		<div class="col-xs-push-2 col-xs-10">
 			<div class="checkbox">
 				<label>
-					@Html.CheckBoxFor(m => m.ShowDetails) @PopForums.Resources.ShowProfileDetails
+					<input type="checkbox" asp-for="ShowDetails"/> @PopForums.Resources.ShowProfileDetails
 				</label>
 			</div>
 		</div>
@@ -53,7 +55,7 @@
 		<div class="col-xs-push-2 col-xs-10">
 			<div class="checkbox">
 				<label>
-					@Html.CheckBoxFor(m => m.IsPlainText) @PopForums.Resources.ForcePlainTextBox
+					<input type="checkbox" asp-for="IsPlainText"/> @PopForums.Resources.ForcePlainTextBox
 				</label>
 			</div>
 		</div>
@@ -62,7 +64,7 @@
 		<div class="col-xs-push-2 col-xs-10">
 			<div class="checkbox">
 				<label>
-					@Html.CheckBoxFor(m => m.HideVanity) @PopForums.Resources.HideVanity
+					<input type="checkbox" asp-for="HideVanity"/> @PopForums.Resources.HideVanity
 				</label>
 			</div>
 		</div>
@@ -70,7 +72,7 @@
 	<div class="form-group">
 		<label for="TimeZone" class="col-xs-2 control-label">@PopForums.Resources.TimeZone</label>
 		<div class="col-xs-10">
-			@Html.TimeZoneDropDown("TimeZone", new { @class = "form-control" }, Model.TimeZone)
+			<select asp-for="TimeZone" asp-items="@timeZones" class="form-control"></select>
 		</div>
 	</div>
 	<div class="form-group">
@@ -89,19 +91,19 @@
 	<div class="form-group">
 		<label for="Signature" class="col-xs-2 control-label">@PopForums.Resources.Signature</label>
 		<div class="col-xs-10">
-			@Html.TextAreaFor(m => m.Signature, new { @class = "form-control", rows = 3 })
+			<textarea asp-for="Signature" class="form-control" rows="3"></textarea>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="Location" class="col-xs-2 control-label">@PopForums.Resources.Location</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+			<input type="text" asp-for="Location" class="form-control"/>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="Dob" class="col-xs-2 control-label">@PopForums.Resources.DateOfBirth</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.Dob, new { @class = "form-control" })
+			<input type="text" asp-for="Dob" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
@@ -109,7 +111,7 @@
 		<div class="col-xs-10">
 			<div class="input-group">
 				<span class="input-group-addon">https://facebook.com/</span>
-				@Html.TextBoxFor(m => m.Facebook, new { @class = "form-control" })
+				<input type="text" asp-for="Facebook" class="form-control" />
 			</div>
 		</div>
 	</div>
@@ -118,35 +120,35 @@
 		<div class="col-xs-10">
 			<div class="input-group">
 				<span class="input-group-addon">&#64;</span>
-				@Html.TextBoxFor(m => m.Twitter, new { @class = "form-control" })
+				<input type="text" asp-for="Twitter" class="form-control" />
 			</div>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="Web" class="col-xs-2 control-label">@PopForums.Resources.Web</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.Web, new { @class = "form-control" })
+			<input type="text" asp-for="Web" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="Aim" class="col-xs-2 control-label">AIM</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.Aim, new { @class = "form-control" })
+			<input type="text" asp-for="Aim" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="Icq" class="col-xs-2 control-label">ICQ</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.Icq, new { @class = "form-control" })
+			<input type="text" asp-for="Icq" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="YahooMessenger" class="col-xs-2 control-label">Yahoo Messenger</label>
 		<div class="col-xs-10">
-			@Html.TextBoxFor(m => m.YahooMessenger, new { @class = "form-control" })
+			<input type="text" asp-for="YahooMessenger" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group col-xs-push-2 col-xs-10">
 		<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	</div>
-}
+</form>

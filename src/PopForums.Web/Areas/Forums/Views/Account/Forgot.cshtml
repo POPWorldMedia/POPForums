@@ -1,25 +1,22 @@
-﻿@using PopForums.Controllers
+﻿@using PopForums.Web.Areas.Forums.Controllers
 @{
     ViewBag.Title = PopForums.Resources.ForgotPassword;
-    Layout = "~/Areas/PopForums/Views/Shared/PopForumsMaster.cshtml";
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.ForgotPassword</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", ForumHomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
 <p>@PopForums.Resources.ForgotInstructions</p>
 
-@using (Html.BeginForm("Forgot", "Account", FormMethod.Post, new { role = "form" }))
-{
+<form asp-action="Forgot" method="post" role="form">
 	<div class="form-group">
-		@Html.TextBox("Email", null, new { @class = "form-control" })
+		<input name="Email" class="form-control"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
-	if (ViewBag.Result != null) { <span class="bg-danger callout">@ViewBag.Result</span> }
-}
-
-
+	@if (ViewBag.Result != null) { <span class="bg-danger callout">@ViewBag.Result</span> }
+</form>

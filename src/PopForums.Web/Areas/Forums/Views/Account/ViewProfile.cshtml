@@ -1,7 +1,5 @@
 ﻿@using System.Threading.Tasks
-@using PopForums.Services
 @using PopForums.Web.Areas.Forums.Controllers
-@using PopForums.Web.Areas.Forums.Services
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @model PopForums.Models.DisplayProfile
@@ -17,7 +15,7 @@
 <div>
 	<h1>@Model.Name</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
@@ -34,13 +32,13 @@
 				{
 					<dt>@PopForums.Resources.Contact</dt>
 					<dd>
-						@Html.ActionLink(String.Format(PopForums.Resources.SendNamePM, Model.Name), "Create", "PrivateMessages", new { id = Model.UserID }, null)<br />
-						@Html.ActionLink(String.Format(PopForums.Resources.SendNameEmail, Model.Name), "EmailUser", "Account", new { id = Model.UserID }, null)
+						<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br/>
+						<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
 					</dd>
 				}
 				
 				<dt></dt>
-				<dd>@Html.ActionLink(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")", "Posts", "Account", new { id = Model.UserID }, null)</dd>
+				<dd><a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID">@(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")")</a></dd>
 				
 				<dt>@PopForums.Resources.Joined</dt>
 				<dd>@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</dd>
@@ -48,7 +46,7 @@
 				@if (Model.Dob.HasValue)
 				{
 					<dt>@PopForums.Resources.Birthday</dt>
-					<dd>@Model.Dob.Value.ToLongDateString()</dd>
+					<dd>@Model.Dob.Value.ToString("D")</dd>
 				}
 				
 				@if (!String.IsNullOrWhiteSpace(Model.Location))

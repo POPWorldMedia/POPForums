@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -190,9 +189,9 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult Forgot(FormCollection collection)
+		public ViewResult Forgot(string email)
 		{
-			var user = _userService.GetUserByEmail(collection["Email"]);
+			var user = _userService.GetUserByEmail(email);
 			if (user == null)
 			{
 				ViewBag.Result = Resources.EmailNotFound;
@@ -206,11 +205,11 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View();
 		}
 
-		public ViewResult ResetPassword(string id)
+		public ActionResult ResetPassword(string id)
 		{
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
-				this.Forbidden("Forbidden", null);
+				return Forbid();
 			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			var container = new PasswordResetContainer();
 			if (user == null)

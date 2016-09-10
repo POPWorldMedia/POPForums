@@ -9,7 +9,6 @@ namespace PopForums.Email
 {
 	public interface ISmtpWrapper
 	{
-		SmtpStatusCode? Send(QueuedEmailMessage message);
 		SmtpStatusCode? Send(EmailMessage message);
 	}
 
@@ -24,15 +23,10 @@ namespace PopForums.Email
 		private readonly ISettingsManager _settingsManager;
 		private readonly IErrorLog _errorLog;
 
-		public SmtpStatusCode? Send(QueuedEmailMessage message)
+		public SmtpStatusCode? Send(EmailMessage message)
 		{
 			if (message == null)
 				throw new ArgumentNullException("message");
-			return Send(message);
-		}
-
-		public SmtpStatusCode? Send(EmailMessage message)
-		{
 			var parsedMessage = ConvertEmailMessage(message);
 			var settings = _settingsManager.Current;
 			SmtpStatusCode? result = SmtpStatusCode.Ok;

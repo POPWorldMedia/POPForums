@@ -8,14 +8,14 @@
 <div>
 	<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li>@PopForums.Resources.Account</li>
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ExternalLogins <span class="caret"></span></a>
 			<ul class="dropdown-menu" role="menu">
-				<li>@Html.ActionLink(PopForums.Resources.EditYourProfile, "EditProfile", "Account")</li>
-				<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", "Account")</li>
-				<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", "Account")</li>
+				<li><a asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a></li>
+				<li><a asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a></li>
+				<li><a asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a></li>
 			</ul>
 		</li>
 
@@ -33,10 +33,9 @@ else
 		{
 			<tr>
 				<td class="col-xs-2">
-					@using (Html.BeginForm("RemoveExternalLogin", "Account", new {id = item.ExternalUserAssociationID}))
-					{
-						<input type="submit" value="Remove" class="btn btn-primary"/>
-					}
+					<form asp-action="RemoveExternalLogin" asp-route-id="@item.ExternalUserAssociationID" method="post">
+						<input type="submit" value="Remove" class="btn btn-primary" />
+					</form>
 				</td>
 				<td class="col-xs-4">@item.Issuer</td>
 				<td class="col-xs-6">@item.Name</td>
