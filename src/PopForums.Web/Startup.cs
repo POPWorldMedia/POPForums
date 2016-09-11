@@ -73,25 +73,6 @@ namespace PopForums.Web
 
 			app.UseCookieAuthenticationForPopForums();
 
-			//app.UseCookieAuthentication(new CookieAuthenticationOptions
-			//{
-			//	AuthenticationScheme = ExternalUserAssociationManager.AuthenticationContextName,
-			//	CookieName = ExternalUserAssociationManager.AuthenticationContextName,
-			//	ExpireTimeSpan = TimeSpan.FromMinutes(5)
-			//});
-
-			//app.UseFacebookAuthentication(new FacebookOptions
-			//{
-			//	AppId = "1932812290276605",
-			//	AppSecret = "d2cfaebc3b565bdcfc7782b72aab98d8"
-			//});
-
-			//app.UseGoogleAuthentication(new GoogleOptions
-			//{
-			//	ClientId = "319472452413-ojveqkrcdfufi84le0sm7044sqfqkhfj.apps.googleusercontent.com",
-			//	ClientSecret = "n_ZhNUpEaGJyhnfIHBSWyhbx"
-			//});
-
 			app.UseSignalR();
 
 			// Add MVC to the request pipeline.

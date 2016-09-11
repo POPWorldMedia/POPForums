@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using PopForums.Configuration;
+using PopForums.ExternalLogin;
 using PopForums.Web.Areas.Forums.Authorization;
 
 namespace PopForums.Web.Areas.Forums.Extensions
@@ -18,6 +22,45 @@ namespace PopForums.Web.Areas.Forums.Extensions
 				CookieName = PopForumsAuthorizationDefaults.CookieName,
 				AutomaticAuthenticate = true
 			});
+
+			var settingsManager = app.ApplicationServices.GetService<ISettingsManager>();
+			var settings = settingsManager.Current;
+
+			app.UseCookieAuthentication(new CookieAuthenticationOptions
+			{
+				AuthenticationScheme = ExternalUserAssociationManager.AuthenticationContextName,
+				CookieName = ExternalUserAssociationManager.AuthenticationContextName,
+				ExpireTimeSpan = TimeSpan.FromMinutes(5)
+			});
+
+			if (settings.UseTwitterLogin)
+				app.UseTwitterAuthentication(new TwitterOptions
+				{
+					ConsumerKey = settings.TwitterConsumerKey,
+					ConsumerSecret = settings.TwitterConsumerSecret
+				});
+
+			if (settings.UseMicrosoftLogin)
+				app.UseMicrosoftAccountAuthentication(new MicrosoftAccountOptions
+				{
+					ClientId = settings.MicrosoftClientID,
+					ClientSecret = settings.MicrosoftClientSecret
+				});
+
+			if (settings.UseFacebookLogin)
+				app.UseFacebookAuthentication(new FacebookOptions
+				{
+					AppId = settings.FacebookAppID,
+					AppSecret = settings.FacebookAppSecret
+				});
+
+			if (settings.UseGoogleLogin)
+				app.UseGoogleAuthentication(new GoogleOptions
+				{
+					ClientId = settings.GoogleClientId,
+					ClientSecret = settings.GoogleClientSecret
+				});
+
 			return app;
 		}
 	}

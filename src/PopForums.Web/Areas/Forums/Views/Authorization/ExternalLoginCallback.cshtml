@@ -17,13 +17,13 @@
 <div class="row">
 	<h1>@PopForums.Resources.Login - @PopForums.Resources.ExternalLogins</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
 <div class="row">
 	<div class="col-xs-6">
-		<h2>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", "Account")</h2>
+		<h2><a asp-controller="Account" asp-action="Create">@PopForums.Resources.CreateAnAccount</a></h2>
 	</div>
 	<div class="col-xs-6">
 		<h2>@PopForums.Resources.UseExistingForumAccount</h2>

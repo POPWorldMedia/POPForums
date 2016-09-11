@@ -94,10 +94,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		[HttpPost]
 		public ViewResult ExternalLogins(FormCollection collection)
 		{
-			throw new NotImplementedException();
-			//SaveFormValuesToSettings(collection);
-			//HttpRuntime.UnloadAppDomain();
-			//return View(_settingsManager.Current);
+			// TODO: This requires an app restart to register the new social logins
+			SaveFormValuesToSettings(Request.Form);
+			_settingsManager.FlushCurrent();
+			return View(_settingsManager.Current);
 		}
 
 		public ViewResult Email()
