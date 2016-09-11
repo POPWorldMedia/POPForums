@@ -31,19 +31,19 @@
 		<div role="form">
 			<div class="form-group">
 				<label for="EmailLogin">@PopForums.Resources.Email</label>
-				@Html.TextBox("EmailLogin", null, new { @class = "form-control" })
+				<input type="text" name="EmailLogin" id="EmailLogin" class="form-control"/>
 			</div>
 			<div class="form-group">
 				<label for="PasswordLogin">@PopForums.Resources.Password</label>
-				@Html.Password("PasswordLogin", null, new { @class = "form-control" })
+				<input type="password" name="PasswordLogin" id="PasswordLogin" class="form-control" />
 			</div>
 			<div class="checkbox">
 				<label>
-					@Html.CheckBox("PersistCookie") @PopForums.Resources.RememberMe
+					<input type="checkbox" name="PersistCookie" id="PersistCookie"/> @PopForums.Resources.RememberMe
 				</label>
 			</div>
 			<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
 		</div>
-		@Html.Hidden("Referrer", (object)ViewBag.Referrer)
+		<input type="hidden" name="Referrer" id="Referrer" value="@((object)ViewBag.Referrer)" />
 	</div>
 </div>

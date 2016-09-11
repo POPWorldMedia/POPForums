@@ -1,7 +1,5 @@
 ﻿@using System.Threading.Tasks
-@using PopForums.Services
 @using PopForums.Web.Areas.Forums.Controllers
-@using PopForums.Web.Areas.Forums.Services
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @model List<PopForums.Models.FeedEvent>
@@ -23,8 +21,8 @@
 <div>
 	<h1>@PopForums.Resources.ActivityFeed</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1 }, null)</li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> @Html.ActionLink(PopForums.Resources.Forums, "Index", HomeController.Name, null, null)</li>
+		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
