@@ -7,20 +7,20 @@
 
 <h2>@PopForums.Resources.EditUser - @PopForums.Resources.Search</h2>
 
-@using (Html.BeginForm("EditUserSearch", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
-	@Html.TextBox("SearchText", null, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" /><br />
-	@Html.RadioButton("SearchType", "Name", new {id="Name", @checked="checked"})<label for="Name">@PopForums.Resources.Name</label>
-	@Html.RadioButton("SearchType", "Email", new { id = "Email" })<label for="Email">@PopForums.Resources.Email</label>
-	@Html.RadioButton("SearchType", "Role", new { id = "Role" })<label for="Role">@PopForums.Resources.Role</label>
-}
+<form asp-action="EditUserSearch" method="post" class="form-inline">
+	<input type="text" name="SearchText" class="form-control" />
+	<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary"/><br/>
+	@Html.RadioButton("SearchType", "Name", new {id = "Name", @checked = "checked"})<label for="Name">@PopForums.Resources.Name</label>
+	@Html.RadioButton("SearchType", "Email", new {id = "Email"})<label for="Email">@PopForums.Resources.Email</label>
+	@Html.RadioButton("SearchType", "Role", new {id = "Role"})<label for="Role">@PopForums.Resources.Role</label>
+</form>
 
 <p>
 	@if (Model != null)
- {
-	 foreach (var user in Model)
-	 {
-			@Html.ActionLink(user.Name, "EditUser", new { id = user.UserID })<br />
+	{
+		foreach (var user in Model)
+		{
+			<a asp-action="EditUser" asp-route-id="@user.UserID">@user.Name</a><br />
 		}
 	}
 </p>

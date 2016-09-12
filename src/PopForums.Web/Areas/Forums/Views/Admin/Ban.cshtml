@@ -10,20 +10,21 @@
 <table class="table">
 	<tr>
 		<td>
-			@using(Html.BeginForm("BanEmail", "Admin", FormMethod.Post, new { @class = "form-inline"} )) {
-				@Html.TextBox("email", null, new { @class = "form-control" })
-				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-primary" />
-			}
+			<form asp-action="BanEmail" method="post" class="form-inline">
+				<input type="text" name="email" class="form-control" />
+				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-primary"/>
+			</form>
 		</td>
 		<td>
-			@using(Html.BeginForm("RemoveEmailBan", "Admin")) {
+			<form asp-action="RemoveEmailBan" method="post">
 				<select name="email" size="6" class="form-control">
-					@foreach(var item in (List<string>)ViewData["EmailList"]) {
+					@foreach (var item in (List<string>)ViewData["EmailList"])
+					{
 						<option>@item</option>
 					}
 				</select><br />
 				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn btn-primary" />
-			}
+			</form>
 		</td>
 	</tr>
 </table>
@@ -33,20 +34,21 @@
 <table class="table">
 	<tr>
 		<td>
-			@using(Html.BeginForm("BanIP", "Admin")) {
-				@Html.TextBox("ip")
-				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-primary" />
-			}
+			<form asp-action="BanIP" method="post" class="form-inline">
+				<input type="text" name="ip" class="form-control"/>
+				<input type="submit" value="@PopForums.Resources.Ban" class="btn btn-primary"/>
+			</form>
 		</td>
 		<td>
-			@using(Html.BeginForm("RemoveIPBan", "Admin")) {
+			<form asp-action="RemoveIPBan" method="post">
 				<select name="ip" size="6" class="form-control">
-					@foreach(var item in (List<string>)ViewData["IPList"]) {
+					@foreach (var item in (List<string>)ViewData["IPList"])
+					{
 						<option>@item</option>
 					}
 				</select><br />
 				<input type="submit" value="@PopForums.Resources.BanRemove" class="btn btn-primary" />
-			}
+			</form>
 		</td>
 	</tr>
 </table>

@@ -96,9 +96,7 @@ namespace PopForums.Services
 		public string GetUnsubscribeHash(User user)
 		{
 			var source = user.Name + user.Email;
-			// TODO: GetUnsubscribeHash()
-			return "";
-			//return source.GetMD5Hash();
+			return source.GetMD5Hash();
 		}
 
 		public bool Unsubscribe(User user, string hash)

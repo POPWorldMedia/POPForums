@@ -15,12 +15,12 @@
 			dataType: "json",
 			success: function (result) {
 				var categoryList = $("#CategoryList");
-				switch (result.Result) {
+				switch (result.result) {
 					case true:
 						categoryList.load(PopForums.areaPath + "/Admin/CategoryList");
 						break;
 					default:
-						categoryList.html(result.Message);
+						categoryList.html(result.message);
 				}
 			},
 			error: function () {
@@ -38,10 +38,10 @@
 
 <h2>@PopForums.Resources.Categories</h2>
 
-@using (Html.BeginForm("AddCategory", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
-	@Html.TextBox("newCategoryTitle", null, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.AddNew" class="btn btn-primary" />
-}
+<form asp-action="AddCategory" method="post" class="form-inline">
+	<input type="text" name="newCategoryTitle" class="form-control"/>
+	<input type="submit" value="@PopForums.Resources.AddNew" class="btn btn-primary"/>
+</form>
 
 <div id="CategoryList" style="margin-top: 20px;">
 	@Html.Partial("CategoryList", Model)

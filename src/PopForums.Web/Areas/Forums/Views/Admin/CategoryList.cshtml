@@ -8,10 +8,10 @@
 		<td>@category.Title</td>
 		<td><input type="button" value="@PopForums.Resources.Edit" onclick="PopForums.EditCategory(@category.CategoryID)" class="btn btn-primary" /></td>
 		<td>
-			@using (Html.BeginForm("DeleteCategory", "Admin")) {
-				@Html.Hidden("categoryID", category.CategoryID)
-				<input type="submit" value="@PopForums.Resources.Delete" class="btn btn-primary" />
-			}
+			<form asp-action="DeleteCategory" method="post" asp-antiforgery="false">
+				<input type="hidden" name="categoryID" value="@category.CategoryID"/>
+				<input type="submit" value="@PopForums.Resources.Delete" class="btn btn-primary"/>
+			</form>
 		</td>
 	</tr>
 	}

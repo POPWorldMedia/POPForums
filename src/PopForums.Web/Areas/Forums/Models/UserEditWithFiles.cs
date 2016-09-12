@@ -5,6 +5,11 @@ namespace PopForums.Web.Areas.Forums.Models
 {
     public class UserEditWithFiles : UserEdit
     {
+	    public UserEditWithFiles()
+	    {
+		    
+	    }
+
 	    public UserEditWithFiles(User user, Profile profile) : base(user, profile)
 	    {
 	    }

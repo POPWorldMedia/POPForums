@@ -1,5 +1,4 @@
-﻿@using PopForums.Web.Areas.Forums.Controllers
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -30,32 +29,32 @@
 						</div>
 						<div id="MainNav" class="collapse navbar-collapse">
 							<ul class="nav navbar-collapse">
-								<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", HomeController.Name)</li>
+								<li><a asp-action="Index" asp-controller="Home">@PopForums.Resources.ForumHome</a></li>
 								<li class="divider"></li>
-								<li>@Html.ActionLink(PopForums.Resources.GeneralSettings, "Index")</li>
-								<li>@Html.ActionLink(PopForums.Resources.Categories, "Categories")</li>
-								<li>@Html.ActionLink(PopForums.Resources.Forums, "Forums")</li>
-								<li>@Html.ActionLink(PopForums.Resources.ForumPermisions, "ForumPermissions")</li>
-								<li>@Html.ActionLink(PopForums.Resources.Email, "Email")</li>
-								<li>@Html.ActionLink(PopForums.Resources.Search, "Search")</li>
-								<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins")</li>
+								<li><a asp-action="Index">@PopForums.Resources.GeneralSettings</a></li>
+								<li><a asp-action="Categories">@PopForums.Resources.Categories</a></li>
+								<li><a asp-action="Forums">@PopForums.Resources.Forums</a></li>
+								<li><a asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a></li>
+								<li><a asp-action="Email">@PopForums.Resources.Email</a></li>
+								<li><a asp-action="Search">@PopForums.Resources.Search</a></li>
+								<li><a asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a></li>
 								<li class="divider"></li>
-								<li>@Html.ActionLink(PopForums.Resources.EditUser, "EditUserSearch")</li>
-								<li>@Html.ActionLink(PopForums.Resources.UserRoles, "UserRoles")</li>
-								<li>@Html.ActionLink(PopForums.Resources.UserImageApproval, "UserImageApprove")</li>
-								<li>@Html.ActionLink(PopForums.Resources.EmailIpBan, "Ban")</li>
-								<li>@Html.ActionLink(PopForums.Resources.EmailUsers, "EmailUsers")</li>
+								<li><a asp-action="EditUserSearch">@PopForums.Resources.EditUser</a></li>
+								<li><a asp-action="UserRoles">@PopForums.Resources.UserRoles</a></li>
+								<li><a asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a></li>
+								<li><a asp-action="Ban">@PopForums.Resources.EmailIpBan</a></li>
+								<li><a asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a></li>
 								<li class="divider"></li>
-								<li>@Html.ActionLink(PopForums.Resources.ScoringGame, "ScoringGame")</li>
-								<li>@Html.ActionLink(PopForums.Resources.EventDefinitions, "EventDefinitions")</li>
-								<li>@Html.ActionLink(PopForums.Resources.AwardDefinitions, "AwardDefinitions")</li>
-								<li>@Html.ActionLink(PopForums.Resources.ManualEvent, "ManualEvent")</li>
+								<li><a asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a></li>
+								<li><a asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a></li>
+								<li><a asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a></li>
+								<li><a asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a></li>
 								<li class="divider"></li>
-								<li>@Html.ActionLink(PopForums.Resources.IpHistory, "IPHistory")</li>
-								<li>@Html.ActionLink(PopForums.Resources.SecurityLog, "SecurityLog")</li>
-								<li>@Html.ActionLink(PopForums.Resources.ModerationLog, "ModerationLog")</li>
-								<li>@Html.ActionLink(PopForums.Resources.ErrorLog, "ErrorLog")</li>
-								<li>@Html.ActionLink(PopForums.Resources.Services, "Services")</li>
+								<li><a asp-action="IPHistory">@PopForums.Resources.IpHistory</a></li>
+								<li><a asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a></li>
+								<li><a asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a></li>
+								<li><a asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a></li>
+								<li><a asp-action="Services">@PopForums.Resources.Services</a></li>
 							</ul>
 						</div>
 					</nav>

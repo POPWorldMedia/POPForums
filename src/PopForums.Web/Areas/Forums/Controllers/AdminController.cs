@@ -108,7 +108,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		[HttpPost]
 		public ViewResult Email(FormCollection collection)
 		{
-			SaveFormValuesToSettings(collection);
+			SaveFormValuesToSettings(Request.Form);
 			return View(_settingsManager.Current);
 		}
 
@@ -333,7 +333,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		[HttpPost]
 		public ViewResult Search(FormCollection collection)
 		{
-			SaveFormValuesToSettings(collection);
+			SaveFormValuesToSettings(Request.Form);
 			ViewData["Interval"] = _settingsManager.Current.SearchIndexingInterval;
 			ViewData["JunkWords"] = _searchService.GetJunkWords();
 			return View();
@@ -688,7 +688,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		[HttpPost]
 		public ViewResult ScoringGame(FormCollection collection)
 		{
-			SaveFormValuesToSettings(collection);
+			SaveFormValuesToSettings(Request.Form);
 			ViewData["Interval"] = _settingsManager.Current.ScoringGameCalculatorInterval;
 			return View();
 		}

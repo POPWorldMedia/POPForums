@@ -18,14 +18,14 @@
 	@foreach (var item in Model)
 	{
 		<tr>
-			<td>@Html.ActionLink(item.AwardDefinitionID, "Award", new { id = item.AwardDefinitionID })</td>
+			<td><a asp-action="Award" asp-route-id="@item.AwardDefinitionID">@item.AwardDefinitionID</a></td>
 			<td>@item.Title</td>
 			<td>@item.Description</td>
 			<td><input type="checkbox" disabled="disabled" @if (item.IsSingleTimeAward){<text>checked="checked" </text>}/></td>
 			<td>
-				@using (Html.BeginForm("DeleteAward", "Admin", new { id = item.AwardDefinitionID })) {
+				<form asp-action="DeleteAward" asp-route-id="@item.AwardDefinitionID">
 					<input type="submit" value="Delete" class="btn btn-primary" />
-				}
+				</form>
 			</td>
 		</tr>
 	}
@@ -38,15 +38,15 @@
 	<div role="form">
 		<div class="form-group">
 			<label for="AwardDefinitionID">Award Definition ID</label>
-			@Html.TextBox("AwardDefinitionID", String.Empty, new { @class = "form-control" })
+			<input type="text" name="AwardDefinitionID" id="AwardDefinitionID" class="form-control"/>
 		</div>
 		<div class="form-group">
 			<label for="Title">Title</label>
-			@Html.TextBox("Title", String.Empty, new { @class = "form-control" })
+			<input type="text" name="Title" id="Title" class="form-control" />
 		</div>
 		<div class="form-group">
 			<label for="Description">Description</label>
-			@Html.TextBox("Description", String.Empty, new { @class = "form-control" })
+			<input type="text" name="Description" id="Description" class="form-control" />
 		</div>
 		<div class="form-group">
 			<div class="checkbox">

@@ -15,12 +15,12 @@
 			dataType: "json",
 			success: function (result) {
 				var forumList = $("#CategorizedForums");
-				switch (result.Result) {
+				switch (result.result) {
 					case true:
 						forumList.load(PopForums.areaPath + "/Admin/CategorizedForums");
 						break;
 					default:
-						forumList.html(result.Message);
+						forumList.html(result.message);
 				}
 			},
 			error: function () {
@@ -34,7 +34,7 @@
 
 <h2>@PopForums.Resources.Forums</h2>
 
-<p>@Html.ActionLink(PopForums.Resources.AddNewForum, "AddForum", "Admin", new { @class = "btn btn-primary", role = "button" })</p>
+<p><a asp-action="AddForum" class="btn btn-primary" role="button">@PopForums.Resources.AddNewForum</a></p>
 
 <div id="CategorizedForums">
 	@Html.Partial("CategorizedForums", Model)

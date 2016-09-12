@@ -1,31 +1,31 @@
 ﻿<div class="form-group">
 	<label for="title" class="col-sm-2 control-label">@PopForums.Resources.Title</label>
-	<div class="col-sm-10">@Html.TextBox("title", null, new { @class = "form-control" })</div>
+	<div class="col-sm-10">@Html.TextBox("Title", null, new { @class = "form-control" })</div>
 </div>
 <div class="form-group">
 	<label for="description" class="col-sm-2 control-label">@PopForums.Resources.Description</label>
-	<div class="col-sm-10">@Html.TextBox("description", null, new { @class = "form-control" })</div>
+	<div class="col-sm-10">@Html.TextBox("Description", null, new { @class = "form-control" })</div>
 </div>
 <div class="form-group">
 	<label for="categoryID" class="col-sm-2 control-label">@PopForums.Resources.Category</label>
-	<div class="col-sm-10">@Html.DropDownList("categoryID", null, new { @class = "form-control" })</div>
+	<div class="col-sm-10">@Html.DropDownList("CategoryID", null, new { @class = "form-control" })</div>
 </div>
 <div class="form-group">
 	<div class="col-sm-push-2 col-sm-10 checkbox">
-		<label for="isVisible">@Html.CheckBox("isVisible") @PopForums.Resources.Visible</label>
+		<label for="isVisible">@Html.CheckBox("IsVisible") @PopForums.Resources.Visible</label>
 	</div>
 </div>
 <div class="form-group">
 	<div class="col-sm-push-2 col-sm-10 checkbox">
-		<label for="isArchived">@Html.CheckBox("isArchived") @PopForums.Resources.Archived</label>
+		<label for="isArchived">@Html.CheckBox("IsArchived") @PopForums.Resources.Archived</label>
 	</div>
 </div>
 <div class="form-group">
 	<div class="col-sm-push-2 col-sm-10 checkbox">
-		<label for="isQAForum">@Html.CheckBox("isQAForum") Q&amp;A @PopForums.Resources.Forum</label>
+		<label for="isQAForum">@Html.CheckBox("IsQAForum") Q&amp;A @PopForums.Resources.Forum</label>
 	</div>
 </div>
 <div class="form-group">
 	<label for="forumAdapterName" class="control-label">@PopForums.Resources.ForumAdapter</label>
-	@Html.TextBox("forumAdapterName", null, new { @class = "form-control" })
+	@Html.TextBox("ForumAdapterName", null, new { @class = "form-control" })
 </div>

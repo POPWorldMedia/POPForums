@@ -2,8 +2,8 @@
 
 <h3>@PopForums.Resources.CategoryEditTitle</h3>
 
-@using(Html.BeginForm("EditCategory", "Admin", FormMethod.Post, new { @class = "form-inline" })) {
-	@Html.TextBox("newTitle", Model.Title, new { @class = "form-control" })
-	@Html.Hidden("categoryID", Model.CategoryID, new { @class = "form-control" })
-	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
-}
+<form asp-action="EditCategory" method="post" class="form-inline" asp-antiforgery="false">
+	<input type="text" name="newTitle" value="@Model.Title" class="form-control"/>
+	<input type="hidden" name="categoryID" value="@Model.CategoryID"/>
+	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary"/>
+</form>

@@ -53,15 +53,15 @@
 		$.get(PopForums.areaPath + "/Admin/ForumRoles/" + forumSelect.val(),
 			function (result) {
 				$(".permissionListBox").empty();
-				$.each(result.AllRoles, function (k, v) {
+				$.each(result.allRoles, function (k, v) {
 					var option = $('<option/>').attr('value', v).text(v);
 					$("#AllRoles").append(option);
 				});
-				$.each(result.ViewRoles, function (k, v) {
+				$.each(result.viewRoles, function (k, v) {
 					var option = $('<option/>').attr('value', v).text(v);
 					$("#ViewRoles").append(option);
 				});
-				$.each(result.PostRoles, function (k, v) {
+				$.each(result.postRoles, function (k, v) {
 					var option = $('<option/>').attr('value', v).text(v);
 					$("#PostRoles").append(option);
 				});
