@@ -10,7 +10,7 @@
 	"dependencies": {
 		"NETStandard.Library": "1.6.0",
 		"ImageProcessorCore": "1.0.0-alpha1025",
-		"MailKit": "1.4.2.1",
+		"MailKit": "1.6.0",
 		"Microsoft.Extensions.Configuration": "1.0.0",
 		"Microsoft.Extensions.Configuration.Json": "1.0.0",
 		"Microsoft.Extensions.DependencyInjection": "1.0.0",
