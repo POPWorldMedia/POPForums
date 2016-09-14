@@ -102,11 +102,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 				}
 				else
 					ViewData["Result"] = Resources.AccountReadyCheckEmail;
-
-				// TODO: wireup external auth
-				//var authResult = await _externalAuthentication.GetAuthenticationResult(authentication);
-				//if (authResult != null)
-				//	_externalUserAssociationManager.Associate(user, authResult, ip);
+				
+				var authResult = await AuthorizationController.GetExternalLoginInfoAsync(HttpContext);
+				if (authResult != null)
+					_externalUserAssociationManager.Associate(user, authResult, ip);
 
 				await AuthorizationController.PerformSignInAsync(true, user, HttpContext);
 

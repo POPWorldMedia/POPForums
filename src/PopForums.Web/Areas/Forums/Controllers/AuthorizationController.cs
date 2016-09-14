@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
@@ -98,7 +97,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			User user;
             if (_userService.Login(email, password, persistCookie, ip, out user))
 			{
-				var authResult = await GetExternalLoginInfoAsync();
+				var authResult = await GetExternalLoginInfoAsync(HttpContext);
 				if (authResult != null)
 				{
 					_externalUserAssociationManager.Associate(user, authResult, ip);
@@ -137,7 +136,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-            var info = await GetExternalLoginInfoAsync();
+            var info = await GetExternalLoginInfoAsync(HttpContext);
 			if (info == null)
 				return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
 			var email = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Email) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Email).Value : null;
@@ -163,10 +162,10 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		// PopForums doesn't use the Xsrf property, because it associates claims with user accounts, not 
 		// accounts with claims. For example, a user can't add a Facebook association while already logged in.
 		// They must use their PF credentials after getting valid claims from the 3rd party.
-		private async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(string expectedXsrf = null)
+		public static async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext httpContext, string expectedXsrf = null)
 		{
 			var auth = new AuthenticateContext(ExternalUserAssociationManager.AuthenticationContextName);
-			await HttpContext.Authentication.AuthenticateAsync(auth);
+			await httpContext.Authentication.AuthenticateAsync(auth);
 			if (auth.Principal == null || auth.Properties == null || !auth.Properties.ContainsKey(LoginProviderKey))
 			{
 				return null;
