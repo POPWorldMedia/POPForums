@@ -68,6 +68,7 @@ namespace PopForums.Web
 				app.UseDeveloperExceptionPage();
 				app.UseDatabaseErrorPage();
 			}
+			app.UseStatusCodePages();
 
 			app.UseStaticFiles();
 
