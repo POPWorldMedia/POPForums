@@ -46,12 +46,11 @@ END";
 
 		public void SetupDatabase()
 		{
-			// TODO: make db
-			//var assembly = Assembly.GetExecutingAssembly();
-			//var stream = assembly.GetManifestResourceStream("PopForums.Data.Sql.PopForums.sql");
-			//var reader = new StreamReader(stream);
-			//var sql = reader.ReadToEnd();
-			//_sqlObjectFactory.GetConnection().Using(c => c.Command(sql).ExecuteNonQuery());
+			var assembly = typeof(SetupRepository).GetTypeInfo().Assembly;
+			var stream = assembly.GetManifestResourceStream("PopForums.Sql.PopForums.sql");
+			var reader = new StreamReader(stream);
+			var sql = reader.ReadToEnd();
+			_sqlObjectFactory.GetConnection().Using(c => c.Command(sql).ExecuteNonQuery());
 		}
 	}
 }

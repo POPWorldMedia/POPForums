@@ -1,0 +1,97 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Models
+@model PopForums.Models.SetupVariables
+@{
+	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>@PopForums.Resources.PopForumsSetup</title>
+	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function () {
+			$("table.stripe tr:even").addClass("stripe");
+			var useEsmtp = $("#UseEsmtp:checkbox");
+			SetEsmtpBoxes();
+			useEsmtp.click(function () { SetEsmtpBoxes(); });
+		});
+
+		function SetEsmtpBoxes() {
+			var enabled = $("#UseEsmtp:checkbox").is(":checked");
+			if (enabled)
+				$("#SmtpUser, #SmtpPassword").removeAttr("disabled");
+			else
+				$("#SmtpUser, #SmtpPassword").attr("disabled", "disabled");
+		}
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<h1>@PopForums.Resources.PopForumsSetup</h1>
+			<h2>Welcome to POP Forums!</h2>
+			<p>@PopForums.Resources.SetupConnSuccess:</p>
+			@using (Html.BeginForm("Index", "Setup", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+			{
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="ForumTitle">@PopForums.Resources.ForumTitle</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.ForumTitle, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="SmtpServer">@PopForums.Resources.SmtpServer</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.SmtpServer, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="SmtpPort">@PopForums.Resources.SmtpPort</label>
+					<div class="col-xs-2">@Html.TextBoxFor(s => s.SmtpPort, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="MailerAddress">@PopForums.Resources.FromEmailAddress</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.MailerAddress, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="UseSslSmtp">@PopForums.Resources.UseSsl</label>
+					<div class="col-xs-10">@Html.CheckBoxFor(s => s.UseSslSmtp, new { @class = "checkbox" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="UseEsmtp">@PopForums.Resources.UseEsmtpCred</label>
+					<div class="col-xs-10">@Html.CheckBoxFor(s => s.UseEsmtp, new { @class = "checkbox" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="SmtpUser">@PopForums.Resources.SmtpUser</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.SmtpUser, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="SmtpPassword">@PopForums.Resources.SmtpPassword</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.SmtpPassword, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="ServerTimeZone">@PopForums.Resources.TimeZone</label>
+					<div class="col-xs-10"><select asp-for="ServerTimeZone" asp-items="@timeZones" class="form-control"></select></div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="UseEsmtp">@PopForums.Resources.UseDaylight</label>
+					<div class="col-xs-10">@Html.CheckBoxFor(s => s.ServerDaylightSaving, new { @class = "checkbox" })</div>
+				</div>
+				<h3>@PopForums.Resources.SetupFirstUser</h3>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="Name">@PopForums.Resources.DisplayName</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.Name, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="Email">@PopForums.Resources.Email</label>
+					<div class="col-xs-10">@Html.TextBoxFor(s => s.Email, new { @class = "form-control" })</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-2 control-label" for="Password">@PopForums.Resources.Password</label>
+					<div class="col-xs-10">@Html.PasswordFor(s => s.Password, new { @class = "form-control" })</div>
+				</div>
+				<input type="submit" value="@PopForums.Resources.SetupDatabase" class="btn btn-primary" />
+			}
+		</div>
+	</div>
+</body>
+</html>

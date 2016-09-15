@@ -1,0 +1,19 @@
+﻿@using System.Threading.Tasks
+@using PopForums.Web.Areas.Forums.Controllers
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>@PopForums.Resources.PopForumsSetup - @PopForums.Resources.Success</title>
+	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
+			<p>Congratulations!</p>
+			<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
+		</div>
+	</div>
+</body>
+</html>

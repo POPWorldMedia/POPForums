@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
 using PopForums.ExternalLogin;
+using PopForums.Services;
 using PopForums.Web.Areas.Forums.Authorization;
 
 namespace PopForums.Web.Areas.Forums.Extensions
@@ -16,6 +17,9 @@ namespace PopForums.Web.Areas.Forums.Extensions
 		/// <returns></returns>
 		public static IApplicationBuilder UseCookieAuthenticationForPopForums(this IApplicationBuilder app)
 		{
+			var setupService = app.ApplicationServices.GetService<ISetupService>();
+			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
+				return app;
 			app.UseCookieAuthentication(new CookieAuthenticationOptions
 			{
 				AuthenticationScheme = PopForumsAuthorizationDefaults.AuthenticationScheme,

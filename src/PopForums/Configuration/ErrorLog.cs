@@ -32,6 +32,8 @@ namespace PopForums.Configuration
 
 		public void Log(Exception exception, ErrorSeverity severity, string additionalContext)
 		{
+			if (exception != null && exception is ErrorLogException)
+				return;
 			var message = String.Empty;
 			var stackTrace = String.Empty;
 			var s = new StringBuilder();
@@ -56,36 +58,6 @@ namespace PopForums.Configuration
 				}
 			}
 			s.Append("\r\n");
-			// TODO: add httpcontext to error log
-			//var context = HttpContext.Current;
-			//if (context != null)
-			//{
-			//	if (context.User != null && context.User.Identity.IsAuthenticated)
-			//	{
-			//		var user = context.User as User;
-			//		if (user != null)
-			//		{
-			//			s.Append("User: ");
-			//			s.Append(user.Name);
-			//			s.Append("\r\nE-mail: ");
-			//			s.Append(user.Email);
-			//			s.Append("\r\n\r\n");
-			//		}
-			//	}
-			//	lock (context.Request.ServerVariables.AllKeys.SyncRoot)
-			//	{
-			//		foreach (var key in context.Request.ServerVariables.AllKeys)
-			//		{
-			//			if (context.Request.ServerVariables[key] != String.Empty && key != "ALL_HTTP")
-			//			{
-			//				s.Append(key);
-			//				s.Append(": ");
-			//				s.Append(context.Request.ServerVariables[key]);
-			//				s.Append("\r\n");
-			//			}
-			//		}
-			//	}
-			//}
 			try
 			{
 				_errorLogRepository.Create(DateTime.UtcNow, message, stackTrace, s.ToString(), severity);

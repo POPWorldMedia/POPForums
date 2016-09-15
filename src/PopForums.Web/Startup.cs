@@ -32,26 +32,30 @@ namespace PopForums.Web
 		// This method gets called by the runtime.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			// needed for social logins in POP Forums
 			services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
 
 			services.Configure<AuthorizationOptions>(options =>
 			{
+				// sets claims policies for admin and moderator functions in POP Forums
 				options.AddPopForumsPolicies();
 			});
 
-			// Add MVC services to the services container.
 			services.AddMvc(options =>
 			{
+				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
 			});
 
 			// TODO: go to primary nuget
 			services.AddSignalR();
 
+			// sets up the dependencies for the base, SQL and web libraries in POP Forums
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			services.AddPopForumsWeb();
 
+			// creates an instance of the background services for POP Forums
 			services.AddPopForumsBackgroundServices();
 		}
 
@@ -60,6 +64,7 @@ namespace PopForums.Web
 		{
 			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			loggerFactory.AddDebug();
+			// records exceptions and info to the POP Forums database
 			loggerFactory.AddPopForumsLogger(app);
 
 			if (env.IsDevelopment())
@@ -72,6 +77,7 @@ namespace PopForums.Web
 
 			app.UseStaticFiles();
 
+			// sets up POP Forums auth and includes social logins if setup in admin
 			app.UseCookieAuthenticationForPopForums();
 
 			app.UseSignalR();
@@ -80,7 +86,7 @@ namespace PopForums.Web
 			app.UseMvc(routes =>
 			{
 
-				// forum routes
+				// POP Forums routes
 				routes.AddPopForumsRoutes(app);
 
 				// app routes

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Repositories;
+using PopForums.Services;
 using PopForums.Web.Areas.Forums.Controllers;
 
 namespace PopForums.Web.Areas.Forums.Extensions
@@ -21,6 +22,11 @@ namespace PopForums.Web.Areas.Forums.Extensions
 				"Forums/Setup",
 				new { controller = "Setup", action = "Index", Area = "Forums" }
 				);
+
+			var setupService = app.ApplicationServices.GetService<ISetupService>();
+			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
+				return routes;
+
 			routes.MapRoute(
 				"pfrecent",
 				"Forums/Recent/{page?}",

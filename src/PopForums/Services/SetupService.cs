@@ -67,8 +67,7 @@ namespace PopForums.Services
 			var profile = new Profile(user.UserID) { IsTos = true, IsSubscribed = true, TimeZone = setupVariables.ServerTimeZone, IsDaylightSaving = setupVariables.ServerDaylightSaving, ShowDetails = true };
 			_profileService.Create(profile);
 			var edit = new UserEdit(user, profile);
-			// TODO: create first user profile, refresh settings
-			//_userService.EditUser(user, edit, false, false, null, null, "", user);
+			_userService.EditUser(user, edit, false, false, null, null, "", user);
 			//PopForumsActivation.StartServicesIfRunningInstance();
 			return user;
 		}

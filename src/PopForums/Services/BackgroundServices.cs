@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using PopForums.Email;
 using PopForums.ScoringGame;
 
@@ -9,6 +10,9 @@ namespace PopForums.Services
 	{
 		public static void SetupServices(IServiceProvider serviceProvider)
 		{
+			var setupService = serviceProvider.GetService<ISetupService>();
+			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
+				return;
 			_emailService.Start(serviceProvider);
 			_userSessionService.Start(serviceProvider);
 			_searchIndexService.Start(serviceProvider);
