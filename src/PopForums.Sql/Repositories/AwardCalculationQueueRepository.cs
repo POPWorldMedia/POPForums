@@ -26,20 +26,19 @@ namespace PopForums.Data.Sql.Repositories
 		public KeyValuePair<string, int> Dequeue()
 		{
 			var pair = new KeyValuePair<string, int>();
-			var id = 0;
+			var sql = @"WITH cte AS (
+SELECT TOP(1) EventDefinitionID, UserID
+FROM pf_AwardCalculationQueue WITH (ROWLOCK, READPAST)
+ORDER BY ID)
+DELETE FROM cte
+OUTPUT DELETED.EventDefinitionID, DELETED.UserID";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT TOP 1 ID, EventDefinitionID, UserID FROM pf_AwardCalculationQueue ORDER BY TimeStamp")
+				connection.Command(sql)
 				.ExecuteReader()
 				.ReadOne(r =>
 				{ 
-					pair = new KeyValuePair<string, int>(r.GetString(1), r.GetInt32(2));
-					id = r.GetInt32(0);
+					pair = new KeyValuePair<string, int>(r.GetString(0), r.GetInt32(1));
 				}));
-			if (id != 0)
-				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("DELETE FROM pf_AwardCalculationQueue WHERE ID = @ID")
-					.AddParameter("@ID", id)
-					.ExecuteNonQuery());
 			return pair;
 		}
 	}
