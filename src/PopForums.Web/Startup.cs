@@ -20,16 +20,16 @@ namespace PopForums.Web
 			// Setup configuration sources.
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
-				.AddJsonFile("config.json")
+				.AddJsonFile("appsettings.json")
 				.AddEnvironmentVariables();
 			Configuration = builder.Build();
 
+			// setup PopForums.json config file
 			Config.SetPopForumsAppEnvironment(env.ContentRootPath);
 		}
 
 		public IConfigurationRoot Configuration { get; set; }
-
-		// This method gets called by the runtime.
+		
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// needed for social logins in POP Forums
@@ -58,8 +58,7 @@ namespace PopForums.Web
 			// creates an instance of the background services for POP Forums
 			services.AddPopForumsBackgroundServices();
 		}
-
-		// Configure is called after ConfigureServices is called.
+		
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
 			loggerFactory.AddConsole(Configuration.GetSection("Logging"));

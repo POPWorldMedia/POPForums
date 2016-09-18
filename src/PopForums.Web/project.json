@@ -60,6 +60,7 @@
 				"Views",
 				"Areas/**/Views",
 				"appsettings.json",
+				"PopForums.json",
 				"web.config"
 			]
   },
