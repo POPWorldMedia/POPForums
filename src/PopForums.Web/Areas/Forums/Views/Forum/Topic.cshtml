@@ -26,12 +26,12 @@
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
 		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName">@Model.Forum.Title</a></li>
+		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
 		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
 		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName">@Model.Forum.Title</a></li>
+		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
 		<li>@Model.Topic.Title</li>
 	</ul>
 </div>

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -53,6 +52,19 @@ namespace PopForums.Data.Sql.Repositories
 
 		public Topic GetNextTopicForIndexing()
 		{
+			var sql = @"WITH cte AS (
+SELECT TOP(1) TopicID
+FROM pf_SearchQueue WITH (ROWLOCK, READPAST)
+ORDER BY Id)
+DELETE FROM cte
+OUTPUT DELETED.TopicID;";
+			var topicID = 0;
+			_sqlObjectFactory.GetConnection().Using(connection =>
+				connection.Command(sql)
+				.ExecuteReader()
+				.ReadOne(r => topicID = r.GetInt32(0)));
+			if (topicID == 0)
+				return null;
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				connection.Command("SELECT TOP 1 " + TopicRepository.TopicFields + " FROM pf_Topic WHERE IsDeleted = 0 AND IsIndexed = 0 ORDER BY LastPostTime")
