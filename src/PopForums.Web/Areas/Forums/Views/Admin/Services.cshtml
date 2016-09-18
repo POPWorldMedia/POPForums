@@ -1,6 +1,4 @@
-﻿@using PopForums.Configuration;
-
-@model List<ApplicationServiceBase>
+﻿@model List<PopForums.Models.ServiceHeartbeat>
 
 @{
     ViewBag.PageTitle = PopForums.Resources.Services;
@@ -12,15 +10,15 @@
 <table class="table table-hover">
 	<tr>
 		<th>@PopForums.Resources.Name</th>
-		<th>@PopForums.Resources.IsRunning</th>
+		<th>Machine</th>
 		<th>@PopForums.Resources.Last</th>
 	</tr>
 	@foreach (var service in Model)
 	 {
 		<tr>
-			<td>@service.Name</td>
-			<td>@service.IsRunning</td>
-			<td class="text-nowrap">@service.LastExecutionTime</td>
+			<td>@service.ServiceName</td>
+			<td>@service.MachineName</td>
+			<td class="text-nowrap">@service.LastRun</td>
 		</tr>
 	 }
 </table>

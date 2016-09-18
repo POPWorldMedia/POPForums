@@ -20,7 +20,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 	[Area("Forums")]
     public class AdminController : Controller
 	{
-		public AdminController(IUserService userService, IProfileService profileService, ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, ISearchService searchService, ISecurityLogService securityLogService, IErrorLog errorLog, IBanService banService, IModerationLogService modLogService, IIPHistoryService ipHistoryService, IImageService imageService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IUserRetrievalShim userRetrievalShim)
+		public AdminController(IUserService userService, IProfileService profileService, ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, ISearchService searchService, ISecurityLogService securityLogService, IErrorLog errorLog, IBanService banService, IModerationLogService modLogService, IIPHistoryService ipHistoryService, IImageService imageService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IUserRetrievalShim userRetrievalShim, IServiceHeartbeatService serviceHeartbeat)
 		{
 			_userService = userService;
 			_profileService = profileService;
@@ -39,6 +39,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			_awardDefinitionService = awardDefinitionService;
 			_eventPublisher = eventPublisher;
 			_userRetrievalShim = userRetrievalShim;
+			_serviceHeartbeat = serviceHeartbeat;
 		}
 
 		public static string Name = "Admin";
@@ -61,6 +62,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		private readonly IAwardDefinitionService _awardDefinitionService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IUserRetrievalShim _userRetrievalShim;
+		private readonly IServiceHeartbeatService _serviceHeartbeat;
 
 		private void SaveFormValuesToSettings(IFormCollection collection)
 		{
@@ -501,10 +503,8 @@ namespace PopForums.Web.Areas.Forums.Controllers
 
 		public ViewResult Services()
 		{
-			// TODO: Services view
-			throw new NotImplementedException();
-			//var services = PopForumsActivation.ApplicationServices;
-			//return View(services);
+			var services = _serviceHeartbeat.GetAll();
+			return View(services);
 		}
 
 		public ViewResult ModerationLog()

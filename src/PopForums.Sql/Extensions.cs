@@ -107,6 +107,7 @@ namespace PopForums.Data.Sql
 			services.AddTransient<IUserImageRepository, UserImageRepository>();
 			services.AddTransient<IUserRepository, UserRepository>();
 			services.AddTransient<IUserSessionRepository, UserSessionRepository>();
+			services.AddTransient<IServiceHeartbeatRepository, ServiceHeartbeatRepository>();
 		}
 
 		public static object GetObjectOrDbNull(this object value)

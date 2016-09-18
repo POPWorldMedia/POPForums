@@ -23,12 +23,14 @@ namespace PopForums.Services
 		public virtual void Start(IServiceProvider serviceProvider)
 		{
 			ErrorLog = serviceProvider.GetService<IErrorLog>();
+			_serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
 			IsRunning = true;
 			TimerCallback callback = Execute;
 			Timer = new Timer(callback, this, Interval, Interval);
 		}
 
 		public IErrorLog ErrorLog { get; private set; }
+		private IServiceHeartbeatService _serviceHeartbeatService;
 
 		public void Execute(object sender)
 		{
@@ -45,6 +47,7 @@ namespace PopForums.Services
 				{
 					LastExecutionTime = DateTime.UtcNow;
 					ServiceAction();
+					_serviceHeartbeatService.RecordHeartbeat(Name, Environment.MachineName);
 				}
 				catch (Exception exc)
 				{

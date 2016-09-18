@@ -43,7 +43,6 @@ namespace PopForums.Extensions
 		    services.AddTransient<ICategoryService, CategoryService>();
 		    services.AddTransient<IClientSettingsMapper, ClientSettingsMapper>();
 		    services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
-		    //services.AddTransient<IForumAdapterFactory, ForumAdapterFactory>();
 		    services.AddTransient<IForumService, ForumService>();
 		    services.AddTransient<IFriendService, FriendService>();
 		    services.AddTransient<IImageService, ImageService>();
@@ -61,9 +60,9 @@ namespace PopForums.Extensions
 		    services.AddTransient<ITextParsingService, TextParsingService>();
 		    services.AddTransient<ITimeFormattingService, TimeFormattingService>();
 		    services.AddTransient<ITopicService, TopicService>();
-		    //services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 		    services.AddTransient<IUserService, UserService>();
 		    services.AddTransient<IUserSessionService, UserSessionService>();
+		    services.AddTransient<IServiceHeartbeatService, ServiceHeartbeatService>();
 	    }
 
 	    public static void AddPopForumsBackgroundServices(this IServiceCollection services)
