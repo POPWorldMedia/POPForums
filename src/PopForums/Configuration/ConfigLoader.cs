@@ -12,6 +12,7 @@ namespace PopForums.Configuration
 			var builder = new ConfigurationBuilder();
 			builder.SetBasePath(basePath);
 			builder.AddJsonFile("PopForums.json");
+			builder.AddEnvironmentVariables("APPSETTING_");
 			var config = builder.Build();
 			var container = new ConfigContainer();
 			container.DatabaseConnectionString = config["PopForums:Database:ConnectionString"];
