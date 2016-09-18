@@ -1,3 +1,6 @@
+using System;
+using Newtonsoft.Json;
+using PopForums.Email;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -14,7 +17,8 @@ namespace PopForums.Data.Sql.Repositories
 
 		public void CreateMessage(QueuedEmailMessage message)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
+			var id = 0;
+			_sqlObjectFactory.GetConnection().Using(connection => id = Convert.ToInt32(
 				connection.Command("INSERT INTO pf_QueuedEmailMessage (FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime) VALUES (@FromEmail, @FromName, @ToEmail, @ToName, @Subject, @Body, @HtmlBody, @QueueTime)")
 					.AddParameter("@FromEmail", message.FromEmail)
 					.AddParameter("@FromName", message.FromName)
@@ -24,6 +28,19 @@ namespace PopForums.Data.Sql.Repositories
 					.AddParameter("@Body", message.Body)
 					.AddParameter("@HtmlBody", message.HtmlBody.GetObjectOrDbNull())
 					.AddParameter("@QueueTime", message.QueueTime)
+					.ExecuteAndReturnIdentity()));
+			if (id == 0)
+				throw new Exception("MessageID was not returned from creation of a QueuedEmailMessage.");
+			var payload = new EmailQueuePayload { MessageID = id, EmailQueuePayloadType = EmailQueuePayloadType.FullMessage };
+			WriteMessageToEmailQueue(payload);
+		}
+
+		protected void WriteMessageToEmailQueue(EmailQueuePayload payload)
+		{
+			var serializedPayload = JsonConvert.SerializeObject(payload);
+			_sqlObjectFactory.GetConnection().Using(connection =>
+				connection.Command("INSERT INTO pf_EmailQueue (Payload) VALUES (@Payload)")
+					.AddParameter("@Payload", serializedPayload)
 					.ExecuteNonQuery());
 		}
 
@@ -35,11 +52,36 @@ namespace PopForums.Data.Sql.Repositories
 					.ExecuteNonQuery());
 		}
 
+		protected EmailQueuePayload DequeueEmailQueuePayload()
+		{
+			var serializedPayload = String.Empty;
+			var sql = @"WITH cte AS (
+SELECT TOP(1) Payload
+FROM pf_EmailQueue WITH (ROWLOCK, READPAST)
+ORDER BY Id)
+DELETE FROM cte
+OUTPUT DELETED.Payload;";
+			_sqlObjectFactory.GetConnection().Using(connection =>
+				connection.Command(sql)
+					.ExecuteReader()
+					.ReadOne(r => serializedPayload = r.GetString(0)));
+			if (String.IsNullOrEmpty(serializedPayload))
+				return null;
+			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(serializedPayload);
+			return payload;
+		}
+
 		public QueuedEmailMessage GetOldestQueuedEmailMessage()
 		{
+			var payload = DequeueEmailQueuePayload();
+			if (payload == null)
+				return null;
+			if (payload.EmailQueuePayloadType != EmailQueuePayloadType.FullMessage)
+				throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
 			QueuedEmailMessage message = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT TOP 1 MessageID, FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime FROM pf_QueuedEmailMessage ORDER BY QueueTime")
+				connection.Command("SELECT MessageID, FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID")
+					.AddParameter("@MessageID", payload.MessageID)
 					.ExecuteReader()
 					.ReadOne(r => message = new QueuedEmailMessage
 												{
@@ -53,6 +95,8 @@ namespace PopForums.Data.Sql.Repositories
 													HtmlBody = r.NullStringDbHelper(7),
 													QueueTime = r.GetDateTime(8)
 												}));
+			if (message == null)
+				throw new Exception($"Queued email with MessageID {payload.MessageID} was not found.");
 			return message;
 		}
 	}

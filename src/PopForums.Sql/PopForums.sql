@@ -865,7 +865,12 @@ CREATE CLUSTERED INDEX [IX_pf_ExternalUserAssociation_UserID] ON [dbo].[pf_Exter
 
 
 
+CREATE TABLE [dbo].[pf_EmailQueue](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
+) ON [PRIMARY]
 
+CREATE CLUSTERED INDEX IX_pf_EmailQueue_Id ON pf_EmailQueue (Id)
 
 
 
