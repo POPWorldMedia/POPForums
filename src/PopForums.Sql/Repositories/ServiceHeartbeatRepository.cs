@@ -44,5 +44,12 @@ namespace PopForums.Data.Sql.Repositories
 					})));
 			return list;
 		}
+
+		public void ClearAll()
+		{
+			_sqlObjectFactory.GetConnection()
+				.Using(connection => connection.Command("DELETE FROM pf_ServiceHeartbeat")
+					.ExecuteNonQuery());
+		}
 	}
 }

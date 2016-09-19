@@ -8,5 +8,6 @@ namespace PopForums.Repositories
 	{
 		void RecordHeartbeat(string serviceName, string machineName, DateTime lastRun);
 		List<ServiceHeartbeat> GetAll();
+		void ClearAll();
 	}
 }

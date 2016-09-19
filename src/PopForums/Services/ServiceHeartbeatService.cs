@@ -9,6 +9,7 @@ namespace PopForums.Services
 	{
 		void RecordHeartbeat(string serviceName, string machineName);
 		List<ServiceHeartbeat> GetAll();
+		void ClearAll();
 	}
 
 	public class ServiceHeartbeatService : IServiceHeartbeatService
@@ -28,6 +29,11 @@ namespace PopForums.Services
 		public List<ServiceHeartbeat> GetAll()
 		{
 			return _serviceHeartbeatRepository.GetAll();
+		}
+
+		public void ClearAll()
+		{
+			_serviceHeartbeatRepository.ClearAll();
 		}
 	}
 }

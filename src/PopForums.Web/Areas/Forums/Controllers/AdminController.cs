@@ -507,6 +507,13 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			return View(services);
 		}
 
+		[HttpPost]
+		public ActionResult ServicesClearAll()
+		{
+			_serviceHeartbeat.ClearAll();
+			return RedirectToAction("Services");
+		}
+
 		public ViewResult ModerationLog()
 		{
 			return View();

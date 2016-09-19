@@ -14,11 +14,15 @@
 		<th>@PopForums.Resources.Last</th>
 	</tr>
 	@foreach (var service in Model)
-	 {
+	{
 		<tr>
 			<td>@service.ServiceName</td>
 			<td>@service.MachineName</td>
 			<td class="text-nowrap">@service.LastRun</td>
 		</tr>
-	 }
+	}
 </table>
+
+<form asp-action="ServicesClearAll" method="post" role="form">
+	<input type="submit" value="@PopForums.Resources.RemoveAll" class="btn btn-primary" />
+</form>
