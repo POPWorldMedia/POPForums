@@ -1219,4 +1219,7 @@
   <data name="SubmitAnswer" xml:space="preserve">
     <value>提交答案</value>
   </data>
+  <data name="AppRestartRequired" xml:space="preserve">
+    <value>需要重新启动应用程序</value>
+  </data>
 </root>

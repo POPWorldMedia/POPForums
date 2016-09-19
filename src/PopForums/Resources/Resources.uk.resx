@@ -1243,4 +1243,7 @@
   <data name="SubmitAnswer" xml:space="preserve">
     <value>Додати відповідь</value>
   </data>
+  <data name="AppRestartRequired" xml:space="preserve">
+    <value>потрібне перезавантаження App</value>
+  </data>
 </root>

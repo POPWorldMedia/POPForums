@@ -99,6 +99,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 			// TODO: This requires an app restart to register the new social logins
 			SaveFormValuesToSettings(Request.Form);
 			_settingsManager.FlushCurrent();
+			ViewData["PostResult"] = Resources.SettingsSaved + ". " + Resources.AppRestartRequired + ".";
 			return View(_settingsManager.Current);
 		}
 

@@ -1243,4 +1243,7 @@
   <data name="SubmitAnswer" xml:space="preserve">
     <value>Submit answer</value>
   </data>
+  <data name="AppRestartRequired" xml:space="preserve">
+    <value>App restart is required</value>
+  </data>
 </root>

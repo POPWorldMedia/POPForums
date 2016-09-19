@@ -168,6 +168,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to App restart is required.
+        /// </summary>
+        public static string AppRestartRequired {
+            get {
+                return ResourceManager.GetString("AppRestartRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to Archive.
         /// </summary>
         public static string Archive {

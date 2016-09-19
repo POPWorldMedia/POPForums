@@ -1,5 +1,4 @@
 ﻿@using System.Threading.Tasks
-@using PopForums.Web.Areas.Forums.Controllers
 <!DOCTYPE html>
 
 <html>
@@ -12,7 +11,8 @@
 		<div class="row">
 			<h1>@PopForums.Resources.PopForumsSetup -  @PopForums.Resources.Success</h1>
 			<p>Congratulations!</p>
-			<p>@PopForums.Resources.ForumReady @Html.ActionLink(PopForums.Resources.GoAdmin, "Index", AdminController.Name)</p>
+			<p>@PopForums.Resources.ForumReady</p>
+			<p>@PopForums.Resources.AppRestartRequired</p>
 		</div>
 	</div>
 </body>

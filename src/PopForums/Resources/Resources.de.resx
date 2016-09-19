@@ -1232,4 +1232,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="SubmitAnswer" xml:space="preserve">
     <value>Antwort abschicken</value>
   </data>
+  <data name="AppRestartRequired" xml:space="preserve">
+    <value>App Neustart erforderlich</value>
+  </data>
 </root>

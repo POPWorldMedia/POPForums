@@ -10,6 +10,8 @@
 
 <h2>@PopForums.Resources.ExternalLogins</h2>
 
+<p>@PopForums.Resources.AppRestartRequired</p>
+
 @using (Html.BeginForm()) {
 
 <table class="table">
@@ -19,11 +21,11 @@
     </tr>
 	<tr>
 		<td>ClientId:</td>
-		<td>@Html.TextBoxFor(x => x.GoogleClientId)</td>
+		<td>@Html.TextBoxFor(x => x.GoogleClientId, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<td>ClientSecret:</td>
-		<td>@Html.TextBoxFor(x => x.GoogleClientSecret)</td>
+		<td>@Html.TextBoxFor(x => x.GoogleClientSecret, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<th>Facebook</th>
@@ -31,11 +33,11 @@
 	</tr>
 	<tr>
 		<td>AppID:</td>
-		<td>@Html.TextBoxFor(x => x.FacebookAppID)</td>
+		<td>@Html.TextBoxFor(x => x.FacebookAppID, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<td>AppSecret:</td>
-		<td>@Html.TextBoxFor(x => x.FacebookAppSecret)</td>
+		<td>@Html.TextBoxFor(x => x.FacebookAppSecret, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<th>Twitter</th>
@@ -43,11 +45,11 @@
 	</tr>
 	<tr>
 		<td>ConsumerKey:</td>
-		<td>@Html.TextBoxFor(x => x.TwitterConsumerKey)</td>
+		<td>@Html.TextBoxFor(x => x.TwitterConsumerKey, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<td>ConsumerSecret:</td>
-		<td>@Html.TextBoxFor(x => x.TwitterConsumerSecret)</td>
+		<td>@Html.TextBoxFor(x => x.TwitterConsumerSecret, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<th>Microsoft</th>
@@ -55,11 +57,11 @@
 	</tr>
 	<tr>
 		<td>ClientID:</td>
-		<td>@Html.TextBoxFor(x => x.MicrosoftClientID)</td>
+		<td>@Html.TextBoxFor(x => x.MicrosoftClientID, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<td>ClientSecret:</td>
-		<td>@Html.TextBoxFor(x => x.MicrosoftClientSecret)</td>
+		<td>@Html.TextBoxFor(x => x.MicrosoftClientSecret, new { @class = "form-control" })</td>
 	</tr>
 	<tr>
 		<td></td>
