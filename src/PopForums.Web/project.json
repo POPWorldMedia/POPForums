@@ -59,6 +59,7 @@
 				"wwwroot",
 				"Views",
 				"Areas/**/Views/*.cshtml",
+				"Areas/**/Views/**/*.cshtml",
 				"appsettings.json",
 				"PopForums.json",
 				"web.config"
