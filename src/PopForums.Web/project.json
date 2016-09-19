@@ -58,7 +58,7 @@
 			"include": [
 				"wwwroot",
 				"Views",
-				"Areas/**/Views",
+				"Areas/**/Views/*.cshtml",
 				"appsettings.json",
 				"PopForums.json",
 				"web.config"
