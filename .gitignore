@@ -5,3 +5,4 @@ packages
 /src/PopForums.Sql/project.lock.json
 /src/PopForums/project.lock.json
 /src/PopForums.Test/project.lock.json
+/src/PopForums.AzureKit/project.lock.json

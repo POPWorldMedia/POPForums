@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PopForums.AzureKit.Redis;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
@@ -54,6 +55,8 @@ namespace PopForums.Web
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			services.AddPopForumsWeb();
+
+			services.AddPopForumsRedisCache();
 
 			// creates an instance of the background services for POP Forums
 			services.AddPopForumsBackgroundServices();

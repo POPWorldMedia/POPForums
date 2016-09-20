@@ -5,7 +5,7 @@
 		},
 		"Cache": {
 			"Seconds": 90,
-			"ConnectionString": ""
+			"ConnectionString": "127.0.0.1:6379"
 		}
 	}
 }

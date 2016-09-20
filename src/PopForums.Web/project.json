@@ -31,7 +31,8 @@
 		"Microsoft.VisualStudio.Web.CodeGeneration.Tools": "1.0.0-preview2-update1",
 		"Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.0.0-preview2-update1",
 		"PopForums": "14.0.0",
-		"PopForums.Sql": "14.0.0"
+        "PopForums.Sql": "14.0.0",
+        "PopForums.AzureKit": "1.0.0"
 	},
 
 	"tools": {
