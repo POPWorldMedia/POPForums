@@ -26,9 +26,9 @@ namespace PopForums.Web.Areas.Forums
 			{
 				forumUrlNames = _forumRepository.GetAllForumUrlNames();
 			}
-			catch
+			catch (Exception exc)
 			{
-				throw new Exception("Can't read forum URL names from data store.");
+				throw new Exception("Can't read forum URL names from data store.", exc);
 			}
 			if (forumUrlNames.Contains(values["urlName"]))
 				return true;
