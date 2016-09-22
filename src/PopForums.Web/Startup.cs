@@ -57,7 +57,7 @@ namespace PopForums.Web
 			services.AddPopForumsWeb();
 
 			// use Redis cache for POP Forums using 
-			services.AddPopForumsRedisCache();
+			//services.AddPopForumsRedisCache();
 
 			// creates an instance of the background services for POP Forums using AzureKit
 			services.AddPopForumsBackgroundServices();
