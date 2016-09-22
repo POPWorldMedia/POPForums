@@ -21,10 +21,17 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetCacheObject(string key, object value)
 	    {
-		    var db = _multiplexer.GetDatabase();
-		    var serialized = JsonConvert.SerializeObject(value);
-		    db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds));
-	    }
+			try
+			{ 
+				var db = _multiplexer.GetDatabase();
+				var serialized = JsonConvert.SerializeObject(value);
+				db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds));
+			}
+			catch (Exception exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Error);
+			}
+		}
 
 	    public object GetCacheObject(string key)
 		{
@@ -46,15 +53,29 @@ namespace PopForums.AzureKit.Redis
 
 	    public void RemoveCacheObject(string key)
 		{
-			var db = _multiplexer.GetDatabase();
-			db.KeyDelete(key);
+			try
+			{ 
+				var db = _multiplexer.GetDatabase();
+				db.KeyDelete(key);
+			}
+			catch (Exception exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Error);
+			}
 		}
 
 	    public void SetCacheObject(string key, object value, double seconds)
 		{
-			var db = _multiplexer.GetDatabase();
-			var serialized = JsonConvert.SerializeObject(value);
-			db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds));
+			try
+			{
+				var db = _multiplexer.GetDatabase();
+				var serialized = JsonConvert.SerializeObject(value);
+				db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds));
+			}
+			catch (Exception exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Error);
+			}
 		}
 
 	    public T GetCacheObject<T>(string key)
