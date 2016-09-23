@@ -63,7 +63,7 @@ namespace PopForums.AzureKit.Redis
 			{ 
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSetAsync(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds), flags: CommandFlags.FireAndForget);
+				db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds), flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -78,7 +78,7 @@ namespace PopForums.AzureKit.Redis
 				var db = _messageConnection.GetDatabase();
 				var keyValue = new LocalCacheKeyValue { Key = key, Value = value, FullType = value.GetType().FullName };
 				var serialized = JsonConvert.SerializeObject(keyValue);
-				db.PublishAsync(_addChannel, serialized, CommandFlags.FireAndForget);
+				db.Publish(_addChannel, serialized, CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -92,7 +92,7 @@ namespace PopForums.AzureKit.Redis
 			{
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSetAsync(key, serialized, new TimeSpan(0, 0, (int)seconds), flags: CommandFlags.FireAndForget);
+				db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds), flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -105,7 +105,7 @@ namespace PopForums.AzureKit.Redis
 			try
 			{ 
 				var db = _cacheConnection.GetDatabase();
-				db.KeyDeleteAsync(key, CommandFlags.FireAndForget);
+				db.KeyDelete(key);
 			}
 			catch (Exception exc)
 			{
@@ -118,7 +118,7 @@ namespace PopForums.AzureKit.Redis
 		    try
 			{
 				var db = _messageConnection.GetSubscriber();
-				db.PublishAsync(_removeChannel, key);
+				db.Publish(_removeChannel, key);
 			}
 			catch (Exception exc)
 			{
@@ -131,11 +131,10 @@ namespace PopForums.AzureKit.Redis
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
-				var result = db.StringGetAsync(key);
-				var resultValue = db.Wait(result);
-				if (resultValue.IsNullOrEmpty)
+				var result = db.StringGet(key);
+				if (String.IsNullOrEmpty(result))
 					return default(T);
-				var deserialized = JsonConvert.DeserializeObject<T>(resultValue.ToString());
+				var deserialized = JsonConvert.DeserializeObject<T>(result);
 				return deserialized;
 			}
 			catch (Exception exc)
