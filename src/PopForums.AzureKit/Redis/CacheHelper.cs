@@ -63,7 +63,7 @@ namespace PopForums.AzureKit.Redis
 			{ 
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds));
+				db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds), flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -78,7 +78,7 @@ namespace PopForums.AzureKit.Redis
 				var db = _messageConnection.GetDatabase();
 				var keyValue = new LocalCacheKeyValue { Key = key, Value = value, FullType = value.GetType().FullName };
 				var serialized = JsonConvert.SerializeObject(keyValue);
-				db.Publish(_addChannel, serialized);
+				db.Publish(_addChannel, serialized, CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -92,7 +92,7 @@ namespace PopForums.AzureKit.Redis
 			{
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds));
+				db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds), flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
