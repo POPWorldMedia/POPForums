@@ -106,10 +106,10 @@ namespace PopForums.Data.Sql.Repositories
 								ForumAdapterName = forumAdapterName,
 								IsQAForum = isQAForum
 			            	};
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumUrlNames);
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumPostRoleRestrictions);
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumViewRoleRestrictions);
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumTitles);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumUrlNames);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumPostRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumViewRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumTitles);
 			return forum;
 		}
 
@@ -157,8 +157,8 @@ namespace PopForums.Data.Sql.Repositories
 				.AddParameter("@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
 				.AddParameter("@IsQAForum", isQAForum)
 				.ExecuteNonQuery());
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumUrlNames);
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumTitles);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumUrlNames);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumTitles);
 		}
 
 		public void UpdateSortOrder(int forumID, int newSortOrder)
@@ -245,21 +245,21 @@ namespace PopForums.Data.Sql.Repositories
 
 		public Dictionary<int, List<string>> GetForumPostRestrictionRoleGraph()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumPostRoleRestrictions);
+			var cacheObject = _cacheHelper.GetLongTermCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumPostRoleRestrictions);
 			if (cacheObject != null)
 				return cacheObject;
 			var dictionary = GetForumRestrictionRoleGraph("pf_ForumPostRestrictions");
-			_cacheHelper.SetCacheObject(CacheKeys.ForumPostRoleRestrictions, dictionary);
+			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumPostRoleRestrictions, dictionary);
 			return dictionary;
 		}
 
 		public Dictionary<int, List<string>> GetForumViewRestrictionRoleGraph()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumViewRoleRestrictions);
+			var cacheObject = _cacheHelper.GetLongTermCacheObject<Dictionary<int, List<string>>>(CacheKeys.ForumViewRoleRestrictions);
 			if (cacheObject != null)
 				return cacheObject;
 			var dictionary = GetForumRestrictionRoleGraph("pf_ForumViewRestrictions");
-			_cacheHelper.SetCacheObject(CacheKeys.ForumViewRoleRestrictions, dictionary);
+			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumViewRoleRestrictions, dictionary);
 			return dictionary;
 		}
 
@@ -298,43 +298,43 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			RemovePostRole(forumID, role);
 			ModifyForumRole(forumID, role, "INSERT INTO pf_ForumPostRestrictions (ForumID, Role) VALUES (@ForumID, @Role)");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumPostRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumPostRoleRestrictions);
 		}
 
 		public void RemovePostRole(int forumID, string role)
 		{
 			ModifyForumRole(forumID, role, "DELETE FROM pf_ForumPostRestrictions WHERE ForumID = @ForumID And Role = @Role");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumPostRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumPostRoleRestrictions);
 		}
 
 		public void AddViewRole(int forumID, string role)
 		{
 			RemoveViewRole(forumID, role);
 			ModifyForumRole(forumID, role, "INSERT INTO pf_ForumViewRestrictions (ForumID, Role) VALUES (@ForumID, @Role)");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumViewRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumViewRoleRestrictions);
 		}
 
 		public void RemoveViewRole(int forumID, string role)
 		{
 			ModifyForumRole(forumID, role, "DELETE FROM pf_ForumViewRestrictions WHERE ForumID = @ForumID And Role = @Role");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumViewRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumViewRoleRestrictions);
 		}
 
 		public void RemoveAllPostRoles(int forumID)
 		{
 			ModifyForumRole(forumID, "DELETE FROM pf_ForumPostRestrictions WHERE ForumID = @ForumID");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumPostRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumPostRoleRestrictions);
 		}
 
 		public void RemoveAllViewRoles(int forumID)
 		{
 			ModifyForumRole(forumID, "DELETE FROM pf_ForumViewRestrictions WHERE ForumID = @ForumID");
-			_cacheHelper.RemoveCacheObject(CacheKeys.ForumViewRoleRestrictions);
+			_cacheHelper.RemoveLongTermCacheObject(CacheKeys.ForumViewRoleRestrictions);
 		}
 
 		public IEnumerable<string> GetAllForumUrlNames()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject<IEnumerable<string>>(CacheKeys.ForumUrlNames);
+			var cacheObject = _cacheHelper.GetLongTermCacheObject<IEnumerable<string>>(CacheKeys.ForumUrlNames);
 			if (cacheObject != null)
 				return cacheObject;
 			var urlNames = new List<string>();
@@ -342,13 +342,13 @@ namespace PopForums.Data.Sql.Repositories
 				connection.Command("SELECT UrlName FROM pf_Forum")
 			        .ExecuteReader()
 			        .ReadAll(r => urlNames.Add(r.GetString(0))));
-			_cacheHelper.SetCacheObject(CacheKeys.ForumUrlNames, urlNames);
+			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumUrlNames, urlNames);
 			return urlNames;
 		}
 
 		public Dictionary<int, string> GetAllForumTitles()
 		{
-			var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, string>>(CacheKeys.ForumTitles);
+			var cacheObject = _cacheHelper.GetLongTermCacheObject<Dictionary<int, string>>(CacheKeys.ForumTitles);
 			if (cacheObject != null)
 				return cacheObject;
 			var urlNames = new Dictionary<int, string>();
@@ -356,7 +356,7 @@ namespace PopForums.Data.Sql.Repositories
 				connection.Command("SELECT ForumID, Title FROM pf_Forum")
 					.ExecuteReader()
 					.ReadAll(r => urlNames.Add(r.GetInt32(0), r.GetString(1))));
-			_cacheHelper.SetCacheObject(CacheKeys.ForumTitles, urlNames);
+			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumTitles, urlNames);
 			return urlNames;
 		}
 

@@ -31,9 +31,20 @@ namespace PopForums.Data.Sql
 			_cache.Set(key, value, options);
 		}
 
-		public object GetCacheObject(string key)
+		public void SetLongTermCacheObject(string key, object value)
 		{
-			return _cache.Get(key);
+			var options = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(60) };
+			_cache.Set(key, value, options);
+		}
+
+		public void RemoveCacheObject(string key)
+		{
+			_cache.Remove(key);
+		}
+
+		public void RemoveLongTermCacheObject(string key)
+		{
+			RemoveCacheObject(key);
 		}
 
 		public T GetCacheObject<T>(string key)
@@ -42,9 +53,9 @@ namespace PopForums.Data.Sql
 			return cacheObject != null ? (T)cacheObject : default(T);
 		}
 
-		public void RemoveCacheObject(string key)
+		public T GetLongTermCacheObject<T>(string key)
 		{
-			_cache.Remove(key);
+			return GetCacheObject<T>(key);
 		}
 	}
 }
