@@ -5,7 +5,8 @@
 		},
 		"Cache": {
 			"Seconds": 90,
-			"ConnectionString": "127.0.0.1:6379,abortConnect=false"
+			"ConnectionString": "127.0.0.1:6379,abortConnect=false",
+			"ForceLocalOnly": false 
 		}
 	}
 }

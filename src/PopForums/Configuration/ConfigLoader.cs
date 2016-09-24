@@ -19,6 +19,7 @@ namespace PopForums.Configuration
 			var cacheSeconds = config["PopForums:Cache:Seconds"];
 			container.CacheSeconds = cacheSeconds == null ? 90 : Convert.ToInt32(cacheSeconds);
 			container.CacheConnectionString = config["PopForums:Cache:ConnectionString"];
+			container.ForceLocalOnly = Convert.ToBoolean(config["PopForums:Cache:ForceLocalOnly"]);
 			return container;
 		} 
 	}
