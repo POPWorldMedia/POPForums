@@ -9,12 +9,16 @@ namespace PopForums.AzureKit.Redis
     public class CacheHelper : ICacheHelper
     {
 	    private readonly IErrorLog _errorLog;
-	    private readonly IConfig _config;
+	    private static IConfig _config;
 	    private static ConnectionMultiplexer _cacheConnection;
 	    private static ConnectionMultiplexer _messageConnection;
 		private static IMemoryCache _cache;
 		private const string _removeChannel = "pf.cache.remove";
 	    private const string _addChannel = "pf.cache.add";
+
+		private static Lazy<ConnectionMultiplexer> _lazyConnection = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(_config.CacheConnectionString));
+
+		private static ConnectionMultiplexer Connection => _lazyConnection.Value;
 
 	    public CacheHelper(IErrorLog errorLog)
 	    {
@@ -22,8 +26,7 @@ namespace PopForums.AzureKit.Redis
 		    _config = new Config();
 		    if (_cacheConnection == null)
 		    {
-			    _cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
-			    _cacheConnection.PreserveAsyncOrder = false;
+			    _cacheConnection = Connection;
 		    }
 			if (_cache == null)
 				SetupLocalCache();
