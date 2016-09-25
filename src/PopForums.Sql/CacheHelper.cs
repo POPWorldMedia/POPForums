@@ -42,20 +42,10 @@ namespace PopForums.Data.Sql
 			_cache.Remove(key);
 		}
 
-		public void RemoveLongTermCacheObject(string key)
-		{
-			RemoveCacheObject(key);
-		}
-
 		public T GetCacheObject<T>(string key)
 		{
 			var cacheObject = _cache.Get(key);
 			return cacheObject != null ? (T)cacheObject : default(T);
-		}
-
-		public T GetLongTermCacheObject<T>(string key)
-		{
-			return GetCacheObject<T>(key);
 		}
 	}
 }

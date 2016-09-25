@@ -14,19 +14,21 @@ namespace PopForums.AzureKit.Redis
 	    private static ConnectionMultiplexer _messageConnection;
 		private static IMemoryCache _cache;
 		private const string _removeChannel = "pf.cache.remove";
-	    private const string _addChannel = "pf.cache.add";
 
 	    public CacheHelper(IErrorLog errorLog)
 	    {
 		    _errorLog = errorLog;
 		    _config = new Config();
+			// Redis cache
 		    if (_cacheConnection == null)
 		    {
 			    _cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
 			    _cacheConnection.PreserveAsyncOrder = false;
 		    }
+			// Local cache
 			if (_cache == null)
 				SetupLocalCache();
+			// Redis messaging to invalidate local cache entries
 			if (_messageConnection == null)
 		    {
 			    _messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
@@ -37,16 +39,6 @@ namespace PopForums.AzureKit.Redis
 					if (_cache == null)
 						return;
 					_cache.Remove(value.ToString());
-				});
-			    db.Subscribe(_addChannel, (channel, value) =>
-				{
-					if (_cache == null)
-						SetupLocalCache();
-					var keyValue = JsonConvert.DeserializeObject<LocalCacheKeyValue>(value);
-					var options = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(60) };
-					var valueType = Type.GetType(keyValue.FullType);
-					var castValue = JsonConvert.DeserializeObject(keyValue.Value.ToString(), valueType);
-					_cache.Set(keyValue.Key, castValue, options);
 				});
 		    }
 	    }
@@ -59,11 +51,19 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetCacheObject(string key, object value)
 	    {
+		    SetCacheObject(key, value, _config.CacheSeconds);
+		}
+
+	    public void SetCacheObject(string key, object value, double seconds)
+		{
+			var timeSpan = TimeSpan.FromSeconds(seconds);
+			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
+			_cache.Set(key, value, options);
 			try
-			{ 
+			{
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSet(key, serialized, new TimeSpan(0, 0, _config.CacheSeconds), flags: CommandFlags.FireAndForget);
+				db.StringSet(key, serialized, timeSpan, flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -73,26 +73,13 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetLongTermCacheObject(string key, object value)
 		{
-			try
-			{
-				var db = _messageConnection.GetDatabase();
-				var keyValue = new LocalCacheKeyValue { Key = key, Value = value, FullType = value.GetType().FullName };
-				var serialized = JsonConvert.SerializeObject(keyValue);
-				db.Publish(_addChannel, serialized, CommandFlags.FireAndForget);
-			}
-			catch (Exception exc)
-			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
-			}
-		}
-
-	    public void SetCacheObject(string key, object value, double seconds)
-		{
+			var options = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(60) };
+			_cache.Set(key, value, options);
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
 				var serialized = JsonConvert.SerializeObject(value);
-				db.StringSet(key, serialized, new TimeSpan(0, 0, (int)seconds), flags: CommandFlags.FireAndForget);
+				db.StringSet(key, serialized, flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -102,8 +89,9 @@ namespace PopForums.AzureKit.Redis
 
 	    public void RemoveCacheObject(string key)
 		{
+			_cache.Remove(key);
 			try
-			{ 
+			{
 				var db = _cacheConnection.GetDatabase();
 				db.KeyDelete(key);
 			}
@@ -113,21 +101,11 @@ namespace PopForums.AzureKit.Redis
 			}
 		}
 
-	    public void RemoveLongTermCacheObject(string key)
-	    {
-		    try
-			{
-				var db = _messageConnection.GetSubscriber();
-				db.Publish(_removeChannel, key);
-			}
-			catch (Exception exc)
-			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
-			}
-		}
-
 	    public T GetCacheObject<T>(string key)
 		{
+			var cacheObject = _cache.Get(key);
+			if (cacheObject != null)
+				return (T)cacheObject;
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
@@ -135,6 +113,9 @@ namespace PopForums.AzureKit.Redis
 				if (String.IsNullOrEmpty(result))
 					return default(T);
 				var deserialized = JsonConvert.DeserializeObject<T>(result);
+				var timeSpan = TimeSpan.FromSeconds(_config.CacheSeconds);
+				var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
+				_cache.Set(key, deserialized, options);
 				return deserialized;
 			}
 			catch (Exception exc)
@@ -143,18 +124,5 @@ namespace PopForums.AzureKit.Redis
 				return default(T);
 			}
 		}
-
-	    public T GetLongTermCacheObject<T>(string key)
-		{
-			var cacheObject = _cache.Get(key);
-			return cacheObject != null ? (T)cacheObject : default(T);
-		}
-
-	    private class LocalCacheKeyValue
-	    {
-		    public string Key { get; set; }
-			public object Value { get; set; }
-			public string FullType { get; set; }
-	    }
     }
 }
