@@ -200,7 +200,7 @@ namespace PopForums.Services
 			else
 			{
 				context.UserCanView = false;
-				if (user != null && viewRestrictionRoles.Where(user.IsInRole).Count() > 0)
+				if (user != null && viewRestrictionRoles.Where(user.IsInRole).Any())
 					context.UserCanView = true;
 			}
 

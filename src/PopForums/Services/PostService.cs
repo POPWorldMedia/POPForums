@@ -36,7 +36,7 @@ namespace PopForums.Services
 
 	public class PostService : IPostService
 	{
-		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, IFeedService feedService)
+		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, IFeedService feedService, ITopicRepository topicRepository)
 		{
 			_postRepository = postRepository;
 			_profileRepository = profileRepository;
@@ -48,6 +48,7 @@ namespace PopForums.Services
 			_eventPublisher = eventPublisher;
 			_userService = userService;
 			_feedService = feedService;
+			_topicRepository = topicRepository;
 		}
 
 		private readonly IPostRepository _postRepository;
@@ -60,6 +61,7 @@ namespace PopForums.Services
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IUserService _userService;
 		private readonly IFeedService _feedService;
+		private readonly ITopicRepository _topicRepository;
 
 		public List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -193,6 +195,7 @@ namespace PopForums.Services
 			post.IsEdited = true;
 			_postRepository.Update(post);
 			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
+			_topicRepository.MarkTopicForIndexing(post.TopicID);
 		}
 
 		public void Delete(Post post, User user)

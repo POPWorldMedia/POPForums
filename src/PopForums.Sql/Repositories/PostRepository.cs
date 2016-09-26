@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -9,12 +10,19 @@ namespace PopForums.Data.Sql.Repositories
 {
 	public class PostRepository : IPostRepository
 	{
-		public PostRepository(ISqlObjectFactory sqlObjectFactory)
+		public PostRepository(ISqlObjectFactory sqlObjectFactory, ICacheHelper cache)
 		{
 			_sqlObjectFactory = sqlObjectFactory;
+			_cache = cache;
+		}
+
+		public class CacheKeys
+		{
+			public const string PostPages = "PopForums.PostPages.{0}";
 		}
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
+		private readonly ICacheHelper _cache;
 		private const string PostFields = "PostID, TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes";
 
 		public virtual int Create(int topicID, int parentPostID, string ip, bool isFirstInTopic, bool showSig, int userID, string name, string title, string fullText, DateTime postTime, bool isEdited, string lastEditName, DateTime? lastEditTime, bool isDeleted, int votes)
@@ -37,6 +45,8 @@ namespace PopForums.Data.Sql.Repositories
 				.AddParameter("@IsDeleted", isDeleted)
 				.AddParameter("@Votes", votes)
 				.ExecuteAndReturnIdentity());
+			var key = String.Format(CacheKeys.PostPages, topicID);
+			_cache.RemoveCacheObject(key);
 			return Convert.ToInt32(postID);
 		}
 
@@ -61,11 +71,23 @@ namespace PopForums.Data.Sql.Repositories
 				.AddParameter("@PostID", post.PostID)
 				.AddParameter("@Votes", post.Votes)
 				.ExecuteNonQuery() == 1);
+			var key = String.Format(CacheKeys.PostPages, post.TopicID);
+			_cache.RemoveCacheObject(key);
 			return result;
 		}
 
 		public List<Post> Get(int topicID, bool includeDeleted, int startRow, int pageSize)
 		{
+			var key = String.Format(CacheKeys.PostPages, topicID);
+			var page = startRow == 1 ? 1 : (startRow - 1) / pageSize + 1;
+			if (!includeDeleted)
+			{
+				// we're only caching paged threads that do not include deleted posts, since only moderators
+				// ever see thereads that way, a small percentage of users
+				var cachedList = _cache.GetPagedListCacheObject<Post>(key, page);
+				if (cachedList != null)
+					return cachedList;
+			}
 			const string sql = @"
 DECLARE @Counter int
 SET @Counter = (@StartRow + @PageSize - 1)
@@ -93,6 +115,10 @@ SET ROWCOUNT 0";
 					.AddParameter("@PageSize", pageSize)
 					.ExecuteReader()
 					.ReadAll(r => posts.Add(GetPostFromReader(r))));
+			if (!includeDeleted)
+			{
+				_cache.SetPagedListCacheObject(key, page, posts);
+			}
 			return posts;
 		}
 

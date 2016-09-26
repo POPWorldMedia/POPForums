@@ -24,6 +24,7 @@ namespace PopForums.Test.Services
 		private Mock<IEventPublisher> _eventPub;
 		private Mock<IUserService> _userService;
 		private Mock<IFeedService> _feedService;
+		private Mock<ITopicRepository> _topicRepo;
 
 		private PostService GetService()
 		{
@@ -38,8 +39,9 @@ namespace PopForums.Test.Services
 			_eventPub = new Mock<IEventPublisher>();
 			_userService = new Mock<IUserService>();
 			_feedService = new Mock<IFeedService>();
+			_topicRepo = new Mock<ITopicRepository>();
 			_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _feedService.Object);
+			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _feedService.Object, _topicRepo.Object);
 		}
 
 		[Fact]
@@ -271,6 +273,18 @@ namespace PopForums.Test.Services
 			_textParsingService.Setup(t => t.EscapeHtmlAndCensor("unparsed title")).Returns("new title");
 			service.EditPost(new Post(456) { ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
+		}
+
+		[Fact]
+		public void EditPostMarksTopicForIndexing()
+		{
+			var service = GetService();
+			var user = new User(123, DateTime.MinValue) { Name = "dude" };
+			var post = new Post(456) {ShowSig = false, FullText = "old text", TopicID = 999};
+
+			service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+
+			_topicRepo.Verify(x => x.MarkTopicForIndexing(post.TopicID), Times.Once());
 		}
 
 		[Fact]

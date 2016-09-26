@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace PopForums.Configuration
 {
@@ -25,6 +26,15 @@ namespace PopForums.Configuration
 		/// <param name="value"></param>
 		void SetLongTermCacheObject(string key, object value);
 		/// <summary>
+		/// Stores an object in cache as a group. When the root key is removed, all of the paged items 
+		/// are also removed. Useful for storing paged threads and lists of topics.
+		/// </summary>
+		/// <typeparam name="T">The type for the collections stored together (like a List&lt;Post&gt;).</typeparam>
+		/// <param name="rootKey">They key that references the collection of paged lists.</param>
+		/// <param name="page">The page number of the collection to store.</param>
+		/// <param name="value">The collection of T objects to cache.</param>
+		void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value);
+		/// <summary>
 		/// Removes an object from cache.
 		/// </summary>
 		/// <param name="key"></param>
@@ -36,5 +46,7 @@ namespace PopForums.Configuration
 		/// <param name="key"></param>
 		/// <returns></returns>
 		T GetCacheObject<T>(string key);
+
+		List<T> GetPagedListCacheObject<T>(string rootKey, int page);
 	}
 }

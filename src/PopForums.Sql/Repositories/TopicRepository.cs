@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -8,12 +9,14 @@ namespace PopForums.Data.Sql.Repositories
 {
 	public class TopicRepository : ITopicRepository
 	{
-		public TopicRepository(ISqlObjectFactory sqlObjectFactory)
+		public TopicRepository(ISqlObjectFactory sqlObjectFactory, ICacheHelper cache)
 		{
 			_sqlObjectFactory = sqlObjectFactory;
+			_cache = cache;
 		}
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
+		private readonly ICacheHelper _cache;
 		internal const string TopicFields = "pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID";
 
 		public Topic GetLastUpdatedTopic(int forumID)
@@ -377,6 +380,8 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsDeleted = 1 WHERE TopicID = @TopicID")
 				.AddParameter("@TopicID", topicID)
 				.ExecuteNonQuery());
+			var key = String.Format(PostRepository.CacheKeys.PostPages, topicID);
+			_cache.RemoveCacheObject(key);
 		}
 
 		public void UndeleteTopic(int topicID)
@@ -391,6 +396,8 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("DELETE FROM pf_Topic WHERE TopicID = @TopicID")
 				.AddParameter("@TopicID", topicID)
 				.ExecuteNonQuery());
+			var key = String.Format(PostRepository.CacheKeys.PostPages, topicID);
+			_cache.RemoveCacheObject(key);
 		}
 
 		public void UpdateTitleAndForum(int topicID, int forumID, string newTitle, string newUrlName)

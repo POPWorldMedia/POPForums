@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 using PopForums.Configuration;
 
@@ -37,6 +38,18 @@ namespace PopForums.Data.Sql
 			_cache.Set(key, value, options);
 		}
 
+		public void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value)
+		{
+			Dictionary<int, List<T>> rootPages;
+			_cache.TryGetValue(rootKey, out rootPages);
+			if (rootPages == null)
+				rootPages = new Dictionary<int, List<T>>();
+			else if (rootPages.ContainsKey(page))
+				rootPages.Remove(page);
+			rootPages.Add(page, value);
+			_cache.Set(rootKey, rootPages);
+		}
+
 		public void RemoveCacheObject(string key)
 		{
 			_cache.Remove(key);
@@ -46,6 +59,17 @@ namespace PopForums.Data.Sql
 		{
 			var cacheObject = _cache.Get(key);
 			return cacheObject != null ? (T)cacheObject : default(T);
+		}
+
+		public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
+		{
+			Dictionary<int, List<T>> rootPages;
+			_cache.TryGetValue(rootKey, out rootPages);
+			if (rootPages == null)
+				return null;
+			if (rootPages.ContainsKey(page))
+				return rootPages[page];
+			return null;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using PopForums.Configuration;
@@ -87,13 +88,28 @@ namespace PopForums.AzureKit.Redis
 			}
 		}
 
-	    public void RemoveCacheObject(string key)
+	    public void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value)
+		{
+			Dictionary<int, List<T>> rootPages;
+			_cache.TryGetValue(rootKey, out rootPages);
+			if (rootPages == null)
+				rootPages = new Dictionary<int, List<T>>();
+			else if (rootPages.ContainsKey(page))
+				rootPages.Remove(page);
+			rootPages.Add(page, value);
+			_cache.Set(rootKey, rootPages);
+		}
+
+
+		public void RemoveCacheObject(string key)
 		{
 			_cache.Remove(key);
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
 				db.KeyDelete(key);
+				var bus = _messageConnection.GetDatabase();
+				bus.Publish(_removeChannel, key, CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -123,6 +139,17 @@ namespace PopForums.AzureKit.Redis
 				_errorLog.Log(exc, ErrorSeverity.Error);
 				return default(T);
 			}
+		}
+
+	    public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
+		{
+			Dictionary<int, List<T>> rootPages;
+			_cache.TryGetValue(rootKey, out rootPages);
+			if (rootPages == null)
+				return null;
+			if (rootPages.ContainsKey(page))
+				return rootPages[page];
+			return null;
 		}
     }
 }

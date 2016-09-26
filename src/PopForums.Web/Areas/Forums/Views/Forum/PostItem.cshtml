@@ -76,7 +76,7 @@
 					</li>
 				}
 			}
-			@if (Model.Post.IsEdited && Model.User.IsInRole(PermanentRoles.Moderator))
+			@if (Model.Post.IsEdited && Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
 				<li><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
 			}
