@@ -17,17 +17,17 @@ namespace PopForums.Data.Sql.Repositories
 		public void RecordHeartbeat(string serviceName, string machineName, DateTime lastRun)
 		{
 			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
-					.AddParameter("@ServiceName", serviceName)
-					.AddParameter("@MachineName", machineName)
-					.ExecuteNonQuery());
-
-			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)")
-					.AddParameter("@ServiceName", serviceName)
-					.AddParameter("@MachineName", machineName)
-					.AddParameter("@LastRun", lastRun)
-					.ExecuteNonQuery());
+				.Using(connection =>
+				{
+					var command = connection.Command(
+							"DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
+						.AddParameter("@ServiceName", serviceName)
+						.AddParameter("@MachineName", machineName);
+					command.ExecuteNonQuery();
+					command.CommandText = "INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)";
+					command.AddParameter("@LastRun", lastRun);
+					command.ExecuteNonQuery();
+				});
 		}
 
 		public List<ServiceHeartbeat> GetAll()
