@@ -285,6 +285,7 @@ namespace PopForums.Services
 			forum = _forumRepository.Get(forum.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
+			_topicRepository.MarkTopicForIndexing(topic.TopicID);
 			return topic;
 		}
 

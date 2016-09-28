@@ -55,6 +55,7 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.EscapeHtmlAndCensor("mah title")).Returns("parsed title");
 			_mockPostRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).Returns(69);
 			_mockForumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
+			_mockTopicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
 			forumService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
 			return user;
 		}
@@ -552,6 +553,13 @@ namespace PopForums.Test.Services
 			DoUpNewTopic();
 			_broker.Verify(x => x.NotifyForumUpdate(It.IsAny<Forum>()), Times.Once());
 			_broker.Verify(x => x.NotifyTopicUpdate(It.IsAny<Topic>(), It.IsAny<Forum>(), It.IsAny<string>()), Times.Once());
+		}
+
+		[Fact]
+		public void PostNewTopicMarksTopicForIndexing()
+		{
+			DoUpNewTopic();
+			_mockTopicRepo.Verify(x => x.MarkTopicForIndexing(111), Times.Once());
 		}
 
 		[Fact]

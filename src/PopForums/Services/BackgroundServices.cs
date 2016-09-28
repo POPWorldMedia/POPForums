@@ -13,6 +13,10 @@ namespace PopForums.Services
 			var setupService = serviceProvider.GetService<ISetupService>();
 			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
 				return;
+			_emailService = new EmailApplicationService();
+			_userSessionService = new UserSessionApplicationService();
+			_searchIndexService = new SearchIndexApplicationService();
+			_awardCalcService = new AwardCalculatorApplicationService();
 			_emailService.Start(serviceProvider);
 			_userSessionService.Start(serviceProvider);
 			_searchIndexService.Start(serviceProvider);
@@ -23,10 +27,10 @@ namespace PopForums.Services
 			ApplicationServices.Add(_awardCalcService);
 		}
 
-		private static readonly EmailApplicationService _emailService = new EmailApplicationService();
-		private static readonly UserSessionApplicationService _userSessionService = new UserSessionApplicationService();
-		private static readonly SearchIndexApplicationService _searchIndexService = new SearchIndexApplicationService();
-		private static readonly AwardCalculatorApplicationService _awardCalcService = new AwardCalculatorApplicationService();
+		private static EmailApplicationService _emailService;
+		private static UserSessionApplicationService _userSessionService;
+		private static SearchIndexApplicationService _searchIndexService;
+		private static AwardCalculatorApplicationService _awardCalcService;
 
 		public static readonly List<ApplicationServiceBase> ApplicationServices = new List<ApplicationServiceBase>();
 	}

@@ -6,7 +6,11 @@
 		"Cache": {
 			"Seconds": 180,
 			"ConnectionString": "127.0.0.1:6379,abortConnect=false",
-			"ForceLocalOnly": false 
+			"ForceLocalOnly": false
+		},
+		"Search": {
+			"Url": "popforumsdev",
+			"Key": "A3DAB9D7C7B1525DA2B3AA0A6C4FAAA0"
 		}
 	}
 }

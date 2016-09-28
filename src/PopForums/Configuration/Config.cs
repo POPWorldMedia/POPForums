@@ -6,7 +6,8 @@
 		int CacheSeconds { get; }
 		string CacheConnectionString { get; }
 		bool ForceLocalOnly { get; }
-
+		string SearchUrl { get; }
+		string SearchKey { get; }
 	}
 
 	public class Config : IConfig
@@ -31,6 +32,8 @@
 		public string DatabaseConnectionString => _configContainer.DatabaseConnectionString;
 		public int CacheSeconds => _configContainer.CacheSeconds;
 		public string CacheConnectionString => _configContainer.CacheConnectionString;
-		public bool ForceLocalOnly => _configContainer.ForceLocalOnly;
+		public bool ForceLocalOnly => _configContainer.CacheForceLocalOnly;
+		public string SearchUrl => _configContainer.SearchUrl;
+		public string SearchKey => _configContainer.SearchKey;
 	}
 }

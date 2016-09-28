@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PopForums.AzureKit.Redis;
+using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
@@ -56,10 +56,13 @@ namespace PopForums.Web
 			services.AddPopForumsSql();
 			services.AddPopForumsWeb();
 
-			// use Redis cache for POP Forums using 
-			services.AddPopForumsRedisCache();
+			// use Redis cache for POP Forums using AzureKit
+			//services.AddPopForumsRedisCache();
 
-			// creates an instance of the background services for POP Forums using AzureKit
+			// use Azure Search for POP Forums using AzureKit
+			services.AddPopForumsAzureSearch();
+
+			// creates an instance of the background services for POP Forums... call this last in forum setup
 			services.AddPopForumsBackgroundServices();
 		}
 		
