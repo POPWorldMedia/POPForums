@@ -473,7 +473,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		{
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			if (user.IsPostEditable(post))
+			if (!user.IsPostEditable(post))
 				return Forbid();
 			_postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
