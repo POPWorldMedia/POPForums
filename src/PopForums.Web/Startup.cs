@@ -60,7 +60,7 @@ namespace PopForums.Web
 			//services.AddPopForumsRedisCache();
 
 			// use Azure Search for POP Forums using AzureKit
-			services.AddPopForumsAzureSearch();
+			//services.AddPopForumsAzureSearch();
 
 			// creates an instance of the background services for POP Forums... call this last in forum setup
 			services.AddPopForumsBackgroundServices();
