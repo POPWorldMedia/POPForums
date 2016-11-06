@@ -18,16 +18,16 @@ namespace PopForums.Data.Sql.Repositories
 		public void Log(DateTime timeStamp, int userID, string userName, int moderationType, int? forumID, int topicID, int? postID, string comment, string oldText)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_ModerationLog (TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText) VALUES (@TimeStamp, @UserID, @UserName, @ModerationType, @ForumID, @TopicID, @PostID, @Comment, @OldText)")
-					.AddParameter("@TimeStamp", timeStamp)
-					.AddParameter("@UserID", userID)
-					.AddParameter("@UserName", userName)
-					.AddParameter("@ModerationType", moderationType)
-					.AddParameter("@ForumID", forumID.GetObjectOrDbNull())
-					.AddParameter("@TopicID", topicID)
-					.AddParameter("@PostID", postID.GetObjectOrDbNull())
-					.AddParameter("@Comment", comment.NullToEmpty())
-					.AddParameter("@OldText", oldText.GetObjectOrDbNull())
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_ModerationLog (TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText) VALUES (@TimeStamp, @UserID, @UserName, @ModerationType, @ForumID, @TopicID, @PostID, @Comment, @OldText)")
+					.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
+					.AddParameter(_sqlObjectFactory, "@UserName", userName)
+					.AddParameter(_sqlObjectFactory, "@ModerationType", moderationType)
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID.GetObjectOrDbNull())
+					.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
+					.AddParameter(_sqlObjectFactory, "@PostID", postID.GetObjectOrDbNull())
+					.AddParameter(_sqlObjectFactory, "@Comment", comment.NullToEmpty())
+					.AddParameter(_sqlObjectFactory, "@OldText", oldText.GetObjectOrDbNull())
 					.ExecuteNonQuery());
 		}
 
@@ -52,9 +52,9 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<ModerationLogEntry>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT ModerationID, TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText FROM pf_ModerationLog WHERE TimeStamp >= @Start AND TimeStamp <= @End ORDER BY TimeStamp")
-					.AddParameter("@Start", start)
-					.AddParameter("@End", end)
+				connection.Command(_sqlObjectFactory, "SELECT ModerationID, TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText FROM pf_ModerationLog WHERE TimeStamp >= @Start AND TimeStamp <= @End ORDER BY TimeStamp")
+					.AddParameter(_sqlObjectFactory, "@Start", start)
+					.AddParameter(_sqlObjectFactory, "@End", end)
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateFromReader(r))));
 			return list;
@@ -68,8 +68,8 @@ namespace PopForums.Data.Sql.Repositories
 				sql += " AND PostID IS NULL";
 			sql += "  ORDER BY TimeStamp";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-					.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateFromReader(r))));
 			return list;
@@ -79,8 +79,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<ModerationLogEntry>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT ModerationID, TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText FROM pf_ModerationLog WHERE PostID = @PostID ORDER BY TimeStamp")
-					.AddParameter("@PostID", postID)
+				connection.Command(_sqlObjectFactory, "SELECT ModerationID, TimeStamp, UserID, UserName, ModerationType, ForumID, TopicID, PostID, Comment, OldText FROM pf_ModerationLog WHERE PostID = @PostID ORDER BY TimeStamp")
+					.AddParameter(_sqlObjectFactory, "@PostID", postID)
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateFromReader(r))));
 			return list;

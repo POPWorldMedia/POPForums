@@ -19,15 +19,15 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var id = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => id = Convert.ToInt32(
-				connection.Command("INSERT INTO pf_QueuedEmailMessage (FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime) VALUES (@FromEmail, @FromName, @ToEmail, @ToName, @Subject, @Body, @HtmlBody, @QueueTime)")
-					.AddParameter("@FromEmail", message.FromEmail)
-					.AddParameter("@FromName", message.FromName)
-					.AddParameter("@ToEmail", message.ToEmail)
-					.AddParameter("@ToName", message.ToName)
-					.AddParameter("@Subject", message.Subject)
-					.AddParameter("@Body", message.Body)
-					.AddParameter("@HtmlBody", message.HtmlBody.GetObjectOrDbNull())
-					.AddParameter("@QueueTime", message.QueueTime)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_QueuedEmailMessage (FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime) VALUES (@FromEmail, @FromName, @ToEmail, @ToName, @Subject, @Body, @HtmlBody, @QueueTime)")
+					.AddParameter(_sqlObjectFactory, "@FromEmail", message.FromEmail)
+					.AddParameter(_sqlObjectFactory, "@FromName", message.FromName)
+					.AddParameter(_sqlObjectFactory, "@ToEmail", message.ToEmail)
+					.AddParameter(_sqlObjectFactory, "@ToName", message.ToName)
+					.AddParameter(_sqlObjectFactory, "@Subject", message.Subject)
+					.AddParameter(_sqlObjectFactory, "@Body", message.Body)
+					.AddParameter(_sqlObjectFactory, "@HtmlBody", message.HtmlBody.GetObjectOrDbNull())
+					.AddParameter(_sqlObjectFactory, "@QueueTime", message.QueueTime)
 					.ExecuteAndReturnIdentity()));
 			if (id == 0)
 				throw new Exception("MessageID was not returned from creation of a QueuedEmailMessage.");
@@ -39,16 +39,16 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_EmailQueue (Payload) VALUES (@Payload)")
-					.AddParameter("@Payload", serializedPayload)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_EmailQueue (Payload) VALUES (@Payload)")
+					.AddParameter(_sqlObjectFactory, "@Payload", serializedPayload)
 					.ExecuteNonQuery());
 		}
 
 		public void DeleteMessage(int messageID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID")
-					.AddParameter("@MessageID", messageID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID")
+					.AddParameter(_sqlObjectFactory, "@MessageID", messageID)
 					.ExecuteNonQuery());
 		}
 
@@ -62,7 +62,7 @@ ORDER BY Id)
 DELETE FROM cte
 OUTPUT DELETED.Payload;";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
+				connection.Command(_sqlObjectFactory, sql)
 					.ExecuteReader()
 					.ReadOne(r => serializedPayload = r.GetString(0)));
 			if (String.IsNullOrEmpty(serializedPayload))
@@ -80,8 +80,8 @@ OUTPUT DELETED.Payload;";
 				throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
 			QueuedEmailMessage message = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT MessageID, FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID")
-					.AddParameter("@MessageID", payload.MessageID)
+				connection.Command(_sqlObjectFactory, "SELECT MessageID, FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID")
+					.AddParameter(_sqlObjectFactory, "@MessageID", payload.MessageID)
 					.ExecuteReader()
 					.ReadOne(r => message = new QueuedEmailMessage
 												{

@@ -20,12 +20,12 @@ namespace PopForums.Data.Sql.Repositories
 				.Using(connection =>
 				{
 					var command = connection.Command(
-							"DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
-						.AddParameter("@ServiceName", serviceName)
-						.AddParameter("@MachineName", machineName);
+							_sqlObjectFactory, "DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
+						.AddParameter(_sqlObjectFactory, "@ServiceName", serviceName)
+						.AddParameter(_sqlObjectFactory, "@MachineName", machineName);
 					command.ExecuteNonQuery();
 					command.CommandText = "INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)";
-					command.AddParameter("@LastRun", lastRun);
+					command.AddParameter(_sqlObjectFactory, "@LastRun", lastRun);
 					command.ExecuteNonQuery();
 				});
 		}
@@ -34,7 +34,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<ServiceHeartbeat>();
 			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command("SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName")
+				.Using(connection => connection.Command(_sqlObjectFactory, "SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(new ServiceHeartbeat
 					{
@@ -48,7 +48,7 @@ namespace PopForums.Data.Sql.Repositories
 		public void ClearAll()
 		{
 			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command("DELETE FROM pf_ServiceHeartbeat")
+				.Using(connection => connection.Command(_sqlObjectFactory, "DELETE FROM pf_ServiceHeartbeat")
 					.ExecuteNonQuery());
 		}
 	}

@@ -40,10 +40,10 @@ WHERE Row between
 
 SET ROWCOUNT 0";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-				.AddParameter("@UserID", userID)
-				.AddParameter("@StartRow", startRow)
-				.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+				.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(TopicRepository.GetTopicFromReader(r))));
 			return list;
@@ -53,8 +53,8 @@ SET ROWCOUNT 0";
 		{
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command("SELECT COUNT(*) FROM pf_Favorite F JOIN pf_Topic T ON F.TopicID = T.TopicID WHERE F.UserID = @UserID AND T.IsDeleted = 0")
-				.AddParameter("@UserID", userID)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_Favorite F JOIN pf_Topic T ON F.TopicID = T.TopicID WHERE F.UserID = @UserID AND T.IsDeleted = 0")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
 				.ExecuteScalar()));
 			return count;
 		}
@@ -63,9 +63,9 @@ SET ROWCOUNT 0";
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT * FROM pf_Favorite WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "SELECT * FROM pf_Favorite WHERE UserID = @UserID AND TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteReader()
 				.ReadOne(r => result = true));
 			return result;
@@ -74,18 +74,18 @@ SET ROWCOUNT 0";
 		public void AddFavoriteTopic(int userID, int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_Favorite (UserID, TopicID) VALUES (@UserID, @TopicID)")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Favorite (UserID, TopicID) VALUES (@UserID, @TopicID)")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void RemoveFavoriteTopic(int userID, int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_Favorite WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_Favorite WHERE UserID = @UserID AND TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 	}

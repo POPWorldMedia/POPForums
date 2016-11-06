@@ -53,8 +53,8 @@ namespace PopForums.Data.Sql.Repositories
 		public Forum Get(int forumID)
 		{
 			Forum forum = null;
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("SELECT " + ForumFields + " FROM pf_Forum WHERE ForumID = @ForumID")
-					.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum WHERE ForumID = @ForumID")
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 					.ExecuteReader()
 					.ReadOne(r => forum = PopulateForumFromReader(r)));
 			return forum;
@@ -64,8 +64,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			Forum forum = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT " + ForumFields + " FROM pf_Forum WHERE UrlName = @UrlName")
-					.AddParameter("@UrlName", urlName)
+				connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum WHERE UrlName = @UrlName")
+					.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
 					.ExecuteReader()
 					.ReadOne(r => forum = PopulateForumFromReader(r)));
 			return forum;
@@ -78,17 +78,17 @@ namespace PopForums.Data.Sql.Repositories
 			var forumID = 0;
 			var lastPostTime = new DateTime(2000, 1, 1);
 			_sqlObjectFactory.GetConnection().Using(connection => forumID = Convert.ToInt32(
-				connection.Command("INSERT INTO pf_Forum (CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName, IsQAForum) VALUES (@CategoryID, @Title, @Description, @IsVisible, @IsArchived, @SortOrder, 0, 0, @LastPostTime, '', @UrlName, @ForumAdapterName, @IsQAForum)")
-				.AddParameter("@CategoryID", categoryID.GetObjectOrDbNull())
-				.AddParameter("@Title", title)
-				.AddParameter("@Description", description.NullToEmpty())
-				.AddParameter("@IsVisible", isVisible)
-				.AddParameter("@IsArchived", isArchived)
-				.AddParameter("@SortOrder", sortOrder)
-				.AddParameter("@LastPostTime", lastPostTime)
-				.AddParameter("@UrlName", urlName)
-				.AddParameter("@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
-				.AddParameter("@IsQAForum", isQAForum)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Forum (CategoryID, Title, Description, IsVisible, IsArchived, SortOrder, TopicCount, PostCount, LastPostTime, LastPostName, UrlName, ForumAdapterName, IsQAForum) VALUES (@CategoryID, @Title, @Description, @IsVisible, @IsArchived, @SortOrder, 0, 0, @LastPostTime, '', @UrlName, @ForumAdapterName, @IsQAForum)")
+				.AddParameter(_sqlObjectFactory, "@CategoryID", categoryID.GetObjectOrDbNull())
+				.AddParameter(_sqlObjectFactory, "@Title", title)
+				.AddParameter(_sqlObjectFactory, "@Description", description.NullToEmpty())
+				.AddParameter(_sqlObjectFactory, "@IsVisible", isVisible)
+				.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
+				.AddParameter(_sqlObjectFactory, "@SortOrder", sortOrder)
+				.AddParameter(_sqlObjectFactory, "@LastPostTime", lastPostTime)
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
+				.AddParameter(_sqlObjectFactory, "@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
+				.AddParameter(_sqlObjectFactory, "@IsQAForum", isQAForum)
 				.ExecuteAndReturnIdentity()));
 			var forum = new Forum(forumID)
 			            	{
@@ -118,13 +118,13 @@ namespace PopForums.Data.Sql.Repositories
 			var forums = new List<Forum>();
 			if (categoryID.HasValue && categoryID != 0)
 				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("SELECT " + ForumFields + " FROM pf_Forum WHERE CategoryID = @CategoryID")
-						.AddParameter("@CategoryID", categoryID.Value)
+					connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum WHERE CategoryID = @CategoryID")
+						.AddParameter(_sqlObjectFactory, "@CategoryID", categoryID.Value)
 						.ExecuteReader()
 						.ReadAll(r => forums.Add(PopulateForumFromReader(r))));
 			else
 				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("SELECT " + ForumFields + " FROM pf_Forum WHERE CategoryID = 0 OR CategoryID IS NULL")
+					connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum WHERE CategoryID = 0 OR CategoryID IS NULL")
 						.ExecuteReader()
 						.ReadAll(r => forums.Add(PopulateForumFromReader(r))));
 			return forums;
@@ -134,8 +134,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT UrlName FROM pf_Forum WHERE UrlName LIKE @UrlName + '%'")
-				.AddParameter("@UrlName", urlName)
+				c.Command(_sqlObjectFactory, "SELECT UrlName FROM pf_Forum WHERE UrlName LIKE @UrlName + '%'")
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(r.GetString(0))));
 			return list;
@@ -146,16 +146,16 @@ namespace PopForums.Data.Sql.Repositories
 			if (categoryID == 0)
 				categoryID = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_Forum SET CategoryID = @CategoryID, Title = @Title, Description = @Description, IsVisible = @IsVisible, IsArchived = @IsArchived, UrlName = @UrlName, ForumAdapterName = @ForumAdapterName, IsQAForum = @IsQAForum WHERE ForumID = @ForumID")
-				.AddParameter("@CategoryID", categoryID.GetObjectOrDbNull())
-				.AddParameter("@Title", title)
-				.AddParameter("@Description", description.NullToEmpty())
-				.AddParameter("@IsVisible", isVisible)
-				.AddParameter("@IsArchived", isArchived)
-				.AddParameter("@UrlName", urlName)
-				.AddParameter("@ForumID", forumID)
-				.AddParameter("@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
-				.AddParameter("@IsQAForum", isQAForum)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET CategoryID = @CategoryID, Title = @Title, Description = @Description, IsVisible = @IsVisible, IsArchived = @IsArchived, UrlName = @UrlName, ForumAdapterName = @ForumAdapterName, IsQAForum = @IsQAForum WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@CategoryID", categoryID.GetObjectOrDbNull())
+				.AddParameter(_sqlObjectFactory, "@Title", title)
+				.AddParameter(_sqlObjectFactory, "@Description", description.NullToEmpty())
+				.AddParameter(_sqlObjectFactory, "@IsVisible", isVisible)
+				.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+				.AddParameter(_sqlObjectFactory, "@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
+				.AddParameter(_sqlObjectFactory, "@IsQAForum", isQAForum)
 				.ExecuteNonQuery());
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumUrlNames);
 			_cacheHelper.RemoveCacheObject(CacheKeys.ForumTitles);
@@ -163,49 +163,49 @@ namespace PopForums.Data.Sql.Repositories
 
 		public void UpdateSortOrder(int forumID, int newSortOrder)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET SortOrder = @SortOrder WHERE ForumID = @ForumID")
-				.AddParameter("@SortOrder", newSortOrder)
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET SortOrder = @SortOrder WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@SortOrder", newSortOrder)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
 		public void UpdateCategoryAssociation(int forumID, int? categoryID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET CategoryID = @CategoryID WHERE ForumID = @ForumID")
-				.AddParameter("@CategoryID", categoryID.GetObjectOrDbNull())
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET CategoryID = @CategoryID WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@CategoryID", categoryID.GetObjectOrDbNull())
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
 		public void UpdateLastTimeAndUser(int forumID, DateTime lastTime, string lastName)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET LastPostTime = @LastPostTime, LastPostName = @LastPostName WHERE ForumID = @ForumID")
-				.AddParameter("@LastPostTime", lastTime)
-				.AddParameter("@LastPostName", lastName)
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET LastPostTime = @LastPostTime, LastPostName = @LastPostName WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@LastPostTime", lastTime)
+				.AddParameter(_sqlObjectFactory, "@LastPostName", lastName)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
 		public void UpdateTopicAndPostCounts(int forumID, int topicCount, int postCount)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET TopicCount = @TopicCount, PostCount = @PostCount WHERE ForumID = @ForumID")
-				.AddParameter("@TopicCount", topicCount)
-				.AddParameter("@PostCount", postCount)
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET TopicCount = @TopicCount, PostCount = @PostCount WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@TopicCount", topicCount)
+				.AddParameter(_sqlObjectFactory, "@PostCount", postCount)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
 		public void IncrementPostCount(int forumID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET PostCount = PostCount + 1 WHERE ForumID = @ForumID")
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET PostCount = PostCount + 1 WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
 		public void IncrementPostAndTopicCount(int forumID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Forum SET TopicCount = TopicCount + 1, PostCount = PostCount + 1 WHERE ForumID = @ForumID")
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Forum SET TopicCount = TopicCount + 1, PostCount = PostCount + 1 WHERE ForumID = @ForumID")
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
@@ -213,7 +213,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var forums = new List<Forum>();
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT " + ForumFields + " FROM pf_Forum ORDER BY SortOrder")
+				connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum ORDER BY SortOrder")
 			        .ExecuteReader()
 			        .ReadAll(r => forums.Add(PopulateForumFromReader(r))));
 			return forums;
@@ -223,7 +223,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var forums = new List<Forum>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT " + ForumFields + " FROM pf_Forum WHERE IsVisible = 1 ORDER BY SortOrder")
+				connection.Command(_sqlObjectFactory, "SELECT " + ForumFields + " FROM pf_Forum WHERE IsVisible = 1 ORDER BY SortOrder")
 					.ExecuteReader()
 					.ReadAll(r => forums.Add(PopulateForumFromReader(r))));
 			return forums;
@@ -270,7 +270,7 @@ namespace PopForums.Data.Sql.Repositories
 			foreach (var forum in forums)
 				dictionary.Add(forum.ForumID, new List<string>());
 			_sqlObjectFactory.GetConnection().Using(connection =>
-											 connection.Command("SELECT ForumID, Role FROM " + table)
+											 connection.Command(_sqlObjectFactory, "SELECT ForumID, Role FROM " + table)
 												.ExecuteReader()
 												.ReadAll(r => 
 													dictionary.Single(d => d.Key == r.GetInt32(0)).Value
@@ -281,16 +281,16 @@ namespace PopForums.Data.Sql.Repositories
 
 		private void ModifyForumRole(int forumID, string role, string sql)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(sql)
-				.AddParameter("@ForumID", forumID)
-				.AddParameter("@Role", role)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, sql)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+				.AddParameter(_sqlObjectFactory, "@Role", role)
 				.ExecuteNonQuery());
 		}
 
 		private void ModifyForumRole(int forumID, string sql)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(sql)
-				.AddParameter("@ForumID", forumID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, sql)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteNonQuery());
 		}
 
@@ -339,7 +339,7 @@ namespace PopForums.Data.Sql.Repositories
 				return cacheObject;
 			var urlNames = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT UrlName FROM pf_Forum")
+				connection.Command(_sqlObjectFactory, "SELECT UrlName FROM pf_Forum")
 			        .ExecuteReader()
 			        .ReadAll(r => urlNames.Add(r.GetString(0))));
 			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumUrlNames, urlNames);
@@ -353,7 +353,7 @@ namespace PopForums.Data.Sql.Repositories
 				return cacheObject;
 			var urlNames = new Dictionary<int, string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT ForumID, Title FROM pf_Forum")
+				connection.Command(_sqlObjectFactory, "SELECT ForumID, Title FROM pf_Forum")
 					.ExecuteReader()
 					.ReadAll(r => urlNames.Add(r.GetInt32(0), r.GetString(1))));
 			_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumTitles, urlNames);
@@ -368,7 +368,7 @@ namespace PopForums.Data.Sql.Repositories
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
 			                                 	{
-			                                 		var result = connection.Command("SELECT SUM(TopicCount) FROM pf_Forum")
+			                                 		var result = connection.Command(_sqlObjectFactory, "SELECT SUM(TopicCount) FROM pf_Forum")
 														.ExecuteScalar();
 													if (result.GetType() == typeof(Int32))
 														count = Convert.ToInt32(result);
@@ -385,7 +385,7 @@ namespace PopForums.Data.Sql.Repositories
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
 			                                 	{
-			                                 		var result = connection.Command("SELECT SUM(PostCount) FROM pf_Forum")
+			                                 		var result = connection.Command(_sqlObjectFactory, "SELECT SUM(PostCount) FROM pf_Forum")
 														.ExecuteScalar();
 													if (result.GetType() == typeof(Int32))
 														count = Convert.ToInt32(result);

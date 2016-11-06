@@ -40,10 +40,10 @@ WHERE Row between
 
 SET ROWCOUNT 0";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-				.AddParameter("@UserID", userID)
-				.AddParameter("@StartRow", startRow)
-				.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+				.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(TopicRepository.GetTopicFromReader(r))));
 			return list;
@@ -53,8 +53,8 @@ SET ROWCOUNT 0";
 		{
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command("SELECT COUNT(*) FROM pf_SubscribeTopic S JOIN pf_Topic T ON S.TopicID = T.TopicID WHERE S.UserID = @UserID AND T.IsDeleted = 0")
-				.AddParameter("@UserID", userID)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_SubscribeTopic S JOIN pf_Topic T ON S.TopicID = T.TopicID WHERE S.UserID = @UserID AND T.IsDeleted = 0")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
 				.ExecuteScalar()));
 			return count;
 		}
@@ -63,8 +63,8 @@ SET ROWCOUNT 0";
 		{
 			var list = new List<User>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID AND IsViewed = 1")
-					.AddParameter("@TopicID", topicID)
+					connection.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID AND IsViewed = 1")
+					.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 					.ExecuteReader()
 					.ReadAll(r => list.Add(UserRepository.PopulateUser(r))));
 			return list;
@@ -74,9 +74,9 @@ SET ROWCOUNT 0";
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT * FROM pf_SubscribeTopic WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "SELECT * FROM pf_SubscribeTopic WHERE UserID = @UserID AND TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteReader()
 				.ReadOne(r => result = true));
 			return result;
@@ -85,35 +85,35 @@ SET ROWCOUNT 0";
 		public void AddSubscribedTopic(int userID, int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_SubscribeTopic (UserID, TopicID, IsViewed) VALUES (@UserID, @TopicID, 1)")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_SubscribeTopic (UserID, TopicID, IsViewed) VALUES (@UserID, @TopicID, 1)")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void RemoveSubscribedTopic(int userID, int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_SubscribeTopic WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_SubscribeTopic WHERE UserID = @UserID AND TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void MarkSubscribedTopicViewed(int userID, int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_SubscribeTopic SET IsViewed = 1 WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_SubscribeTopic SET IsViewed = 1 WHERE UserID = @UserID AND TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void MarkSubscribedTopicUnviewed(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_SubscribeTopic SET IsViewed = 0 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_SubscribeTopic SET IsViewed = 0 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 	}

@@ -17,8 +17,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var data = new byte[] {};
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT ImageData FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
-					.AddParameter("@UserAvatarID", userAvatarID)
+				connection.Command(_sqlObjectFactory, "SELECT ImageData FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
+					.AddParameter(_sqlObjectFactory, "@UserAvatarID", userAvatarID)
 					.ExecuteReader()
 					.ReadOne(r => data = (byte[])r["ImageData"]));
 			return data;
@@ -28,8 +28,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var ids = new List<int>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT UserAvatarID FROM pf_UserAvatar WHERE UserID = @UserID")
-					.AddParameter("@UserID", userID)
+				connection.Command(_sqlObjectFactory, "SELECT UserAvatarID FROM pf_UserAvatar WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteReader()
 					.ReadAll(r => ids.Add(r.GetInt32(0))));
 			return ids;
@@ -39,10 +39,10 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			int avatarID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				avatarID = Convert.ToInt32(connection.Command("INSERT INTO pf_UserAvatar (UserID, ImageData, [TimeStamp]) VALUES (@UserID, @ImageData, @TimeStamp)")
-					.AddParameter("@UserID", userID)
-					.AddParameter("@TimeStamp", timeStamp)
-					.AddParameter("@ImageData", imageData)
+				avatarID = Convert.ToInt32(connection.Command(_sqlObjectFactory, "INSERT INTO pf_UserAvatar (UserID, ImageData, [TimeStamp]) VALUES (@UserID, @ImageData, @TimeStamp)")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
+					.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
+					.AddParameter(_sqlObjectFactory, "@ImageData", imageData)
 					.ExecuteAndReturnIdentity()));
 			return avatarID;
 		}
@@ -50,8 +50,8 @@ namespace PopForums.Data.Sql.Repositories
 		public void DeleteAvatarsByUserID(int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_UserAvatar WHERE UserID = @UserID")
-					.AddParameter("@UserID", userID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_UserAvatar WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteNonQuery());
 		}
 
@@ -59,8 +59,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			DateTime? timeStamp = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT [TimeStamp] FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
-					.AddParameter("@UserAvatarID", userAvatarID)
+				connection.Command(_sqlObjectFactory, "SELECT [TimeStamp] FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
+					.AddParameter(_sqlObjectFactory, "@UserAvatarID", userAvatarID)
 					.ExecuteReader()
 					.ReadOne(r => timeStamp = r.GetDateTime(0)));
 			return timeStamp;

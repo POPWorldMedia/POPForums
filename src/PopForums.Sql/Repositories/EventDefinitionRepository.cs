@@ -17,8 +17,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			EventDefinition eventDef = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT EventDefinitionID, Description, PointValue, IsPublishedToFeed FROM pf_EventDefinition WHERE EventDefinitionID = @EventDefinitionID")
-				.AddParameter("@EventDefinitionID", eventDefinitionID)
+				connection.Command(_sqlObjectFactory, "SELECT EventDefinitionID, Description, PointValue, IsPublishedToFeed FROM pf_EventDefinition WHERE EventDefinitionID = @EventDefinitionID")
+				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
 				.ExecuteReader()
 				.ReadOne(r => eventDef = new EventDefinition { EventDefinitionID = r.GetString(0), Description = r.GetString(1), PointValue = r.GetInt32(2), IsPublishedToFeed = r.GetBoolean(3) }));
 			return eventDef;
@@ -28,7 +28,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<EventDefinition>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT EventDefinitionID, Description, PointValue, IsPublishedToFeed FROM pf_EventDefinition ORDER BY EventDefinitionID")
+				connection.Command(_sqlObjectFactory, "SELECT EventDefinitionID, Description, PointValue, IsPublishedToFeed FROM pf_EventDefinition ORDER BY EventDefinitionID")
 				.ExecuteReader()
 				.ReadAll(r => list.Add(new EventDefinition { EventDefinitionID = r.GetString(0), Description = r.GetString(1), PointValue = r.GetInt32(2), IsPublishedToFeed = r.GetBoolean(3) })));
 			return list;
@@ -37,19 +37,19 @@ namespace PopForums.Data.Sql.Repositories
 		public void Create(EventDefinition eventDefinition)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_EventDefinition (EventDefinitionID, Description, PointValue, IsPublishedToFeed) VALUES (@EventDefinitionID, @Description, @PointValue, @IsPublishedToFeed)")
-				.AddParameter("@EventDefinitionID", eventDefinition.EventDefinitionID)
-				.AddParameter("@Description", eventDefinition.Description.NullToEmpty())
-				.AddParameter("@PointValue", eventDefinition.PointValue)
-				.AddParameter("@IsPublishedToFeed", eventDefinition.IsPublishedToFeed)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_EventDefinition (EventDefinitionID, Description, PointValue, IsPublishedToFeed) VALUES (@EventDefinitionID, @Description, @PointValue, @IsPublishedToFeed)")
+				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinition.EventDefinitionID)
+				.AddParameter(_sqlObjectFactory, "@Description", eventDefinition.Description.NullToEmpty())
+				.AddParameter(_sqlObjectFactory, "@PointValue", eventDefinition.PointValue)
+				.AddParameter(_sqlObjectFactory, "@IsPublishedToFeed", eventDefinition.IsPublishedToFeed)
 				.ExecuteNonQuery());
 		}
 
 		public void Delete(string eventDefinitionID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_EventDefinition WHERE EventDefinitionID = @EventDefinitionID")
-				.AddParameter("@EventDefinitionID", eventDefinitionID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_EventDefinition WHERE EventDefinitionID = @EventDefinitionID")
+				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
 				.ExecuteNonQuery());
 		}
 	}

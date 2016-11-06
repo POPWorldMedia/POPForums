@@ -17,7 +17,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var dictionary = new Dictionary<string, string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT Setting, [Value] FROM pf_Setting")
+				connection.Command(_sqlObjectFactory, "SELECT Setting, [Value] FROM pf_Setting")
 					.ExecuteReader()
 					.ReadAll(r => dictionary.Add(r.GetString(0), r.GetString(1))));
 			return dictionary;
@@ -27,12 +27,12 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				{
-					connection.Command("DELETE FROM pf_Setting")
+					connection.Command(_sqlObjectFactory, "DELETE FROM pf_Setting")
 						.ExecuteNonQuery();
 					foreach (var key in dictionary)
-						connection.Command("INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)")
-							.AddParameter("@Setting", key.Key)
-							.AddParameter("@Value", key.Value == null ? String.Empty : key.Value.ToString())
+						connection.Command(_sqlObjectFactory, "INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)")
+							.AddParameter(_sqlObjectFactory, "@Setting", key.Key)
+							.AddParameter(_sqlObjectFactory, "@Value", key.Value == null ? String.Empty : key.Value.ToString())
 							.ExecuteNonQuery();
 				});
 		}

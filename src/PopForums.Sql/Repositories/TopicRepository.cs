@@ -23,10 +23,10 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT TOP 1 " + TopicFields + 
+				c.Command(_sqlObjectFactory, "SELECT TOP 1 " + TopicFields + 
 @" FROM pf_Topic WHERE pf_Topic.ForumID = @ForumID AND pf_Topic.IsDeleted = 0 
 ORDER BY pf_Topic.LastPostTime DESC")
-				.AddParameter("@ForumID", forumID)
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 				.ExecuteReader()
 				.ReadOne(r => topic = GetTopicFromReader(r)));
 			return topic;
@@ -39,8 +39,8 @@ ORDER BY pf_Topic.LastPostTime DESC")
 				sql += " AND IsDeleted = 0";
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				count = Convert.ToInt32(connection.Command(sql)
-					.AddParameter("@ForumID", forumID)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 					.ExecuteScalar()));
 			return count;
 		}
@@ -53,8 +53,8 @@ ORDER BY pf_Topic.LastPostTime DESC")
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command(sql)
-				.AddParameter("@UserID", userID)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, sql)
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
 				.ExecuteScalar()));
 			return count;
 		}
@@ -69,7 +69,7 @@ ORDER BY pf_Topic.LastPostTime DESC")
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command(sql)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, sql)
 					.ExecuteScalar()));
 			return count;
 		}
@@ -97,8 +97,8 @@ ORDER BY pf_Topic.LastPostTime DESC")
 				sql += " AND pf_Post.IsDeleted = 0 AND pf_Topic.IsDeleted = 0";
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command(sql)
-					.AddParameter("@ForumID", forumID)
+				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
 					.ExecuteScalar()));
 			return count;
 		}
@@ -107,8 +107,8 @@ ORDER BY pf_Topic.LastPostTime DESC")
 		{
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + TopicFields + " FROM pf_Topic WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+				c.Command(_sqlObjectFactory, "SELECT " + TopicFields + " FROM pf_Topic WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteReader()
 				.ReadOne(r => topic = GetTopicFromReader(r)));
 			return topic;
@@ -118,8 +118,8 @@ ORDER BY pf_Topic.LastPostTime DESC")
 		{
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + TopicFields + " FROM pf_Topic WHERE UrlName = @UrlName")
-				.AddParameter("@UrlName", urlName)
+				c.Command(_sqlObjectFactory, "SELECT " + TopicFields + " FROM pf_Topic WHERE UrlName = @UrlName")
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
 				.ExecuteReader()
 				.ReadOne(r => topic = GetTopicFromReader(r)));
 			return topic;
@@ -151,11 +151,11 @@ WHERE Row between
 SET ROWCOUNT 0";
 			var topics = new List<Topic>();
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(sql)
-					.AddParameter("@ForumID", forumID)
-					.AddParameter("@IncludeDeleted", includeDeleted)
-					.AddParameter("@StartRow", startRow)
-					.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+					.AddParameter(_sqlObjectFactory, "@IncludeDeleted", includeDeleted)
+					.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+					.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 					.ExecuteReader()
 					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
 			return topics;
@@ -194,11 +194,11 @@ WHERE Row between
 SET ROWCOUNT 0";
 			var topics = new List<Topic>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-					.AddParameter("@UserID", userID)
-					.AddParameter("@IncludeDeleted", includeDeleted)
-					.AddParameter("@StartRow", startRow)
-					.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
+					.AddParameter(_sqlObjectFactory, "@IncludeDeleted", includeDeleted)
+					.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+					.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 					.ExecuteReader()
 					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
 			return topics;
@@ -230,10 +230,10 @@ WHERE Row between
 SET ROWCOUNT 0";
 			var topics = new List<Topic>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-					.AddParameter("@IncludeDeleted", includeDeleted)
-					.AddParameter("@StartRow", startRow)
-					.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@IncludeDeleted", includeDeleted)
+					.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+					.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 					.ExecuteReader()
 					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
 			return topics;
@@ -249,9 +249,9 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			var topics = new List<Topic>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-					.AddParameter("@ForumID", forumID)
-					.AddParameter("@IncludeDeleted", includeDeleted)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+					.AddParameter(_sqlObjectFactory, "@IncludeDeleted", includeDeleted)
 					.ExecuteReader()
 					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
 			return topics;
@@ -283,8 +283,8 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 		{
 			var list = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT UrlName FROM pf_Topic WHERE UrlName LIKE @UrlName + '%'")
-				.AddParameter("@UrlName", urlName)
+				c.Command(_sqlObjectFactory, "SELECT UrlName FROM pf_Topic WHERE UrlName LIKE @UrlName + '%'")
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(r.GetString(0))));
 			return list;
@@ -294,91 +294,91 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 		{
 			object result = null;
 			_sqlObjectFactory.GetConnection().Using(c =>
-				result = c.Command("INSERT INTO pf_Topic (ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName) VALUES (@ForumID, @Title, @ReplyCount, @ViewCount, @StartedByUserID, @StartedByName, @LastPostUserID, @LastPostName, @LastPostTime, @IsClosed, @IsPinned, @IsDeleted, @IsIndexed, @UrlName)")
-				.AddParameter("@ForumID", forumID)
-				.AddParameter("@Title", title)
-				.AddParameter("@ReplyCount", replyCount)
-				.AddParameter("@ViewCount", viewCount)
-				.AddParameter("@StartedByUserID", startedByUserID)
-				.AddParameter("@StartedByName", startedByName)
-				.AddParameter("@LastPostUserID", lastPostUserID)
-				.AddParameter("@LastPostName", lastPostName)
-				.AddParameter("@LastPostTime", lastPostTime)
-				.AddParameter("@IsClosed", isClosed)
-				.AddParameter("@IsPinned", isPinned)
-				.AddParameter("@IsDeleted", isDeleted)
-				.AddParameter("@IsIndexed", isIndexed)
-				.AddParameter("@UrlName", urlName)
+				result = c.Command(_sqlObjectFactory, "INSERT INTO pf_Topic (ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName) VALUES (@ForumID, @Title, @ReplyCount, @ViewCount, @StartedByUserID, @StartedByName, @LastPostUserID, @LastPostName, @LastPostTime, @IsClosed, @IsPinned, @IsDeleted, @IsIndexed, @UrlName)")
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+				.AddParameter(_sqlObjectFactory, "@Title", title)
+				.AddParameter(_sqlObjectFactory, "@ReplyCount", replyCount)
+				.AddParameter(_sqlObjectFactory, "@ViewCount", viewCount)
+				.AddParameter(_sqlObjectFactory, "@StartedByUserID", startedByUserID)
+				.AddParameter(_sqlObjectFactory, "@StartedByName", startedByName)
+				.AddParameter(_sqlObjectFactory, "@LastPostUserID", lastPostUserID)
+				.AddParameter(_sqlObjectFactory, "@LastPostName", lastPostName)
+				.AddParameter(_sqlObjectFactory, "@LastPostTime", lastPostTime)
+				.AddParameter(_sqlObjectFactory, "@IsClosed", isClosed)
+				.AddParameter(_sqlObjectFactory, "@IsPinned", isPinned)
+				.AddParameter(_sqlObjectFactory, "@IsDeleted", isDeleted)
+				.AddParameter(_sqlObjectFactory, "@IsIndexed", isIndexed)
+				.AddParameter(_sqlObjectFactory, "@UrlName", urlName)
 				.ExecuteAndReturnIdentity());
 			return Convert.ToInt32(result);
 		}
 
 		public void IncrementReplyCount(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET ReplyCount = ReplyCount + 1 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET ReplyCount = ReplyCount + 1 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void IncrementViewCount(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET ViewCount = ViewCount + 1 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET ViewCount = ViewCount + 1 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void MarkTopicForIndexing(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsIndexed = 0 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsIndexed = 0 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("INSERT INTO pf_SearchQueue (TopicID) VALUES (@TopicID)")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "INSERT INTO pf_SearchQueue (TopicID) VALUES (@TopicID)")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET LastPostUserID = @LastPostUserID, LastPostName = @LastPostName, LastPostTime = @LastPostTime WHERE TopicID = @TopicID")
-				.AddParameter("@LastPostUserID", userID)
-				.AddParameter("@LastPostName", name)
-				.AddParameter("@LastPostTime", postTime)
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET LastPostUserID = @LastPostUserID, LastPostName = @LastPostName, LastPostTime = @LastPostTime WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@LastPostUserID", userID)
+				.AddParameter(_sqlObjectFactory, "@LastPostName", name)
+				.AddParameter(_sqlObjectFactory, "@LastPostTime", postTime)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void CloseTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsClosed = 1 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsClosed = 1 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void OpenTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsClosed = 0 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsClosed = 0 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void PinTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsPinned = 1 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsPinned = 1 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void UnpinTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsPinned = 0 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsPinned = 0 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void DeleteTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsDeleted = 1 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsDeleted = 1 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 			var key = String.Format(PostRepository.CacheKeys.PostPages, topicID);
 			_cache.RemoveCacheObject(key);
@@ -386,15 +386,15 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 
 		public void UndeleteTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET IsDeleted = 0 WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsDeleted = 0 WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public void HardDeleteTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("DELETE FROM pf_Topic WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "DELETE FROM pf_Topic WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 			var key = String.Format(PostRepository.CacheKeys.PostPages, topicID);
 			_cache.RemoveCacheObject(key);
@@ -402,36 +402,36 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 
 		public void UpdateTitleAndForum(int topicID, int forumID, string newTitle, string newUrlName)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET ForumID = @ForumID, Title = @Title, UrlName = @UrlName WHERE TopicID = @TopicID")
-				.AddParameter("@ForumID", forumID)
-				.AddParameter("@Title", newTitle)
-				.AddParameter("@TopicID", topicID)
-				.AddParameter("@UrlName", newUrlName)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET ForumID = @ForumID, Title = @Title, UrlName = @UrlName WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
+				.AddParameter(_sqlObjectFactory, "@Title", newTitle)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
+				.AddParameter(_sqlObjectFactory, "@UrlName", newUrlName)
 				.ExecuteNonQuery());
 		}
 
 		public void UpdateReplyCount(int topicID, int replyCount)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET ReplyCount = @ReplyCount WHERE TopicID = @TopicID")
-				.AddParameter("@ReplyCount", replyCount)
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET ReplyCount = @ReplyCount WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@ReplyCount", replyCount)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 
 		public DateTime? GetLastPostTime(int topicID)
 		{
 			DateTime? result = null;
-			_sqlObjectFactory.GetConnection().Using(connection => result = Convert.ToDateTime(connection.Command("SELECT LastPostTime FROM pf_Topic WHERE TopicID = @TopicID")
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => result = Convert.ToDateTime(connection.Command(_sqlObjectFactory, "SELECT LastPostTime FROM pf_Topic WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteScalar()));
 			return result;
 		}
 
 		public void UpdateAnswerPostID(int topicID, int? postID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => connection.Command("UPDATE pf_Topic SET AnswerPostID = @AnswerPostID WHERE TopicID = @TopicID")
-				.AddParameter("@AnswerPostID", postID.HasValue ? (object)postID.Value : DBNull.Value)
-				.AddParameter("@TopicID", topicID)
+			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET AnswerPostID = @AnswerPostID WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@AnswerPostID", postID.HasValue ? (object)postID.Value : DBNull.Value)
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteNonQuery());
 		}
 	}

@@ -18,8 +18,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var data = new byte[] { };
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID")
-					.AddParameter("@UserImageID", userImageID)
+				connection.Command(_sqlObjectFactory, "SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID")
+					.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 					.ExecuteReader()
 					.ReadOne(r => data = (byte[])r["ImageData"]));
 			return data;
@@ -29,8 +29,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<UserImage>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserID = @UserID ORDER BY SortOrder")
-					.AddParameter("@UserID", userID)
+				connection.Command(_sqlObjectFactory, "SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserID = @UserID ORDER BY SortOrder")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteReader()
 					.ReadAll(r => list.Add(new UserImage {UserImageID = r.GetInt32(0), UserID = r.GetInt32(1), SortOrder = r.GetInt32(2), IsApproved = r.GetBoolean(3)})));
 			return list;
@@ -40,12 +40,12 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			int userImageID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				userImageID = Convert.ToInt32(connection.Command("INSERT INTO pf_UserImages (UserID, SortOrder, IsApproved, [TimeStamp], ImageData) VALUES (@UserID, @SortOrder, @IsApproved, @TimeStamp, @ImageData)")
-					.AddParameter("@UserID", userID)
-					.AddParameter("@SortOrder", sortOrder)
-					.AddParameter("@IsApproved", isApproved)
-					.AddParameter("@TimeStamp", timeStamp)
-					.AddParameter("@ImageData", imageData)
+				userImageID = Convert.ToInt32(connection.Command(_sqlObjectFactory, "INSERT INTO pf_UserImages (UserID, SortOrder, IsApproved, [TimeStamp], ImageData) VALUES (@UserID, @SortOrder, @IsApproved, @TimeStamp, @ImageData)")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
+					.AddParameter(_sqlObjectFactory, "@SortOrder", sortOrder)
+					.AddParameter(_sqlObjectFactory, "@IsApproved", isApproved)
+					.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
+					.AddParameter(_sqlObjectFactory, "@ImageData", imageData)
 					.ExecuteAndReturnIdentity()));
 			return userImageID;
 		}
@@ -53,8 +53,8 @@ namespace PopForums.Data.Sql.Repositories
 		public void DeleteImagesByUserID(int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_UserImages WHERE UserID = @UserID")
-					.AddParameter("@UserID", userID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_UserImages WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteNonQuery());
 		}
 
@@ -62,8 +62,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			DateTime? timeStamp = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT [TimeStamp] FROM pf_UserImages WHERE UserImageID = @UserImageID")
-					.AddParameter("@UserImageID", userImageID)
+				connection.Command(_sqlObjectFactory, "SELECT [TimeStamp] FROM pf_UserImages WHERE UserImageID = @UserImageID")
+					.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 					.ExecuteReader()
 					.ReadOne(r => timeStamp = r.GetDateTime(0)));
 			return timeStamp;
@@ -73,7 +73,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<UserImage>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE IsApproved = 0")
+				connection.Command(_sqlObjectFactory, "SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE IsApproved = 0")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(new UserImage { UserImageID = r.GetInt32(0), UserID = r.GetInt32(1), SortOrder = r.GetInt32(2), IsApproved = r.GetBoolean(3) })));
 			return list;
@@ -83,8 +83,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			bool? result = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-			                                 connection.Command("SELECT IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID")
-			                                 	.AddParameter("@UserImageID", userImageID)
+			                                 connection.Command(_sqlObjectFactory, "SELECT IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID")
+			                                 	.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 			                                 	.ExecuteReader()
 			                                 	.ReadOne(r => result = r.GetBoolean(0)));
 			return result;
@@ -93,16 +93,16 @@ namespace PopForums.Data.Sql.Repositories
 		public void ApproveUserImage(int userImageID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_UserImages SET IsApproved = 1 WHERE UserImageID = @UserImageID")
-					.AddParameter("@UserImageID", userImageID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_UserImages SET IsApproved = 1 WHERE UserImageID = @UserImageID")
+					.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 					.ExecuteNonQuery());
 		}
 
 		public void DeleteUserImage(int userImageID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_UserImages WHERE UserImageID = @UserImageID")
-					.AddParameter("@UserImageID", userImageID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_UserImages WHERE UserImageID = @UserImageID")
+					.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 					.ExecuteNonQuery());
 		}
 
@@ -110,8 +110,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			UserImage userImage = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID")
-					.AddParameter("@UserImageID", userImageID)
+				connection.Command(_sqlObjectFactory, "SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID")
+					.AddParameter(_sqlObjectFactory, "@UserImageID", userImageID)
 					.ExecuteReader()
 					.ReadOne(r => userImage = new UserImage { UserImageID = r.GetInt32(0), UserID = r.GetInt32(1), SortOrder = r.GetInt32(2), IsApproved = r.GetBoolean(3) }));
 			return userImage;

@@ -18,12 +18,12 @@ namespace PopForums.Data.Sql.Repositories
 		public ErrorLogEntry Create(DateTime timeStamp, string message, string stackTrace, string data, ErrorSeverity severity)
 		{
 			var errorID = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => errorID = Convert.ToInt32(connection.Command("INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity)")
-				.AddParameter("@TimeStamp", timeStamp)
-				.AddParameter("@Message", message)
-				.AddParameter("@StackTrace", stackTrace)
-				.AddParameter("@Data", data)
-				.AddParameter("@Severity", severity)
+			_sqlObjectFactory.GetConnection().Using(connection => errorID = Convert.ToInt32(connection.Command(_sqlObjectFactory, "INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity)")
+				.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
+				.AddParameter(_sqlObjectFactory, "@Message", message)
+				.AddParameter(_sqlObjectFactory, "@StackTrace", stackTrace)
+				.AddParameter(_sqlObjectFactory, "@Data", data)
+				.AddParameter(_sqlObjectFactory, "@Severity", severity)
 				.ExecuteAndReturnIdentity()));
 			var errorLog = new ErrorLogEntry
 			               	{
@@ -41,7 +41,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(
-				connection.Command("SELECT COUNT(*) FROM pf_ErrorLog")
+				connection.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_ErrorLog")
 				.ExecuteScalar()));
 			return count;
 		}
@@ -67,9 +67,9 @@ WHERE Row between
 SET ROWCOUNT 0";
 			var logEntries = new List<ErrorLogEntry>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
-					.AddParameter("@StartRow", startRow)
-					.AddParameter("@PageSize", pageSize)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
+					.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
 					.ExecuteReader()
 					.ReadAll(r => logEntries.Add(new ErrorLogEntry
 					                             	{
@@ -86,15 +86,15 @@ SET ROWCOUNT 0";
 		public void DeleteError(int errorID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_ErrorLog WHERE ErrorID = @ErrorID")
-				.AddParameter("@ErrorID", errorID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_ErrorLog WHERE ErrorID = @ErrorID")
+				.AddParameter(_sqlObjectFactory, "@ErrorID", errorID)
 				.ExecuteNonQuery());
 		}
 
 		public void DeleteAllErrors()
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_ErrorLog")
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_ErrorLog")
 				.ExecuteNonQuery());
 		}
 	}

@@ -15,16 +15,16 @@ namespace PopForums.Data.Sql.Repositories
 		public void BanIP(string ip)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_IPBan (IPBan) VALUES (@IPBan)")
-					.AddParameter("@IPBan", ip)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_IPBan (IPBan) VALUES (@IPBan)")
+					.AddParameter(_sqlObjectFactory, "@IPBan", ip)
 					.ExecuteNonQuery());
 		}
 
 		public void RemoveIPBan(string ip)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_IPBan WHERE IPBan = @IPBan")
-					.AddParameter("@IPBan", ip)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_IPBan WHERE IPBan = @IPBan")
+					.AddParameter(_sqlObjectFactory, "@IPBan", ip)
 					.ExecuteNonQuery());
 		}
 
@@ -32,7 +32,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT IPBan FROM pf_IPBan ORDER BY IPBan")
+				connection.Command(_sqlObjectFactory, "SELECT IPBan FROM pf_IPBan ORDER BY IPBan")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(r.GetString(0))));
 			return list;
@@ -42,8 +42,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Command("SELECT * FROM pf_IPBan WHERE CHARINDEX(pf_IPBan.IPBan, @IPBan) > 0")
-					.AddParameter("@IPBan", ip)
+				result = connection.Command(_sqlObjectFactory, "SELECT * FROM pf_IPBan WHERE CHARINDEX(pf_IPBan.IPBan, @IPBan) > 0")
+					.AddParameter(_sqlObjectFactory, "@IPBan", ip)
 					.ExecuteReader()
 					.Read());
 			return result;
@@ -52,16 +52,16 @@ namespace PopForums.Data.Sql.Repositories
 		public void BanEmail(string email)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_EmailBan (EmailBan) VALUES (@EmailBan)")
-					.AddParameter("@EmailBan", email)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_EmailBan (EmailBan) VALUES (@EmailBan)")
+					.AddParameter(_sqlObjectFactory, "@EmailBan", email)
 					.ExecuteNonQuery());
 		}
 
 		public void RemoveEmailBan(string email)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_EmailBan WHERE EmailBan = @EmailBan")
-					.AddParameter("@EmailBan", email)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_EmailBan WHERE EmailBan = @EmailBan")
+					.AddParameter(_sqlObjectFactory, "@EmailBan", email)
 					.ExecuteNonQuery());
 		}
 
@@ -69,7 +69,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT EmailBan FROM pf_EmailBan ORDER BY EmailBan")
+				connection.Command(_sqlObjectFactory, "SELECT EmailBan FROM pf_EmailBan ORDER BY EmailBan")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(r.GetString(0))));
 			return list;
@@ -79,8 +79,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Command("SELECT * FROM pf_EmailBan WHERE EmailBan = @EmailBan")
-					.AddParameter("@EmailBan", email)
+				result = connection.Command(_sqlObjectFactory, "SELECT * FROM pf_EmailBan WHERE EmailBan = @EmailBan")
+					.AddParameter(_sqlObjectFactory, "@EmailBan", email)
 					.ExecuteReader()
 					.Read());
 			return result;
