@@ -21,8 +21,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<Friend>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE FromUserID = @FromUserID ORDER BY pf_PopForumsUser.Name")
-				.AddParameter("@FromUserID", userID)
+				c.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE FromUserID = @FromUserID ORDER BY pf_PopForumsUser.Name")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(
 					new Friend {User = UserRepository.PopulateUser(r), IsApproved = (bool)r["App"]})));
@@ -33,8 +33,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<Friend>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.FromUserID = pf_PopForumsUser.UserID WHERE ToUserID = @ToUserID ORDER BY pf_PopForumsUser.Name")
-				.AddParameter("@ToUserID", userID)
+				c.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + ", pf_Friend.IsApproved AS App FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.FromUserID = pf_PopForumsUser.UserID WHERE ToUserID = @ToUserID ORDER BY pf_PopForumsUser.Name")
+				.AddParameter(_sqlObjectFactory, "@ToUserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(
 					new Friend { User = UserRepository.PopulateUser(r), IsApproved = (bool)r["App"] })));
@@ -45,8 +45,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<User>();
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE FromUserID = @FromUserID AND NOT pf_Friend.IsApproved = 1 ORDER BY pf_PopForumsUser.Name")
-				.AddParameter("@FromUserID", userID)
+				c.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_Friend JOIN pf_PopForumsUser ON pf_Friend.ToUserID = pf_PopForumsUser.UserID WHERE FromUserID = @FromUserID AND NOT pf_Friend.IsApproved = 1 ORDER BY pf_PopForumsUser.Name")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(
 					UserRepository.PopulateUser(r))));
@@ -56,27 +56,27 @@ namespace PopForums.Data.Sql.Repositories
 		public void AddUnapprovedFriend(int fromUserID, int toUserID)
 		{
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("INSERT INTO pf_Friend (FromUserID, ToUserID, IsApproved) VALUES (@FromUserID, @ToUserID, 0)")
-				.AddParameter("@FromUserID", fromUserID)
-				.AddParameter("@ToUserID", toUserID)
+				c.Command(_sqlObjectFactory, "INSERT INTO pf_Friend (FromUserID, ToUserID, IsApproved) VALUES (@FromUserID, @ToUserID, 0)")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", fromUserID)
+				.AddParameter(_sqlObjectFactory, "@ToUserID", toUserID)
 				.ExecuteNonQuery());
 		}
 
 		public void DeleteFriend(int fromUserID, int toUserID)
 		{
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("DELETE FROM pf_Friend WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID")
-				.AddParameter("@FromUserID", fromUserID)
-				.AddParameter("@ToUserID", toUserID)
+				c.Command(_sqlObjectFactory, "DELETE FROM pf_Friend WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", fromUserID)
+				.AddParameter(_sqlObjectFactory, "@ToUserID", toUserID)
 				.ExecuteNonQuery());
 		}
 
 		public void ApproveFriend(int fromUserID, int toUserID)
 		{
 			_sqlObjectFactory.GetConnection().Using(c =>
-				c.Command("UPDATE pf_Friend SET IsApproved = 1 WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID")
-				.AddParameter("@FromUserID", fromUserID)
-				.AddParameter("@ToUserID", toUserID)
+				c.Command(_sqlObjectFactory, "UPDATE pf_Friend SET IsApproved = 1 WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", fromUserID)
+				.AddParameter(_sqlObjectFactory, "@ToUserID", toUserID)
 				.ExecuteNonQuery());
 		}
 
@@ -84,9 +84,9 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(c => result = Convert.ToInt32(
-				c.Command("SELECT COUNT(*) FROM pf_Friend WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID AND IsApproved = 1")
-				.AddParameter("@FromUserID", fromUserID)
-				.AddParameter("@ToUserID", toUserID)
+				c.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_Friend WHERE FromUserID = @FromUserID AND ToUserID = @ToUserID AND IsApproved = 1")
+				.AddParameter(_sqlObjectFactory, "@FromUserID", fromUserID)
+				.AddParameter(_sqlObjectFactory, "@ToUserID", toUserID)
 				.ExecuteScalar()) > 0);
 			return result;
 		}

@@ -40,7 +40,7 @@ BEGIN
 	SELECT 1
 END";
 			var result = false;
-			_sqlObjectFactory.GetConnection().Using(c => result = Convert.ToBoolean(c.Command(sql).ExecuteScalar()));
+			_sqlObjectFactory.GetConnection().Using(c => result = Convert.ToBoolean(c.Command(_sqlObjectFactory, sql).ExecuteScalar()));
 			return result;
 		}
 
@@ -50,7 +50,7 @@ END";
 			var stream = assembly.GetManifestResourceStream("PopForums.Sql.PopForums.sql");
 			var reader = new StreamReader(stream);
 			var sql = reader.ReadToEnd();
-			_sqlObjectFactory.GetConnection().Using(c => c.Command(sql).ExecuteNonQuery());
+			_sqlObjectFactory.GetConnection().Using(c => c.Command(_sqlObjectFactory, sql).ExecuteNonQuery());
 		}
 	}
 }

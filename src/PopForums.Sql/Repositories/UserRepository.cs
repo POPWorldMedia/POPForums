@@ -31,10 +31,10 @@ namespace PopForums.Data.Sql.Repositories
 		public void SetHashedPassword(User user, string hashedPassword, Guid salt)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("UPDATE pf_PopForumsUser SET Password = @Password, Salt = @Salt WHERE UserID = @UserID")
-					.AddParameter("@Password", hashedPassword)
-					.AddParameter("@Salt", salt)
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET Password = @Password, Salt = @Salt WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@Password", hashedPassword)
+					.AddParameter(_sqlObjectFactory, "@Salt", salt)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
@@ -43,8 +43,8 @@ namespace PopForums.Data.Sql.Repositories
 			string hashedPassword = null;
 			Guid? saltCheck = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("SELECT Password, Salt FROM pf_PopForumsUser WHERE Email = @Email")
-					.AddParameter("@Email", email)
+				connection.Command(_sqlObjectFactory, "SELECT Password, Salt FROM pf_PopForumsUser WHERE Email = @Email")
+					.AddParameter(_sqlObjectFactory, "@Email", email)
 					.ExecuteReader()
 					.ReadOne(r =>
 					         {
@@ -65,7 +65,7 @@ namespace PopForums.Data.Sql.Repositories
 				sql += ", " + id;
 			sql += ")";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-			                                 connection.Command(sql)
+			                                 connection.Command(_sqlObjectFactory, sql)
 			                                 	.ExecuteReader()
 			                                 	.ReadAll(r => list.Add(PopulateUser(r))));
 			return list;
@@ -77,7 +77,7 @@ namespace PopForums.Data.Sql.Repositories
 			if (cacheObject.HasValue)
 				return cacheObject.Value;
 			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(connection.Command("SELECT COUNT(UserID) FROM pf_PopForumsUser")
+			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(connection.Command(_sqlObjectFactory, "SELECT COUNT(UserID) FROM pf_PopForumsUser")
 						.ExecuteScalar()));
 			_cacheHelper.SetCacheObject(CacheKeys.TotalUsers, count);
 			return count;
@@ -100,8 +100,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			User user = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(sql)
-					.AddParameter(parameter, value)
+				connection.Command(_sqlObjectFactory, sql)
+					.AddParameter(_sqlObjectFactory, parameter, value)
 					.ExecuteReader()
 					.ReadOne(r => { user = PopulateUser(r); }));
 			return user;
@@ -131,16 +131,16 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var userID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				userID = Convert.ToInt32(connection.Command("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, LastActivityDate, LastLoginDate, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @LastActivityDate, @LastLoginDate, @AuthorizationKey, @Password, @Salt)")
-					.AddParameter("@Name", name)
-					.AddParameter("@Email", email)
-					.AddParameter("@CreationDate", creationDate)
-					.AddParameter("@IsApproved", isApproved)
-					.AddParameter("@LastActivityDate", creationDate)
-					.AddParameter("@LastLoginDate", creationDate)
-					.AddParameter("@AuthorizationKey", authorizationKey)
-					.AddParameter("@Password", hashedPassword)
-					.AddParameter("@Salt", salt)
+				userID = Convert.ToInt32(connection.Command(_sqlObjectFactory, "INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, LastActivityDate, LastLoginDate, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @LastActivityDate, @LastLoginDate, @AuthorizationKey, @Password, @Salt)")
+					.AddParameter(_sqlObjectFactory, "@Name", name)
+					.AddParameter(_sqlObjectFactory, "@Email", email)
+					.AddParameter(_sqlObjectFactory, "@CreationDate", creationDate)
+					.AddParameter(_sqlObjectFactory, "@IsApproved", isApproved)
+					.AddParameter(_sqlObjectFactory, "@LastActivityDate", creationDate)
+					.AddParameter(_sqlObjectFactory, "@LastLoginDate", creationDate)
+					.AddParameter(_sqlObjectFactory, "@AuthorizationKey", authorizationKey)
+					.AddParameter(_sqlObjectFactory, "@Password", hashedPassword)
+					.AddParameter(_sqlObjectFactory, "@Salt", salt)
 					.ExecuteAndReturnIdentity()));
 			return new User(Convert.ToInt32(userID), creationDate) {Name = name, Email = email, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey};
 		}
@@ -148,52 +148,52 @@ namespace PopForums.Data.Sql.Repositories
 		public void UpdateLastActivityDate(User user, DateTime newDate)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("UPDATE pf_PopForumsUser SET LastActivityDate = @LastActivityDate WHERE UserID = @UserID")
-					.AddParameter("@LastActivityDate", newDate)
-					.AddParameter("@UserID", user.UserID).ExecuteNonQuery());
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET LastActivityDate = @LastActivityDate WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@LastActivityDate", newDate)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID).ExecuteNonQuery());
 		}
 
 		public void UpdateLastLoginDate(User user, DateTime newDate)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-			    connection.Command("UPDATE pf_PopForumsUser SET LastLoginDate = @LastLoginDate WHERE UserID = @UserID")
-			    .AddParameter("@LastLoginDate", newDate)
-			    .AddParameter("@UserID", user.UserID).ExecuteNonQuery());
+			    connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET LastLoginDate = @LastLoginDate WHERE UserID = @UserID")
+			    .AddParameter(_sqlObjectFactory, "@LastLoginDate", newDate)
+			    .AddParameter(_sqlObjectFactory, "@UserID", user.UserID).ExecuteNonQuery());
 		}
 
 		public void ChangeName(User user, string newName)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("UPDATE pf_PopForumsUser SET Name = @Name WHERE UserID = @UserID")
-					.AddParameter("@Name", newName)
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET Name = @Name WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@Name", newName)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
 		public void ChangeEmail(User user, string newEmail)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command("UPDATE pf_PopForumsUser SET Email = @Email WHERE UserID = @UserID")
-					.AddParameter("@Email", newEmail)
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET Email = @Email WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@Email", newEmail)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
 		public void UpdateIsApproved(User user, bool isApproved)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_PopForumsUser SET IsApproved = @IsApproved WHERE UserID = @UserID")
-					.AddParameter("@IsApproved", isApproved)
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET IsApproved = @IsApproved WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@IsApproved", isApproved)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
 		public void UpdateAuthorizationKey(User user, Guid key)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("UPDATE pf_PopForumsUser SET AuthorizationKey = @AuthorizationKey WHERE UserID = @UserID")
-					.AddParameter("@AuthorizationKey", key)
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "UPDATE pf_PopForumsUser SET AuthorizationKey = @AuthorizationKey WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@AuthorizationKey", key)
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
@@ -222,7 +222,7 @@ namespace PopForums.Data.Sql.Repositories
 				return cacheObject;
 			var list = new List<User>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_UserSession ON pf_PopForumsUser.UserID = pf_UserSession.UserID ORDER BY Name")
+					connection.Command(_sqlObjectFactory, "SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_UserSession ON pf_PopForumsUser.UserID = pf_UserSession.UserID ORDER BY Name")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateUser(r))));
 			_cacheHelper.SetCacheObject(CacheKeys.UsersOnline, list, 60);
@@ -233,7 +233,7 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<User>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID WHERE pf_Profile.IsSubscribed = 1")
+					connection.Command(_sqlObjectFactory, "SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID WHERE pf_Profile.IsSubscribed = 1")
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateUser(r))));
 			return list;
@@ -247,7 +247,7 @@ namespace PopForums.Data.Sql.Repositories
 				return cacheObject;
 			var list = new Dictionary<User, int>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command(String.Format("SELECT TOP {0} {1}, pf_Profile.Points FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID ORDER BY pf_Profile.Points DESC", top, PopForumsUserColumns))
+					connection.Command(_sqlObjectFactory, String.Format("SELECT TOP {0} {1}, pf_Profile.Points FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID ORDER BY pf_Profile.Points DESC", top, PopForumsUserColumns))
 					.ExecuteReader()
 					.ReadAll(r => list.Add(PopulateUser(r), Convert.ToInt32(r["Points"]))));
 			_cacheHelper.SetCacheObject(key, list, 60);
@@ -257,8 +257,8 @@ namespace PopForums.Data.Sql.Repositories
 		public void DeleteUser(User user)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("DELETE FROM pf_PopForumsUser WHERE UserID = @UserID")
-					.AddParameter("@UserID", user.UserID)
+				connection.Command(_sqlObjectFactory, "DELETE FROM pf_PopForumsUser WHERE UserID = @UserID")
+					.AddParameter(_sqlObjectFactory, "@UserID", user.UserID)
 					.ExecuteNonQuery());
 		}
 
@@ -268,8 +268,8 @@ namespace PopForums.Data.Sql.Repositories
 				return new List<User>();
 			var list = new List<User>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-			        connection.Command(sql)
-			        .AddParameter(parameter, searchTerm)
+			        connection.Command(_sqlObjectFactory, sql)
+			        .AddParameter(_sqlObjectFactory, parameter, searchTerm)
 			        .ExecuteReader()
 			        .ReadAll(r => list.Add(PopulateUser(r))));
 			return list;

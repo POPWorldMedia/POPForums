@@ -17,12 +17,12 @@ namespace PopForums.Data.Sql.Repositories
 		public virtual void IssueAward(int userID, string awardDefinitionID, string title, string description, DateTime timeStamp)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_UserAward (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp)")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@AwardDefinitionID", awardDefinitionID)
-				.AddParameter("@Title", title)
-				.AddParameter("@Description", description)
-				.AddParameter("@TimeStamp", timeStamp)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_UserAward (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp)")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
+				.AddParameter(_sqlObjectFactory, "@Title", title)
+				.AddParameter(_sqlObjectFactory, "@Description", description)
+				.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
 				.ExecuteNonQuery());
 		}
 
@@ -30,9 +30,9 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(
-				connection.Command("SELECT COUNT(*) FROM pf_UserAward WHERE UserID = @UserID AND AwardDefinitionID = @AwardDefinitionID")
-				.AddParameter("@UserID", userID)
-				.AddParameter("@AwardDefinitionID", awardDefinitionID)
+				connection.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_UserAward WHERE UserID = @UserID AND AwardDefinitionID = @AwardDefinitionID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
 				.ExecuteScalar()));
 			return count > 0;
 		}
@@ -41,8 +41,8 @@ namespace PopForums.Data.Sql.Repositories
 		{
 			var list = new List<UserAward>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("SELECT UserAwardID, UserID, AwardDefinitionID, Title, Description, TimeStamp FROM pf_UserAward WHERE UserID = @UserID")
-				.AddParameter("@UserID", userID)
+				connection.Command(_sqlObjectFactory, "SELECT UserAwardID, UserID, AwardDefinitionID, Title, Description, TimeStamp FROM pf_UserAward WHERE UserID = @UserID")
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
 				.ExecuteReader()
 				.ReadAll(r => list.Add(new UserAward
 				                       	{

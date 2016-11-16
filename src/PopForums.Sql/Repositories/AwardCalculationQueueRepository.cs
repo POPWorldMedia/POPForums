@@ -16,10 +16,10 @@ namespace PopForums.Data.Sql.Repositories
 		public void Enqueue(string eventDefinitionID, int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command("INSERT INTO pf_AwardCalculationQueue (EventDefinitionID, UserID, TimeStamp) VALUES (@EventDefinitionID, @UserID, @TimeStamp)")
-				.AddParameter("@EventDefinitionID", eventDefinitionID)
-				.AddParameter("@UserID", userID)
-				.AddParameter("@TimeStamp", DateTime.UtcNow)
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_AwardCalculationQueue (EventDefinitionID, UserID, TimeStamp) VALUES (@EventDefinitionID, @UserID, @TimeStamp)")
+				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
+				.AddParameter(_sqlObjectFactory, "@UserID", userID)
+				.AddParameter(_sqlObjectFactory, "@TimeStamp", DateTime.UtcNow)
 				.ExecuteNonQuery());
 		}
 
@@ -33,7 +33,7 @@ ORDER BY ID)
 DELETE FROM cte
 OUTPUT DELETED.EventDefinitionID, DELETED.UserID";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(sql)
+				connection.Command(_sqlObjectFactory, sql)
 				.ExecuteReader()
 				.ReadOne(r =>
 				{ 
