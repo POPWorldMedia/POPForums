@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Azure.Search;
+using Microsoft.Rest.Azure;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Models;
@@ -10,57 +11,61 @@ namespace PopForums.AzureKit.Search
     public class SearchRepository : Data.Sql.Repositories.SearchRepository
 	{
 		private readonly IConfig _config;
+		private readonly IErrorLog _errorLog;
 
-		public SearchRepository(ISqlObjectFactory sqlObjectFactory, IConfig config) : base(sqlObjectFactory)
+		public SearchRepository(ISqlObjectFactory sqlObjectFactory, IConfig config, IErrorLog errorLog) : base(sqlObjectFactory)
 		{
 			_config = config;
+			_errorLog = errorLog;
 		}
 
-		public new List<string> GetJunkWords()
+		public override List<string> GetJunkWords()
 	    {
 		    throw new NotImplementedException();
 	    }
 
-	    public new void CreateJunkWord(string word)
+	    public override void CreateJunkWord(string word)
 	    {
 		    throw new NotImplementedException();
 	    }
 
-	    public new void DeleteJunkWord(string word)
+	    public override void DeleteJunkWord(string word)
 	    {
 		    throw new NotImplementedException();
 	    }
 
-	    public new Topic GetNextTopicForIndexing()
-	    {
-		    return base.GetNextTopicForIndexing();
-	    }
+	    // GetNextTopicForIndexing() uses base
 
-	    public new void MarkTopicAsIndexed(int topicID)
-	    {
-		    base.MarkTopicAsIndexed(topicID);
-	    }
+	    // MarkTopicAsIndexed(int topicID) uses base
 
-	    public new void DeleteAllIndexedWordsForTopic(int topicID)
+	    public override void DeleteAllIndexedWordsForTopic(int topicID)
 	    {
 		    throw new NotImplementedException();
 	    }
 
-	    public new void SaveSearchWord(int topicID, string word, int rank)
+	    public override void SaveSearchWord(int topicID, string word, int rank)
 	    {
 		    throw new NotImplementedException();
 	    }
 
-	    public new List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize,
-		    out int topicCount)
-	    {
-		    var list = new List<Topic>();
+		public override List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		{
+			var list = new List<Topic>();
 
 			var serviceIndexClient = new SearchIndexClient(_config.SearchUrl, SearchIndexSubsystem.IndexName, new SearchCredentials(_config.SearchKey));
-		    var result = serviceIndexClient.Documents.Search<SearchTopic>("test");
+			try
+			{
+				var result = serviceIndexClient.Documents.Search<SearchTopic>("test");
+			}
+			catch (CloudException cloudException)
+			{
+				_errorLog.Log(cloudException, ErrorSeverity.Error);
+				topicCount = 0;
+				return new List<Topic>();
+			}
 
-		    topicCount = 1;
+			topicCount = 1;
 			return list;
-	    }
-    }
+		}
+	}
 }

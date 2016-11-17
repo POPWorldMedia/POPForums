@@ -17,7 +17,7 @@ namespace PopForums.Data.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public List<string> GetJunkWords()
+		public virtual List<string> GetJunkWords()
 		{
 			var words = new List<string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
@@ -27,7 +27,7 @@ namespace PopForums.Data.Sql.Repositories
 			return words;
 		}
 
-		public void CreateJunkWord(string word)
+		public virtual void CreateJunkWord(string word)
 		{
 			var exists = false;
 			_sqlObjectFactory.GetConnection().Using(connection => exists =
@@ -42,7 +42,7 @@ namespace PopForums.Data.Sql.Repositories
 				.ExecuteNonQuery());
 		}
 
-		public void DeleteJunkWord(string word)
+		public virtual void DeleteJunkWord(string word)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				connection.Command(_sqlObjectFactory, "DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord")
@@ -67,7 +67,8 @@ OUTPUT DELETED.TopicID;";
 				return null;
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT TOP 1 " + TopicRepository.TopicFields + " FROM pf_Topic WHERE IsDeleted = 0 AND IsIndexed = 0 ORDER BY LastPostTime")
+				connection.Command(_sqlObjectFactory, "SELECT " + TopicRepository.TopicFields + " FROM pf_Topic WHERE TopicID = @TopicID")
+				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
 				.ExecuteReader()
 				.ReadOne(r => topic = TopicRepository.GetTopicFromReader(r)));
 			return topic;
@@ -81,7 +82,7 @@ OUTPUT DELETED.TopicID;";
 				.ExecuteNonQuery());
 		}
 
-		public void DeleteAllIndexedWordsForTopic(int topicID)
+		public virtual void DeleteAllIndexedWordsForTopic(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				connection.Command(_sqlObjectFactory, "DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID")
@@ -89,7 +90,7 @@ OUTPUT DELETED.TopicID;";
 				.ExecuteNonQuery());
 		}
 
-		public void SaveSearchWord(int topicID, string word, int rank)
+		public virtual void SaveSearchWord(int topicID, string word, int rank)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				connection.Command(_sqlObjectFactory, "INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)")
@@ -99,7 +100,7 @@ OUTPUT DELETED.TopicID;";
 				.ExecuteNonQuery());
 		}
 
-		public List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public virtual List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
 			topicCount = 0;
 			if (searchTerm.Trim() == String.Empty)

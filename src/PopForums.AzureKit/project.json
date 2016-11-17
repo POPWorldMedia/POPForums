@@ -2,7 +2,7 @@
   "version": "1.0.0",
 
     "dependencies": {
-        "Microsoft.Azure.Search": "2.0.4-preview",
+        "Microsoft.Azure.Search": "2.0.5-preview",
         "Microsoft.Extensions.Caching.Memory": "1.0.0",
         "Microsoft.Extensions.DependencyInjection": "1.0.0",
         "NETStandard.Library": "1.6.0",

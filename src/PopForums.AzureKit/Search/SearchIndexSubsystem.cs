@@ -37,14 +37,15 @@ namespace PopForums.AzureKit.Search
 					Posts = posts
 				};
 
-				var actions = new []
+				var actions =
+				new IndexAction<SearchTopic>[]
 				{
 					IndexAction.Upload(searchTopic)
 				};
-				var batch = IndexBatch.New(actions);
 				try
 				{
-					var serviceIndexClient = new SearchIndexClient(config.SearchUrl, IndexName, new SearchCredentials(config.SearchKey));
+					var serviceIndexClient = serviceClient.Indexes.GetClient(IndexName);
+					var batch = IndexBatch.New(actions);
 					serviceIndexClient.Documents.Index(batch);
 					searchService.MarkTopicAsIndexed(topic);
 				}
