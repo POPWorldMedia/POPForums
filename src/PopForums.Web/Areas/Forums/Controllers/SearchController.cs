@@ -35,7 +35,7 @@ namespace PopForums.Web.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Process(FormCollection collection)
+		public ActionResult Process(IFormCollection collection)
 		{
 			var query = Request.Form["Query"];
 			var searchType = Request.Form["SearchType"];

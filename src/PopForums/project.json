@@ -7,19 +7,19 @@
 			"imports": "dnxcore50"
 		}
 	},
-	"dependencies": {
-		"NETStandard.Library": "1.6.0",
-		"ImageProcessorCore": "1.0.0-alpha1025",
-		"MailKit": "1.6.0",
-		"Microsoft.Extensions.Configuration": "1.0.0",
-		"Microsoft.Extensions.Configuration.Json": "1.0.0",
-		"Microsoft.Extensions.DependencyInjection": "1.0.0",
-		"Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0",
-		"Microsoft.Extensions.Logging": "1.0.0",
-		"System.Security.Cryptography.Algorithms": "4.2.0",
-		"System.Threading.Thread": "4.0.0",
-		"System.Security.Claims": "4.0.1"
-	},
+    "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "MailKit": "1.6.0",
+        "Microsoft.Extensions.Configuration": "1.0.0",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0",
+        "Microsoft.Extensions.DependencyInjection": "1.0.0",
+        "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0",
+        "Microsoft.Extensions.Logging": "1.0.0",
+        "System.Security.Cryptography.Algorithms": "4.2.0",
+        "System.Threading.Thread": "4.0.0",
+        "System.Security.Claims": "4.0.1",
+        "ImageProcessorCore": "1.0.0-alpha1095"
+    },
 	"resource": [
 		"Resources/*.resx"
 	],

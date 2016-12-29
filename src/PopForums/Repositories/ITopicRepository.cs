@@ -34,5 +34,6 @@ namespace PopForums.Repositories
 		void HardDeleteTopic(int topicID);
 		void MarkTopicForIndexing(int topicID);
 		void UpdateAnswerPostID(int topicID, int? postID);
+		List<Topic> Get(IEnumerable<int> topicIDs);
 	}
 }

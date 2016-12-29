@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using PopForums.Configuration;
@@ -8,7 +10,13 @@ namespace PopForums.AzureKit.Search
 {
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
+		private readonly ITextParsingService _textParsingService;
 		public static string IndexName = "popforumstopics";
+
+		public SearchIndexSubsystem(ITextParsingService textParsingService)
+		{
+			_textParsingService = textParsingService;
+		}
 
 		public void DoIndex(ISearchService searchService, ISettingsManager settingsManager, IPostService postService,
 			IConfig config, ITopicService topicService, IErrorLog errorLog)
@@ -21,6 +29,12 @@ namespace PopForums.AzureKit.Search
 					CreateIndex(serviceClient);
 
 				var posts = postService.GetPosts(topic, false).ToArray();
+				var parsedPosts = posts.Select(x =>
+					{
+						var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);
+						parsedText = _textParsingService.RemoveForumCode(parsedText); 
+						return parsedText;
+					}).ToArray();
 				var searchTopic = new SearchTopic
 				{
 					TopicID = topic.TopicID.ToString(),
@@ -34,7 +48,7 @@ namespace PopForums.AzureKit.Search
 					IsPinned = topic.IsPinned,
 					UrlName = topic.UrlName,
 					LastPostName = topic.LastPostName,
-					Posts = posts
+					Posts = parsedPosts
 				};
 
 				var actions =
@@ -76,7 +90,16 @@ namespace PopForums.AzureKit.Search
 					new Field("urlName", DataType.String) {IsSortable = false, IsSearchable = false},
 					new Field("lastPostName", DataType.String) {IsSortable = false, IsSearchable = false},
 					new Field("posts", DataType.Collection(DataType.String)) {IsSortable = false, IsSearchable = true}
-			    }
+			    },
+				ScoringProfiles = new []
+				{
+					new ScoringProfile("TopicWeight", new TextWeights(new Dictionary<string, double>
+					{
+						{"title", 10},
+						{"startedByName", 5},
+						{"posts", 1}
+					}))
+				}
 		    };
 		    serviceClient.Indexes.Create(indexDefinition);
 	    }

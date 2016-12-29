@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -234,6 +235,38 @@ SET ROWCOUNT 0";
 					.AddParameter(_sqlObjectFactory, "@IncludeDeleted", includeDeleted)
 					.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
 					.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
+					.ExecuteReader()
+					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
+			return topics;
+		}
+
+		public List<Topic> Get(IEnumerable<int> topicIDs)
+		{
+			var list = topicIDs.ToList();
+			var topics = new List<Topic>();
+			var ids = string.Join(",", list);
+			var sql = $@"SELECT {TopicFields} FROM pf_Topic 
+WHERE TopicID IN ({ids})";
+			var count = list.Count;
+			if (count > 1)
+			{
+				var x = 1;
+				var orderBy = @"
+ORDER BY
+CASE";
+				foreach (var topicID in list.Take(count - 1))
+				{
+					orderBy += $@"
+WHEN TopicID = {topicID} THEN {x}";
+					x++;
+				}
+				orderBy += $@"
+ELSE {x}
+END";
+				sql += orderBy;
+			}
+			_sqlObjectFactory.GetConnection().Using(connection =>
+				connection.Command(_sqlObjectFactory, sql)
 					.ExecuteReader()
 					.ReadAll(r => topics.Add(GetTopicFromReader(r))));
 			return topics;
