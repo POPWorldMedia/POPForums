@@ -6,7 +6,8 @@
 @model PopForums.Models.CategorizedForumContainer
 @{
 	ViewBag.Title = Model.ForumTitle;
-    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser(Context);
 	var profile = UserRetrievalShim.GetProfile(Context);
 }
 
@@ -20,7 +21,7 @@
 
 <h1>@Model.ForumTitle</h1>
 
-@if (User != null)
+@if (user != null)
 {
 	<form asp-action="MarkAllForumsRead" asp-controller="Forum" asp-antiforgery="false">
 		<input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="btn btn-primary" />
@@ -66,8 +67,8 @@
 
 <div>
 	<h3>@PopForums.Resources.UsersOnline</h3>
-	<p>@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var user in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
-		{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@user.UserID">@user.Name</a>}
+	<p>@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var u in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
+		{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@u.UserID">@u.Name</a>}
 	</p>
 	<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
 </div>
