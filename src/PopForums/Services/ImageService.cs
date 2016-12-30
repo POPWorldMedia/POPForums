@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ImageProcessorCore;
+using ImageSharp;
 using PopForums.Models;
 using PopForums.Repositories;
 

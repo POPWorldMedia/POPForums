@@ -18,7 +18,7 @@
         "System.Security.Cryptography.Algorithms": "4.2.0",
         "System.Threading.Thread": "4.0.0",
         "System.Security.Claims": "4.0.1",
-        "ImageProcessorCore": "1.0.0-alpha1095"
+        "ImageSharp": "1.0.0-alpha-000282"
     },
 	"resource": [
 		"Resources/*.resx"
