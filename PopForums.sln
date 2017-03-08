@@ -1,23 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.xproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums", "src\PopForums\PopForums.xproj", "{1787FE89-F023-482E-ABBA-996554DD332D}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Data.Sql", "src\PopForums.Sql\PopForums.Data.Sql.xproj", "{229CDD35-A4A5-44F2-8937-61AB286D6A77}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{044AC2DE-7D9D-4C1A-8C83-38AF448B5A61}"
 	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
 		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.Test", "src\PopForums.Test\PopForums.Test.xproj", "{AB4006F4-F457-490B-B9FC-8DE9CDA67127}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.csproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PopForums.AzureKit", "src\PopForums.AzureKit\PopForums.AzureKit.xproj", "{C3E4460C-E785-4FF4-AFAF-07AF2EA8812D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums", "src\PopForums\PopForums.csproj", "{1787FE89-F023-482E-ABBA-996554DD332D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Sql", "src\PopForums.Sql\PopForums.Sql.csproj", "{229CDD35-A4A5-44F2-8937-61AB286D6A77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Test", "src\PopForums.Test\PopForums.Test.csproj", "{AB4006F4-F457-490B-B9FC-8DE9CDA67127}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AzureKit", "src\PopForums.AzureKit\PopForums.AzureKit.csproj", "{C3E4460C-E785-4FF4-AFAF-07AF2EA8812D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

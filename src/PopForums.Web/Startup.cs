@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,8 @@ using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Web.Areas.Forums.Authorization;
 using PopForums.Web.Areas.Forums.Extensions;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace PopForums.Web
 {
@@ -104,6 +107,16 @@ namespace PopForums.Web
 					name: "default",
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
+
+            // TODO: abstract this
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
+            app.UseRequestLocalization(new RequestLocalizationOptions {
+                DefaultRequestCulture = new RequestCulture("en", "en"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
+            //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
+            //CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
 		}
 	}
 }
