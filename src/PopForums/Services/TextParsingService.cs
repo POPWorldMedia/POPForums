@@ -52,6 +52,12 @@ namespace PopForums.Services
 
 		string EscapeHtmlAndCensor(string text);
 		string HtmlToForumCode(string text);
+		/// <summary>
+		/// Removes all forum code markup from the text. Useful for scrubbing text to be saved in search repositories.
+		/// </summary>
+		/// <param name="text">Text to parse.</param>
+		/// <returns>Parsed text.</returns>
+		string RemoveForumCode(string text);
 	}
 
 	public class TextParsingService : ITextParsingService
@@ -61,15 +67,15 @@ namespace PopForums.Services
 			_settingsManager = settingsManager;
 		}
 
-		private ISettingsManager _settingsManager;
+		private readonly ISettingsManager _settingsManager;
 
 		public static string[] AllowedCloseableTags = { "b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img" };
-		private readonly static Regex _tagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private readonly static Regex _tagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private readonly static Regex _protocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private readonly static Regex _wwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private readonly static Regex _emailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private static readonly Regex _youTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex TagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex TagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex ProtocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex WwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex EmailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex YouTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		/// <summary>
 		/// Converts forum code from the browser to HTML for storage. This method wraps <see cref="CleanForumCode(string)"/> and <see cref="ForumCodeToHtml(string)"/>, and censors the text.
@@ -232,7 +238,7 @@ namespace PopForums.Services
 
 			// close all tags
 			var stack = new Stack<string>();
-			var allMatches = _tagPattern.Match(text);
+			var allMatches = TagPattern.Match(text);
 			var indexAdjustment = 0;
 			while (allMatches.Success)
 			{
@@ -240,14 +246,14 @@ namespace PopForums.Services
 				if (!tag.StartsWith("[/"))
 				{
 					// opening tag
-					var tagID = _tagID.Replace(tag, "$1");
+					var tagID = TagID.Replace(tag, "$1");
 					if (AllowedCloseableTags.Contains(tagID))
 						stack.Push(tagID);
 				}
 				else
 				{
 					// closing tag
-					var tagID = _tagID.Replace(tag, "$1");
+					var tagID = TagID.Replace(tag, "$1");
 					if (stack.Count == 0 || !stack.Contains(tagID))
 					{
 						// prepend with opener
@@ -306,10 +312,10 @@ namespace PopForums.Services
 
 			// put URL's in url tags (plus youtube)
 			if (_settingsManager.Current.AllowImages)
-				text = _youTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
-			text = _protocolPattern.Replace(text, match => String.Format("[url={0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
-			text = _wwwPattern.Replace(text, match => String.Format("[url=http://{0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
-			text = _emailPattern.Replace(text, match => String.Format("[url=mailto:{0}]{0}[/url]", match.Value));
+				text = YouTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
+			text = ProtocolPattern.Replace(text, match => String.Format("[url={0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
+			text = WwwPattern.Replace(text, match => String.Format("[url=http://{0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
+			text = EmailPattern.Replace(text, match => String.Format("[url=mailto:{0}]{0}[/url]", match.Value));
 
 			// escape out rogue HTML tags
 			text = EscapeHtmlTags(text);
@@ -385,6 +391,12 @@ namespace PopForums.Services
 			text = Regex.Replace(text, @"</blockquote>(\r\n)*(?!(<p>|<blockquote>|</blockquote>|\Z))", "</blockquote><p>", RegexOptions.IgnoreCase);
 			text = text.Replace("\r\n", "<br />");
 
+			return text;
+		}
+
+		public string RemoveForumCode(string text)
+		{
+			text = TagPattern.Replace(text, "");
 			return text;
 		}
 

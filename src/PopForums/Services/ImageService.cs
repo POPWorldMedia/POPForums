@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ImageProcessorCore;
+using ImageSharp;
 using PopForums.Models;
 using PopForums.Repositories;
+using ImageSharp.Formats;
 
 namespace PopForums.Services
 {
@@ -116,7 +117,7 @@ namespace PopForums.Services
 			{
 				var image = new Image(stream);
 				image.Resize(width, height)
-					.SaveAsJpeg(output, qualityLevel);
+					.SaveAsJpeg(output, new JpegEncoderOptions { Quality = 75 });
 			}
 			return output.ToArray();
 		}
