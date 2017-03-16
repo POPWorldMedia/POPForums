@@ -158,8 +158,7 @@ namespace PopForums.Test.Services
 		{
 			var user = new User(123, DateTime.MinValue);
 			var service = GetService();
-			var deleteCalled = false;
-			Action delete = () => { deleteCalled = true; };
+			Action delete = () => { };
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
@@ -180,8 +179,7 @@ namespace PopForums.Test.Services
 		{
 			var user = new User(123, DateTime.MinValue);
 			var service = GetService();
-			var deleteCalled = false;
-			Action delete = () => { deleteCalled = true; };
+		    Action delete = () => { };
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
