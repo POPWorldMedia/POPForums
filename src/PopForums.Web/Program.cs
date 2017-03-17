@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
-namespace PopForums.Web
+namespace PopForums.Mvc
 {
 	public class Program
 	{
@@ -10,7 +10,7 @@ namespace PopForums.Web
 			var host = new WebHostBuilder()
 				.UseKestrel()
 				.UseContentRoot(Directory.GetCurrentDirectory())
-				//.UseIISIntegration()
+				.UseIISIntegration()
 				.UseAzureAppServices()
 				.UseStartup<Startup>()
 				.Build();

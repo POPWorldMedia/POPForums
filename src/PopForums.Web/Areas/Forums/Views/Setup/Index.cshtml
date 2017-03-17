@@ -1,6 +1,4 @@
-﻿@using System.Threading.Tasks
-@using PopForums.Models
-@model PopForums.Models.SetupVariables
+﻿@model SetupVariables
 @{
 	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
 }

@@ -1,9 +1,6 @@
-﻿@using PopForums.Services;
-@using PopForums.Web.Areas.Forums.Services;
-@addTagHelper *, PopForums.Web
-@inject IUserRetrievalShim UserRetrievalShim
+﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
-@model PopForums.Models.CategorizedForumContainer
+@model CategorizedForumContainer
 @{
 	ViewBag.Title = Model.ForumTitle;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";

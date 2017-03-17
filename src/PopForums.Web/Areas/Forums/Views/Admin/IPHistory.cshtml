@@ -1,9 +1,11 @@
-﻿@using PopForums.Models;
-@model List<IPHistoryEvent>
+﻿@model List<IPHistoryEvent>
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
 
 @{
-	ViewBag.PageTitle = PopForums.Resources.IpHistory;
+    ViewBag.PageTitle = PopForums.Resources.IpHistory;
     Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+    var profile = UserRetrievalShim.GetProfile(Context);
 }
 
 <h1>@PopForums.Resources.IpHistory</h1>	
@@ -39,7 +41,7 @@
 		</tr>
 	@foreach (var entry in Model) {
 		<tr>
-			<td class="text-nowrap">@FormatTime(entry.EventTime)</td>
+			<td class="text-nowrap">@TimeFormattingService.GetFormattedTime(entry.EventTime, profile)</td>
 			<td>@entry.Type.Name</td>
 			<td>
 				@switch(entry.Type.Name) {

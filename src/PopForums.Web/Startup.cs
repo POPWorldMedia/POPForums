@@ -10,12 +10,12 @@ using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
-using PopForums.Web.Areas.Forums.Authorization;
-using PopForums.Web.Areas.Forums.Extensions;
+using PopForums.Mvc.Areas.Forums.Extensions;
 using System.Collections.Generic;
 using System.Globalization;
+using PopForums.Mvc.Areas.Forums.Authorization;
 
-namespace PopForums.Web
+namespace PopForums.Mvc
 {
 	public class Startup
 	{
@@ -94,7 +94,6 @@ namespace PopForums.Web
 			// Add MVC to the request pipeline.
 			app.UseMvc(routes =>
 			{
-
 				// POP Forums routes
 				routes.AddPopForumsRoutes(app);
 

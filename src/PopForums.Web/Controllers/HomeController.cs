@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace PopForums.Web.Controllers
+namespace PopForums.Mvc.Controllers
 {
     public class HomeController : Controller
     {

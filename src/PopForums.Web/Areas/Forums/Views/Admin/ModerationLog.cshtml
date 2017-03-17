@@ -1,8 +1,6 @@
-﻿@using System.Threading.Tasks
-@using PopForums.Web.Areas.Forums.Controllers
-@inject PopForums.Services.ITimeFormattingService TimeFormattingService
-@inject PopForums.Web.Areas.Forums.Services.IUserRetrievalShim UserRetrievalShim
-@model List<PopForums.Models.ModerationLogEntry>
+﻿@inject ITimeFormattingService TimeFormattingService
+@inject IUserRetrievalShim UserRetrievalShim
+@model List<ModerationLogEntry>
 
 @{
     ViewBag.PageTitle = PopForums.Resources.ModerationLog;

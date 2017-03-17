@@ -1,8 +1,6 @@
-﻿@using System.Threading.Tasks
-@using PopForums.Web.Areas.Forums.Controllers
-@inject IUserRetrievalShim UserRetrievalShim
+﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
-@model List<PopForums.Models.FeedEvent>
+@model List<FeedEvent>
 
 @{
 	ViewBag.Title = PopForums.Resources.ActivityFeed;

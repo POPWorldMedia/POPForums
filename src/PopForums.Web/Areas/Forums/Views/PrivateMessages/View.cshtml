@@ -1,7 +1,6 @@
-﻿@addTagHelper *, PopForums.Web
-@inject IUserRetrievalShim UserRetrievalShim
+﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
-@model PopForums.Models.PrivateMessageView
+@model PrivateMessageView
 @{
 	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
