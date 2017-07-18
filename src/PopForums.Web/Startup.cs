@@ -76,14 +76,6 @@ namespace PopForums.Mvc
 			// records exceptions and info to the POP Forums database
 			loggerFactory.AddPopForumsLogger(app);
 
-			if (env.IsDevelopment())
-			{
-				//app.UseBrowserLink();
-				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
-			}
-			app.UseStatusCodePages();
-
 			app.UseStaticFiles();
 
 			// sets up POP Forums auth and includes social logins if setup in admin
@@ -114,8 +106,19 @@ namespace PopForums.Mvc
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures
             });
-            //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
-            //CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
+			//CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
+			//CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
+
+			// Error page config has to come at the end of middleware config, as some of 
+			// options will double execute population of HttpContext.User.Identities.
+			// see: https://github.com/POPWorldMedia/POPForums/issues/54
+			if (env.IsDevelopment())
+			{
+				//app.UseBrowserLink();
+				app.UseDeveloperExceptionPage();
+				app.UseDatabaseErrorPage();
+			}
+			app.UseStatusCodePages();
 		}
 	}
 }
