@@ -1246,4 +1246,7 @@
   <data name="AppRestartRequired" xml:space="preserve">
     <value>App restart is required</value>
   </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Unexpected Error</value>
+  </data>
 </root>
