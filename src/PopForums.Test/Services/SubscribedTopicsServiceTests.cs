@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using Moq;
 using Xunit;
@@ -111,7 +112,7 @@ namespace PopForums.Test.Services
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(user.UserID, topic.TopicID), Times.Once());
 		}
 		
-		[Fact(Skip = "Barrier doesn't block the async sends in core.")] // TODO: make this test work
+        [Fact]
 		public void NotifyCallQueueOnEveryUser()
 		{
 			var service = GetService();
@@ -120,14 +121,11 @@ namespace PopForums.Test.Services
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
 			var topicLink = "foo";
 			Func<User, string> gen = u => "x" + u.UserID;
-			var barrier = new Barrier(1);
-			Action action = () => {
-				service.NotifySubscribers(topic, new User(45643, DateTime.MinValue), topicLink, gen);
-			    barrier.SignalAndWait();
-			};
-			action();
-			barrier.Dispose();
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Once());
+		    WaitExternalThreadToComplete(() =>
+		    {
+		        service.NotifySubscribers(topic, new User(45643, DateTime.MinValue), topicLink, gen);
+		    });
+		    _mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Once());
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[1], topicLink, "x" + list[1].UserID), Times.Once());
 		}
 
@@ -141,14 +139,10 @@ namespace PopForums.Test.Services
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
 			var topicLink = "foo";
 			Func<User, string> gen = u => "x" + u.UserID;
-			var barrier = new Barrier(1);
-			Action action = () =>
-			{
+            WaitExternalThreadToComplete(() =>
+            {
 				service.NotifySubscribers(topic, user, topicLink, gen);
-				barrier.SignalAndWait();
-			};
-			action.Invoke();
-			barrier.Dispose();
+			});
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, It.IsAny<User>(), topicLink, It.IsAny<string>()), Times.Exactly(1));
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Exactly(0));
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[1], topicLink, "x" + list[1].UserID), Times.Exactly(1));
@@ -180,5 +174,16 @@ namespace PopForums.Test.Services
 			_mockSubRepo.Verify(s => s.GetSubscribedTopics(user.UserID, 41, 20), Times.Once());
 			Assert.Equal(20, pagerContext.PageSize);
 		}
+
+	    private void WaitExternalThreadToComplete(Action action)
+	    {
+	        var threads = Process.GetCurrentProcess().Threads.Count;
+	        action();
+	        while (true)
+	        {
+	            if (threads == Process.GetCurrentProcess().Threads.Count) break;
+                Thread.Sleep(1);
+	        }
+	    }
 	}
 }
