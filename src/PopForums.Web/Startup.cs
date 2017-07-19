@@ -33,7 +33,7 @@ namespace PopForums.Mvc
 		}
 
 		public IConfigurationRoot Configuration { get; set; }
-		
+
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// needed for social logins in POP Forums
@@ -68,7 +68,7 @@ namespace PopForums.Mvc
 			// creates an instance of the background services for POP Forums... call this last in forum setup
 			services.AddPopForumsBackgroundServices();
 		}
-		
+
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
 			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -82,6 +82,24 @@ namespace PopForums.Mvc
 			app.UseCookieAuthenticationForPopForums();
 
 			app.UseSignalR();
+
+			// Error page config has to come before the Authentication has been setup, as some of 
+			// options will double execute population of HttpContext.User.Identities.
+			// see: https://github.com/POPWorldMedia/POPForums/issues/54
+			// The error handling also has to come before the routing allowing us to navigate to
+			// controller which handles it.
+			if (env.IsDevelopment())
+			{
+				//app.UseBrowserLink();
+				app.UseDeveloperExceptionPage();
+				app.UseDatabaseErrorPage();
+				app.UseStatusCodePages();
+			}
+			else
+			{
+				app.UseStatusCodePagesWithReExecute("/Error/{0}");
+				app.UseExceptionHandler("/Error");
+			}
 
 			// Add MVC to the request pipeline.
 			app.UseMvc(routes =>
@@ -99,26 +117,16 @@ namespace PopForums.Mvc
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
 
-            // TODO: abstract this
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
-            app.UseRequestLocalization(new RequestLocalizationOptions {
-                DefaultRequestCulture = new RequestCulture("en", "en"),
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures
-            });
+			// TODO: abstract this
+			var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
+			app.UseRequestLocalization(new RequestLocalizationOptions
+			{
+				DefaultRequestCulture = new RequestCulture("en", "en"),
+				SupportedCultures = supportedCultures,
+				SupportedUICultures = supportedCultures
+			});
 			//CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
 			//CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
-
-			// Error page config has to come at the end of middleware config, as some of 
-			// options will double execute population of HttpContext.User.Identities.
-			// see: https://github.com/POPWorldMedia/POPForums/issues/54
-			if (env.IsDevelopment())
-			{
-				//app.UseBrowserLink();
-				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
-			}
-			app.UseStatusCodePages();
 		}
 	}
 }
