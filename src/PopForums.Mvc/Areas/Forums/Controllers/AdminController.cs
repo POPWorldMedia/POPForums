@@ -80,9 +80,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		[HttpPost]
 		//[ValidateInput(false)] TODO: need this?
-		public ViewResult Index(FormCollection collection)
+		public ViewResult Index(IFormCollection collection)
 		{
-			// TODO: FormCollection can't be used as a parameter
 			SaveFormValuesToSettings(Request.Form);
 			ViewData[TimeZonesKey] = DataCollections.TimeZones();
 			return View(_settingsManager.Current);
@@ -94,7 +93,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult ExternalLogins(FormCollection collection)
+		public ViewResult ExternalLogins(IFormCollection collection)
 		{
 			// TODO: This requires an app restart to register the new social logins
 			SaveFormValuesToSettings(Request.Form);
@@ -109,7 +108,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult Email(FormCollection collection)
+		public ViewResult Email(IFormCollection collection)
 		{
 			SaveFormValuesToSettings(Request.Form);
 			return View(_settingsManager.Current);
@@ -334,7 +333,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult Search(FormCollection collection)
+		public ViewResult Search(IFormCollection collection)
 		{
 			SaveFormValuesToSettings(Request.Form);
 			ViewData["Interval"] = _settingsManager.Current.SearchIndexingInterval;
@@ -694,7 +693,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult ScoringGame(FormCollection collection)
+		public ViewResult ScoringGame(IFormCollection collection)
 		{
 			SaveFormValuesToSettings(Request.Form);
 			ViewData["Interval"] = _settingsManager.Current.ScoringGameCalculatorInterval;
