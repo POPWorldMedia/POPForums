@@ -8,3 +8,5 @@ packages
 /src/PopForums.AzureKit/project.lock.json
 /*.user
 *.user
+.idea/.idea.PopForums/.idea
+.idea/.idea.PopForums/riderModule.iml
