@@ -86,7 +86,7 @@ namespace PopForums.Services
 		public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel)
 		{
 			var stream = new MemoryStream(bytes);
-			var originalImage = new Image(stream);
+			var originalImage = new Image<Rgba32>(Image.Load<Rgba32>(stream));
 			int newHeight;
 			int newWidth;
 			CalculateResize(maxWidth, maxHeight, originalImage.Width, originalImage.Height, out newWidth, out newHeight);
@@ -115,7 +115,7 @@ namespace PopForums.Services
 			var output = new MemoryStream();
 			using (var stream = new MemoryStream(bytes))
 			{
-				var image = new Image(stream);
+				var image = new Image<Rgba32>(Image.Load<Rgba32>(stream));
 				image.Resize(width, height)
 					.SaveAsJpeg(output, new JpegEncoderOptions { Quality = 75 });
 			}
