@@ -3,11 +3,14 @@
   "private": true,
   "dependencies": {
     "bootstrap": "v3.3.7",
-    "jquery": "2.1.4",
-    "signalr": "2.2.0",
-    "tinymce": "4.3.0"
+    "jquery": "3.2.1",
+    "signalr": "v2.2.2",
+    "tinymce": "4.6.5"
   },
   "resolutions": {
-    "bootstrap": "v3.3.7"
+    "bootstrap": "v3.3.7",
+    "jquery": "3.2.1",
+    "signalr": "v2.2.2",
+    "tinymce": "4.6.5"
   }
 }

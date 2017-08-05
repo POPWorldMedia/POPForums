@@ -117,7 +117,8 @@ namespace PopForums.Services
 			{
 				var image = new Image<Rgba32>(Image.Load<Rgba32>(stream));
 				image.Resize(width, height)
-					.SaveAsJpeg(output, new JpegEncoderOptions { Quality = 75 });
+					.GaussianSharpen(0.5f)
+					.SaveAsJpeg(output, new JpegEncoder { Quality = 75 });
 			}
 			return output.ToArray();
 		}

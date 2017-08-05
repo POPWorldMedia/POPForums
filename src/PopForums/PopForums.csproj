@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha4-00031" />
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00175" />
     <PackageReference Include="MailKit" Version="1.16.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
