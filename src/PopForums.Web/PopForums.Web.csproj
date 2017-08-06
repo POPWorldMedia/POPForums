@@ -9,6 +9,8 @@
     <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <PreBuildEvent>CD $(MSBuildProjectDirectory)
+bower install</PreBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,12 +53,5 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.1" />
   </ItemGroup>
-
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="npm install" />
-    <Exec Command="bower install" />
-    <Exec Command="gulp clean" />
-    <Exec Command="gulp min" />
-  </Target>
 
 </Project>
