@@ -107,7 +107,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (authResult != null)
 					_externalUserAssociationManager.Associate(user, authResult, ip);
 
-				await AuthorizationController.PerformSignInAsync(true, user, HttpContext);
+				await AuthorizationController.PerformSignInAsync(user, HttpContext);
 
 				return View("AccountCreated");
 			}

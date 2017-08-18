@@ -29,9 +29,8 @@ namespace PopForums.Services
 		void UpdateIsApproved(User targetUser, bool isApproved, User user, string ip);
 		void UpdateAuthorizationKey(User user, Guid key);
 		void Logout(User user, string ip);
-		bool Login(string email, string password, bool persistCookie, string ip, out User user);
+		bool Login(string email, string password, string ip, out User user);
 		void Login(User user, string ip);
-		void Login(User user, bool persistCookie, string ip);
 		List<string> GetAllRoles();
 		void CreateRole(string role, User user, string ip);
 		void DeleteRole(string role, User user, string ip);
@@ -271,7 +270,7 @@ namespace PopForums.Services
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Logout);
 		}
 
-		public bool Login(string email, string password, bool persistCookie, string ip, out User user)
+		public bool Login(string email, string password, string ip, out User user)
 		{
 			Guid? salt;
 			var result = CheckPassword(email, password, out salt);
@@ -293,11 +292,6 @@ namespace PopForums.Services
 		}
 
 		public void Login(User user, string ip)
-		{
-			Login(user, false, ip);
-		}
-
-		public void Login(User user, bool persistCookie, string ip)
 		{
 			user.LastLoginDate = DateTime.UtcNow;
 			_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);

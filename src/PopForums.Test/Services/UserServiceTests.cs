@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
 using Moq;
 using Xunit;
@@ -493,7 +492,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
 			User userOut;
 
-			var result = userService.Login(email, password, true, ip, out userOut);
+			var result = userService.Login(email, password, ip, out userOut);
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
@@ -517,7 +516,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
 			User userOut;
 
-			var result = userService.Login(email, password, true, ip, out userOut);
+			var result = userService.Login(email, password, ip, out userOut);
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
@@ -537,7 +536,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(It.IsAny<string>(), out salt)).Returns("1234");
 			User userOut;
 
-			var result = userService.Login(email, password, true, ip, out userOut);
+			var result = userService.Login(email, password, ip, out userOut);
 
 			Assert.False(result);
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin), Times.Once());
@@ -564,7 +563,7 @@ namespace PopForums.Test.Services
 			var service = GetMockedUserService();
 			const string ip = "1.1.1.1";
 
-			service.Login(user, true, ip);
+			service.Login(user, ip);
 
 			_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login), Times.Once());

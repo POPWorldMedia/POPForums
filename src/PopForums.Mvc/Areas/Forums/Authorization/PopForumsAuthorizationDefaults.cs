@@ -2,8 +2,8 @@
 {
 	public static class PopForumsAuthorizationDefaults
 	{
-		public static string AuthenticationScheme = "PopForumsAuthScheme";
-		public static string CookieName = "pfauth";
-		public static string ForumsClaimType = "http://popforums.com/forumclaims";
+		public const string AuthenticationScheme = "PopForumsAuthScheme";
+		public const string CookieName = "pfauth";
+		public const string ForumsClaimType = "http://popforums.com/forumclaims";
 	}
 }

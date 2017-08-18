@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.ExternalLogin;
@@ -12,6 +10,9 @@ using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using AuthenticationProperties = Microsoft.AspNetCore.Authentication.AuthenticationProperties;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
@@ -45,7 +46,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
-			await HttpContext.Authentication.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Redirect(link);
 		}
 
@@ -54,24 +55,24 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
-			await HttpContext.Authentication.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Login(string email, string password, bool persistCookie)
+		public async Task<IActionResult> Login(string email, string password)
 		{
 			User user;
-			if (_userService.Login(email, password, persistCookie, HttpContext.Connection.RemoteIpAddress.ToString(), out user))
+			if (_userService.Login(email, password, HttpContext.Connection.RemoteIpAddress.ToString(), out user))
 			{
-				await PerformSignInAsync(persistCookie, user, HttpContext);
+				await PerformSignInAsync(user, HttpContext);
 				return Json(new BasicJsonMessage { Result = true });
 			}
 
 			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
 
-		public static async Task PerformSignInAsync(bool persistCookie, User user, HttpContext httpContext)
+		public static async Task PerformSignInAsync(User user, HttpContext httpContext)
 		{
 			var claims = new List<Claim>
 			{
@@ -80,14 +81,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			var props = new AuthenticationProperties
 			{
-				IsPersistent = persistCookie,
+				IsPersistent = true,
 				ExpiresUtc = DateTime.UtcNow.AddYears(1)
 			};
 
 			var id = new ClaimsIdentity(claims, PopForumsAuthorizationDefaults.AuthenticationScheme);
-			await
-				httpContext.Authentication.SignInAsync(PopForumsAuthorizationDefaults.AuthenticationScheme, new ClaimsPrincipal(id),
-					props);
+			await httpContext.SignInAsync(PopForumsAuthorizationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
 		}
 
 		[HttpPost]
@@ -95,13 +94,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			User user;
-            if (_userService.Login(email, password, persistCookie, ip, out user))
+            if (_userService.Login(email, password, ip, out user))
 			{
 				var authResult = await GetExternalLoginInfoAsync(HttpContext);
 				if (authResult != null)
 				{
 					_externalUserAssociationManager.Associate(user, authResult, ip);
-					await PerformSignInAsync(persistCookie, user, HttpContext);
+					await PerformSignInAsync(user, HttpContext);
 					return Json(new BasicJsonMessage { Result = true });
 				}
 			}
@@ -151,8 +150,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalAuthResult, ip);
 			if (matchResult.Successful)
 			{
-				_userService.Login(matchResult.User, true, ip);
-				await PerformSignInAsync(true, matchResult.User, HttpContext);
+				_userService.Login(matchResult.User, ip);
+				await PerformSignInAsync(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
 			ViewBag.Referrer = returnUrl;
@@ -165,7 +164,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public static async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext httpContext, string expectedXsrf = null)
 		{
 			var auth = new AuthenticateContext(ExternalUserAssociationManager.AuthenticationContextName);
-			await httpContext.Authentication.AuthenticateAsync(auth);
+			await httpContext.AuthenticateAsync(ExternalUserAssociationManager.AuthenticationContextName);
 			if (auth.Principal == null || auth.Properties == null || !auth.Properties.ContainsKey(LoginProviderKey))
 			{
 				return null;

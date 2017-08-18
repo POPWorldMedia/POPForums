@@ -5,17 +5,18 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Mvc.Areas.Forums.Extensions;
-using System.Collections.Generic;
-using System.Globalization;
 using PopForums.Mvc.Areas.Forums.Authorization;
 
-namespace PopForums.Mvc
+namespace PopForums.Web
 {
 	public class Startup
 	{
@@ -37,7 +38,7 @@ namespace PopForums.Mvc
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// needed for social logins in POP Forums
-			services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
+			//services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
 
 			services.Configure<AuthorizationOptions>(options =>
 			{
@@ -49,6 +50,11 @@ namespace PopForums.Mvc
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
+			})
+			// TODO: Remove once bug is fixed: https://github.com/aspnet/Mvc/issues/6660
+			.AddRazorOptions(options =>
+			{
+				options.ViewLocationExpanders.Remove(options.ViewLocationExpanders.First(f => f is Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageViewLocationExpander));
 			});
 
 			// TODO: go to primary nuget
@@ -57,7 +63,8 @@ namespace PopForums.Mvc
 			// sets up the dependencies for the base, SQL and web libraries in POP Forums
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
-			services.AddPopForumsWeb();
+			// this adds dependencies from the MVC project and sets up authentication for the forum
+			services.AddPopForumsMvc();
 
 			// use Redis cache for POP Forums using AzureKit
 			//services.AddPopForumsRedisCache();
@@ -78,10 +85,12 @@ namespace PopForums.Mvc
 
 			app.UseStaticFiles();
 
-			// sets up POP Forums auth and includes social logins if setup in admin
-			app.UseCookieAuthenticationForPopForums();
+			// Not unique to POP Forums, but required.
+			app.UseAuthentication();
 
 			app.UseSignalR();
+
+			app.UseDeveloperExceptionPage();
 
 			// Add MVC to the request pipeline.
 			app.UseMvc(routes =>
@@ -108,17 +117,6 @@ namespace PopForums.Mvc
             });
 			//CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
 			//CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
-
-			// Error page config has to come at the end of middleware config, as some of 
-			// options will double execute population of HttpContext.User.Identities.
-			// see: https://github.com/POPWorldMedia/POPForums/issues/54
-			if (env.IsDevelopment())
-			{
-				//app.UseBrowserLink();
-				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();
-			}
-			app.UseStatusCodePages();
 		}
 	}
 }

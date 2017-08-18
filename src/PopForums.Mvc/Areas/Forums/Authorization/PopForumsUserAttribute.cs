@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -46,7 +47,8 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 				return;
 			}
 			_ignore = false;
-			var identity = context.HttpContext.User.Identities.SingleOrDefault(x => x.AuthenticationType == PopForumsAuthorizationDefaults.AuthenticationScheme);
+			var authResult = context.HttpContext.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme).Result;
+			var identity = authResult?.Principal?.Identity as ClaimsIdentity;
 			if (identity == null)
 				return;
 			_user = _userService.GetUserByName(identity.Name);
@@ -58,6 +60,7 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 				var profileService = context.HttpContext.RequestServices.GetService<IProfileService>();
 				var profile = profileService.GetProfile(_user);
 				context.HttpContext.Items["PopForumsProfile"] = profile;
+				context.HttpContext.User = new ClaimsPrincipal(identity);
 			}
 		}
 

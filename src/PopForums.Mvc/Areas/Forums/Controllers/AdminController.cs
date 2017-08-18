@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.ScoringGame;
@@ -16,7 +17,7 @@ using PopForums.Mvc.Areas.Forums.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
-	[Authorize(Policy = PermanentRoles.Admin)]
+	[Authorize(Policy = PermanentRoles.Admin, AuthenticationSchemes = PopForumsAuthorizationDefaults.AuthenticationScheme)]
 	[Area("Forums")]
     public class AdminController : Controller
 	{
