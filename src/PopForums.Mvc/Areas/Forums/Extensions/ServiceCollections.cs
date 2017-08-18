@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
@@ -36,14 +34,8 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 			var settingsManager = serviceProvider.GetService<ISettingsManager>();
 			var settings = settingsManager.Current;
 
-			var authenticationBuilder = services.AddAuthentication(options =>
-			{
-				options.AddScheme(PopForumsAuthorizationDefaults.AuthenticationScheme, builder =>
-				{
-					builder.HandlerType = typeof(CookieAuthenticationHandler);
-				});
-			})
-				.AddCookie(option => option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0));
+			var authenticationBuilder = services.AddAuthentication()
+				.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option => option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0));
 
 			if (settings.UseTwitterLogin)
 				authenticationBuilder.AddTwitter(x =>
