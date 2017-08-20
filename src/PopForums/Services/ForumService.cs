@@ -235,7 +235,7 @@ namespace PopForums.Services
 			if (topic != null && topic.IsClosed)
 			{
 				context.UserCanPost = false;
-				context.DenialReason += Resources.Closed + ". ";
+				context.DenialReason = Resources.Closed + ". ";
 			}
 
 			if (topic != null && topic.IsDeleted)
