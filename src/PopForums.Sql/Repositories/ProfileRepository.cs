@@ -187,6 +187,7 @@ namespace PopForums.Data.Sql.Repositories
 				connection.Command(_sqlObjectFactory, "UPDATE pf_Profile SET ImageID = NULL WHERE UserID = @UserID")
 					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteNonQuery());
+			_cacheHelper.RemoveCacheObject(CacheKeys.UserProfile(userID));
 		}
 
 		public void UpdatePoints(int userID, int points)
