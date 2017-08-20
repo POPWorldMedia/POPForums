@@ -227,7 +227,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			service.EditPost(new Post(456), new PostEdit{ Title = "blah" }, new User(123, DateTime.MinValue));
-			_textParsingService.Verify(t => t.EscapeHtmlAndCensor("blah"), Times.Exactly(1));
+			_textParsingService.Verify(t => t.Censor("blah"), Times.Exactly(1));
 		}
 
 		[Fact]
@@ -253,7 +253,7 @@ namespace PopForums.Test.Services
 			var post = new Post(67);
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
 			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParsingService.Setup(t => t.EscapeHtmlAndCensor("unparsed title")).Returns("new title");
+			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
 			service.EditPost(new Post(456) { ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User(123, DateTime.MinValue) { Name = "dude" });
 			Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
 			Assert.Equal(post.PostID, 456);
@@ -270,7 +270,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) {Name = "dude"};
 			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParsingService.Setup(t => t.EscapeHtmlAndCensor("unparsed title")).Returns("new title");
+			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
 			service.EditPost(new Post(456) { ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
 		}

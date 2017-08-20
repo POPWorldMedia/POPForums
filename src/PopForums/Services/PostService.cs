@@ -184,7 +184,7 @@ namespace PopForums.Services
 		public void EditPost(Post post, PostEdit postEdit, User editingUser)
 		{
 			var oldText = post.FullText;
-			post.Title = _textParsingService.EscapeHtmlAndCensor(postEdit.Title);
+			post.Title = _textParsingService.Censor(postEdit.Title);
 			if (postEdit.IsPlainText)
 				post.FullText = _textParsingService.ForumCodeToHtml(postEdit.FullText);
 			else
