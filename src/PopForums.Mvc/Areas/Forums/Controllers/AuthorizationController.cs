@@ -113,9 +113,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[ValidateAntiForgeryToken]
 		public IActionResult ExternalLogin(string provider, string returnUrl = null)
 		{
-			var redirectUrl = Url.Action("ExternalLoginCallback", Name, new { ReturnUrl = returnUrl });
+			var redirectUrl = Url.Action(nameof(ExternalLoginCallback), Name, new { ReturnUrl = returnUrl });
 			var properties = ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-			return new ChallengeResult(provider, properties);
+			return Challenge(properties, provider);
 		}
 
 		private const string LoginProviderKey = "LoginProvider";
@@ -132,8 +132,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return properties;
 		}
 
-		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
+		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
 		{
+			if (remoteError != null)
+			{
+				// TODO: deal with this
+			}
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
             var info = await GetExternalLoginInfoAsync(HttpContext);
 			if (info == null)
@@ -163,20 +167,20 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// They must use their PF credentials after getting valid claims from the 3rd party.
 		public static async Task<ExternalLoginInfo> GetExternalLoginInfoAsync(HttpContext httpContext, string expectedXsrf = null)
 		{
-			var auth = new AuthenticateContext(ExternalUserAssociationManager.AuthenticationContextName);
-			await httpContext.AuthenticateAsync(ExternalUserAssociationManager.AuthenticationContextName);
-			if (auth.Principal == null || auth.Properties == null || !auth.Properties.ContainsKey(LoginProviderKey))
+			var auth = await httpContext.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			var items = auth?.Properties?.Items;
+			if (auth?.Principal == null || items == null || !items.ContainsKey(LoginProviderKey))
 			{
 				return null;
 			}
 
 			if (expectedXsrf != null)
 			{
-				if (!auth.Properties.ContainsKey(XsrfKey))
+				if (!items.ContainsKey(XsrfKey))
 				{
 					return null;
 				}
-				var userId = auth.Properties[XsrfKey];
+				var userId = items[XsrfKey];
 				if (userId != expectedXsrf)
 				{
 					return null;
@@ -185,12 +189,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			var claim = auth.Principal.FindFirst(ClaimTypes.NameIdentifier);
 			var providerKey = claim?.Value;
-			var provider = auth.Properties[LoginProviderKey];
+			var provider = items[LoginProviderKey];
 			if (providerKey == null || provider == null)
 			{
 				return null;
 			}
-			return new ExternalLoginInfo(auth.Principal, provider, providerKey, auth.Properties[LoginProviderKey]);
+			return new ExternalLoginInfo(auth.Principal, provider, providerKey, provider);
 		}
 	}
 }

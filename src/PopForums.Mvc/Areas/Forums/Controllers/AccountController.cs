@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PopForums.Configuration;
@@ -22,7 +22,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class AccountController : Controller
 	{
-		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim)
+		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IAuthenticationSchemeProvider authenticationSchemeProvider)
 		{
 			_userService = userService;
 			_settingsManager = settingsManager;
@@ -39,6 +39,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userAwardService = userAwardService;
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userRetrievalShim = userRetrievalShim;
+			_authenticationSchemeProvider = authenticationSchemeProvider;
 		}
 
 		public static string Name = "Account";
@@ -61,6 +62,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserAwardService _userAwardService;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserRetrievalShim _userRetrievalShim;
+		private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
 		public ViewResult Create()
 		{
@@ -430,9 +432,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(externalLoginList);
 		}
 
-		private List<AuthenticationDescription> GetExternalLoginList()
+		private List<AuthenticationScheme> GetExternalLoginList()
 		{
-			var schemes = HttpContext.Authentication.GetAuthenticationSchemes()
+			var schemes = _authenticationSchemeProvider.GetAllSchemesAsync().Result
 				.Where(x => !string.IsNullOrWhiteSpace(x.DisplayName)).ToList();
 			return schemes;
 		}

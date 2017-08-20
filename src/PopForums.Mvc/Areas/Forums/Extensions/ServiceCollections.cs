@@ -42,6 +42,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				{
 					x.ConsumerKey = settings.TwitterConsumerKey;
 					x.ConsumerSecret = settings.TwitterConsumerSecret;
+					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
 				});
 
 			if (settings.UseFacebookLogin)
@@ -49,6 +50,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				{
 					x.AppId = settings.FacebookAppID;
 					x.AppSecret = settings.FacebookAppSecret;
+					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
 				});
 
 			if (settings.UseGoogleLogin)
@@ -56,6 +58,8 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				{
 					x.ClientId = settings.GoogleClientId;
 					x.ClientSecret = settings.GoogleClientSecret;
+					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
+
 				});
 
 			if (settings.UseMicrosoftLogin)
@@ -63,6 +67,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				{
 					x.ClientId = settings.MicrosoftClientID;
 					x.ClientSecret = settings.MicrosoftClientSecret;
+					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
 				});
 
 			return services;

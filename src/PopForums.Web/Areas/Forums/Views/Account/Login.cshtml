@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http.Authentication
 @inject IUserRetrievalShim UserRetrievalShim
-@model List<AuthenticationDescription>
+@model List<Microsoft.AspNetCore.Authentication.AuthenticationScheme>
 @{
     ViewBag.Title = PopForums.Resources.Login;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -48,7 +48,7 @@
 			<p>
 				@foreach (var authenticationDescription in Model)
 				{
-					<button type="submit" id="@authenticationDescription.AuthenticationScheme" name="provider" value="@authenticationDescription.AuthenticationScheme" class="btn btn-primary">@authenticationDescription.DisplayName</button>
+					<button type="submit" id="@authenticationDescription.Name" name="provider" value="@authenticationDescription.Name" class="btn btn-primary">@authenticationDescription.DisplayName</button>
 				}
 			</p>
 		</form>

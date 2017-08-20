@@ -27,8 +27,6 @@ namespace PopForums.ExternalLogin
 		private readonly IUserRepository _userRepository;
 		private readonly ISecurityLogService _securityLogService;
 
-		public static string AuthenticationContextName = "pfauth";
-
 		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip)
 		{
 			if (externalAuthenticationResult == null)
