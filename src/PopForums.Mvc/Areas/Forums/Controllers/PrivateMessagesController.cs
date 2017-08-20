@@ -112,6 +112,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
 				return Forbid();
+			if (String.IsNullOrEmpty(fullText))
+				fullText = String.Empty;
 			_privateMessageService.Reply(pm, fullText, user);
 			return RedirectToAction("View", new { id });
 		}

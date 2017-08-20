@@ -99,7 +99,7 @@ namespace PopForums.Services
 		{
 			if (pm == null || pm.PMID == 0)
 				throw new ArgumentException("Can't reply to a PM that hasn't been persisted.", "pm");
-			if (String.IsNullOrWhiteSpace(fullText))
+			if (fullText == null)
 				throw new ArgumentNullException("fullText");
 			if (user == null)
 				throw new ArgumentNullException("user");
