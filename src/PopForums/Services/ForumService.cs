@@ -263,7 +263,7 @@ namespace PopForums.Services
 		{
 			if (!permissionContext.UserCanPost || !permissionContext.UserCanView)
 				throw new Exception(String.Format("User {0} can't post to forum {1}.", user.Name, forum.Title));
-			newPost.Title = _textParsingService.EscapeHtmlAndCensor(newPost.Title);
+			newPost.Title = _textParsingService.Censor(newPost.Title);
 			if (newPost.IsPlainText)
 				newPost.FullText = _textParsingService.ForumCodeToHtml(newPost.FullText);
 			else

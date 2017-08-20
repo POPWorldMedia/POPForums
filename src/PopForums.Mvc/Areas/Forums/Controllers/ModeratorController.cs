@@ -70,7 +70,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public RedirectToActionResult UpdateTopic(FormCollection collection)
+		public RedirectToActionResult UpdateTopic(IFormCollection collection)
 		{
 			int topicID;
 			if (!int.TryParse(collection["TopicID"], out topicID))

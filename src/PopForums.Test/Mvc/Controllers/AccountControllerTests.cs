@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Authentication;
+using Moq;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.ExternalLogin;
@@ -28,6 +29,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IUserAwardService> _userAwardService;
 		private Mock<IExternalUserAssociationManager> _externalUserAssocManager;
 		private Mock<IUserRetrievalShim> _userRetrievalShim;
+		private Mock<IAuthenticationSchemeProvider> _authSchemeProvider;
 
 		private AccountController GetController()
 		{
@@ -46,7 +48,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_userAwardService = new Mock<IUserAwardService>();
 			_externalUserAssocManager = new Mock<IExternalUserAssociationManager>();
 			_userRetrievalShim = new Mock<IUserRetrievalShim>();
-			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object);
+			_authSchemeProvider = new Mock<IAuthenticationSchemeProvider>();
+			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _authSchemeProvider.Object);
 		}
 
 		[Fact]

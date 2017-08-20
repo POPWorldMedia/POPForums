@@ -120,7 +120,7 @@ namespace PopForums.Services
 
 		public Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator)
 		{
-			newPost.Title = _textParsingService.EscapeHtmlAndCensor(newPost.Title);
+			newPost.Title = _textParsingService.Censor(newPost.Title);
 			if (newPost.IsPlainText)
 				newPost.FullText = _textParsingService.ForumCodeToHtml(newPost.FullText);
 			else
