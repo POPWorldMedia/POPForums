@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ImageSharp;
 using PopForums.Models;
 using PopForums.Repositories;
-using ImageSharp.Formats;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace PopForums.Services
 {
@@ -85,14 +85,14 @@ namespace PopForums.Services
 
 		public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel)
 		{
-			var stream = new MemoryStream(bytes);
-			var originalImage = new Image<Rgba32>(Image.Load<Rgba32>(stream));
-			int newHeight;
-			int newWidth;
-			CalculateResize(maxWidth, maxHeight, originalImage.Width, originalImage.Height, out newWidth, out newHeight);
-			var image = Resize(bytes, newWidth, newHeight, qualityLevel);
-			stream.Dispose();
-			return image;
+			using (var stream = new MemoryStream(bytes))
+			using (var originalImage = Image.Load<Rgba32>(stream))
+			{
+				CalculateResize(maxWidth, maxHeight, originalImage.Width, originalImage.Height, out var newWidth, out var newHeight);
+				var image = Resize(bytes, newWidth, newHeight, qualityLevel);
+				stream.Dispose();
+				return image;
+			}
 		}
 
 		private void CalculateResize(int maxWidth, int maxHeight, int originalWidth, int originalHeight, out int newWidth, out int newHeight)
@@ -112,15 +112,16 @@ namespace PopForums.Services
 		{
 			if (bytes == null)
 				throw new Exception("Bytes parameter is null.");
-			var output = new MemoryStream();
 			using (var stream = new MemoryStream(bytes))
+			using (var image = Image.Load<Rgba32>(stream))
+			using (var output = new MemoryStream())
 			{
-				var image = new Image<Rgba32>(Image.Load<Rgba32>(stream));
-				image.Resize(width, height)
-					.GaussianSharpen(0.5f)
-					.SaveAsJpeg(output, new JpegEncoder { Quality = 75 });
+				image.Mutate(x => x
+					.Resize(width, height)
+					.GaussianSharpen(0.5f));
+				image.Save(output, new JpegEncoder { Quality = qualityLevel });
+				return output.ToArray();
 			}
-			return output.ToArray();
 		}
 	}
 }

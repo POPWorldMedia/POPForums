@@ -1,11 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{044AC2DE-7D9D-4C1A-8C83-38AF448B5A61}"
 	ProjectSection(SolutionItems) = preProject
 		NuGet.config = NuGet.config
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.csproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
@@ -18,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Test", "src\PopFo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AzureKit", "src\PopForums.AzureKit\PopForums.AzureKit.csproj", "{C3E4460C-E785-4FF4-AFAF-07AF2EA8812D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.Mvc", "src\PopForums.Mvc\PopForums.Mvc.csproj", "{0AE33580-28F6-41CB-B757-56E02394F645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Mvc", "src\PopForums.Mvc\PopForums.Mvc.csproj", "{0AE33580-28F6-41CB-B757-56E02394F645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,5 +67,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC971413-E75E-4D0A-8189-B71EE5DBAED1}
 	EndGlobalSection
 EndGlobal

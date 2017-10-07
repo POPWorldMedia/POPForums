@@ -5,6 +5,9 @@ An MVC forum application with real-time updating and multiple languages.
 
 The master branch is now the work-in-progress of v14, which will be for ASP.NET Core 2.0. If you're looking for the version that works on .NET 4.5.x with MVC 5, check out v13.0.2.
 
+Roadmap:
+Yeah, so you might ask why this project gets updated infrequently, and there hasn't been a release for ASP.NET Core. The answer is that Core has been too much of a moving target, plus day jobs and stuff. The release criteria at this point is at least beta status for external dependencies, and we're getting close now. The goal is mostly feature parity (and fewer bugs) with v13. After the release of v14, I'll be looking at modernizing the app, but requirements are largely driven by the need to make https://coasterbuzz.com work. It's due for a refresh. A minor requirement too is that VSTS and the build/release process for Core works reliably and without a ton of magic, which hasn't really been the case yet.
+
 CI build of v14, running on .NET Core is demo'ing here:
 https://popforumsdev.azurewebsites.net/Forums
 
