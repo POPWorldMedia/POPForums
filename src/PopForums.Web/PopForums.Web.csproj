@@ -7,8 +7,6 @@
     <OutputType>Exe</OutputType>
     <PackageId>PopForums.Web</PackageId>
     <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
-    <PreBuildEvent>CD $(MSBuildProjectDirectory)
-bower install</PreBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,16 +23,10 @@ bower install</PreBuildEvent>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Server" Version="0.2.0-rtm-22752" />
     <PackageReference Include="BundlerMinifier.Core" Version="2.4.337" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.AzureAppServicesIntegration" Version="2.0.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-alpha1-final" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.0.0-alpha1-final" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.0.0" />

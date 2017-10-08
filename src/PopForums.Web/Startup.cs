@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
@@ -15,6 +17,7 @@ using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Mvc.Areas.Forums.Authorization;
+using PopForums.Services;
 
 namespace PopForums.Web
 {
@@ -56,8 +59,7 @@ namespace PopForums.Web
 			{
 				options.ViewLocationExpanders.Remove(options.ViewLocationExpanders.First(f => f is Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageViewLocationExpander));
 			});
-
-			// TODO: go to primary nuget
+			
 			services.AddSignalR();
 
 			// sets up the dependencies for the base, SQL and web libraries in POP Forums
@@ -88,7 +90,33 @@ namespace PopForums.Web
 			// Not unique to POP Forums, but required.
 			app.UseAuthentication();
 
-			app.UseSignalR();
+			// TODO: refactor to extension method, moved out of PopForumsUserAttribute so SignalR hubs have user
+			app.Use(async (context, next) =>
+			{
+				var authResult = context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme).Result;
+				var identity = authResult?.Principal?.Identity as ClaimsIdentity;
+				if (identity != null)
+				{
+					var userService = app.ApplicationServices.GetService<IUserService>();
+					var user = userService.GetUserByName(identity.Name);
+					if (user != null)
+					{
+						foreach (var role in user.Roles)
+							identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
+						context.Items["PopForumsUser"] = user;
+						var profileService = context.RequestServices.GetService<IProfileService>();
+						var profile = profileService.GetProfile(user);
+						context.Items["PopForumsProfile"] = profile;
+						context.User = new ClaimsPrincipal(identity);
+					}
+				}
+				await next.Invoke();
+			});
+
+
+
+
+			app.UsePopForumsSignalR();
 
 			app.UseDeveloperExceptionPage();
 
@@ -108,8 +136,8 @@ namespace PopForums.Web
 					template: "{controller=Home}/{action=Index}/{id?}");
 			});
 
-            // TODO: abstract this
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
+			// TODO: abstract this
+			var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
             app.UseRequestLocalization(new RequestLocalizationOptions {
                 DefaultRequestCulture = new RequestCulture("en", "en"),
                 SupportedCultures = supportedCultures,

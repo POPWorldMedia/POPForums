@@ -115,6 +115,8 @@ namespace PopForums.Services
 
 		public User GetUserByName(string name)
 		{
+			if (string.IsNullOrWhiteSpace(name))
+				return null;
 			var user = _userRepository.GetUserByName(name);
 			PopulateRoles(user);
 			return user;

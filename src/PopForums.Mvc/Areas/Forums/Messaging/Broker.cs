@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.AspNetCore.SignalR.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
 using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -10,46 +10,47 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
     public class Broker : IBroker
 	{
 		// TODO: test all of these!
-		public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IConnectionManager connectionManager)
+		public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext)
 		{
 			_timeFormattingService = timeFormattingService;
 			_forumRepo = forumRepo;
-			_connectionManager = connectionManager;
+			_topicHubContext = topicHubContext;
+			_feedHubContext = feedHubContext;
+			_forumsHubContext = forumsHubContext;
+			_recentHubContext = recentHubContext;
 		}
 
 		private readonly ITimeFormattingService _timeFormattingService;
 		private readonly IForumRepository _forumRepo;
-	    private readonly IConnectionManager _connectionManager;
+		private readonly IHubContext<TopicsHub> _topicHubContext;
+		private readonly IHubContext<FeedHub> _feedHubContext;
+		private readonly IHubContext<ForumsHub> _forumsHubContext;
+		private readonly IHubContext<RecentHub> _recentHubContext;
 
-	    public void NotifyNewPosts(Topic topic, int lasPostID)
+		public void NotifyNewPosts(Topic topic, int lasPostID)
 		{
-			var context = _connectionManager.GetHubContext<TopicsHub>();
-			context.Clients.Group(topic.TopicID.ToString()).notifyNewPosts(lasPostID);
+			_topicHubContext.Clients.Group(topic.TopicID.ToString()).InvokeAsync("notifyNewPosts", lasPostID);
 		}
 
 		public void NotifyNewPost(Topic topic, int postID)
 		{
-			var context = _connectionManager.GetHubContext<TopicsHub>();
-			context.Clients.Group(topic.TopicID.ToString()).fetchNewPost(postID);
+			_topicHubContext.Clients.Group(topic.TopicID.ToString()).InvokeAsync("fetchNewPost", postID);
 		}
 
 		public void NotifyFeed(string message)
 		{
-			var context = _connectionManager.GetHubContext<FeedHub>();
 			var data = new { Message = message, Utc = new DateTime(DateTime.UtcNow.Ticks, DateTimeKind.Unspecified).ToString("o"), TimeStamp = Resources.LessThanMinute };
-			context.Clients.All.notifyFeed(data);
+			_feedHubContext.Clients.All.InvokeAsync("notifyFeed", data);
 		}
 
 		public void NotifyForumUpdate(Forum forum)
 		{
-			var context = _connectionManager.GetHubContext<ForumsHub>();
-			context.Clients.All.notifyForumUpdate(new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o"), Image = "NewIndicator.png" });
+			_forumsHubContext.Clients.All.InvokeAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o"), Image = "NewIndicator.png" });
 		}
 
 		public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
 		{
 			var isForumViewRestricted = _forumRepo.GetForumViewRoles(forum.ForumID).Count > 0;
-			var recentHubContext = _connectionManager.GetHubContext<RecentHub>();
 			var result = new
 			{
 				Link = topicLink,
@@ -64,12 +65,11 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 				Utc = topic.LastPostTime.ToString("o"),
 				topic.LastPostName
 			};
-			var forumHubContext = _connectionManager.GetHubContext<ForumsHub>();
 			if (isForumViewRestricted)
-				recentHubContext.Clients.Group("forum" + forum.ForumID).notifyRecentUpdate(result);
+				_recentHubContext.Clients.Group("forum" + forum.ForumID).InvokeAsync("notifyRecentUpdate", result);
 			else
-				recentHubContext.Clients.All.notifyRecentUpdate(result);
-			forumHubContext.Clients.Group(forum.ForumID.ToString()).notifyUpdatedTopic(result);
+				_recentHubContext.Clients.All.InvokeAsync("notifyRecentUpdate", result);
+			_forumsHubContext.Clients.Group(forum.ForumID.ToString()).InvokeAsync("notifyUpdatedTopic", result);
 		}
 	}
 }

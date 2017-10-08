@@ -740,9 +740,21 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetViewableForumIDsFromViewRestrictedForumsReturnsEmptyDictionaryWithoutUser()
 		{
+			var graph = new Dictionary<int, List<string>>
+			{
+				{1, new List<string> {"blah"}},
+				{2, new List<string>()},
+				{3, new List<string> {"blah"}}
+			};
 			var service = GetService();
+			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			{
+				new Forum(1), new Forum(2), new Forum(3)
+			});
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(null);
-			Assert.Equal(0, result.Count);
+			Assert.Equal(1, result.Count);
+			Assert.Equal(2, result[0]);
 		}
 
 		[Fact]
@@ -754,9 +766,12 @@ namespace PopForums.Test.Services
 			graph.Add(3, new List<string> { "blah" });
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
+			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			{
+				new Forum(1), new Forum(2), new Forum(3)
+			});
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new [] {"blah"}.ToList() });
-			Assert.Equal(2, result.Count);
-			Assert.False(result.Contains(2));
+			Assert.Equal(3, result.Count);
 		}
 
 		[Fact]
@@ -769,14 +784,17 @@ namespace PopForums.Test.Services
 			graph.Add(4, new List<string> { "burp", "blah" });
 			graph.Add(5, new List<string> { "burp" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph); _mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			{
+				new Forum(1), new Forum(2), new Forum(3), new Forum(4), new Forum(5)
+			});
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new[] { "blah", "blep" }.ToList() });
-			Assert.Equal(3, result.Count);
-			Assert.False(result.Contains(2));
-			Assert.False(result.Contains(5));
+			Assert.Equal(4, result.Count);
 			Assert.True(result.Contains(1));
+			Assert.True(result.Contains(2));
 			Assert.True(result.Contains(3));
 			Assert.True(result.Contains(4));
+			Assert.False(result.Contains(5));
 		}
 
 		[Fact]

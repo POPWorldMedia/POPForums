@@ -146,10 +146,14 @@ namespace PopForums.Services
 
 		public List<int> GetViewableForumIDsFromViewRestrictedForums(User user)
 		{
+			var nonViewableForumIDs = GetNonViewableForumIDs(user);
+			var noViewRestrictionForums = _forumRepository.GetAllVisible().Where(f => !nonViewableForumIDs.Contains(f.ForumID));
+			return noViewRestrictionForums.Select(x => x.ForumID).ToList();
+			if (user == null)
+			{
+			}
 			var forumsWithRestrictions = _forumRepository.GetForumViewRestrictionRoleGraph();
 			var viewableForums = new List<int>();
-			if (user == null)
-				return viewableForums;
 			foreach (var item in forumsWithRestrictions.Where(f => f.Value.Count > 0))
 			{
 				if (user.Roles.Intersect(item.Value).Count() != 0)

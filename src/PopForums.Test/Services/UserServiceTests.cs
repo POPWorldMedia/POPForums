@@ -152,6 +152,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void GetUserByNameReturnsNullWithNullOrEmptyName()
+		{
+			var userService = GetMockedUserService();
+			Assert.Null(userService.GetUserByName(""));
+			Assert.Null(userService.GetUserByName(null));
+		}
+
+		[Fact]
 		public void GetUserByEmail()
 		{
 			const string name = "Jeff";

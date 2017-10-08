@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.SignalR.Hubs;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Messaging
 {
-	[HubName("Recent")]
 	public class RecentHub : Hub
 	{
 		public RecentHub(IForumService forumService, IUserService userService)
@@ -18,13 +16,13 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public void Register()
 		{
-			var id = Context.User;
-			if (id != null)
+			var principal = Context.User;
+			if (principal != null)
 			{
-				var user = _userService.GetUserByName(id.Identity.Name);
+				var user = _userService.GetUserByName(principal.Identity.Name);
 				var visibleForumIDs = _forumService.GetViewableForumIDsFromViewRestrictedForums(user);
 				foreach (var forumID in visibleForumIDs)
-					Groups.Add(Context.ConnectionId, "forum" + forumID);
+					Groups.AddAsync(Context.ConnectionId, "forum" + forumID);
 			}
 		}
 	}

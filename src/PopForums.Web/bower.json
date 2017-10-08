@@ -4,13 +4,11 @@
   "dependencies": {
     "bootstrap": "v3.3.7",
     "jquery": "3.2.1",
-    "signalr": "v2.2.2",
     "tinymce": "4.6.5"
   },
   "resolutions": {
     "bootstrap": "v3.3.7",
     "jquery": "3.2.1",
-    "signalr": "v2.2.2",
     "tinymce": "4.6.5"
   }
 }
