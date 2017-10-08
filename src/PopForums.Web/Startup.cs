@@ -80,9 +80,7 @@ namespace PopForums.Web
 		
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			loggerFactory.AddDebug();
-			// records exceptions and info to the POP Forums database
+			// Records exceptions and info to the POP Forums database.
 			loggerFactory.AddPopForumsLogger(app);
 
 			app.UseStaticFiles();
@@ -90,32 +88,10 @@ namespace PopForums.Web
 			// Not unique to POP Forums, but required.
 			app.UseAuthentication();
 
-			// TODO: refactor to extension method, moved out of PopForumsUserAttribute so SignalR hubs have user
-			app.Use(async (context, next) =>
-			{
-				var authResult = context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme).Result;
-				var identity = authResult?.Principal?.Identity as ClaimsIdentity;
-				if (identity != null)
-				{
-					var userService = app.ApplicationServices.GetService<IUserService>();
-					var user = userService.GetUserByName(identity.Name);
-					if (user != null)
-					{
-						foreach (var role in user.Roles)
-							identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
-						context.Items["PopForumsUser"] = user;
-						var profileService = context.RequestServices.GetService<IProfileService>();
-						var profile = profileService.GetProfile(user);
-						context.Items["PopForumsProfile"] = profile;
-						context.User = new ClaimsPrincipal(identity);
-					}
-				}
-				await next.Invoke();
-			});
+			// Populate the POP Forums identity in every request.
+			app.UsePopForumsAuth();
 
-
-
-
+			// Wires up the SignalR hubs for real-time updates.
 			app.UsePopForumsSignalR();
 
 			app.UseDeveloperExceptionPage();

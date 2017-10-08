@@ -11,3 +11,4 @@ obj
 packages
 
 src/PopForums.Web/wwwroot/lib
+/src/PopForums.Web/node_modules
