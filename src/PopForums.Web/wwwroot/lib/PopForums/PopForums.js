@@ -41,11 +41,9 @@ PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
 
 PopForums.editorSettings = {
-	script_url: "/lib/tinymce/tinymce.min.js",
 	theme: "modern",
 	plugins: "paste lists image link",
 	content_css: PopForums.editorCSS,
-	init_instance_callback: "PopForums.richEditorComplete",
 	menubar: false,
 	toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
 	statusbar: false,
@@ -121,7 +119,8 @@ PopForums.topicListSetup = function (forumID) {
 			}
 			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
 			if (!usePlainText) {
-				$("#NewTopic #FullText").tinymce(PopForums.editorSettings);
+				PopForums.editorSettings.selector = "#NewTopic #FullText";
+				tinyMCE.init(PopForums.editorSettings);
 			}
 			n.slideDown();
 			b.hide();
@@ -152,7 +151,8 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 		}
 		var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
 		if (!usePlainText) {
-			$("#NewReply #FullText").tinymce(PopForums.editorSettings);
+			PopForums.editorSettings.selector = "#NewReply #FullText";
+			tinyMCE.init(PopForums.editorSettings);
 		}
 		n.slideDown();
 		$("#ReplyButton").hide();
@@ -173,15 +173,14 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 		});
 
 		if (setupMorePosts) {
-			//var hub = $.connection.Topics; // already started in topicsetup
-			//hub.server.getLastPostID(topicID).done(function (result) {
-			//	PopForums.setReplyMorePosts(result);
-			//});
-
 			var connection = new signalR.HubConnection("/TopicsHub");
-			connection.start();
-			var result = connection.invoke("getLastPostID", topicID);
-			PopForums.setReplyMorePosts(result);
+			connection.start()
+				.then(function () {
+					var result = connection.invoke("getLastPostID", topicID)
+						.then(function (result) {
+							PopForums.setReplyMorePosts(result);
+						});
+				});
 		}
 
 		$("#PreviewModal").on("shown.bs.modal", function () {
@@ -205,7 +204,8 @@ PopForums.loadComment = function (topicID, replyID) {
 		}
 		var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
 		if (!usePlainText) {
-			$(".postForm #FullText").tinymce(PopForums.editorSettings);
+			PopForums.editorSettings.selector = ".postForm #FullText";
+			tinyMCE.init(PopForums.editorSettings);
 		}
 		n.slideDown();
 
@@ -216,6 +216,7 @@ PopForums.loadComment = function (topicID, replyID) {
 };
 
 PopForums.previewPost = function () {
+	tinyMCE.triggerSave();
 	var r = $("#ParsedFullText");
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PreviewText",
@@ -233,14 +234,14 @@ PopForums.previewPost = function () {
 };
 
 PopForums.loadFeed = function () {
-	var hub = $.connection.Feed;
-	hub.client.notifyFeed = function (data) {
+	var connection = new signalR.HubConnection("/FeedHub");
+	connection.on("notifyFeed", function (data) {
 		var list = $("#FeedList");
 		var row = PopForums.populateFeedRow(data);
 		list.prepend(row);
 		row.fadeIn();
-	};
-	$.connection.hub.start();
+	});
+	connection.start();
 	PopForums.startTimeUpdater();
 };
 
@@ -277,31 +278,13 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			PopForums.currentTopicState.lastVisiblePost = postID;
 		}
 	});
-	connection.on('notifyNewPosts', function (theLastPostID) {
+	connection.on("notifyNewPosts", function (theLastPostID) {
 		PopForums.setReplyMorePosts(theLastPostID);
 	});
 	connection.start()
 		.then(function () {
-			return connection.invoke('listenTo', topicID);
+			return connection.invoke("listenTo", topicID);
 		});
-
-	//var topicHub = $.connection.Topics;
-	//topicHub.client.fetchNewPost = function (postID) {
-	//	if (!PopForums.TopicState.replyLoaded && PopForums.currentTopicState.highPage == PopForums.currentTopicState.pageCount) {
-	//		$.get(PopForums.areaPath + "/Forum/Post/" + postID, function (data) {
-	//			var post = $(data);
-	//			post.appendTo("#PostStream");
-	//		});
-	//		$("#LastPostID").val(postID);
-	//		PopForums.currentTopicState.lastVisiblePost = postID;
-	//	}
-	//};
-	//topicHub.client.notifyNewPosts = function (theLastPostID) {
-	//	PopForums.setReplyMorePosts(theLastPostID);
-	//};
-	//$.connection.hub.start().done(function () {
-	//	topicHub.server.listenTo(topicID);
-	//});
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
 	$(document).on("click", "#ReplyButton,.replyLink", function () {
@@ -584,6 +567,7 @@ PopForums.topicPreviewSetup = function () {
 
 PopForums.postNewTopic = function () {
 	$("SubmitNewTopic").attr("disabled", "disabled");
+	tinyMCE.triggerSave();
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostTopic",
 		type: "POST",
@@ -596,7 +580,7 @@ PopForums.postNewTopic = function () {
 					window.location = result.redirect;
 					break;
 				default:
-					r.html(result.Message);
+					r.html(result.message);
 					$("#SubmitNewTopic").removeAttr("disabled");
 					r.show();
 			}
@@ -612,6 +596,7 @@ PopForums.postNewTopic = function () {
 
 PopForums.postReply = function () {
 	$("#SubmitReply").attr("disabled", "disabled");
+	tinyMCE.triggerSave();
 	$.ajax({
 		url: PopForums.areaPath + "/Forum/PostReply",
 		type: "POST",
@@ -677,8 +662,8 @@ PopForums.homeSetup = function () {
 };
 
 PopForums.recentListen = function (pageSize) {
-	var connection = new signalR.HubConnection('/RecentHub');
-	connection.on('notifyRecentUpdate', function (data) {
+	var connection = new signalR.HubConnection("/RecentHub");
+	connection.on("notifyRecentUpdate", function (data) {
 		var removal = $('#TopicList tr[data-topicID="' + data.TopicID + '"]');
 		if (removal.length != 0) {
 			removal.fadeOut();
@@ -695,13 +680,13 @@ PopForums.recentListen = function (pageSize) {
 	});
 	connection.start()
 		.then(function () {
-			return connection.invoke('register');
+			return connection.invoke("register");
 		});
 };
 
 PopForums.forumListen = function (pageSize, forumID) {
-	var hub = $.connection.Forums;
-	hub.client.notifyUpdatedTopic = function (data) {
+	var connection = new signalR.HubConnection("/ForumsHub");
+	connection.on("notifyUpdatedTopic", function (data) {
 		var removal = $('#TopicList tr[data-topicID="' + data.TopicID + '"]');
 		if (removal.length != 0) {
 			removal.fadeOut();
@@ -715,10 +700,11 @@ PopForums.forumListen = function (pageSize, forumID) {
 		row.removeClass("hidden");
 		$("#TopicList").prepend(row);
 		row.fadeIn();
-	};
-	$.connection.hub.start().done(function () {
-		hub.server.listenTo(forumID);
 	});
+	connection.start()
+		.then(function () {
+			return connection.invoke("listenTo", forumID);
+		});
 };
 
 PopForums.populateTopicRow = function (data) {

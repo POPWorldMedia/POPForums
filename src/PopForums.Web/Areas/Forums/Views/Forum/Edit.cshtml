@@ -7,12 +7,13 @@
 
 @section HeaderContent
 {
-	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/jquery.tinymce.min.js")"></script>
+	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/tinymce.min.js")"></script>
 	<script language="javascript" type="text/javascript">
 		$(function () {
 			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
 			if (!usePlainText) {
-				$("#FullText").tinymce(PopForums.editorSettings);
+				PopForums.editorSettings.selector = "#FullText";
+				tinyMCE.init(PopForums.editorSettings);
 			}
 
 			$("#PreviewModal").on("shown.bs.modal", function () {

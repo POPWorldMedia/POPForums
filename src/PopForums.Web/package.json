@@ -6,8 +6,7 @@
 	"dependencies": {
 			"@aspnet/signalr-client": "1.0.0-alpha1-final",
 			"jquery": "3.2.1",
-			"bootstrap": "3.3.7",
-			"tinymce": "4.5.8"
+			"bootstrap": "3.3.7"
 	},
 	"devDependencies": {
 	}
