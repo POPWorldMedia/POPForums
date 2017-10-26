@@ -149,17 +149,6 @@ namespace PopForums.Services
 			var nonViewableForumIDs = GetNonViewableForumIDs(user);
 			var noViewRestrictionForums = _forumRepository.GetAllVisible().Where(f => !nonViewableForumIDs.Contains(f.ForumID));
 			return noViewRestrictionForums.Select(x => x.ForumID).ToList();
-			if (user == null)
-			{
-			}
-			var forumsWithRestrictions = _forumRepository.GetForumViewRestrictionRoleGraph();
-			var viewableForums = new List<int>();
-			foreach (var item in forumsWithRestrictions.Where(f => f.Value.Count > 0))
-			{
-				if (user.Roles.Intersect(item.Value).Count() != 0)
-					viewableForums.Add(item.Key);
-			}
-			return viewableForums;
 		}
 
 		public CategorizedForumContainer GetCategorizedForumContainerFilteredForUser(User user)
