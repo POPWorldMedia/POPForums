@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class CategoryRepository : ICategoryRepository
 	{

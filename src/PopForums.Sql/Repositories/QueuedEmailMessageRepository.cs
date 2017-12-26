@@ -1,10 +1,11 @@
 using System;
 using Newtonsoft.Json;
+using PopForums.Data.Sql;
 using PopForums.Email;
 using PopForums.Models;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class QueuedEmailMessageRepository : IQueuedEmailMessageRepository
 	{

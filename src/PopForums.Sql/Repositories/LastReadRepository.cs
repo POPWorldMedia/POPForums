@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PopForums.Data.Sql;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class LastReadRepository : ILastReadRepository
 	{

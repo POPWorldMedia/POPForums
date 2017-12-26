@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using PopForums.Data.Sql;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class SetupRepository : ISetupRepository
 	{

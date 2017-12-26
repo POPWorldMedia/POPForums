@@ -2,7 +2,7 @@
 using System.Data.Common;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
-using PopForums.Data.Sql.Repositories;
+using PopForums.Sql.Repositories;
 using PopForums.Repositories;
 
 namespace PopForums.Data.Sql

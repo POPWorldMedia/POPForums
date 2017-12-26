@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using PopForums.Data.Sql;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class BanRepository : IBanRepository
 	{

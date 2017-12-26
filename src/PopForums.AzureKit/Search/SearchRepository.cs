@@ -11,7 +11,7 @@ using PopForums.Repositories;
 
 namespace PopForums.AzureKit.Search
 {
-    public class SearchRepository : Data.Sql.Repositories.SearchRepository
+    public class SearchRepository : Sql.Repositories.SearchRepository
 	{
 		private readonly IConfig _config;
 		private readonly IErrorLog _errorLog;

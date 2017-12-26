@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class SearchRepository : ISearchRepository
 	{

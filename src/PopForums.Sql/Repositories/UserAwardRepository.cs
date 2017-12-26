@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using PopForums.Data.Sql;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
 
-namespace PopForums.Data.Sql.Repositories
+namespace PopForums.Sql.Repositories
 {
 	public class UserAwardRepository : IUserAwardRepository
 	{
