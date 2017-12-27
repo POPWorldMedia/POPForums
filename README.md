@@ -19,3 +19,7 @@ https://github.com/POPWorldMedia/POPForums/wiki
 
 v13 Demo here:
 http://popforums.com/Forums
+
+## Prerequisites:
+* .NET Core v2.
+* AzureKit optionally requires Redis for two-level cache, Azure Search for Azure Search.
