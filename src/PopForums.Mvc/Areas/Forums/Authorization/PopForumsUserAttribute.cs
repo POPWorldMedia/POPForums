@@ -1,11 +1,8 @@
 ﻿using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 using PopForums.Models;
 using PopForums.Services;
 
@@ -13,13 +10,11 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 {
 	public class PopForumsUserAttribute : IAuthorizationFilter, IActionFilter
 	{
-		public PopForumsUserAttribute(IUserService userService, IUserSessionService userSessionService)
+		public PopForumsUserAttribute(IUserSessionService userSessionService)
 		{
-			_userService = userService;
 			_userSessionService = userSessionService;
 		}
-
-		private readonly IUserService _userService;
+		
 		private readonly IUserSessionService _userSessionService;
 
 		private bool _ignore;

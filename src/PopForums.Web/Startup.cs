@@ -41,7 +41,7 @@ namespace PopForums.Web
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// needed for social logins in POP Forums
-			//services.AddAuthentication(options => options.SignInScheme = ExternalUserAssociationManager.AuthenticationContextName);
+			services.AddAuthentication(options => options.DefaultSignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme);
 
 			services.Configure<AuthorizationOptions>(options =>
 			{
