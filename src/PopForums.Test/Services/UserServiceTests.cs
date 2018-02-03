@@ -293,7 +293,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-			Assert.Throws(typeof(Exception), () => userService.CreateUser("", "a b@oihfwe", "", true, ""));
+			Assert.Throws<Exception>(() => userService.CreateUser("", "a b@oihfwe", "", true, ""));
 		}
 
 		[Fact]
@@ -305,22 +305,22 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.Censor("jeff")).Returns("jeff");
 			_mockTextParser.Setup(t => t.Censor("anynamejeff")).Returns("anynamejeff");
 			_mockUserRepo.Setup(r => r.GetUserByName(It.IsRegex("^" + usedName + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser(usedName, email));
-			Assert.Throws(typeof(Exception), () => userService.CreateUser(usedName, email, "", true, ""));
-			Assert.Throws(typeof(Exception), () => userService.CreateUser(usedName.ToUpper(), email, "", true, ""));
+			Assert.Throws<Exception>(() => userService.CreateUser(usedName, email, "", true, ""));
+			Assert.Throws<Exception>(() => userService.CreateUser(usedName.ToUpper(), email, "", true, ""));
 		}
 
 		[Fact]
 		public void CreateNameNull()
 		{
 			var userManager = GetMockedUserService();
-			Assert.Throws(typeof(Exception), () => userManager.CreateUser(null, "a@b.com", "", true, ""));
+			Assert.Throws<Exception>(() => userManager.CreateUser(null, "a@b.com", "", true, ""));
 		}
 
 		[Fact]
 		public void CreateNameEmpty()
 		{
 			var userManager = GetMockedUserService();
-			Assert.Throws(typeof(Exception), () => userManager.CreateUser(String.Empty, "a@b.com", "", true, ""));
+			Assert.Throws<Exception>(() => userManager.CreateUser(String.Empty, "a@b.com", "", true, ""));
 		}
 
 		[Fact]
@@ -330,7 +330,7 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
 			_mockUserRepo.Setup(r => r.GetUserByEmail(It.IsRegex("^" + usedEmail + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser("jeff", usedEmail));
-			Assert.Throws(typeof(Exception), () => userService.CreateUser("", usedEmail, "", true, ""));
+			Assert.Throws<Exception>(() => userService.CreateUser("", usedEmail, "", true, ""));
 		}
 
 		[Fact]
@@ -340,7 +340,7 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
 			_mockBanRepo.Setup(b => b.EmailIsBanned(bannedEmail)).Returns(true);
-			Assert.Throws(typeof(Exception), () => userService.CreateUser("name", bannedEmail, "", true, ""));
+			Assert.Throws<Exception>(() => userService.CreateUser("name", bannedEmail, "", true, ""));
 		}
 
 		[Fact]
@@ -350,7 +350,7 @@ namespace PopForums.Test.Services
 			var userManager = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
 			_mockBanRepo.Setup(b => b.IPIsBanned(bannedIP)).Returns(true);
-			Assert.Throws(typeof(Exception), () => userManager.CreateUser("", "a@b.com", "", true, bannedIP));
+			Assert.Throws<Exception>(() => userManager.CreateUser("", "a@b.com", "", true, bannedIP));
 		}
 
 		[Fact]
@@ -394,7 +394,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns(GetDummyUser("Diana", newEmail));
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser(oldName, oldEmail);
-			Assert.Throws(typeof(Exception), () => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()));
+			Assert.Throws<Exception>(() => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -405,7 +405,7 @@ namespace PopForums.Test.Services
 			var userManager = GetMockedUserService();
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser("", "");
-			Assert.Throws(typeof(Exception), () => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()));
+			Assert.Throws<Exception>(() => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -454,7 +454,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByName(oldName)).Returns(GetDummyUser(oldName, oldEmail));
 			_mockUserRepo.Setup(r => r.GetUserByName(newName)).Returns(GetDummyUser(newName, oldEmail));
 			var user = GetDummyUser(oldName, oldEmail);
-			Assert.Throws(typeof(Exception), () => userService.ChangeName(user, newName, It.IsAny<User>(), It.IsAny<string>()));
+			Assert.Throws<Exception>(() => userService.ChangeName(user, newName, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -463,7 +463,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("Jeff", "a@b.com");
-			Assert.Throws(typeof(Exception), () => userService.ChangeName(user, null, It.IsAny<User>(), It.IsAny<string>()));
+			Assert.Throws<Exception>(() => userService.ChangeName(user, null, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -472,7 +472,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("Jeff", "a@b.com");
-			Assert.Throws(typeof(Exception), () => userService.ChangeName(user, String.Empty, It.IsAny<User>(), It.IsAny<string>()));
+			Assert.Throws<Exception>(() => userService.ChangeName(user, String.Empty, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 

@@ -23,8 +23,8 @@ namespace PopForums.Test.Configuration
 			Assert.Equal(settings.TermsOfService, String.Empty);
 			Assert.Equal(settings.ServerTimeZone, -5);
 			Assert.True(settings.IsNewUserApproved);
-			Assert.Equal(settings.TopicsPerPage, 20);
-			Assert.Equal(settings.PostsPerPage, 20);
+			Assert.Equal(20, settings.TopicsPerPage);
+			Assert.Equal(20, settings.PostsPerPage);
 			Assert.Equal(settings.ForumTitle, String.Empty);
 		}
 

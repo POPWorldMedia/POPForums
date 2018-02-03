@@ -256,7 +256,7 @@ namespace PopForums.Test.Services
 			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
 			service.EditPost(new Post(456) { ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User(123, DateTime.MinValue) { Name = "dude" });
 			Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
-			Assert.Equal(post.PostID, 456);
+			Assert.Equal(456, post.PostID);
 			Assert.Equal("new", post.FullText);
 			Assert.Equal("new title", post.Title);
 			Assert.True(post.ShowSig);
@@ -616,7 +616,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var result = service.GetVotedPostIDs(null, new List<Post>());
-			Assert.Equal(0, result.Count);
+			Assert.Empty(result);
 		}
 
 		[Fact]
@@ -664,9 +664,9 @@ namespace PopForums.Test.Services
 			var message = String.Empty;
 			_eventPub.Setup(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false)).Callback<string, User, string, bool>((x, y, z, a) => message = x);
 			service.VotePost(new Post(123) { UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), userUrl, topicUrl, title);
-			Assert.True(message.Contains(userUrl));
-			Assert.True(message.Contains(topicUrl));
-			Assert.True(message.Contains(title));
+			Assert.Contains(userUrl, message);
+			Assert.Contains(topicUrl, message);
+			Assert.Contains(title, message);
 		}
 
 		[Fact]

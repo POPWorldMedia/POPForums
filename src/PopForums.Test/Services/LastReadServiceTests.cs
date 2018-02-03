@@ -117,7 +117,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NewPosts, container.ReadStatusLookup[1]);
 		}
 
@@ -131,7 +131,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForum(user.UserID, forum.ForumID)).Returns(new DateTime(2000, 1, 1, 3, 0, 0));
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NewPosts, container.ReadStatusLookup[1]);
 		}
 
@@ -144,7 +144,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime>());
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NewPosts, container.ReadStatusLookup[1]);
 		}
 
@@ -157,7 +157,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NoNewPosts, container.ReadStatusLookup[1]);
 		}
 
@@ -170,7 +170,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NewPosts | ReadStatus.Closed, container.ReadStatusLookup[1]);
 		}
 
@@ -183,7 +183,7 @@ namespace PopForums.Test.Services
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 			service.GetForumReadStatus(user, container);
-			Assert.Equal(1, container.ReadStatusLookup.Count);
+			Assert.Single(container.ReadStatusLookup);
 			Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Closed, container.ReadStatusLookup[1]);
 		}
 

@@ -753,7 +753,7 @@ namespace PopForums.Test.Services
 			});
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(null);
-			Assert.Equal(1, result.Count);
+			Assert.Single(result);
 			Assert.Equal(2, result[0]);
 		}
 
@@ -790,11 +790,11 @@ namespace PopForums.Test.Services
 			});
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new[] { "blah", "blep" }.ToList() });
 			Assert.Equal(4, result.Count);
-			Assert.True(result.Contains(1));
-			Assert.True(result.Contains(2));
-			Assert.True(result.Contains(3));
-			Assert.True(result.Contains(4));
-			Assert.False(result.Contains(5));
+			Assert.Contains(1, result);
+			Assert.Contains(2, result);
+			Assert.Contains(3, result);
+			Assert.Contains(4, result);
+			Assert.DoesNotContain(5, result);
 		}
 
 		[Fact]
@@ -808,7 +808,7 @@ namespace PopForums.Test.Services
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue){Roles = new List<string>()});
 			Assert.Equal(2, result.Count);
-			Assert.False(result.Contains(2));
+			Assert.DoesNotContain(2, result);
 		}
 
 		[Fact]
@@ -821,8 +821,8 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue) { Roles = new List<string> { "OK" } });
-			Assert.Equal(1, result.Count);
-			Assert.False(result.Contains(3));
+			Assert.Single(result);
+			Assert.DoesNotContain(3, result);
 		}
 
 		[Fact]
@@ -835,7 +835,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue) { Roles = new List<string> { "OK" } });
-			Assert.Equal(1, result.Count);
+			Assert.Single(result);
 			Assert.Equal(1, result[0]);
 		}
 
@@ -967,7 +967,7 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.Equal(1, result.AnswersWithComments.Count);
+			Assert.Single(result.AnswersWithComments);
 			Assert.Same(post1, result.AnswersWithComments[0].Post);
 		}
 
@@ -986,10 +986,10 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.True(result.AnswersWithComments[0].Children.Count == 1);
-			Assert.True(result.AnswersWithComments[0].Children.Contains(post4));
+			Assert.Contains(post4, result.AnswersWithComments[0].Children);
 			Assert.True(result.AnswersWithComments[1].Children.Count == 2);
-			Assert.True(result.AnswersWithComments[1].Children.Contains(post6));
-			Assert.True(result.AnswersWithComments[1].Children.Contains(post7));
+			Assert.Contains(post6, result.AnswersWithComments[1].Children);
+			Assert.Contains(post7, result.AnswersWithComments[1].Children);
 		}
 
 		[Fact]
@@ -1007,8 +1007,8 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.True(result.QuestionPostWithComments.Children.Count == 2);
-			Assert.True(result.QuestionPostWithComments.Children.Contains(post5));
-			Assert.True(result.QuestionPostWithComments.Children.Contains(post6));
+			Assert.Contains(post5, result.QuestionPostWithComments.Children);
+			Assert.Contains(post6, result.QuestionPostWithComments.Children);
 		}
 
 		[Fact]
@@ -1071,7 +1071,7 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234) };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
-			Assert.False(result.AnswersWithComments.Any(x => x.Post.PostID == post5.PostID));
+			Assert.DoesNotContain(result.AnswersWithComments, x => x.Post.PostID == post5.PostID);
 		}
 
 		[Fact]

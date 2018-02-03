@@ -142,9 +142,9 @@ namespace PopForums.Test.Services
 			_profileRepo.Setup(p => p.GetSignatures(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
 			service.GetSignatures(posts);
 			Assert.Equal(3, ids.Count);
-			Assert.Equal(ids[0], 2);
-			Assert.Equal(ids[1], 4);
-			Assert.Equal(ids[2], 5);
+			Assert.Equal(2, ids[0]);
+			Assert.Equal(4, ids[1]);
+			Assert.Equal(5, ids[2]);
 		}
 
 		[Fact]
@@ -164,8 +164,8 @@ namespace PopForums.Test.Services
 			_profileRepo.Setup(p => p.GetSignatures(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
 			service.GetSignatures(posts);
 			Assert.Equal(2, ids.Count);
-			Assert.Equal(ids[0], 2);
-			Assert.Equal(ids[1], 3);
+			Assert.Equal(2, ids[0]);
+			Assert.Equal(3, ids[1]);
 		}
 
 		[Fact]
@@ -185,9 +185,9 @@ namespace PopForums.Test.Services
 			_profileRepo.Setup(p => p.GetAvatars(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
 			service.GetAvatars(posts);
 			Assert.Equal(3, ids.Count);
-			Assert.Equal(ids[0], 1);
-			Assert.Equal(ids[1], 2);
-			Assert.Equal(ids[2], 3);
+			Assert.Equal(1, ids[0]);
+			Assert.Equal(2, ids[1]);
+			Assert.Equal(3, ids[2]);
 		}
 
 		[Fact]

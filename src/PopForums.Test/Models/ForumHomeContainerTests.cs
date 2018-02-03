@@ -19,10 +19,10 @@ namespace PopForums.Test.Models
 			var cats = new List<Category> {c1, c2};
 			var forums = new List<Forum> {f1, f2, f3, f4};
 			var container = new CategorizedForumContainer(cats, forums);
-			Assert.True(container.UncategorizedForums.Contains(f1));
-			Assert.False(container.UncategorizedForums.Contains(f2));
-			Assert.False(container.UncategorizedForums.Contains(f3));
-			Assert.True(container.UncategorizedForums.Contains(f4));
+			Assert.Contains(f1, container.UncategorizedForums);
+			Assert.DoesNotContain(f2, container.UncategorizedForums);
+			Assert.DoesNotContain(f3, container.UncategorizedForums);
+			Assert.Contains(f4, container.UncategorizedForums);
 		}
 
 		[Fact]
@@ -81,10 +81,10 @@ namespace PopForums.Test.Models
 			var cats = new List<Category> { c1, c2 };
 			var forums = new List<Forum> { f1, f2, f3 };
 			var container = new CategorizedForumContainer(cats, forums);
-			Assert.True(container.CategoryDictionary[c1].Contains(f2));
-			Assert.True(container.CategoryDictionary[c2].Contains(f3));
-			Assert.False(container.CategoryDictionary[c1].Contains(f1));
-			Assert.False(container.CategoryDictionary[c1].Contains(f3));
+			Assert.Contains(f2, container.CategoryDictionary[c1]);
+			Assert.Contains(f3, container.CategoryDictionary[c2]);
+			Assert.DoesNotContain(f1, container.CategoryDictionary[c1]);
+			Assert.DoesNotContain(f3, container.CategoryDictionary[c1]);
 		}
 		
 		[Fact]

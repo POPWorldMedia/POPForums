@@ -203,7 +203,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://youtube.com/watch?v=12345 blah");
-			Assert.Equal(result, "blah [youtube=http://youtube.com/watch?v=12345] blah");
+			Assert.Equal("blah [youtube=http://youtube.com/watch?v=12345] blah", result);
 		}
 
 		[Fact]
@@ -212,7 +212,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://www.youtube.com/watch?v=12345 blah");
-			Assert.Equal(result, "blah [youtube=http://www.youtube.com/watch?v=12345] blah");
+			Assert.Equal("blah [youtube=http://www.youtube.com/watch?v=12345] blah", result);
 		}
 
 		[Fact]
@@ -221,7 +221,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://youtube.com/watch?v=12345 blah");
-			Assert.Equal(result, "blah [youtube=https://youtube.com/watch?v=12345] blah");
+			Assert.Equal("blah [youtube=https://youtube.com/watch?v=12345] blah", result);
 		}
 
 		[Fact]
@@ -230,7 +230,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://www.youtube.com/watch?v=12345 blah");
-			Assert.Equal(result, "blah [youtube=https://www.youtube.com/watch?v=12345] blah");
+			Assert.Equal("blah [youtube=https://www.youtube.com/watch?v=12345] blah", result);
 		}
 
 		[Fact]
@@ -239,7 +239,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah http://youtu.be/12345 blah");
-			Assert.Equal(result, "blah [youtube=http://youtu.be/12345] blah");
+			Assert.Equal("blah [youtube=http://youtu.be/12345] blah", result);
 		}
 
 		[Fact]
@@ -248,7 +248,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
-			Assert.Equal(result, "blah [youtube=https://youtu.be/12345] blah");
+			Assert.Equal("blah [youtube=https://youtu.be/12345] blah", result);
 		}
 
 		[Fact]
@@ -257,7 +257,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = false;
 			var result = service.CleanForumCode("blah https://youtu.be/12345 blah");
-			Assert.Equal(result, "blah [url=https://youtu.be/12345]https://youtu.be/12345[/url] blah");
+			Assert.Equal("blah [url=https://youtu.be/12345]https://youtu.be/12345[/url] blah", result);
 		}
 
 		[Fact]
@@ -266,7 +266,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_settings.AllowImages = true;
 			var result = service.CleanForumCode("blah [url=https://youtu.be/12345]test[/url] blah");
-			Assert.Equal(result, "blah [url=https://youtu.be/12345]test[/url] blah");
+			Assert.Equal("blah [url=https://youtu.be/12345]test[/url] blah", result);
 		}
 	}
 }
