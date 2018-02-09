@@ -14,7 +14,6 @@ namespace PopForums.Models
 			Dob = profile.Dob;
 			Location = profile.Location;
 			Web = profile.Web;
-			Aim = profile.Aim;
 			YahooMessenger = profile.YahooMessenger;
 			Icq = profile.Icq;
 			Facebook = profile.Facebook;

@@ -15,7 +15,6 @@ namespace PopForums.Models
 			IsPlainText = profile.IsPlainText;
 			Dob = profile.Dob;
 			Web = profile.Web;
-			Aim = profile.Aim;
 			Icq = profile.Icq;
 			YahooMessenger = profile.YahooMessenger;
 			Facebook = profile.Facebook;

@@ -754,7 +754,6 @@ namespace PopForums.Test.Services
 			                      	Location = userEdit.Location,
 			                      	Dob = userEdit.Dob,
 			                      	Web = userEdit.Web,
-			                      	Aim = userEdit.Aim,
 			                      	Icq = userEdit.Icq,
 			                      	YahooMessenger = userEdit.YahooMessenger,
 									Facebook = userEdit.Facebook,
@@ -947,7 +946,6 @@ namespace PopForums.Test.Services
 			               	};
 			service.EditUserProfile(user, userEdit);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
-			Assert.Equal("a", profile.Aim);
 			Assert.Equal(new DateTime(2000, 1, 1), profile.Dob);
 			Assert.True(profile.HideVanity);
 			Assert.Equal("i", profile.Icq);

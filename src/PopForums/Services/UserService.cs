@@ -374,7 +374,6 @@ namespace PopForums.Services
 			profile.Location = userEdit.Location;
 			profile.Dob = userEdit.Dob;
 			profile.Web = userEdit.Web;
-			profile.Aim = userEdit.Aim;
 			profile.Icq = userEdit.Icq;
 			profile.YahooMessenger = userEdit.YahooMessenger;
 			profile.Facebook = userEdit.Facebook;
@@ -459,7 +458,6 @@ namespace PopForums.Services
 			profile.Location = userEditProfile.Location;
 			profile.Dob = userEditProfile.Dob;
 			profile.Web = userEditProfile.Web;
-			profile.Aim = userEditProfile.Aim;
 			profile.Icq = userEditProfile.Icq;
 			profile.YahooMessenger = userEditProfile.YahooMessenger;
 			profile.Facebook = userEditProfile.Facebook;

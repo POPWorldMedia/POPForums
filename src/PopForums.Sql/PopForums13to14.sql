@@ -35,3 +35,7 @@ CREATE TABLE [dbo].[pf_ServiceHeartbeat](
 )
 )
 END
+
+IF EXISTS( SELECT TOP 1 1 FROM sys.objects o INNER JOIN sys.columns c ON o.object_id = c.object_id WHERE o.name = 'pf_Profile' AND c.name = 'AIM')
+ALTER TABLE dbo.pf_Profile DROP COLUMN [AIM]
+GO

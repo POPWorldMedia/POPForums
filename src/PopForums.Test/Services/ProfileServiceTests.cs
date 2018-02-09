@@ -26,7 +26,7 @@ namespace PopForums.Test.Services
 		public void GetProfile()
 		{
 			var service = GetService();
-			var profile = new Profile(123) { Aim = "blah", Location = "Cleveland" };
+			var profile = new Profile(123) { Location = "Cleveland" };
 			var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(profile);
 			var result = service.GetProfile(user);
@@ -46,7 +46,7 @@ namespace PopForums.Test.Services
 		public void GetProfileForEditParsesSig()
 		{
 			var service = GetService();
-			var profile = new Profile(123) { Aim = "blah", Location = "Cleveland", Signature = "blah" };
+			var profile = new Profile(123) { Location = "Cleveland", Signature = "blah" };
 			var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(profile);
 			_textParsingService.Setup(t => t.ClientHtmlToForumCode("blah")).Returns("parsed");
@@ -59,7 +59,7 @@ namespace PopForums.Test.Services
 		public void CreateFromProfileObject()
 		{
 			var service = GetService();
-			var profile = new Profile(123) { Aim = "blah", Location = "Cleveland" };
+			var profile = new Profile(123) { Location = "Cleveland" };
 			_profileRepo.Setup(p => p.Create(profile));
 			service.Create(profile);
 			_profileRepo.Verify(p => p.Create(profile), Times.Once());
@@ -98,7 +98,7 @@ namespace PopForums.Test.Services
 		public void Update()
 		{
 			var service = GetService();
-			var profile = new Profile(123) {Aim = "blah", Location = "Cleveland", Signature = ""};
+			var profile = new Profile(123) {Location = "Cleveland", Signature = ""};
 			_profileRepo.Setup(p => p.Update(profile)).Returns(true);
 			service.Update(profile);
 			_profileRepo.Verify(p => p.Update(profile), Times.Once());
@@ -108,7 +108,7 @@ namespace PopForums.Test.Services
 		public void UpdateTrimsSig()
 		{
 			var service = GetService();
-			var profile = new Profile(123) { Aim = "blah", Location = "Cleveland", Signature = " " };
+			var profile = new Profile(123) { Location = "Cleveland", Signature = " " };
 			var trimProfile = new Profile { Signature = "no"};
 			_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Returns(true).Callback<Profile>(p => trimProfile = p);
 			service.Update(profile);
@@ -119,7 +119,7 @@ namespace PopForums.Test.Services
 		public void UpdateThrowsWithNoProfile()
 		{
 			var service = GetService();
-			var profile = new Profile(123) { Aim = "blah", Location = "Cleveland", Signature = "" };
+			var profile = new Profile(123) { Location = "Cleveland", Signature = "" };
 			_profileRepo.Setup(p => p.Update(profile)).Returns(false);
 			Assert.Throws<Exception>(() => service.Update(profile));
 			_profileRepo.Verify(p => p.Update(profile), Times.Once());
