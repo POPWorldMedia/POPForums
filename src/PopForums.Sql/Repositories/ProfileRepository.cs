@@ -72,7 +72,7 @@ namespace PopForums.Sql.Repositories
 		public void Create(Profile profile)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @AIM, @ICQ, @YahooMessenger, @Facebook, @Twitter, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)")
+				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @ICQ, @YahooMessenger, @Facebook, @Twitter, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)")
 					.AddParameter(_sqlObjectFactory, "@UserID", profile.UserID)
 					.AddParameter(_sqlObjectFactory, "@IsSubscribed", profile.IsSubscribed)
 					.AddParameter(_sqlObjectFactory, "@Signature", profile.Signature.NullToEmpty())
