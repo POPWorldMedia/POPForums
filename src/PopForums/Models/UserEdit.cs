@@ -44,7 +44,6 @@ namespace PopForums.Models
 		public bool IsPlainText { get; set; }
 		public DateTime? Dob { get; set; }
 		public string Web { get; set; }
-		public string Aim { get; set; }
 		public string Icq { get; set; }
 		public string YahooMessenger { get; set; }
 		public string Facebook { get; set; }

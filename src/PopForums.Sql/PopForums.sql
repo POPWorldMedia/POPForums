@@ -32,7 +32,6 @@ CREATE TABLE [dbo].[pf_Profile](
 	[IsPlainText] [bit] NOT NULL DEFAULT ((0)),
 	[DOB] [datetime] NULL,
 	[Web] [nvarchar](256) NOT NULL,
-	[AIM] [nvarchar](256) NOT NULL,
 	[ICQ] [nvarchar](256) NOT NULL,
 	[YahooMessenger] [nvarchar](256) NOT NULL,
 	[Facebook] [nvarchar](256) NULL,

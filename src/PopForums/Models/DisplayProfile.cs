@@ -33,7 +33,6 @@ namespace PopForums.Models
 		public string Location { get; set; }
 		public int PostCount { get; set; }
 		public string Web { get; set; }
-		public string Aim { get; set; }
 		public string YahooMessenger { get; set; }
 		public string Icq { get; set; }
 		public string Facebook { get; set; }
