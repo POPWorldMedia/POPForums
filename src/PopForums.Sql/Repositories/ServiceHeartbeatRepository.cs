@@ -17,19 +17,29 @@ namespace PopForums.Sql.Repositories
 
 		public void RecordHeartbeat(string serviceName, string machineName, DateTime lastRun)
 		{
-			_sqlObjectFactory.GetConnection()
-				.Using(connection =>
-				{
-					var command = connection.Command(
-							_sqlObjectFactory, "DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
-						.AddParameter(_sqlObjectFactory, "@ServiceName", serviceName)
-						.AddParameter(_sqlObjectFactory, "@MachineName", machineName);
-					command.ExecuteNonQuery();
-					command.CommandText = "INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)";
-					command.AddParameter(_sqlObjectFactory, "@LastRun", lastRun);
-					command.ExecuteNonQuery();
-				});
+			// Not crazy about this lock, but there appear to be multiple instances of this running 
+			// when in a web context, causing PK violations when the old record isn't deleted. Of course 
+			// this goes away when running in Azure functions on a consumption plan.
+			lock (_heartbeatlock)
+			{
+				_sqlObjectFactory.GetConnection()
+					.Using(connection =>
+					{
+						var command = connection.Command(
+								_sqlObjectFactory,
+								"DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
+							.AddParameter(_sqlObjectFactory, "@ServiceName", serviceName)
+							.AddParameter(_sqlObjectFactory, "@MachineName", machineName);
+						command.ExecuteNonQuery();
+						command.CommandText =
+							"INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)";
+						command.AddParameter(_sqlObjectFactory, "@LastRun", lastRun);
+						command.ExecuteNonQuery();
+					});
+			}
 		}
+
+		private static object _heartbeatlock = new Object();
 
 		public List<ServiceHeartbeat> GetAll()
 		{
