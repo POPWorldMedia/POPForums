@@ -368,6 +368,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = _postService.GetPostCount(user);
+			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
+			if (viewingUser == null)
+				model.ShowDetails = false;
 			return View(model);
 		}
 
@@ -384,6 +387,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			model.PostCount = _postService.GetPostCount(user);
 			model.Feed = _feedService.GetFeed(user);
 			model.UserAwards = _userAwardService.GetAwards(user);
+			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
+			if (viewingUser == null)
+				model.ShowDetails = false;
 			return View(model);
 		}
 
