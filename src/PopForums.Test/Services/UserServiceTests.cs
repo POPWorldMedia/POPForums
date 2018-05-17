@@ -942,7 +942,7 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
 			var userEdit = new UserEditProfile
 			               	{
-			               		Aim = "a", Dob = new DateTime(2000,1,1), HideVanity = true, Icq = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w", YahooMessenger = "y"
+			               		Dob = new DateTime(2000,1,1), HideVanity = true, Icq = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w", YahooMessenger = "y"
 			               	};
 			service.EditUserProfile(user, userEdit);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
