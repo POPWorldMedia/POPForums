@@ -55,17 +55,12 @@ namespace PopForums.Sql.Repositories
 
 		public Profile GetProfile(int userID)
 		{
-			var cacheObject = _cacheHelper.GetCacheObject<Profile>(CacheKeys.UserProfile(userID));
-			if (cacheObject != null)
-				return cacheObject;
 			Profile profile = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
 				connection.Command(_sqlObjectFactory, "SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID")
 					.AddParameter(_sqlObjectFactory, "@UserID", userID)
 					.ExecuteReader()
 					.ReadOne(r => { profile = PopulateFromReader(r); }));
-			if (profile != null)
-				_cacheHelper.SetCacheObject(CacheKeys.UserProfile(userID), profile);
 			return profile;
 		}
 
