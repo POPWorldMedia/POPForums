@@ -709,14 +709,14 @@ PopForums.forumListen = function (pageSize, forumID) {
 
 PopForums.populateTopicRow = function (data) {
 	var row = $("#TopicTemplate").clone();
-	row.attr("data-topicID", data.TopicID);
+	row.attr("data-topicid", data.topicID);
 	row.removeAttr("id");
 	row.find(".startedByName").text(data.startedByName);
 	row.find(".indicatorLink").attr("href", data.link);
 	row.find(".titleLink").text(data.title);
 	row.find(".titleLink").attr("href", data.link);
 	row.find(".topicPreview").attr("id", "TopicPreview" + data.topicID);
-	row.find(".topicPreviewButton").attr("data-topicID", data.topicID);
+	row.find(".topicPreviewButton").attr("data-topicid", data.topicID);
 	row.find(".forumTitle").text(data.forumTitle);
 	row.find(".viewCount").text(data.viewCount);
 	row.find(".replyCount").text(data.replyCount);
