@@ -25,7 +25,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (!_setupService.IsConnectionPossible())
 				return View("NoConnection");
 			if (_setupService.IsDatabaseSetup())
-				return Forbid();
+				return StatusCode(403);
 			var setupVariables = new SetupVariables
 			{
 				SmtpPort = 25,
@@ -41,7 +41,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public ActionResult Index(SetupVariables setupVariables)
 		{
 			if (_setupService.IsDatabaseSetup())
-				return Forbid();
+				return StatusCode(403);
 			Exception exc;
 			var user = _setupService.SetupDatabase(setupVariables, out exc);
 			if (exc != null)

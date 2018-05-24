@@ -210,7 +210,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
-				return Forbid();
+				return StatusCode(403);
 			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			var container = new PasswordResetContainer();
 			if (user == null)
@@ -225,7 +225,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var authKey = Guid.Empty;
 			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
-				return Forbid();
+				return StatusCode(403);
 			var user = _userService.GetUserByAuhtorizationKey(authKey);
 			resetContainer.IsValidUser = true;
 			if (resetContainer.Password != resetContainer.PasswordRetype)
@@ -449,12 +449,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
 			if (!_userEmailer.IsUserEmailable(toUser))
-				return Forbid();
+				return StatusCode(403);
 			ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
 			return View(toUser);
 		}
@@ -465,12 +465,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
 			if (!_userEmailer.IsUserEmailable(toUser))
-				return Forbid();
+				return StatusCode(403);
 			if (String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(text))
 			{
 				ViewBag.EmailResult = Resources.PMCreateWarnings;

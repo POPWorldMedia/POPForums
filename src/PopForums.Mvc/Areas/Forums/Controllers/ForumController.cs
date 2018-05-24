@@ -54,7 +54,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
-				return Forbid();
+				return StatusCode(403);
 			}
 
 			PagerContext pagerContext;
@@ -221,7 +221,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return Forbid();
+				return StatusCode(403);
 			}
 
 			DateTime? lastReadTime = DateTime.UtcNow;
@@ -340,7 +340,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			Topic topic;
 			var permissionContext = GetPermissionContextByTopicID(post.TopicID, out topic);
 			if (!permissionContext.UserCanView)
-				return Forbid();
+				return StatusCode(403);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var postList = new List<Post> { post };
 			var signatures = _profileService.GetSignatures(postList);
@@ -450,7 +450,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
-				return Forbid();
+				return StatusCode(403);
 			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
 			var postEdit = _postService.GetPostForEdit(post, user, isMobile);
 			return View(postEdit);
@@ -463,7 +463,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
-				return Forbid();
+				return StatusCode(403);
 			_postService.EditPost(post, postEdit, user);
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
@@ -474,7 +474,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
-				return Forbid();
+				return StatusCode(403);
 			_postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
 			{
@@ -505,7 +505,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return Forbid();
+				return StatusCode(403);
 			}
 
 			DateTime? lastReadTime = DateTime.UtcNow;
@@ -545,7 +545,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("Post {0} appears to be orphaned from a topic.", post.PostID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
@@ -578,7 +578,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			try
 			{
 				var helper = Url;
@@ -588,7 +588,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			catch (SecurityException securityException) // TODO: what is this?
 			{
-				return Forbid();
+				return StatusCode(403);
 			}
 			return new EmptyResult();
 		}

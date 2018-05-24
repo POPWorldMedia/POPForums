@@ -28,7 +28,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			PagerContext pagerContext;
 			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
@@ -39,7 +39,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			PagerContext pagerContext;
 			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page, out pagerContext);
 			ViewBag.PagerContext = pagerContext;
@@ -50,10 +50,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return Forbid();
+				return StatusCode(403);
 			var model = new PrivateMessageView
 			{
 				PrivateMessage = pm,
@@ -67,7 +67,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			ViewBag.UserIDs = " ";
 			if (id.HasValue)
 			{
@@ -91,7 +91,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			if (String.IsNullOrWhiteSpace(userIDs) || String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(fullText))
 			{
 				ViewBag.Warning = Resources.PMCreateWarnings;
@@ -108,10 +108,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return Forbid();
+				return StatusCode(403);
 			if (String.IsNullOrEmpty(fullText))
 				fullText = String.Empty;
 			_privateMessageService.Reply(pm, fullText, user);
@@ -130,10 +130,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return Forbid();
+				return StatusCode(403);
 			_privateMessageService.Archive(user, pm);
 			return RedirectToAction("Index");
 		}
@@ -143,10 +143,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return StatusCode(403);
 			var pm = _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
-				return Forbid();
+				return StatusCode(403);
 			_privateMessageService.Unarchive(user, pm);
 			return RedirectToAction("Archive");
 		}
