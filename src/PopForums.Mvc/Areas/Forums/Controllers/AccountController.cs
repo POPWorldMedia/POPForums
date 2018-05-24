@@ -244,7 +244,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Forbid();
+				return RedirectToAction("Login");
 			return View();
 		}
 

@@ -162,7 +162,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
-				return Forbid();
+				return NotFound();
 			}
 
 			PagerContext pagerContext = null;
