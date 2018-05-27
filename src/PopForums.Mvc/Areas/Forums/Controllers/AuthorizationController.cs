@@ -110,7 +110,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		[HttpPost]
 		[AllowAnonymous]
-		[ValidateAntiForgeryToken]
 		public IActionResult ExternalLogin(string provider, string returnUrl = null)
 		{
 			var redirectUrl = Url.Action(nameof(ExternalLoginCallback), Name, new { ReturnUrl = returnUrl });

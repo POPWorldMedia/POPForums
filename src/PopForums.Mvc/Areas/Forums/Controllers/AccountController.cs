@@ -460,7 +460,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		[ValidateAntiForgeryToken]
 		public ActionResult EmailUser(int id, string subject, string text)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
