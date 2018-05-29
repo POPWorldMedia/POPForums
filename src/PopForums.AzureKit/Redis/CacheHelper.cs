@@ -90,14 +90,14 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value)
 		{
-			Dictionary<int, List<T>> rootPages;
-			_cache.TryGetValue(rootKey, out rootPages);
+			_cache.TryGetValue(rootKey, out Dictionary<int, List<T>> rootPages);
 			if (rootPages == null)
 				rootPages = new Dictionary<int, List<T>>();
 			else if (rootPages.ContainsKey(page))
 				rootPages.Remove(page);
 			rootPages.Add(page, value);
-			_cache.Set(rootKey, rootPages);
+			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_config.CacheSeconds) };
+			_cache.Set(rootKey, rootPages, options);
 		}
 
 
