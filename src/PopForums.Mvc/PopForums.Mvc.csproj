@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.App" />
+	  <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
   </ItemGroup>
 
-</Project>	  <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
+</Project>
