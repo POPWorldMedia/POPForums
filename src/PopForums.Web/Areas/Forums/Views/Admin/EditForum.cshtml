@@ -9,7 +9,7 @@
 
 <form method="post">
 	<div class="form-horizontal" role="form">
-		@Html.Partial("ForumForm", Model)
+		@await Html.PartialAsync("ForumForm", Model)
 		<div class="form-group">
 			<div class="col-sm-push-2 col-sm-10">
 				<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />

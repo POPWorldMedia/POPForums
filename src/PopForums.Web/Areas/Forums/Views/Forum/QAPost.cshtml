@@ -19,7 +19,7 @@
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
 	<div class="answerData pull-left">
-		<h3><span class="label label-default voteCount">@Html.Partial("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
+		<h3><span class="label label-default voteCount">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
 		@if (user != null && user.UserID != Model.Post.UserID)
 		{
 			if (Model.VotedPostIDs.Contains(Model.Post.PostID))

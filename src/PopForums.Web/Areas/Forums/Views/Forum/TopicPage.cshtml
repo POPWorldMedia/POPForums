@@ -9,7 +9,7 @@
 <div>
 @foreach (var post in Model.Posts)
 {
-	Html.RenderPartial("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
+	@await Html.PartialAsync("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
 }
 <pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" low="@ViewBag.Low" high="@ViewBag.High" routeParameters="@routeParameters" />
 @Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
