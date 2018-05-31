@@ -225,11 +225,11 @@
 
 <p><em>@PopForums.Resources.UserDeleteWarning</em></p>
 <form asp-action="DeleteAndBanUser" method="post">
-	<input type="hidden" value="@Model.UserID" />
+	<input type="hidden" value="@Model.UserID" name="id" />
 	<p><input type="submit" value="@PopForums.Resources.DeleteAndBanButton" class="confirm btn btn-primary"/>
 	</p>
 </form>
 <form asp-action="DeleteUser" method="post">
-	<input type="hidden" value="@Model.UserID" />
+	<input type="hidden" value="@Model.UserID" name="id" />
 	<p><input type="submit" value="@PopForums.Resources.DeleteUserButton" class="confirm btn btn-primary" /></p>
 </form>
