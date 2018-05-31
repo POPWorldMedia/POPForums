@@ -12,3 +12,4 @@ packages
 
 src/PopForums.Web/wwwroot/lib
 /src/PopForums.Web/node_modules
+/package-lock.json

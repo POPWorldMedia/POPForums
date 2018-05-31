@@ -6,7 +6,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 	{
 		public void ListenTo(int forumID)
 		{
-			Groups.AddAsync(Context.ConnectionId, forumID.ToString());
+			Groups.AddToGroupAsync(Context.ConnectionId, forumID.ToString());
 		}
 	}
 }

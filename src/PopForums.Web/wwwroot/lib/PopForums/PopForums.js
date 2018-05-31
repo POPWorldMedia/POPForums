@@ -173,7 +173,7 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 		});
 
 		if (setupMorePosts) {
-			var connection = new signalR.HubConnection("/TopicsHub");
+			var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
 			connection.start()
 				.then(function () {
 					var result = connection.invoke("getLastPostID", topicID)
@@ -234,7 +234,7 @@ PopForums.previewPost = function () {
 };
 
 PopForums.loadFeed = function () {
-	var connection = new signalR.HubConnection("/FeedHub");
+	var connection = new signalR.HubConnectionBuilder().withUrl("/FeedHub").build();
 	connection.on("notifyFeed", function (data) {
 		var list = $("#FeedList");
 		var row = PopForums.populateFeedRow(data);
@@ -267,7 +267,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	var lastPostID = $("#LastPostID").val();
 	PopForums.currentTopicState = new PopForums.TopicState(pageIndex, lastPostID, pageCount, topicID);
 
-	var connection = new signalR.HubConnection("/TopicsHub");
+	var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
 	connection.on("fetchNewPost", function (postID) {
 		if (!PopForums.TopicState.replyLoaded && PopForums.currentTopicState.highPage == PopForums.currentTopicState.pageCount) {
 			$.get(PopForums.areaPath + "/Forum/Post/" + postID, function (data) {
@@ -653,7 +653,7 @@ PopForums.scrollToElement = function (id) {
 };
 
 PopForums.homeSetup = function () {
-	var connection = new signalR.HubConnection("/ForumsHub");
+	var connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").build();
 	connection.on("notifyForumUpdate", function (data) {
 		PopForums.updateForumStats(data);
 	});
@@ -662,7 +662,7 @@ PopForums.homeSetup = function () {
 };
 
 PopForums.recentListen = function (pageSize) {
-	var connection = new signalR.HubConnection("/RecentHub");
+	var connection = new signalR.HubConnectionBuilder().withUrl("/RecentHub").build();
 	connection.on("notifyRecentUpdate", function (data) {
 		var removal = $('#TopicList tr[data-topicID="' + data.topicID + '"]');
 		if (removal.length != 0) {
@@ -685,7 +685,7 @@ PopForums.recentListen = function (pageSize) {
 };
 
 PopForums.forumListen = function (pageSize, forumID) {
-	var connection = new signalR.HubConnection("/ForumsHub");
+	var connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").build();
 	connection.on("notifyUpdatedTopic", function (data) {
 		var removal = $('#TopicList tr[data-topicID="' + data.topicID + '"]');
 		if (removal.length != 0) {

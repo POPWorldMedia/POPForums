@@ -22,7 +22,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 				var user = _userService.GetUserByName(principal.Identity.Name);
 				var visibleForumIDs = _forumService.GetViewableForumIDsFromViewRestrictedForums(user);
 				foreach (var forumID in visibleForumIDs)
-					Groups.AddAsync(Context.ConnectionId, "forum" + forumID);
+					Groups.AddToGroupAsync(Context.ConnectionId, "forum" + forumID);
 			}
 		}
 	}

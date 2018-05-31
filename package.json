@@ -1,0 +1,23 @@
+{
+  "name": "PopForums14",
+  "version": "1.0.0",
+  "description": "POPForums\r =========",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/POPWorldMedia/POPForums.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/POPWorldMedia/POPForums/issues"
+  },
+  "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
+  "dependencies": {
+    "@aspnet/signalr": "^1.0.0"
+  }
+}

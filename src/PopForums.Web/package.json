@@ -1,13 +1,12 @@
 {
-	"name": "popforums",
-	"version": "14.0.0",
-	"scripts": {
-	},
-	"dependencies": {
-			"@aspnet/signalr-client": "1.0.0-alpha2-final",
-			"jquery": "3.2.1",
-			"bootstrap": "3.3.7"
-	},
-	"devDependencies": {
-	}
+  "name": "popforums",
+  "version": "14.0.0",
+  "scripts": {},
+  "dependencies": {
+    "@aspnet/signalr": "1.0.0",
+    "bootstrap": "3.3.7",
+		"jquery": "3.2.1",
+		"tinymce": "4.5.8" 
+  },
+  "devDependencies": {}
 }

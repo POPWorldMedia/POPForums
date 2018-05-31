@@ -14,7 +14,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public void ListenTo(int topicID)
 		{
-			Groups.AddAsync(Context.ConnectionId, topicID.ToString());
+			Groups.AddToGroupAsync(Context.ConnectionId, topicID.ToString());
 		}
 
 		public int GetLastPostID(int topicID)

@@ -14,10 +14,10 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		{
 			app.UseSignalR(routes =>
 			{
-				routes.MapHub<TopicsHub>("TopicsHub");
-				routes.MapHub<RecentHub>("RecentHub");
-				routes.MapHub<ForumsHub>("ForumsHub");
-				routes.MapHub<FeedHub>("FeedHub");
+				routes.MapHub<TopicsHub>("/TopicsHub");
+				routes.MapHub<RecentHub>("/RecentHub");
+				routes.MapHub<ForumsHub>("/ForumsHub");
+				routes.MapHub<FeedHub>("/FeedHub");
 			});
 			return app;
 		}
@@ -44,13 +44,6 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 					}
 				}
 				await next.Invoke();
-			});
-			app.UseSignalR(routes =>
-			{
-				routes.MapHub<TopicsHub>("TopicsHub");
-				routes.MapHub<RecentHub>("RecentHub");
-				routes.MapHub<ForumsHub>("ForumsHub");
-				routes.MapHub<FeedHub>("FeedHub");
 			});
 			return app;
 		}

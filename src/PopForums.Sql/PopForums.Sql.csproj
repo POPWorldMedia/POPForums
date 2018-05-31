@@ -4,7 +4,7 @@
     <Description>PopForums.Data.Sql Class Library</Description>
     <VersionPrefix>14.0.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>PopForums.Sql</AssemblyName>
     <PackageId>PopForums.Sql</PackageId>
   </PropertyGroup>

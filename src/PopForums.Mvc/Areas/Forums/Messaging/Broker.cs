@@ -29,23 +29,23 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public void NotifyNewPosts(Topic topic, int lasPostID)
 		{
-			_topicHubContext.Clients.Group(topic.TopicID.ToString()).InvokeAsync("notifyNewPosts", lasPostID);
+			_topicHubContext.Clients.Group(topic.TopicID.ToString()).SendAsync("notifyNewPosts", lasPostID);
 		}
 
 		public void NotifyNewPost(Topic topic, int postID)
 		{
-			_topicHubContext.Clients.Group(topic.TopicID.ToString()).InvokeAsync("fetchNewPost", postID);
+			_topicHubContext.Clients.Group(topic.TopicID.ToString()).SendAsync("fetchNewPost", postID);
 		}
 
 		public void NotifyFeed(string message)
 		{
 			var data = new { Message = message, Utc = new DateTime(DateTime.UtcNow.Ticks, DateTimeKind.Unspecified).ToString("o"), TimeStamp = Resources.LessThanMinute };
-			_feedHubContext.Clients.All.InvokeAsync("notifyFeed", data);
+			_feedHubContext.Clients.All.SendAsync("notifyFeed", data);
 		}
 
 		public void NotifyForumUpdate(Forum forum)
 		{
-			_forumsHubContext.Clients.All.InvokeAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o"), Image = "NewIndicator.png" });
+			_forumsHubContext.Clients.All.SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o"), Image = "NewIndicator.png" });
 		}
 
 		public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
@@ -66,10 +66,10 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 				topic.LastPostName
 			};
 			if (isForumViewRestricted)
-				_recentHubContext.Clients.Group("forum" + forum.ForumID).InvokeAsync("notifyRecentUpdate", result);
+				_recentHubContext.Clients.Group("forum" + forum.ForumID).SendAsync("notifyRecentUpdate", result);
 			else
-				_recentHubContext.Clients.All.InvokeAsync("notifyRecentUpdate", result);
-			_forumsHubContext.Clients.Group(forum.ForumID.ToString()).InvokeAsync("notifyUpdatedTopic", result);
+				_recentHubContext.Clients.All.SendAsync("notifyRecentUpdate", result);
+			_forumsHubContext.Clients.Group(forum.ForumID.ToString()).SendAsync("notifyUpdatedTopic", result);
 		}
 	}
 }
