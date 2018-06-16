@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
@@ -179,7 +180,19 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
 					_lastReadService.MarkTopicRead(user, topic);
 				if (user.IsInRole(PermanentRoles.Moderator))
-					ViewBag.CategorizedForums = _forumService.GetCategorizedForumContainer();
+				{
+					var categorizedForums = _forumService.GetCategorizedForumContainer();
+					var categorizedForumSelectList = new List<SelectListItem>();
+					foreach (var uncategorizedForum in categorizedForums.UncategorizedForums)
+						categorizedForumSelectList.Add(new SelectListItem { Value = uncategorizedForum.ForumID.ToString(), Text = uncategorizedForum.Title, Selected = forum.ForumID == uncategorizedForum.ForumID});
+					foreach (var categoryPair in categorizedForums.CategoryDictionary)
+					{
+						var group = new SelectListGroup {Name = categoryPair.Key.Title};
+						foreach (var categorizedForum in categoryPair.Value)
+							categorizedForumSelectList.Add(new SelectListItem { Value = categorizedForum.ForumID.ToString(), Text = categorizedForum.Title, Selected = forum.ForumID == categorizedForum.ForumID, Group = group});
+					}
+					ViewBag.CategorizedForums = categorizedForumSelectList;
+				}
 			}
 			List<Post> posts;
 			if (forum.IsQAForum)
