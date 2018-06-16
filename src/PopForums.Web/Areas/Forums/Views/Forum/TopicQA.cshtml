@@ -115,19 +115,7 @@ else
 			<div class="form-group">
 				<label for="NewForum" class="col-sm-2 control-label">@PopForums.Resources.Forum</label>
 				<div class="col-sm-6">
-					<select id="NewForum" name="NewForum" class="form-control">
-						@foreach (var forum in ((CategorizedForumContainer)ViewBag.CategorizedForums).UncategorizedForums)
-						{
-							<option value="@forum.ForumID" @Html.Raw(forum.ForumID= =Model.Topic.ForumID ? @" selected="" selected""" : "" )>@forum.Title</option>}
-						@foreach (var category in ((CategorizedForumContainer)ViewBag.CategorizedForums).CategoryDictionary)
-						{
-							<optgroup label="@category.Key.Title">
-								@foreach (var forum in category.Value)
-								{
-									<option value="@forum.ForumID" @Html.Raw(forum.ForumID= =Model.Topic.ForumID ? @" selected="" selected""" : "" )>@forum.Title</option>}
-							</optgroup>
-						}
-					</select>
+					<select id="NewForum" name="NewForum" class="form-control" asp-items="ViewBag.CategorizedForums"></select>
 				</div>
 			</div>
 			<div class="form-group">
