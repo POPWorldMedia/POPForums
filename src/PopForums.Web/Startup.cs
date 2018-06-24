@@ -53,11 +53,6 @@ namespace PopForums.Web
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
-			})
-			// TODO: Remove once bug is fixed: https://github.com/aspnet/Mvc/issues/6660
-			.AddRazorOptions(options =>
-			{
-				options.ViewLocationExpanders.Remove(options.ViewLocationExpanders.First(f => f is Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure.PageViewLocationExpander));
 			});
 			
 			services.AddSignalR();
