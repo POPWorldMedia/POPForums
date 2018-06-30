@@ -9,20 +9,23 @@
 }
 
 @section HeaderContent{
-@if (user != null) {
-	<script src="~/lib/tinymce/jquery.tinymce.min.js" type="text/javascript"></script>
-}
+	@if (user != null)
+	{
+		<script src="~/lib/tinymce/tinymce.min.js" type="text/javascript"></script>
+	}
 
-<script type="text/javascript">
+	<script type="text/javascript">
 	$(function () {
 		PopForums.topicListSetup(@Model.Forum.ForumID);
 	});
-</script>
+	</script>
 }
 
 <div>
-	<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost)
-	{ <input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}</h1>
+	<h1>
+		@Model.Forum.Title@if (Model.PermissionContext.UserCanPost)
+	{<input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}
+	</h1>
 	@if (Model.PermissionContext.UserCanPost)
 	{
 		<div id="NewTopic" style="display: none;"></div>
@@ -54,7 +57,7 @@
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)
 	{
-		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>  } data-topicid="@topic.TopicID">
+		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text> } data-topicid="@topic.TopicID">
 			<td class="newIndicator">
 				<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
 			</td>
