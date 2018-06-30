@@ -27,9 +27,7 @@
 
 <form method="post">
 	<div class="postForm" role="form">
-		<div class="form-group">
-			<input asp-for="Title" class="form-control" placeholder="@PopForums.Resources.Title"/>
-		</div>
+		<input asp-for="Title" type="hidden"/>
 		<textarea asp-for="FullText" class="form-control"></textarea>
 		<div class="checkbox">
 			<label for="IncludeSignature">
