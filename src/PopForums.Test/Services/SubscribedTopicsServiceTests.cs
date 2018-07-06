@@ -36,6 +36,19 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void OnlySubscribeIfNotAlready()
+		{
+			var service = GetService();
+			var user = new User(123, DateTime.MaxValue);
+			var topic = new Topic(456);
+
+			_mockSubRepo.Setup(s => s.IsTopicSubscribed(user.UserID, topic.TopicID)).Returns(true);
+
+			service.AddSubscribedTopic(user, topic);
+			_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Never());
+		}
+
+		[Fact]
 		public void RemoveSubTopic()
 		{
 			var service = GetService();
