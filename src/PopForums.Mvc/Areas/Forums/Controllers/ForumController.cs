@@ -466,6 +466,15 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return StatusCode(403);
 			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
 			var postEdit = _postService.GetPostForEdit(post, user, isMobile);
+
+			// If the first post in the topic and the author is also
+			//  the topic author allow editing
+			var topic = _topicService.Get(post.TopicID);
+			if (post.IsFirstInTopic && user.IsTopicTitleEditable(topic))
+			{
+				postEdit.IsTitleEditable = true;
+			}
+
 			return View(postEdit);
 		}
 
@@ -473,11 +482,28 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// TODO: test validate [ValidateInput(false)]
 		public ActionResult Edit(int id, PostEdit postEdit)
 		{
+			if (string.IsNullOrWhiteSpace(postEdit.Title))
+			{
+				throw new Exception(string.Format("Topic title cannot be empty."));
+			}
+
 			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
+			{
 				return StatusCode(403);
+			}
+
 			_postService.EditPost(post, postEdit, user);
+
+			// If the user is the topic creator or a moderator allow them
+			// to update the title of the topic.
+			var topic = _topicService.Get(post.TopicID);
+			if (user.IsTopicTitleEditable(topic) && topic.Title != post.Title)
+			{
+				_topicService.UpdateTitle(topic, post.Title, user);
+			}
+
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
 

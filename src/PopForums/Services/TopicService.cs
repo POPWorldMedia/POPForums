@@ -24,6 +24,7 @@ namespace PopForums.Services
 		void DeleteTopic(Topic topic, User user);
 		void UndeleteTopic(Topic topic, User user);
 		void UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
+		void UpdateTitle(Topic topic, string newTitle, User user);
 		List<Topic> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		void RecalculateReplyCount(Topic topic);
 		Dictionary<int, int> GetFirstPostIDsFromTopics(List<Topic> topics);
@@ -274,6 +275,29 @@ namespace PopForums.Services
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to update topic title or move topic.");
+		}
+
+		public void UpdateTitle(Topic topic, string newTitle, User user)
+		{
+			if (user.IsInRole(PermanentRoles.Moderator) || topic.StartedByUserID == user.UserID)
+			{
+				var oldTopic = _topicRepository.Get(topic.TopicID);
+				if (oldTopic.Title == newTitle)
+					return;
+
+				var forum = _forumRepository.Get(topic.ForumID);
+				_moderationLogService.LogTopic(user, ModerationType.TopicRenamed, topic, forum, string.Format("Renamed from \"{0}\" to \"{1}\"", oldTopic.Title, newTitle));
+				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
+				topic.UrlName = urlName;
+				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
+				_topicRepository.MarkTopicForIndexing(topic.TopicID);
+				_forumService.UpdateCounts(forum);
+				_forumService.UpdateLast(forum);
+			}
+			else
+			{
+				throw new InvalidOperationException("User must be Moderator or Topic creator to update topic title.");
+			}
 		}
 
 		public void RecalculateReplyCount(Topic topic)

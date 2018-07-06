@@ -46,9 +46,9 @@ namespace PopForums.Test.Services
 			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object, _userRepo.Object);
 		}
 
-		private static User GetUser()
+		private static User GetUser(int id = 123)
 		{
-			return new User(123, DateTime.MinValue) {Name = "Name", Email = "Email", IsApproved = true, LastActivityDate = DateTime.MaxValue, LastLoginDate = DateTime.MaxValue, AuthorizationKey = Guid.NewGuid(), Roles = new List<string>()};
+			return new User(id, DateTime.MinValue) { Name = "Name", Email = "Email", IsApproved = true, LastActivityDate = DateTime.MaxValue, LastLoginDate = DateTime.MaxValue, AuthorizationKey = Guid.NewGuid(), Roles = new List<string>() };
 		}
 
 		[Fact]
@@ -647,6 +647,118 @@ namespace PopForums.Test.Services
 			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_forumService.Verify(f => f.UpdateCounts(oldForum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(oldForum), Times.Exactly(1));
+		}
+
+		[Fact]
+		public void UpdateTopicTitleThrowsWithNonModOrCreator()
+		{
+			var topic = new Topic(1);
+			var topicCreatingUser = GetUser();
+			var user = GetUser(456);
+			var topicService = GetTopicService();
+
+			// User is not a MOD or the creator of the Topic
+			Assert.Throws<InvalidOperationException>(() => topicService.UpdateTitle(topic, "blah", user));
+		}
+
+		[Fact]
+		public void UpdateTopicTitleNoChangeDoesNothing()
+		{
+			var forum = new Forum(2);
+			var topic = new Topic(1) { ForumID = forum.ForumID, Title = "old-title" };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2, Title = "old-title" });
+
+			topicService.UpdateTitle(topic, "old-title", user);
+
+			_topicRepo.Verify(t => t.Get(topic.TopicID), Times.Once());
+			_modService.Verify(m => m.LogTopic(It.IsAny<User>(), ModerationType.TopicRenamed, It.IsAny<Topic>(), It.IsAny<Forum>(), It.IsAny<string>()), Times.Never());
+			_topicRepo.Verify(t => t.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+			_topicRepo.Verify(t => t.MarkTopicForIndexing(It.IsAny<int>()), Times.Never());
+			_forumService.Verify(f => f.UpdateCounts(It.IsAny<Forum>()), Times.Never());
+			_forumService.Verify(f => f.UpdateLast(It.IsAny<Forum>()), Times.Never());
+		}
+
+		[Fact]
+		public void UpdateTopicTitleUpdatesTitleWithMod()
+		{
+			var forum = new Forum(2);
+			var topic = new Topic(1) { ForumID = forum.ForumID, Title = "old-title" };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2, Title = "old-title" });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_forumRepo.Setup(f => f.Get(topic.ForumID)).Returns(forum);
+			topicService.UpdateTitle(topic, "new title", user);
+			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
+			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, "new title", "new-title"), Times.Exactly(1));
+		}
+
+		[Fact]
+		public void UpdateTopicTitleUpdatesTitleWithCreator()
+		{
+			var forum = new Forum(2);
+			var user = GetUser();
+			var topic = new Topic(1) { ForumID = forum.ForumID, StartedByUserID = user.UserID };
+			var topicService = GetTopicService();
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2, StartedByUserID = user.UserID });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_forumRepo.Setup(f => f.Get(topic.ForumID)).Returns(forum);
+			topicService.UpdateTitle(topic, "new title", user);
+			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
+			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, "new title", "new-title"), Times.Exactly(1));
+		}
+
+		[Fact]
+		public void UpdateTopicTitleMarksTopicForIndexingWithMod()
+		{
+			var topic = new Topic(1);
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1));
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_forumRepo.Setup(f => f.Get(topic.ForumID)).Returns(new Forum(2));
+			topicService.UpdateTitle(topic, "new title", user);
+			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
+		}
+
+		[Fact]
+		public void UpdateTopicTitleWithNewTitleChangesUrlNameOnTopicParameter()
+		{
+			var forum = new Forum(2);
+			var topic = new Topic(1) { ForumID = forum.ForumID, UrlName = "old" };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2 });
+			_forumRepo.Setup(f => f.Get(topic.ForumID)).Returns(new Forum(2));
+			topicService.UpdateTitle(topic, "new title", user);
+			Assert.Equal("new-title", topic.UrlName);
+		}
+
+		[Fact]
+		public void UpdateTopicTitleMovesUpdatesCountAndLastOnForum()
+		{
+			var forum = new Forum(2);
+			var topic = new Topic(1) { ForumID = 7 };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = forum.ForumID, Title = "old" });
+			_forumRepo.Setup(f => f.Get(topic.ForumID)).Returns(forum);
+
+			topicService.UpdateTitle(topic, "new", user);
+
+			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
+			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
 		}
 
 		[Fact]
