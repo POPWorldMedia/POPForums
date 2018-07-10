@@ -24,7 +24,7 @@
 <div>
 	<h1>
 		@Model.Forum.Title@if (Model.PermissionContext.UserCanPost)
-	{<input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}
+	{ <input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}
 	</h1>
 	@if (Model.PermissionContext.UserCanPost)
 	{
