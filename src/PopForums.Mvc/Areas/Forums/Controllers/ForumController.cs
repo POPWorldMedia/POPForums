@@ -116,6 +116,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
 			var topic = _forumService.PostNewTopic(forum, user, permissionContext, newPost, HttpContext.Connection.RemoteIpAddress.ToString(), userProfileUrl, topicLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
+			_subService.AddSubscribedTopic(user, topic);
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
 		}
 
@@ -339,6 +340,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
 			var post = _topicService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
+			_subService.AddSubscribedTopic(user, topic);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 				_topicService.CloseTopic(topic, user);
 			var urlHelper = Url;

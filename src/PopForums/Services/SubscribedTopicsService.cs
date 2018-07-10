@@ -34,7 +34,10 @@ namespace PopForums.Services
 
 		public void AddSubscribedTopic(User user, Topic topic)
 		{
-			_subscribedTopicsRepository.AddSubscribedTopic(user.UserID, topic.TopicID);
+			if (!IsTopicSubscribed(user, topic))
+			{
+				_subscribedTopicsRepository.AddSubscribedTopic(user.UserID, topic.TopicID);
+			}
 		}
 
 		public void RemoveSubscribedTopic(User user, Topic topic)
