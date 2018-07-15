@@ -8,6 +8,7 @@ namespace PopForums.Services
 {
 	public interface ISetupService
 	{
+		bool IsRuntimeConnectionAndSetupGood();
 		bool IsConnectionPossible();
 		bool IsDatabaseSetup();
 		User SetupDatabase(SetupVariables setupVariables, out Exception exception);
@@ -27,6 +28,19 @@ namespace PopForums.Services
 		private readonly IUserService _userService;
 		private readonly ISettingsManager _settingsManager;
 		private readonly IProfileService _profileService;
+
+		private static bool? _isConnectionSetupGood;
+
+		public bool IsRuntimeConnectionAndSetupGood()
+		{
+			if (_isConnectionSetupGood.HasValue && _isConnectionSetupGood.Value)
+				return true;
+			_isConnectionSetupGood = _setupRepository.IsConnectionPossible();
+			if (!_isConnectionSetupGood.Value)
+				return false;
+			_isConnectionSetupGood = _setupRepository.IsDatabaseSetup();
+			return _isConnectionSetupGood.Value;
+		}
 
 		public bool IsConnectionPossible()
 		{

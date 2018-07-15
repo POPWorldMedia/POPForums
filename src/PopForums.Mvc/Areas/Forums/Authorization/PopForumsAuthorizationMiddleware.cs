@@ -15,8 +15,10 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 			_next = next;
 		}
 
-		public Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService)
+		public Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService)
 		{
+			if (!setupService.IsRuntimeConnectionAndSetupGood())
+				return _next.Invoke(context);
 			var authResult = context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme).Result;
 			var identity = authResult?.Principal?.Identity as ClaimsIdentity;
 			if (identity != null)
