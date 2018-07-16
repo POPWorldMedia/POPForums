@@ -1,22 +1,22 @@
 POPForums
 =========
 
-An MVC forum application with real-time updating and multiple languages.
+A forum application with real-time updating and multiple languages.
 
-The master branch is now the work-in-progress of v14, which will be for ASP.NET Core 2.x. If you're looking for the version that works on .NET 4.5.x with MVC 5, check out v13.0.2.
+The master branch is now the work-in-progress for future versions. The v14.0.0 branch is v14, for ASP.NET Core 2.1. If you're looking for the version that works on .NET 4.5.x with MVC 5, check out v13.0.2.
 
 Roadmap:
-Yeah, so you might ask why this project gets updated infrequently, and there hasn't been a release for ASP.NET Core. The answer is that Core has been too much of a moving target, plus day jobs and stuff. The release criteria at this point is at least beta status for external dependencies, and we're getting close now. The goal is mostly feature parity (and fewer bugs) with v13. After the release of v14, I'll be looking at modernizing the app, but requirements are largely driven by the need to make https://coasterbuzz.com work. It's due for a refresh.
+The v14 release is a port of v13, bringing the app to .Net Core. It doesn't add any substantial features over the previous version (less bugs), as the intention was largely feature parity to the "old" MVC version. Going forward, I'll be looking at modernizing the app, but requirements are largely driven by the need to make https://coasterbuzz.com work. It's due for a refresh.
 
-CI build of v14, running on .NET Core is demo'ing here:
+CI build of master, running on .NET Core is demo'ing here:
 https://popforumsdev.azurewebsites.net/Forums
 
 Latest release:
-https://github.com/POPWorldMedia/POPForums/releases/tag/v13.0.2
+https://github.com/POPWorldMedia/POPForums/releases/tag/v14.0.0
 
-For the latest information and documentation, check the wiki (admittedly needs a lot of work):
+For the latest information and documentation, check the wiki:
 https://github.com/POPWorldMedia/POPForums/wiki
 
 ## Prerequisites:
-* .NET Core v2.
-* AzureKit optionally requires Redis for two-level cache, Azure Search for Azure Search.
+* .NET Core v2.1.
+* AzureKit optionally requires Redis for two-level cache, Azure Search for Azure Search. This is experimental.
