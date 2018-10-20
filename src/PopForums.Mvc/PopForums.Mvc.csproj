@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>PopForums Mvc Class Library</Description>
-    <VersionPrefix>14.0.0</VersionPrefix>
+    <VersionPrefix>14.0.1</VersionPrefix>
     <Authors>Jeff Putz</Authors>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>PopForums.Mvc</AssemblyName>

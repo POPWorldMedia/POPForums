@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+	  <VersionPrefix>14.0.1</VersionPrefix>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PopForums.Web</AssemblyName>
     <OutputType>Exe</OutputType>
