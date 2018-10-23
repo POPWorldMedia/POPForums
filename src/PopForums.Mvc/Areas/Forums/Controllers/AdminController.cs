@@ -79,6 +79,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(_settingsManager.Current);
 		}
 
+		public ViewResult Index2()
+		{
+			return View();
+		}
+
 		[HttpPost]
 		//[ValidateInput(false)] TODO: need this?
 		public ViewResult Index(IFormCollection collection)

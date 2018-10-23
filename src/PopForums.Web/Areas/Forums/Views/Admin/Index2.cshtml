@@ -1,0 +1,50 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<title>Index2</title>
+	<script src="~/lib/vue/dist/vue.min.js"></script>
+	<script src="~/lib/vue-router/dist/vue-router.min.js"></script>
+	@*<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>*@
+
+</head>
+<body>
+<div id="app">
+	<h1>Hello App!</h1>
+	<p>
+		<router-link to="/foo">Go to Foo</router-link>
+		<router-link to="/bar">Go to Bar</router-link>
+	</p>
+
+	<router-view></router-view>
+</div>
+<script>
+
+	const Foo = { template: '<div>foo</div>' }
+	const Bar = { template: '<div>bar</div>' }
+
+	const routes = [
+		{ path: '/foo', component: Foo },
+		{ path: '/bar', component: Bar }
+	];
+
+	const router = new VueRouter({
+		routes: routes,
+		mode: 'history',
+		base: '/forums/admin/index2/'
+	});
+
+	const app = new Vue({
+		router
+	}).$mount('#app');
+
+</script>
+</body>
+</html>

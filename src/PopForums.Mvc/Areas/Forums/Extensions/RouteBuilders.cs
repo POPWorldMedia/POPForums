@@ -75,6 +75,10 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				"Forums/Admin/ErrorLog/{page?}",
 				new { controller = AdminController.Name, action = "ErrorLog", Area = "Forums" }
 				);
+			routes.MapRoute(
+				"pfadmin",
+				"Forums/Admin/Index2/{*.}",
+				new { controller = AdminController.Name, action = "Index2", Area = "Forums" });
 			return routes;
 		}
 	}

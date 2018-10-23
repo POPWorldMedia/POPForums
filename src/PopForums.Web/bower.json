@@ -4,7 +4,9 @@
   "dependencies": {
     "bootstrap": "v3.3.7",
     "jquery": "3.2.1",
-    "tinymce": "4.7.0"
+    "tinymce": "4.7.0",
+    "vue": "v2.5.17",
+    "vue-router": "v3.0.1"
   },
   "resolutions": {
     "bootstrap": "v3.3.7",
