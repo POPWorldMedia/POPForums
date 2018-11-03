@@ -11,6 +11,8 @@ The v14 release is a port of v13, bringing the app to .Net Core. It doesn't add 
 CI build of master, running on .NET Core is demo'ing here:
 https://popforumsdev.azurewebsites.net/Forums
 
+[![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
+
 Latest release:
 https://github.com/POPWorldMedia/POPForums/releases/tag/v14.0.0
 
