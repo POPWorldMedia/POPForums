@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <Description>PopForums Class Library</Description>
-    <VersionPrefix>14.0.1</VersionPrefix>
+    <VersionPrefix>14.1.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>PopForums</AssemblyName>
     <PackageId>PopForums</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+	  <AssemblyVersion>14.1.0</AssemblyVersion>
+	  <FileVersion>14.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
