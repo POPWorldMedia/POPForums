@@ -599,7 +599,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
 			}
-			catch (SecurityException securityException) // TODO: what is this?
+			catch (SecurityException) // TODO: what is this?
 			{
 				return StatusCode(403);
 			}

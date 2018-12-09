@@ -4,7 +4,7 @@
     <Description>PopForums Class Library</Description>
     <VersionPrefix>14.1.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>PopForums</AssemblyName>
     <PackageId>PopForums</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.5" />
+    <PackageReference Update="Microsoft.NETCore.App" />
   </ItemGroup>
 
 </Project>
