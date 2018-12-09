@@ -19,6 +19,9 @@ https://github.com/POPWorldMedia/POPForums/releases/tag/v14.0.0
 For the latest information and documentation, check the wiki:
 https://github.com/POPWorldMedia/POPForums/wiki
 
+The latest CI build packages can be found on MyGet:
+https://www.myget.org/feed/Packages/popforums
+
 ## Prerequisites:
 * .NET Core v2.2.
 * AzureKit optionally requires Redis for two-level cache, Azure Search for Azure Search. This is experimental.
