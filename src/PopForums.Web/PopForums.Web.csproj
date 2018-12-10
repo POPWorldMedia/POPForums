@@ -11,7 +11,16 @@
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 	  <AssemblyVersion>14.1.0</AssemblyVersion>
 	  <FileVersion>14.1.0</FileVersion>
+	  <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="gulpfile.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="gulpfile.js" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views\*.cshtml;Areas\**\Views\**\*.cshtml">
