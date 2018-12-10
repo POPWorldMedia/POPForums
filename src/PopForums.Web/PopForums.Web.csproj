@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+		<!-- next two lines temp until 2.2 is up on Azure app service -->
+	  <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
+	  <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
 	  <VersionPrefix>14.1.0</VersionPrefix>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PopForums.Web</AssemblyName>
