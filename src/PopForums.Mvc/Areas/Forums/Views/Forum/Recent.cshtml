@@ -48,8 +48,7 @@
 				}
 			</td>
 			<td>
-				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
-				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null)</h2>
 				<small class="pull-right forumDetails">
 					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 				</small>

@@ -19,20 +19,20 @@
 <div>
 	<h1>@PopForums.Resources.ActivityFeed</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
 <div id="FeedList">
 @foreach (var item in Model)
 {
-	<div class="bg-info callout">
+	<div class="bg-light callout">
 		<div class="feedItemText">@Html.Raw(item.Message)</div>
 		<div class="text-right small fTime" data-utc="@item.TimeStamp.ToString("o")">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 	</div>
 }
-	<div id="ActivityFeedTemplate" class="bg-info callout" style="display: none;">
+	<div id="ActivityFeedTemplate" class="bg-light callout" style="display: none;">
 		<div class="feedItemText"></div>
 		<div class="text-right small fTime" data-utc=""></div>
 	</div>

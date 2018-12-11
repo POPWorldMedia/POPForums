@@ -42,12 +42,8 @@
 }
 
 #ForumContainer #FixedBreadcrumb {
-	position: fixed;top: 0;display: none;
+	position: fixed;top: 0;
 	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
-}
-
-#ForumContainer .twirl {
-	font-size: 75%;
 }
 
 #ForumContainer .topicListButton {
@@ -149,11 +145,13 @@
 #ForumContainer .miniProfileBox {
 	padding: 8px 15px;
 	margin-bottom: 10px;
+	margin-top: 4px;
 	display: none;
 	border-radius: 4px;
 }
-#ForumContainer .miniProfile a {
+#ForumContainer .miniProfile a, #ForumContainer .miniProfile a:visited {
 	text-decoration: underline;
+	color: white; /* need to get this from BS */
 }
 #ForumContainer .postItem .voteCount {
 	display: inline-block;
@@ -239,6 +237,13 @@
 	display: none;
 }
 
+#ForumContainer .morePager:hover, #ForumContainer .currentPager:hover {
+	background: none;
+}
+#ForumContainer .morePager, #ForumContainer .currentPager .page-link {
+	cursor: default;
+}
+
 /* queries */
 
 @media(max-width:479px) {
@@ -266,16 +271,15 @@
 #ForumContainer #AccountBox .badge {
 	background-color: #ff0000;color: white;
 	position: relative;
-	top: -2px;
+	top: -5px;
 }
 
-.pagination .glyphicon {
-	top: 0;
-}
+
 
 /* icons */
 .message-icon {
 	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMTIuNzEzbC0xMS45ODUtOS43MTNoMjMuOTcxbC0xMS45ODYgOS43MTN6bS01LjQyNS0xLjgyMmwtNi41NzUtNS4zMjl2MTIuNTAxbDYuNTc1LTcuMTcyem0xMC44NSAwbDYuNTc1IDcuMTcydi0xMi41MDFsLTYuNTc1IDUuMzI5em0tMS41NTcgMS4yNjFsLTMuODY4IDMuMTM1LTMuODY4LTMuMTM1LTguMTEgOC44NDhoMjMuOTU2bC04LjExLTguODQ4eiIvPjwvc3ZnPg==');
-	width: 1em;
-	height: 1em;
+	width: 1.2em;
+	height: 1.2em;
+	margin-top: 5px;
 }

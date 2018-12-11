@@ -68,9 +68,8 @@
 				}
 			</td>
 			<td>
-				<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-page="">@topic.Title</a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
-				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
-				<small class="pull-right forumDetails">
+				<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-page="">@topic.Title</a></h2>
+				<small class="float-right forumDetails">
 					@PopForums.Resources.StartedBy: @topic.StartedByName | @PopForums.Resources.Views: @topic.ViewCount.ToString("N0") | @PopForums.Resources.Replies: @topic.ReplyCount.ToString("N0") | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 				</small>
 			</td>

@@ -13,89 +13,112 @@
 <div>
 	<h1>@Model.Name</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
 <div id="Profile">
 	<ul class="nav nav-tabs" role="tablist" id="ProfileTabs">
-		<li class="active"><a href="#Details" role="tab" data-toggle="tab">@PopForums.Resources.Profile</a></li>
-		<li><a href="#ActivityFeed" role="tab" data-toggle="tab">@PopForums.Resources.ActivityFeed</a></li>
-		<li><a href="#Awards" role="tab" data-toggle="tab">@PopForums.Resources.Awards</a></li>
+		<li class="nav-item"><a class="nav-link active" href="#Details" role="tab" data-toggle="tab">@PopForums.Resources.Profile</a></li>
+		<li class="nav-item"><a class="nav-link" href="#ActivityFeed" role="tab" data-toggle="tab">@PopForums.Resources.ActivityFeed</a></li>
+		<li class="nav-item"><a class="nav-link" href="#Awards" role="tab" data-toggle="tab">@PopForums.Resources.Awards</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="Details" class="tab-pane active">
-			<dl class="dl-horizontal">
+			<div class="dl-horizontal">
 				@if (Model.ShowDetails)
 				{
-					<dt>@PopForums.Resources.Contact</dt>
-					<dd>
-						<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br/>
-						<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
-					</dd>
+					<div class="row">
+						<div class="col-2">@PopForums.Resources.Contact</div>
+						<div class="col-10">
+							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br />
+							<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
+						</div>
+					</div>
 				}
-				
-				<dt></dt>
-				<dd><a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID">@(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")")</a></dd>
-				
-				<dt>@PopForums.Resources.Joined</dt>
-				<dd>@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</dd>
+
+				<div class="row">
+					<div class="col-10 offset-2"><a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID">@(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")")</a></div>
+				</div>
+
+				<div class="row">
+					<div class="col-2">@PopForums.Resources.Joined</div>
+					<div class="col-10">@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</div>
+				</div>
 
 				@if (Model.Dob.HasValue)
 				{
-					<dt>@PopForums.Resources.Birthday</dt>
-					<dd>@Model.Dob.Value.ToString("D")</dd>
+					<div class="row">
+						<div class="col-2">@PopForums.Resources.Birthday</div>
+						<div class="col-10">@Model.Dob.Value.ToString("D")</div>
+					</div>
 				}
-				
+
 				@if (!String.IsNullOrWhiteSpace(Model.Location))
 				{
-					<dt>@PopForums.Resources.Location</dt>
-					<dd>@Model.Location</dd>
+					<div class="row">
+						<div class="col-2">@PopForums.Resources.Location</div>
+						<div class="col-10">@Model.Location</div>
+					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Facebook))
 				{
-					<dt>Facebook</dt>
-					<dd><a href="https://facebook.com/@Model.Facebook" target="_blank">https://facebook.com/@Model.Facebook</a></dd>
+					<div class="row">
+						<div class="col-2">Facebook</div>
+						<div class="col-10"><a href="https://facebook.com/@Model.Facebook" target="_blank">https://facebook.com/@Model.Facebook</a></div>
+					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Twitter))
 				{
-					<dt>Twitter</dt>
-					<dd><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></dd>
+					<div class="row">
+						<div class="col-2">Twitter</div>
+						<div class="col-10"><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></div>
+					</div>
 				}
-				
+
 				@if (!String.IsNullOrWhiteSpace(Model.Web))
 				{
-					<dt>@PopForums.Resources.Web</dt>
-					<dd><a href="@Model.Web" target="_blank">@Model.Web</a></dd>
+					<div class="row">
+						<div class="col-2">@PopForums.Resources.Web</div>
+						<div class="col-10"><a href="@Model.Web" target="_blank">@Model.Web</a></div>
+					</div>
 				}
-				
+
 				@if (!String.IsNullOrWhiteSpace(Model.YahooMessenger))
 				{
-					<dt>Yahoo Messenger</dt>
-					<dd><a href="ymsgr:sendIM?@Model.YahooMessenger">@Model.YahooMessenger</a></dd>
+					<div class="row">
+						<div class="col-2">Yahoo Messenger</div>
+						<div class="col-10"><a href="ymsgr:sendIM?@Model.YahooMessenger">@Model.YahooMessenger</a></div>
+					</div>
 				}
-				
+
 				@if (!String.IsNullOrWhiteSpace(Model.Icq))
 				{
-					<dt>ICQ</dt>
-					<dd><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></dd>
+					<div class="row">
+						<div class="col-2">ICQ</div>
+						<div class="col-10"><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></div>
+					</div>
 				}
-				
+
 				@if (Model.AvatarID.HasValue)
 				{
-					<dt>@PopForums.Resources.Avatar</dt>
-					<dd><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-responsive" /></dd>
+					<div class="row">
+						<div class="col-2">@PopForums.Resources.Avatar</div>
+						<div class="col-10"><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-responsive" /></div>
+					</div>
 				}
-				
-				<dt>@PopForums.Resources.ScoringGame</dt>
-				<dd>@Model.Points.ToString("N0")</dd>
-			</dl>
+
+				<div class="row">
+					<div class="col-2">@PopForums.Resources.ScoringGame</div>
+					<div class="col-10">@Model.Points.ToString("N0")</div>
+				</div>
+			</div>
 
 			@if (Model.ImageID.HasValue && Model.IsImageApproved)
 			{
-				<div class="col-12">
+				<div class="row">
 					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-responsive" />
 				</div>
 			}
@@ -104,7 +127,7 @@
 		<div id="ActivityFeed" class="tab-pane">
 			@foreach (var item in Model.Feed)
 			{
-				<div class="bg-info callout">
+				<div class="bg-light callout">
 					@if (item.Points > 0)
 					{
 						<div class="activityFeedPoints center-block">+@item.Points</div>
@@ -118,7 +141,7 @@
 		<div id="Awards" class="tab-pane">
 			@foreach (var item in Model.UserAwards)
 			{
-				<div class="bg-info callout" title="@item.Description">
+				<div class="bg-light callout" title="@item.Description">
 					<h2>@item.Title</h2>
 					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>

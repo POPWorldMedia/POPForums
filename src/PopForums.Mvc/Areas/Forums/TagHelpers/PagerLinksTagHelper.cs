@@ -54,19 +54,19 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				return;
 			
 			var builder = new StringBuilder();
-			if (String.IsNullOrEmpty(MoreTextClass)) builder.Append($"<li><span>{Resources.More}:</span></li>");
-			else builder.Append($"<li class=\"{MoreTextClass}\"><span>{Resources.More}</span></li>");
+			if (String.IsNullOrEmpty(MoreTextClass)) builder.Append($"<li><span class=\"page-link\">{Resources.More}:</span></li>");
+			else builder.Append($"<li><span class=\"page-link {MoreTextClass}\">{Resources.More}</span></li>");
 
 			if (PagerContext.PageIndex != 1 && Low != 1)
 			{
 				// first page link
-				builder.Append("<li>");
+				builder.Append("<li class=\"page-item\">");
 				var firstRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = 1 });
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						firstRouteDictionary.Add(item.Key, item.Value);
-				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null,
-					firstRouteDictionary, new { title = Resources.First, @class = "glyphicon glyphicon-step-backward" });
+				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, "|«", ActionName, ControllerName, null, null, null,
+					firstRouteDictionary, new { title = Resources.First, @class = "page-link" });
 				builder.Append(GetString(firstLink));
 				builder.Append("</li>");
 				if (PagerContext.PageIndex > 2)
@@ -75,12 +75,12 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					var previousIndex = PagerContext.PageIndex - 1;
 					if (Low != 0)
 						previousIndex = Low - 1;
-					builder.Append("<li>");
+					builder.Append("<li class=\"page-item\">");
 					var previousRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = previousIndex });
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							previousRouteDictionary.Add(item.Key, item.Value);
-					var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, @class = "glyphicon glyphicon-chevron-left", rel = "prev" });
+					var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "«", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, rel = "prev", @class = "page-link" });
 					builder.Append(GetString(previousLink));
 					builder.Append("</li>");
 				}
@@ -102,8 +102,8 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					if (x == PagerContext.PageIndex)
 					{
 						if (String.IsNullOrEmpty(CurrentTextClass))
-							builder.Append(String.Format("<li><span class=\"active\">{0} of {1}</span></li>", x, PagerContext.PageCount));
-						else builder.Append(String.Format("<li class=\"active {0}\"><span>{1} of {2}</span></li>", CurrentTextClass, x, PagerContext.PageCount));
+							builder.Append($"<li class=\"page-item active\"><span class=\"page-link\">{x} of {PagerContext.PageCount}</span></li>");
+						else builder.Append($"<li class=\"page-item {CurrentTextClass}\"><span class=\"page-link\">{x} of {PagerContext.PageCount}</span></li>");
 					}
 					else
 					{
@@ -112,7 +112,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 						if (RouteParameters != null)
 							foreach (var item in RouteParameters)
 								numericRouteDictionary.Add(item.Key, item.Value);
-						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
+						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, new { @class = "page-link" });
 						builder.Append(GetString(link));
 						builder.Append("</li>");
 					}
@@ -138,18 +138,18 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 						{
 							isRangeRendered = true;
 							if (String.IsNullOrEmpty(CurrentTextClass))
-								builder.Append(String.Format("<li class=\"active\"><span>{0}-{1} of {2}</span></li>", Low, High, PagerContext.PageCount));
-							else builder.Append(String.Format("<li class=\"active {0}\"><span>{1}-{2} of {3}</span></li>", CurrentTextClass, Low, High, PagerContext.PageCount));
+								builder.Append($"<li class=\"active\"><span class=\"page-link\">{Low}-{High} of {PagerContext.PageCount}</span></li>");
+							else builder.Append($"<li class=\"active {CurrentTextClass}\"><span class=\"page-link\">{Low}-{High} of {PagerContext.PageCount}</span></li>");
 						}
 					}
 					else
 					{
-						builder.Append("<li>");
+						builder.Append("<li class=\"page-item\">");
 						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
 						if (RouteParameters != null)
 							foreach (var item in RouteParameters)
 								numericRouteDictionary.Add(item.Key, item.Value);
-						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, null);
+						var link = _htmlGenerator.GenerateActionLink(ViewContext, x.ToString(), ActionName, ControllerName, null, null, null, numericRouteDictionary, new { @class = "page-link" });
 						builder.Append(GetString(link));
 						builder.Append("</li>");
 					}
@@ -162,22 +162,22 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				{
 					// next page link
 					var nextIndex = PagerContext.PageIndex + 1;
-					builder.Append("<li>");
+					builder.Append("<li class=\"page-item\">");
 					var nextRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = nextIndex });
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							nextRouteDictionary.Add(item.Key, item.Value);
-					var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, @class = "glyphicon glyphicon-chevron-right", rel = "next" });
+					var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "»", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, rel = "next", @class = "page-link" });
 					builder.Append(GetString(nextLink));
 					builder.Append("</li>");
 				}
 				// last page link
-				builder.Append("<li>");
+				builder.Append("<li class=\"page-item\">");
 				var lastRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = PagerContext.PageCount });
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						lastRouteDictionary.Add(item.Key, item.Value);
-				var lastLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, lastRouteDictionary, new { title = Resources.Last, @class = "glyphicon glyphicon-step-forward", rel = "next" });
+				var lastLink = _htmlGenerator.GenerateActionLink(ViewContext, "»|", ActionName, ControllerName, null, null, null, lastRouteDictionary, new { title = Resources.Last, @class = "page-link" });
 				builder.Append(GetString(lastLink));
 				builder.Append("</li>");
 			}

@@ -12,9 +12,9 @@
 
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "")postItem" data-postid="@Model.Post.PostID" data-userid="@Model.Post.UserID">
-	<div class="postUserData bg-primary">
-		<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Post.Name</h3>
-		<div class="miniProfileBox bg-info text-info"></div>
+	<div class="postUserData bg-primary text-light">
+		<h3 class="postNameLink bg-primary twirl">@Model.Post.Name</h3>
+		<div class="miniProfileBox bg-secondary text-light"></div>
 		<small class="postTime text-right">
 			@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{

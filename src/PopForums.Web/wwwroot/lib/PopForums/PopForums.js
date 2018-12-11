@@ -108,7 +108,6 @@ PopForums.processLoginBase = function (path) {
 };
 
 PopForums.topicListSetup = function (forumID) {
-	PopForums.topicPreviewSetup();
 	PopForums.startTimeUpdater();
 	var b = $("#NewTopicButton");
 	b.click(function () {
@@ -692,8 +691,6 @@ PopForums.populateTopicRow = function (data) {
 	row.find(".indicatorLink").attr("href", data.link);
 	row.find(".titleLink").text(data.title);
 	row.find(".titleLink").attr("href", data.link);
-	row.find(".topicPreview").attr("id", "TopicPreview" + data.topicID);
-	row.find(".topicPreviewButton").attr("data-topicid", data.topicID);
 	row.find(".forumTitle").text(data.forumTitle);
 	row.find(".viewCount").text(data.viewCount);
 	row.find(".replyCount").text(data.replyCount);
