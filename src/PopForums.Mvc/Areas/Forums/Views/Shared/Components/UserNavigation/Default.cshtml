@@ -2,42 +2,42 @@
 
 @if (Model.User == null)
 {
-	<li>@Html.ActionLink(PopForums.Resources.CreateAnAccount, "Create", AccountController.Name, new { Area = "Forums" })</li>
-	<li>@Html.ActionLink(PopForums.Resources.Login, "Login", AccountController.Name, new { Area = "Forums" })</li>
-	<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1, Area = "Forums" }, null)</li>
-	<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name)</li>
+	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
+	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
+	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 }
 else
 {
-	<li class="dropdown">
-		<a class="dropdown-toggle" data-toggle="dropdown" href="#">@Model.User.Name <span class="caret"></span></a>
-		<ul class="dropdown-menu" role="menu">
-			<li>@Html.ActionLink(PopForums.Resources.Profile, "ViewProfile", AccountController.Name, new { id = Model.User.UserID, Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.Subscriptions, "Topics", SubscriptionController.Name, new { page = 1, Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.Favorites, "Topics", FavoritesController.Name, new { page = 1, Area = "Forums" }, null)</li>
-			<li class="divider"></li>
-			<li>@Html.ActionLink(PopForums.Resources.EditProfile, "EditProfile", AccountController.Name, new { Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.ChangeYourEmailPassword, "Security", AccountController.Name, new { Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.ManageYourPhotos, "ManagePhotos", AccountController.Name, new { Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.ExternalLogins, "ExternalLogins", AccountController.Name, new { Area = "Forums" }, null)</li>
+	<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.User.Name</a>
+		<div class="dropdown-menu" role="menu">
+			<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@Model.User.UserID" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.Profile</a>
+			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-page="" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.Subscriptions</a>
+			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-page="" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.Favorites</a>
+			<div class="dropdown-divider"></div>
+			<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.EditProfile</a>
+			<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.ChangeYourEmailPassword</a>
+			<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.ManageYourPhotos</a>
+			<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.ExternalLogins</a>
 			@if (Model.User.IsInRole(PermanentRoles.Admin))
 			{
-				<li class="divider"></li>
-									<li>@Html.ActionLink(PopForums.Resources.PopForumsAdmin, "Index", AdminController.Name)</li>
+				<div class="dropdown-divider"></div>
+				<a asp-controller="@AdminController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.PopForumsAdmin</a>
 			}
-			<li class="divider"></li>
-			<li>@Html.ActionLink(PopForums.Resources.Logout, "Logout", AuthorizationController.Name)</li>
-		</ul>
+			<div class="dropdown-divider"></div>
+			<a asp-controller="@AuthorizationController.Name" asp-action="Logout" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.Logout</a>
+		</div>
 	</li>
-	<li class="dropdown">
-		<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum <span class="caret"></span></a>
-		<ul class="dropdown-menu" role="menu">
-			<li>@Html.ActionLink(PopForums.Resources.Recent, "Recent", ForumController.Name, new { page = 1, Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.ActivityFeed, "Index", FeedController.Name, new { Area = "Forums" }, null)</li>
-			<li>@Html.ActionLink(PopForums.Resources.ForumHome, "Index", HomeController.Name, new { Area = "Forums" }, null)</li>
-		</ul>
+	<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum</a>
+		<div class="dropdown-menu" role="menu">
+			<a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.Recent</a>
+			<a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.ActivityFeed</a>
+			<a asp-controller="@HomeController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link py-1">@PopForums.Resources.ForumHome</a>
+		</div>
 	</li>
-	<li>
-		<a href="@Url.Action("Index", PrivateMessagesController.Name, new { page = 1, Area = "Forums" })" title="@PopForums.Resources.PrivateMessages"><span class="glyphicon glyphicon-envelope"></span> @Html.Raw(Model.PMCount)</a>
+	<li class="nav-item">
+		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-page="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="message-icon"></span> @Html.Raw(Model.PMCount)</a>
 	</li>
 }

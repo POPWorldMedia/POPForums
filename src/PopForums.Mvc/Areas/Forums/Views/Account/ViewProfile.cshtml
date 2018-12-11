@@ -95,7 +95,7 @@
 
 			@if (Model.ImageID.HasValue && Model.IsImageApproved)
 			{
-				<div class="col-xs-12">
+				<div class="col-12">
 					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-responsive" />
 				</div>
 			}

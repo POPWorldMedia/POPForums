@@ -1,22 +1,22 @@
 ﻿@model List<PopForums.ExternalLogin.ExternalUserAssociation>
 @{
-    ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
-    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li>@PopForums.Resources.Account</li>
-		<li class="dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ExternalLogins <span class="caret"></span></a>
-			<ul class="dropdown-menu" role="menu">
-				<li><a asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a></li>
-				<li><a asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a></li>
-				<li><a asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a></li>
-			</ul>
-		</li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+		<div class="breadcrumb-item dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ExternalLogins</a>
+			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+				<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
+				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+				<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+			</div>
+		</div>
 
 	</ul>
 </div>
@@ -31,13 +31,13 @@ else
 		@foreach (var item in Model)
 		{
 			<tr>
-				<td class="col-xs-2">
+				<td class="col-2">
 					<form asp-action="RemoveExternalLogin" asp-route-id="@item.ExternalUserAssociationID" method="post">
 						<input type="submit" value="Remove" class="btn btn-primary" />
 					</form>
 				</td>
-				<td class="col-xs-4">@item.Issuer</td>
-				<td class="col-xs-6">@item.Name</td>
+				<td class="col-4">@item.Issuer</td>
+				<td class="col-6">@item.Name</td>
 			</tr>
 		}
 	</table>

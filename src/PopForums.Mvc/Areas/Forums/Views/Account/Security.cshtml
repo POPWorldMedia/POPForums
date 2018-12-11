@@ -2,31 +2,32 @@
 
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ChangeYourEmailPassword;
-    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.Account - @PopForums.Resources.ChangeYourEmailPassword</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li>@PopForums.Resources.Account</li>
-		<li class="dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.ChangeYourEmailPassword <span class="caret"></span></a>
-			<ul class="dropdown-menu" role="menu">
-				<li><a asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a></li>
-				<li><a asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a></li>
-				<li><a asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a></li>
-			</ul>
-		</li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+		<div class="breadcrumb-item dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ChangeYourEmailPassword</a>
+			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+				<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
+				<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			</div>
+		</div>
 
 	</ul>
 </div>
 
+<h2>@PopForums.Resources.ChangePassword</h2>
+
 <form asp-action="ChangePassword" method="post" role="form">
-	<div class="form-group"><h2>@PopForums.Resources.ChangePassword</h2></div>
 	<div class="form-group">
 		<label for="OldPassword">@PopForums.Resources.PasswordOld</label>
-		<input type="password" name="OldPassword" class="form-control"/>
+		<input type="password" name="OldPassword" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label for="NewPassword">@PopForums.Resources.PasswordNew</label>
@@ -37,12 +38,16 @@
 		<input type="password" name="NewPasswordRetype" class="form-control" />
 	</div>
 	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary" />
-	@if (ViewBag.PasswordResult != null) { <span class="bg-danger callout">@ViewBag.PasswordResult</span> }
+	@if (ViewBag.PasswordResult != null)
+	{<span class="bg-danger callout">@ViewBag.PasswordResult</span>}
 </form>
+
+<p> </p>
+
+<h2>@PopForums.Resources.ChangeEmail</h2>
 
 <form asp-action="ChangeEmail" method="post" role="form">
 	<div class="form-group">
-		<h2>@PopForums.Resources.ChangeEmail</h2>
 		@if (!Model.IsNewUserApproved)
 		{
 			<p>@PopForums.Resources.ChangeEmailConsequence</p>
@@ -61,5 +66,6 @@
 		<input type="text" name="NewEmailRetype" class="form-control" />
 	</div>
 	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary" />
-	@if (ViewBag.EmailResult != null) { <span class="bg-danger callout">@ViewBag.EmailResult</span> }
+	@if (ViewBag.EmailResult != null)
+	{<span class="bg-danger callout">@ViewBag.EmailResult</span>}
 </form>
