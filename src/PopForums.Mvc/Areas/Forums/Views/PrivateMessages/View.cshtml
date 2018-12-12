@@ -16,14 +16,14 @@
 <div>
 	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
 	</ul>
 </div>
 @foreach (var post in Model.Posts)
 {
 	<div class="postItem">
-		<div class="postUserData bg-primary">
+		<div class="postUserData bg-primary text-light">
 			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID">@post.Name</a></h3>
 			<small class="postTime text-right fTime" data-utc="@post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(post.PostTime, profile)</small>
 		</div>

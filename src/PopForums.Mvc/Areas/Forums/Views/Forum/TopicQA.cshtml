@@ -20,15 +20,15 @@
 <div>
 	<h1>@Model.Topic.Title</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="1">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="1">@Model.Forum.Title</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="1">@Model.Forum.Title</a></li>
-		<li>@Model.Topic.Title</li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="1">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item active">@Model.Topic.Title</li>
 	</ul>
 </div>
 
@@ -48,7 +48,7 @@
 <div class="row">
 	<div class="col-sm-12">
 		@{
-			await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post });
+			@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
 		}
 	</div>
 </div>

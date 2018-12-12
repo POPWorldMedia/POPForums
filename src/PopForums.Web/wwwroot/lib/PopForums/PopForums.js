@@ -320,7 +320,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			success: function (result) {
 				countBox.html(result);
 				var voted = parent.find(".voteUp");
-				voted.replaceWith('<li>Voted</li>');
+				voted.replaceWith('<li class="list-inline-item">Voted</li>');
 			}
 		});
 	});

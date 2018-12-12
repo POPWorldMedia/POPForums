@@ -34,17 +34,17 @@
 		<p class="bg-warning callout">@Model.PermissionContext.DenialReason</p>
 	}
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li>@Model.Forum.Title</li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item active">@Model.Forum.Title</li>
 	</ul>
 </div>
 
-<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 @if (user != null)
 {
@@ -80,13 +80,12 @@
 			<a class="indicatorLink" href=""><img src="" /></a>
 		</td>
 		<td>
-			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid=""></span></h2>
-			<div id="" class="topicPreview"></div>
-			<small class="pull-right forumDetails">
+			<h2><a class="titleLink" href=""></a></h2>
+			<small class="float-right forumDetails">
 				@PopForums.Resources.StartedBy: <span class="startedByName"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
 			</small>
 		</td>
 	</tr>
 </table>
 
-<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager"/>
+<pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active"/>

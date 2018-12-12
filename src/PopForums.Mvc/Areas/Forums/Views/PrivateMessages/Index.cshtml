@@ -23,7 +23,7 @@
 
 <p><a asp-action="Create">@PopForums.Resources.SendPM</a></p>
 
-<pf-pagerlinks controllerName="PrivateMessages" actionName="Index" pagerContext="@(PagerContext)ViewBag.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager"/>
+<pf-pagerlinks controllerName="PrivateMessages" actionName="Index" pagerContext="@(PagerContext)ViewBag.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active"/>
 
 <table class="table grid table-hover">
 	@foreach (var pm in Model)

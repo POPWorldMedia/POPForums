@@ -11,7 +11,7 @@
 @section HeaderContent {
 <script type="text/javascript">
 	$(function () {
-		PopForums.topicPreviewSetup();
+		PopForums.startTimeUpdater();
 	});
 </script>
 }
@@ -27,7 +27,7 @@
 	</ul>
 </div>
 
-<pf-pagerLinks controllerName="Account" actionName="Posts" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
+<pf-pagerLinks controllerName="Account" actionName="Posts" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)

@@ -12,7 +12,6 @@
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
 		$(function () {
-			PopForums.topicPreviewSetup();
 			PopForums.startTimeUpdater();
 		});
 	</script>
@@ -21,28 +20,29 @@
 <div>
 	<h1>@PopForums.Resources.Search</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item active">@PopForums.Resources.Search</li>
 	</ul>
 </div>
 
 <div id="SearchForm">
-	<form asp-action="Process" method="post" role="form" class="form-inline" asp-antiforgery="false">
+	<form asp-action="Process" method="post" role="form" class="form-inline mb-4" asp-antiforgery="false">
 		<div class="form-group">
-			<input type="text" name="Query" id="Query" class="form-control" value="@(ViewBag.Query)"/>
+			<input type="text" name="Query" id="Query" class="form-control mr-1" value="@(ViewBag.Query)"/>
 		</div>
 		<div class="form-group">
-			@Html.DropDownList("SearchType", (SelectList)ViewBag.SearchTypes, new { @class = "form-control" })
+			@Html.DropDownList("SearchType", (SelectList)ViewBag.SearchTypes, new { @class = "form-control mr-1 " })
 		</div>
 		<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" />
 	</form>
 </div>
 
-<pf-pagerlinks actionName="Result" controllerName="Search" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" routeParameters="@routeParameters" />
+<pf-pagerlinks actionName="Result" controllerName="Search" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" routeParameters="@routeParameters" />
 
 @if (Model.Topics.Count == 0 && !String.IsNullOrEmpty(ViewBag.Query))
 {

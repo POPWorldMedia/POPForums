@@ -21,16 +21,8 @@
 	margin-top: 30px;
 }
 
-#ForumContainer .topicPreviewButton {
-	cursor: pointer;
-}
-
 #ForumContainer #PostResponseMessage {
 	display: none;
-}
-
-#ForumContainer .topicPreview {
-	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
 }
 
 #ForumContainer #TopicModerationLog {
@@ -274,12 +266,23 @@
 	top: -5px;
 }
 
-
+#ForumContainer .hidden {
+	display: none !important
+}
 
 /* icons */
 .message-icon {
 	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMTIuNzEzbC0xMS45ODUtOS43MTNoMjMuOTcxbC0xMS45ODYgOS43MTN6bS01LjQyNS0xLjgyMmwtNi41NzUtNS4zMjl2MTIuNTAxbDYuNTc1LTcuMTcyem0xMC44NSAwbDYuNTc1IDcuMTcydi0xMi41MDFsLTYuNTc1IDUuMzI5em0tMS41NTcgMS4yNjFsLTMuODY4IDMuMTM1LTMuODY4LTMuMTM1LTguMTEgOC44NDhoMjMuOTU2bC04LjExLTguODQ4eiIvPjwvc3ZnPg==');
+	width: 1.2em; height: 1.2em;
+	margin-top: 5px;
+}
+.check-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptLTEuMjUgMTcuMjkybC00LjUtNC4zNjQgMS44NTctMS44NTggMi42NDMgMi41MDYgNS42NDMtNS43ODQgMS44NTcgMS44NTctNy41IDcuNjQzeiIvPjwvc3ZnPg==');
+	width: 1.2em; height: 1.2em;
+	color: green;
+}
+.question-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
 	width: 1.2em;
 	height: 1.2em;
-	margin-top: 5px;
 }

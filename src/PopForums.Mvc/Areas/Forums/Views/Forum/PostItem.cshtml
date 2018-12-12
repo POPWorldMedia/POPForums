@@ -25,7 +25,7 @@
 	</div>
 	@if (Model.Profile != null && !Model.Profile.HideVanity && (Model.Avatars).ContainsKey(Model.Post.UserID))
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar pull-right" />
+		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right" />
 	}
 
 	@Html.Raw(Model.Post.FullText)
@@ -46,37 +46,37 @@
 			{
 				if (Model.VotedPostIDs.Contains(Model.Post.PostID))
 				{
-					<li>@PopForums.Resources.Voted</li>
+					<li class="list-inline-item">@PopForums.Resources.Voted</li>
 				}
 				else
 				{
-					<li class="voteUp btn-link">Vote up</li>}
+					<li class="voteUp btn-link list-inline-item">Vote up</li>}
 			}
-			<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
+			<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
 			@if (User != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
-				<li><input type="button" class="replyLink btn-link" value="@PopForums.Resources.Reply" /></li>
-				<li><input type="button" class="quoteLink btn-link" value="@PopForums.Resources.Quote" /></li>
+				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply" /></li>
+				<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>
 			}
 			@if (Model.User.IsPostEditable(Model.Post))
 			{
-				<li>@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
+				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
 				if (Model.Post.IsDeleted)
 				{
-					<li>
+					<li class="list-inline-item">
 						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /></form>
 					</li>
 				}
 				else
 				{
-					<li>
+					<li class="list-inline-item">
 						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm"><input type="submit" value="@deleteLink" class="btn-link" /></form>
 					</li>
 				}
 			}
 			@if (Model.Post.IsEdited && Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
-				<li><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
+				<li class="list-inline-item"><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
 			}
 		</ul>
 		<div class="moderationLog"></div>

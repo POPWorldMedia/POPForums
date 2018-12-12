@@ -23,7 +23,7 @@
 	</ul>
 </div>
 
-<pf-pagerlinks controllerName="PrivateMessages" actionName="Archive" pagerContext="@(PagerContext)ViewBag.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerlinks controllerName="PrivateMessages" actionName="Archive" pagerContext="@(PagerContext)ViewBag.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <table class="table grid table-hover">
 	@foreach (var pm in Model)
