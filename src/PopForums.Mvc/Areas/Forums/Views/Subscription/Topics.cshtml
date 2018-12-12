@@ -11,7 +11,6 @@
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
 		$(function () {
-			PopForums.topicPreviewSetup();
 			PopForums.startTimeUpdater();
 		});
 	</script>
@@ -20,13 +19,13 @@
 <div>
 	<h1>@PopForums.Resources.SubscribedTopics</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li>@PopForums.Resources.SubscribedTopics</li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item active">@PopForums.Resources.SubscribedTopics</li>
 	</ul>
 </div>
 
@@ -41,7 +40,7 @@ else
 		<p>@PopForums.Resources.SubscribeNone</p>
 	}
 	
-	<pf-pagerLinks controllerName="Subscription" actionName="Topics" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+	<pf-pagerLinks controllerName="Subscription" actionName="Topics" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 	<table id="TopicList" class="table grid table-hover">
 		@foreach (var topic in Model.Topics)
@@ -55,8 +54,7 @@ else
 					</form>
 				</td>
 				<td>
-					<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-page="">@topic.Title</a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
-					<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
+					<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-page="">@topic.Title</a></h2>
 					<small class="pull-right forumDetails">
 						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 					</small>

@@ -24,37 +24,37 @@
 
 @using (Html.BeginForm("EditUser", "Admin", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
 {
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Security</h2>
 	</div>
 	<div class="form-group">
-		<label class="col-xs-4 control-label">@PopForums.Resources.Name</label>
-		<div class="col-xs-8">
+		<label class="col-4 control-label">@PopForums.Resources.Name</label>
+		<div class="col-8">
 			<p class="form-control-static">@Model.Name</p>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-xs-4 control-label">@PopForums.Resources.Email</label>
-		<div class="col-xs-8">
+		<label class="col-4 control-label">@PopForums.Resources.Email</label>
+		<div class="col-8">
 			<p class="form-control-static"><a href="mailto:@Model.Email">@Model.Email</a></p>
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="NewEmail" class="col-xs-4 control-label">@PopForums.Resources.EmailNewOptional</label>
-		<div class="col-xs-8">
+		<label for="NewEmail" class="col-4 control-label">@PopForums.Resources.EmailNewOptional</label>
+		<div class="col-8">
 			<input type="text" asp-for="NewEmail" class="form-control" autocomplete="off"/>
 			<span asp-validation-for="NewEmail"></span>
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="NewPassword" class="col-xs-4 control-label">@PopForums.Resources.PasswordNewOptional</label>
-		<div class="col-xs-8">
+		<label for="NewPassword" class="col-4 control-label">@PopForums.Resources.PasswordNewOptional</label>
+		<div class="col-8">
 			<input type="password" asp-for="NewPassword" class="form-control" autocomplete="off"/>
 			<span asp-validation-for="NewPassword"></span>
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-4 col-xs-8">
+		<div class="offset-4 col-8">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="IsApproved"/> @PopForums.Resources.IsApproved
@@ -63,11 +63,11 @@
 		</div>
 	</div>
 
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Options</h2>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-2 col-xs-10">
+		<div class="offset-2 col-10">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="IsSubscribed" /> @PopForums.Resources.SubscribeToList
@@ -76,7 +76,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-2 col-xs-10">
+		<div class="offset-2 col-10">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="ShowDetails" /> @PopForums.Resources.ShowProfileDetails
@@ -85,7 +85,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-2 col-xs-10">
+		<div class="offset-2 col-10">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="IsPlainText" /> @PopForums.Resources.ForcePlainTextBox
@@ -94,7 +94,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-2 col-xs-10">
+		<div class="offset-2 col-10">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="HideVanity" /> @PopForums.Resources.HideVanity
@@ -103,13 +103,13 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="TimeZone" class="col-xs-2 control-label">@PopForums.Resources.TimeZone</label>
-		<div class="col-xs-10">
+		<label for="TimeZone" class="col-2 control-label">@PopForums.Resources.TimeZone</label>
+		<div class="col-10">
 			<select asp-for="TimeZone" asp-items="@timeZones" class="form-control"></select>
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-push-2 col-xs-10">
+		<div class="offset-2 col-10">
 			<div class="checkbox">
 				<label>
 					<input type="checkbox" asp-for="IsDaylightSaving" /> @PopForums.Resources.UseDaylight
@@ -118,30 +118,30 @@
 		</div>
 	</div>
 
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Details</h2>
 	</div>
 	<div class="form-group">
-		<label for="Signature" class="col-xs-2 control-label">@PopForums.Resources.Signature</label>
-		<div class="col-xs-10">
+		<label for="Signature" class="col-2 control-label">@PopForums.Resources.Signature</label>
+		<div class="col-10">
 			<textarea asp-for="Signature" class="form-control" rows="3"></textarea>
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Location" class="col-xs-2 control-label">@PopForums.Resources.Location</label>
-		<div class="col-xs-10">
+		<label for="Location" class="col-2 control-label">@PopForums.Resources.Location</label>
+		<div class="col-10">
 			<input type="text" asp-for="Location" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Dob" class="col-xs-2 control-label">@PopForums.Resources.DateOfBirth</label>
-		<div class="col-xs-10">
+		<label for="Dob" class="col-2 control-label">@PopForums.Resources.DateOfBirth</label>
+		<div class="col-10">
 			<input type="text" asp-for="Dob" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Facebook" class="col-xs-2 control-label">Facebook</label>
-		<div class="col-xs-10">
+		<label for="Facebook" class="col-2 control-label">Facebook</label>
+		<div class="col-10">
 			<div class="input-group">
 				<span class="input-group-addon">https://facebook.com/</span>
 				<input type="text" asp-for="Facebook" class="form-control" />
@@ -149,8 +149,8 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Twitter" class="col-xs-2 control-label">Twitter</label>
-		<div class="col-xs-10">
+		<label for="Twitter" class="col-2 control-label">Twitter</label>
+		<div class="col-10">
 			<div class="input-group">
 				<span class="input-group-addon">&#64;</span>
 				<input type="text" asp-for="Twitter" class="form-control" />
@@ -158,29 +158,29 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Web" class="col-xs-2 control-label">@PopForums.Resources.Web</label>
-		<div class="col-xs-10">
+		<label for="Web" class="col-2 control-label">@PopForums.Resources.Web</label>
+		<div class="col-10">
 			<input type="text" asp-for="Web" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="Icq" class="col-xs-2 control-label">ICQ</label>
-		<div class="col-xs-10">
+		<label for="Icq" class="col-2 control-label">ICQ</label>
+		<div class="col-10">
 			<input type="text" asp-for="Icq" class="form-control" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="YahooMessenger" class="col-xs-2 control-label">Yahoo Messenger</label>
-		<div class="col-xs-10">
+		<label for="YahooMessenger" class="col-2 control-label">Yahoo Messenger</label>
+		<div class="col-10">
 			<input type="text" asp-for="YahooMessenger" class="form-control" />
 		</div>
 	</div>
 
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Roles</h2>
 	</div>
 	<div class="form-group">
-		<div class="col-xs-10 col-xs-push-2">
+		<div class="col-10 offset-2">
 			@foreach (var item in roles)
 			{
 				<input type="checkbox" name="Roles" value="@item" @if (Model.Roles.Contains(item)) { <text> checked="checked"</text> } />
@@ -189,12 +189,12 @@
 		</div>
 	</div>
 
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Avatar</h2>
 	</div>
 	<div class="form-group">
-		<label for="avatarFile" class="col-xs-4 control-label">@PopForums.Resources.UploadNew</label>
-		<div class="col-xs-8">
+		<label for="avatarFile" class="col-4 control-label">@PopForums.Resources.UploadNew</label>
+		<div class="col-8">
 			<input type="file" id="AvatarFile" name="AvatarFile" class="form-control" />
 		</div>
 	</div>
@@ -205,12 +205,12 @@
 		</p>
 	}
 
-	<div class="col-xs-12">
+	<div class="col-12">
 		<h2>@PopForums.Resources.Photo</h2>
 	</div>
 	<div class="form-group">
-		<label for="photoFile" class="col-xs-4 control-label">@PopForums.Resources.UploadNew</label>
-		<div class="col-xs-8">
+		<label for="photoFile" class="col-4 control-label">@PopForums.Resources.UploadNew</label>
+		<div class="col-8">
 			<input type="file" id="PhotoFile" name="PhotoFile" class="form-control" />
 		</div>
 	</div>

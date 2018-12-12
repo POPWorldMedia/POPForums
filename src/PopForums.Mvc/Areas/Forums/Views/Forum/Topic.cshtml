@@ -20,15 +20,15 @@
 <div>
 	<h1>@Model.Topic.Title</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
-		<li>@Model.Topic.Title</li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item active">@Model.Topic.Title</li>
 	</ul>
 </div>
 
@@ -45,7 +45,7 @@
 	</div>
 }
 
-<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <div id="PostStream">
 @if (Model.PagerContext.PageIndex > 1)
@@ -65,7 +65,7 @@
 
 <input type="hidden" id="LastPostID" name="LastPostID" value="@Model.Posts.Last().PostID" class="lastPostID" />
 
-<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <div id="StreamBottom"></div>
 

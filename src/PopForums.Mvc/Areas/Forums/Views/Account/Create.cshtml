@@ -9,7 +9,7 @@
 <div>
 	<h1>@PopForums.Resources.CreateAnAccount</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index" >@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index" >@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
@@ -18,93 +18,89 @@
 @if (user == null)
 {
 	<form asp-controller="@AccountController.Name" asp-action="Create" method="post" role="form">
-		<div class="form-horizontal">
-			<div class="form-group" pf-validation-for="Name" pf-validationerror-class="has-error">
-				<label for="Name" class="col-xs-2 control-label">
+		<div>
+			<div class="form-group row" pf-validation-for="Name" pf-validationerror-class="has-error">
+				<label for="Name" class="col-2 col-form-label">
 					@PopForums.Resources.Name<br />
 					@PopForums.Resources.AsYouWouldLikeItToAppear
 				</label>
-				<div class="col-xs-10">
+				<div class="col-10">
 					<input asp-for="Name" class="form-control" />
 					<span asp-validation-for="Name" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group" pf-validation-for="Email" pf-validationerror-class="has-error">
-				<label for="Email" class="col-xs-2 control-label">
+			<div class="form-group row" pf-validation-for="Email" pf-validationerror-class="has-error">
+				<label for="Email" class="col-2 col-form-label">
 					@PopForums.Resources.Email
 				</label>
-				<div class="col-xs-10">
-					<input asp-for="Email" class="form-control"/>
+				<div class="col-10">
+					<input asp-for="Email" class="form-control" type="email" />
 					<span asp-validation-for="Email" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group" pf-validation-for="Password" pf-validationerror-class="has-error">
-				<label for="Password" class="col-xs-2 control-label">
+			<div class="form-group row" pf-validation-for="Password" pf-validationerror-class="has-error">
+				<label for="Password" class="col-2 col-form-label">
 					@PopForums.Resources.Password<br />
 					@PopForums.Resources.AtLeastSixChar
 				</label>
-				<div class="col-xs-10">
+				<div class="col-10">
 					<input type="password" asp-for="Password" class="form-control"/>
 					<span asp-validation-for="Password" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group" pf-validation-for="PasswordRetype" pf-validationerror-class="has-error">
-				<label for="PasswordRetype" class="col-xs-2 control-label">
+			<div class="form-group row" pf-validation-for="PasswordRetype" pf-validationerror-class="has-error">
+				<label for="PasswordRetype" class="col-2 col-form-label">
 					@PopForums.Resources.RetypePassword
 				</label>
-				<div class="col-xs-10">
+				<div class="col-10">
 					<input type="password" asp-for="PasswordRetype" class="form-control"/>
 					<span asp-validation-for="PasswordRetype" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="TimeZone" class="col-xs-2 control-label">
+			<div class="form-group row">
+				<label for="TimeZone" class="col-2 col-form-label">
 					@PopForums.Resources.TimeZone
 				</label>
-				<div class="col-xs-10">
+				<div class="col-10">
 					<select asp-items="@(new SelectList(DataCollections.TimeZones(), "Key", "Value", ViewData[AccountController.ServerTimeZoneKey]))" class="form-control" asp-for="TimeZone"></select>
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label><input type="checkbox" asp-for="IsDaylightSaving"/> @PopForums.Resources.UseDaylight</label>
-					</div>
+			<div class="form-check">
+				<div class="offset-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" asp-for="IsDaylightSaving" />
+					<label class="form-check-label">@PopForums.Resources.UseDaylight</label>
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label><input type="checkbox" asp-for="IsSubscribed"/> @PopForums.Resources.SubscribeToList</label>
-					</div>
+			<div class="form-check">
+				<div class="offset-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" asp-for="IsSubscribed"/>
+					<label class="form-check-label">@PopForums.Resources.SubscribeToList</label>
 				</div>
 			</div>
-			<div class="form-group" pf-validation-for="IsCoppa" pf-validationerror-class="has-error">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label><input type="checkbox" asp-for="IsCoppa"/> @String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label>
-						<span asp-validation-for="IsCoppa" class="text-danger"></span>
-					</div>
+			<div class="form-check" pf-validation-for="IsCoppa" pf-validationerror-class="has-error">
+				<div class="offset-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" asp-for="IsCoppa" />
+					<label class="form-check-label">@String.Format(PopForums.Resources.MyBirthdayIsOnOrBefore, ViewData[AccountController.CoppaDateKey])</label>
+					<span asp-validation-for="IsCoppa" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="col-xs-2 control-label">
+			<div class="form-group row">
+				<label class="col-2 col-form-label">
 					@PopForums.Resources.TermsOfService
 				</label>
-				<div class="col-xs-10">
+				<div class="col-10">
 					<textarea class="form-control" disabled="disabled" rows="6" id="TOS">@ViewData[AccountController.TosKey]</textarea>
 				</div>
 			</div>
-			<div class="form-group" pf-validation-for="IsTos" pf-validationerror-class="has-error">
-				<div class="col-sm-offset-2 col-sm-10">
-					<div class="checkbox">
-						<label><input type="checkbox" asp-for="IsTos"/> @PopForums.Resources.HaveReadTOS</label>
-						<span asp-validation-for="IsTos" class="text-danger"></span>
-					</div>
+			<div class="form-check" pf-validation-for="IsTos" pf-validationerror-class="has-error">
+				<div class="offset-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" asp-for="IsTos" />
+					<label class="form-check-label">@PopForums.Resources.HaveReadTOS</label>
+					<span asp-validation-for="IsTos" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
+			<div class="form-group row">
+				<div class="offset-2 col-sm-10">
 					<input type="submit" value="@PopForums.Resources.CreateAccountButton" class="btn btn-primary" />
 				</div>
 			</div>

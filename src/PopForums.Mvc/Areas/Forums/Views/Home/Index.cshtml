@@ -34,7 +34,7 @@
 				<td>
 					<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 					<p>@forum.Description</p>
-					<small class="pull-right forumDetails">
+					<small class="float-right text-secondary forumDetails">
 						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 					</small>
 				</td>
@@ -42,7 +42,7 @@
 		}
 		@foreach (var category in Model.CategoryDictionary)
 		{
-			<tr class="bg-primary">
+			<tr class="bg-primary text-light">
 				<td colspan="2">@category.Key.Title</td>
 			</tr>
 			foreach (var forum in category.Value)
@@ -52,7 +52,7 @@
 					<td>
 						<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 						<p>@forum.Description</p>
-						<small class="pull-right forumDetails">
+						<small class="float-right text-secondary forumDetails">
 							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 						</small>
 					</td>

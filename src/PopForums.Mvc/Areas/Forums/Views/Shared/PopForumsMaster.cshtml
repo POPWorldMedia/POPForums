@@ -10,37 +10,30 @@
 }
 
 <div id="ForumContainer" class="container-fluid">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#AccountBox" aria-controls="AccountBox" aria-expanded="false">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div id="AccountBox" class="collapse navbar-collapse">
+			<ul class="navbar-nav ml-auto">
+				@await Component.InvokeAsync("UserNavigation")
+			</ul>
+			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "form-inline" }, { "role", "search" } }))
+			{
+				<div class="form-group">
+					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
+				</div>
+			}
+		</div>
+	</nav>
 	<div class="row">
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#AccountBox">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-			</div>
-			<div id="AccountBox" class="collapse navbar-collapse">
-				@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "navbar-form navbar-right" }, { "role", "search" } }))
-				{
-					<div class="form-group">
-						<input type="search" class="form-control" placeholder="Search" id="query" name="query">
-					</div>
-				}
-				<ul class="nav navbar-nav navbar-right">
-					@await Component.InvokeAsync("UserNavigation")
-				</ul>
-			</div>
-		</nav>
-		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				@RenderBody()
-			</div>
-		</div>
-		<div class="row">
-			<div id="ForumFooter" class="col-xs-12">
-				<small><a href="http://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
-			</div>
+		<div class="col-12">
+			@RenderBody()
 		</div>
 	</div>
+	<div class="row">
+		<div id="ForumFooter" class="col-12">
+			<small><a href="http://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
+		</div>
+	</div>
+</div>

@@ -11,7 +11,6 @@
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
 		$(function () {
-			PopForums.topicPreviewSetup();
 			PopForums.startTimeUpdater();
 		@if (Model.PagerContext.PageIndex == 1)
 		{
@@ -20,6 +19,8 @@
 		});
 	</script>
 }
+
+<h1>@PopForums.Resources.Recent</h1>
 
 <div>
 	<ul id="TopBreadcrumb" class="breadcrumb">
@@ -31,7 +32,7 @@
 	</ul>
 </div>
 
-<pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" />
+<pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)
@@ -48,9 +49,8 @@
 				}
 			</td>
 			<td>
-				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null) <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid="@topic.TopicID"></span></h2>
-				<div id="TopicPreview@(topic.TopicID)" class="topicPreview"></div>
-				<small class="pull-right forumDetails">
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null)</h2>
+				<small class="float-right forumDetails">
 					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 				</small>
 			</td>
@@ -61,9 +61,8 @@
 			<a class="indicatorLink" href=""><img src="" /></a>
 		</td>
 		<td>
-			<h2><a class="titleLink" href=""></a> <span class="topicPreviewButton glyphicon glyphicon-chevron-right twirl" title="@PopForums.Resources.PreviewTopic" data-topicid=""></span></h2>
-			<div id="" class="topicPreview"></div>
-			<small class="pull-right forumDetails">
+			<h2><a class="titleLink" href=""></a></h2>
+			<small class="float-right forumDetails">
 				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
 			</small>
 		</td>

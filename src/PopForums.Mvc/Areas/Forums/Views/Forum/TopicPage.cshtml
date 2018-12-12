@@ -11,7 +11,7 @@
 {
 	@await Html.PartialAsync("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
 }
-<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagerLinks" moreTextClass="morePager" currentTextClass="currentPager" low="@ViewBag.Low" high="@ViewBag.High" routeParameters="@routeParameters" />
+<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="page-item currentPager active" low="@ViewBag.Low" high="@ViewBag.High" routeParameters="@routeParameters" />
 @Html.Hidden("LastPostID", Model.Posts.Last().PostID, new { @class = "lastPostID" })
 @Html.Hidden("PageCount", Model.PagerContext.PageCount, new { @class = "pageCount" })
 </div>

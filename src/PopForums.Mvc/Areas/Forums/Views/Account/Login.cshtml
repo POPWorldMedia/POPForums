@@ -20,11 +20,11 @@
 <div>
 	<h1>@PopForums.Resources.Login</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
-<div id="LoginResult" class="bg-danger callout @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> hide</text>}">@Context.Request.Query["error"]</div>
+<div id="LoginResult" class="bg-danger callout @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>
 
 @if (user == null)
 {

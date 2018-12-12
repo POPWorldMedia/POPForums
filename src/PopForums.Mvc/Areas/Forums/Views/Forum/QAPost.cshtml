@@ -18,7 +18,7 @@
 }
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
-	<div class="answerData pull-left">
+	<div class="answerData float-left">
 		<h3><span class="label label-default voteCount">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
 		@if (user != null && user.UserID != Model.Post.UserID)
 		{
@@ -39,14 +39,14 @@
 		{
 			if (Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID)
 			{
-				<p class="answerCheck glyphicon text-success glyphicon-ok"></p>
+				<p class="check-icon"></p>
 			}
 		}
 	</div>
 	<div class="answerBody">
-		<div class="postUserData bg-primary" data-userid="@Model.Post.UserID">
-			<h3 class="postNameLink bg-primary"><span class="twirl glyphicon glyphicon-chevron-right"></span> @Model.Post.Name</h3>
-			<div class="miniProfileBox bg-info text-info"></div>
+		<div class="postUserData bg-primary text-light" data-userid="@Model.Post.UserID">
+			<h3 class="postNameLink bg-primary">@Model.Post.Name</h3>
+			<div class="miniProfileBox bg-secondary text-light"></div>
 			<small class="postTime text-right">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				{

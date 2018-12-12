@@ -42,8 +42,4 @@
 	  <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Forums\" />
-  </ItemGroup>
-
 </Project>

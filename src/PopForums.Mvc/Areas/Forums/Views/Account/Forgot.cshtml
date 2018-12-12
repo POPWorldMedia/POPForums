@@ -6,7 +6,7 @@
 <div>
 	<h1>@PopForums.Resources.ForgotPassword</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li><a class="breadcrumb-item" asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
@@ -17,5 +17,5 @@
 		<input name="Email" class="form-control"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
-	@if (ViewBag.Result != null) { <span class="bg-danger callout">@ViewBag.Result</span> }
+	@if (ViewBag.Result != null) { <p class="bg-danger callout">@ViewBag.Result</p> }
 </form>

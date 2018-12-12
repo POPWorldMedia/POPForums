@@ -13,20 +13,20 @@
 	</script>
 }
 
-<div class="row">
+<div>
 	<h1>@PopForums.Resources.Login - @PopForums.Resources.ExternalLogins</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
 </div>
 
 <div class="row">
-	<div class="col-xs-6">
+	<div class="col-6">
 		<h2><a asp-controller="Account" asp-action="Create">@PopForums.Resources.CreateAnAccount</a></h2>
 	</div>
-	<div class="col-xs-6">
+	<div class="col-6">
 		<h2>@PopForums.Resources.UseExistingForumAccount</h2>
-		<div id="LoginResult" class="bg-danger callout hide"></div>
+		<div id="LoginResult" class="bg-danger d-none callout"></div>
 		<div role="form">
 			<div class="form-group">
 				<label for="EmailLogin">@PopForums.Resources.Email</label>
