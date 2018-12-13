@@ -62,7 +62,7 @@ PopForums.checkScroll = function () {
 		PopForums.crumbTop = tCrumb.offset().top + PopForums.navOffset;
 	}
 	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-	if ((scrollTop > PopForums.crumbTop) && fCrumb.css("display") == "none") {
+	if ((scrollTop > PopForums.crumbTop) && fCrumb.css("display") === "none") {
 		var width = $("#ForumContainer #TopBreadcrumb").outerWidth();
 		fCrumb.css("width", width + "px");
 		fCrumb.css("top", PopForums.navOffset);
