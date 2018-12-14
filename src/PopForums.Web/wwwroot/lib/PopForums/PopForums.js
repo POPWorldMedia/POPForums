@@ -308,6 +308,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			$(this).mouseleave(function () {
 				$(this).hide();
 			});
+			$(this).css("display", "block");
 		}).css("display", "block");
 	});
 	$(document).on("click", ".voteUp", function () {

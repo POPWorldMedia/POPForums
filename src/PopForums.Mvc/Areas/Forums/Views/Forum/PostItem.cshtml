@@ -40,7 +40,7 @@
 		<div class="signature">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
 	<div class="postToolContainer">
-		<div class="voteCount label label-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>
+		<div class="voteCount badge badge-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>
 		<ul class="postTools list-inline">
 			@if (Model.User != null && Model.User.UserID != Model.Post.UserID)
 			{
