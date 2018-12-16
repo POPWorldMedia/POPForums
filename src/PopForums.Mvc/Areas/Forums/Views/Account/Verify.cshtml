@@ -12,7 +12,7 @@
 
 @if (ViewData["EmailProblem"] != null || ViewData["Result"] != null)
 {
-	<div class="bg-danger callout">@ViewData["EmailProblem"] @ViewData["Result"]</div>
+	<div class="alert alert-danger">@ViewData["EmailProblem"] @ViewData["Result"]</div>
 }
 
 <div class="row">

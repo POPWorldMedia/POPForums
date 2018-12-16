@@ -13,8 +13,8 @@
 	width: 40px;
 }
 
-#ForumContainer .callout {
-	padding: 8px; border-radius: 4px;
+#ForumContainer .alert {
+	border-radius: 4px;
 }
 
 #ForumContainer #ForumFooter {

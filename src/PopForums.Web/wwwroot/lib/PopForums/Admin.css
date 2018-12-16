@@ -14,8 +14,8 @@
 	margin: 20px;
 }
 
-.callout {
-	padding: 8px; border-radius: 4px;
+.alert {
+	border-radius: 4px;
 }
 
 .pagination .glyphicon {

@@ -31,7 +31,7 @@
 	}
 	else
 	{
-		<p class="bg-warning callout">@Model.PermissionContext.DenialReason</p>
+		<p class="alert alert-warning">@Model.PermissionContext.DenialReason</p>
 	}
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>

@@ -29,6 +29,6 @@
 		<textarea name="text" class="form-control" rows="6"></textarea>
 	</div>
 	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
-	@if (ViewBag.EmailResult != null){ <span class="bg-danger callout">@ViewBag.EmailResult</span> }
+	@if (ViewBag.EmailResult != null){ <span class="alert alert-danger">@ViewBag.EmailResult</span> }
 	@Html.AntiForgeryToken()
 </form>

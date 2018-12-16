@@ -39,7 +39,7 @@
 	</div>
 	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary" />
 	@if (ViewBag.PasswordResult != null)
-	{<span class="bg-danger callout">@ViewBag.PasswordResult</span>}
+	{<span class="alert alert-danger">@ViewBag.PasswordResult</span>}
 </form>
 
 <p> </p>
@@ -67,5 +67,5 @@
 	</div>
 	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary" />
 	@if (ViewBag.EmailResult != null)
-	{<span class="bg-danger callout">@ViewBag.EmailResult</span>}
+	{<span class="alert alert-danger">@ViewBag.EmailResult</span>}
 </form>

@@ -24,7 +24,7 @@
 	</ul>
 </div>
 
-<div id="LoginResult" class="bg-danger callout @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>
+<div id="LoginResult" class="alert alert-danger @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>
 
 @if (user == null)
 {

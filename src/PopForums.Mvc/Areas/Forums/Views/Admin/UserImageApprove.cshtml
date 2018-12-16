@@ -8,7 +8,7 @@
 
 @if ((bool)ViewBag.IsNewUserImageApproved)
 {
-	<p class="bg-danger callout">@PopForums.Resources.UserImageApprovalNotReq</p>
+	<p class="alert alert-danger">@PopForums.Resources.UserImageApprovalNotReq</p>
 }
 
 @foreach (var item in Model)

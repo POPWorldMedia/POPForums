@@ -18,7 +18,7 @@
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn btn-primary" />
 	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
-	<p id="PostResponseMessage" class="bg-danger callout"></p>
+	<p id="PostResponseMessage" class="alert alert-danger"></p>
 </div>
 
 <div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">

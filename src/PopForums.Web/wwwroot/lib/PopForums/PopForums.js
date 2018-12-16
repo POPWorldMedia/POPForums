@@ -96,7 +96,7 @@ PopForums.processLoginBase = function (path) {
 					break;
 				default:
 					loginResult.html(result.message);
-					loginResult.removeClass("hide");
+					loginResult.removeClass("d-none");
 			}
 		},
 		error: function () {

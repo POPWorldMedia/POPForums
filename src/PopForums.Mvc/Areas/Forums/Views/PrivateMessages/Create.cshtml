@@ -16,7 +16,7 @@
 						.done(function (data) {
 						toList.empty();
 						$.each(data, function(i, item) {
-							toList.append('<li><a href="#" data-userID="' + item.userID + '" class="callout toItem">' + item.value + '</a></li>');
+							toList.append('<li><a href="#" data-userID="' + item.userID + '" class="alert toItem">' + item.value + '</a></li>');
 						});
 					});
 				} else {
@@ -65,7 +65,7 @@
 </div>
 
 @if (ViewBag.Warning != null)
-{ <p class="bg-danger callout">@ViewBag.Warning</p> }
+{ <p class="alert alert-danger">@ViewBag.Warning</p> }
 
 <div class="modal fade" id="ToModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-sm">
