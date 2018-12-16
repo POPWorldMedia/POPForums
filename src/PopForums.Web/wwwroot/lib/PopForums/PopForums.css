@@ -38,6 +38,10 @@
 	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
 }
 
+#ForumContainer #ModeratorPanel {
+	margin-top: 20px; padding: 10px;
+}
+
 #ForumContainer #FixedBreadcrumb li {
 	float: left;
 }
