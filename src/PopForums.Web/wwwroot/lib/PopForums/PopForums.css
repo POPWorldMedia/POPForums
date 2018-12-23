@@ -83,8 +83,30 @@
 }
 
 #ForumContainer .answerData {
-	min-width: 70px;
 	text-align: center;
+}
+
+#ForumContainer .answerData .answerStatus {
+	margin: 1em auto;
+	font-size: 150%;
+}
+
+#ForumContainer .answerData .badge {
+	font-size: 150%;
+}
+
+#ForumContainer .qaComment {
+	margin-left: 20px;
+	padding: 10px;
+}
+
+#ForumContainer .answerButton, #ForumContainer .answerCheck {
+	font-size: 150%;
+	text-align: center;
+}
+
+#ForumContainer .answerButton {
+	cursor: pointer;
 }
 
 #ForumContainer .answerVote {
@@ -214,25 +236,6 @@
 	max-height: 350px;
 }
 
-#ForumContainer .qaComment {
-	margin-left: 20px;padding: 10px;
-}
-
-#ForumContainer .answerButton, #ForumContainer .answerCheck {
-	margin: 20px;font-size: 200%;
-}
-#ForumContainer .answerButton {
-	cursor: pointer;
-}
-#ForumContainer .answerData {
-	min-width: 70px;
-}
-#ForumContainer .answerBody {
-	margin-left: 100px;
-}
-#ForumContainer .answerData span {
-	display: block;text-align: center;
-}
 #ForumContainer .voteCount .voters {
 	display: none;
 }
@@ -280,6 +283,7 @@
 
 .btn-link {
 	border: none;
+	cursor: pointer;
 }
 
 /* icons */
@@ -291,10 +295,12 @@
 .check-icon {
 	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptLTEuMjUgMTcuMjkybC00LjUtNC4zNjQgMS44NTctMS44NTggMi42NDMgMi41MDYgNS42NDMtNS43ODQgMS44NTcgMS44NTctNy41IDcuNjQzeiIvPjwvc3ZnPg==');
 	width: 1.2em; height: 1.2em;
-	color: green;
 }
 .question-icon {
 	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
-	width: 1.2em;
-	height: 1.2em;
+	width: 1.2em; height: 1.2em;
+}
+.star-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem0tMS44MzQgOS42ODZsLTQuMTY2LjU3NSAzLjAzMiAyLjkxNC0uNzQgNC4xMzkgMy43MDgtMS45ODIgMy43MDggMS45ODMtLjc0LTQuMTM5IDMuMDMyLTIuOTE1LTQuMTY2LS41NzUtMS44MzQtMy43ODQtMS44MzQgMy43ODR6Ii8+PC9zdmc+');
+	width: 1.2em; height: 1.2em;
 }

@@ -388,9 +388,9 @@ PopForums.qaTopicSetup = function (topicID) {
 		PopForums.loadMiniProfile(userID, box, chev);
 	});
 	$(document).on("click", ".voteUp", function () {
-		var parent = $(this).parents(".postContainer");
+		var parent = $(this).parents(".postItem");
 		var postID = parent.attr("data-postid");
-		var countBox = $(this).parents(".answerData").find(".voteCount");
+		var countBox = $(this).parents(".answerData").find(".badge");
 		$.ajax({
 			url: PopForums.areaPath + "/Forum/VotePost/" + postID,
 			type: "POST",
@@ -404,7 +404,7 @@ PopForums.qaTopicSetup = function (topicID) {
 	});
 	$(document).on("click", ".answerButton", function () {
 		var button = $(this);
-		var parent = button.parents(".postContainer");
+		var parent = button.parents(".postItem");
 		var postID = parent.attr("data-postid");
 		var topicID = parent.attr("data-topicid");
 		$.ajax({
@@ -412,8 +412,8 @@ PopForums.qaTopicSetup = function (topicID) {
 			type: "POST",
 			data: {postID: postID, topicID: topicID},
 			success: function () {
-				$(".answerButton").removeClass("text-success glyphicon-ok").addClass("text-muted glyphicon-asterisk");
-				button.addClass("text-success glyphicon-ok");
+				$(".answerStatus").removeClass("check-icon").addClass("star-icon");
+				button.removeClass("star-icon").addClass("check-icon");
 			}
 		});
 	});
@@ -421,7 +421,7 @@ PopForums.qaTopicSetup = function (topicID) {
 	PopForums.SetupFavoriteButton(topicID);
 	$("#TopicModLogButton").click(function () {
 		var l = $("#TopicModerationLog");
-		if (l.is(":hidden"))
+		if (l.is(":none"))
 			l.load(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID, function () {
 				l.slideDown();
 			});

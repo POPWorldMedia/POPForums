@@ -17,33 +17,33 @@
 	{ deleteLink = PopForums.Resources.Delete; }
 }
 <a name="@Model.Post.PostID"></a>
-<div class="@(Model.Post.IsDeleted ? "bg-danger " : "") row postContainer" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
-	<div class="answerData float-left">
-		<h3><span class="label label-default voteCount">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</span></h3>
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
+	<div class="answerData col-1">
+		<p class="badge badge-primary">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</p>
 		@if (user != null && user.UserID != Model.Post.UserID)
 		{
 			if (Model.VotedPostIDs.Contains(Model.Post.PostID))
 			{
-				<span class="answerVote">@PopForums.Resources.Voted</span>
+				<p class="answerVote">@PopForums.Resources.Voted</p>
 			}
 			else
 			{
-				<span class="voteUp answerVote btn-link">Vote up</span>
+				<p class="voteUp answerVote btn-link">Vote up</p>
 			}
 		}
 		@if (user != null && user.UserID == Model.Topic.StartedByUserID && !Model.Post.IsFirstInTopic)
 		{
-			<p class="answerButton glyphicon @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>text-success glyphicon-ok</text>}else{<text>text-muted glyphicon-asterisk</text>}" title="@PopForums.Resources.ChooseAnswer"></p>
+			<p class="answerButton answerStatus @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>check-icon</text>}else{<text>star-icon</text>}" title="@PopForums.Resources.ChooseAnswer"> </p>
 		}
 		else
 		{
 			if (Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID)
 			{
-				<p class="check-icon"></p>
+				<p class="check-icon answerStatus"></p>
 			}
 		}
 	</div>
-	<div class="answerBody">
+	<div class="answerBody col-11">
 		<div class="postUserData bg-primary text-light" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink bg-primary">@Model.Post.Name</h3>
 			<div class="miniProfileBox bg-secondary text-light"></div>
@@ -55,9 +55,9 @@
 				<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, profile)</span>
 			</small>
 		</div>
-		@if (!hideVanity && (Model.Avatars).ContainsKey(Model.Post.UserID))
+		@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
 		{
-			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar pull-right" />
+			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right" />
 		}
 
 		<div class="@if (Model.PostWithChildren.LastReadTime.HasValue && Model.PostWithChildren.Post.PostTime > Model.PostWithChildren.LastReadTime)
@@ -74,30 +74,30 @@
 		}
 		<div class="postToolContainer">
 			<ul class="postTools list-inline">
-				<li>@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
+				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
 				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
-					<li><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></li>
+					<li class="list-inline-item"><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></li>
 				}
 				@if (user.IsPostEditable(Model.Post))
 				{
-					<li>@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
+					<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
 					if (Model.Post.IsDeleted)
 					{
-						<li>
+						<li class="list-inline-item">
 							<form asp-controller="Moderator" asp-action="UndeletePost" asp-route-id="@Model.Post.PostID" method="post" class="deletePostForm"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /></form>
 						</li>
 					}
 					else
 					{
-						<li>
+						<li class="list-inline-item">
 							<form asp-controller="Forum" asp-action="DeletePost" asp-route-id="@Model.Post.PostID" method="post" class="deletePostForm"><input type="submit" value="@deleteLink" class="btn-link" /></form>
 						</li>
 					}
 				}
 				@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
 				{
-					<li><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
+					<li class="list-inline-item"><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
 				}
 			</ul>
 			<div class="moderationLog"></div>
@@ -109,10 +109,10 @@
 				<a name="@comment.PostID"></a>
 				<div class="@if(comment.IsDeleted){<text>bg-danger</text>}else{<text>well</text>} qaComment @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
 	{<text>newPostBlock</text>}">
-					<p class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
+					<small class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
 						@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 						{<text> - IP: </text>@comment.IP}
-					</p>
+					</small>
 					@Html.Raw(comment.FullText)
 					@if (user.IsPostEditable(comment))
 					{
@@ -128,6 +128,7 @@
 						}
 					}
 				</div>
+				<hr />
 			}
 			if (user != null && Model.PostWithChildren.Children.Count > 0 && !Model.Topic.IsClosed)
 			{

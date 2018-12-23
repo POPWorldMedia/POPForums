@@ -4,19 +4,21 @@
 @{
 	var profile = UserRetrievalShim.GetProfile(Context);
 }
-<table class="table">
-	@foreach (var entry in Model)
-	{
-		<tr>
-			<td>@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
-			<td><a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@entry.UserID" target="_blank">@entry.UserName</a></td>
-			<td>@entry.ModerationType</td>
-		</tr>
-		<tr>
-			<td colspan="3" style="border-bottom: solid 1px black;">
-				<p>@PopForums.Resources.Comment: @entry.Comment</p>
-				@Html.Raw(entry.OldText)
-			</td>
-		</tr>
-	}
-</table>
+<div class="alert alert-secondary">
+	<table class="table">
+		@foreach (var entry in Model)
+		{
+			<tr>
+				<td>@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
+				<td><a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@entry.UserID" target="_blank">@entry.UserName</a></td>
+				<td>@entry.ModerationType</td>
+			</tr>
+			<tr>
+				<td colspan="3" style="border-bottom: solid 1px black;">
+					<p>@PopForums.Resources.Comment: @entry.Comment</p>
+					@Html.Raw(entry.OldText)
+				</td>
+			</tr>
+		}
+	</table>
+</div>

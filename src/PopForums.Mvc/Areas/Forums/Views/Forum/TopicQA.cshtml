@@ -45,13 +45,9 @@
 	</div>
 }
 
-<div class="row">
-	<div class="col-sm-12">
-		@{
-			@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
-		}
-	</div>
-</div>
+@{
+	@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
+}
 
 @if (Model.PermissionContext.UserCanPost)
 {
