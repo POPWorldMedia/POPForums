@@ -37,7 +37,7 @@
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)
 	{
-		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>  } data-topicid="@topic.TopicID">
+		<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>  } data-topicid="@topic.TopicID">
 			<td class="newIndicator">
 				@if (user == null)
 				{

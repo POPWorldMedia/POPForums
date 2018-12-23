@@ -45,7 +45,7 @@ else
 	<table id="TopicList" class="table grid table-hover">
 		@foreach (var topic in Model.Topics)
 		{
-			<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text>    }>
+			<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>    }>
 				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
 				<td class="topicListButton">
 					<form asp-action="RemoveFavorite" asp-controller="Favorites" asp-antiforgery="false">
