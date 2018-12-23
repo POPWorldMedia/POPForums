@@ -84,6 +84,7 @@
 
 #ForumContainer .answerData {
 	text-align: center;
+	min-width: 4em;
 }
 
 #ForumContainer .answerData .answerStatus {

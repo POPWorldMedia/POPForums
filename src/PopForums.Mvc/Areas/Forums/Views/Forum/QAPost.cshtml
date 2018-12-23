@@ -17,7 +17,7 @@
 	{ deleteLink = PopForums.Resources.Delete; }
 }
 <a name="@Model.Post.PostID"></a>
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
 	<div class="answerData col-1">
 		<p class="badge badge-primary">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</p>
 		@if (user != null && user.UserID != Model.Post.UserID)
@@ -43,7 +43,7 @@
 			}
 		}
 	</div>
-	<div class="answerBody col-11">
+	<div class="col-11">
 		<div class="postUserData bg-primary text-light" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink bg-primary">@Model.Post.Name</h3>
 			<div class="miniProfileBox bg-secondary text-light"></div>
@@ -107,7 +107,7 @@
 			foreach (var comment in Model.PostWithChildren.Children)
 			{
 				<a name="@comment.PostID"></a>
-				<div class="@if(comment.IsDeleted){<text>bg-danger</text>}else{<text>well</text>} qaComment @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
+				<div class="@if(comment.IsDeleted){<text>bg-warning</text>}else{<text>well</text>} qaComment @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
 	{<text>newPostBlock</text>}">
 					<small class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
 						@if (user != null && user.IsInRole(PermanentRoles.Moderator))
