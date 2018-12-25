@@ -27,7 +27,7 @@
 			$(document).on("click", ".toItem", function () {
 				var item = $(this);
 				var userID = item.attr("data-userID");
-				var label = '<div data-userID="' + userID + '" class="label label-primary toLabel">' + item[0].innerHTML + ' <span class="glyphicon glyphicon-remove toLabelX"></span></div>';
+				var label = '<div data-userID="' + userID + '" class="badge badge-primary toLabel">' + item[0].innerHTML + ' <span class="x-icon toLabelX"></span></div>';
 				$("#PMToBox").append(label);
 				toList.empty();
 				toText.val("");
@@ -71,8 +71,8 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
 				<h4 class="modal-title">@PopForums.Resources.To</h4>
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
 			</div>
 			<div class="modal-body">
 				<input id="ToText" type="text" class="form-control" placeholder="@PopForums.Resources.Search" />
@@ -95,7 +95,7 @@
 			<div id="PMToBox" class="form-control">
 				@if (ViewBag.TargetUserID != null)
 				{
-					<div data-userid="@ViewBag.TargetUserID" class="label label-primary toLabel">@ViewBag.TargetUserName <span class="glyphicon glyphicon-remove toLabelX"></span></div>
+					<div data-userid="@ViewBag.TargetUserID" class="badge badge-primary toLabel">@ViewBag.TargetUserName <span class="x-icon toLabelX"></span></div>
 				}
 			</div>
 		</div>
