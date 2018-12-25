@@ -182,23 +182,7 @@ namespace PopForums.Test.Services
 			var user = new User(456, DateTime.MinValue);
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(new Profile {IsPlainText = true});
 			_textParsingService.Setup(p => p.HtmlToForumCode("not")).Returns("new text");
-			var postEdit = service.GetPostForEdit(post, user, false);
-			Assert.Equal("mah title", postEdit.Title);
-			Assert.Equal("new text", postEdit.FullText);
-			Assert.True(postEdit.ShowSig);
-			Assert.True(postEdit.IsPlainText);
-			_textParsingService.Verify(t => t.HtmlToForumCode("not"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void GetPostForEditPlainTextMobile()
-		{
-			var service = GetService();
-			var post = new Post(123) { Title = "mah title", FullText = "not", ShowSig = true };
-			var user = new User(456, DateTime.MinValue);
-			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(new Profile { IsPlainText = false });
-			_textParsingService.Setup(p => p.HtmlToForumCode("not")).Returns("new text");
-			var postEdit = service.GetPostForEdit(post, user, true);
+			var postEdit = service.GetPostForEdit(post, user);
 			Assert.Equal("mah title", postEdit.Title);
 			Assert.Equal("new text", postEdit.FullText);
 			Assert.True(postEdit.ShowSig);
@@ -214,7 +198,7 @@ namespace PopForums.Test.Services
 			var user = new User(456, DateTime.MinValue);
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(new Profile { IsPlainText = false });
 			_textParsingService.Setup(p => p.HtmlToClientHtml("not")).Returns("new text");
-			var postEdit = service.GetPostForEdit(post, user, false);
+			var postEdit = service.GetPostForEdit(post, user);
 			Assert.Equal("mah title", postEdit.Title);
 			Assert.Equal("new text", postEdit.FullText);
 			Assert.True(postEdit.ShowSig);
