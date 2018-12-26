@@ -22,7 +22,6 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		{
 			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
-			services.AddTransient<IMobileDetectionWrapper, MobileDetectionWrapper>();
 			services.AddTransient<IBroker, Broker>();
 			// this is required for error logging:
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
