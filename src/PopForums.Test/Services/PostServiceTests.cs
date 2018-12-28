@@ -283,7 +283,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteCallDeleteTopicIfFirstInTopic()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
@@ -297,7 +297,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteCallLogs()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
@@ -311,7 +311,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteSetsEditFields()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
@@ -329,7 +329,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteCallSetsIsDeletedAndUpdates()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
@@ -346,7 +346,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteCallFiresRecalcs()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
@@ -372,7 +372,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteCallLogs()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator }};
@@ -386,7 +386,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteSetsEditFields()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
@@ -404,7 +404,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteCallSetsIsDeletedAndUpdates()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
@@ -421,7 +421,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteCallFiresRecalcs()
 		{
-			var forum = new Forum(5);
+			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic(4) { ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };

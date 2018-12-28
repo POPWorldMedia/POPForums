@@ -43,7 +43,7 @@ namespace PopForums.Test.Services
 
 		private User DoUpNewTopic()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum {ForumID = 1};
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -65,7 +65,7 @@ namespace PopForums.Test.Services
 		{
 			const int forumID = 123;
 			var forumService = GetService();
-			_mockForumRepo.Setup(f => f.Get(forumID)).Returns(new Forum(forumID));
+			_mockForumRepo.Setup(f => f.Get(forumID)).Returns(new Forum {ForumID = forumID});
 			var forum = forumService.Get(forumID);
 			Assert.Equal(forumID, forum.ForumID);
 			_mockForumRepo.Verify(f => f.Get(forumID), Times.Once());
@@ -84,10 +84,10 @@ namespace PopForums.Test.Services
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
-			var forum = new Forum(forumID) {CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder};
+			var forum = new Forum {ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder};
 			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			_mockForumRepo.Setup(f => f.GetAll()).Returns(new List<Forum> { new Forum(1) { SortOrder = 9 }, new Forum(2) { SortOrder = 6 }, forum});
+			_mockForumRepo.Setup(f => f.GetAll()).Returns(new List<Forum> { new Forum { ForumID = 1, SortOrder = 9 }, new Forum { ForumID = 2, SortOrder = 6 }, forum});
 			var result = forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
 			Assert.Equal(forum, result);
 			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum), Times.Once());
@@ -109,7 +109,7 @@ namespace PopForums.Test.Services
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
-			var forum = new Forum(forumID) { CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
+			var forum = new Forum { ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
 			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
@@ -129,7 +129,7 @@ namespace PopForums.Test.Services
 			const int forumID = 123;
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
-			var forum = new Forum(forumID) { CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
+			var forum = new Forum { ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
 			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
 			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(title.ToUrlName())).Returns(new List<string> {"forum-title", "forum-title-but-not", "forum-title-2"});
 			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
@@ -143,7 +143,7 @@ namespace PopForums.Test.Services
 			const int topicID = 456;
 			var lastTime = new DateTime(2001, 2, 2);
 			const string lastName = "Jeff";
-			var forum = new Forum(forumID);
+			var forum = new Forum { ForumID = forumID };
 			var topic = new Topic(topicID) { LastPostTime = lastTime, LastPostName = lastName };
 			var forumService = GetService();
 			_mockTopicRepo.Setup(t => t.GetLastUpdatedTopic(forum.ForumID)).Returns(topic);
@@ -159,7 +159,7 @@ namespace PopForums.Test.Services
 			const int forumID = 123;
 			var lastTime = new DateTime(2001, 2, 2);
 			const string lastName = "Jeff";
-			var forum = new Forum(forumID);
+			var forum = new Forum { ForumID = forumID };
 			forumService.UpdateLast(forum, lastTime, lastName);
 			_mockForumRepo.Verify(f => f.UpdateLastTimeAndUser(forum.ForumID, lastTime, lastName), Times.Once());
 		}
@@ -185,7 +185,7 @@ namespace PopForums.Test.Services
 		public void IncrementPostCount()
 		{
 			const int forumID = 123;
-			var forum = new Forum(forumID);
+			var forum = new Forum { ForumID = forumID };
 			var forumService = GetService();
 			forumService.IncrementPostCount(forum);
 			_mockForumRepo.Verify(f => f.IncrementPostCount(forumID), Times.Once());
@@ -195,7 +195,7 @@ namespace PopForums.Test.Services
 		public void IncrementTopicAndPostCount()
 		{
 			const int forumID = 123;
-			var forum = new Forum(forumID);
+			var forum = new Forum { ForumID = forumID };
 			var forumService = GetService();
 			forumService.IncrementPostAndTopicCount(forum);
 			_mockForumRepo.Verify(f => f.IncrementPostAndTopicCount(forumID), Times.Once());
@@ -230,7 +230,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), GetUser());
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, GetUser());
 			Assert.True(permission.UserCanView);
 			Assert.Empty(permission.DenialReason);
 		}
@@ -241,7 +241,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), null);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null);
 			Assert.True(permission.UserCanView);
 		}
 
@@ -251,7 +251,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>{"blah"});
-			var permission = forumService.GetPermissionContext(new Forum(1), GetUser());
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, GetUser());
 			Assert.False(permission.UserCanView);
 		}
 
@@ -261,7 +261,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string> { "blah" });
-			var permission = forumService.GetPermissionContext(new Forum(1), GetUser());
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, GetUser());
 			Assert.False(permission.UserCanView);
 			Assert.False(permission.UserCanPost);
 		}
@@ -272,7 +272,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string> { "blah" });
-			var permission = forumService.GetPermissionContext(new Forum(1), null);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null);
 			Assert.False(permission.UserCanView);
 		}
 
@@ -284,7 +284,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string> { "blah" });
-			var permission = forumService.GetPermissionContext(new Forum(1), user);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user);
 			Assert.True(permission.UserCanView);
 		}
 
@@ -294,7 +294,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string> { "blah" });
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), null);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null);
 			Assert.False(permission.UserCanPost);
 		}
 
@@ -306,7 +306,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string> { "blah" });
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), user);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user);
 			Assert.True(permission.UserCanPost);
 			Assert.Empty(permission.DenialReason);
 		}
@@ -319,7 +319,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), user);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user);
 			Assert.False(permission.UserCanPost);
 			Assert.NotEmpty(permission.DenialReason);
 		}
@@ -330,7 +330,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string> { "blah" });
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), GetUser());
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, GetUser());
 			Assert.False(permission.UserCanPost);
 			Assert.NotEmpty(permission.DenialReason);
 		}
@@ -341,7 +341,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), null);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null);
 			Assert.False(permission.UserCanModerate);
 		}
 
@@ -353,7 +353,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), user);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user);
 			Assert.True(permission.UserCanModerate);
 		}
 
@@ -365,7 +365,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var permission = forumService.GetPermissionContext(new Forum(1), user);
+			var permission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user);
 			Assert.True(permission.UserCanModerate);
 		}
 
@@ -376,7 +376,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1), user, new Topic(4) {IsClosed = true});
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) {IsClosed = true});
 			Assert.False(premission.UserCanPost);
 		}
 
@@ -387,7 +387,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1), user, new Topic(4) { IsClosed = false });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsClosed = false });
 			Assert.True(premission.UserCanPost);
 		}
 
@@ -398,7 +398,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1), user, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsDeleted = true });
 			Assert.False(premission.UserCanView);
 		}
 
@@ -408,7 +408,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1), null, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null, new Topic(4) { IsDeleted = true });
 			Assert.False(premission.UserCanView);
 		}
 
@@ -420,7 +420,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1), user, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsDeleted = true });
 			Assert.True(premission.UserCanView);
 		}
 
@@ -431,7 +431,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1) { IsArchived = false }, user, new Topic(4));
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = false }, user, new Topic(4));
 			Assert.True(premission.UserCanPost);
 		}
 
@@ -442,7 +442,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum(1) { IsArchived = true }, user, new Topic(4));
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = true }, user, new Topic(4));
 			Assert.False(premission.UserCanPost);
 		}
 
@@ -450,14 +450,14 @@ namespace PopForums.Test.Services
 		public void UserWithoutPermissionThrowsOnPost()
 		{
 			var topicService = GetService();
-			Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum(1), GetUser(), new ForumPermissionContext { UserCanPost = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
-			Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum(1), GetUser(), new ForumPermissionContext { UserCanView = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
+			Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum { ForumID = 1 }, GetUser(), new ForumPermissionContext { UserCanPost = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
+			Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum { ForumID = 1 }, GetUser(), new ForumPermissionContext { UserCanView = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
 		}
 
 		[Fact]
 		public void PostNewTopicCallsTopicRepoCreate()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -475,7 +475,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostNewTopicCallsTextParserRichText()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -495,7 +495,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostNewTopicCallsTextParserPlainText()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -565,7 +565,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostNewTopicDoesNotPublishToFeedIfForumHasViewRestrictions()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -584,7 +584,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostNewTopicReturnsTopic()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
 			const string ip = "127.0.0.1";
 			const string title = "mah title";
@@ -616,10 +616,10 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MoveUp()
 		{
-			var f1 = new Forum(123) { SortOrder = 0, CategoryID = 777 };
-			var f2 = new Forum(456) { SortOrder = 2, CategoryID = 777 };
-			var f3 = new Forum(789) { SortOrder = 4, CategoryID = 777 };
-			var f4 = new Forum(1000) { SortOrder = 6, CategoryID = 777 };
+			var f1 = new Forum { ForumID = 123, SortOrder = 0, CategoryID = 777 };
+			var f2 = new Forum { ForumID = 456, SortOrder = 2, CategoryID = 777 };
+			var f3 = new Forum { ForumID = 789, SortOrder = 4, CategoryID = 777 };
+			var f4 = new Forum { ForumID = 1000,SortOrder = 6, CategoryID = 777 };
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
@@ -639,10 +639,10 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MoveDown()
 		{
-			var f1 = new Forum(123) { SortOrder = 0, CategoryID = 777 };
-			var f2 = new Forum(456) { SortOrder = 2, CategoryID = 777 };
-			var f3 = new Forum(789) { SortOrder = 4, CategoryID = 777 };
-			var f4 = new Forum(1000) { SortOrder = 6, CategoryID = 777 };
+			var f1 = new Forum { ForumID = 123, SortOrder = 0, CategoryID = 777 };
+			var f2 = new Forum { ForumID = 456, SortOrder = 2, CategoryID = 777 };
+			var f3 = new Forum { ForumID = 789, SortOrder = 4, CategoryID = 777 };
+			var f4 = new Forum { ForumID = 1000, SortOrder = 6, CategoryID = 777 };
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
@@ -663,7 +663,7 @@ namespace PopForums.Test.Services
 		public void PostRestrictions()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var roles = new List<string> {"leader", "follower"};
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(forum.ForumID)).Returns(roles);
 			var result = service.GetForumPostRoles(forum);
@@ -675,7 +675,7 @@ namespace PopForums.Test.Services
 		public void ViewRestrictions()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var roles = new List<string> { "leader", "follower" };
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(forum.ForumID)).Returns(roles);
 			var result = service.GetForumViewRoles(forum);
@@ -687,7 +687,7 @@ namespace PopForums.Test.Services
 		public void AddPostRole()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.AddPostRole(forum, "admin");
 			_mockForumRepo.Verify(f => f.AddPostRole(forum.ForumID, "admin"));
 		}
@@ -696,7 +696,7 @@ namespace PopForums.Test.Services
 		public void RemovePostRole()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.RemovePostRole(forum, "admin");
 			_mockForumRepo.Verify(f => f.RemovePostRole(forum.ForumID, "admin"));
 		}
@@ -705,7 +705,7 @@ namespace PopForums.Test.Services
 		public void AddViewRole()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.AddViewRole(forum, "admin");
 			_mockForumRepo.Verify(f => f.AddViewRole(forum.ForumID, "admin"));
 		}
@@ -714,7 +714,7 @@ namespace PopForums.Test.Services
 		public void RemoveViewRole()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.RemoveViewRole(forum, "admin");
 			_mockForumRepo.Verify(f => f.RemoveViewRole(forum.ForumID, "admin"));
 		}
@@ -723,7 +723,7 @@ namespace PopForums.Test.Services
 		public void RemoveAllPostRoles()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.RemoveAllPostRoles(forum);
 			_mockForumRepo.Verify(f => f.RemoveAllPostRoles(forum.ForumID));
 		}
@@ -732,7 +732,7 @@ namespace PopForums.Test.Services
 		public void RemoveAllViewRoles()
 		{
 			var service = GetService();
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			service.RemoveAllViewRoles(forum);
 			_mockForumRepo.Verify(f => f.RemoveAllViewRoles(forum.ForumID));
 		}
@@ -749,7 +749,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
 			{
-				new Forum(1), new Forum(2), new Forum(3)
+				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }
 			});
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(null);
@@ -768,7 +768,7 @@ namespace PopForums.Test.Services
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
 			{
-				new Forum(1), new Forum(2), new Forum(3)
+				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }
 			});
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new [] {"blah"}.ToList() });
 			Assert.Equal(3, result.Count);
@@ -786,7 +786,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph); _mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
 			{
-				new Forum(1), new Forum(2), new Forum(3), new Forum(4), new Forum(5)
+				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }, new Forum { ForumID = 4 }, new Forum { ForumID = 5 }
 			});
 			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new[] { "blah", "blep" }.ToList() });
 			Assert.Equal(4, result.Count);
@@ -861,7 +861,7 @@ namespace PopForums.Test.Services
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "OK" });
-			var allForums = new List<Forum> {new Forum(1), new Forum(2), new Forum(3)};
+			var allForums = new List<Forum> {new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 } };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
 			_mockForumRepo.Setup(f => f.GetAllVisible()).Returns(allForums);
@@ -890,7 +890,7 @@ namespace PopForums.Test.Services
 		{
 			var topicContainer = new TopicContainer
 			{
-				Forum = new Forum(1),
+				Forum = new Forum { ForumID = 1 },
 				Topic = new Topic(2),
 				Posts = new List<Post> {new Post(123) { IsFirstInTopic = true }},
 				PagerContext = new PagerContext(),

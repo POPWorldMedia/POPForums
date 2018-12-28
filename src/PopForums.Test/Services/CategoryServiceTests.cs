@@ -70,9 +70,9 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var cat = new Category(123);
-			var f1 = new Forum(1) { CategoryID = cat.CategoryID };
-			var f2 = new Forum(2) { CategoryID = cat.CategoryID };
-			var f3 = new Forum(3) { CategoryID = 456 };
+			var f1 = new Forum { ForumID = 1, CategoryID = cat.CategoryID };
+			var f2 = new Forum { ForumID = 2, CategoryID = cat.CategoryID };
+			var f3 = new Forum { ForumID = 3, CategoryID = 456 };
 			var forums = new List<Forum> {f1, f2, f3};
 			_mockForumRepo.Setup(f => f.GetAll()).Returns(forums);
 			service.Delete(cat);

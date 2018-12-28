@@ -54,7 +54,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsFromRepo()
 		{
-			var forum = new Forum(1) { TopicCount = 3 };
+			var forum = new Forum { ForumID = 1, TopicCount = 3 };
 			var topicService = GetTopicService();
 			var repoTopics = new List<Topic>();
 			var settings = new Settings {TopicsPerPage = 20};
@@ -68,7 +68,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsStartRowCalcd()
 		{
-			var forum = new Forum(1) { TopicCount = 300 };
+			var forum = new Forum { ForumID = 1, TopicCount = 300 };
 			var topicService = GetTopicService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_settingsManager.Setup(s => s.Current).Returns(settings);
@@ -80,7 +80,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsIncludeDeletedCallsRepoCount()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Topic>());
 			_topicRepo.Setup(t => t.GetTopicCount(1, true)).Returns(350);
@@ -93,7 +93,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsNotIncludeDeletedNotCallRepoCount()
 		{
-			var forum = new Forum(1);
+			var forum = new Forum { ForumID = 1 };
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Topic>());
 			_settingsManager.Setup(s => s.Current).Returns(new Settings());
@@ -105,9 +105,9 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsPagerContextIncludesPageIndexAndCalcdTotalPages()
 		{
-			var forum = new Forum(1) {TopicCount = 301};
-			var forum2 = new Forum(2) {TopicCount = 300};
-			var forum3 = new Forum(3) {TopicCount = 299};
+			var forum = new Forum {ForumID = 1, TopicCount = 301};
+			var forum2 = new Forum {ForumID = 2, TopicCount = 300};
+			var forum3 = new Forum {ForumID = 3, TopicCount = 299};
 			var topicService = GetTopicService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), settings.TopicsPerPage)).Returns(new List<Topic>());
@@ -257,7 +257,7 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum {ForumID = topic.ForumID};
 			_forumRepo.Setup(x => x.Get(topic.ForumID)).Returns(forum);
 			_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
@@ -447,7 +447,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum { ForumID = topic.ForumID };
 			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
 			topicService.DeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
@@ -460,7 +460,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum { ForumID = topic.ForumID };
 			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
 			topicService.DeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
@@ -517,7 +517,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum { ForumID = topic.ForumID };
 			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
 			topicService.UndeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
@@ -530,7 +530,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum { ForumID = topic.ForumID };
 			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
 			topicService.UndeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
@@ -554,13 +554,13 @@ namespace PopForums.Test.Services
 			var topic = new Topic(1);
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.UpdateTitleAndForum(topic, new Forum(2), "blah", user));
+			Assert.Throws<InvalidOperationException>(() => topicService.UpdateTitleAndForum(topic, new Forum { ForumID = 2 }, "blah", user));
 		}
 
 		[Fact]
 		public void UpdateTopicUpdatesTitleWithMod()
 		{
-			var forum = new Forum(2);
+			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic(1) { ForumID = forum.ForumID };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -575,7 +575,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicMarksTopicForIndexingWithMod()
 		{
-			var forum = new Forum(2);
+			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic(1) { ForumID = forum.ForumID };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -589,7 +589,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicMovesTopicWithMod()
 		{
-			var forum = new Forum(2);
+			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -604,7 +604,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicWithNewTitleChangesUrlNameOnTopicParameter()
 		{
-			var forum = new Forum(2);
+			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic(1) { ForumID = forum.ForumID, UrlName = "old" };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -618,8 +618,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicMovesUpdatesCountAndLastOnOldForum()
 		{
-			var forum = new Forum(2);
-			var oldForum = new Forum(3);
+			var forum = new Forum { ForumID = 2 };
+			var oldForum = new Forum { ForumID = 3 };
 			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -635,8 +635,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicMovesUpdatesCountAndLastOnNewForum()
 		{
-			var forum = new Forum(2);
-			var oldForum = new Forum(3);
+			var forum = new Forum { ForumID = 2 };
+			var oldForum = new Forum { ForumID = 3 };
 			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
@@ -704,7 +704,7 @@ namespace PopForums.Test.Services
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
 			var topic = new Topic(45) {ForumID = 67};
-			var forum = new Forum(topic.ForumID);
+			var forum = new Forum { ForumID = topic.ForumID };
 			var service = GetTopicService();
 			_forumService.Setup(x => x.Get(topic.ForumID)).Returns(forum);
 			service.HardDeleteTopic(topic, user);

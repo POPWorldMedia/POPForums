@@ -24,7 +24,7 @@ namespace PopForums.Test.Services
 		public void MarkForumReadSetsReadTime()
 		{
 			var service = GetService();
-			var forum = new Forum(123);
+			var forum = new Forum { ForumID = 123 };
 			var user = new User(456, DateTime.MinValue);
 			service.MarkForumRead(user, forum);
 			_lastReadRepo.Verify(l => l.SetForumRead(user.UserID, forum.ForumID, It.IsAny<DateTime>()), Times.Exactly(1));
@@ -34,7 +34,7 @@ namespace PopForums.Test.Services
 		public void MarkForumReadDeletesOldTopicReadTimes()
 		{
 			var service = GetService();
-			var forum = new Forum(123);
+			var forum = new Forum { ForumID = 123 };
 			var user = new User(456, DateTime.MinValue);
 			service.MarkForumRead(user, forum);
 			_lastReadRepo.Verify(l => l.DeleteTopicReadsInForum(user.UserID, forum.ForumID), Times.Exactly(1));
@@ -65,7 +65,7 @@ namespace PopForums.Test.Services
 		public void MarkForumReadThrowsWithoutUser()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.MarkForumRead(null, new Forum(1)));
+			Assert.Throws<ArgumentNullException>(() => service.MarkForumRead(null, new Forum { ForumID = 1 }));
 		}
 
 		[Fact]
@@ -97,9 +97,9 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusForNoUser()
 		{
 			var service = GetService();
-			var forum1 = new Forum(1);
-			var forum2 = new Forum(2) { IsArchived = true };
-			var forum3 = new Forum(3);
+			var forum1 = new Forum { ForumID = 1 };
+			var forum2 = new Forum { ForumID = 2, IsArchived = true };
+			var forum3 = new Forum { ForumID = 3 };
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum1, forum2, forum3 });
 			service.GetForumReadStatus(null, container);
 			Assert.Equal(3, container.ReadStatusLookup.Count);
@@ -112,7 +112,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNewPosts()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
@@ -125,7 +125,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNewPostsButNoTopicRecords()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime>());
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForum(user.UserID, forum.ForumID)).Returns(new DateTime(2000, 1, 1, 3, 0, 0));
@@ -139,7 +139,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNewPostsNoLastReadRecords()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime>());
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
@@ -152,7 +152,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNoNewPosts()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
@@ -165,7 +165,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNewPostsArchived()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
@@ -178,7 +178,7 @@ namespace PopForums.Test.Services
 		public void ForumReadStatusUserNoNewPostsArchived()
 		{
 			var service = GetService();
-			var forum = new Forum(1) { LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
+			var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
 			var user = new User(2, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
