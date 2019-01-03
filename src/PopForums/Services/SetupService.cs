@@ -74,6 +74,8 @@ namespace PopForums.Services
 			settings.UseEsmtp = setupVariables.UseEsmtp;
 			settings.SmtpUser = setupVariables.SmtpUser;
 			settings.SmtpPassword = setupVariables.SmtpPassword;
+			settings.ServerDaylightSaving = setupVariables.ServerDaylightSaving;
+			settings.ServerTimeZone = setupVariables.ServerTimeZone;
 			_settingsManager.SaveCurrent();
 
 			var user = _userService.CreateUser(setupVariables.Name, setupVariables.Email, setupVariables.Password, true, "");
