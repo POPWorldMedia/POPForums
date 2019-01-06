@@ -30,7 +30,9 @@ namespace PopForums.Sql.Repositories
 
 		private static Profile PopulateFromReader(DbDataReader reader)
 		{
-			return new Profile(reader.GetInt32(0)) {
+			return new Profile
+			{
+				UserID = reader.GetInt32(0),
 				IsSubscribed = reader.GetBoolean(1),
 				Signature = reader.GetString(2),
 				ShowDetails = reader.GetBoolean(3),

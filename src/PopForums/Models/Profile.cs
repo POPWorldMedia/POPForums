@@ -4,16 +4,7 @@ namespace PopForums.Models
 {
 	public class Profile
 	{
-		public Profile()
-		{
-		}
-
-		public Profile(int userID)
-		{
-			UserID = userID;
-		}
-
-		public int UserID { get; private set; }
+		public int UserID { get; set; }
 		public bool IsSubscribed { get; set; }
 		public string Signature { get; set; }
 		public bool ShowDetails { get; set; }

@@ -713,7 +713,7 @@ namespace PopForums.Test.Services
 		public void GetUserEdit()
 		{
 			var service = GetMockedUserService();
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(new Profile(1) {Web = "blah"});
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(new Profile { UserID = 1, Web = "blah"});
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var result = service.GetUserEdit(user);
@@ -743,22 +743,24 @@ namespace PopForums.Test.Services
 
 		private Profile GetReturnedProfile(UserEdit userEdit)
 		{
-			return new Profile(1) {
-			                      	IsSubscribed = userEdit.IsSubscribed,
-			                      	ShowDetails = userEdit.ShowDetails,
-			                      	IsPlainText = userEdit.IsPlainText,
-			                      	HideVanity = userEdit.HideVanity,
-			                      	TimeZone = userEdit.TimeZone,
-			                      	IsDaylightSaving = userEdit.IsDaylightSaving,
-			                      	Signature = userEdit.Signature,
-			                      	Location = userEdit.Location,
-			                      	Dob = userEdit.Dob,
-			                      	Web = userEdit.Web,
-			                      	Icq = userEdit.Icq,
-			                      	YahooMessenger = userEdit.YahooMessenger,
-									Facebook = userEdit.Facebook,
-									Twitter = userEdit.Twitter
-			                      };
+			return new Profile
+			{
+				UserID = 1,
+				IsSubscribed = userEdit.IsSubscribed,
+				ShowDetails = userEdit.ShowDetails,
+				IsPlainText = userEdit.IsPlainText,
+				HideVanity = userEdit.HideVanity,
+				TimeZone = userEdit.TimeZone,
+				IsDaylightSaving = userEdit.IsDaylightSaving,
+				Signature = userEdit.Signature,
+				Location = userEdit.Location,
+				Dob = userEdit.Dob,
+				Web = userEdit.Web,
+				Icq = userEdit.Icq,
+				YahooMessenger = userEdit.YahooMessenger,
+				Facebook = userEdit.Facebook,
+				Twitter = userEdit.Twitter
+			};
 		}
 
 		[Fact]
@@ -934,7 +936,7 @@ namespace PopForums.Test.Services
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
-			var returnedProfile = new Profile(1);
+			var returnedProfile = new Profile { UserID = 1 };
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
