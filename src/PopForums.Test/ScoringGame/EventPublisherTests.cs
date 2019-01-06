@@ -30,7 +30,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventPublishesToLedger()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition {EventDefinitionID = "blah", PointValue = 42};
 			const string message = "msg";
 			var publisher = GetPublisher();
@@ -46,7 +46,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventPublishesToFeedService()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
 			const string message = "msg";
 			var publisher = GetPublisher();
@@ -58,7 +58,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventPublishesToFeedServiceForActivity()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
 			const string message = "msg";
 			var publisher = GetPublisher();
@@ -70,7 +70,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventDoesNotPublishToFeedServiceForActivityWhenEventDefSaysNo()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
 			const string message = "msg";
 			var publisher = GetPublisher();
@@ -82,7 +82,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventDoesNotPublishToFeedServiceWhenEventDefSaysNo()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
 			const string message = "msg";
 			var publisher = GetPublisher();
@@ -94,7 +94,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventCallsCalculator()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 			var publisher = GetPublisher();
 			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
@@ -105,7 +105,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessEventUpdatesProfilePointTotal()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 			var publisher = GetPublisher();
 			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
@@ -116,7 +116,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessManualEventPublishesToLedger()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			const string message = "msg";
 			const int points = 252;
 			var publisher = GetPublisher();
@@ -131,7 +131,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessManualEventPublishesToFeedService()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			const string message = "msg";
 			const int points = 252;
 			var publisher = GetPublisher();
@@ -142,7 +142,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void ProcessManualEventUpdatesProfilePointTotal()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var publisher = GetPublisher();
 			publisher.ProcessManualEvent("msg", user, 252);
 			_profileService.Verify(x => x.UpdatePointTotal(user), Times.Once());

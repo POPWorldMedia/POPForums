@@ -24,7 +24,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsFromRepo()
 		{
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
@@ -39,7 +39,7 @@ namespace PopForums.Test.Services
 		public void AddFaveTopic()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
 			service.AddFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.AddFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
@@ -49,7 +49,7 @@ namespace PopForums.Test.Services
 		public void RemoveFaveTopic()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
 			service.RemoveFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.RemoveFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
@@ -58,7 +58,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetTopicsStartRowCalcd()
 		{
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);

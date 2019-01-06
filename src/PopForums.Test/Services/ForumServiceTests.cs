@@ -771,7 +771,7 @@ namespace PopForums.Test.Services
 			{
 				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }
 			});
-			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new [] {"blah"}.ToList() });
+			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new [] {"blah"}.ToList() });
 			Assert.Equal(3, result.Count);
 		}
 
@@ -789,7 +789,7 @@ namespace PopForums.Test.Services
 			{
 				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }, new Forum { ForumID = 4 }, new Forum { ForumID = 5 }
 			});
-			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User(123, DateTime.MinValue) { Roles = new[] { "blah", "blep" }.ToList() });
+			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new[] { "blah", "blep" }.ToList() });
 			Assert.Equal(4, result.Count);
 			Assert.Contains(1, result);
 			Assert.Contains(2, result);
@@ -807,7 +807,7 @@ namespace PopForums.Test.Services
 			graph.Add(3, new List<string> { "blah" });
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue){Roles = new List<string>()});
+			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string>()});
 			Assert.Equal(2, result.Count);
 			Assert.DoesNotContain(2, result);
 		}
@@ -821,7 +821,7 @@ namespace PopForums.Test.Services
 			graph.Add(3, new List<string> { "OK" });
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue) { Roles = new List<string> { "OK" } });
+			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
 			Assert.Single(result);
 			Assert.DoesNotContain(3, result);
 		}
@@ -835,7 +835,7 @@ namespace PopForums.Test.Services
 			graph.Add(3, new List<string> { "OK" });
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User(123, DateTime.MinValue) { Roles = new List<string> { "OK" } });
+			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
 			Assert.Single(result);
 			Assert.Equal(1, result[0]);
 		}
@@ -868,7 +868,7 @@ namespace PopForums.Test.Services
 			_mockForumRepo.Setup(f => f.GetAllVisible()).Returns(allForums);
 			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(new List<Category>());
 			_mockSettingsManager.Setup(s => s.Current.ForumTitle).Returns("whatever");
-			var container = service.GetCategorizedForumContainerFilteredForUser(new User(123, DateTime.MinValue) { Roles = new List<string> { "OK" } });
+			var container = service.GetCategorizedForumContainerFilteredForUser(new User { UserID = 123, Roles = new List<string> { "OK" } });
 			Assert.Equal(2, container.UncategorizedForums.Count);
 			Assert.Null(container.UncategorizedForums.SingleOrDefault(f => f.ForumID == 1));
 		}
@@ -877,7 +877,7 @@ namespace PopForums.Test.Services
 		public void GetCategorizedForUserPopulatesReadStatus()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(new List<Category>());
 			_mockForumRepo.Setup(f => f.GetAllVisible()).Returns(new List<Forum>());
 			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(new Dictionary<int, List<string>>());

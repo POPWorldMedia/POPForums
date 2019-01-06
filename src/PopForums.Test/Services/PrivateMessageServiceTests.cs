@@ -28,56 +28,56 @@ namespace PopForums.Test.Services
 		public void CreateNullSubjectThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Create(null, "oiahfoih", new User(12, DateTime.MinValue), new List<User> {new User(45, DateTime.MaxValue)}));
+			Assert.Throws<ArgumentNullException>(() => service.Create(null, "oiahfoih", new User(), new List<User> {new User()}));
 		}
 
 		[Fact]
 		public void CreateEmptySubjectThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Create(String.Empty, "oiahfoih", new User(12, DateTime.MinValue), new List<User> { new User(45, DateTime.MaxValue) }));
+			Assert.Throws<ArgumentNullException>(() => service.Create(String.Empty, "oiahfoih", new User(), new List<User> { new User() }));
 		}
 
 		[Fact]
 		public void CreateNullTextThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", null, new User(12, DateTime.MinValue), new List<User> { new User(45, DateTime.MaxValue) }));
+			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", null, new User(), new List<User> { new User() }));
 		}
 
 		[Fact]
 		public void CreateEmptyTextThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", String.Empty, new User(12, DateTime.MinValue), new List<User> { new User(45, DateTime.MaxValue) }));
+			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", String.Empty, new User(), new List<User> { new User() }));
 		}
 
 		[Fact]
 		public void CreateNullUserThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", "oho h", null, new List<User> { new User(45, DateTime.MaxValue) }));
+			Assert.Throws<ArgumentNullException>(() => service.Create("wfwe", "oho h", null, new List<User> { new User() }));
 		}
 
 		[Fact]
 		public void CreateNullToUsersThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentException>(() => service.Create("wfwe", "oho h", new User(12, DateTime.MinValue), null));
+			Assert.Throws<ArgumentException>(() => service.Create("wfwe", "oho h", new User(), null));
 		}
 
 		[Fact]
 		public void CreateZeroToUsersThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentException>(() => service.Create("wfwe", "oho h", new User(12, DateTime.MinValue), new List<User>()));
+			Assert.Throws<ArgumentException>(() => service.Create("wfwe", "oho h", new User(), new List<User>()));
 		}
 
 		[Fact]
 		public void CreateAggregateUserNameSingle()
 		{
 			var service = GetService();
-			var pm = service.Create("ohqefwwf", "oihefio", new User(12, DateTime.MinValue) {Name = "jeff"}, new List<User> {new User(45, DateTime.MinValue) {Name = "diana"}});
+			var pm = service.Create("ohqefwwf", "oihefio", new User { UserID = 12, Name = "jeff"}, new List<User> {new User { UserID = 45, Name = "diana"}});
 			Assert.Equal("jeff, diana", pm.UserNames);
 		}
 
@@ -85,7 +85,7 @@ namespace PopForums.Test.Services
 		public void CreateAggregateUserNameMultiple()
 		{
 			var service = GetService();
-			var pm = service.Create("ohqefwwf", "oihefio", new User(12, DateTime.MinValue) { Name = "jeff" }, new List<User> { new User(45, DateTime.MinValue) { Name = "diana" }, new User(67, DateTime.MinValue) { Name = "simon"} });
+			var pm = service.Create("ohqefwwf", "oihefio", new User { UserID = 12, Name = "jeff" }, new List<User> { new User { UserID = 45, Name = "diana" }, new User { UserID = 67, Name = "simon"} });
 			Assert.Equal("jeff, diana, simon", pm.UserNames);
 		}
 
@@ -94,7 +94,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			_mockTextParse.Setup(t => t.EscapeHtmlAndCensor("ohqefwwf")).Returns("ohqefwwf");
-			var pm = service.Create("ohqefwwf", "oihefio", new User(12, DateTime.MinValue), new List<User> { new User(45, DateTime.MinValue) });
+			var pm = service.Create("ohqefwwf", "oihefio", new User { UserID = 12 }, new List<User> { new User { UserID = 45 } });
 			Assert.Equal("ohqefwwf", pm.Subject);
 		}
 
@@ -105,7 +105,7 @@ namespace PopForums.Test.Services
 			var persist = new PrivateMessage();
 			_mockPMRepo.Setup(p => p.CreatePrivateMessage(It.IsAny<PrivateMessage>())).Returns(69).Callback<PrivateMessage>(p => persist = p);
 			_mockTextParse.Setup(t => t.EscapeHtmlAndCensor("ohqefwwf")).Returns("ohqefwwf");
-			var pm = service.Create("ohqefwwf", "oihefio", new User(12, DateTime.MinValue) { Name = "jeff" }, new List<User> { new User(45, DateTime.MinValue) { Name = "diana" }, new User(67, DateTime.MinValue) { Name = "simon"} });
+			var pm = service.Create("ohqefwwf", "oihefio", new User { UserID = 12, Name = "jeff" }, new List<User> { new User { UserID = 45, Name = "diana" }, new User { UserID = 67, Name = "simon"} });
 			Assert.Equal(69, pm.PMID);
 			Assert.Equal("ohqefwwf", persist.Subject);
 			Assert.Equal("jeff, diana, simon", persist.UserNames);
@@ -114,9 +114,9 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void CreateAllUsersPresisted()
 		{
-			var user = new User(12, DateTime.MinValue);
-			var to1 = new User(45, DateTime.MinValue);
-			var to2 = new User(67, DateTime.MinValue);
+			var user = new User { UserID = 12 };
+			var to1 = new User { UserID = 45 };
+			var to2 = new User { UserID = 67 };
 			var service = GetService();
 			var users = new List<int>();
 			var originalUser = new List<int>();
@@ -133,9 +133,9 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void CreatePostPersist()
 		{
-			var user = new User(12, DateTime.MinValue) { Name = "jeff" };
-			var to1 = new User(45, DateTime.MinValue);
-			var to2 = new User(67, DateTime.MinValue);
+			var user = new User { UserID = 12, Name = "jeff" };
+			var to1 = new User { UserID = 45 };
+			var to2 = new User { UserID = 67 };
 			var service = GetService();
 			_mockPMRepo.Setup(p => p.CreatePrivateMessage(It.IsAny<PrivateMessage>())).Returns(69);
 			var post = new PrivateMessagePost();
@@ -152,28 +152,28 @@ namespace PopForums.Test.Services
 		public void ReplyNullPMThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentException>(() => service.Reply(null, "ohifwefhi", new User(1, DateTime.MinValue)));
+			Assert.Throws<ArgumentException>(() => service.Reply(null, "ohifwefhi", new User()));
 		}
 
 		[Fact]
 		public void ReplyNoIdPMThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentException>(() => service.Reply(new PrivateMessage(), "ohifwefhi", new User(1, DateTime.MinValue)));
+			Assert.Throws<ArgumentException>(() => service.Reply(new PrivateMessage(), "ohifwefhi", new User()));
 		}
 
 		[Fact]
 		public void ReplyNullTextThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Reply(new PrivateMessage{ PMID = 2 }, null, new User(1, DateTime.MinValue)));
+			Assert.Throws<ArgumentNullException>(() => service.Reply(new PrivateMessage{ PMID = 2 }, null, new User()));
 		}
 
 		[Fact]
 		public void ReplyEmptyTextThrows()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.Reply(new PrivateMessage { PMID = 2 }, String.Empty, new User(1, DateTime.MinValue)));
+			Assert.Throws<ArgumentNullException>(() => service.Reply(new PrivateMessage { PMID = 2 }, String.Empty, new User()));
 		}
 
 		[Fact]
@@ -189,7 +189,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var post = new PrivateMessagePost();
 			_mockPMRepo.Setup(p => p.AddPost(It.IsAny<PrivateMessagePost>())).Callback<PrivateMessagePost>(p => post = p);
-			var user = new User(1, DateTime.MinValue) {Name = "jeff"};
+			var user = new User { UserID = 1, Name = "jeff"};
 			var pm = new PrivateMessage {PMID = 2};
 			var text = "mah message";
 			_mockTextParse.Setup(t => t.ForumCodeToHtml(text)).Returns(text);
@@ -205,7 +205,7 @@ namespace PopForums.Test.Services
 		public void ReplyThrowsIfUserIsntOnPM()
 		{
 			var service = GetService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			_mockPMRepo.Setup(p => p.GetUsers(It.IsAny<int>())).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 456 } });
 			Assert.Throws<Exception>(() => service.Reply(new PrivateMessage { PMID = 2 }, "wohfwo", user));
 		}
@@ -214,7 +214,7 @@ namespace PopForums.Test.Services
 		public void IsUserInPMTrue()
 		{
 			var service = GetService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var pm = new PrivateMessage { PMID = 2 };
 			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = user.UserID } });
 			Assert.True(service.IsUserInPM(user, pm));
@@ -224,7 +224,7 @@ namespace PopForums.Test.Services
 		public void IsUserInPMFalse()
 		{
 			var service = GetService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var pm = new PrivateMessage { PMID = 2 };
 			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 765 } });
 			Assert.False(service.IsUserInPM(user, pm));

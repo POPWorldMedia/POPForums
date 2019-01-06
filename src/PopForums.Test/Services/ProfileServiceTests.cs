@@ -194,7 +194,7 @@ namespace PopForums.Test.Services
 		public void UpdatePointsUpdatesPoints()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			const int total = 87;
 			_pointLedger.Setup(x => x.GetPointTotal(user.UserID)).Returns(total);
 			service.UpdatePointTotal(user);

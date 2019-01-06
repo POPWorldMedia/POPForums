@@ -5,14 +5,8 @@ namespace PopForums.Models
 {
 	public class User
 	{
-		public User(int userID, DateTime creationDate)
-		{
-			UserID = userID;
-			CreationDate = creationDate;
-		}
-
-		public int UserID { get; private set; }
-		public DateTime CreationDate { get; private set; }
+		public int UserID { get; set; }
+		public DateTime CreationDate { get; set; }
 		public string Name { get; set; }
 		public string Email { get; set; }
 		public DateTime LastActivityDate { get; set; }

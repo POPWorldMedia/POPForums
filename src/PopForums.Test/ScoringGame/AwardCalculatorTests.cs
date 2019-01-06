@@ -35,7 +35,7 @@ namespace PopForums.Test.ScoringGame
 		public void EnqueueDoesWhatItSaysItShould()
 		{
 			var calc = GetCalc();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User();
 			var eventDef = new EventDefinition {EventDefinitionID = "blah"};
 			calc.QueueCalculation(user, eventDef);
 			_awardCalcRepo.Verify(x => x.Enqueue(eventDef.EventDefinitionID, user.UserID), Times.Once());
@@ -45,7 +45,7 @@ namespace PopForums.Test.ScoringGame
 		public void ProcessLogsAndDoesNothingWithNullEventDef()
 		{
 			var calc = GetCalc();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User();
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns((EventDefinition) null);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>("oih", user.UserID));
@@ -72,7 +72,7 @@ namespace PopForums.Test.ScoringGame
 		{
 			var calc = GetCalc();
 			var eventDef = new EventDefinition {EventDefinitionID = "oi"};
-			var user = new User(1, DateTime.MinValue);
+			var user = new User();
 			var awardDef = new AwardDefinition {AwardDefinitionID = "sweet", IsSingleTimeAward = true};
 			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
@@ -88,7 +88,7 @@ namespace PopForums.Test.ScoringGame
 		{
 			var calc = GetCalc();
 			var eventDef = new EventDefinition { EventDefinitionID = "oi" };
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var awardDef = new AwardDefinition {AwardDefinitionID = "sweet", IsSingleTimeAward = true};
 			var conditions = new List<AwardCondition>
 			        {
@@ -112,7 +112,7 @@ namespace PopForums.Test.ScoringGame
 		{
 			var calc = GetCalc();
 			var eventDef = new EventDefinition { EventDefinitionID = "oi" };
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var awardDef = new AwardDefinition { AwardDefinitionID = "sweet", IsSingleTimeAward = true };
 			var conditions = new List<AwardCondition>
 			        {
@@ -136,7 +136,7 @@ namespace PopForums.Test.ScoringGame
 		{
 			var calc = GetCalc();
 			var eventDef = new EventDefinition { EventDefinitionID = "oi" };
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var firstAwardDef = new AwardDefinition {AwardDefinitionID = "first", IsSingleTimeAward = true};
 			var secondAwardDef = new AwardDefinition { AwardDefinitionID = "sweet", IsSingleTimeAward = true };
 			var conditions = new List<AwardCondition>

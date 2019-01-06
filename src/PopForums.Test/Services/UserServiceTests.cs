@@ -187,7 +187,7 @@ namespace PopForums.Test.Services
 		public static User GetDummyUser(string name, string email)
 		{
 			var almostNow = DateTime.UtcNow.AddDays(-1);
-			return new User(1, almostNow) {Name = name, Email = email, IsApproved = true, LastActivityDate = almostNow, LastLoginDate = almostNow, AuthorizationKey = new Guid()};
+			return new User { UserID = 1, Name = name, Email = email, IsApproved = true, LastActivityDate = almostNow, LastLoginDate = almostNow, AuthorizationKey = new Guid()};
 		}
 
 		[Fact]
@@ -219,7 +219,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("jeff", "a@b.com");
-			_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).Returns(new User(123, DateTime.MinValue));
+			_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).Returns(new User { UserID = 123 });
 			var result = userService.IsEmailInUseByDifferentUser(user, "c@d.com");
 			_mockUserRepo.Verify(u => u.GetUserByEmail("c@d.com"), Times.Once());
 			Assert.True(result);
@@ -376,7 +376,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns((User)null);
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(false);
 			var targetUser = GetDummyUser(oldName, oldEmail);
-			var user = new User(34243, DateTime.MinValue);
+			var user = new User { UserID = 34243 };
 			userManager.ChangeEmail(targetUser, newEmail, user, "123");
 			_mockUserRepo.Verify(r => r.ChangeEmail(targetUser, newEmail), Times.Exactly(1));
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: a@b.com, New: c@d.com", SecurityLogType.EmailChange));
@@ -421,7 +421,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns((User)null);
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var targetUser = GetDummyUser(oldName, oldEmail);
-			var user = new User(34243, DateTime.MinValue);
+			var user = new User { UserID = 34243 };
 			userManager.ChangeEmail(targetUser, newEmail, user, "123");
 			_mockUserRepo.Verify(x => x.UpdateIsApproved(targetUser, true), Times.Once());
 		}
@@ -437,7 +437,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByName(oldName)).Returns(GetDummyUser(oldName, oldEmail));
 			_mockUserRepo.Setup(r => r.GetUserByName(newName)).Returns((User)null);
 			var targetUser = GetDummyUser(oldName, oldEmail);
-			var user = new User(1234531, DateTime.MinValue);
+			var user = new User { UserID = 1234531 };
 			userManager.ChangeName(targetUser, newName, user, "123");
 			_mockUserRepo.Verify(r => r.ChangeName(targetUser, newName));
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: Jeff, New: Diana", SecurityLogType.NameChange));
@@ -624,7 +624,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			var targetUser = GetDummyUser("Jeff", "a@b.com");
-			var user = new User(97, DateTime.MinValue);
+			var user = new User { UserID = 97 };
 			userService.UpdateIsApproved(targetUser, true, user, "123");
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, true), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsApproved));
@@ -635,7 +635,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			var targetUser = GetDummyUser("Jeff", "a@b.com");
-			var user = new User(97, DateTime.MinValue);
+			var user = new User { UserID = 97 };
 			userService.UpdateIsApproved(targetUser, false, user, "123");
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, false), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsNotApproved));
@@ -714,7 +714,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetMockedUserService();
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(new Profile(1) {Web = "blah"});
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var result = service.GetUserEdit(user);
 			Assert.Equal(1, result.UserID);
@@ -725,7 +725,7 @@ namespace PopForums.Test.Services
 		public void EditUserProfileOnly()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var profile = new Profile();
@@ -765,7 +765,7 @@ namespace PopForums.Test.Services
 		public void EditUserApprovalChange()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue) {IsApproved = false};
+			var user = new User { UserID = 1, IsApproved = false};
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit {IsApproved = true};
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
@@ -777,7 +777,7 @@ namespace PopForums.Test.Services
 		public void EditUserNewEmail()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue) { Email = "c@d.com" };
+			var user = new User { UserID = 1, Email = "c@d.com" };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { NewEmail = "a@b.com" };
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
@@ -789,7 +789,7 @@ namespace PopForums.Test.Services
 		public void EditUserNewPassword()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { NewPassword = "foo" };
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
@@ -801,7 +801,7 @@ namespace PopForums.Test.Services
 		public void EditUserAddRole()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { Roles = new [] {"Admin", "Moderator"} };
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
@@ -815,7 +815,7 @@ namespace PopForums.Test.Services
 		public void EditUserRemoveRole()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string> { "Admin", "Moderator" };
 			var userEdit = new UserEdit { Roles = new[] { "SomethingElse" } };
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
@@ -829,8 +829,7 @@ namespace PopForums.Test.Services
 		public void EditUserDeleteAvatar()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
-			user.Roles = new List<string>();
+			var user = new User {UserID = 1, Roles = new List<string>()};
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
@@ -846,7 +845,7 @@ namespace PopForums.Test.Services
 		public void EditUserNoDeleteAvatar()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
@@ -863,7 +862,7 @@ namespace PopForums.Test.Services
 		public void EditUserDeletePhoto()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
@@ -880,7 +879,7 @@ namespace PopForums.Test.Services
 		public void EditUserNoDeletePhoto()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
@@ -897,7 +896,7 @@ namespace PopForums.Test.Services
 		public void EditUserNewAvatar()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
@@ -915,7 +914,7 @@ namespace PopForums.Test.Services
 		public void EditUserNewPhoto()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
@@ -933,7 +932,7 @@ namespace PopForums.Test.Services
 		public void EditUserProfile()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var returnedProfile = new Profile(1);
 			var profile = new Profile();
@@ -971,7 +970,7 @@ namespace PopForums.Test.Services
 			Guid? salt;
 			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns(hashed);
 
-			var result = service.VerifyPassword(new User(1, DateTime.MinValue) {Email = "a@b.com"}, password);
+			var result = service.VerifyPassword(new User { UserID = 123, Email = "a@b.com"}, password);
 
 			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
 			Assert.True(result);
@@ -986,7 +985,7 @@ namespace PopForums.Test.Services
 			var hashed = password.GetMD5Hash(salt.Value);
 			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns(hashed);
 
-			var result = service.VerifyPassword(new User(1, DateTime.MinValue) { Email = "a@b.com" }, password);
+			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
 
 			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
 			Assert.True(result);
@@ -1000,7 +999,7 @@ namespace PopForums.Test.Services
 			Guid? salt;
 			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns("2233435");
 
-			var result = service.VerifyPassword(new User(1, DateTime.MinValue) { Email = "a@b.com" }, password);
+			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
 
 			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
 			Assert.False(result);
@@ -1014,7 +1013,7 @@ namespace PopForums.Test.Services
 			Guid? salt = Guid.NewGuid();
 			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns("2233435");
 
-			var result = service.VerifyPassword(new User(1, DateTime.MinValue) { Email = "a@b.com" }, password);
+			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
 
 			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
 			Assert.False(result);
@@ -1024,7 +1023,7 @@ namespace PopForums.Test.Services
 		public void UserEditPhotosDeleteAvatar()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
@@ -1041,7 +1040,7 @@ namespace PopForums.Test.Services
 		public void UserEditPhotosNoDeleteAvatar()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
@@ -1058,7 +1057,7 @@ namespace PopForums.Test.Services
 		public void UserEditPhotosDeletePhoto()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
@@ -1075,7 +1074,7 @@ namespace PopForums.Test.Services
 		public void UserEditPhotosNoDeletePhoto()
 		{
 			var service = GetMockedUserService();
-			var user = new User(1, DateTime.MinValue);
+			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
@@ -1102,8 +1101,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteUserLogs()
 		{
-			var targetUser = new User(1, DateTime.MinValue);
-			var user = new User(2, DateTime.MinValue);
+			var targetUser = new User { UserID = 1 };
+			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
 			service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "127.0.0.1", It.IsAny<string>(), SecurityLogType.UserDeleted));
@@ -1112,8 +1111,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteUserCallsRepo()
 		{
-			var targetUser = new User(1, DateTime.MinValue);
-			var user = new User(2, DateTime.MinValue);
+			var targetUser = new User { UserID = 1 };
+			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
 			service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockUserRepo.Verify(u => u.DeleteUser(targetUser), Times.Once());
@@ -1122,8 +1121,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteUserCallsBanRepoIfBanIsTrue()
 		{
-			var targetUser = new User(1, DateTime.MinValue) { Email = "a@b.com" };
-			var user = new User(2, DateTime.MinValue);
+			var targetUser = new User { UserID = 1, Email = "a@b.com" };
+			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
 			service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Once());
@@ -1132,8 +1131,8 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteUserDoesNotCallBanRepoIfBanIsFalse()
 		{
-			var targetUser = new User(1, DateTime.MinValue) { Email = "a@b.com" };
-			var user = new User(2, DateTime.MinValue);
+			var targetUser = new User { UserID = 1, Email = "a@b.com" };
+			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
 			service.DeleteUser(targetUser, user, "127.0.0.1", false);
 			_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Never());
@@ -1142,7 +1141,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void ForgotPasswordCallsMailerForGoodUser()
 		{
-			var user = new User(2, DateTime.MinValue) { Email = "a@b.com" };
+			var user = new User { UserID = 2, Email = "a@b.com" };
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).Returns(user);
 			service.GeneratePasswordResetEmail(user, "http");
@@ -1152,7 +1151,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void ForgotPasswordGeneratesNewAuthKey()
 		{
-			var user = new User(2, DateTime.MinValue) { Email = "a@b.com" };
+			var user = new User { UserID = 2, Email = "a@b.com" };
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).Returns(user);
 			service.GeneratePasswordResetEmail(user, "http");
