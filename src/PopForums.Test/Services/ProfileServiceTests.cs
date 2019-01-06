@@ -130,12 +130,12 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			            	{
-								new Post(1) { UserID = 1, ShowSig = false },
-								new Post(1) { UserID = 2, ShowSig = true },
-								new Post(1) { UserID = 3, ShowSig = false },
-								new Post(1) { UserID = 4, ShowSig = true },
-								new Post(1) { UserID = 5, ShowSig = true },
-								new Post(1) { UserID = 6, ShowSig = false },
+								new Post { UserID = 1, ShowSig = false },
+								new Post { UserID = 2, ShowSig = true },
+								new Post { UserID = 3, ShowSig = false },
+								new Post { UserID = 4, ShowSig = true },
+								new Post { UserID = 5, ShowSig = true },
+								new Post { UserID = 6, ShowSig = false },
 			            	};
 			var service = GetService();
 			var ids = new List<int>();
@@ -152,12 +152,12 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			            	{
-								new Post(1) { UserID = 1, ShowSig = false },
-								new Post(1) { UserID = 2, ShowSig = true },
-								new Post(1) { UserID = 2, ShowSig = false },
-								new Post(1) { UserID = 2, ShowSig = true },
-								new Post(1) { UserID = 3, ShowSig = true },
-								new Post(1) { UserID = 3, ShowSig = true },
+								new Post { UserID = 1, ShowSig = false },
+								new Post { UserID = 2, ShowSig = true },
+								new Post { UserID = 2, ShowSig = false },
+								new Post { UserID = 2, ShowSig = true },
+								new Post { UserID = 3, ShowSig = true },
+								new Post { UserID = 3, ShowSig = true },
 			            	};
 			var service = GetService();
 			var ids = new List<int>();
@@ -173,12 +173,12 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			            	{
-								new Post(1) { UserID = 1 },
-								new Post(1) { UserID = 2 },
-								new Post(1) { UserID = 2 },
-								new Post(1) { UserID = 2 },
-								new Post(1) { UserID = 3 },
-								new Post(1) { UserID = 3 },
+								new Post { UserID = 1 },
+								new Post { UserID = 2 },
+								new Post { UserID = 2 },
+								new Post { UserID = 2 },
+								new Post { UserID = 3 },
+								new Post { UserID = 3 },
 			            	};
 			var service = GetService();
 			var ids = new List<int>();

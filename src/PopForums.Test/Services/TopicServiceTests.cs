@@ -653,7 +653,7 @@ namespace PopForums.Test.Services
 		public void UpdateLastSetsFieldsFromLastPost()
 		{
 			var topic = new Topic { TopicID = 456 };
-			var post = new Post(123) {TopicID = topic.TopicID, UserID = 789, Name = "Dude", PostTime = new DateTime(2000, 1, 3)};
+			var post = new Post { PostID = 123, TopicID = topic.TopicID, UserID = 789, Name = "Dude", PostTime = new DateTime(2000, 1, 3)};
 			var service = GetTopicService();
 			_postRepo.Setup(x => x.GetLastInTopic(post.TopicID)).Returns(post);
 			service.UpdateLast(topic);
@@ -718,7 +718,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = 789 };
-			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
+			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
 		}
 
 		[Fact]
@@ -728,7 +728,7 @@ namespace PopForums.Test.Services
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
-			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
+			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
 		}
 
 		[Fact]
@@ -737,7 +737,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
-			var post = new Post(789) { TopicID = 111 };
+			var post = new Post { PostID = 789, TopicID = 111 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post, "", ""));
 		}
@@ -748,7 +748,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
-			var post = new Post(789) { TopicID = topic.TopicID };
+			var post = new Post { PostID = 789, TopicID = topic.TopicID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			service.SetAnswer(user, topic, post, "", "");
 			_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
@@ -761,7 +761,7 @@ namespace PopForums.Test.Services
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null};
-			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID};
+			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID};
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
 			service.SetAnswer(user, topic, post, "", "");
@@ -774,7 +774,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
-			var post = new Post(789) { TopicID = topic.TopicID, UserID = 777 };
+			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = 777 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
 			service.SetAnswer(user, topic, post, "", "");
@@ -788,7 +788,7 @@ namespace PopForums.Test.Services
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = 666 };
-			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID };
+			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
 			service.SetAnswer(user, topic, post, "", "");
@@ -801,7 +801,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
-			var post = new Post(789) { TopicID = topic.TopicID, UserID = user.UserID };
+			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = user.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(user.UserID)).Returns(user);
 			service.SetAnswer(user, topic, post, "", "");

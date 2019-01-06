@@ -126,8 +126,9 @@ namespace PopForums.Services
 			else
 				newPost.FullText = _textParsingService.ClientHtmlToHtml(newPost.FullText);
 			var postID = _postRepository.Create(topic.TopicID, parentPostID, ip, isFirstInTopic, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, postTime, false, user.Name, null, false, 0);
-			var post = new Post(postID)
+			var post = new Post
 			{
+				PostID = postID,
 				FullText = newPost.FullText,
 				IP = ip,
 				IsDeleted = false,

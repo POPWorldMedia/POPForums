@@ -101,7 +101,7 @@ namespace PopForums.Test.Services
 		{
 			var postService = GetService();
 			var postID = 123;
-			var post = new Post(postID);
+			var post = new Post {PostID = postID};
 			_postRepo.Setup(p => p.Get(postID)).Returns(post);
 			var postResult = postService.Get(postID);
 			_postRepo.Verify(p => p.Get(postID), Times.Once());
@@ -123,7 +123,7 @@ namespace PopForums.Test.Services
 			var postService = GetService();
 			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
 			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) {PostTime = DateTime.UtcNow.AddSeconds(-15)});
+			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, PostTime = DateTime.UtcNow.AddSeconds(-15)});
 			_settings.Setup(s => s.MinimumSecondsBetweenPosts).Returns(20);
 			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost(), user));
 		}
@@ -135,7 +135,7 @@ namespace PopForums.Test.Services
 			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
 			const string dupeText = "whatever";
 			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) { FullText = dupeText });
+			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = dupeText });
 			_textParsingService.Setup(x => x.ForumCodeToHtml(dupeText)).Returns(dupeText);
 			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = true}, user));
 		}
@@ -147,7 +147,7 @@ namespace PopForums.Test.Services
 			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
 			const string dupeText = "whatever";
 			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) { FullText = dupeText });
+			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = dupeText });
 			_textParsingService.Setup(x => x.ClientHtmlToHtml(dupeText)).Returns(dupeText);
 			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = false }, user));
 		}
@@ -158,7 +158,7 @@ namespace PopForums.Test.Services
 			var postService = GetService();
 			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
 			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post(456) { FullText = "one thing", PostTime = DateTime.UtcNow.AddSeconds(-30) });
+			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = "one thing", PostTime = DateTime.UtcNow.AddSeconds(-30) });
 			_settings.Setup(s => s.MinimumSecondsBetweenPosts).Returns(20);
 			Assert.False(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = "another" }, user));
 		}
@@ -178,7 +178,7 @@ namespace PopForums.Test.Services
 		public void GetPostForEditPlainText()
 		{
 			var service = GetService();
-			var post = new Post(123) { Title = "mah title", FullText = "not", ShowSig = true };
+			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true };
 			var user = new User(456, DateTime.MinValue);
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(new Profile {IsPlainText = true});
 			_textParsingService.Setup(p => p.HtmlToForumCode("not")).Returns("new text");
@@ -194,7 +194,7 @@ namespace PopForums.Test.Services
 		public void GetPostForEditNotPlainText()
 		{
 			var service = GetService();
-			var post = new Post(123) { Title = "mah title", FullText = "not", ShowSig = true };
+			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true };
 			var user = new User(456, DateTime.MinValue);
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).Returns(new Profile { IsPlainText = false });
 			_textParsingService.Setup(p => p.HtmlToClientHtml("not")).Returns("new text");
@@ -210,7 +210,7 @@ namespace PopForums.Test.Services
 		public void EditPostCensorsTitle()
 		{
 			var service = GetService();
-			service.EditPost(new Post(456), new PostEdit{ Title = "blah" }, new User(123, DateTime.MinValue));
+			service.EditPost(new Post { PostID = 456 }, new PostEdit{ Title = "blah" }, new User(123, DateTime.MinValue));
 			_textParsingService.Verify(t => t.Censor("blah"), Times.Exactly(1));
 		}
 
@@ -218,7 +218,7 @@ namespace PopForums.Test.Services
 		public void EditPostPlainTextParsed()
 		{
 			var service = GetService();
-			service.EditPost(new Post(456), new PostEdit { FullText = "blah", IsPlainText = true }, new User(123, DateTime.MinValue));
+			service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = true }, new User(123, DateTime.MinValue));
 			_textParsingService.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
 		}
 
@@ -226,7 +226,7 @@ namespace PopForums.Test.Services
 		public void EditPostRichTextParsed()
 		{
 			var service = GetService();
-			service.EditPost(new Post(456), new PostEdit { FullText = "blah", IsPlainText = false }, new User(123, DateTime.MinValue));
+			service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = false }, new User(123, DateTime.MinValue));
 			_textParsingService.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
 		}
 
@@ -234,11 +234,11 @@ namespace PopForums.Test.Services
 		public void EditPostSavesMappedValues()
 		{
 			var service = GetService();
-			var post = new Post(67);
+			var post = new Post { PostID = 67 };
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
 			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
-			service.EditPost(new Post(456) { ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User(123, DateTime.MinValue) { Name = "dude" });
+			service.EditPost(new Post { PostID = 456, ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User(123, DateTime.MinValue) { Name = "dude" });
 			Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
 			Assert.Equal(456, post.PostID);
 			Assert.Equal("new", post.FullText);
@@ -255,7 +255,7 @@ namespace PopForums.Test.Services
 			var user = new User(123, DateTime.MinValue) {Name = "dude"};
 			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
-			service.EditPost(new Post(456) { ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+			service.EditPost(new Post { PostID = 456, ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
 		}
 
@@ -264,7 +264,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Name = "dude" };
-			var post = new Post(456) {ShowSig = false, FullText = "old text", TopicID = 999};
+			var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999};
 
 			service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
 
@@ -276,7 +276,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67);
+			var post = new Post { PostID = 67 };
 			Assert.Throws<Exception>(() => service.Delete(post, user));
 		}
 
@@ -287,7 +287,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = true, TopicID = topic.TopicID };
+			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = true, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
 			service.Delete(post, user);
@@ -301,7 +301,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
+			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
 			service.Delete(post, user);
@@ -315,10 +315,10 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsEdited = false };
+			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsEdited = false };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			var editedPost = new Post(0);
+			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
 			service.Delete(post, user);
 			Assert.True(editedPost.IsEdited);
@@ -333,10 +333,10 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsDeleted = false };
+			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsDeleted = false };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			var persistedPost = new Post(0);
+			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
 			service.Delete(post, user);
 			Assert.Equal(post.PostID, persistedPost.PostID);
@@ -350,7 +350,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
+			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
 			service.Delete(post, user);
@@ -365,7 +365,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var post = new Post(67) { UserID = user.UserID };
+			var post = new Post { PostID = 67, UserID = user.UserID };
 			Assert.Throws<Exception>(() => service.Undelete(post, user));
 		}
 
@@ -376,7 +376,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator }};
-			var post = new Post(67) { TopicID = topic.TopicID };
+			var post = new Post { PostID = 67, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
 			service.Undelete(post, user);
@@ -390,10 +390,10 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
-			var post = new Post(67) { TopicID = topic.TopicID, IsEdited = false, UserID = user.UserID };
+			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsEdited = false, UserID = user.UserID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			var editedPost = new Post(0);
+			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
 			service.Undelete(post, user);
 			Assert.True(editedPost.IsEdited);
@@ -408,10 +408,10 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
-			var post = new Post(67) { TopicID = topic.TopicID, IsDeleted = true };
+			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsDeleted = true };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			var persistedPost = new Post(0);
+			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
 			service.Undelete(post, user);
 			Assert.Equal(post.PostID, persistedPost.PostID);
@@ -425,7 +425,7 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
-			var post = new Post(67) { TopicID = topic.TopicID };
+			var post = new Post { PostID = 67, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
 			service.Undelete(post, user);
@@ -447,7 +447,7 @@ namespace PopForums.Test.Services
 		public void GetFirstInTopicReturnsFromRepo()
 		{
 			var service = GetService();
-			var post = new Post(123);
+			var post = new Post { PostID = 123 };
 			_postRepo.Setup(p => p.GetFirstInTopic(It.IsAny<int>())).Returns(post);
 			var result = service.GetFirstInTopic(new Topic { TopicID = 2 });
 			Assert.Same(post, result);
@@ -458,7 +458,7 @@ namespace PopForums.Test.Services
 		public void GetPostsToEndSkipsLoadedPosts()
 		{
 			var service = GetService();
-			var posts = new List<Post> {new Post(1), new Post(2), new Post(3), new Post(4)};
+			var posts = new List<Post> {new Post { PostID = 1 }, new Post { PostID = 2 }, new Post { PostID = 3 }, new Post { PostID = 4 } };
 			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(5);
 			PagerContext pagerContext;
@@ -472,7 +472,7 @@ namespace PopForums.Test.Services
 		public void GetPostsToEndCalcsCorrectPagerContext()
 		{
 			var service = GetService();
-			var posts = new List<Post> { new Post(1), new Post(2), new Post(3), new Post(4), new Post(5), new Post(6), new Post(7), new Post(8) };
+			var posts = new List<Post> { new Post { PostID = 1 }, new Post { PostID = 2 }, new Post { PostID = 3 }, new Post { PostID = 4 }, new Post { PostID = 5 }, new Post { PostID = 6 }, new Post { PostID = 7 }, new Post { PostID = 8 } };
 			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(3);
 			PagerContext pagerContext;
@@ -485,7 +485,7 @@ namespace PopForums.Test.Services
 		public void VotePostCallsRepoWithPostIDAndUserID()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			var user = new User(2, new DateTime());
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(new Dictionary<int, string>());
 			service.VotePost(post, user, "abc", "def", "ghi");
@@ -496,7 +496,7 @@ namespace PopForums.Test.Services
 		public void VotePostCalcsAndSetsCount()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			var user = new User(2, new DateTime());
 			const int votes = 32;
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(new Dictionary<int, string>());
@@ -509,7 +509,7 @@ namespace PopForums.Test.Services
 		public void VotePostDoesntAllowDupeVote()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			var user = new User(2, new DateTime());
 			var voters = new Dictionary<int, string> { { 1, "Foo" }, { user.UserID, "Dude" }, { 3, null }, { 4, "Chica" } };
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(voters);
@@ -521,7 +521,7 @@ namespace PopForums.Test.Services
 		public void GetVoteCountCallsRepoAndReturns()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			const int votes = 32;
 			_postRepo.Setup(x => x.GetVoteCount(post.PostID)).Returns(votes);
 			var result = service.GetVoteCount(post);
@@ -532,7 +532,7 @@ namespace PopForums.Test.Services
 		public void GetVotersReturnsContainerWithPostID()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(new Dictionary<int, string>());
 			var result = service.GetVoters(post);
 			Assert.Equal(post.PostID, result.PostID);
@@ -542,7 +542,7 @@ namespace PopForums.Test.Services
 		public void GetVotersReturnsContainerWithTotalVotes()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			var voters = new Dictionary<int, string> {{1, "Foo"}, {2, "Dude"}, {3, null}, {4, "Chica"}};
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(voters);
 			var result = service.GetVoters(post);
@@ -553,7 +553,7 @@ namespace PopForums.Test.Services
 		public void GetVotersFiltersNullNames()
 		{
 			var service = GetService();
-			var post = new Post(1);
+			var post = new Post { PostID = 1 };
 			var voters = new Dictionary<int, string> { { 1, "Foo" }, { 2, "Dude" }, { 3, null }, { 4, "Chica" } };
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(voters);
 			var result = service.GetVoters(post);
@@ -575,7 +575,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
-			var list = new List<Post> {new Post(4), new Post(5), new Post(8)};
+			var list = new List<Post> {new Post { PostID = 4 }, new Post { PostID = 5 }, new Post { PostID = 8 } };
 			List<int> returnedList = null;
 			_postRepo.Setup(x => x.GetVotedPostIDs(user.UserID, It.IsAny<List<int>>())).Callback<int, List<int>>((u, l) => returnedList = l);
 			service.GetVotedPostIDs(user, list);
@@ -609,7 +609,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			_userService.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post(123), new User(456, DateTime.MinValue), "", "", "");
+			service.VotePost(new Post { PostID = 123 }, new User(456, DateTime.MinValue), "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), false), Times.Never());
 		}
 
@@ -620,7 +620,7 @@ namespace PopForums.Test.Services
 			var voteUpUser = new User(777, DateTime.MinValue);
 			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post(123) { UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), "", "", "");
+			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), voteUpUser, EventDefinitionService.StaticEventIDs.PostVote, false), Times.Once());
 		}
 
@@ -631,7 +631,7 @@ namespace PopForums.Test.Services
 			var voteUpUser = new User(456, DateTime.MinValue);
 			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post(123) { UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), "", "", "");
+			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false), Times.Never());
 		}
 
@@ -647,7 +647,7 @@ namespace PopForums.Test.Services
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
 			var message = String.Empty;
 			_eventPub.Setup(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false)).Callback<string, User, string, bool>((x, y, z, a) => message = x);
-			service.VotePost(new Post(123) { UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), userUrl, topicUrl, title);
+			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User(456, DateTime.MinValue), userUrl, topicUrl, title);
 			Assert.Contains(userUrl, message);
 			Assert.Contains(topicUrl, message);
 			Assert.Contains(title, message);

@@ -4,11 +4,6 @@ namespace PopForums.Models
 {
 	public class Post
 	{
-		public Post(int postID)
-		{
-			PostID = postID;
-		}
-
 		public int PostID { get; set; }
 		public int TopicID { get; set; }
 		public int ParentPostID { get; set; }

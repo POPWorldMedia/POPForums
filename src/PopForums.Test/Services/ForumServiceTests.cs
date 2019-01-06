@@ -893,7 +893,7 @@ namespace PopForums.Test.Services
 			{
 				Forum = new Forum { ForumID = 1 },
 				Topic = new Topic { TopicID = 2 },
-				Posts = new List<Post> {new Post(123) { IsFirstInTopic = true }},
+				Posts = new List<Post> {new Post { PostID = 123, IsFirstInTopic = true }},
 				PagerContext = new PagerContext(),
 				PermissionContext = new ForumPermissionContext(),
 				IsSubscribed = true,
@@ -921,8 +921,8 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			{
-				new Post(1),
-				new Post(2) {IsFirstInTopic = true}
+				new Post {PostID = 1},
+				new Post{PostID = 2, IsFirstInTopic = true}
 			};
 			var topicContainer = new TopicContainer {Posts = posts, Topic = new Topic { TopicID = 123 }};
 			var service = GetService();
@@ -935,8 +935,8 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			{
-				new Post(1),
-				new Post(2)
+				new Post { PostID =  1 },
+				new Post { PostID =  2 }
 			};
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 123 } };
 			var service = GetService();
@@ -948,8 +948,8 @@ namespace PopForums.Test.Services
 		{
 			var posts = new List<Post>
 			{
-				new Post(1) {IsFirstInTopic = true},
-				new Post(2) {IsFirstInTopic = true}
+				new Post { PostID =  1, IsFirstInTopic = true},
+				new Post { PostID =  2, IsFirstInTopic = true}
 			};
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 123 } };
 			var service = GetService();
@@ -959,11 +959,11 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerSetsQuestionsWithNoParentAsAnswers()
 		{
-			var post1 = new Post(1) {ParentPostID = 0};
-			var post2 = new Post(2) {IsFirstInTopic = true};
-			var post3 = new Post(3) {ParentPostID = 2};
-			var post4 = new Post(4) {ParentPostID = 1};
-			var post5 = new Post(5) {ParentPostID = 3};
+			var post1 = new Post { PostID = 1, ParentPostID = 0};
+			var post2 = new Post { PostID = 2, IsFirstInTopic = true};
+			var post3 = new Post { PostID = 3, ParentPostID = 2};
+			var post4 = new Post { PostID = 4, ParentPostID = 1};
+			var post5 = new Post { PostID = 5, ParentPostID = 3};
 			var posts = new List<Post> {post1, post2, post3, post4, post5};
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
@@ -975,13 +975,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerMapsCommentsToParentQuestionsAndAnswers()
 		{
-			var post1 = new Post(1) { ParentPostID = 0 };
-			var post2 = new Post(2) { IsFirstInTopic = true };
-			var post3 = new Post(3) { ParentPostID = 0 };
-			var post4 = new Post(4) { ParentPostID = 1 };
-			var post5 = new Post(5) { ParentPostID = 2 };
-			var post6 = new Post(6) { ParentPostID = 3 };
-			var post7 = new Post(7) { ParentPostID = 3 };
+			var post1 = new Post { PostID = 1, ParentPostID = 0 };
+			var post2 = new Post { PostID = 2, IsFirstInTopic = true };
+			var post3 = new Post { PostID = 3, ParentPostID = 0 };
+			var post4 = new Post { PostID = 4, ParentPostID = 1 };
+			var post5 = new Post { PostID = 5, ParentPostID = 2 };
+			var post6 = new Post { PostID = 6, ParentPostID = 3 };
+			var post7 = new Post { PostID = 7, ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
@@ -996,13 +996,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerMapsCommentsToQuestion()
 		{
-			var post1 = new Post(1) { ParentPostID = 0 };
-			var post2 = new Post(2) { IsFirstInTopic = true };
-			var post3 = new Post(3) { ParentPostID = 0 };
-			var post4 = new Post(4) { ParentPostID = 1 };
-			var post5 = new Post(5) { ParentPostID = 2 };
-			var post6 = new Post(6) { ParentPostID = 2 };
-			var post7 = new Post(7) { ParentPostID = 3 };
+			var post1 = new Post { PostID = 1, ParentPostID = 0 };
+			var post2 = new Post { PostID = 2, IsFirstInTopic = true };
+			var post3 = new Post { PostID = 3, ParentPostID = 0 };
+			var post4 = new Post { PostID = 4, ParentPostID = 1 };
+			var post5 = new Post { PostID = 5, ParentPostID = 2 };
+			var post6 = new Post { PostID = 6, ParentPostID = 2 };
+			var post7 = new Post { PostID = 7, ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
@@ -1015,13 +1015,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerOrdersAnswersByVoteThenDate()
 		{
-			var post1 = new Post(1) { IsFirstInTopic = true };
-			var post2 = new Post(2) { Votes = 7, PostTime = new DateTime(2000, 1, 1) };
-			var post3 = new Post(3) { Votes = 7, PostTime = new DateTime(2000, 2, 1) };
-			var post4 = new Post(4) { Votes = 2 };
-			var post5 = new Post(5) { Votes = 3 };
-			var post6 = new Post(6) { Votes = 8 };
-			var post7 = new Post(7) { Votes = 5 };
+			var post1 = new Post { PostID = 1, IsFirstInTopic = true };
+			var post2 = new Post { PostID = 2, Votes = 7, PostTime = new DateTime(2000, 1, 1) };
+			var post3 = new Post { PostID = 3, Votes = 7, PostTime = new DateTime(2000, 2, 1) };
+			var post4 = new Post { PostID = 4, Votes = 2 };
+			var post5 = new Post { PostID = 5, Votes = 3 };
+			var post6 = new Post { PostID = 6, Votes = 8 };
+			var post7 = new Post { PostID = 7, Votes = 5 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var topic = new Topic { TopicID = 123, AnswerPostID = null };
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
@@ -1038,13 +1038,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerOrdersAnswersByAnswerThenVoteThenDate()
 		{
-			var post1 = new Post(1) { IsFirstInTopic = true };
-			var post2 = new Post(2) { Votes = 7, PostTime = new DateTime(2000, 1, 1) };
-			var post3 = new Post(3) { Votes = 7, PostTime = new DateTime(2000, 2, 1) };
-			var post4 = new Post(4) { Votes = 2 };
-			var post5 = new Post(5) { Votes = 3 };
-			var post6 = new Post(6) { Votes = 8 };
-			var post7 = new Post(7) { Votes = 5 };
+			var post1 = new Post { PostID = 1, IsFirstInTopic = true };
+			var post2 = new Post { PostID = 2, Votes = 7, PostTime = new DateTime(2000, 1, 1) };
+			var post3 = new Post { PostID = 3, Votes = 7, PostTime = new DateTime(2000, 2, 1) };
+			var post4 = new Post { PostID = 4, Votes = 2 };
+			var post5 = new Post { PostID = 5, Votes = 3 };
+			var post6 = new Post { PostID = 6, Votes = 8 };
+			var post7 = new Post { PostID = 7, Votes = 5 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var topic = new Topic { TopicID = 123, AnswerPostID = 5};
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
@@ -1061,13 +1061,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerDoesNotMapCommentsForTopQuestionAsReplies()
 		{
-			var post1 = new Post(1) { ParentPostID = 0 };
-			var post2 = new Post(2) { IsFirstInTopic = true };
-			var post3 = new Post(3) { ParentPostID = 0 };
-			var post4 = new Post(4) { ParentPostID = 1 };
-			var post5 = new Post(5) { ParentPostID = 2 };
-			var post6 = new Post(6) { ParentPostID = 3 };
-			var post7 = new Post(7) { ParentPostID = 3 };
+			var post1 = new Post { PostID = 1, ParentPostID = 0 };
+			var post2 = new Post { PostID = 2, IsFirstInTopic = true };
+			var post3 = new Post { PostID = 3, ParentPostID = 0 };
+			var post4 = new Post { PostID = 4, ParentPostID = 1 };
+			var post5 = new Post { PostID = 5, ParentPostID = 2 };
+			var post6 = new Post { PostID = 6, ParentPostID = 3 };
+			var post7 = new Post { PostID = 7, ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
@@ -1078,13 +1078,13 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MapTopicContainerMapsLastReadTimeToQuestionAndAnswerSets()
 		{
-			var post1 = new Post(1) { ParentPostID = 0 };
-			var post2 = new Post(2) { IsFirstInTopic = true };
-			var post3 = new Post(3) { ParentPostID = 0 };
-			var post4 = new Post(4) { ParentPostID = 1 };
-			var post5 = new Post(5) { ParentPostID = 2 };
-			var post6 = new Post(6) { ParentPostID = 3 };
-			var post7 = new Post(7) { ParentPostID = 3 };
+			var post1 = new Post { PostID = 1, ParentPostID = 0 };
+			var post2 = new Post { PostID = 2, IsFirstInTopic = true };
+			var post3 = new Post { PostID = 3, ParentPostID = 0 };
+			var post4 = new Post { PostID = 4, ParentPostID = 1 };
+			var post5 = new Post { PostID = 5, ParentPostID = 2 };
+			var post6 = new Post { PostID = 6, ParentPostID = 3 };
+			var post7 = new Post { PostID = 7, ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var lastRead = new DateTime(2000, 1, 1);
 			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 }, LastReadTime = lastRead };
