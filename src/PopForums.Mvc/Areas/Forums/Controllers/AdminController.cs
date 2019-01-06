@@ -194,7 +194,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private void SetupCategoryDropDown(int categoryID = 0)
 		{
 			var categories = _categoryService.GetAll();
-			categories.Insert(0, new Category(0) { Title = "Uncategorized" });
+			categories.Insert(0, new Category { Title = "Uncategorized" });
 			var selectList = new SelectList(categories, "CategoryID", "Title", categoryID);
 			ViewData["categoryID"] = selectList;
 		}

@@ -21,7 +21,7 @@ namespace PopForums.Sql.Repositories
 			_sqlObjectFactory.GetConnection().Using(c => c.Command(_sqlObjectFactory, "SELECT CategoryID, Title, SortOrder FROM pf_Category WHERE CategoryID = @CategoryID")
 				.AddParameter(_sqlObjectFactory, "@CategoryID", categoryID)
 				.ExecuteReader()
-				.ReadOne(r => category = new Category(r.GetInt32(0)) { Title = r.GetString(1), SortOrder = r.GetInt32(2) }));
+				.ReadOne(r => category = new Category { CategoryID = r.GetInt32(0), Title = r.GetString(1), SortOrder = r.GetInt32(2) }));
 			return category;
 		}
 
@@ -30,7 +30,7 @@ namespace PopForums.Sql.Repositories
 			var categories = new List<Category>();
 			_sqlObjectFactory.GetConnection().Using(connection => connection.Command(_sqlObjectFactory, "SELECT CategoryID, Title, SortOrder FROM pf_Category ORDER BY SortOrder")
 					.ExecuteReader()
-					.ReadAll(r => categories.Add(new Category(r.GetInt32(0)) {Title = r.GetString(1), SortOrder = r.GetInt32(2)})));
+					.ReadAll(r => categories.Add(new Category { CategoryID = r.GetInt32(0), Title = r.GetString(1), SortOrder = r.GetInt32(2)})));
 			return categories;
 		}
 
@@ -41,7 +41,7 @@ namespace PopForums.Sql.Repositories
 				.AddParameter(_sqlObjectFactory, "@Title", newTitle)
 				.AddParameter(_sqlObjectFactory, "@SortOrder", sortOrder)
 				.ExecuteAndReturnIdentity()));
-			var category = new Category(categoryID) { Title = newTitle, SortOrder = sortOrder };
+			var category = new Category { CategoryID = categoryID, Title = newTitle, SortOrder = sortOrder };
 			return category;
 		}
 

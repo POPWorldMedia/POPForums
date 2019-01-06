@@ -10,8 +10,8 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void UncategorizedForumsShowUpOnProperty()
 		{
-			var c1 = new Category(1);
-			var c2 = new Category(2);
+			var c1 = new Category { CategoryID = 1 };
+			var c2 = new Category { CategoryID = 2 };
 			var f1 = new Forum {ForumID = 1, CategoryID = null};
 			var f2 = new Forum { ForumID = 2, CategoryID = 1};
 			var f3 = new Forum { ForumID = 3, CategoryID = 2};
@@ -41,9 +41,9 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void CategoriesInCorrectOrder()
 		{
-			var c1 = new Category(1) { SortOrder = 5 };
-			var c2 = new Category(2) { SortOrder = 1 };
-			var c3 = new Category(3) { SortOrder = 3 };
+			var c1 = new Category { CategoryID = 1, SortOrder = 5 };
+			var c2 = new Category { CategoryID = 2, SortOrder = 1 };
+			var c3 = new Category { CategoryID = 3, SortOrder = 3 };
 			var f1 = new Forum { ForumID = 1, CategoryID = 1 };
 			var f2 = new Forum { ForumID = 2, CategoryID = 2 };
 			var f3 = new Forum { ForumID = 3, CategoryID = 3 };
@@ -58,8 +58,8 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void AllCollectionsPersist()
 		{
-			var c1 = new Category(1);
-			var c2 = new Category(2);
+			var c1 = new Category { CategoryID = 1 };
+			var c2 = new Category { CategoryID = 2 };
 			var f1 = new Forum { ForumID = 1, CategoryID = null };
 			var f2 = new Forum { ForumID = 2, CategoryID = 1 };
 			var f3 = new Forum { ForumID = 3, CategoryID = 2 };
@@ -73,8 +73,8 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void ForumsAppearInCategories()
 		{
-			var c1 = new Category(1) { Title = "Cat1" };
-			var c2 = new Category(2) { Title = "Cat2" };
+			var c1 = new Category { CategoryID = 1, Title = "Cat1" };
+			var c2 = new Category { CategoryID = 2, Title = "Cat2" };
 			var f1 = new Forum { ForumID = 1, CategoryID = null };
 			var f2 = new Forum { ForumID = 2, CategoryID = 1 };
 			var f3 = new Forum { ForumID = 3, CategoryID = 2 };
@@ -90,9 +90,9 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void CategoryWithNoForumsDoesNotAppear()
 		{
-			var c1 = new Category(1) { Title = "Cat1" };
-			var c2 = new Category(2) { Title = "Cat2" };
-			var c3 = new Category(3) { Title = "Cat3" };
+			var c1 = new Category { CategoryID = 1, Title = "Cat1" };
+			var c2 = new Category { CategoryID = 2, Title = "Cat2" };
+			var c3 = new Category { CategoryID = 3, Title = "Cat3" };
 			var f1 = new Forum { ForumID = 1, CategoryID = null };
 			var f2 = new Forum { ForumID = 2, CategoryID = 1 };
 			var f3 = new Forum { ForumID = 3, CategoryID = 2 };
