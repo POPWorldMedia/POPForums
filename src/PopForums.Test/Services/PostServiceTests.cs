@@ -47,7 +47,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetPostsPageSizeAndStartRowCalcdCorrectly()
 		{
-			var topic = new Topic(1) {ReplyCount = 20};
+			var topic = new Topic { TopicID = 1, ReplyCount = 20};
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(2);
 			PagerContext pagerContext;
@@ -61,7 +61,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetPostsReplyCountCalledOnIncludeDeleted()
 		{
-			var topic = new Topic(1) { ReplyCount = 20 };
+			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(2);
 			_postRepo.Setup(p => p.GetReplyCount(topic.TopicID, true)).Returns(21);
@@ -74,7 +74,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetPostsPagerContextConstructed()
 		{
-			var topic = new Topic(1) { ReplyCount = 20 };
+			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(3);
 			PagerContext pagerContext;
@@ -86,7 +86,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void GetPostsHitsRepo()
 		{
-			var topic = new Topic(1) { ReplyCount = 20 };
+			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var posts = new List<Post>();
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(3);
@@ -284,7 +284,7 @@ namespace PopForums.Test.Services
 		public void DeleteCallDeleteTopicIfFirstInTopic()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
 			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = true, TopicID = topic.TopicID };
@@ -298,7 +298,7 @@ namespace PopForums.Test.Services
 		public void DeleteCallLogs()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
 			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
@@ -312,7 +312,7 @@ namespace PopForums.Test.Services
 		public void DeleteSetsEditFields()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
 			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsEdited = false };
@@ -330,7 +330,7 @@ namespace PopForums.Test.Services
 		public void DeleteCallSetsIsDeletedAndUpdates()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
 			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsDeleted = false };
@@ -347,7 +347,7 @@ namespace PopForums.Test.Services
 		public void DeleteCallFiresRecalcs()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue);
 			var post = new Post(67) { UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
@@ -373,7 +373,7 @@ namespace PopForums.Test.Services
 		public void UndeleteCallLogs()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator }};
 			var post = new Post(67) { TopicID = topic.TopicID };
@@ -387,7 +387,7 @@ namespace PopForums.Test.Services
 		public void UndeleteSetsEditFields()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post(67) { TopicID = topic.TopicID, IsEdited = false, UserID = user.UserID };
@@ -405,7 +405,7 @@ namespace PopForums.Test.Services
 		public void UndeleteCallSetsIsDeletedAndUpdates()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post(67) { TopicID = topic.TopicID, IsDeleted = true };
@@ -422,7 +422,7 @@ namespace PopForums.Test.Services
 		public void UndeleteCallFiresRecalcs()
 		{
 			var forum = new Forum { ForumID = 5 };
-			var topic = new Topic(4) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
 			var service = GetService();
 			var user = new User(123, DateTime.MinValue) { Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post(67) { TopicID = topic.TopicID };
@@ -440,7 +440,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			_postRepo.Setup(p => p.GetFirstInTopic(It.IsAny<int>())).Returns((Post) null);
-			Assert.Throws<Exception>(() => service.GetFirstInTopic(new Topic(1)));
+			Assert.Throws<Exception>(() => service.GetFirstInTopic(new Topic { TopicID = 1 }));
 		}
 
 		[Fact]
@@ -449,7 +449,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var post = new Post(123);
 			_postRepo.Setup(p => p.GetFirstInTopic(It.IsAny<int>())).Returns(post);
-			var result = service.GetFirstInTopic(new Topic(2));
+			var result = service.GetFirstInTopic(new Topic { TopicID = 2 });
 			Assert.Same(post, result);
 			_postRepo.Verify(p => p.GetFirstInTopic(It.IsAny<int>()), Times.Exactly(1));
 		}
@@ -462,7 +462,7 @@ namespace PopForums.Test.Services
 			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(5);
 			PagerContext pagerContext;
-			var result = service.GetPosts(new Topic(123), 2, true, out pagerContext);
+			var result = service.GetPosts(new Topic { TopicID = 123 }, 2, true, out pagerContext);
 			Assert.Equal(2, result.Count);
 			Assert.Equal(3, result[0].PostID);
 			Assert.Equal(4, result[1].PostID);
@@ -476,7 +476,7 @@ namespace PopForums.Test.Services
 			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(3);
 			PagerContext pagerContext;
-			service.GetPosts(new Topic(123), 2, true, out pagerContext);
+			service.GetPosts(new Topic { TopicID = 123 }, 2, true, out pagerContext);
 			Assert.Equal(3, pagerContext.PageCount);
 			Assert.Equal(3, pagerContext.PageIndex);
 		}

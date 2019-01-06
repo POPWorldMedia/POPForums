@@ -30,7 +30,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.AddSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
@@ -40,7 +40,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.RemoveSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
@@ -50,7 +50,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.TryRemoveSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
@@ -68,7 +68,7 @@ namespace PopForums.Test.Services
 		public void TryRemoveSubTopicNullUser()
 		{
 			var service = GetService();
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.TryRemoveSubscribedTopic(null, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
@@ -77,7 +77,7 @@ namespace PopForums.Test.Services
 		public void MarkSubNullUser()
 		{
 			var service = GetService();
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.MarkSubscribedTopicViewed(null, topic);
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
@@ -105,7 +105,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			_mockSubRepo.Setup(s => s.IsTopicSubscribed(user.UserID, topic.TopicID)).Returns(true);
 			service.MarkSubscribedTopicViewed(user, topic);
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(user.UserID, topic.TopicID), Times.Once());
@@ -115,7 +115,7 @@ namespace PopForums.Test.Services
 		public void NotifyCallQueueOnEveryUser()
 		{
 			var service = GetService();
-			var topic = new Topic(123);
+			var topic = new Topic { TopicID = 123 };
 			var list = new List<User> {new User(1, DateTime.MinValue), new User(2, DateTime.MinValue)};
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
 			var topicLink = "foo";
@@ -135,7 +135,7 @@ namespace PopForums.Test.Services
 		public void NotifyCallQueueOnEveryUserButPostingUser()
 		{
 			var service = GetService();
-			var topic = new Topic(123);
+			var topic = new Topic { TopicID = 123 };
 			var user = new User(768, DateTime.MinValue);
 			var list = new List<User> { user, new User(2, DateTime.MinValue) };
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);

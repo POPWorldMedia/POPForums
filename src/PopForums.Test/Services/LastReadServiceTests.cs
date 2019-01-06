@@ -44,7 +44,7 @@ namespace PopForums.Test.Services
 		public void MarkTopicReadThrowsWithoutUser()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.MarkTopicRead(null, new Topic(1)));
+			Assert.Throws<ArgumentNullException>(() => service.MarkTopicRead(null, new Topic { TopicID = 1 }));
 		}
 
 		[Fact]
@@ -192,7 +192,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> {new Topic(1), new Topic(2) {IsClosed = true}, new Topic(3) {IsPinned = true}};
+			container.Topics = new List<Topic> {new Topic { TopicID = 1 }, new Topic { TopicID = 2, IsClosed = true}, new Topic { TopicID = 3, IsPinned = true}};
 			service.GetTopicReadStatus(null, container);
 			Assert.Equal(3, container.ReadStatusLookup.Count);
 			Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
@@ -205,7 +205,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime>());
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -218,7 +218,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime>());
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
@@ -231,7 +231,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -244,7 +244,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
@@ -257,7 +257,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -270,7 +270,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime>());
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
@@ -283,7 +283,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
@@ -296,7 +296,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
@@ -309,7 +309,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new [] {1})).Returns(new Dictionary<int, DateTime>());
@@ -322,7 +322,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -335,7 +335,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -348,7 +348,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -361,7 +361,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -374,7 +374,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -387,7 +387,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -400,7 +400,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var container = new PagedTopicContainer();
-			container.Topics = new List<Topic> { new Topic(1) { ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
+			container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 			var user = new User(123, DateTime.MinValue);
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).Returns(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
 			_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).Returns(new Dictionary<int, DateTime>());
@@ -413,7 +413,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(1, DateTime.MinValue);
-			var topic = new Topic(2);
+			var topic = new Topic { TopicID = 2 };
 			service.MarkTopicRead(user, topic);
 			_lastReadRepo.Verify(l => l.SetTopicRead(user.UserID, topic.TopicID, It.IsAny<DateTime>()), Times.Exactly(1));
 		}
@@ -423,7 +423,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(1, DateTime.MinValue);
-			var topic = new Topic(2);
+			var topic = new Topic { TopicID = 2 };
 			var lastRead = new DateTime(2010, 1, 1);
 			_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).Returns(lastRead);
 
@@ -438,7 +438,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(1, DateTime.MinValue);
-			var topic = new Topic(2) {ForumID = 3};
+			var topic = new Topic { TopicID = 2, ForumID = 3};
 			var lastRead = new DateTime(2010, 1, 1);
 			_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).Returns((DateTime?)null);
 			_lastReadRepo.Setup(x => x.GetLastReadTimesForForum(user.UserID, topic.ForumID)).Returns(lastRead);

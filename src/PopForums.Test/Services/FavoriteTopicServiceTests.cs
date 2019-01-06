@@ -40,7 +40,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.AddFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.AddFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
 		}
@@ -50,7 +50,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			service.RemoveFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.RemoveFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
 		}

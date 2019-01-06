@@ -128,7 +128,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyHitsRepo()
 		{
-			var topic = new Topic(1) { Title = "" };
+			var topic = new Topic { TopicID = 1, Title = "" };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -143,7 +143,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyHitsSubscribedService()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -156,7 +156,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyHitsTextParserRichText()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -171,7 +171,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyHitsTextParserPlainText()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -186,7 +186,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyIncrementsTopicReplyCount()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -199,7 +199,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyIncrementsForumPostCount()
 		{
-			var topic = new Topic(1) { ForumID = 2};
+			var topic = new Topic { TopicID = 1, ForumID = 2};
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -212,7 +212,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyUpdatesTopicLastInfo()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -225,7 +225,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyUpdatesForumLastInfo()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -238,7 +238,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyMarksTopicForIndexing()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -251,7 +251,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyNotifiesBroker()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -269,7 +269,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplySetsProfileLastPostID()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -282,7 +282,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyPublishesEvent()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -295,7 +295,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyDoesNotPublisheEventOnViewRestrictedForum()
 		{
-			var topic = new Topic(1) { ForumID = 2 };
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -308,7 +308,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PostReplyReturnsHydratedObject()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
@@ -338,7 +338,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void CloseTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.CloseTopic(topic, user));
@@ -347,7 +347,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void CloseTopicClosesWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -359,7 +359,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void OpenTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.OpenTopic(topic, user));
@@ -368,7 +368,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void OpenTopicOpensWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -380,7 +380,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PinTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.PinTopic(topic, user));
@@ -389,7 +389,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void PinTopicPinsWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -401,7 +401,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UnpinTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.UnpinTopic(topic, user));
@@ -410,7 +410,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UnpinTopicUnpinsWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -422,7 +422,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.DeleteTopic(topic, user));
@@ -431,7 +431,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteTopicDeletesWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -443,7 +443,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteTopicUpdatesCounts()
 		{
-			var topic = new Topic(1) { ForumID = 123 };
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -456,7 +456,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteTopicUpdatesLast()
 		{
-			var topic = new Topic(1) { ForumID = 123 };
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -469,7 +469,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void DeleteTopicUpdatesReplyCount()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -482,7 +482,7 @@ namespace PopForums.Test.Services
 		public void DeleteTopicDeletesWithStarter()
 		{
 			var user = GetUser();
-			var topic = new Topic(1) { StartedByUserID = user.UserID };
+			var topic = new Topic { TopicID = 1, StartedByUserID = user.UserID };
 			var topicService = GetTopicService();
 			topicService.DeleteTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicDelete, topic, null), Times.Exactly(1));
@@ -492,7 +492,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.UndeleteTopic(topic, user));
@@ -501,7 +501,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteTopicUndeletesWithMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -513,7 +513,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteTopicUpdatesCounts()
 		{
-			var topic = new Topic(1) { ForumID = 123 };
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -526,7 +526,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteTopicUpdatesLast()
 		{
-			var topic = new Topic(1) {ForumID = 123};
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -539,7 +539,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UndeleteTopicUpdatesReplyCount()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
@@ -551,7 +551,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTopicThrowsWithNonMod()
 		{
-			var topic = new Topic(1);
+			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => topicService.UpdateTitleAndForum(topic, new Forum { ForumID = 2 }, "blah", user));
@@ -561,11 +561,11 @@ namespace PopForums.Test.Services
 		public void UpdateTopicUpdatesTitleWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
-			var topic = new Topic(1) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2 });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
@@ -576,11 +576,11 @@ namespace PopForums.Test.Services
 		public void UpdateTopicMarksTopicForIndexingWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
-			var topic = new Topic(1) { ForumID = forum.ForumID };
+			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2 });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
@@ -590,11 +590,11 @@ namespace PopForums.Test.Services
 		public void UpdateTopicMovesTopicWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
-			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
+			var topic = new Topic { TopicID = 1, ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 3 });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 3 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicMoved, topic, forum, It.IsAny<string>()), Times.Exactly(1));
@@ -605,12 +605,12 @@ namespace PopForums.Test.Services
 		public void UpdateTopicWithNewTitleChangesUrlNameOnTopicParameter()
 		{
 			var forum = new Forum { ForumID = 2 };
-			var topic = new Topic(1) { ForumID = forum.ForumID, UrlName = "old" };
+			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID, UrlName = "old" };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = 2 });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			Assert.Equal("new-title", topic.UrlName);
 		}
@@ -620,11 +620,11 @@ namespace PopForums.Test.Services
 		{
 			var forum = new Forum { ForumID = 2 };
 			var oldForum = new Forum { ForumID = 3 };
-			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
+			var topic = new Topic { TopicID = 1, ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = oldForum.ForumID });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
 			_forumService.Setup(f => f.Get(oldForum.ForumID)).Returns(oldForum);
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
@@ -637,11 +637,11 @@ namespace PopForums.Test.Services
 		{
 			var forum = new Forum { ForumID = 2 };
 			var oldForum = new Forum { ForumID = 3 };
-			var topic = new Topic(1) { ForumID = 7, Title = String.Empty };
+			var topic = new Topic { TopicID = 1, ForumID = 7, Title = String.Empty };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic(1) { ForumID = oldForum.ForumID });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
 			_forumService.Setup(f => f.Get(oldForum.ForumID)).Returns(oldForum);
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
@@ -652,7 +652,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateLastSetsFieldsFromLastPost()
 		{
-			var topic = new Topic(456);
+			var topic = new Topic { TopicID = 456 };
 			var post = new Post(123) {TopicID = topic.TopicID, UserID = 789, Name = "Dude", PostTime = new DateTime(2000, 1, 3)};
 			var service = GetTopicService();
 			_postRepo.Setup(x => x.GetLastInTopic(post.TopicID)).Returns(post);
@@ -664,7 +664,7 @@ namespace PopForums.Test.Services
 		public void HardDeleteThrowsIfUserNotAdmin()
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string>() };
-			var topic = new Topic(45);
+			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
 			Assert.Throws<InvalidOperationException>(() => service.HardDeleteTopic(topic, user));
 		}
@@ -673,7 +673,7 @@ namespace PopForums.Test.Services
 		public void HardDeleteCallsModerationService()
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
-			var topic = new Topic(45);
+			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
 			service.HardDeleteTopic(topic, user);
 			_modService.Verify(x => x.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null), Times.Once());
@@ -683,7 +683,7 @@ namespace PopForums.Test.Services
 		public void HardDeleteCallsSearchRepoToDeleteSearchWords()
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
-			var topic = new Topic(45);
+			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
 			service.HardDeleteTopic(topic, user);
 			_searchRepo.Verify(x => x.DeleteAllIndexedWordsForTopic(topic.TopicID), Times.Once());
@@ -693,7 +693,7 @@ namespace PopForums.Test.Services
 		public void HardDeleteCallsTopiRepoToDeleteTopic()
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
-			var topic = new Topic(45);
+			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
 			service.HardDeleteTopic(topic, user);
 			_topicRepo.Verify(x => x.HardDeleteTopic(topic.TopicID), Times.Once());
@@ -703,7 +703,7 @@ namespace PopForums.Test.Services
 		public void HardDeleteCallsForumServiceToUpdateLastAndCounts()
 		{
 			var user = new User(123, DateTime.MaxValue) { Roles = new List<string> { "Admin" } };
-			var topic = new Topic(45) {ForumID = 67};
+			var topic = new Topic { TopicID = 45, ForumID = 67};
 			var forum = new Forum { ForumID = topic.ForumID };
 			var service = GetTopicService();
 			_forumService.Setup(x => x.Get(topic.ForumID)).Returns(forum);
@@ -717,7 +717,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 789 };
+			var topic = new Topic { TopicID = 456, StartedByUserID = 789 };
 			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
 		}
 
@@ -726,7 +726,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123 };
+			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
 			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post(789), "", ""));
 		}
@@ -736,7 +736,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123 };
+			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post(789) { TopicID = 111 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post, "", ""));
@@ -747,7 +747,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = 123 };
+			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post(789) { TopicID = topic.TopicID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			service.SetAnswer(user, topic, post, "", "");
@@ -760,7 +760,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null};
+			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null};
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID};
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
@@ -773,7 +773,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null };
+			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = 777 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
@@ -787,7 +787,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
 			var answerUser = new User(777, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = 666 };
+			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = 666 };
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = answerUser.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
@@ -800,7 +800,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetTopicService();
 			var user = new User(123, DateTime.MaxValue);
-			var topic = new Topic(456) { StartedByUserID = user.UserID, AnswerPostID = null };
+			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
 			var post = new Post(789) { TopicID = topic.TopicID, UserID = user.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(user.UserID)).Returns(user);

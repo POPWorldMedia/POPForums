@@ -10,6 +10,7 @@ using PopForums.Repositories;
 using PopForums.ScoringGame;
 using PopForums.Services;
 using System.Collections.Generic;
+using Org.BouncyCastle.Crypto.Paddings;
 
 namespace PopForums.Test.Services
 {
@@ -144,7 +145,7 @@ namespace PopForums.Test.Services
 			var lastTime = new DateTime(2001, 2, 2);
 			const string lastName = "Jeff";
 			var forum = new Forum { ForumID = forumID };
-			var topic = new Topic(topicID) { LastPostTime = lastTime, LastPostName = lastName };
+			var topic = new Topic { TopicID = topicID, LastPostTime = lastTime, LastPostName = lastName };
 			var forumService = GetService();
 			_mockTopicRepo.Setup(t => t.GetLastUpdatedTopic(forum.ForumID)).Returns(topic);
 			forumService.UpdateLast(forum);
@@ -376,7 +377,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) {IsClosed = true});
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic { TopicID = 4, IsClosed = true});
 			Assert.False(premission.UserCanPost);
 		}
 
@@ -387,7 +388,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsClosed = false });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic { TopicID = 4, IsClosed = false });
 			Assert.True(premission.UserCanPost);
 		}
 
@@ -398,7 +399,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic { TopicID = 4, IsDeleted = true });
 			Assert.False(premission.UserCanView);
 		}
 
@@ -408,7 +409,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, null, new Topic { TopicID = 4, IsDeleted = true });
 			Assert.False(premission.UserCanView);
 		}
 
@@ -420,7 +421,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic(4) { IsDeleted = true });
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1 }, user, new Topic { TopicID = 4, IsDeleted = true });
 			Assert.True(premission.UserCanView);
 		}
 
@@ -431,7 +432,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = false }, user, new Topic(4));
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = false }, user, new Topic { TopicID = 4 });
 			Assert.True(premission.UserCanPost);
 		}
 
@@ -442,7 +443,7 @@ namespace PopForums.Test.Services
 			var forumService = GetService();
 			_mockForumRepo.Setup(f => f.GetForumPostRoles(1)).Returns(new List<string>());
 			_mockForumRepo.Setup(f => f.GetForumViewRoles(1)).Returns(new List<string>());
-			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = true }, user, new Topic(4));
+			var premission = forumService.GetPermissionContext(new Forum { ForumID = 1, IsArchived = true }, user, new Topic { TopicID = 4 });
 			Assert.False(premission.UserCanPost);
 		}
 
@@ -891,7 +892,7 @@ namespace PopForums.Test.Services
 			var topicContainer = new TopicContainer
 			{
 				Forum = new Forum { ForumID = 1 },
-				Topic = new Topic(2),
+				Topic = new Topic { TopicID = 2 },
 				Posts = new List<Post> {new Post(123) { IsFirstInTopic = true }},
 				PagerContext = new PagerContext(),
 				PermissionContext = new ForumPermissionContext(),
@@ -923,7 +924,7 @@ namespace PopForums.Test.Services
 				new Post(1),
 				new Post(2) {IsFirstInTopic = true}
 			};
-			var topicContainer = new TopicContainer {Posts = posts, Topic = new Topic(123)};
+			var topicContainer = new TopicContainer {Posts = posts, Topic = new Topic { TopicID = 123 }};
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.Equal(2, result.QuestionPostWithComments.Post.PostID);
@@ -937,7 +938,7 @@ namespace PopForums.Test.Services
 				new Post(1),
 				new Post(2)
 			};
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(123) };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 123 } };
 			var service = GetService();
 			Assert.Throws<InvalidOperationException>(() => service.MapTopicContainerForQA(topicContainer));
 		}
@@ -950,7 +951,7 @@ namespace PopForums.Test.Services
 				new Post(1) {IsFirstInTopic = true},
 				new Post(2) {IsFirstInTopic = true}
 			};
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(123) };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 123 } };
 			var service = GetService();
 			Assert.Throws<InvalidOperationException>(() => service.MapTopicContainerForQA(topicContainer));
 		}
@@ -964,7 +965,7 @@ namespace PopForums.Test.Services
 			var post4 = new Post(4) {ParentPostID = 1};
 			var post5 = new Post(5) {ParentPostID = 3};
 			var posts = new List<Post> {post1, post2, post3, post4, post5};
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.Single(result.AnswersWithComments);
@@ -982,7 +983,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { ParentPostID = 3 };
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.True(result.AnswersWithComments[0].Children.Count == 1);
@@ -1003,7 +1004,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { ParentPostID = 2 };
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234)};
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.True(result.QuestionPostWithComments.Children.Count == 2);
@@ -1022,7 +1023,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { Votes = 8 };
 			var post7 = new Post(7) { Votes = 5 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topic = new Topic(123) { AnswerPostID = null };
+			var topic = new Topic { TopicID = 123, AnswerPostID = null };
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
@@ -1045,7 +1046,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { Votes = 8 };
 			var post7 = new Post(7) { Votes = 5 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topic = new Topic(123) {AnswerPostID = 5};
+			var topic = new Topic { TopicID = 123, AnswerPostID = 5};
 			var topicContainer = new TopicContainer { Posts = posts, Topic = topic };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
@@ -1068,7 +1069,7 @@ namespace PopForums.Test.Services
 			var post6 = new Post(6) { ParentPostID = 3 };
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234) };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 } };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.DoesNotContain(result.AnswersWithComments, x => x.Post.PostID == post5.PostID);
@@ -1086,7 +1087,7 @@ namespace PopForums.Test.Services
 			var post7 = new Post(7) { ParentPostID = 3 };
 			var posts = new List<Post> { post1, post2, post3, post4, post5, post6, post7 };
 			var lastRead = new DateTime(2000, 1, 1);
-			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic(1234), LastReadTime = lastRead };
+			var topicContainer = new TopicContainer { Posts = posts, Topic = new Topic { TopicID = 1234 }, LastReadTime = lastRead };
 			var service = GetService();
 			var result = service.MapTopicContainerForQA(topicContainer);
 			Assert.Equal(lastRead, result.AnswersWithComments[0].LastReadTime);

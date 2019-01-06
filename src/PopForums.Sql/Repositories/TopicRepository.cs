@@ -293,24 +293,25 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 
 		internal static Topic GetTopicFromReader(DbDataReader reader)
 		{
-			return new Topic(reader.GetInt32(0))
-			       	{
-			       		ForumID = reader.GetInt32(1),
-			       		Title = reader.GetString(2),
-			       		ReplyCount = reader.GetInt32(3),
-			       		ViewCount = reader.GetInt32(4),
-			       		StartedByUserID = reader.GetInt32(5),
-			       		StartedByName = reader.GetString(6),
-			       		LastPostUserID = reader.GetInt32(7),
-			       		LastPostName = reader.GetString(8),
-			       		LastPostTime = reader.GetDateTime(9),
-			       		IsClosed = reader.GetBoolean(10),
-			       		IsPinned = reader.GetBoolean(11),
-			       		IsDeleted = reader.GetBoolean(12),
-			       		IsIndexed = reader.GetBoolean(13),
-			       		UrlName = reader.GetString(14),
-						AnswerPostID = reader.NullIntDbHelper(15)
-			       	};
+			return new Topic
+			    {
+					TopicID = reader.GetInt32(0),
+				    ForumID = reader.GetInt32(1),
+				    Title = reader.GetString(2),
+				    ReplyCount = reader.GetInt32(3),
+				    ViewCount = reader.GetInt32(4),
+				    StartedByUserID = reader.GetInt32(5),
+				    StartedByName = reader.GetString(6),
+				    LastPostUserID = reader.GetInt32(7),
+				    LastPostName = reader.GetString(8),
+				    LastPostTime = reader.GetDateTime(9),
+				    IsClosed = reader.GetBoolean(10),
+				    IsPinned = reader.GetBoolean(11),
+				    IsDeleted = reader.GetBoolean(12),
+				    IsIndexed = reader.GetBoolean(13),
+				    UrlName = reader.GetString(14),
+					AnswerPostID = reader.NullIntDbHelper(15)
+			    };
 		}
 
 		public List<string> GetUrlNamesThatStartWith(string urlName)
