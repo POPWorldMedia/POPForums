@@ -1,17 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-	  <VersionPrefix>14.0.1</VersionPrefix>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+		<!-- next two lines temp until 2.2 is up on Azure app service -->
+	  <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
+	  <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+	  <VersionPrefix>14.99.0</VersionPrefix>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PopForums.Web</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>PopForums.Web</PackageId>
     <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-	  <TypeScriptToolsVersion>3.0</TypeScriptToolsVersion>
+	  <AssemblyVersion>14.99.0</AssemblyVersion>
+	  <FileVersion>14.99.0</FileVersion>
+	  <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="gulpfile.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="gulpfile.js" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views\*.cshtml;Areas\**\Views\**\*.cshtml">
@@ -27,8 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
-	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" PrivateAssets="All" />
+	  <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

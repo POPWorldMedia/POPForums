@@ -2,12 +2,17 @@
 
   <PropertyGroup>
     <Description>PopForums.Data.Sql Class Library</Description>
-    <VersionPrefix>14.0.1</VersionPrefix>
+    <VersionPrefix>14.99.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>PopForums.Sql</AssemblyName>
     <PackageId>PopForums.Sql</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+	  <AssemblyVersion>14.99.0</AssemblyVersion>
+	  <FileVersion>14.99.0</FileVersion>
+	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
+	  <Copyright>2019, POP World Media, LLC</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,10 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
   </ItemGroup>
 
 </Project>

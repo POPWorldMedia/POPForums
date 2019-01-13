@@ -268,7 +268,7 @@ namespace PopForums.Services
 			_forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
 			_forumRepository.IncrementPostAndTopicCount(forum.ForumID);
 			_profileRepository.SetLastPostID(user.UserID, postID);
-			var topic = new Topic(topicID) { ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsIndexed = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
+			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsIndexed = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 			var topicLink = topicLinkGenerator(topic);
 			var message = String.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);

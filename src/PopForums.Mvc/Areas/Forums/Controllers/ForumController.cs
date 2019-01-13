@@ -15,7 +15,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class ForumController : Controller
 	{
-		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IMobileDetectionWrapper mobileDetectionWrapper, IUserRetrievalShim userRetrievalShim)
+		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim)
 		{
 			_settingsManager = settingsManager;
 			_forumService = forumService;
@@ -26,7 +26,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_lastReadService = lastReadService;
 			_favoriteTopicService = favoriteTopicService;
 			_profileService = profileService;
-			_mobileDetectionWrapper = mobileDetectionWrapper;
 			_userRetrievalShim = userRetrievalShim;
 		}
 
@@ -41,7 +40,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ILastReadService _lastReadService;
 		private readonly IFavoriteTopicService _favoriteTopicService;
 		private readonly IProfileService _profileService;
-		private readonly IMobileDetectionWrapper _mobileDetectionWrapper;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 
 		public ActionResult Index(string urlName, int page = 1)
@@ -88,7 +86,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return Content(Resources.ForumNoPost);
 
 			var profile = _profileService.GetProfile(user);
-			var newPost = new NewPost { ItemID = forum.ForumID, IncludeSignature = profile.Signature.Length > 0, IsPlainText = _mobileDetectionWrapper.IsMobileDevice(HttpContext) || profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages };
+			var newPost = new NewPost { ItemID = forum.ForumID, IncludeSignature = profile.Signature.Length > 0, IsPlainText = profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages };
 			return View("NewTopic", newPost);
 		}
 
@@ -280,13 +278,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (!title.ToLower().StartsWith("re:"))
 				title = "Re: " + title;
 			var profile = _profileService.GetProfile(user);
-			var forcePlainText = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
-			var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = forcePlainText || profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages, ParentPostID = replyID };
+			var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages, ParentPostID = replyID };
 
 			if (quotePostID != 0)
 			{
 				var post = _postService.Get(quotePostID);
-				newPost.FullText = _postService.GetPostForQuote(post, user, forcePlainText);
+				newPost.FullText = _postService.GetPostForQuote(post, user, profile.IsPlainText);
 			}
 
 			if (forum.IsQAForum)
@@ -464,8 +461,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
-			var isMobile = _mobileDetectionWrapper.IsMobileDevice(HttpContext);
-			var postEdit = _postService.GetPostForEdit(post, user, isMobile);
+			var postEdit = _postService.GetPostForEdit(post, user);
 			return View(postEdit);
 		}
 
@@ -599,7 +595,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
 			}
-			catch (SecurityException securityException) // TODO: what is this?
+			catch (SecurityException) // TODO: what is this?
 			{
 				return StatusCode(403);
 			}

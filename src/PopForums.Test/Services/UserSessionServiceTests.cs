@@ -67,7 +67,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UserWithAnonCookieStartsLoggedInSession()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			var deleteCalled = false;
 			Action delete = () => { deleteCalled = true; };
@@ -115,7 +115,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UserWithNoCookieGetsCookieAndSessionStart()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			var deleteCalled = false;
 			Action delete = () => { deleteCalled = true; };
@@ -135,7 +135,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UserWithCookieUpdateSession()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			var deleteCalled = false;
 			Action delete = () => { deleteCalled = true; };
@@ -156,7 +156,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UserSessionNoCookieButHasOldSessionEndsOldSessionStartsNewOne()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 			Action delete = () => { };
 			int? createResult = null;
@@ -177,7 +177,7 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UserSessionWithNoMatchingIDEndsOldSessionStartsNewOne()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var service = GetService();
 		    Action delete = () => { };
 			int? createResult = null;

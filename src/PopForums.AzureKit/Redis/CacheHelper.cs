@@ -24,7 +24,6 @@ namespace PopForums.AzureKit.Redis
 		    if (_cacheConnection == null)
 		    {
 			    _cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
-			    _cacheConnection.PreserveAsyncOrder = false;
 		    }
 			// Local cache
 			if (_cache == null)
@@ -33,7 +32,6 @@ namespace PopForums.AzureKit.Redis
 			if (_messageConnection == null)
 		    {
 			    _messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
-				_cacheConnection.PreserveAsyncOrder = false;
 			    var db = _messageConnection.GetSubscriber();
 			    db.Subscribe(_removeChannel, (channel, value) =>
 				{

@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = PopForums.Resources.ForgotPassword;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.ForgotPassword</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li><a class="breadcrumb-item" asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+</div>
+
+<p>@PopForums.Resources.ForgotInstructions</p>
+
+<form asp-action="Forgot" method="post" role="form">
+	<div class="form-group">
+		<input name="Email" class="form-control"/>
+	</div>
+	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
+	@if (ViewBag.Result != null) { <p class="alert alert-danger">@ViewBag.Result</p> }
+</form>

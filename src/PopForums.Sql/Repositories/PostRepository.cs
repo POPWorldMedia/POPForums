@@ -337,24 +337,25 @@ SET ROWCOUNT 0";
 
 		private static Post GetPostFromReader(DbDataReader r)
 		{
-			return new Post(r.GetInt32(0))
-			       	{
-			       		TopicID = r.GetInt32(1),
-						ParentPostID = r.GetInt32(2),
-						IP = r.GetString(3),
-						IsFirstInTopic = r.GetBoolean(4),
-						ShowSig = r.GetBoolean(5),
-						UserID = r.GetInt32(6),
-						Name = r.GetString(7),
-						Title = r.GetString(8),
-						FullText = r.GetString(9),
-						PostTime = r.GetDateTime(10),
-						IsEdited = r.GetBoolean(11),
-						LastEditName = r.GetString(12),
-						LastEditTime = r.NullDateTimeDbHelper(13),
-						IsDeleted = r.GetBoolean(14),
-						Votes = r.GetInt32(15)
-			       	};
+			return new Post
+			{
+				PostID = r.GetInt32(0),
+				TopicID = r.GetInt32(1),
+				ParentPostID = r.GetInt32(2),
+				IP = r.GetString(3),
+				IsFirstInTopic = r.GetBoolean(4),
+				ShowSig = r.GetBoolean(5),
+				UserID = r.GetInt32(6),
+				Name = r.GetString(7),
+				Title = r.GetString(8),
+				FullText = r.GetString(9),
+				PostTime = r.GetDateTime(10),
+				IsEdited = r.GetBoolean(11),
+				LastEditName = r.GetString(12),
+				LastEditTime = r.NullDateTimeDbHelper(13),
+				IsDeleted = r.GetBoolean(14),
+				Votes = r.GetInt32(15)
+			};
 		}
 	}
 }

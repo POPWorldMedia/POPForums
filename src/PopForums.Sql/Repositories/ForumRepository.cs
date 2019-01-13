@@ -33,9 +33,10 @@ namespace PopForums.Sql.Repositories
 
 		private static Forum PopulateForumFromReader(DbDataReader r)
 		{
-			return new Forum(r.GetInt32(0))
+			return new Forum
 			       	{
-			       		CategoryID = r.NullIntDbHelper(1),
+						ForumID = r.GetInt32(0),
+						CategoryID = r.NullIntDbHelper(1),
 			       		Title = r.GetString(2),
 			       		Description = r.GetString(3),
 			       		IsVisible = r.GetBoolean(4),
@@ -91,8 +92,9 @@ namespace PopForums.Sql.Repositories
 				.AddParameter(_sqlObjectFactory, "@ForumAdapterName", forumAdapterName.GetObjectOrDbNull())
 				.AddParameter(_sqlObjectFactory, "@IsQAForum", isQAForum)
 				.ExecuteAndReturnIdentity()));
-			var forum = new Forum(forumID)
+			var forum = new Forum
 			            	{
+								ForumID = forumID,
 			            		CategoryID = categoryID,
 			            		Title = title,
 			            		Description = description,

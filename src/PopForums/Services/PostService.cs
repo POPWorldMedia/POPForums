@@ -20,7 +20,7 @@ namespace PopForums.Services
 		bool IsNewPostDupeOrInTimeLimit(NewPost newPost, User user);
 		int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic);
 		int GetPostCount(User user);
-		PostEdit GetPostForEdit(Post post, User user, bool isMobile);
+		PostEdit GetPostForEdit(Post post, User user);
 		void EditPost(Post post, PostEdit postEdit, User editingUser);
 		void Delete(Post post, User user);
 		void Undelete(Post post, User user);
@@ -146,7 +146,7 @@ namespace PopForums.Services
 			return _postRepository.GetPostCount(user.UserID);
 		}
 
-		public PostEdit GetPostForEdit(Post post, User user, bool isMobile)
+		public PostEdit GetPostForEdit(Post post, User user)
 		{
 			if (post == null)
 				throw new ArgumentNullException("post");
@@ -154,7 +154,7 @@ namespace PopForums.Services
 				throw new ArgumentNullException("user");
 			var profile = _profileRepository.GetProfile(user.UserID);
 			var postEdit = new PostEdit(post) { IsPlainText = profile.IsPlainText };
-			if (profile.IsPlainText || isMobile)
+			if (profile.IsPlainText)
 			{
 				postEdit.FullText = _textParsingService.HtmlToForumCode(post.FullText);
 				postEdit.IsPlainText = true;

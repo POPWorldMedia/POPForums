@@ -1,0 +1,70 @@
+﻿@model PagedTopicContainer
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	ViewBag.Title = PopForums.Resources.RecentTopics;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser(Context);
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		@if (Model.PagerContext.PageIndex == 1)
+		{
+			<text>PopForums.recentListen(@Model.PagerContext.PageSize);</text>
+		}
+		});
+	</script>
+}
+
+<h1>@PopForums.Resources.Recent</h1>
+
+<div>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item active">@PopForums.Resources.Recent</li>
+	</ul>
+</div>
+
+<pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
+
+<table id="TopicList" class="table grid table-hover">
+	@foreach (var topic in Model.Topics)
+	{
+		<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>  } data-topicid="@topic.TopicID">
+			<td class="newIndicator">
+				@if (user == null)
+				{
+					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+				}
+				else
+				{
+					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+				}
+			</td>
+			<td>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, page = 1 }, null)</h2>
+				<small class="float-right forumDetails">
+					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+				</small>
+			</td>
+		</tr>
+	}
+	<tr id="TopicTemplate" data-topicid="" class="hidden">
+		<td class="newIndicator">
+			<a class="indicatorLink" href=""><img src="" /></a>
+		</td>
+		<td>
+			<h2><a class="titleLink" href=""></a></h2>
+			<small class="float-right forumDetails">
+				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
+			</small>
+		</td>
+	</tr>
+</table>

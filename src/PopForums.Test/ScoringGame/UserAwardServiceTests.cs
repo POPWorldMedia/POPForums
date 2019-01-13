@@ -21,7 +21,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void IssueMapsFieldsToRepoCall()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var awardDef = new AwardDefinition {AwardDefinitionID = "blah", Description = "desc", Title = "title", IsSingleTimeAward = true};
 			var service = GetService();
 			service.IssueAward(user, awardDef);
@@ -31,7 +31,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void IsAwardedMapsAndReturnsRightValue()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var awardDef = new AwardDefinition { AwardDefinitionID = "blah" };
 			var service = GetService();
 			_userAwardRepo.Setup(x => x.IsAwarded(user.UserID, awardDef.AwardDefinitionID)).Returns(true);
@@ -42,7 +42,7 @@ namespace PopForums.Test.ScoringGame
 		[Fact]
 		public void GetAwardsMapsUserIDAndReturnsList()
 		{
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var list = new List<UserAward>();
 			var service = GetService();
 			_userAwardRepo.Setup(x => x.GetAwards(user.UserID)).Returns(list);

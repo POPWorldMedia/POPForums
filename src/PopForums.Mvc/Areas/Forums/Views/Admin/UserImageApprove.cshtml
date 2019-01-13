@@ -1,0 +1,23 @@
+﻿@model Dictionary<UserImage, User>
+@{
+	ViewBag.PageTitle = PopForums.Resources.UserImageApproval;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.UserImageApproval</h1>
+
+@if ((bool)ViewBag.IsNewUserImageApproved)
+{
+	<p class="alert alert-danger">@PopForums.Resources.UserImageApprovalNotReq</p>
+}
+
+@foreach (var item in Model)
+{
+	<p>
+		@item.Value.Name | <a href="mailto:@item.Value.Email">@item.Value.Email</a><br />
+		<img src="@Url.Action("UserImage", "Image", new {id = item.Key.UserImageID})" alt="User image" /><br />
+		<form asp-action="ApproveUserImage" asp-route-id="@item.Key.UserImageID" asp-antiforgery="false" method="post" style="display:inline;"><input type="submit" value="Approve" class="btn btn-primary" /></form>
+		<form asp-action="DeleteUserImage" asp-route-id="@item.Key.UserImageID" asp-antiforgery="false" method="post" style="display:inline;"><input type="submit" value="@PopForums.Resources.Delete" class="btn btn-primary" /></form>
+	</p>
+	<hr />
+}

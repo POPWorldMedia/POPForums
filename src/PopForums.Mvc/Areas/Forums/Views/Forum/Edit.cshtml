@@ -1,0 +1,63 @@
+﻿@model PostEdit
+
+@{
+    ViewBag.Title = PopForums.Resources.EditPost;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/tinymce.min.js")"></script>
+	<script language="javascript" type="text/javascript">
+		$(function () {
+			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
+			if (!usePlainText) {
+				PopForums.editorSettings.selector = "#FullText";
+				tinyMCE.init(PopForums.editorSettings);
+			}
+
+			$("#PreviewModal").on("shown.bs.modal", function () {
+				PopForums.previewPost();
+			});
+		});
+	</script>
+}
+
+<h1>@PopForums.Resources.EditPost</h1>
+
+<form method="post">
+	<div class="postForm" role="form">
+		<input asp-for="Title" type="hidden"/>
+		<textarea asp-for="FullText" class="form-control"></textarea>
+		<div class="checkbox">
+			<label for="IncludeSignature">
+				<input type="checkbox" asp-for="ShowSig"/>
+				@PopForums.Resources.IncludeSignature
+			</label>
+		</div>
+		<div class="form-group">
+			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
+			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
+		</div>
+		<input type="hidden" asp-for="IsPlainText"/>
+	</div>
+	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
+	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
+</form>
+
+<div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content" id="PreviewModalContent">
+			<div class="modal-header">
+				<h4 class="modal-title">@PopForums.Resources.Preview</h4>
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+			</div>
+			<div class="modal-body">
+				<div id="ParsedFullText" class="postItem"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

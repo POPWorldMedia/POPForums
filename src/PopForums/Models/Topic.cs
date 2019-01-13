@@ -4,12 +4,7 @@ namespace PopForums.Models
 {
 	public class Topic
 	{
-		public Topic(int topicID)
-		{
-			TopicID = topicID;
-		}
-
-		public int TopicID { get; private set; }
+		public int TopicID { get; set; }
 		public int ForumID { get; set; }
 		public string Title { get; set; }
 		public int ReplyCount { get; set; }

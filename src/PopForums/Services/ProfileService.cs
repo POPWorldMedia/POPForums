@@ -58,13 +58,14 @@ namespace PopForums.Services
 
 		public Profile Create(User user, SignupData signupData)
 		{
-			var profile = new Profile(user.UserID)
-			              	{
-			              		TimeZone = signupData.TimeZone,
-			              		IsDaylightSaving = signupData.IsDaylightSaving,
-			              		IsSubscribed = signupData.IsSubscribed,
-			              		IsTos = signupData.IsTos
-			              	};
+			var profile = new Profile
+            {
+				UserID = user.UserID,
+	            TimeZone = signupData.TimeZone,
+	            IsDaylightSaving = signupData.IsDaylightSaving,
+	            IsSubscribed = signupData.IsSubscribed,
+	            IsTos = signupData.IsTos
+            };
 			_profileRepository.Create(profile);
 			return profile;
 		}

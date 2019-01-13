@@ -4,12 +4,7 @@ namespace PopForums.Models
 {
 	public class Forum
 	{
-		public Forum(int forumID)
-		{
-			ForumID = forumID;
-		}
-
-		public int ForumID { get; private set; }
+		public int ForumID { get; set; }
 		public int? CategoryID { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }

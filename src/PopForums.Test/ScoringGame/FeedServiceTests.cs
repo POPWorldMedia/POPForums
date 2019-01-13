@@ -25,7 +25,7 @@ namespace PopForums.Test.ScoringGame
 		public void PublishSavesToRepo()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			const string msg = "oiehgfoih";
 			const int points = 5352;
 			var timeStamp = new DateTime(2000, 1, 1);
@@ -37,7 +37,7 @@ namespace PopForums.Test.ScoringGame
 		public void PublishDeletesOlderThan50()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var timeStamp = new DateTime(2000, 1, 1);
 			var cutOff = new DateTime(1999, 2, 2);
 			const int points = 5352;
@@ -58,7 +58,7 @@ namespace PopForums.Test.ScoringGame
 		public void GetFeedGets50ItemsMaxFromRepo()
 		{
 			var service = GetService();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var list = new List<FeedEvent>();
 			_feedRepo.Setup(x => x.GetFeed(user.UserID, 50)).Returns(list);
 			var result = service.GetFeed(user);

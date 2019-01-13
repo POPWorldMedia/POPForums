@@ -1,0 +1,113 @@
+﻿@{
+	ViewBag.PageTitle = PopForums.Resources.ManualEvent;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script type="text/javascript">
+		$(function () {
+			var toText = $("#ToText");
+			var toList = $("#ToList");
+			toText.on("keyup", function() {
+				var q = $(this).val();
+				if (q.length > 1) {
+					$.getJSON(PopForums.areaPath + "/Admin/GetNames", { id: q })
+						.done(function (data) {
+							toList.empty();
+							$.each(data, function(i, item) {
+								toList.append('<li><a href="#" data-userID="' + item.userID + '" class="alert toItem">' + item.value + '</a></li>');
+							});
+						});
+				} else {
+					toList.empty();
+				}
+			});
+
+			$(document).on("click", ".toItem", function () {
+				var context = "#" + $("#FormContext").val();
+				var item = $(this);
+				var userID = item.attr("data-userID");
+				$(context + " #UserID").val(userID);
+				$(context + " #Name").val(item[0].innerHTML);
+				toList.empty();
+				toText.val("");
+				$("#ToModal").modal("hide");
+			});
+
+			$("#ToModal").on("shown.bs.modal", function () {
+				$("#ToText").focus();
+			});
+
+			$(".modalTrigger").on("click", function () {
+				var dataForm = $(this).attr("data-form");
+				$("#FormContext").val(dataForm);
+			});
+		});
+	</script>
+}
+
+<h1>@PopForums.Resources.ManualEvent</h1>
+
+@using (Html.BeginForm())
+{
+	<div role="form" id="PointsForm">
+		@Html.Hidden("UserID", String.Empty)
+		<div class="form-group">
+			<label><input type="button" class="btn btn-primary modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="PointsForm" value="@PopForums.Resources.Name" /></label>
+			@Html.TextBox("Name", String.Empty, new { @class = "form-control", disabled = "disabled" })
+		</div>
+		<div class="form-group">
+			<label>Feed message</label>
+			@Html.TextBox("FeedMessage", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label>Points</label>
+			@Html.TextBox("Points", String.Empty, new { @class = "form-control" })
+		</div>
+		<input type="submit" value="Publish Points" class="btn btn-primary" />
+	</div>
+}
+
+<h2>Manual existing event</h2>
+
+@using (Html.BeginForm("ManualExistingEvent", "Admin"))
+{
+	<div role="form" id="EventForm">
+		@Html.Hidden("UserID", String.Empty)
+		<div class="form-group">
+			<label><input type="button" class="btn btn-primary modalTrigger" data-toggle="modal" data-target="#ToModal" data-form="EventForm" value="@PopForums.Resources.Name" /></label>
+			@Html.TextBox("Name", String.Empty, new { @class = "form-control", disabled = "disabled" })
+		</div>
+		<div class="form-group">
+			<label>Feed message</label>
+			@Html.TextBox("FeedMessage", null, new { @class = "form-control" })
+		</div>
+		<div class="form-group">
+			<label>Event Definition ID</label>
+			@Html.DropDownList("EventDefinitionID", (SelectList)ViewBag.EventList, new { @class = "form-control" })
+		</div>
+		<input type="submit" value="Publish Event" class="btn btn-primary" />
+	</div>
+}
+
+<input type="hidden" id="FormContext"/>
+<div class="modal fade" id="ToModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">@PopForums.Resources.To</h4>
+			</div>
+			<div class="modal-body">
+				<input id="ToText" type="text" class="form-control" placeholder="@PopForums.Resources.Search" />
+				<div id="ToResultList">
+					<ul id="ToList" class="list-unstyled"></ul>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

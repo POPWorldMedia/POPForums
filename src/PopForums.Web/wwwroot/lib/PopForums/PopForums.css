@@ -13,24 +13,16 @@
 	width: 40px;
 }
 
-#ForumContainer .callout {
-	padding: 8px; border-radius: 4px;
+#ForumContainer .alert {
+	border-radius: 4px;
 }
 
 #ForumContainer #ForumFooter {
 	margin-top: 30px;
 }
 
-#ForumContainer .topicPreviewButton {
-	cursor: pointer;
-}
-
 #ForumContainer #PostResponseMessage {
 	display: none;
-}
-
-#ForumContainer .topicPreview {
-	display: none;overflow-y: scroll;overflow-x: hidden;max-height: 300px;width: 99%;padding: 5px;margin-bottom: 10px;
 }
 
 #ForumContainer #TopicModerationLog {
@@ -42,12 +34,16 @@
 }
 
 #ForumContainer #FixedBreadcrumb {
-	position: fixed;top: 0;display: none;
+	position: fixed;top: 0; display: none;
 	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
 }
 
-#ForumContainer .twirl {
-	font-size: 75%;
+#ForumContainer #ModeratorPanel {
+	margin-top: 20px; padding: 10px;
+}
+
+#ForumContainer #FixedBreadcrumb li {
+	float: left;
 }
 
 #ForumContainer .topicListButton {
@@ -87,8 +83,31 @@
 }
 
 #ForumContainer .answerData {
-	min-width: 70px;
 	text-align: center;
+	min-width: 4em;
+}
+
+#ForumContainer .answerData .answerStatus {
+	margin: 1em auto;
+	font-size: 150%;
+}
+
+#ForumContainer .answerData .badge {
+	font-size: 150%;
+}
+
+#ForumContainer .qaComment {
+	margin-left: 20px;
+	padding: 10px;
+}
+
+#ForumContainer .answerButton, #ForumContainer .answerCheck {
+	font-size: 150%;
+	text-align: center;
+}
+
+#ForumContainer .answerButton {
+	cursor: pointer;
 }
 
 #ForumContainer .answerVote {
@@ -139,6 +158,8 @@
 }
 #ForumContainer blockquote {
 	font-size: 100%;
+	border-left: 5px solid #aaaaaa;
+	padding: 0 1em;
 }
 #ForumContainer .postItem hr {
 	margin: 10px 0;
@@ -149,11 +170,13 @@
 #ForumContainer .miniProfileBox {
 	padding: 8px 15px;
 	margin-bottom: 10px;
+	margin-top: 4px;
 	display: none;
 	border-radius: 4px;
 }
-#ForumContainer .miniProfile a {
+#ForumContainer .miniProfile a, #ForumContainer .miniProfile a:visited {
 	text-decoration: underline;
+	color: white; /* need to get this from BS */
 }
 #ForumContainer .postItem .voteCount {
 	display: inline-block;
@@ -216,27 +239,15 @@
 	max-height: 350px;
 }
 
-#ForumContainer .qaComment {
-	margin-left: 20px;padding: 10px;
-}
-
-#ForumContainer .answerButton, #ForumContainer .answerCheck {
-	margin: 20px;font-size: 200%;
-}
-#ForumContainer .answerButton {
-	cursor: pointer;
-}
-#ForumContainer .answerData {
-	min-width: 70px;
-}
-#ForumContainer .answerBody {
-	margin-left: 100px;
-}
-#ForumContainer .answerData span {
-	display: block;text-align: center;
-}
 #ForumContainer .voteCount .voters {
 	display: none;
+}
+
+#ForumContainer .morePager:hover, #ForumContainer .currentPager:hover {
+	background: none;
+}
+#ForumContainer .morePager, #ForumContainer .currentPager .page-link {
+	cursor: default;
 }
 
 /* queries */
@@ -266,9 +277,37 @@
 #ForumContainer #AccountBox .badge {
 	background-color: #ff0000;color: white;
 	position: relative;
-	top: -2px;
+	top: -5px;
 }
 
-.pagination .glyphicon {
-	top: 0;
+#ForumContainer .hidden {
+	display: none !important
+}
+
+.btn-link {
+	border: none;
+	cursor: pointer;
+}
+
+/* icons */
+.message-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMTIuNzEzbC0xMS45ODUtOS43MTNoMjMuOTcxbC0xMS45ODYgOS43MTN6bS01LjQyNS0xLjgyMmwtNi41NzUtNS4zMjl2MTIuNTAxbDYuNTc1LTcuMTcyem0xMC44NSAwbDYuNTc1IDcuMTcydi0xMi41MDFsLTYuNTc1IDUuMzI5em0tMS41NTcgMS4yNjFsLTMuODY4IDMuMTM1LTMuODY4LTMuMTM1LTguMTEgOC44NDhoMjMuOTU2bC04LjExLTguODQ4eiIvPjwvc3ZnPg==');
+	width: 1.2em; height: 1.2em;
+	margin-top: 5px;
+}
+.check-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptLTEuMjUgMTcuMjkybC00LjUtNC4zNjQgMS44NTctMS44NTggMi42NDMgMi41MDYgNS42NDMtNS43ODQgMS44NTcgMS44NTctNy41IDcuNjQzeiIvPjwvc3ZnPg==');
+	width: 1.2em; height: 1.2em;
+}
+.question-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
+	width: 1.2em; height: 1.2em;
+}
+.star-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem0tMS44MzQgOS42ODZsLTQuMTY2LjU3NSAzLjAzMiAyLjkxNC0uNzQgNC4xMzkgMy43MDgtMS45ODIgMy43MDggMS45ODMtLjc0LTQuMTM5IDMuMDMyLTIuOTE1LTQuMTY2LS41NzUtMS44MzQtMy43ODQtMS44MzQgMy43ODR6Ii8+PC9zdmc+');
+	width: 1.2em; height: 1.2em;
+}
+.x-icon {
+	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem02IDE2LjA5NGwtNC4xNTctNC4xMDQgNC4xLTQuMTQxLTEuODQ5LTEuODQ5LTQuMTA1IDQuMTU5LTQuMTU2LTQuMTAyLTEuODMzIDEuODM0IDQuMTYxIDQuMTItNC4xMDQgNC4xNTcgMS44MzQgMS44MzIgNC4xMTgtNC4xNTkgNC4xNDMgNC4xMDIgMS44NDgtMS44NDl6Ii8+PC9zdmc+');
+	width: 1em; height: 1em;
 }

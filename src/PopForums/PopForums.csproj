@@ -2,12 +2,17 @@
 
   <PropertyGroup>
     <Description>PopForums Class Library</Description>
-    <VersionPrefix>14.0.1</VersionPrefix>
+    <VersionPrefix>14.99.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>PopForums</AssemblyName>
     <PackageId>PopForums</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+	  <AssemblyVersion>14.99.0</AssemblyVersion>
+	  <FileVersion>14.99.0</FileVersion>
+	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
+	  <Copyright>2019, POP World Media, LLC</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +20,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0004" />
+    <PackageReference Include="MailKit" Version="2.1.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0005" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
@@ -44,7 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.5" />
+    <PackageReference Update="Microsoft.NETCore.App" />
   </ItemGroup>
 
 </Project>

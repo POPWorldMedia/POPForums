@@ -23,7 +23,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var list = new List<Friend>();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			_friendRepo.Setup(x => x.GetFriends(user.UserID)).Returns(list);
 			
 			var result = service.GetFriends(user);
@@ -37,7 +37,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var list = new List<User>();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			_friendRepo.Setup(x => x.GetUnapprovedFriends(user.UserID)).Returns(list);
 
 			var result = service.GetUnapprovedFriends(user);
@@ -50,8 +50,8 @@ namespace PopForums.Test.Services
 		public void AddUnapprovedFriendCallsRepoByIDs()
 		{
 			var service = GetService();
-			var fromUser = new User(123, DateTime.MinValue);
-			var toUser = new User(456, DateTime.MinValue);
+			var fromUser = new User { UserID = 123 };
+			var toUser = new User { UserID = 456 };
 
 			service.AddUnapprovedFriend(fromUser, toUser);
 
@@ -62,7 +62,7 @@ namespace PopForums.Test.Services
 		public void AddUnapprovedFriendWontCallRepoIfSelfAddingFriend()
 		{
 			var service = GetService();
-			var fromUser = new User(123, DateTime.MinValue);
+			var fromUser = new User { UserID = 123 };
 
 			service.AddUnapprovedFriend(fromUser, fromUser);
 
@@ -73,8 +73,8 @@ namespace PopForums.Test.Services
 		public void ApproveFriendCallsRepoByIDs()
 		{
 			var service = GetService();
-			var fromUser = new User(123, DateTime.MinValue);
-			var toUser = new User(456, DateTime.MinValue);
+			var fromUser = new User { UserID = 123 };
+			var toUser = new User { UserID = 456 };
 
 			service.ApproveFriend(fromUser, toUser);
 
@@ -85,8 +85,8 @@ namespace PopForums.Test.Services
 		public void DeleteFriendCallsRepoByIDs()
 		{
 			var service = GetService();
-			var fromUser = new User(123, DateTime.MinValue);
-			var toUser = new User(456, DateTime.MinValue);
+			var fromUser = new User { UserID = 123 };
+			var toUser = new User { UserID = 456 };
 
 			service.DeleteFriend(fromUser, toUser);
 
@@ -97,8 +97,8 @@ namespace PopForums.Test.Services
 		public void IsFriendCallsRepoByIDsAndReturnsResult()
 		{
 			var service = GetService();
-			var fromUser = new User(123, DateTime.MinValue);
-			var toUser = new User(456, DateTime.MinValue);
+			var fromUser = new User { UserID = 123 };
+			var toUser = new User { UserID = 456 };
 			_friendRepo.Setup(x => x.IsFriend(fromUser.UserID, toUser.UserID)).Returns(true);
 
 			var result = service.IsFriend(fromUser, toUser);

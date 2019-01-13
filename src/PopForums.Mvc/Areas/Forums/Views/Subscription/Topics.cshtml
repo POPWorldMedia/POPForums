@@ -1,0 +1,65 @@
+﻿@model PagedTopicContainer
+@inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormattingService TimeFormattingService
+@{
+	ViewBag.Title = PopForums.Resources.SubscribedTopics;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser(Context);
+	var profile = UserRetrievalShim.GetProfile(Context);
+}
+
+@section HeaderContent {
+	<script type="text/javascript" language="javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		});
+	</script>
+}
+
+<div>
+	<h1>@PopForums.Resources.SubscribedTopics</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+	<ul id="FixedBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item active">@PopForums.Resources.SubscribedTopics</li>
+	</ul>
+</div>
+
+@if (Model == null)
+{
+	<p>@PopForums.Resources.SubscribeLoggedIn</p>
+}
+else
+{
+	if (Model.Topics.Count == 0)
+	{
+		<p>@PopForums.Resources.SubscribeNone</p>
+	}
+	
+	<pf-pagerLinks controllerName="Subscription" actionName="Topics" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
+
+	<table id="TopicList" class="table grid table-hover">
+		@foreach (var topic in Model.Topics)
+		{
+			<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>   }>
+				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
+				<td class="topicListButton">
+					<form asp-action="Unsubscribe" asp-controller="Subscription" asp-antiforgery="false">
+						<input type="hidden" value="@topic.TopicID" />
+						<input type="submit" value="@PopForums.Resources.Unsubscribe" class="btn btn-primary"/>
+					</form>
+				</td>
+				<td>
+					<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-page="">@topic.Title</a></h2>
+					<small class="pull-right forumDetails">
+						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+					</small>
+				</td>
+			</tr>
+		}
+	</table>
+}

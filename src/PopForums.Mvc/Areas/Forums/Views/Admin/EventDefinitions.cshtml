@@ -1,0 +1,64 @@
+﻿@model List<PopForums.ScoringGame.EventDefinition>
+
+@{
+	ViewBag.PageTitle = PopForums.Resources.EventDefinitions;
+    Layout = "~/Areas/Forums/Views/Admin/AdminMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.EventDefinitions</h1>
+
+<table class="table table-hover">
+	<tr>
+		<th>ID</th>
+		<th>@PopForums.Resources.Description</th>
+		<th>Point Value</th>
+		<th>Publish to Feed</th>
+		<th>&nbsp;</th>
+	</tr>
+@foreach (var item in Model)
+{
+	<tr>
+		<td>@item.EventDefinitionID</td>
+		<td>@item.Description</td>
+		<td>@item.PointValue</td>
+		<td><input type="checkbox" disabled="disabled" @if (item.IsPublishedToFeed) {<text>checked="checked" </text>}/></td>
+		<td>
+			@if (!PopForums.ScoringGame.EventDefinitionService.StaticEvents.ContainsKey(item.EventDefinitionID)) {
+				using (Html.BeginForm("DeleteEvent", "Admin", new { id = item.EventDefinitionID })) {
+					<input type="submit" value="Delete" class="btn btn-primary" />
+				}
+			}
+		</td>
+	</tr>
+}
+</table>
+
+<h2>Add Event</h2>
+
+@using (Html.BeginForm("AddEvent", "Admin"))
+{
+	<div role="form" class="form-horizontal">
+		<div class="form-group">
+			<label class="col-4">EventDefinitionID</label>
+			<div class="col-8">@Html.TextBox("EventDefinitionID", String.Empty, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label class="col-4">@PopForums.Resources.Description</label>
+			<div class="col-8">@Html.TextBox("Description", String.Empty, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<label class="col-4">Point Value</label>
+			<div class="col-3">@Html.TextBox("PointValue", String.Empty, new { @class = "form-control" })</div>
+		</div>
+		<div class="form-group">
+			<div class="offset-4 col-8">
+				<div class="checkbox">
+					<label>
+						@Html.CheckBox("IsPublishedToFeed") Publish to Feed
+					</label>
+				</div>
+			</div>
+		</div>
+		<input type="submit" value="Add Event" class="btn btn-primary" />
+	</div>
+}

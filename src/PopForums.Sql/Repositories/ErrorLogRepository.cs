@@ -95,7 +95,7 @@ SET ROWCOUNT 0";
 		public void DeleteAllErrors()
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_ErrorLog")
+				connection.Command(_sqlObjectFactory, "TRUNCATE TABLE pf_ErrorLog")
 				.ExecuteNonQuery());
 		}
 	}

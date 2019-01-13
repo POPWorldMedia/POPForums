@@ -86,15 +86,17 @@ namespace PopForums.Sql.Repositories
 
 		internal static User PopulateUser(DbDataReader reader)
 		{
-			return new User(
-				reader.GetInt32(0),
-				reader.GetDateTime(3)) {
+			return new User
+			{
+				UserID = reader.GetInt32(0),
+				CreationDate = reader.GetDateTime(3),
 				Name = reader.GetString(1),
 				Email = reader.GetString(2),
 				IsApproved = reader.GetBoolean(4),
 				LastActivityDate = reader.GetDateTime(5),
 				LastLoginDate = reader.GetDateTime(6),
-				AuthorizationKey = reader.GetGuid(7)};
+				AuthorizationKey = reader.GetGuid(7)
+			};
 		}
 
 		private User GetUser(string sql, string parameter, object value)
@@ -143,7 +145,7 @@ namespace PopForums.Sql.Repositories
 					.AddParameter(_sqlObjectFactory, "@Password", hashedPassword)
 					.AddParameter(_sqlObjectFactory, "@Salt", salt)
 					.ExecuteAndReturnIdentity()));
-			return new User(Convert.ToInt32(userID), creationDate) {Name = name, Email = email, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey};
+			return new User {UserID = userID, Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey};
 		}
 
 		public void UpdateLastActivityDate(User user, DateTime newDate)

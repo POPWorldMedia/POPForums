@@ -45,7 +45,7 @@ namespace PopForums.Test.Models
 		[Fact]
 		public void IsNewUserApprovedMapped()
 		{
-			var edit = new UserEditSecurity(new User(1, DateTime.MaxValue), true);
+			var edit = new UserEditSecurity(new User { UserID = 1 }, true);
 			Assert.True(edit.IsNewUserApproved);
 		}
 	}

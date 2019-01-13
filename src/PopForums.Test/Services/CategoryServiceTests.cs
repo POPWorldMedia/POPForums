@@ -35,11 +35,11 @@ namespace PopForums.Test.Services
 		public void Create()
 		{
 			const string newTitle = "new category";
-			var cat1 = new Category(123) { SortOrder = 0 };
-			var cat2 = new Category(456) { SortOrder = 2 };
-			var cat3 = new Category(789) { SortOrder = 4 };
-			var cat4 = new Category(1000) { SortOrder = 6 };
-			var newCat = new Category(999) {Title = newTitle, SortOrder = -2};
+			var cat1 = new Category { CategoryID = 123, SortOrder = 0 };
+			var cat2 = new Category { CategoryID = 456, SortOrder = 2 };
+			var cat3 = new Category { CategoryID = 789, SortOrder = 4 };
+			var cat4 = new Category { CategoryID = 1000, SortOrder = 6 };
+			var newCat = new Category { CategoryID = 999, Title = newTitle, SortOrder = -2};
 			var cats = new List<Category> { cat1, cat2, cat3, cat4, newCat };
 			var service = GetService();
 			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);
@@ -60,7 +60,7 @@ namespace PopForums.Test.Services
 		public void Delete()
 		{
 			var service = GetService();
-			var cat = new Category(123);
+			var cat = new Category { CategoryID = 123 };
 			service.Delete(cat);
 			_mockCategoryRepo.Verify(c => c.Delete(cat.CategoryID), Times.Once());
 		}
@@ -69,10 +69,10 @@ namespace PopForums.Test.Services
 		public void DeleteResetsForumCatIDsToNull()
 		{
 			var service = GetService();
-			var cat = new Category(123);
-			var f1 = new Forum(1) { CategoryID = cat.CategoryID };
-			var f2 = new Forum(2) { CategoryID = cat.CategoryID };
-			var f3 = new Forum(3) { CategoryID = 456 };
+			var cat = new Category { CategoryID = 123 };
+			var f1 = new Forum { ForumID = 1, CategoryID = cat.CategoryID };
+			var f2 = new Forum { ForumID = 2, CategoryID = cat.CategoryID };
+			var f3 = new Forum { ForumID = 3, CategoryID = 456 };
 			var forums = new List<Forum> {f1, f2, f3};
 			_mockForumRepo.Setup(f => f.GetAll()).Returns(forums);
 			service.Delete(cat);
@@ -84,9 +84,9 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void UpdateTitle()
 		{
-			var savedCategory = new Category(789);
+			var savedCategory = new Category { CategoryID = 789 };
 			var service = GetService();
-			var cat = new Category(123) { Title = "old", SortOrder = 456 };
+			var cat = new Category { CategoryID = 123, Title = "old", SortOrder = 456 };
 			_mockCategoryRepo.Setup(c => c.Update(cat)).Callback<Category>(category => savedCategory = category);
 			service.UpdateTitle(cat, "new");
 			_mockCategoryRepo.Verify(c => c.Update(It.IsAny<Category>()), Times.Once());
@@ -98,10 +98,10 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MoveUp()
 		{
-			var cat1 = new Category(123) {SortOrder = 0};
-			var cat2 = new Category(456) {SortOrder = 2};
-			var cat3 = new Category(789) {SortOrder = 4};
-			var cat4 = new Category(1000) {SortOrder = 6};
+			var cat1 = new Category { CategoryID = 123, SortOrder = 0};
+			var cat2 = new Category { CategoryID = 456, SortOrder = 2};
+			var cat3 = new Category { CategoryID = 789, SortOrder = 4};
+			var cat4 = new Category { CategoryID = 1000, SortOrder = 6};
 			var cats = new List<Category> { cat1, cat2, cat3, cat4 };
 			var service = GetService();
 			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);
@@ -121,10 +121,10 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void MoveDown()
 		{
-			var cat1 = new Category(123) { SortOrder = 0 };
-			var cat2 = new Category(456) { SortOrder = 2 };
-			var cat3 = new Category(789) { SortOrder = 4 };
-			var cat4 = new Category(1000) { SortOrder = 6 };
+			var cat1 = new Category { CategoryID = 123, SortOrder = 0 };
+			var cat2 = new Category { CategoryID = 456, SortOrder = 2 };
+			var cat3 = new Category { CategoryID = 789, SortOrder = 4 };
+			var cat4 = new Category { CategoryID = 1000, SortOrder = 6 };
 			var cats = new List<Category> { cat1, cat2, cat3, cat4 };
 			var service = GetService();
 			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);

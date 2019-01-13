@@ -1,0 +1,41 @@
+﻿@{
+	ViewBag.Title = PopForums.Resources.VerifyAccount;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.VerifyAccount</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+</div>
+
+@if (ViewData["EmailProblem"] != null || ViewData["Result"] != null)
+{
+	<div class="alert alert-danger">@ViewData["EmailProblem"] @ViewData["Result"]</div>
+}
+
+<div class="row">
+	<div class="col-6">
+		<form asp-action="VerifyCode" method="post">
+			<div role="form">
+				<div class="form-group">
+					<label for="authorizationCode">@PopForums.Resources.EnterVerificationCode</label>
+					<input type="text" name="authorizationCode" class="form-control"/>
+				</div>
+				<input type="submit" value="@PopForums.Resources.VerifyCodeButton" class="btn btn-primary"/>
+			</div>
+		</form>
+	</div>
+	<div class="col-6">
+		<form asp-action="RequestCode" method="post">
+			<div role="form">
+				<div class="form-group">
+					<label for="email">@PopForums.Resources.VerificationIfYouNeed</label>
+					<input type="text" name="email" class="form-control" />
+				</div>
+				<input type="submit" value="@PopForums.Resources.SendEmailWithNewCodeButton" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>

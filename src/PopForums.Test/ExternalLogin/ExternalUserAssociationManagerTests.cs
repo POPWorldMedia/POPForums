@@ -64,7 +64,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc"};
-			var user = new User(association.UserID, DateTime.MinValue);
+			var user = new User {UserID = association.UserID};
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			var authResult = new ExternalAuthenticationResult {Issuer = "Google", ProviderKey = "abc"};
@@ -81,7 +81,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
-			var user = new User(association.UserID, DateTime.MinValue);
+			var user = new User {UserID = association.UserID};
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			const string ip = "1.1.1.1";
@@ -133,7 +133,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			manager.Associate(new User(1, DateTime.MinValue), null, String.Empty);
+			manager.Associate(new User(), null, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 		}
@@ -143,14 +143,14 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(1, DateTime.MinValue), new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", null, "wewg"), String.Empty));
+			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(), new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", null, "wewg"), String.Empty));
 		}
 
 		[Fact]
 		public void AssociateMapsObjectsToRepoCall()
 		{
 			var manager = GetManager();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User {UserID = 123};
 			var externalAuthResult = new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", "wfweg", "wewg");
 
 			manager.Associate(user, externalAuthResult, String.Empty);
@@ -162,7 +162,7 @@ namespace PopForums.Test.ExternalLogin
 		public void AssociateSuccessCallsSecurityLog()
 		{
 			var manager = GetManager();
-			var user = new User(123, DateTime.MinValue);
+			var user = new User { UserID = 123 };
 			var externalAuthResult = new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", "wfweg", "wewg");
 			const string ip = "1.1.1.1";
 
@@ -175,7 +175,7 @@ namespace PopForums.Test.ExternalLogin
 		public void GetExternalUserAssociationsCallsRepoByUserID()
 		{
 			var manager = GetManager();
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 
 			manager.GetExternalUserAssociations(user);
 
@@ -186,7 +186,7 @@ namespace PopForums.Test.ExternalLogin
 		public void GetExternalUserAssociationsReturnsCollectionFromRepo()
 		{
 			var manager = GetManager();
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var collection = new List<ExternalUserAssociation>();
 			_externalUserAssociationRepo.Setup(x => x.GetByUser(user.UserID)).Returns(collection);
 
@@ -201,7 +201,7 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((ExternalUserAssociation) null);
 
-			manager.RemoveAssociation(new User(123, DateTime.MaxValue), 4556, String.Empty);
+			manager.RemoveAssociation(new User(), 4556, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(It.IsAny<int>()), Times.Never());
 		}
@@ -211,7 +211,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation {ExternalUserAssociationID = 123, Issuer = "Google", Name = "Jeffy", ProviderKey = "oihfoihfef", UserID = 456};
-			var user = new User(association.UserID, DateTime.MaxValue);
+			var user = new User {UserID = association.UserID};
 			const string ip = "1.1.1.1";
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
@@ -225,7 +225,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
-			var user = new User(789, DateTime.MaxValue);
+			var user = new User { UserID = 789 };
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
 			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
@@ -236,7 +236,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
-			var user = new User(association.UserID, DateTime.MaxValue);
+			var user = new User { UserID = association.UserID };
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
 			manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
@@ -249,7 +249,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = 789};
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User();
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
 			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
@@ -259,7 +259,7 @@ namespace PopForums.Test.ExternalLogin
 		public void GetExternalUserAssociationsCallsRepoWithMatchingUserIDs()
 		{
 			var manager = GetManager();
-			var user = new User(123, DateTime.MaxValue);
+			var user = new User { UserID = 123 };
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = user.UserID };
 			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
 
