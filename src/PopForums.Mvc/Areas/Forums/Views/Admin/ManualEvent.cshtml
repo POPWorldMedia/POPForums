@@ -16,7 +16,7 @@
 						.done(function (data) {
 							toList.empty();
 							$.each(data, function(i, item) {
-								toList.append('<li><a href="#" data-userID="' + item.UserID + '" class="alert toItem">' + item.value + '</a></li>');
+								toList.append('<li><a href="#" data-userID="' + item.userID + '" class="alert toItem">' + item.value + '</a></li>');
 							});
 						});
 				} else {
