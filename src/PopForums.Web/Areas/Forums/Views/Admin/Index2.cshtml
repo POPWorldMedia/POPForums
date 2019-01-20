@@ -11,28 +11,49 @@
 	<title>Index2</title>
 	<script src="~/lib/vue/dist/vue.min.js"></script>
 	<script src="~/lib/vue-router/dist/vue-router.min.js"></script>
-	@*<script src="https://unpkg.com/vue/dist/vue.js"></script>
-	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>*@
-
+	<script src="~/lib/popper.js/dist/popper.min.js"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-<div id="app">
-	<h1>Hello App!</h1>
-	<p>
-		<router-link to="/foo">Go to Foo</router-link>
-		<router-link to="/bar">Go to Bar</router-link>
-	</p>
+	<div class="container">
+		<div id="app">
+			<h1>Hello App!</h1>
+			<p>
+				<router-link to="/foo">Go to Foo</router-link>
+				<router-link to="/categories">Categories</router-link>
+			</p>
 
-	<router-view></router-view>
-</div>
+			<router-view></router-view>
+		</div>
+	</div>
 <script>
 
-	const Foo = { template: '<div>foo</div>' }
-	const Bar = { template: '<div>bar</div>' }
+	const Foo = { template: '#foo' }
+
+	const Categories = {
+		template: '#Categories',
+		data: {
+			categories: [{ title: "blah" }, {title:"yack"}]
+		},
+		mounted: function () {
+			var self = this;
+			$.get('../../adminapi/getcategories', function(response)
+			{
+				self.categories = response.data;
+			});
+		},
+		methods: {
+			saveNew: function(event) {
+				alert("boo!");
+			}
+		}
+	}
 
 	const routes = [
 		{ path: '/foo', component: Foo },
-		{ path: '/bar', component: Bar }
+		{ path: '/Categories', component: Categories }
 	];
 
 	const router = new VueRouter({
@@ -45,6 +66,30 @@
 		router
 	}).$mount('#app');
 
+	Vue.config.devtools = true;
+
 </script>
+
+<template id="foo">
+	<div>foo</div>
+</template>
+
+<template id="Categories">
+	<div class="form-inline">
+		<input type="text" name="newCategoryTitle" class="form-control"/>
+		<input type="button" v-on:click="saveNew" value="@PopForums.Resources.AddNew" class="btn btn-primary"/>
+	</div>
+	<ul>
+		<li v-for="category in categories">{{category.title}}</li>
+	</ul>
+	<table class="table">
+		<tr v-for="category in categories">
+			<td>{{category.title}}</td>
+			<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary" /></td>
+			<td><input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary"/></td>
+		</tr>
+	</table>
+</template>
+
 </body>
 </html>
