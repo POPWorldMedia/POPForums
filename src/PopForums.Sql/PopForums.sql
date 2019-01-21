@@ -201,8 +201,8 @@ CREATE TABLE [dbo].[pf_Topic](
 CREATE CLUSTERED INDEX [IX_pf_Topic_ForumID] ON [dbo].[pf_Topic] 
 (
 	[ForumID] ASC,
-	[LastPostTime] DESC,
-	[IsPinned] DESC
+	[IsPinned] DESC,
+	[LastPostTime] DESC
 ) 
 
 ALTER TABLE [dbo].[pf_Topic]  WITH CHECK ADD  CONSTRAINT [FK_pf_Topic_pf_Forum] FOREIGN KEY([ForumID])
