@@ -220,7 +220,12 @@ CREATE NONCLUSTERED INDEX [pf_Topic_IsIndexed_IsDeleted] ON [dbo].[pf_Topic]
 CREATE UNIQUE NONCLUSTERED INDEX [IX_pf_Topic_UrlName] ON [dbo].[pf_Topic] 
 (
 	[UrlName] ASC
-) 
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_Topic_LastPostTime] ON [dbo].[pf_Topic]
+(
+	[LastPostTime] DESC
+)
 
 
 
