@@ -89,7 +89,7 @@
 
 #ForumContainer .answerData .answerStatus {
 	margin: 1em auto;
-	font-size: 150%;
+	font-size: 2em;
 }
 
 #ForumContainer .answerData .badge {
@@ -277,7 +277,7 @@
 #ForumContainer #AccountBox .badge {
 	background-color: #ff0000;color: white;
 	position: relative;
-	top: -5px;
+	top: -2px;
 }
 
 #ForumContainer .hidden {
@@ -290,24 +290,203 @@
 }
 
 /* icons */
-.message-icon {
-	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMTIuNzEzbC0xMS45ODUtOS43MTNoMjMuOTcxbC0xMS45ODYgOS43MTN6bS01LjQyNS0xLjgyMmwtNi41NzUtNS4zMjl2MTIuNTAxbDYuNTc1LTcuMTcyem0xMC44NSAwbDYuNTc1IDcuMTcydi0xMi41MDFsLTYuNTc1IDUuMzI5em0tMS41NTcgMS4yNjFsLTMuODY4IDMuMTM1LTMuODY4LTMuMTM1LTguMTEgOC44NDhoMjMuOTU2bC04LjExLTguODQ4eiIvPjwvc3ZnPg==');
-	width: 1.2em; height: 1.2em;
-	margin-top: 5px;
+
+#ForumContainer .topicIndicator {
+	font-size: 2em;
 }
-.check-icon {
-	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptLTEuMjUgMTcuMjkybC00LjUtNC4zNjQgMS44NTctMS44NTggMi42NDMgMi41MDYgNS42NDMtNS43ODQgMS44NTcgMS44NTctNy41IDcuNjQzeiIvPjwvc3ZnPg==');
-	width: 1.2em; height: 1.2em;
+
+@font-face {
+	font-family: 'pfglyphs';
+	src: url('fonts/pfglyphs.eot?enukk');
+	src: url('fonts/pfglyphs.eot?enukk#iefix') format('embedded-opentype'), url('fonts/pfglyphs.ttf?enukk') format('truetype'), url('fonts/pfglyphs.woff?enukk') format('woff'), url('fonts/pfglyphs.svg?enukk#pfglyphs') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
-.question-icon {
-	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMGMtNi42MjcgMC0xMiA1LjM3My0xMiAxMnM1LjM3MyAxMiAxMiAxMiAxMi01LjM3MyAxMi0xMi01LjM3My0xMi0xMi0xMnptMCAxOC4yNWMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1cy41Ni0xLjI1IDEuMjUtMS4yNWMuNjkxIDAgMS4yNS41NiAxLjI1IDEuMjVzLS41NTkgMS4yNS0xLjI1IDEuMjV6bTEuOTYxLTUuOTI4Yy0uOTA0Ljk3NS0uOTQ3IDEuNTE0LS45MzUgMi4xNzhoLTIuMDA1Yy0uMDA3LTEuNDc1LjAyLTIuMTI1IDEuNDMxLTMuNDY4LjU3My0uNTQ0IDEuMDI1LS45NzUuOTYyLTEuODIxLS4wNTgtLjgwNS0uNzMtMS4yMjYtMS4zNjUtMS4yMjYtLjcwOSAwLTEuNTM4LjUyNy0xLjUzOCAyLjAxM2gtMi4wMWMwLTIuNCAxLjQwOS0zLjk1IDMuNTktMy45NSAxLjAzNiAwIDEuOTQyLjMzOSAyLjU1Ljk1NS41Ny41NzguODY1IDEuMzcyLjg1NCAyLjI5OC0uMDE2IDEuMzgzLS44NTcgMi4yOTEtMS41MzQgMy4wMjF6Ii8+PC9zdmc+');
-	width: 1.2em; height: 1.2em;
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'pfglyphs' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
-.star-icon {
-	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem0tMS44MzQgOS42ODZsLTQuMTY2LjU3NSAzLjAzMiAyLjkxNC0uNzQgNC4xMzkgMy43MDgtMS45ODIgMy43MDggMS45ODMtLjc0LTQuMTM5IDMuMDMyLTIuOTE1LTQuMTY2LS41NzUtMS44MzQtMy43ODQtMS44MzQgMy43ODR6Ii8+PC9zdmc+');
-	width: 1.2em; height: 1.2em;
+
+.icon-file-text2:before {
+	content: "\e926";
 }
-.x-icon {
-	content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgMmM1LjUxNCAwIDEwIDQuNDg2IDEwIDEwcy00LjQ4NiAxMC0xMCAxMC0xMC00LjQ4Ni0xMC0xMCA0LjQ4Ni0xMCAxMC0xMHptMC0yYy02LjYyNyAwLTEyIDUuMzczLTEyIDEyczUuMzczIDEyIDEyIDEyIDEyLTUuMzczIDEyLTEyLTUuMzczLTEyLTEyLTEyem02IDE2LjA5NGwtNC4xNTctNC4xMDQgNC4xLTQuMTQxLTEuODQ5LTEuODQ5LTQuMTA1IDQuMTU5LTQuMTU2LTQuMTAyLTEuODMzIDEuODM0IDQuMTYxIDQuMTItNC4xMDQgNC4xNTcgMS44MzQgMS44MzIgNC4xMTgtNC4xNTkgNC4xNDMgNC4xMDIgMS44NDgtMS44NDl6Ii8+PC9zdmc+');
-	width: 1em; height: 1em;
+
+.icon-envelop:before {
+	content: "\e945";
+}
+
+.icon-pushpin:before {
+	content: "\e946";
+}
+
+.icon-bell:before {
+	content: "\e951";
+}
+
+.icon-users:before {
+	content: "\e972";
+}
+
+.icon-user-plus:before {
+	content: "\e973";
+}
+
+.icon-user-minus:before {
+	content: "\e974";
+}
+
+.icon-search:before {
+	content: "\e986";
+}
+
+.icon-lock:before {
+	content: "\e98f";
+}
+
+.icon-unlocked:before {
+	content: "\e990";
+}
+
+.icon-stats-bars:before {
+	content: "\e99c";
+}
+
+.icon-trophy:before {
+	content: "\e99e";
+}
+
+.icon-link:before {
+	content: "\e9cb";
+}
+
+.icon-star-empty:before {
+	content: "\e9d7";
+}
+
+.icon-star-full:before {
+	content: "\e9d9";
+}
+
+.icon-warning:before {
+	content: "\ea07";
+}
+
+.icon-question:before {
+	content: "\ea09";
+}
+
+.icon-plus:before {
+	content: "\ea0a";
+}
+
+.icon-minus:before {
+	content: "\ea0b";
+}
+
+.icon-info:before {
+	content: "\ea0c";
+}
+
+.icon-cancel-circle:before {
+	content: "\ea0d";
+}
+
+.icon-cross:before {
+	content: "\ea0f";
+}
+
+.icon-checkmark:before {
+	content: "\ea10";
+}
+
+.icon-checkmark2:before {
+	content: "\ea11";
+}
+
+.icon-backward2:before {
+	content: "\ea1f";
+}
+
+.icon-forward3:before {
+	content: "\ea20";
+}
+
+.icon-previous2:before {
+	content: "\ea23";
+}
+
+.icon-next2:before {
+	content: "\ea24";
+}
+
+.icon-circle-up:before {
+	content: "\ea41";
+}
+
+.icon-circle-right:before {
+	content: "\ea42";
+}
+
+.icon-circle-down:before {
+	content: "\ea43";
+}
+
+.icon-circle-left:before {
+	content: "\ea44";
+}
+
+.icon-share2:before {
+	content: "\ea82";
+}
+
+.icon-google3:before {
+	content: "\ea8a";
+}
+
+.icon-facebook2:before {
+	content: "\ea91";
+}
+
+.icon-instagram:before {
+	content: "\ea92";
+}
+
+.icon-twitter:before {
+	content: "\ea96";
+}
+
+.icon-rss2:before {
+	content: "\ea9c";
+}
+
+.icon-youtube:before {
+	content: "\ea9d";
+}
+
+.icon-vimeo2:before {
+	content: "\eaa1";
+}
+
+.icon-github:before {
+	content: "\eab0";
+}
+
+.icon-skype:before {
+	content: "\eac5";
+}
+
+.icon-linkedin:before {
+	content: "\eac9";
+}
+
+.icon-pinterest:before {
+	content: "\ead1";
 }
