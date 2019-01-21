@@ -248,6 +248,7 @@
 }
 #ForumContainer .morePager, #ForumContainer .currentPager .page-link {
 	cursor: default;
+	white-space: nowrap;
 }
 
 /* queries */
