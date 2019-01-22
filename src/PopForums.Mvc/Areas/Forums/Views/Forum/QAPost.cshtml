@@ -102,6 +102,7 @@
 			</ul>
 			<div class="moderationLog"></div>
 		</div>
+		<div class="commentHolder"></div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
 		{
 			foreach (var comment in Model.PostWithChildren.Children)
@@ -135,6 +136,5 @@
 				<p><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></p>
 			}
 		}
-		<div class="commentHolder"></div>
 	</div>
 </div>

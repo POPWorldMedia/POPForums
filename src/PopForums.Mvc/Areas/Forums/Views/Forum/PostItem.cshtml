@@ -1,13 +1,15 @@
 ﻿@inject ITimeFormattingService TimeFormattingService
+@inject IUserRetrievalShim UserRetrievalShim
 @model PostItemContainer
 @{
+	var user = UserRetrievalShim.GetUser(Context);
 	string deleteLink;
 	if (Model.Post.IsDeleted)
-	{deleteLink = PopForums.Resources.Undelete;}
+	{ deleteLink = PopForums.Resources.Undelete; }
 	else if (Model.Post.IsFirstInTopic)
-	{deleteLink = PopForums.Resources.DeleteTopic;}
+	{ deleteLink = PopForums.Resources.DeleteTopic; }
 	else
-	{deleteLink = PopForums.Resources.Delete;}
+	{ deleteLink = PopForums.Resources.Delete; }
 }
 
 <a name="@Model.Post.PostID"></a>
@@ -53,7 +55,7 @@
 					<li class="voteUp btn-link list-inline-item">Vote up</li>}
 			}
 			<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
-			@if (User != null && Model.Topic != null && Model.Topic.IsClosed == false)
+			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
 				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply" /></li>
 				<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>

@@ -37,7 +37,7 @@ PopForums.areaPath = "/Forums";
 PopForums.contentPath = "/lib/PopForums";
 PopForums.currentTopicState = null;
 PopForums.navOffset = 0;
-PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/PopForums.css";
+PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/Editor.css";
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
 
 PopForums.editorSettings = {
@@ -374,7 +374,7 @@ PopForums.qaTopicSetup = function (topicID) {
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
 	$(document).on("click", ".commentLink", function () {
-		var replyID = $(this).parents(".postContainer").attr("data-postid");
+		var replyID = $(this).parents(".postItem").attr("data-postid");
 		PopForums.loadComment(topicID, replyID);
 	});
 	$(document).on("click", "#ReplyButton", function () {
