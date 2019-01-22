@@ -30,7 +30,7 @@
 	{
 		<tr>
 			<td class="newIndicator">
-				<a asp-action="View" asp-route-id="@pm.PMID"><pf-pmReadIndicator imagePath="/lib/PopForums/" privateMessage="@pm" /></a>
+				<a asp-action="View" asp-route-id="@pm.PMID"><pf-pmReadIndicator privateMessage="@pm" /></a>
 			</td>
 			<td class="topicListButton">
 				<form asp-action="UnarchivePM" asp-route-id="@pm.PMID" method="post"><input type="submit" value="@PopForums.Resources.Unarchive" class="btn btn-primary" /></form>

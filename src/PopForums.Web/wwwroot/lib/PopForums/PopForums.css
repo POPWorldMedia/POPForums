@@ -10,7 +10,7 @@
 }
 
 #ForumContainer .newIndicator {
-	width: 40px;
+	max-width: 40px;
 }
 
 #ForumContainer .alert {
@@ -243,6 +243,10 @@
 	display: none;
 }
 
+#ForumContainer .morePostsButton {
+	margin-bottom: 10px;
+}
+
 #ForumContainer .morePager:hover, #ForumContainer .currentPager:hover {
 	background: none;
 }
@@ -291,10 +295,6 @@
 }
 
 /* icons */
-
-#ForumContainer .topicIndicator {
-	font-size: 2em;
-}
 
 @font-face {
 	font-family: 'pfglyphs';
@@ -490,4 +490,28 @@
 
 .icon-pinterest:before {
 	content: "\ead1";
+}
+
+
+#ForumContainer .newIndicator a {
+	text-decoration: none;
+}
+#ForumContainer .topicIndicator {
+	font-size: 2em;
+	width: 40px;
+}
+
+#ForumContainer .topicIndicator .topicIndicatorBadge {
+	position: relative;
+	font-size: 60%;
+	text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
+}
+#ForumContainer .topicIndicator .soloLeftBadge {
+	left: -95%;
+}
+#ForumContainer .topicIndicator .firstBadge {
+	left: -25%;
+}
+#ForumContainer .topicIndicator .secondBadge {
+	left: -145%;
 }

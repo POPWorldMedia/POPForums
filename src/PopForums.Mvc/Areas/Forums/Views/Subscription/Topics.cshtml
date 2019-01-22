@@ -46,7 +46,7 @@ else
 		@foreach (var topic in Model.Topics)
 		{
 			<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>   }>
-				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
+				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a></td>
 				<td class="topicListButton">
 					<form asp-action="Unsubscribe" asp-controller="Subscription" asp-antiforgery="false">
 						<input type="hidden" value="@topic.TopicID" />

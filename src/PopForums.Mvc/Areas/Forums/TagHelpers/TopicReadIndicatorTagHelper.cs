@@ -4,69 +4,68 @@ using PopForums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.TagHelpers
 {
-	[HtmlTargetElement("pf-topicReadIndicator", Attributes = "topic, pagedTopicContainer, imagePath")]
+	[HtmlTargetElement("pf-topicReadIndicator", Attributes = "topic, pagedTopicContainer")]
 	public class TopicReadIndicatorTagHelper : TagHelper
 	{
 		[HtmlAttributeName("topic")]
 		public Topic Topic { get; set; }
 		[HtmlAttributeName("pagedTopicContainer")]
 		public PagedTopicContainer PagedTopicContainer { get; set; }
-		[HtmlAttributeName("imagePath")]
-		public string ImagePath { get; set; }
 		[HtmlAttributeName("class")]
 		public string Class { get; set; }
 
 		public override void Process(TagHelperContext context, TagHelperOutput output)
 		{
 			var alt = Resources.NoNewPosts;
-			var image = "NoNewIndicator.png";
 			if (PagedTopicContainer.ReadStatusLookup.ContainsKey(Topic.TopicID))
 			{
 				var status = PagedTopicContainer.ReadStatusLookup[Topic.TopicID];
 				switch (status)
 				{
 					case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.Pinned:
-						image = "NewPinnedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
 						alt = Resources.NewPostsPinned;
 						break;
 					case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.NotPinned:
-						image = "NewIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span>");
 						alt = Resources.NewPosts;
 						break;
 					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-						image = "PinnedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-mute\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
 						alt = Resources.Pinned;
 						break;
 					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-						image = "NoNewIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
 						alt = Resources.NoNewPosts;
 						break;
 					case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.Pinned:
-						image = "NewClosedPinnedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon-pushpin secondBadge topicIndicatorBadge text-success\"></span>");
 						alt = Resources.NewPostsClosedPinned;
 						break;
 					case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.NotPinned:
-						image = "NewClosedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 						alt = Resources.NewPostsClosed;
 						break;
 					case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-						image = "ClosedPinnedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon-pushpin secondBadge topicIndicatorBadge text-success\"></span>");
 						alt = Resources.ClosedPinned;
 						break;
 					case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-						image = "ClosedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 						alt = Resources.Closed;
 						break;
 					default:
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
 						break;
 				}
 			}
 
-			output.TagName = "img";
-			output.Attributes.Add("src", $"{ImagePath}{image}");
-			output.Attributes.Add("alt", alt);
+			output.TagName = "div";
+			output.Attributes.Add("title", alt);
 			if (!String.IsNullOrWhiteSpace(Class))
-				output.Attributes.Add("class", Class);
+				output.Attributes.Add("class", $"topicIndicator {Class}");
+			else
+				output.Attributes.Add("class", "topicIndicator");
 		}
 	}
 }
