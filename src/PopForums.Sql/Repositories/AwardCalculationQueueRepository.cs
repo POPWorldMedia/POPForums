@@ -32,7 +32,7 @@ ORDER BY ID)
 DELETE FROM cte
 OUTPUT DELETED.[Key], DELETED.[Value]";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				pair = connection.Query<KeyValuePair<string, int>>(sql).SingleOrDefault());
+				pair = connection.QuerySingleOrDefault<KeyValuePair<string, int>>(sql));
 		return pair;
 		}
 	}

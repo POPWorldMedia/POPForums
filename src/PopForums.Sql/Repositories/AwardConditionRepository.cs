@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Data.Sql;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -18,41 +20,26 @@ namespace PopForums.Sql.Repositories
 		{
 			var list = new List<AwardCondition>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT AwardDefinitionID, EventDefinitionID, EventCount FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-				.ExecuteReader()
-				.ReadAll(r => list.Add(new AwardCondition
-					{
-						AwardDefinitionID = r.GetString(0),
-						EventDefinitionID = r.GetString(1),
-						EventCount = r.GetInt32(2)
-					})));
+				list = connection.Query<AwardCondition>("SELECT AwardDefinitionID, EventDefinitionID, EventCount FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID  = awardDefinitionID }).ToList());
 			return list;
 		}
 
 		public void DeleteConditions(string awardDefinitionID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID = awardDefinitionID }));
 		}
 
 		public void DeleteCondition(string awardDefinitionID, string eventDefinitionID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID AND EventDefinitionID = @EventDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID AND EventDefinitionID = @EventDefinitionID", new { AwardDefinitionID = awardDefinitionID, EventDefinitionID = eventDefinitionID }));
 		}
 
 		public void DeleteConditionsByEventDefinitionID(string eventDefinitionID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_AwardCondition WHERE EventDefinitionID = @EventDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_AwardCondition WHERE EventDefinitionID = @EventDefinitionID", new { EventDefinitionID = eventDefinitionID }));
 		}
 
 		public void SaveConditions(List<AwardCondition> conditions)
@@ -60,11 +47,7 @@ namespace PopForums.Sql.Repositories
 			foreach (var condition in conditions)
 			{
 				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command(_sqlObjectFactory, "INSERT INTO pf_AwardCondition (AwardDefinitionID, EventDefinitionID, EventCount) VALUES (@AwardDefinitionID, @EventDefinitionID, @EventCount)")
-					.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", condition.AwardDefinitionID)
-					.AddParameter(_sqlObjectFactory, "@EventDefinitionID", condition.EventDefinitionID)
-					.AddParameter(_sqlObjectFactory, "@EventCount", condition.EventCount)
-					.ExecuteNonQuery());
+					connection.Execute("INSERT INTO pf_AwardCondition (AwardDefinitionID, EventDefinitionID, EventCount) VALUES (@AwardDefinitionID, @EventDefinitionID, @EventCount)", new { condition.AwardDefinitionID, condition.EventDefinitionID, condition.EventCount }));
 			}
 		}
 	}

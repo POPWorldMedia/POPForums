@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Data.Sql;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -18,16 +20,7 @@ namespace PopForums.Sql.Repositories
 		{
 			AwardDefinition awardDefinition = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-			    connection.Command(_sqlObjectFactory, "SELECT AwardDefinitionID, Title, Description, IsSingleTimeAward FROM pf_AwardDefinition WHERE AwardDefinitionID = @AwardDefinitionID")
-			    .AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-			    .ExecuteReader()
-			    .ReadOne(r => awardDefinition = new AwardDefinition
-			        {
-						AwardDefinitionID = r.GetString(0),
-						Title = r.GetString(1),
-						Description = r.GetString(2),
-						IsSingleTimeAward = r.GetBoolean(3)
-			        }));
+				awardDefinition = connection.QuerySingleOrDefault<AwardDefinition>("SELECT AwardDefinitionID, Title, Description, IsSingleTimeAward FROM pf_AwardDefinition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID = awardDefinitionID }));
 			return awardDefinition;
 		}
 
@@ -35,15 +28,7 @@ namespace PopForums.Sql.Repositories
 		{
 			var list = new List<AwardDefinition>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT AwardDefinitionID, Title, Description, IsSingleTimeAward FROM pf_AwardDefinition ORDER BY AwardDefinitionID")
-				.ExecuteReader()
-				.ReadAll(r => list.Add(new AwardDefinition
-				{
-					AwardDefinitionID = r.GetString(0),
-					Title = r.GetString(1),
-					Description = r.GetString(2),
-					IsSingleTimeAward = r.GetBoolean(3)
-				})));
+				list = connection.Query<AwardDefinition>("SELECT AwardDefinitionID, Title, Description, IsSingleTimeAward FROM pf_AwardDefinition ORDER BY AwardDefinitionID").ToList());
 			return list;
 		}
 
@@ -51,36 +36,20 @@ namespace PopForums.Sql.Repositories
 		{
 			var list = new List<AwardDefinition>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT D.AwardDefinitionID, D.Title, D.Description, D.IsSingleTimeAward FROM pf_AwardDefinition D JOIN pf_AwardCondition C ON D.AwardDefinitionID = C.AwardDefinitionID WHERE C.EventDefinitionID = @EventDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
-				.ExecuteReader()
-				.ReadAll(r => list.Add(new AwardDefinition
-				{
-					AwardDefinitionID = r.GetString(0),
-					Title = r.GetString(1),
-					Description = r.GetString(2),
-					IsSingleTimeAward = r.GetBoolean(3)
-				})));
+				list = connection.Query<AwardDefinition>("SELECT D.AwardDefinitionID, D.Title, D.Description, D.IsSingleTimeAward FROM pf_AwardDefinition D JOIN pf_AwardCondition C ON D.AwardDefinitionID = C.AwardDefinitionID WHERE C.EventDefinitionID = @EventDefinitionID", new { EventDefinitionID = eventDefinitionID }).ToList());
 			return list;
 		}
 
 		public void Create(string awardDefinitionID, string title, string description, bool isSingleTimeAward)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_AwardDefinition (AwardDefinitionID, Title, Description, IsSingleTimeAward) VALUES (@AwardDefinitionID, @Title, @Description, @IsSingleTimeAward)")
-				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-				.AddParameter(_sqlObjectFactory, "@Title", title)
-				.AddParameter(_sqlObjectFactory, "@Description", description.NullToEmpty())
-				.AddParameter(_sqlObjectFactory, "@IsSingleTimeAward", isSingleTimeAward)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_AwardDefinition (AwardDefinitionID, Title, Description, IsSingleTimeAward) VALUES (@AwardDefinitionID, @Title, @Description, @IsSingleTimeAward)", new { AwardDefinitionID = awardDefinitionID, Title = title, Description = description, IsSingleTimeAward = isSingleTimeAward }));
 		}
 
 		public void Delete(string awardDefinitionID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_AwardDefinition WHERE AwardDefinitionID = @AwardDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@AwardDefinitionID", awardDefinitionID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_AwardDefinition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID = awardDefinitionID }));
 		}
 	}
 }
