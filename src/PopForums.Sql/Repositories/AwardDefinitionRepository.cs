@@ -43,7 +43,7 @@ namespace PopForums.Sql.Repositories
 		public void Create(string awardDefinitionID, string title, string description, bool isSingleTimeAward)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_AwardDefinition (AwardDefinitionID, Title, Description, IsSingleTimeAward) VALUES (@AwardDefinitionID, @Title, @Description, @IsSingleTimeAward)", new { AwardDefinitionID = awardDefinitionID, Title = title, Description = description, IsSingleTimeAward = isSingleTimeAward }));
+				connection.Execute("INSERT INTO pf_AwardDefinition (AwardDefinitionID, Title, Description, IsSingleTimeAward) VALUES (@AwardDefinitionID, @Title, @Description, @IsSingleTimeAward)", new { AwardDefinitionID = awardDefinitionID, Title = title, Description = description.NullToEmpty(), IsSingleTimeAward = isSingleTimeAward }));
 		}
 
 		public void Delete(string awardDefinitionID)

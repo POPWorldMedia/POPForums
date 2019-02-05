@@ -31,7 +31,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 						alt = Resources.NewPosts;
 						break;
 					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-mute\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
 						alt = Resources.Pinned;
 						break;
 					case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.NotPinned:

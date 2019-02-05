@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dapper;
 using PopForums.Data.Sql;
 using PopForums.Repositories;
 
@@ -19,67 +20,40 @@ namespace PopForums.Sql.Repositories
 		public void SetForumRead(int userID, int forumID, DateTime readTime)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_LastForumView WHERE UserID = @UserID AND ForumID = @ForumID; INSERT INTO pf_LastForumView (UserID, ForumID, LastForumViewDate)VALUES (@UserID, @ForumID, @LastForumViewDate)")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
-				.AddParameter(_sqlObjectFactory, "@LastForumViewDate", readTime)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_LastForumView WHERE UserID = @UserID AND ForumID = @ForumID; INSERT INTO pf_LastForumView (UserID, ForumID, LastForumViewDate)VALUES (@UserID, @ForumID, @LastForumViewDate)", new { UserID = userID, ForumID = forumID, LastForumViewDate = readTime }));
 		}
 
 		public void DeleteTopicReadsInForum(int userID, int forumID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE pf_LastTopicView FROM pf_LastTopicView JOIN pf_Topic ON pf_LastTopicView.TopicID = pf_Topic.TopicID WHERE pf_Topic.ForumID = @ForumID AND pf_LastTopicView.UserID = @UserID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE pf_LastTopicView FROM pf_LastTopicView JOIN pf_Topic ON pf_LastTopicView.TopicID = pf_Topic.TopicID WHERE pf_Topic.ForumID = @ForumID AND pf_LastTopicView.UserID = @UserID", new { UserID = userID, ForumID = forumID }));
 		}
 
 		public void SetAllForumsRead(int userID, DateTime readTime)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_LastForumView WHERE UserID = @UserID; INSERT INTO pf_LastForumView SELECT @UserID, ForumID, @LastForumViewDate FROM pf_Forum")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@LastForumViewDate", readTime)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_LastForumView WHERE UserID = @UserID; INSERT INTO pf_LastForumView SELECT @UserID, ForumID, @LastForumViewDate FROM pf_Forum", new { UserID = userID, LastForumViewDate = readTime }));
 		}
 
 		public void DeleteAllTopicReads(int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_LastTopicView WHERE UserID = @UserID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_LastTopicView WHERE UserID = @UserID", new { UserID = userID }));
 		}
 
 		public void SetTopicRead(int userID, int topicID, DateTime readTime)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID;")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_LastTopicView (UserID, TopicID, LastTopicViewDate) VALUES (@UserID, @TopicID, @LastTopicViewDate)")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.AddParameter(_sqlObjectFactory, "@LastTopicViewDate", readTime)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_LastTopicView (UserID, TopicID, LastTopicViewDate) VALUES (@UserID, @TopicID, @LastTopicViewDate)", new { UserID = userID, TopicID = topicID, LastTopicViewDate = readTime }));
 		}
 
 		public Dictionary<int, DateTime> GetLastReadTimesForForums(int userID)
 		{
-			var dictionary = new Dictionary<int, DateTime>();
+			Dictionary<int, DateTime> dictionary = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT ForumID, LastForumViewDate FROM pf_LastForumView WHERE UserID = @UserID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.ExecuteReader()
-				.ReadAll(r =>
-				         {
-					         var key = r.GetInt32(0);
-							 if (!dictionary.ContainsKey(key))
-								dictionary.Add(key, r.GetDateTime(1));
-				         }));
+				dictionary = connection.Query<KeyValuePair<int, DateTime>>("SELECT ForumID AS [Key], LastForumViewDate AS [Value] FROM pf_LastForumView WHERE UserID = @UserID", new { UserID = userID }).ToDictionary(p => p.Key, p => p.Value));
 			return dictionary;
 		}
 
@@ -87,11 +61,7 @@ namespace PopForums.Sql.Repositories
 		{
 			DateTime? lastRead = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT LastForumViewDate FROM pf_LastForumView WHERE UserID = @UserID AND ForumID = @ForumID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@ForumID", forumID)
-				.ExecuteReader()
-				.ReadOne(r => lastRead = r.GetDateTime(0)));
+				lastRead = connection.QuerySingleOrDefault<DateTime?>("SELECT LastForumViewDate FROM pf_LastForumView WHERE UserID = @UserID AND ForumID = @ForumID", new { UserID = userID, ForumID = forumID }));
 			return lastRead;
 		}
 
@@ -109,17 +79,17 @@ namespace PopForums.Sql.Repositories
 				isFirst = false;
 				inString.Append(topicID);
 			}
-			var sql = String.Format("SELECT TopicID, LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID IN ({0})", inString);
+			var sql = $"SELECT TopicID, LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID IN ({inString})";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, sql)
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.ExecuteReader()
-				.ReadAll(r =>
-						{
-							var key = r.GetInt32(0);
-							if (!dictionary.ContainsKey(key))
-								dictionary.Add(key, r.GetDateTime(1));
-				         }));
+			{
+				var reader = connection.ExecuteReader(sql, new {UserID = userID});
+				while (reader.Read())
+				{
+					var key = reader.GetInt32(0);
+					if (!dictionary.ContainsKey(key))
+						dictionary.Add(key, reader.GetDateTime(1));
+				}
+			});
 			return dictionary;
 		}
 
@@ -127,11 +97,7 @@ namespace PopForums.Sql.Repositories
 		{
 			DateTime? time = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.ExecuteReader()
-				.ReadOne(r => time = r.GetDateTime(0)));
+				time = connection.QuerySingleOrDefault<DateTime?>("SELECT LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
 			return time;
 		}
 	}

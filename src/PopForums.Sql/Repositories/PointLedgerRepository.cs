@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Dapper;
 using PopForums.Data.Sql;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -17,30 +17,22 @@ namespace PopForums.Sql.Repositories
 		public virtual void RecordEntry(PointLedgerEntry entry)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_PointLedger (UserID, EventDefinitionID, Points, TimeStamp) VALUES (@UserID, @EventDefinitionID, @Points, @TimeStamp)")
-				.AddParameter(_sqlObjectFactory, "@UserID", entry.UserID)
-				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", entry.EventDefinitionID)
-				.AddParameter(_sqlObjectFactory, "@Points", entry.Points)
-				.AddParameter(_sqlObjectFactory, "@TimeStamp", entry.TimeStamp)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_PointLedger (UserID, EventDefinitionID, Points, TimeStamp) VALUES (@UserID, @EventDefinitionID, @Points, @TimeStamp)", new { entry.UserID, entry.EventDefinitionID, entry.Points, entry.TimeStamp }));
 		}
 
 		public int GetPointTotal(int userID)
 		{
 			var total = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => total = Convert.ToInt32(connection.Command(_sqlObjectFactory, "SELECT SUM(Points) FROM pf_PointLedger WHERE UserID = @UserID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.ExecuteScalar()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				total = connection.ExecuteScalar<int>("SELECT SUM(Points) FROM pf_PointLedger WHERE UserID = @UserID", new { UserID = userID }));
 			return total;
 		}
 
 		public int GetEntryCount(int userID, string eventDefinitionID)
 		{
 			var total = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => total = Convert.ToInt32(connection.Command(_sqlObjectFactory, "SELECT COUNT(*) FROM pf_PointLedger WHERE UserID = @UserID AND EventDefinitionID = @EventDefinitionID")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@EventDefinitionID", eventDefinitionID)
-				.ExecuteScalar()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				total = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pf_PointLedger WHERE UserID = @UserID AND EventDefinitionID = @EventDefinitionID", new { UserID = userID, EventDefinitionID = eventDefinitionID }));
 			return total;
 		}
 	}
