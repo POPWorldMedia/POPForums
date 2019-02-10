@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.Common;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
@@ -115,19 +116,13 @@ namespace PopForums.Data.Sql
 			return reader.GetInt32(index);
 		}
 
-		public static DateTime? NullDateTimeDbHelper(this DbDataReader reader, int index)
-		{
-			if (reader.IsDBNull(index)) return null;
-			return reader.GetDateTime(index);
-		}
-
 		public static string NullStringDbHelper(this DbDataReader reader, int index)
 		{
 			if (reader.IsDBNull(index)) return null;
 			return reader.GetString(index);
 		}
 
-		public static Guid? NullGuidDbHelper(this DbDataReader reader, int index)
+		public static Guid? NullGuidDbHelper(this IDataReader reader, int index)
 		{
 			if (reader.IsDBNull(index)) return null;
 			return reader.GetGuid(index);

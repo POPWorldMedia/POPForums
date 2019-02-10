@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -62,12 +64,9 @@ SET ROWCOUNT 0";
 
 		public List<User> GetSubscribedUsersThatHaveViewed(int topicID)
 		{
-			var list = new List<User>();
+			List<User> list = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID AND IsViewed = 1")
-					.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-					.ExecuteReader()
-					.ReadAll(r => list.Add(UserRepository.PopulateUser(r))));
+				list = connection.Query<User>("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID AND IsViewed = 1", new { TopicID = topicID }).ToList());
 			return list;
 		}
 

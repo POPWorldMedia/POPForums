@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Configuration;
 using PopForums.Data.Sql;
 using PopForums.Models;
@@ -90,12 +92,9 @@ namespace PopForums.Sql.Repositories
 
 		public List<User> GetUsersInRole(string role)
 		{
-			var users = new List<User>();
+			List<User> users = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser U JOIN pf_PopForumsUserRole R ON U.UserID = R.UserID WHERE Role = @Role")
-					.AddParameter(_sqlObjectFactory, "@Role", role)
-					.ExecuteReader()
-					.ReadAll(r => users.Add(UserRepository.PopulateUser(r))));
+				users = connection.Query<User>("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser U JOIN pf_PopForumsUserRole R ON U.UserID = R.UserID WHERE Role = @Role", new { Role = role }).ToList());
 			return users;
 		}
 
