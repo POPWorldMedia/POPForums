@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using Dapper;
-using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 

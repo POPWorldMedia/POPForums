@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using PopForums.Data.Sql;
+using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -20,35 +21,27 @@ namespace PopForums.Sql.Repositories
 
 		public virtual List<string> GetJunkWords()
 		{
-			var words = new List<string>();
+			List<string> words = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT JunkWord FROM pf_JunkWords ORDER BY JunkWord")
-					.ExecuteReader()
-					.ReadAll(r => words.Add(r.GetString(0))));
+				words = connection.Query<string>("SELECT JunkWord FROM pf_JunkWords ORDER BY JunkWord").ToList());
 			return words;
 		}
 
 		public virtual void CreateJunkWord(string word)
 		{
 			var exists = false;
-			_sqlObjectFactory.GetConnection().Using(connection => exists =
-				connection.Command(_sqlObjectFactory, "SELECT JunkWord FROM pf_JunkWords WHERE JunkWord LIKE @JunkWord")
-					.AddParameter(_sqlObjectFactory, "@JunkWord", word)
-					.ExecuteReader().Read());
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				exists = connection.Query<string>("SELECT JunkWord FROM pf_JunkWords WHERE JunkWord LIKE @JunkWord", new { JunkWord = word }).Any());
 			if (exists)
 				return;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_JunkWords (JunkWord) VALUES (@JunkWord)")
-				.AddParameter(_sqlObjectFactory, "@JunkWord", word)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_JunkWords (JunkWord) VALUES (@JunkWord)", new { JunkWord = word }));
 		}
 
 		public virtual void DeleteJunkWord(string word)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord")
-				.AddParameter(_sqlObjectFactory, "@JunkWord", word)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord", new { JunkWord = word }));
 		}
 
 		public Topic GetNextTopicForIndexing()
@@ -61,44 +54,31 @@ DELETE FROM cte
 OUTPUT DELETED.TopicID;";
 			var topicID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, sql)
-				.ExecuteReader()
-				.ReadOne(r => topicID = r.GetInt32(0)));
+				topicID = connection.QuerySingleOrDefault<int>(sql));
 			if (topicID == 0)
 				return null;
 			Topic topic = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT " + TopicRepository.TopicFields + " FROM pf_Topic WHERE TopicID = @TopicID")
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.ExecuteReader()
-				.ReadOne(r => topic = TopicRepository.GetTopicFromReader(r)));
+				topic = connection.QuerySingleOrDefault<Topic>($"SELECT {TopicRepository.TopicFields} FROM pf_Topic WHERE TopicID = @TopicID", new { TopicID = topicID }));
 			return topic;
 		}
 
 		public void MarkTopicAsIndexed(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "UPDATE pf_Topic SET IsIndexed = 1 WHERE TopicID = @TopicID")
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.ExecuteNonQuery());
+				connection.Execute("UPDATE pf_Topic SET IsIndexed = 1 WHERE TopicID = @TopicID", new { TopicID = topicID }));
 		}
 
 		public virtual void DeleteAllIndexedWordsForTopic(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID")
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID", new { TopicID = topicID }));
 		}
 
 		public virtual void SaveSearchWord(int topicID, string word, int rank)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)")
-				.AddParameter(_sqlObjectFactory, "@SearchWord", word)
-				.AddParameter(_sqlObjectFactory, "@TopicID", topicID)
-				.AddParameter(_sqlObjectFactory, "@Rank", rank)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)", new { SearchWord = word, TopicID = topicID, Rank = rank }));
 		}
 
 		public virtual List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)

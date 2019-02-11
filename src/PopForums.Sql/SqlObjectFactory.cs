@@ -3,7 +3,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using PopForums.Configuration;
 
-namespace PopForums.Data.Sql
+namespace PopForums.Sql
 {
 	public class SqlObjectFactory : ISqlObjectFactory
 	{

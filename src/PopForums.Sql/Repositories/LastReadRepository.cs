@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dapper;
-using PopForums.Data.Sql;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories

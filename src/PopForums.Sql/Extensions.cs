@@ -6,7 +6,7 @@ using PopForums.Configuration;
 using PopForums.Sql.Repositories;
 using PopForums.Repositories;
 
-namespace PopForums.Data.Sql
+namespace PopForums.Sql
 {
 	public static class Extensions
 	{

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using PopForums.Data.Sql;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories

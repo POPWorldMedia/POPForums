@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace PopForums.Data.Sql
+namespace PopForums.Sql
 {
 	public interface ISqlObjectFactory
 	{

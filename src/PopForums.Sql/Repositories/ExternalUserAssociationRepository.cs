@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Dapper;
-using PopForums.Data.Sql;
 using PopForums.ExternalLogin;
 using PopForums.Repositories;
 

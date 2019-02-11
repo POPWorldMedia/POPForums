@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Dapper;
-using PopForums.Data.Sql;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories

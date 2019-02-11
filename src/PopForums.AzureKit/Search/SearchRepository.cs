@@ -5,7 +5,7 @@ using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using Microsoft.Rest.Azure;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
+using PopForums.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 

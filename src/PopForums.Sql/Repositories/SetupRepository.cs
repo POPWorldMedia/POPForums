@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using PopForums.Data.Sql;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories

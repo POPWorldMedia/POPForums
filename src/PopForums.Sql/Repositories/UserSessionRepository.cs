@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 
