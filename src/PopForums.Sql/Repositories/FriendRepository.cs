@@ -37,7 +37,7 @@ namespace PopForums.Sql.Repositories
 						return friend;
 					},
 					new { FromUserID = userID },
-					splitOn: "ToUserID").ToList());
+					splitOn: "IsApproved").ToList());
 			return list;
 		}
 
@@ -54,7 +54,7 @@ namespace PopForums.Sql.Repositories
 						return friend;
 					},
 					new { ToUserID = userID },
-					splitOn: "FromUserID").ToList());
+					splitOn: "IsApproved").ToList());
 			return list;
 		}
 

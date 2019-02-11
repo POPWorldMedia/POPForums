@@ -203,7 +203,7 @@ namespace PopForums.Sql.Repositories
 					{
 						list.Add(user, points);
 						return user;
-					}, splitOn: "UserID"));
+					}, splitOn: "Points"));
 			_cacheHelper.SetCacheObject(key, list, 60);
 			return list;
 		}
