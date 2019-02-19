@@ -23,33 +23,6 @@ namespace PopForums.Sql
 			return command;
 		}
 
-		public static object ExecuteAndReturnIdentity(this DbCommand command)
-		{
-			if (command.Connection == null)
-				throw new Exception("SqlCommand has no connection.");
-			command.ExecuteNonQuery();
-			command.Parameters.Clear();
-			command.CommandText = "SELECT @@IDENTITY";
-			var result = command.ExecuteScalar();
-			return result;
-		}
-
-		public static DbDataReader ReadOne(this DbDataReader reader, Action<DbDataReader> action)
-		{
-			if (reader.Read())
-				action(reader);
-			reader.Dispose();
-			return reader;
-		}
-
-		public static DbDataReader ReadAll(this DbDataReader reader, Action<DbDataReader> action)
-		{
-			while (reader.Read())
-				action(reader);
-			reader.Dispose();
-			return reader;
-		}
-
 		public static void Using(this DbConnection connection, Action<DbConnection> action)
 		{
 			using (connection)
