@@ -292,6 +292,7 @@
 .btn-link {
 	border: none;
 	cursor: pointer;
+	background: none;
 }
 
 /* icons */
