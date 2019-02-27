@@ -12,7 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using PopForums.AzureKit;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
+using PopForums.Sql;
 using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Mvc.Areas.Forums.Extensions;

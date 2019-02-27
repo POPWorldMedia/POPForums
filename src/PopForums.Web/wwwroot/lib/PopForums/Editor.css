@@ -1,0 +1,8 @@
+﻿body {
+	margin: 10px;
+}
+blockquote {
+	font-size: 100%;
+	border-left: 5px solid #aaaaaa;
+	padding: 0 1em;
+}

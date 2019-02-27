@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PopForums.Data.Sql;
+using System.Linq;
+using Dapper;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories
@@ -16,23 +17,18 @@ namespace PopForums.Sql.Repositories
 
 		public byte[] GetImageData(int userAvatarID)
 		{
-			var data = new byte[] {};
+			byte[] data = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT ImageData FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
-					.AddParameter(_sqlObjectFactory, "@UserAvatarID", userAvatarID)
-					.ExecuteReader()
-					.ReadOne(r => data = (byte[])r["ImageData"]));
+				data = connection.ExecuteScalar<byte[]>("SELECT ImageData FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID", new { UserAvatarID = userAvatarID }));
 			return data;
 		}
 
 		public List<int> GetUserAvatarIDs(int userID)
 		{
-			var ids = new List<int>();
+			List<int> ids = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT UserAvatarID FROM pf_UserAvatar WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteReader()
-					.ReadAll(r => ids.Add(r.GetInt32(0))));
+				ids = connection.Query<int>("SELECT UserAvatarID FROM pf_UserAvatar WHERE UserID = @UserID",
+					new {UserID = userID}).ToList());
 			return ids;
 		}
 
@@ -40,30 +36,21 @@ namespace PopForums.Sql.Repositories
 		{
 			int avatarID = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				avatarID = Convert.ToInt32(connection.Command(_sqlObjectFactory, "INSERT INTO pf_UserAvatar (UserID, ImageData, [TimeStamp]) VALUES (@UserID, @ImageData, @TimeStamp)")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.AddParameter(_sqlObjectFactory, "@TimeStamp", timeStamp)
-					.AddParameter(_sqlObjectFactory, "@ImageData", imageData)
-					.ExecuteAndReturnIdentity()));
+				avatarID = connection.QuerySingle<int>("INSERT INTO pf_UserAvatar (UserID, ImageData, [TimeStamp]) VALUES (@UserID, @ImageData, @TimeStamp);SELECT CAST(SCOPE_IDENTITY() as int)", new { UserID = userID, TimeStamp = timeStamp, ImageData = imageData }));
 			return avatarID;
 		}
 
 		public void DeleteAvatarsByUserID(int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_UserAvatar WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_UserAvatar WHERE UserID = @UserID", new { UserID = userID }));
 		}
 
 		public DateTime? GetLastModificationDate(int userAvatarID)
 		{
 			DateTime? timeStamp = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT [TimeStamp] FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID")
-					.AddParameter(_sqlObjectFactory, "@UserAvatarID", userAvatarID)
-					.ExecuteReader()
-					.ReadOne(r => timeStamp = r.GetDateTime(0)));
+				timeStamp = connection.QuerySingleOrDefault<DateTime?>("SELECT [TimeStamp] FROM pf_UserAvatar WHERE UserAvatarID = @UserAvatarID", new { UserAvatarID = userAvatarID }));
 			return timeStamp;
 		}
 	}

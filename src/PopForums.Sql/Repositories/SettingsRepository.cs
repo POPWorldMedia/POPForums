@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PopForums.Data.Sql;
+using System.Linq;
+using Dapper;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories
@@ -18,23 +19,17 @@ namespace PopForums.Sql.Repositories
 		{
 			var dictionary = new Dictionary<string, string>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT Setting, [Value] FROM pf_Setting")
-					.ExecuteReader()
-					.ReadAll(r => dictionary.Add(r.GetString(0), r.GetString(1))));
+				dictionary = connection.Query("SELECT Setting, [Value] FROM pf_Setting").ToDictionary(r => (string)r.Setting, r => (string)r.Value));
 			return dictionary;
 		}
 
 		public void Save(Dictionary<string, object> dictionary)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				{
-					connection.Command(_sqlObjectFactory, "DELETE FROM pf_Setting")
-						.ExecuteNonQuery();
-					foreach (var key in dictionary)
-						connection.Command(_sqlObjectFactory, "INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)")
-							.AddParameter(_sqlObjectFactory, "@Setting", key.Key)
-							.AddParameter(_sqlObjectFactory, "@Value", key.Value == null ? String.Empty : key.Value.ToString())
-							.ExecuteNonQuery();
+			{
+				connection.Execute("DELETE FROM pf_Setting");
+				foreach (var key in dictionary)
+					connection.Execute("INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)", new { Setting = key.Key, Value = key.Value == null ? string.Empty : key.Value.ToString()});
 				});
 		}
 

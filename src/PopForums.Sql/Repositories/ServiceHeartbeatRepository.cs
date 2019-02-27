@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PopForums.Data.Sql;
+using System.Linq;
+using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -22,20 +23,11 @@ namespace PopForums.Sql.Repositories
 			// this goes away when running in Azure functions on a consumption plan.
 			lock (_heartbeatlock)
 			{
-				_sqlObjectFactory.GetConnection()
-					.Using(connection =>
-					{
-						var command = connection.Command(
-								_sqlObjectFactory,
-								"DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName")
-							.AddParameter(_sqlObjectFactory, "@ServiceName", serviceName)
-							.AddParameter(_sqlObjectFactory, "@MachineName", machineName);
-						command.ExecuteNonQuery();
-						command.CommandText =
-							"INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)";
-						command.AddParameter(_sqlObjectFactory, "@LastRun", lastRun);
-						command.ExecuteNonQuery();
-					});
+				_sqlObjectFactory.GetConnection().Using(connection =>
+				{
+					connection.Execute("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName", new { ServiceName = serviceName, MachineName = machineName });
+					connection.Execute("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)", new { ServiceName = serviceName, MachineName = machineName, LastRun = lastRun });
+				});
 			}
 		}
 
@@ -43,24 +35,16 @@ namespace PopForums.Sql.Repositories
 
 		public List<ServiceHeartbeat> GetAll()
 		{
-			var list = new List<ServiceHeartbeat>();
-			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command(_sqlObjectFactory, "SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName")
-					.ExecuteReader()
-					.ReadAll(r => list.Add(new ServiceHeartbeat
-					{
-						ServiceName = r.GetString(0),
-						MachineName = r.GetString(1),
-						LastRun = r.GetDateTime(2)
-					})));
+			List<ServiceHeartbeat> list = null;
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				list = connection.Query<ServiceHeartbeat>("SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName").ToList());
 			return list;
 		}
 
 		public void ClearAll()
 		{
-			_sqlObjectFactory.GetConnection()
-				.Using(connection => connection.Command(_sqlObjectFactory, "DELETE FROM pf_ServiceHeartbeat")
-					.ExecuteNonQuery());
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				connection.Execute("DELETE FROM pf_ServiceHeartbeat"));
 		}
 	}
 }

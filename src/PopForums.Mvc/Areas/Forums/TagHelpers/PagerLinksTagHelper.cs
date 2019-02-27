@@ -65,8 +65,8 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						firstRouteDictionary.Add(item.Key, item.Value);
-				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, "|«", ActionName, ControllerName, null, null, null,
-					firstRouteDictionary, new { title = Resources.First, @class = "page-link" });
+				var firstLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null,
+					firstRouteDictionary, new { title = Resources.First, @class = "page-link icon-previous2" });
 				builder.Append(GetString(firstLink));
 				builder.Append("</li>");
 				if (PagerContext.PageIndex > 2)
@@ -80,7 +80,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							previousRouteDictionary.Add(item.Key, item.Value);
-					var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "«", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, rel = "prev", @class = "page-link" });
+					var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, rel = "prev", @class = "page-link icon-backward2" });
 					builder.Append(GetString(previousLink));
 					builder.Append("</li>");
 				}
@@ -167,7 +167,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							nextRouteDictionary.Add(item.Key, item.Value);
-					var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "»", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, rel = "next", @class = "page-link" });
+					var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, rel = "next", @class = "page-link icon-forward3" });
 					builder.Append(GetString(nextLink));
 					builder.Append("</li>");
 				}
@@ -177,7 +177,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						lastRouteDictionary.Add(item.Key, item.Value);
-				var lastLink = _htmlGenerator.GenerateActionLink(ViewContext, "»|", ActionName, ControllerName, null, null, null, lastRouteDictionary, new { title = Resources.Last, @class = "page-link" });
+				var lastLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, lastRouteDictionary, new { title = Resources.Last, @class = "page-link icon-next2" });
 				builder.Append(GetString(lastLink));
 				builder.Append("</li>");
 			}

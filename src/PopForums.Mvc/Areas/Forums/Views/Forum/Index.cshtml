@@ -60,11 +60,11 @@
 			<td class="newIndicator">
 				@if (user == null)
 				{
-					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
 				}
 				else
 				{
-					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
 				}
 			</td>
 			<td>
@@ -77,7 +77,7 @@
 	}
 	<tr id="TopicTemplate" data-topicid="" class="hidden">
 		<td class="newIndicator">
-			<a class="indicatorLink" href=""><img src="" /></a>
+			<a href=""><span class="topicIndicator icon-file-text2 text-primary"></span></a>
 		</td>
 		<td>
 			<h2><a class="titleLink" href=""></a></h2>

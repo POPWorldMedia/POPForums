@@ -27,7 +27,7 @@
 			$(document).on("click", ".toItem", function () {
 				var item = $(this);
 				var userID = item.attr("data-userID");
-				var label = '<div data-userID="' + userID + '" class="badge badge-primary toLabel">' + item[0].innerHTML + ' <span class="x-icon toLabelX"></span></div>';
+				var label = '<div data-userID="' + userID + '" class="badge badge-primary toLabel">' + item[0].innerHTML + ' <span class="icon-cancel-circle toLabelX"></span></div>';
 				$("#PMToBox").append(label);
 				toList.empty();
 				toText.val("");
@@ -95,7 +95,7 @@
 			<div id="PMToBox" class="form-control">
 				@if (ViewBag.TargetUserID != null)
 				{
-					<div data-userid="@ViewBag.TargetUserID" class="badge badge-primary toLabel">@ViewBag.TargetUserName <span class="x-icon toLabelX"></span></div>
+					<div data-userid="@ViewBag.TargetUserID" class="badge badge-primary toLabel">@ViewBag.TargetUserName <span class="icon-cancel-circle toLabelX"></span></div>
 				}
 			</div>
 		</div>

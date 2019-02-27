@@ -4,22 +4,19 @@ using PopForums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.TagHelpers
 {
-	[HtmlTargetElement("pf-forumReadIndicator", Attributes = "forum, categorizedForumContainer, imagePath")]
+	[HtmlTargetElement("pf-forumReadIndicator", Attributes = "forum, categorizedForumContainer")]
     public class ForumReadIndicatorTagHelper : TagHelper
 	{
 		[HtmlAttributeName("forum")]
 		public Forum Forum { get; set; }
 		[HtmlAttributeName("categorizedForumContainer")]
 		public CategorizedForumContainer CategorizedForumContainer { get; set; }
-		[HtmlAttributeName("imagePath")]
-		public string ImagePath { get; set; }
 		[HtmlAttributeName("class")]
 		public string Class { get; set; }
 
 		public override void Process(TagHelperContext context, TagHelperOutput output)
 		{
 			var alt = Resources.NoNewPosts;
-			var image = "NoNewIndicator.png";
 			if (CategorizedForumContainer.ReadStatusLookup.ContainsKey(Forum.ForumID))
 			{
 				var status = CategorizedForumContainer.ReadStatusLookup[Forum.ForumID];
@@ -27,26 +24,28 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				{
 					case ReadStatus.Closed | ReadStatus.NoNewPosts:
 						alt = Resources.Archived;
-						image = "ClosedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 						break;
 					case ReadStatus.Closed | ReadStatus.NewPosts:
 						alt = Resources.ArchivedNewPosts;
-						image = "NewClosedIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 						break;
 					case ReadStatus.NewPosts:
 						alt = Resources.NewPosts;
-						image = "NewIndicator.png";
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span>");
 						break;
 					default:
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
 						break;
 				}
 			}
 
-			output.TagName = "img";
-			output.Attributes.Add("src", $"{ImagePath}{image}");
-			output.Attributes.Add("alt", alt);
+			output.TagName = "div";
+			output.Attributes.Add("title", alt);
 			if (!String.IsNullOrWhiteSpace(Class))
-				output.Attributes.Add("class", Class);
+				output.Attributes.Add("class", $"topicIndicator {Class}");
+			else
+				output.Attributes.Add("class", "topicIndicator");
 		}
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
+using Dapper;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -28,97 +27,25 @@ namespace PopForums.Sql.Repositories
 			}
 		}
 
-		private static Profile PopulateFromReader(DbDataReader reader)
-		{
-			return new Profile
-			{
-				UserID = reader.GetInt32(0),
-				IsSubscribed = reader.GetBoolean(1),
-				Signature = reader.GetString(2),
-				ShowDetails = reader.GetBoolean(3),
-				Location = reader.GetString(4),
-				IsPlainText = reader.GetBoolean(5),
-				Dob = reader.NullDateTimeDbHelper(6),
-				Web = reader.GetString(7),
-				Icq = reader.GetString(8),
-				YahooMessenger = reader.GetString(9),
-				Facebook = reader.NullStringDbHelper(10),
-				Twitter = reader.NullStringDbHelper(11),
-				IsTos = reader.GetBoolean(12),
-				TimeZone = reader.GetInt32(13),
-				IsDaylightSaving = reader.GetBoolean(14),
-				AvatarID = reader.NullIntDbHelper(15),
-				ImageID = reader.NullIntDbHelper(16),
-				HideVanity = reader.GetBoolean(17),
-				LastPostID = reader.NullIntDbHelper(18),
-				Points = reader.GetInt32(19)
-			};
-		}
-
 		public Profile GetProfile(int userID)
 		{
 			Profile profile = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteReader()
-					.ReadOne(r => { profile = PopulateFromReader(r); }));
+				profile = connection.QuerySingleOrDefault<Profile>("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
 			return profile;
 		}
 
 		public void Create(Profile profile)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @ICQ, @YahooMessenger, @Facebook, @Twitter, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)")
-					.AddParameter(_sqlObjectFactory, "@UserID", profile.UserID)
-					.AddParameter(_sqlObjectFactory, "@IsSubscribed", profile.IsSubscribed)
-					.AddParameter(_sqlObjectFactory, "@Signature", profile.Signature.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@ShowDetails", profile.ShowDetails)
-					.AddParameter(_sqlObjectFactory, "@Location", profile.Location.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@IsPlainText", profile.IsPlainText)
-					.AddParameter(_sqlObjectFactory, "@DOB", profile.Dob.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@Web", profile.Web.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@ICQ", profile.Icq.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@YahooMessenger", profile.YahooMessenger.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@Facebook", profile.Facebook.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@Twitter", profile.Twitter.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@IsTos", profile.IsTos)
-					.AddParameter(_sqlObjectFactory, "@TimeZone", profile.TimeZone)
-					.AddParameter(_sqlObjectFactory, "@IsDaylightSaving", profile.IsDaylightSaving)
-					.AddParameter(_sqlObjectFactory, "@AvatarID", profile.AvatarID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@ImageID", profile.ImageID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@HideVanity", profile.HideVanity)
-					.AddParameter(_sqlObjectFactory, "@LastPostID", profile.LastPostID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@Points", profile.Points)
-					.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, ICQ, YahooMessenger, Facebook, Twitter, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @ICQ, @YahooMessenger, @Facebook, @Twitter, @IsTos, @TimeZone, @IsDaylightSaving, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points)", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), ICQ = profile.Icq.NullToEmpty(), YahooMessenger =  profile.YahooMessenger.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), Twitter = profile.Twitter.NullToEmpty(), profile.IsTos, profile.TimeZone, profile.IsDaylightSaving, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points }));
 		}
 
 		public bool Update(Profile profile)
 		{
 			var success = false;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				success = connection.Command(_sqlObjectFactory, "UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, ICQ = @ICQ, YahooMessenger = @YahooMessenger, Facebook = @Facebook, Twitter = @Twitter, IsTos = @IsTos, TimeZone = @TimeZone, IsDaylightSaving = @IsDaylightSaving, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@IsSubscribed", profile.IsSubscribed)
-					.AddParameter(_sqlObjectFactory, "@Signature", profile.Signature.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@ShowDetails", profile.ShowDetails)
-					.AddParameter(_sqlObjectFactory, "@Location", profile.Location.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@IsPlainText", profile.IsPlainText)
-					.AddParameter(_sqlObjectFactory, "@DOB", profile.Dob.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@Web", profile.Web.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@ICQ", profile.Icq.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@YahooMessenger", profile.YahooMessenger.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@Facebook", profile.Facebook.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@Twitter", profile.Twitter.NullToEmpty())
-					.AddParameter(_sqlObjectFactory, "@IsTos", profile.IsTos)
-					.AddParameter(_sqlObjectFactory, "@TimeZone", profile.TimeZone)
-					.AddParameter(_sqlObjectFactory, "@IsDaylightSaving", profile.IsDaylightSaving)
-					.AddParameter(_sqlObjectFactory, "@AvatarID", profile.AvatarID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@ImageID", profile.ImageID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@HideVanity", profile.HideVanity)
-					.AddParameter(_sqlObjectFactory, "@LastPostID", profile.LastPostID.GetObjectOrDbNull())
-					.AddParameter(_sqlObjectFactory, "@Points", profile.Points)
-					.AddParameter(_sqlObjectFactory, "@UserID", profile.UserID)
-					.ExecuteNonQuery() == 1);
+				success = connection.Execute("UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, ICQ = @ICQ, YahooMessenger = @YahooMessenger, Facebook = @Facebook, Twitter = @Twitter, IsTos = @IsTos, TimeZone = @TimeZone, IsDaylightSaving = @IsDaylightSaving, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points WHERE UserID = @UserID", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), ICQ = profile.Icq.NullToEmpty(), YahooMessenger = profile.YahooMessenger.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), Twitter = profile.Twitter.NullToEmpty(), profile.IsTos, profile.TimeZone, profile.IsDaylightSaving, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points }) == 1);
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserProfile(profile.UserID));
 			return success;
 		}
@@ -127,10 +54,7 @@ namespace PopForums.Sql.Repositories
 		{
 			int? postID = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "SELECT LastPostID FROM pf_Profile WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteReader()
-					.ReadOne(r => { postID = r.NullIntDbHelper(0); }));
+				postID = connection.QuerySingle<int?>("SELECT LastPostID FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
 			return postID;
 		}
 
@@ -138,60 +62,49 @@ namespace PopForums.Sql.Repositories
 		{
 			var success = false;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				success = connection.Command(_sqlObjectFactory, "UPDATE pf_Profile SET LastPostID = @LastPostID WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@LastPostID", postID)
-					.AddParameter(_sqlObjectFactory, "@UserID", userID).ExecuteNonQuery() == 1);
+				success = connection.Execute("UPDATE pf_Profile SET LastPostID = @LastPostID WHERE UserID = @UserID", new { LastPostID = postID, UserID = userID }) == 1);
 			return success;
 		}
 
 		public Dictionary<int, string> GetSignatures(List<int> userIDs)
 		{
-			var dictionary = new Dictionary<int, string>();
+			Dictionary<int, string> dictionary = null;
 			if (userIDs.Count == 0)
-				return dictionary;
+				return new Dictionary<int, string>();
 			var inList = userIDs.Aggregate(String.Empty, (current, userID) => current + ("," + userID));
 			if (inList.StartsWith(","))
 				inList = inList.Remove(0, 1);
-			var sql = String.Format("SELECT UserID, Signature FROM pf_Profile WHERE NOT Signature = '' AND UserID IN ({0})", inList);
+			var sql = $"SELECT UserID, Signature FROM pf_Profile WHERE NOT Signature = '' AND UserID IN ({inList})";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, sql)
-					.ExecuteReader()
-					.ReadAll(r => dictionary.Add(r.GetInt32(0), r.GetString(1))));
+				dictionary = connection.Query(sql).ToDictionary(r => (int)r.UserID, r => (string)r.Signature));
 			return dictionary;
 		}
 
 		public Dictionary<int, int> GetAvatars(List<int> userIDs)
 		{
-			var dictionary = new Dictionary<int, int>();
+			Dictionary<int, int> dictionary = null;
 			if (userIDs.Count == 0)
-				return dictionary;
+				return new Dictionary<int, int>();
 			var inList = userIDs.Aggregate(String.Empty, (current, userID) => current + ("," + userID));
 			if (inList.StartsWith(","))
 				inList = inList.Remove(0, 1);
-			var sql = String.Format("SELECT UserID, AvatarID FROM pf_Profile WHERE NOT AvatarID IS NULL AND UserID IN ({0})", inList);
+			var sql = $"SELECT UserID, AvatarID FROM pf_Profile WHERE NOT AvatarID IS NULL AND UserID IN ({inList})";
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, sql)
-					.ExecuteReader()
-					.ReadAll(r => dictionary.Add(r.GetInt32(0), r.GetInt32(1))));
+				dictionary = connection.Query(sql).ToDictionary(r => (int)r.UserID, r => (int)r.AvatarID));
 			return dictionary;
 		}
 
 		public void SetCurrentImageIDToNull(int userID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "UPDATE pf_Profile SET ImageID = NULL WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteNonQuery());
+				connection.Execute("UPDATE pf_Profile SET ImageID = NULL WHERE UserID = @UserID", new { UserID = userID }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserProfile(userID));
 		}
 
 		public void UpdatePoints(int userID, int points)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "UPDATE pf_Profile SET Points = @Points WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.AddParameter(_sqlObjectFactory, "@Points", points)
-					.ExecuteNonQuery());
+				connection.Execute("UPDATE pf_Profile SET Points = @Points WHERE UserID = @UserID", new { UserID = userID, Points = points }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserProfile(userID));
 		}
 	}

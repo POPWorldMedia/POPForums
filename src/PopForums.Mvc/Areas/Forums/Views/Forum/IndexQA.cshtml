@@ -59,16 +59,16 @@
 	{
 		<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text> } data-topicid="@topic.TopicID">
 			<td class="newIndicator">
-				<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a>
+				<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
 			</td>
 			<td class="QAstate">
 				@if (topic.AnswerPostID.HasValue)
 				{
-					<span class="check-icon"></span>
+					<span class="icon-checkmark topicIndicator text-success"></span>
 				}
 				else
 				{
-					<span class="question-icon"></span>
+					<span class="icon-question topicIndicator text-danger"></span>
 				}
 			</td>
 			<td>

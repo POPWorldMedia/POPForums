@@ -201,8 +201,8 @@ CREATE TABLE [dbo].[pf_Topic](
 CREATE CLUSTERED INDEX [IX_pf_Topic_ForumID] ON [dbo].[pf_Topic] 
 (
 	[ForumID] ASC,
-	[LastPostTime] DESC,
-	[IsPinned] DESC
+	[IsPinned] DESC,
+	[LastPostTime] DESC
 ) 
 
 ALTER TABLE [dbo].[pf_Topic]  WITH CHECK ADD  CONSTRAINT [FK_pf_Topic_pf_Forum] FOREIGN KEY([ForumID])
@@ -220,7 +220,12 @@ CREATE NONCLUSTERED INDEX [pf_Topic_IsIndexed_IsDeleted] ON [dbo].[pf_Topic]
 CREATE UNIQUE NONCLUSTERED INDEX [IX_pf_Topic_UrlName] ON [dbo].[pf_Topic] 
 (
 	[UrlName] ASC
-) 
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_Topic_LastPostTime] ON [dbo].[pf_Topic]
+(
+	[LastPostTime] DESC
+)
 
 
 
@@ -603,7 +608,12 @@ ON DELETE CASCADE
 CREATE CLUSTERED INDEX [IX_pf_Favorite_UserID] ON [dbo].[pf_Favorite] 
 (
 	[UserID] ASC
-) 
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_Favorite_TopicID] ON [dbo].[pf_Favorite]
+(
+	[TopicID] ASC
+)
 
 
 
@@ -627,7 +637,7 @@ REFERENCES [dbo].[pf_Topic] ([TopicID])
 ON DELETE CASCADE
 
 
-CREATE CLUSTERED INDEX [pf_SubscribeTopic_TopicID_UserID] ON [dbo].[pf_SubscribeTopic] 
+CREATE CLUSTERED INDEX [IX_pf_SubscribeTopic_TopicID_UserID] ON [dbo].[pf_SubscribeTopic] 
 (
 	[TopicID] ASC,
 	[UserID] ASC
@@ -664,7 +674,10 @@ CREATE CLUSTERED INDEX [IX_LastTopicVIew_UserID] ON [dbo].[pf_LastTopicView]
 	[UserID] ASC
 ) 
 
-
+CREATE NONCLUSTERED INDEX [IX_pf_LastTopicView_TopicID] ON [dbo].[pf_LastTopicView]
+(
+	[TopicID] ASC
+)
 
 
 

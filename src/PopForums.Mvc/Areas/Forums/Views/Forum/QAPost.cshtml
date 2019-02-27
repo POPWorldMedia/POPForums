@@ -33,13 +33,13 @@
 		}
 		@if (user != null && user.UserID == Model.Topic.StartedByUserID && !Model.Post.IsFirstInTopic)
 		{
-			<p class="answerButton answerStatus @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>check-icon</text>}else{<text>star-icon</text>}" title="@PopForums.Resources.ChooseAnswer"> </p>
+			<p class="answerButton answerStatus @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>icon-checkmark text-success</text>}else{<text>icon-checkmark2 text-muted</text>}" title="@PopForums.Resources.ChooseAnswer"> </p>
 		}
 		else
 		{
 			if (Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID)
 			{
-				<p class="check-icon answerStatus"></p>
+				<p class="icon-checkmark text-success answerStatus"></p>
 			}
 		}
 	</div>
@@ -102,6 +102,7 @@
 			</ul>
 			<div class="moderationLog"></div>
 		</div>
+		<div class="commentHolder"></div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
 		{
 			foreach (var comment in Model.PostWithChildren.Children)
@@ -135,6 +136,5 @@
 				<p><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></p>
 			}
 		}
-		<div class="commentHolder"></div>
 	</div>
 </div>

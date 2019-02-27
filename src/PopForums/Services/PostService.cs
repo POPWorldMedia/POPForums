@@ -98,7 +98,7 @@ namespace PopForums.Services
 
 		public List<Post> GetPostWithReplies(int id, bool includeDeleted)
 		{
-			return _postRepository.GetPostWithRepies(id, includeDeleted);
+			return _postRepository.GetPostWithReplies(id, includeDeleted);
 		}
 
 		public Post Get(int postID)

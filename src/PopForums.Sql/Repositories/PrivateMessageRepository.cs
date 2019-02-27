@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -30,43 +31,22 @@ namespace PopForums.Sql.Repositories
 		{
 			PrivateMessage pm = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT PMID, Subject, LastPostTime, UserNames FROM pf_PrivateMessage WHERE PMID = @PMID")
-				.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-				.ExecuteReader()
-				.ReadOne(r => pm = new PrivateMessage { PMID = r.GetInt32(0),
-												Subject = r.GetString(1),
-												LastPostTime = r.GetDateTime(2),
-												UserNames = r.GetString(3)}));
+				pm = connection.QuerySingleOrDefault<PrivateMessage>("SELECT PMID, Subject, LastPostTime, UserNames FROM pf_PrivateMessage WHERE PMID = @PMID", new { PMID = pmID }));
 			return pm;
 		}
 
 		public List<PrivateMessagePost> GetPosts(int pmID)
 		{
-			var list = new List<PrivateMessagePost>();
+			List<PrivateMessagePost> list = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT PMPostID, PMID, UserID, Name, PostTime, FullText FROM pf_PrivateMessagePost WHERE PMID = @PMID ORDER BY PostTime")
-				.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-				.ExecuteReader()
-				.ReadAll(r => list.Add(new PrivateMessagePost
-										{
-											PMPostID = r.GetInt32(0),
-											PMID = r.GetInt32(1),
-											UserID = r.GetInt32(2),
-											Name = r.GetString(3),
-											PostTime = r.GetDateTime(4),
-											FullText = r.GetString(5)
-										})));
+				list = connection.Query<PrivateMessagePost>("SELECT PMPostID, PMID, UserID, Name, PostTime, FullText FROM pf_PrivateMessagePost WHERE PMID = @PMID ORDER BY PostTime", new { PMID = pmID }).ToList());
 			return list;
 		}
 
 		public virtual int CreatePrivateMessage(PrivateMessage pm)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => pm.PMID = Convert.ToInt32(
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_PrivateMessage (Subject, LastPostTime, UserNames) VALUES (@Subject, @LastPostTime, @UserNames)")
-				.AddParameter(_sqlObjectFactory, "@Subject", pm.Subject)
-				.AddParameter(_sqlObjectFactory, "@LastPostTime", pm.LastPostTime)
-				.AddParameter(_sqlObjectFactory, "@UserNames", pm.UserNames)
-				.ExecuteAndReturnIdentity()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				pm.PMID = connection.QuerySingle<int>("INSERT INTO pf_PrivateMessage (Subject, LastPostTime, UserNames) VALUES (@Subject, @LastPostTime, @UserNames);SELECT CAST(SCOPE_IDENTITY() as int)", new { pm.Subject, pm.LastPostTime, pm.UserNames }));
 			return pm.PMID;
 		}
 
@@ -76,12 +56,7 @@ namespace PopForums.Sql.Repositories
 			{
 				_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(id));
 				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Command(_sqlObjectFactory, "INSERT INTO pf_PrivateMessageUser (PMID, UserID, LastViewDate, IsArchived) VALUES (@PMID, @UserID, @LastViewDate, @IsArchived)")
-					.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-					.AddParameter(_sqlObjectFactory, "@UserID", id)
-					.AddParameter(_sqlObjectFactory, "@LastViewDate", viewDate)
-					.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
-					.ExecuteNonQuery());
+					connection.Execute("INSERT INTO pf_PrivateMessageUser (PMID, UserID, LastViewDate, IsArchived) VALUES (@PMID, @UserID, @LastViewDate, @IsArchived)", new { PMID = pmID, UserID = id, LastViewDate = viewDate, IsArchived = isArchived }));
 			}
 		}
 
@@ -90,31 +65,16 @@ namespace PopForums.Sql.Repositories
 			var users = GetUsers(post.PMID);
 			foreach (var user in users)
 				_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(user.UserID));
-			_sqlObjectFactory.GetConnection().Using(connection => post.PMPostID = Convert.ToInt32(
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_PrivateMessagePost (PMID, UserID, Name, PostTime, FullText) VALUES (@PMID, @UserID, @Name, @PostTime, @FullText)")
-				.AddParameter(_sqlObjectFactory, "@PMID", post.PMID)
-				.AddParameter(_sqlObjectFactory, "@UserID", post.UserID)
-				.AddParameter(_sqlObjectFactory, "@Name", post.Name)
-				.AddParameter(_sqlObjectFactory, "@PostTime", post.PostTime)
-				.AddParameter(_sqlObjectFactory, "@FullText", post.FullText)
-				.ExecuteAndReturnIdentity()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				post.PMPostID = connection.QuerySingle<int>("INSERT INTO pf_PrivateMessagePost (PMID, UserID, Name, PostTime, FullText) VALUES (@PMID, @UserID, @Name, @PostTime, @FullText);SELECT CAST(SCOPE_IDENTITY() as int)", new { post.PMID, post.UserID, post.Name, post.PostTime, post.FullText }));
 			return post.PMPostID;
 		}
 
 		public List<PrivateMessageUser> GetUsers(int pmID)
 		{
-			var list = new List<PrivateMessageUser>();
+			List<PrivateMessageUser> list = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT PMID, UserID, LastViewDate, IsArchived FROM pf_PrivateMessageUser WHERE PMID = @PMID")
-					.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-					.ExecuteReader()
-					.ReadAll(r => list.Add(new PrivateMessageUser
-					{
-						PMID = r.GetInt32(0),
-						UserID = r.GetInt32(1),
-						LastViewDate = r.GetDateTime(2),
-						IsArchived = r.GetBoolean(3)
-					})));
+				list = connection.Query<PrivateMessageUser>("SELECT PMID, UserID, LastViewDate, IsArchived FROM pf_PrivateMessageUser WHERE PMID = @PMID", new { PMID = pmID }).ToList());
 			return list;
 		}
 
@@ -122,22 +82,14 @@ namespace PopForums.Sql.Repositories
 		{
 			_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(userID));
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "UPDATE pf_PrivateMessageUser SET LastViewDate = @LastViewDate WHERE UserID = @UserID AND PMID = @PMID")
-				.AddParameter(_sqlObjectFactory, "@LastViewDate", viewDate)
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-				.ExecuteNonQuery());
+				connection.Execute("UPDATE pf_PrivateMessageUser SET LastViewDate = @LastViewDate WHERE UserID = @UserID AND PMID = @PMID", new { LastViewDate = viewDate, UserID = userID, PMID = pmID }));
 		}
 
 		public void SetArchive(int pmID, int userID, bool isArchived)
 		{
 			_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(userID));
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "UPDATE pf_PrivateMessageUser SET IsArchived = @IsArchived WHERE UserID = @UserID AND PMID = @PMID")
-				.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-				.ExecuteNonQuery());
+				connection.Execute("UPDATE pf_PrivateMessageUser SET IsArchived = @IsArchived WHERE UserID = @UserID AND PMID = @PMID", new { IsArchived = isArchived, UserID = userID, PMID = pmID }));
 		}
 
 		public List<PrivateMessage> GetPrivateMessages(int userID, PrivateMessageBoxType boxType, int startRow, int pageSize)
@@ -162,22 +114,9 @@ WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
 
 SET ROWCOUNT 0";
-			var messsages = new List<PrivateMessage>();
+			List<PrivateMessage> messsages = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, sql)
-				.AddParameter(_sqlObjectFactory, "@StartRow", startRow)
-				.AddParameter(_sqlObjectFactory, "@PageSize", pageSize)
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
-				.ExecuteReader()
-				.ReadAll(r => messsages.Add(new PrivateMessage
-				                            	{
-				                            		PMID = r.GetInt32(0),
-													Subject = r.GetString(1),
-													LastPostTime = r.GetDateTime(2),
-													UserNames = r.GetString(3),
-													LastViewDate = r.GetDateTime(4)
-				                            	})));
+				messsages = connection.Query<PrivateMessage>(sql, new { StartRow = startRow, PageSize = pageSize, UserID = userID, IsArchived = isArchived }).ToList());
 			return messsages;
 		}
 
@@ -187,10 +126,7 @@ SET ROWCOUNT 0";
 			var sql = "SELECT COUNT(*) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE U.UserID = @UserID AND U.IsArchived = @IsArchived";
 			var count = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = Convert.ToInt32(connection.Command(_sqlObjectFactory, sql)
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.AddParameter(_sqlObjectFactory, "@IsArchived", isArchived)
-				.ExecuteScalar()));
+				count = connection.ExecuteScalar<int>(sql, new { UserID = userID, IsArchived = isArchived }));
 			return count;
 		}
 
@@ -200,21 +136,16 @@ SET ROWCOUNT 0";
 			if (cacheObject.HasValue)
 				return cacheObject.Value;
 			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => count = Convert.ToInt32(
-				connection.Command(_sqlObjectFactory, "SELECT COUNT(P.PMID) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE LastPostTime > LastViewDate AND U.UserID = @UserID AND U.IsArchived = 0")
-				.AddParameter(_sqlObjectFactory, "@UserID", userID)
-				.ExecuteScalar()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				count = connection.ExecuteScalar<int>("SELECT COUNT(P.PMID) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE LastPostTime > LastViewDate AND U.UserID = @UserID AND U.IsArchived = 0", new { UserID = userID }));
 			_cacheHelper.SetCacheObject(CacheKeys.PMCount(userID), count);
 			return count;
 		}
 
 		public void UpdateLastPostTime(int pmID, DateTime lastPostTime)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => pmID = Convert.ToInt32(
-				connection.Command(_sqlObjectFactory, "UPDATE pf_PrivateMessage SET LastPostTime = @LastPostTime WHERE PMID = @PMID")
-				.AddParameter(_sqlObjectFactory, "@LastPostTime", lastPostTime)
-				.AddParameter(_sqlObjectFactory, "@PMID", pmID)
-				.ExecuteNonQuery()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				pmID = connection.Execute("UPDATE pf_PrivateMessage SET LastPostTime = @LastPostTime WHERE PMID = @PMID", new { LastPostTime = lastPostTime, PMID = pmID }));
 		}
 	}
 }

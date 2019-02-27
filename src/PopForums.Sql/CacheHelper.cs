@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 using PopForums.Configuration;
 
-namespace PopForums.Data.Sql
+namespace PopForums.Sql
 {
 	public class CacheHelper : ICacheHelper
 	{

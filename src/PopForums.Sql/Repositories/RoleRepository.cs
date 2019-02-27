@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
+using Dapper;
 using PopForums.Configuration;
-using PopForums.Data.Sql;
+using PopForums.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -29,26 +31,20 @@ namespace PopForums.Sql.Repositories
 		public void CreateRole(string role)
 		{
 			var exists = false;
-			_sqlObjectFactory.GetConnection().Using(connection => exists =
-				connection.Command(_sqlObjectFactory, "SELECT Role FROM pf_Role WHERE Role LIKE @Role")
-					.AddParameter(_sqlObjectFactory, "@Role", role)
-					.ExecuteReader().Read());
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				exists = connection.Query<string>("SELECT Role FROM pf_Role WHERE Role LIKE @Role", new { Role = role }).Any());
 			if (exists)
 				return;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "INSERT INTO pf_Role (Role) VALUES (@Role)")
-				.AddParameter(_sqlObjectFactory, "@Role", role)
-				.ExecuteNonQuery());
+				connection.Execute("INSERT INTO pf_Role (Role) VALUES (@Role)", new { Role = role }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.AllRoles);
 		}
 
 		public bool DeleteRole(string role)
 		{
 			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection => result = 0 != 
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_Role WHERE Role = @Role")
-				.AddParameter(_sqlObjectFactory, "@Role", role)
-				.ExecuteNonQuery());
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				result = connection.Execute("DELETE FROM pf_Role WHERE Role = @Role", new { Role = role }) == 1);
 			_cacheHelper.RemoveCacheObject(CacheKeys.AllRoles);
 			return result;
 		}
@@ -58,11 +54,9 @@ namespace PopForums.Sql.Repositories
 			var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.AllRoles);
 			if (cacheObject != null)
 				return cacheObject;
-			var roles = new List<string>();
+			List<string> roles = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Command(_sqlObjectFactory, "SELECT Role FROM pf_Role ORDER BY Role")
-					.ExecuteReader()
-					.ReadAll(r => roles.Add(r.GetString(0))));
+				roles = connection.Query<string>("SELECT Role FROM pf_Role ORDER BY Role").ToList());
 			_cacheHelper.SetCacheObject(CacheKeys.AllRoles, roles);
 			return roles;
 		}
@@ -78,24 +72,18 @@ namespace PopForums.Sql.Repositories
 			var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.UserRole(userID));
 			if (cacheObject != null)
 				return cacheObject;
-			var roles = new List<string>();
+			List<string> roles = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT Role FROM pf_PopForumsUserRole WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteReader()
-					.ReadAll(r => roles.Add(r.GetString(0))));
+				roles = connection.Query<string>("SELECT Role FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }).ToList());
 			_cacheHelper.SetCacheObject(CacheKeys.UserRole(userID), roles);
 			return roles;
 		}
 
 		public List<User> GetUsersInRole(string role)
 		{
-			var users = new List<User>();
+			List<User> users = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser U JOIN pf_PopForumsUserRole R ON U.UserID = R.UserID WHERE Role = @Role")
-					.AddParameter(_sqlObjectFactory, "@Role", role)
-					.ExecuteReader()
-					.ReadAll(r => users.Add(UserRepository.PopulateUser(r))));
+				users = connection.Query<User>("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser U JOIN pf_PopForumsUserRole R ON U.UserID = R.UserID WHERE Role = @Role", new { Role = role }).ToList());
 			return users;
 		}
 
@@ -104,10 +92,7 @@ namespace PopForums.Sql.Repositories
 			RemoveUserFromRole(userID, role);
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Command(_sqlObjectFactory, "INSERT INTO pf_PopForumsUserRole (UserID, Role) VALUES (@UserID, @Role)")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.AddParameter(_sqlObjectFactory, "@Role", role)
-					.ExecuteNonQuery() != 0);
+				result = connection.Execute("INSERT INTO pf_PopForumsUserRole (UserID, Role) VALUES (@UserID, @Role)", new { UserID = userID, Role = role }) == 1);
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserRole(userID));
 			return result;
 		}
@@ -116,10 +101,7 @@ namespace PopForums.Sql.Repositories
 		{
 			var result = false;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Command(_sqlObjectFactory, "DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID AND Role = @Role")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.AddParameter(_sqlObjectFactory, "@Role", role)
-					.ExecuteNonQuery() != 0);
+				result = connection.Execute("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID AND Role = @Role", new { UserID = userID, Role = role }) == 1);
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserRole(userID));
 			return result;
 		}
@@ -127,9 +109,7 @@ namespace PopForums.Sql.Repositories
 		public void ReplaceUserRoles(int userID, string[] roles)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Command(_sqlObjectFactory, "DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID")
-					.AddParameter(_sqlObjectFactory, "@UserID", userID)
-					.ExecuteNonQuery());
+				connection.Execute("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }));
 			foreach (var role in roles)
 				AddUserToRole(userID, role);
 		}

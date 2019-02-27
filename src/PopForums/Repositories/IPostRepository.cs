@@ -10,7 +10,7 @@ namespace PopForums.Repositories
 		bool Update(Post post);
 		List<Post> Get(int topicID, bool includeDeleted, int startRow, int pageSize);
 		List<Post> Get(int topicID, bool includeDeleted);
-		List<Post> GetPostWithRepies(int postID, bool includeDeleted);
+		List<Post> GetPostWithReplies(int postID, bool includeDeleted);
 		Post GetFirstInTopic(int topicID);
 		int GetReplyCount(int topicID, bool includeDeleted);
 		Post Get(int postID);

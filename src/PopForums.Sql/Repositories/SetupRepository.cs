@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
-using PopForums.Data.Sql;
+using Dapper;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories
@@ -13,7 +12,7 @@ namespace PopForums.Sql.Repositories
 			_sqlObjectFactory = sqlObjectFactory;
 		}
 
-		protected readonly ISqlObjectFactory _sqlObjectFactory;
+		private readonly ISqlObjectFactory _sqlObjectFactory;
 
 		public bool IsConnectionPossible()
 		{
@@ -41,7 +40,8 @@ BEGIN
 	SELECT 1
 END";
 			var result = false;
-			_sqlObjectFactory.GetConnection().Using(c => result = Convert.ToBoolean(c.Command(_sqlObjectFactory, sql).ExecuteScalar()));
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				result = connection.ExecuteScalar<bool>(sql));
 			return result;
 		}
 
@@ -51,7 +51,8 @@ END";
 			var stream = assembly.GetManifestResourceStream("PopForums.Sql.PopForums.sql");
 			var reader = new StreamReader(stream);
 			var sql = reader.ReadToEnd();
-			_sqlObjectFactory.GetConnection().Using(c => c.Command(_sqlObjectFactory, sql).ExecuteNonQuery());
+			_sqlObjectFactory.GetConnection().Using(connection => 
+				connection.Execute(sql));
 		}
 	}
 }
