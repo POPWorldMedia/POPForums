@@ -20,3 +20,12 @@ CREATE NONCLUSTERED INDEX [IX_pf_LastTopicView_TopicID] ON [dbo].[pf_LastTopicVi
 	[TopicID] ASC
 )
 
+IF EXISTS( SELECT TOP 1 1 FROM sys.objects o INNER JOIN sys.columns c ON o.object_id = c.object_id WHERE o.name = 'pf_Profile' AND c.name = 'ICQ')
+ALTER TABLE dbo.pf_Profile DROP COLUMN [ICQ]
+
+IF EXISTS( SELECT TOP 1 1 FROM sys.objects o INNER JOIN sys.columns c ON o.object_id = c.object_id WHERE o.name = 'pf_Profile' AND c.name = 'YahooMessenger')
+ALTER TABLE dbo.pf_Profile DROP COLUMN [YahooMessenger]
+
+IF NOT EXISTS( SELECT TOP 1 1 FROM sys.objects o INNER JOIN sys.columns c ON o.object_id = c.object_id WHERE o.name = 'pf_Profile' AND c.name = 'Instagram')
+ALTER TABLE dbo.pf_Profile ADD [Instagram] nvarchar(256) NULL
+

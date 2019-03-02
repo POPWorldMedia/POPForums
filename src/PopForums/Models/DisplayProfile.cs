@@ -14,8 +14,7 @@ namespace PopForums.Models
 			Dob = profile.Dob;
 			Location = profile.Location;
 			Web = profile.Web;
-			YahooMessenger = profile.YahooMessenger;
-			Icq = profile.Icq;
+			Instagram = profile.Instagram;
 			Facebook = profile.Facebook;
 			Twitter = profile.Twitter;
 			AvatarID = profile.AvatarID;
@@ -33,8 +32,7 @@ namespace PopForums.Models
 		public string Location { get; set; }
 		public int PostCount { get; set; }
 		public string Web { get; set; }
-		public string YahooMessenger { get; set; }
-		public string Icq { get; set; }
+		public string Instagram { get; set; }
 		public string Facebook { get; set; }
 		public string Twitter { get; set; }
 		public int? AvatarID { get; set; }
