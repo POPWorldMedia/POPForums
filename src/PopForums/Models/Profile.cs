@@ -12,10 +12,9 @@ namespace PopForums.Models
 		public bool IsPlainText { get; set; }
 		public DateTime? Dob { get; set; }
 		public string Web { get; set; }
-		public string Icq { get; set; }
-		public string YahooMessenger { get; set; }
 		public string Facebook { get; set; }
 		public string Twitter { get; set; }
+		public string Instagram { get; set; }
 		public bool IsTos { get; set; }
 		public int TimeZone { get; set; }
 		public bool IsDaylightSaving { get; set; }

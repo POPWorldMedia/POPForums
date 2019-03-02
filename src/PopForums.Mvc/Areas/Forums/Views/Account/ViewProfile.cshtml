@@ -78,27 +78,19 @@
 					</div>
 				}
 
+				@if (!String.IsNullOrWhiteSpace(Model.Instagram))
+				{
+					<div class="row">
+						<div class="col-2">Instagram</div>
+						<div class="col-10"><a href="https://www.instagram.com/@Model.Instagram" target="_blank">@Model.Instagram</a></div>
+					</div>
+				}
+
 				@if (!String.IsNullOrWhiteSpace(Model.Web))
 				{
 					<div class="row">
 						<div class="col-2">@PopForums.Resources.Web</div>
 						<div class="col-10"><a href="@Model.Web" target="_blank">@Model.Web</a></div>
-					</div>
-				}
-
-				@if (!String.IsNullOrWhiteSpace(Model.YahooMessenger))
-				{
-					<div class="row">
-						<div class="col-2">Yahoo Messenger</div>
-						<div class="col-10"><a href="ymsgr:sendIM?@Model.YahooMessenger">@Model.YahooMessenger</a></div>
-					</div>
-				}
-
-				@if (!String.IsNullOrWhiteSpace(Model.Icq))
-				{
-					<div class="row">
-						<div class="col-2">ICQ</div>
-						<div class="col-10"><a href="http://wwp.icq.com/@Model.Icq">@Model.Icq</a></div>
 					</div>
 				}
 

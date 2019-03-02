@@ -15,8 +15,7 @@ namespace PopForums.Models
 			IsPlainText = profile.IsPlainText;
 			Dob = profile.Dob;
 			Web = profile.Web;
-			Icq = profile.Icq;
-			YahooMessenger = profile.YahooMessenger;
+			Instagram = profile.Instagram;
 			Facebook = profile.Facebook;
 			Twitter = profile.Twitter;
 			TimeZone = profile.TimeZone;
@@ -31,8 +30,7 @@ namespace PopForums.Models
 		public bool IsPlainText { get; set; }
 		public DateTime? Dob { get; set; }
 		public string Web { get; set; }
-		public string Icq { get; set; }
-		public string YahooMessenger { get; set; }
+		public string Instagram { get; set; }
 		public string Facebook { get; set; }
 		public string Twitter { get; set; }
 		public int TimeZone { get; set; }
