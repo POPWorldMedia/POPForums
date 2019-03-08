@@ -79,7 +79,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(_settingsManager.Current);
 		}
 
-		public ViewResult Index2()
+		public ViewResult App()
 		{
 			return View();
 		}
