@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using PopForums.AwsKit;
 using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Sql;
@@ -68,6 +69,9 @@ namespace PopForums.Web
 
 			// use Azure Search for POP Forums using AzureKit
 			//services.AddPopForumsAzureSearch();
+
+			// use ElasticSearch for POP Forums using AwsKit
+			//services.AddPopForumsElasticSearch();
 
 			// creates an instance of the background services for POP Forums... call this last in forum setup
 			services.AddPopForumsBackgroundServices();
