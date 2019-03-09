@@ -11,24 +11,33 @@ namespace PopForums.AzureKit.Search
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
 		private readonly ITextParsingService _textParsingService;
+		private readonly ISearchService _searchService;
+		private readonly IPostService _postService;
+		private readonly IConfig _config;
+		private readonly ITopicService _topicService;
+		private readonly IErrorLog _errorLog;
 		public static string IndexName = "popforumstopics";
 
-		public SearchIndexSubsystem(ITextParsingService textParsingService)
+		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, IConfig config, ITopicService topicService, IErrorLog errorLog)
 		{
 			_textParsingService = textParsingService;
+			_searchService = searchService;
+			_postService = postService;
+			_config = config;
+			_topicService = topicService;
+			_errorLog = errorLog;
 		}
 
-		public void DoIndex(ISearchService searchService, ISettingsManager settingsManager, IPostService postService,
-			IConfig config, ITopicService topicService, IErrorLog errorLog)
+		public void DoIndex()
 		{
-			var topic = searchService.GetNextTopicForIndexing();
+			var topic = _searchService.GetNextTopicForIndexing();
 			if (topic != null)
 			{
-				var serviceClient = new SearchServiceClient(config.SearchUrl, new SearchCredentials(config.SearchKey));
+				var serviceClient = new SearchServiceClient(_config.SearchUrl, new SearchCredentials(_config.SearchKey));
 				if (!serviceClient.Indexes.Exists(IndexName))
 					CreateIndex(serviceClient);
 
-				var posts = postService.GetPosts(topic, false).ToArray();
+				var posts = _postService.GetPosts(topic, false).ToArray();
 				var parsedPosts = posts.Select(x =>
 					{
 						var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);
@@ -52,7 +61,7 @@ namespace PopForums.AzureKit.Search
 				};
 
 				var actions =
-				new IndexAction<SearchTopic>[]
+				new[]
 				{
 					IndexAction.Upload(searchTopic)
 				};
@@ -61,12 +70,12 @@ namespace PopForums.AzureKit.Search
 					var serviceIndexClient = serviceClient.Indexes.GetClient(IndexName);
 					var batch = IndexBatch.New(actions);
 					serviceIndexClient.Documents.Index(batch);
-					searchService.MarkTopicAsIndexed(topic);
+					_searchService.MarkTopicAsIndexed(topic);
 				}
 				catch (Exception exc)
 				{
-					errorLog.Log(exc, ErrorSeverity.Error);
-					topicService.MarkTopicForIndexing(topic.TopicID);
+					_errorLog.Log(exc, ErrorSeverity.Error);
+					_topicService.MarkTopicForIndexing(topic.TopicID);
 				}
 		    }
 	    }

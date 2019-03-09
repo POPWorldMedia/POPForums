@@ -16,6 +16,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IConfig, Config>();
 		    services.AddTransient<IErrorLog, ErrorLog>();
 		    services.AddTransient<ISettingsManager, SettingsManager>();
+		    services.AddTransient<ITenantService, TenantService>();
 
 			// email
 		    services.AddTransient<IForgotPasswordMailer, ForgotPasswordMailer>();

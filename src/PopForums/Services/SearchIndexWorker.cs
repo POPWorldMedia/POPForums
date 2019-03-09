@@ -13,12 +13,12 @@ namespace PopForums.Services
 			// only allow Instance to create a new instance
 		}
 
-		public void IndexNextTopic(ISearchService searchService, ISettingsManager settingsManager, IPostService postService, IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem, IConfig config, ITopicService topicService)
+		public void IndexNextTopic(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem)
 		{
 			if (!Monitor.TryEnter(_syncRoot)) return;
 			try
 			{
-				searchIndexSubsystem.DoIndex(searchService, settingsManager, postService, config, topicService, errorLog);
+				searchIndexSubsystem.DoIndex();
 			}
 			catch (Exception exc)
 			{
