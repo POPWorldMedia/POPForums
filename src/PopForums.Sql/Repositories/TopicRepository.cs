@@ -211,6 +211,8 @@ SET ROWCOUNT 0";
 		public List<Topic> Get(IEnumerable<int> topicIDs)
 		{
 			var list = topicIDs.ToList();
+			if (list.Count == 0)
+				return new List<Topic>();
 			List<Topic> topics = null;
 			var ids = string.Join(",", list);
 			var sql = $@"SELECT {TopicFields} FROM pf_Topic 

@@ -12,18 +12,20 @@ namespace PopForums.AwsKit.Search
 		private readonly IConfig _config;
 		private readonly IErrorLog _errorLog;
 		private readonly ITopicRepository _topicRepository;
+		private readonly IElasticSearchClientWrapper _elasticSearchClientWrapper;
 
 		public SearchRepository(ISqlObjectFactory sqlObjectFactory, IConfig config, IErrorLog errorLog,
-			ITopicRepository topicRepository) : base(sqlObjectFactory)
+			ITopicRepository topicRepository, IElasticSearchClientWrapper elasticSearchClientWrapper) : base(sqlObjectFactory)
 		{
 			_config = config;
 			_errorLog = errorLog;
 			_topicRepository = topicRepository;
+			_elasticSearchClientWrapper = elasticSearchClientWrapper;
 		}
 
 		public override List<string> GetJunkWords()
 		{
-			throw new NotImplementedException();
+			return new List<string>();
 		}
 
 		public override void CreateJunkWord(string word)
@@ -50,10 +52,11 @@ namespace PopForums.AwsKit.Search
 			throw new NotImplementedException();
 		}
 
-		public override List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType,
-			int startRow, int pageSize, out int topicCount)
+		public override List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
-			throw new NotImplementedException();
+			var ids = _elasticSearchClientWrapper.SearchTopicsWithIDs(searchTerm, hiddenForums, searchType, startRow, pageSize, out topicCount);
+			var topics = _topicRepository.Get(ids);
+			return topics;
 		}
 	}
 }

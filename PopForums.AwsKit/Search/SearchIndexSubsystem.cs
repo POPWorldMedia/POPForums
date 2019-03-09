@@ -10,24 +10,21 @@ namespace PopForums.AwsKit.Search
 	{
 		private readonly ITextParsingService _textParsingService;
 		private readonly ISearchService _searchService;
-		private readonly ISettingsManager _settingsManager;
 		private readonly IPostService _postService;
-		private readonly IConfig _config;
 		private readonly ITopicService _topicService;
 		private readonly IErrorLog _errorLog;
 		private readonly ITenantService _tenantService;
+		private readonly IElasticSearchClientWrapper _elasticSearchClientWrapper;
 
-		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, ISettingsManager settingsManager, IPostService postService, IConfig config,
-			ITopicService topicService, IErrorLog errorLog, ITenantService tenantService)
+		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, ITopicService topicService, IErrorLog errorLog, ITenantService tenantService, IElasticSearchClientWrapper elasticSearchClientWrapper)
 		{
 			_textParsingService = textParsingService;
 			_searchService = searchService;
-			_settingsManager = settingsManager;
 			_postService = postService;
-			_config = config;
 			_topicService = topicService;
 			_errorLog = errorLog;
 			_tenantService = tenantService;
+			_elasticSearchClientWrapper = elasticSearchClientWrapper;
 		}
 
 		public void DoIndex()
@@ -36,7 +33,7 @@ namespace PopForums.AwsKit.Search
 			if (topic == null)
 				return;
 
-			var posts = _postService.GetPosts(topic, false).ToArray();
+			var posts = _postService.GetPosts(topic, false);
 			var parsedPosts = posts.Select(x =>
 			{
 				var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);
@@ -63,21 +60,24 @@ namespace PopForums.AwsKit.Search
 
 			try
 			{
-				var node = new Uri(_config.SearchUrl);
-				var settings = new ConnectionSettings(node)
-					.DefaultIndex(IndexName);
-				var client = new ElasticClient(settings);
-
-				var indexResult = client.IndexDocument(searchTopic);
+				var indexResult = _elasticSearchClientWrapper.IndexTopic(searchTopic);
 				if (indexResult.Result != Result.Created && indexResult.Result != Result.Updated)
+				{
 					_errorLog.Log(indexResult.OriginalException, ErrorSeverity.Error, $"Debug information: {indexResult.DebugInformation}");
+					// TODO: Replace this with some Polly or get real about queues/deadletter
+					_topicService.MarkTopicForIndexing(topic.TopicID);
+				}
+				else
+				{
+					_searchService.MarkTopicAsIndexed(topic);
+				}
 			}
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
+				// TODO: Replace this with some Polly or get real about queues/deadletter
+				_topicService.MarkTopicForIndexing(topic.TopicID);
 			}
 		}
-
-		private const string IndexName = "topicindex";
 	}
 }
