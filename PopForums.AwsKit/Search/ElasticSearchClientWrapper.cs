@@ -63,7 +63,10 @@ namespace PopForums.AwsKit.Search
 			var createIndexResponse = _client.CreateIndex(IndexName, c => c
 				.Settings(s => s
 					.Analysis(a => a
-						.Analyzers(aa => aa.Stop("pfstop", st => st.StopWords("_english_"))
+						.Analyzers(aa => aa
+							.Standard("standard_english", sa => sa
+								.StopWords("_english_")
+							)
 						)
 					)
 				)
@@ -72,9 +75,15 @@ namespace PopForums.AwsKit.Search
 						.Properties(p => p
 							.Text(t => t
 								.Name(n => n.Posts)
+								.Analyzer("standard_english")
+							)
+							.Text(t => t
 								.Name(n => n.FirstPost)
+								.Analyzer("standard_english")
+							)
+							.Text(t => t
 								.Name(n => n.Title)
-								.SearchAnalyzer("pfstop")
+								.Analyzer("standard_english")
 							)
 						)
 					)
