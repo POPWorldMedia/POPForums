@@ -1,4 +1,5 @@
 ﻿using System;
+using Nest;
 
 namespace PopForums.AwsKit.Search
 {
@@ -15,6 +16,7 @@ namespace PopForums.AwsKit.Search
 		public bool IsPinned { get; set; }
 		public string UrlName { get; set; }
 		public string LastPostName { get; set; }
+		public string FirstPost { get; set; }
 		public string[] Posts { get; set; }
 		public string TenantID { get; set; }
     }

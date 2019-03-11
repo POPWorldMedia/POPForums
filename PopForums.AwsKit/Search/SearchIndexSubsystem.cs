@@ -33,7 +33,14 @@ namespace PopForums.AwsKit.Search
 			if (topic == null)
 				return;
 
+			_elasticSearchClientWrapper.VerifyIndexCreate();
+
 			var posts = _postService.GetPosts(topic, false);
+			if (posts.Count == 0)
+				throw new Exception($"TopicID {topic.TopicID} has no posts to index.");
+			var firstPost = _textParsingService.ClientHtmlToForumCode(posts[0].FullText);
+			firstPost = _textParsingService.RemoveForumCode(firstPost);
+			posts.RemoveAt(0);
 			var parsedPosts = posts.Select(x =>
 			{
 				var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);
@@ -54,6 +61,7 @@ namespace PopForums.AwsKit.Search
 				IsPinned = topic.IsPinned,
 				UrlName = topic.UrlName,
 				LastPostName = topic.LastPostName,
+				FirstPost = firstPost,
 				Posts = parsedPosts,
 				TenantID = tenantID
 			};
