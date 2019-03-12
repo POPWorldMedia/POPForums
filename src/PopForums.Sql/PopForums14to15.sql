@@ -5,16 +5,19 @@
 	[LastPostTime] DESC
 ) WITH (drop_existing = on)
 
+IF IndexProperty(Object_Id('pf_Topic'), 'IX_pf_Topic_LastPostTime', 'IndexId') IS NULL
 CREATE NONCLUSTERED INDEX [IX_pf_Topic_LastPostTime] ON [dbo].[pf_Topic]
 (
 	[LastPostTime] DESC
 )
 
+IF IndexProperty(Object_Id('pf_Favorite'), 'IX_pf_Favorite_TopicID', 'IndexId') IS NULL
 CREATE NONCLUSTERED INDEX [IX_pf_Favorite_TopicID] ON [dbo].[pf_Favorite]
 (
 	[TopicID] ASC
 )
 
+IF IndexProperty(Object_Id('pf_LastTopicView'), 'IX_pf_LastTopicView_TopicID', 'IndexId') IS NULL
 CREATE NONCLUSTERED INDEX [IX_pf_LastTopicView_TopicID] ON [dbo].[pf_LastTopicView]
 (
 	[TopicID] ASC
