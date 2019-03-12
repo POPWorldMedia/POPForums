@@ -25,9 +25,9 @@ namespace PopForums.AzureKit.Search
 		}
 
 		public override List<string> GetJunkWords()
-	    {
-		    throw new NotImplementedException();
-	    }
+		{
+			return new List<string>();
+		}
 
 	    public override void CreateJunkWord(string word)
 	    {

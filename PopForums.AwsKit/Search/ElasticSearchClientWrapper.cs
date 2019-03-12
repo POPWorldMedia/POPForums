@@ -16,12 +16,14 @@ namespace PopForums.AwsKit.Search
 
 	public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	{
+		private readonly IErrorLog _errorLog;
 		private readonly ElasticClient _client;
 
 		private const string IndexName = "topicindex";
 
-		public ElasticSearchClientWrapper(IConfig config)
+		public ElasticSearchClientWrapper(IConfig config, IErrorLog errorLog)
 		{
+			_errorLog = errorLog;
 			var node = new Uri(config.SearchUrl);
 			var settings = new ConnectionSettings(node)
 				.DefaultIndex(IndexName);
@@ -37,18 +39,41 @@ namespace PopForums.AwsKit.Search
 
 		public IEnumerable<int> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
-			// filter hidden forums
-			// sort order
+			Func<SortDescriptor<SearchTopic>, IPromise<IList<ISort>>> sortSelector;
+			switch (searchType)
+			{
+				case SearchType.Date:
+					sortSelector = sort => sort.Descending(d => d.LastPostTime);
+					break;
+				case SearchType.Name:
+					sortSelector = sort => sort.Ascending(d => d.StartedByName).Descending(SortSpecialField.Score);
+					break;
+				case SearchType.Replies:
+					sortSelector = sort => sort.Descending(d => d.Replies);
+					break;
+				case SearchType.Title:
+					sortSelector = sort => sort.Ascending(d => d.Title);
+					break;
+				default:
+					sortSelector = sort => sort.Descending(SortSpecialField.Score);
+					break;
+			}
+
 			startRow--;
 			var searchResponse = _client.Search<SearchTopic>(s => s
 				.Source(sf => sf.Includes(i => i.Fields(f => f.Id)))
-				.Query(q => q.MultiMatch(m => m.Query(searchTerm)
-					.Fields(f => f
-						.Field(x => x.Title, boost: 20)
-						.Field(x => x.FirstPost, boost: 2)
-						.Field(x => x.Posts))))
+				.Query(q => 
+					!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) && 
+					q.MultiMatch(m => m.Query(searchTerm)
+						.Fields(f => f
+							.Field(x => x.Title, boost: 20)
+							.Field(x => x.FirstPost, boost: 2)
+							.Field(x => x.Posts))))
+				.Sort(sortSelector)
 				.Take(pageSize)
 				.Skip(startRow));
+			if (!searchResponse.IsValid)
+				_errorLog.Log(searchResponse.OriginalException, ErrorSeverity.Error, $"Debugging info: {searchResponse.DebugInformation}");
 			var ids = searchResponse.Documents.Select(d => Convert.ToInt32(d.Id));
 			topicCount = (int)searchResponse.Total;
 			return ids;
@@ -56,7 +81,6 @@ namespace PopForums.AwsKit.Search
 
 		public void VerifyIndexCreate()
 		{
-			//_client.DeleteIndex(new DeleteIndexRequest(IndexName));
 			var isExists = _client.IndexExists(new IndexExistsRequest(IndexName)).Exists;
 			if (isExists)
 				return;
@@ -84,6 +108,11 @@ namespace PopForums.AwsKit.Search
 							.Text(t => t
 								.Name(n => n.Title)
 								.Analyzer("standard_english")
+								.Fielddata(true)
+							)
+							.Text(t => t
+								.Name(n => n.StartedByName)
+								.Fielddata(true)
 							)
 						)
 					)
