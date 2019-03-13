@@ -15,7 +15,7 @@ namespace PopForums.Services
 
 		public void IndexNextTopic(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem)
 		{
-			if (!Monitor.TryEnter(_syncRoot)) return;
+			if (!Monitor.TryEnter(_syncRoot, 5000)) return;
 			try
 			{
 				searchIndexSubsystem.DoIndex();

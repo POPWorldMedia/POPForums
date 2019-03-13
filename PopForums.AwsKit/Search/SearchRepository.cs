@@ -9,16 +9,11 @@ namespace PopForums.AwsKit.Search
 {
 	public class SearchRepository : Sql.Repositories.SearchRepository
 	{
-		private readonly IConfig _config;
-		private readonly IErrorLog _errorLog;
 		private readonly ITopicRepository _topicRepository;
 		private readonly IElasticSearchClientWrapper _elasticSearchClientWrapper;
 
-		public SearchRepository(ISqlObjectFactory sqlObjectFactory, IConfig config, IErrorLog errorLog,
-			ITopicRepository topicRepository, IElasticSearchClientWrapper elasticSearchClientWrapper) : base(sqlObjectFactory)
+		public SearchRepository(ISqlObjectFactory sqlObjectFactory, ITopicRepository topicRepository, IElasticSearchClientWrapper elasticSearchClientWrapper) : base(sqlObjectFactory)
 		{
-			_config = config;
-			_errorLog = errorLog;
 			_topicRepository = topicRepository;
 			_elasticSearchClientWrapper = elasticSearchClientWrapper;
 		}
