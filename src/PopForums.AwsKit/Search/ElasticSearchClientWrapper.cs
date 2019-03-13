@@ -66,7 +66,7 @@ namespace PopForums.AwsKit.Search
 					!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) && 
 					q.MultiMatch(m => m.Query(searchTerm)
 						.Fields(f => f
-							.Field(x => x.Title, boost: 20)
+							.Field(x => x.Title, boost: 5)
 							.Field(x => x.FirstPost, boost: 2)
 							.Field(x => x.Posts))))
 				.Sort(sortSelector)
