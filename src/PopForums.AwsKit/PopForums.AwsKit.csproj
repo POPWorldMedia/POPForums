@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\PopForums.Sql\PopForums.Sql.csproj" />
-    <ProjectReference Include="..\src\PopForums\PopForums.csproj" />
+    <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
+    <ProjectReference Include="..\PopForums\PopForums.csproj" />
   </ItemGroup>
 
 </Project>
