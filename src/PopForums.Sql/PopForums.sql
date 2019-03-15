@@ -125,12 +125,10 @@ CREATE TABLE [dbo].[pf_SecurityLog](
 	[ActivityDate] [datetime] NOT NULL
 ) 
 
-
-CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP] ON [dbo].[pf_SecurityLog] 
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP_ActivityDate] ON [dbo].[pf_SecurityLog] 
 (
-	[IP] ASC
+	[IP] ASC, [ActivityDate] DESC
 ) 
-
 
 
 -- ******************************************************** pf_Category
@@ -265,17 +263,15 @@ ALTER TABLE [dbo].[pf_Post]  WITH CHECK ADD  CONSTRAINT [FK_pf_Post_pf_Topic] FO
 REFERENCES [dbo].[pf_Topic] ([TopicID])
 ON DELETE CASCADE
 
-
 CREATE NONCLUSTERED INDEX [IX_pf_Post_UserID] ON [dbo].[pf_Post] 
 (
 	[UserID] ASC,
 	[IsDeleted] ASC
 ) 
 
-
-CREATE NONCLUSTERED INDEX [IX_pf_Post_IP] ON [dbo].[pf_Post] 
+CREATE NONCLUSTERED INDEX [IX_pf_Post_IP_PostTime] ON [dbo].[pf_Post] 
 (
-	[IP] ASC
+	[IP] ASC, [PostTime] DESC
 ) 
 
 
