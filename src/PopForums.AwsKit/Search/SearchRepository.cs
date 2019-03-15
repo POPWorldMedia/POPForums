@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nest;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -47,11 +48,18 @@ namespace PopForums.AwsKit.Search
 			throw new NotImplementedException();
 		}
 
-		public override List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public override Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
-			var ids = _elasticSearchClientWrapper.SearchTopicsWithIDs(searchTerm, hiddenForums, searchType, startRow, pageSize, out topicCount);
-			var topics = _topicRepository.Get(ids);
-			return topics;
+			var response = _elasticSearchClientWrapper.SearchTopicsWithIDs(searchTerm, hiddenForums, searchType, startRow, pageSize, out topicCount);
+			Response<List<Topic>> result;
+			if (!response.IsValid)
+			{
+				result = new Response<List<Topic>>(null, false, response.Exception, response.DebugInfo);
+				return result;
+			}
+			var topics = _topicRepository.Get(response.Data);
+			result = new Response<List<Topic>>(topics);
+			return result;
 		}
 	}
 }

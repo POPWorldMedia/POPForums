@@ -11,7 +11,7 @@ namespace PopForums.AwsKit.Search
 	public interface IElasticSearchClientWrapper
 	{
 		IIndexResponse IndexTopic(SearchTopic searchTopic);
-		IEnumerable<int> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
+		Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
 		void VerifyIndexCreate();
 	}
 
@@ -40,7 +40,7 @@ namespace PopForums.AwsKit.Search
 			return indexResult;
 		}
 
-		public IEnumerable<int> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
 			Func<SortDescriptor<SearchTopic>, IPromise<IList<ISort>>> sortSelector;
 			switch (searchType)
@@ -77,11 +77,18 @@ namespace PopForums.AwsKit.Search
 				.Sort(sortSelector)
 				.Take(pageSize)
 				.Skip(startRow));
+			Response<IEnumerable<int>> result;
 			if (!searchResponse.IsValid)
+			{
 				_errorLog.Log(searchResponse.OriginalException, ErrorSeverity.Error, $"Debugging info: {searchResponse.DebugInformation}");
+				result = new Response<IEnumerable<int>>(null, false, searchResponse.OriginalException, searchResponse.DebugInformation);
+				topicCount = 0;
+				return result;
+			}
 			var ids = searchResponse.Documents.Select(d => Convert.ToInt32(d.Id));
 			topicCount = (int)searchResponse.Total;
-			return ids;
+			result = new Response<IEnumerable<int>>(ids);
+			return result;
 		}
 
 		public void VerifyIndexCreate()

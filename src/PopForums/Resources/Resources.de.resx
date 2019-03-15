@@ -1235,4 +1235,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="AppRestartRequired" xml:space="preserve">
     <value>App Neustart erforderlich</value>
   </data>
+  <data name="SearchError" xml:space="preserve">
+    <value>Es ist ein Suchfehler aufgetreten</value>
+  </data>
 </root>

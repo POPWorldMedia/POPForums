@@ -1246,4 +1246,7 @@
   <data name="AppRestartRequired" xml:space="preserve">
     <value>потрібне перезавантаження App</value>
   </data>
+  <data name="SearchError" xml:space="preserve">
+    <value>Сталася помилка пошуку</value>
+  </data>
 </root>

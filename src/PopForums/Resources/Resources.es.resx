@@ -1246,4 +1246,7 @@
   <data name="AppRestartRequired" xml:space="preserve">
     <value>Aplicación requiere reiniciar</value>
   </data>
+  <data name="SearchError" xml:space="preserve">
+    <value>Hubo un error de búsqueda</value>
+  </data>
 </root>

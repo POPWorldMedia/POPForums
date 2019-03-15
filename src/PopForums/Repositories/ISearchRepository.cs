@@ -12,6 +12,6 @@ namespace PopForums.Repositories
 		void MarkTopicAsIndexed(int topicID);
 		void DeleteAllIndexedWordsForTopic(int topicID);
 		void SaveSearchWord(int topicID, string word, int rank);
-		List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
+		Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
 	}
 }

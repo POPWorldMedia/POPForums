@@ -12,7 +12,7 @@ namespace PopForums.Services
 		List<string> GetJunkWords();
 		void CreateJunkWord(string word);
 		void DeleteJunkWord(string word);
-		List<Topic> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
+		Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		Topic GetNextTopicForIndexing();
 		void MarkTopicAsIndexed(Topic topic);
 		void DeleteAllIndexedWordsForTopic(Topic topic);
@@ -34,19 +34,29 @@ namespace PopForums.Services
 
 		public static Regex SearchWordPattern = new Regex(@"[\w'\@\#\$\%\^\&\*]{2,}", RegexOptions.None);
 
-		public List<Topic> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
+		public Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
 			var nonViewableForumIDs = _forumService.GetNonViewableForumIDs(user);
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
 			var topicCount = 0;
-			List<Topic> topics;
+			Response<List<Topic>> topics;
 			if (String.IsNullOrEmpty(searchTerm))
-				topics = new List<Topic>();
+				topics = new Response<List<Topic>>(new List<Topic>(), true);
 			else
+			{
 				topics = _searchRepository.SearchTopics(searchTerm, nonViewableForumIDs, searchType, startRow, pageSize, out topicCount);
-			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			}
+			if (topics.IsValid)
+			{
+				var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
+				pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			}
+			else
+			{
+				topics = new Response<List<Topic>>(new List<Topic>(), false);
+				pagerContext = new PagerContext {PageCount = 1, PageIndex = 1, PageSize = 1};
+			}
 			return topics;
 		}
 

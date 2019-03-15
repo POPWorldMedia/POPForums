@@ -53,7 +53,7 @@ namespace PopForums.AzureKit.Search
 		    throw new NotImplementedException();
 	    }
 
-		public override List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public override Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
 			var serviceIndexClient = new SearchIndexClient(_config.SearchUrl, SearchIndexSubsystem.IndexName, new SearchCredentials(_config.SearchKey));
 			try
@@ -90,13 +90,13 @@ namespace PopForums.AzureKit.Search
 				var topicIDs = result.Results.Select(x => Convert.ToInt32(x.Document.TopicID));
 				var topics = _topicRepository.Get(topicIDs);
 				topicCount = Convert.ToInt32(result.Count);
-				return topics;
+				return new Response<List<Topic>>(topics);
 			}
 			catch (CloudException cloudException)
 			{
 				_errorLog.Log(cloudException, ErrorSeverity.Error);
 				topicCount = 0;
-				return new List<Topic>();
+				return new Response<List<Topic>>(null, false, cloudException);
 			}
 		}
 	}

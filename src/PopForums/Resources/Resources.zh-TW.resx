@@ -1222,4 +1222,7 @@
   <data name="AppRestartRequired" xml:space="preserve">
     <value>需要重新启动应用程序</value>
   </data>
+  <data name="SearchError" xml:space="preserve">
+    <value>有一个搜索错误</value>
+  </data>
 </root>

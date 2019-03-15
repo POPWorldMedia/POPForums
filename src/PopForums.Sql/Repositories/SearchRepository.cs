@@ -81,11 +81,11 @@ OUTPUT DELETED.TopicID;";
 				connection.Execute("INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)", new { SearchWord = word, TopicID = topicID, Rank = rank }));
 		}
 
-		public virtual List<Topic> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public virtual Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 		{
 			topicCount = 0;
 			if (searchTerm.Trim() == String.Empty)
-				return new List<Topic>();
+				return new Response<List<Topic>>(new List<Topic>());
 			var topics = new List<Topic>();
 			var wordArray = searchTerm.Split(new [] { ' ' });
 			var wordList = new List<string>();
@@ -162,8 +162,7 @@ OUTPUT DELETED.TopicID;";
 			sb.Append(") AS Row, COUNT(*) OVER () as cnt FROM FirstEntries WHERE GroupRow = 1)\r\nSELECT TopicID, ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID, cnt FROM Entries WHERE Row BETWEEN @StartRow AND @StartRow + @PageSize - 1");
 
 			if (words.Length == 0)
-				return topics;
-
+				return new Response<List<Topic>>(new List<Topic>());
 
 			var connection = _sqlObjectFactory.GetConnection();
 			var command = connection.Command(_sqlObjectFactory, sb.ToString());
@@ -200,7 +199,8 @@ OUTPUT DELETED.TopicID;";
 			}
 			reader.Dispose();
 			connection.Close();
-			return topics;
+			// simple response since results are from database, not external service like ES or Azure
+			return new Response<List<Topic>>(topics);
 		}
 	}
 }
