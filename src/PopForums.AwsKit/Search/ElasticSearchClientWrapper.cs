@@ -4,6 +4,7 @@ using System.Linq;
 using Nest;
 using PopForums.Configuration;
 using PopForums.Models;
+using PopForums.Services;
 
 namespace PopForums.AwsKit.Search
 {
@@ -17,13 +18,15 @@ namespace PopForums.AwsKit.Search
 	public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	{
 		private readonly IErrorLog _errorLog;
+		private readonly ITenantService _tenantService;
 		private readonly ElasticClient _client;
 
 		private const string IndexName = "topicindex";
 
-		public ElasticSearchClientWrapper(IConfig config, IErrorLog errorLog)
+		public ElasticSearchClientWrapper(IConfig config, IErrorLog errorLog, ITenantService tenantService)
 		{
 			_errorLog = errorLog;
+			_tenantService = tenantService;
 			var node = new Uri(config.SearchUrl);
 			var settings = new ConnectionSettings(node)
 				.DefaultIndex(IndexName);
@@ -59,11 +62,13 @@ namespace PopForums.AwsKit.Search
 					break;
 			}
 
+			var tenantID = _tenantService.GetTenant();
 			startRow--;
 			var searchResponse = _client.Search<SearchTopic>(s => s
 				.Source(sf => sf.Includes(i => i.Fields(f => f.Id)))
 				.Query(q => 
 					!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) && 
+					q.Bool(bb => bb.Must(tt => tt.Term(ff => ff.TenantID, tenantID))) && 
 					q.MultiMatch(m => m.Query(searchTerm)
 						.Fields(f => f
 							.Field(x => x.Title, boost: 5)
