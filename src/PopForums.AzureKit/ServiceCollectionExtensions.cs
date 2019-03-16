@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PopForums.Configuration;
 using PopForums.Repositories;
@@ -17,6 +18,14 @@ namespace PopForums.AzureKit
 			services.Replace(ServiceDescriptor.Transient<ICacheHelper, PopForums.AzureKit.Redis.CacheHelper>());
 		    return services;
 	    }
+
+	    public static ISignalRServerBuilder AddRedisBackplaneForPopForums(this ISignalRServerBuilder signalRServerBuilder)
+		{
+			var serviceProvider = signalRServerBuilder.Services.BuildServiceProvider();
+			var config = serviceProvider.GetService<IConfig>();
+			signalRServerBuilder.AddStackExchangeRedis(config.CacheConnectionString);
+			return signalRServerBuilder;
+		}
 
 		public static IServiceCollection AddPopForumsAzureSearch(this IServiceCollection services)
 		{
