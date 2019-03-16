@@ -128,7 +128,17 @@ CREATE TABLE [dbo].[pf_SecurityLog](
 CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP_ActivityDate] ON [dbo].[pf_SecurityLog] 
 (
 	[IP] ASC, [ActivityDate] DESC
-) 
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_UserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[UserID] ASC, [ActivityDate] DESC
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_TargetUserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[TargetUserID] ASC, [ActivityDate] DESC
+)
 
 
 -- ******************************************************** pf_Category

@@ -26,7 +26,7 @@ namespace PopForums.Sql.Repositories
 		{
 			List<SecurityLogEntry> list = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<SecurityLogEntry>("SELECT SecurityLogID, SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate FROM pf_SecurityLog WHERE UserID = @UserID OR TargetUserID = @UserID AND ActivityDate >= @StartDate AND ActivityDate <= @EndDate ORDER BY ActivityDate", new { UserID = userID, StartDate = startDate, EndDate = endDate }).ToList());
+				list = connection.Query<SecurityLogEntry>("SELECT SecurityLogID, SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate FROM pf_SecurityLog WHERE (UserID = @UserID OR TargetUserID = @UserID) AND ActivityDate >= @StartDate AND ActivityDate <= @EndDate ORDER BY ActivityDate", new { UserID = userID, StartDate = startDate, EndDate = endDate }).ToList());
 			return list;
 		}
 

@@ -41,6 +41,18 @@ CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP_ActivityDate] ON [dbo].[pf_Secur
 	[IP] ASC, [ActivityDate] DESC
 )
 
+IF IndexProperty(Object_Id('pf_SecurityLog'), 'IX_pf_SecurityLog_UserID_ActivityDate', 'IndexId') IS NULL
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_UserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[UserID] ASC, [ActivityDate] DESC
+)
+
+IF IndexProperty(Object_Id('pf_SecurityLog'), 'IX_pf_SecurityLog_TargetUserID_ActivityDate', 'IndexId') IS NULL
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_TargetUserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[TargetUserID] ASC, [ActivityDate] DESC
+)
+
 IF IndexProperty(Object_Id('pf_Post'), 'IX_pf_Post_IP', 'IndexId') IS NOT NULL
 DROP INDEX [IX_pf_Post_IP] ON [dbo].[pf_Post]
 
