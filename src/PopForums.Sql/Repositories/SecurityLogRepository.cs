@@ -32,9 +32,23 @@ namespace PopForums.Sql.Repositories
 
 		public List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end)
 		{
-			List<IPHistoryEvent> list = null;
+			List<IPHistoryEvent> list = new List<IPHistoryEvent>();
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<IPHistoryEvent>("SELECT SecurityLogID, ActivityDate, UserID, SecurityLogType, Message FROM pf_SecurityLog WHERE IP = @IP AND ActivityDate >= @Start AND ActivityDate <= @End ORDER BY ActivityDate", new { IP = ip, Start = start, End = end }).ToList());
+			{
+				var reader = connection.ExecuteReader("SELECT SecurityLogID AS ID, ActivityDate AS EventTime, TargetUserID AS UserID, SecurityLogType, Message FROM pf_SecurityLog WHERE IP = @IP AND ActivityDate >= @Start AND ActivityDate <= @End ORDER BY ActivityDate", new {IP = ip, Start = start, End = end});
+				while (reader.Read())
+				{
+					list.Add(new IPHistoryEvent
+					{
+						ID = reader.GetInt32(0),
+						EventTime = reader.GetDateTime(1),
+						UserID = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2),
+						Name = string.Empty,
+						Description = $"{((SecurityLogType) reader[3]).ToString()} - {(reader.IsDBNull(4) ? null : reader.GetString(4))}",
+						Type = typeof(SecurityLogEntry)
+					});
+				}
+			});
 			return list;
 		}
 	}
