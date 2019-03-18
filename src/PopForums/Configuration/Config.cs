@@ -8,6 +8,7 @@
 		bool ForceLocalOnly { get; }
 		string SearchUrl { get; }
 		string SearchKey { get; }
+		string QueueConnectionString { get; }
 	}
 
 	public class Config : IConfig
@@ -35,5 +36,6 @@
 		public bool ForceLocalOnly => _configContainer.CacheForceLocalOnly;
 		public string SearchUrl => _configContainer.SearchUrl;
 		public string SearchKey => _configContainer.SearchKey;
+		public string QueueConnectionString => _configContainer.QueueConnectionString;
 	}
 }

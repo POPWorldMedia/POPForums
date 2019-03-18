@@ -77,7 +77,12 @@ namespace PopForums.Web
 			// use ElasticSearch for POP Forums using AwsKit
 			//services.AddPopForumsElasticSearch();
 
-			// creates an instance of the background services for POP Forums... call this last in forum setup
+			// use Azure Functions queues for POP Forums using AzureKit for background tasks...
+			// do NOT call AddPopForumsBackgroundServices()
+			//services.AddPopForumsAzureFunctionsAndQueues();
+
+			// creates an instance of the background services for POP Forums... call this last in forum setup,
+			// but don't use if you're running these in functions
 			services.AddPopForumsBackgroundServices();
 		}
 		

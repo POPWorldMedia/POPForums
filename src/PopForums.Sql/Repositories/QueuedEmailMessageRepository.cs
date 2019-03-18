@@ -1,21 +1,23 @@
 using System;
 using Dapper;
 using Newtonsoft.Json;
-using PopForums.Sql;
 using PopForums.Email;
 using PopForums.Models;
 using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Sql.Repositories
 {
 	public class QueuedEmailMessageRepository : IQueuedEmailMessageRepository
 	{
-		public QueuedEmailMessageRepository(ISqlObjectFactory sqlObjectFactory)
+		public QueuedEmailMessageRepository(ISqlObjectFactory sqlObjectFactory, ITenantService tenantService)
 		{
 			_sqlObjectFactory = sqlObjectFactory;
+			_tenantService = tenantService;
 		}
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
+		private readonly ITenantService _tenantService;
 
 		public void CreateMessage(QueuedEmailMessage message)
 		{
@@ -24,11 +26,12 @@ namespace PopForums.Sql.Repositories
 				id = connection.QuerySingle<int>("INSERT INTO pf_QueuedEmailMessage (FromEmail, FromName, ToEmail, ToName, Subject, Body, HtmlBody, QueueTime) VALUES (@FromEmail, @FromName, @ToEmail, @ToName, @Subject, @Body, @HtmlBody, @QueueTime);SELECT CAST(SCOPE_IDENTITY() as int)", new { message.FromEmail, message.FromName, message.ToEmail, message.ToName, message.Subject, message.Body, message.HtmlBody, message.QueueTime }));
 			if (id == 0)
 				throw new Exception("MessageID was not returned from creation of a QueuedEmailMessage.");
-			var payload = new EmailQueuePayload { MessageID = id, EmailQueuePayloadType = EmailQueuePayloadType.FullMessage };
+			var tenantID = _tenantService.GetTenant();
+			var payload = new EmailQueuePayload { MessageID = id, EmailQueuePayloadType = EmailQueuePayloadType.FullMessage, TenantID = tenantID };
 			WriteMessageToEmailQueue(payload);
 		}
 
-		protected void WriteMessageToEmailQueue(EmailQueuePayload payload)
+		protected virtual void WriteMessageToEmailQueue(EmailQueuePayload payload)
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
 			_sqlObjectFactory.GetConnection().Using(connection =>
@@ -41,7 +44,7 @@ namespace PopForums.Sql.Repositories
 				connection.Execute("DELETE FROM pf_QueuedEmailMessage WHERE MessageID = @MessageID", new { MessageID = messageID }));
 		}
 
-		protected EmailQueuePayload DequeueEmailQueuePayload()
+		protected virtual EmailQueuePayload DequeueEmailQueuePayload()
 		{
 			string serializedPayload = null;
 			var sql = @"WITH cte AS (

@@ -22,6 +22,7 @@ namespace PopForums.Configuration
 			container.CacheForceLocalOnly = Convert.ToBoolean(config["PopForums:Cache:ForceLocalOnly"]);
 			container.SearchUrl = config["PopForums:Search:Url"];
 			container.SearchKey = config["PopForums:Search:Key"];
+			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
 			return container;
 		} 
 	}

@@ -33,5 +33,11 @@ namespace PopForums.AzureKit
 			services.Replace(ServiceDescriptor.Transient<ISearchIndexSubsystem, PopForums.AzureKit.Search.SearchIndexSubsystem>());
 			return services;
 		}
+
+		public static IServiceCollection AddPopForumsAzureFunctionsAndQueues(this IServiceCollection services)
+		{
+			services.Replace(ServiceDescriptor.Transient<IQueuedEmailMessageRepository, PopForums.AzureKit.Queue.QueuedEmailMessageRepository>());
+			return services;
+		}
 	}
 }
