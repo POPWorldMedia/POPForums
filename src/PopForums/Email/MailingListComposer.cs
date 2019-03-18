@@ -2,6 +2,7 @@
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Email
 {
@@ -12,14 +13,14 @@ namespace PopForums.Email
 
 	public class MailingListComposer : IMailingListComposer
 	{
-		public MailingListComposer(ISettingsManager settingsManager, IQueuedEmailMessageRepository queuedEmailRepo)
+		public MailingListComposer(ISettingsManager settingsManager, IQueuedEmailService queuedEmailService)
 		{
 			_settingsManager = settingsManager;
-			_queuedQueuedEmailRepo = queuedEmailRepo;
+			_queuedEmailService = queuedEmailService;
 		}
 
 		private readonly ISettingsManager _settingsManager;
-		private readonly IQueuedEmailMessageRepository _queuedQueuedEmailRepo;
+		private readonly IQueuedEmailService _queuedEmailService;
 
 		public void ComposeAndQueue(User user, string subject, string body, string htmlBody, string unsubscribeLink)
 		{
@@ -37,7 +38,7 @@ namespace PopForums.Email
 			};
 			if (!String.IsNullOrWhiteSpace(htmlBody))
 				message.HtmlBody = String.Format("{0}<p>Unsubscribe: <a href=\"{1}\">{1}</a></p>", htmlBody, unsubscribeLink);
-			_queuedQueuedEmailRepo.CreateMessage(message);
+			_queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

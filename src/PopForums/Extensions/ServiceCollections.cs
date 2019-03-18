@@ -54,6 +54,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IPostService, PostService>();
 		    services.AddTransient<IPrivateMessageService, PrivateMessageService>();
 		    services.AddTransient<IProfileService, ProfileService>();
+		    services.AddTransient<IQueuedEmailService, QueuedEmailService>();
 		    services.AddTransient<ISearchService, SearchService>();
 		    services.AddTransient<ISecurityLogService, SecurityLogService>();
 		    services.AddTransient<ISetupService, SetupService>();

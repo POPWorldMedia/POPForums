@@ -36,7 +36,7 @@ namespace PopForums.AzureKit
 
 		public static IServiceCollection AddPopForumsAzureFunctionsAndQueues(this IServiceCollection services)
 		{
-			services.Replace(ServiceDescriptor.Transient<IQueuedEmailMessageRepository, PopForums.AzureKit.Queue.QueuedEmailMessageRepository>());
+			services.Remove(ServiceDescriptor.Transient<IEmailQueueRepository, PopForums.AzureKit.Queue.EmailQueueRepository >());
 			return services;
 		}
 	}

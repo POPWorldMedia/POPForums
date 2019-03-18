@@ -49,6 +49,7 @@ namespace PopForums.Sql
 			services.AddTransient<IAwardDefinitionRepository, AwardDefinitionRepository>();
 			services.AddTransient<IBanRepository, BanRepository>();
 			services.AddTransient<ICategoryRepository, CategoryRepository>();
+			services.AddTransient<IEmailQueueRepository, EmailQueueRepository>();
 			services.AddTransient<IErrorLogRepository, ErrorLogRepository>();
 			services.AddTransient<IEventDefinitionRepository, EventDefinitionRepository>();
 			services.AddTransient<IExternalUserAssociationRepository, ExternalUserAssociationRepository>();

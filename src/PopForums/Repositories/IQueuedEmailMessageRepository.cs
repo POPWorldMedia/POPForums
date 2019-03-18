@@ -4,8 +4,8 @@ namespace PopForums.Repositories
 {
 	public interface IQueuedEmailMessageRepository
 	{
-		void CreateMessage(QueuedEmailMessage message);
+		int CreateMessage(QueuedEmailMessage message);
 		void DeleteMessage(int messageID);
-		QueuedEmailMessage GetOldestQueuedEmailMessage();
+		QueuedEmailMessage GetMessage(int messageID);
 	}
 }

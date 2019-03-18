@@ -4,22 +4,21 @@ using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using PopForums.Configuration;
 using PopForums.Email;
-using PopForums.Services;
-using PopForums.Sql;
+using PopForums.Repositories;
 
 namespace PopForums.AzureKit.Queue
 {
-	public class QueuedEmailMessageRepository : PopForums.Sql.Repositories.QueuedEmailMessageRepository
+	public class EmailQueueRepository : IEmailQueueRepository
 	{
 		private readonly IConfig _config;
 		private const string QueueName = "pfemailqueue";
 
-		public QueuedEmailMessageRepository(ISqlObjectFactory sqlObjectFactory, ITenantService tenantService, IConfig config) : base(sqlObjectFactory, tenantService)
+		public EmailQueueRepository(IConfig config)
 		{
 			_config = config;
 		}
 
-		protected override void WriteMessageToEmailQueue(EmailQueuePayload payload)
+		public void Enqueue(EmailQueuePayload payload)
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
 			var message = new CloudQueueMessage(serializedPayload);
@@ -27,9 +26,9 @@ namespace PopForums.AzureKit.Queue
 			queue.AddMessageAsync(message);
 		}
 
-		protected override EmailQueuePayload DequeueEmailQueuePayload()
+		public EmailQueuePayload Dequeue()
 		{
-			return null;
+			throw new System.NotImplementedException($"{nameof(Dequeue)} should never be called because it's automatically bound to an Azure function.");
 		}
 
 		private async Task<CloudQueue> GetQueue()
