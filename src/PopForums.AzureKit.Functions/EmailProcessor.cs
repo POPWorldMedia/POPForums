@@ -24,13 +24,17 @@ namespace PopForums.AzureKit.Functions
 	        services.AddPopForumsBase();
 	        services.AddPopForumsSql();
 	        services.AddPopForumsAzureFunctionsAndQueues();
+
 	        var serviceProvider = services.BuildServiceProvider();
 			var queuedEmailRepo = serviceProvider.GetService<IQueuedEmailMessageRepository>();
 			var smtpWrapper = serviceProvider.GetService<ISmtpWrapper>();
+			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
+
 			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
 			var message = queuedEmailRepo.GetMessage(payload.MessageID);
 			smtpWrapper.Send(message);
-			log.LogInformation($"C# Queue trigger function processed: {jsonPayload}");
+			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed: {jsonPayload}");
+			serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
         }
     }
 }
