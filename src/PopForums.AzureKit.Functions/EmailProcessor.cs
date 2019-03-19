@@ -1,7 +1,6 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,8 +17,10 @@ namespace PopForums.AzureKit.Functions
     {
         [FunctionName("EmailProcessor")]
         public static void Run([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log, ExecutionContext context)
-        {
-	        Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
+		{
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
 			var services = new ServiceCollection();
 	        services.AddPopForumsBase();
 	        services.AddPopForumsSql();
@@ -29,11 +30,23 @@ namespace PopForums.AzureKit.Functions
 			var queuedEmailRepo = serviceProvider.GetService<IQueuedEmailMessageRepository>();
 			var smtpWrapper = serviceProvider.GetService<ISmtpWrapper>();
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
+			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
 			var message = queuedEmailRepo.GetMessage(payload.MessageID);
-			smtpWrapper.Send(message);
-			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed: {jsonPayload}");
+			try
+			{
+				smtpWrapper.Send(message);
+			}
+			catch (Exception exc)
+			{
+				if (message == null)
+					errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
+				else
+					errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
+			}
+			stopwatch.Stop();
+			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
         }
     }

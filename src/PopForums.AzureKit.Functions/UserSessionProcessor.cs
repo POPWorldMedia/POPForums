@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,8 @@ namespace PopForums.AzureKit.Functions
         [FunctionName("UserSessionProcessor")]
         public static void Run([TimerTrigger("*/1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
 		{
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
 			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
 			var services = new ServiceCollection();
 			services.AddPopForumsBase();
@@ -26,7 +29,8 @@ namespace PopForums.AzureKit.Functions
 
 			userSessionService.CleanUpExpiredSessions();
 
-			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed at: {DateTime.UtcNow}");
+			stopwatch.Stop();
+			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
             serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
 		}
     }

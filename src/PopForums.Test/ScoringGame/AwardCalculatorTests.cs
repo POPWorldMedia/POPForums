@@ -38,7 +38,7 @@ namespace PopForums.Test.ScoringGame
 			var user = new User();
 			var eventDef = new EventDefinition {EventDefinitionID = "blah"};
 			calc.QueueCalculation(user, eventDef);
-			_awardCalcRepo.Verify(x => x.Enqueue(eventDef.EventDefinitionID, user.UserID), Times.Once());
+			_awardCalcRepo.Verify(x => x.Enqueue(eventDef.EventDefinitionID), Times.Once());
 		}
 
 		[Fact]
@@ -49,7 +49,7 @@ namespace PopForums.Test.ScoringGame
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns((EventDefinition) null);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>("oih", user.UserID));
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_errorLog.Verify(x => x.Log(It.IsAny<Exception>(), ErrorSeverity.Warning), Times.Once());
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
 		}
@@ -62,7 +62,7 @@ namespace PopForums.Test.ScoringGame
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
 			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, 123));
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_errorLog.Verify(x => x.Log(It.IsAny<Exception>(), ErrorSeverity.Warning), Times.Once());
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
 		}
@@ -79,7 +79,7 @@ namespace PopForums.Test.ScoringGame
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).Returns(new List<AwardDefinition> {awardDef});
 			_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).Returns(true);
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
 		}
 
@@ -103,7 +103,7 @@ namespace PopForums.Test.ScoringGame
 			_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).Returns(conditions);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(4);
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
 		}
 
@@ -127,7 +127,7 @@ namespace PopForums.Test.ScoringGame
 			_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).Returns(conditions);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(5);
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
 		}
 
@@ -153,7 +153,7 @@ namespace PopForums.Test.ScoringGame
 			_awardDefService.Setup(x => x.GetConditions(secondAwardDef.AwardDefinitionID)).Returns(conditions);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
 			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(5);
-			calc.ProcessOneCalculation();
+			calc.ProcessCalculation(TODO, TODO);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
 		}
 	}

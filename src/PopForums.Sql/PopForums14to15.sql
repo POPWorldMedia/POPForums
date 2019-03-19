@@ -61,3 +61,12 @@ CREATE NONCLUSTERED INDEX [IX_pf_Post_IP_PostTime] ON [dbo].[pf_Post]
 (
 	[IP] ASC, [PostTime] DESC
 ) 
+
+
+
+DROP TABLE [dbo].[pf_AwardCalculationQueue]
+
+CREATE TABLE [dbo].[pf_AwardCalculationQueue](
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	[Payload] [nvarchar](256) NOT NULL
+)

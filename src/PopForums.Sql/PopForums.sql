@@ -801,10 +801,8 @@ CREATE TABLE [dbo].[pf_EventDefinition](
 -- ****************************** [pf_AwardCalculationQueue]
 
 CREATE TABLE [dbo].[pf_AwardCalculationQueue](
-	[ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
-	[EventDefinitionID] [nvarchar](256) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[TimeStamp] [datetime] NOT NULL
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	[Payload] [nvarchar](256) NOT NULL
 )
 
 

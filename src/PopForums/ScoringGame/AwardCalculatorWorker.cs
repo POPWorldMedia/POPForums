@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using PopForums.Configuration;
+using PopForums.Repositories;
 
 namespace PopForums.ScoringGame
 {
@@ -13,12 +14,15 @@ namespace PopForums.ScoringGame
 			// only allow Instance to create a new instance
 		}
 
-		public void ProcessCalculation(IAwardCalculator calculator, IErrorLog errorLog)
+		public void ProcessCalculation(IAwardCalculator calculator, IAwardCalculationQueueRepository awardCalculationQueueRepository, IErrorLog errorLog)
 		{
 			if (!Monitor.TryEnter(_syncRoot)) return;
 			try
 			{
-				calculator.ProcessOneCalculation();
+				var nextItem = awardCalculationQueueRepository.Dequeue();
+				if (string.IsNullOrEmpty(nextItem.Key))
+					return;
+				calculator.ProcessCalculation(nextItem.Key, nextItem.Value);
 			}
 			catch (Exception exc)
 			{
