@@ -11,7 +11,7 @@ namespace PopForums.AzureKit.Queue
 	public class EmailQueueRepository : IEmailQueueRepository
 	{
 		private readonly IConfig _config;
-		private const string QueueName = "pfemailqueue";
+		public const string QueueName = "pfemailqueue";
 
 		public EmailQueueRepository(IConfig config)
 		{

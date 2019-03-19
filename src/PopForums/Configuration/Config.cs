@@ -18,16 +18,18 @@
 			if (_configContainer == null)
 			{
 				var loader = new ConfigLoader();
-				_configContainer = loader.GetConfig(_basePath);
+				_configContainer = loader.GetConfig(_basePath, _configFileName);
 			}
 		}
 
-		public static void SetPopForumsAppEnvironment(string basePath)
+		public static void SetPopForumsAppEnvironment(string basePath, string configFileName = "PopForums.json")
 		{
 			_basePath = basePath;
+			_configFileName = configFileName;
 		}
 
 		private static string _basePath;
+		private static string _configFileName;
 		private static ConfigContainer _configContainer;
 
 		public string DatabaseConnectionString => _configContainer.DatabaseConnectionString;

@@ -5,13 +5,11 @@ namespace PopForums.Configuration
 {
 	public class ConfigLoader
 	{
-		public ConfigContainer GetConfig(string basePath)
+		public ConfigContainer GetConfig(string basePath, string configFileName)
 		{
-			if (String.IsNullOrWhiteSpace(basePath))
-				throw new ArgumentException("Can't setup PopForums configuration without specifying the base path of the app, where PopForums.json should be found.", nameof(basePath));
 			var builder = new ConfigurationBuilder();
 			builder.SetBasePath(basePath);
-			builder.AddJsonFile("PopForums.json");
+			builder.AddJsonFile(configFileName, optional: true);
 			builder.AddEnvironmentVariables("APPSETTING_");
 			var config = builder.Build();
 			var container = new ConfigContainer();
