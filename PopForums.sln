@@ -22,7 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AzureKit", "src\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Mvc", "src\PopForums.Mvc\PopForums.Mvc.csproj", "{0AE33580-28F6-41CB-B757-56E02394F645}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.AwsKit", "src\PopForums.AwsKit\PopForums.AwsKit.csproj", "{20986460-15F5-4C08-BAE2-226F12B1CB23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AwsKit", "src\PopForums.AwsKit\PopForums.AwsKit.csproj", "{20986460-15F5-4C08-BAE2-226F12B1CB23}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AzureKit.Functions", "src\PopForums.AzureKit.Functions\PopForums.AzureKit.Functions.csproj", "{D50E69CC-5070-41DD-A881-20D29B1913EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,12 @@ Global
 		{20986460-15F5-4C08-BAE2-226F12B1CB23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20986460-15F5-4C08-BAE2-226F12B1CB23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20986460-15F5-4C08-BAE2-226F12B1CB23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.CI|Any CPU.ActiveCfg = Debug|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.CI|Any CPU.Build.0 = Debug|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D50E69CC-5070-41DD-A881-20D29B1913EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
