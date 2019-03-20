@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
 using PopForums.Extensions;
+using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Sql;
@@ -26,6 +27,7 @@ namespace PopForums.AzureKit.Functions
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			services.AddPopForumsAzureFunctionsAndQueues();
+			services.AddTransient<IBroker, BrokerSink>();
 
 			var serviceProvider = services.BuildServiceProvider();
 			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
