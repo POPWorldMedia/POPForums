@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
@@ -9,17 +8,17 @@ using PopForums.Repositories;
 
 namespace PopForums.AzureKit.Queue
 {
-	public class AwardCalculationQueueRepository : IAwardCalculationQueueRepository
+	public class SearchIndexQueueRepository : ISearchIndexQueueRepository
 	{
 		private readonly IConfig _config;
-		public const string QueueName = "pfawardcalcqueue";
+		public const string QueueName = "pfsearchindexqueue";
 
-		public AwardCalculationQueueRepository(IConfig config)
+		public SearchIndexQueueRepository(IConfig config)
 		{
 			_config = config;
 		}
 
-		public void Enqueue(AwardCalculationPayload payload)
+		public void Enqueue(SearchIndexPayload payload)
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
 			var message = new CloudQueueMessage(serializedPayload);
@@ -27,7 +26,7 @@ namespace PopForums.AzureKit.Queue
 			queue.AddMessageAsync(message);
 		}
 
-		public KeyValuePair<string, int> Dequeue()
+		public SearchIndexPayload Dequeue()
 		{
 			throw new System.NotImplementedException($"{nameof(Dequeue)} should never be called because it's automatically bound to an Azure function.");
 		}

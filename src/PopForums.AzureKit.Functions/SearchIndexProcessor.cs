@@ -8,16 +8,15 @@ using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
-using PopForums.ScoringGame;
 using PopForums.Services;
 using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-	public static class AwardCalculationProcessor
+	public static class SearchIndexProcessor
 	{
-		[FunctionName("AwardCalculationProcessor")]
-		public static void Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)]
+		[FunctionName("SearchIndexProcessor")]
+		public static void Run([QueueTrigger(SearchIndexQueueRepository.QueueName)]
 			string jsonPayload, ILogger log, ExecutionContext context)
 		{
 			var stopwatch = new Stopwatch();
@@ -29,14 +28,14 @@ namespace PopForums.AzureKit.Functions
 			services.AddPopForumsAzureFunctionsAndQueues();
 
 			var serviceProvider = services.BuildServiceProvider();
-			var awardCalculator = serviceProvider.GetService<IAwardCalculator>();
+			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
 			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			try
 			{
-				var payload = JsonConvert.DeserializeObject<AwardCalculationPayload>(jsonPayload);
-				awardCalculator.ProcessCalculation(payload.EventDefinitionID, payload.UserID);
+				var payload = JsonConvert.DeserializeObject<SearchIndexPayload>(jsonPayload);
+				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID);
 			}
 			catch (Exception exc)
 			{
@@ -45,7 +44,7 @@ namespace PopForums.AzureKit.Functions
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue AwardCalculationProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			serviceHeartbeatService.RecordHeartbeat(typeof(AwardCalculationProcessor).FullName, "AzureFunction");
+			serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}
 }

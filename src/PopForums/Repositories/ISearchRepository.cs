@@ -8,7 +8,6 @@ namespace PopForums.Repositories
 		List<string> GetJunkWords();
 		void CreateJunkWord(string word);
 		void DeleteJunkWord(string word);
-		void MarkTopicAsIndexed(int topicID);
 		void DeleteAllIndexedWordsForTopic(int topicID);
 		void SaveSearchWord(int topicID, string word, int rank);
 		Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);

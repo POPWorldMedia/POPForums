@@ -32,8 +32,6 @@ namespace PopForums.AwsKit.Search
 			throw new NotImplementedException();
 		}
 
-		// MarkTopicAsIndexed(int topicID) uses base
-
 		public override void DeleteAllIndexedWordsForTopic(int topicID)
 		{
 			throw new NotImplementedException();

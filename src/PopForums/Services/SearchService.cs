@@ -14,7 +14,6 @@ namespace PopForums.Services
 		void DeleteJunkWord(string word);
 		Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		int GetNextTopicIDForIndexing();
-		void MarkTopicAsIndexed(Topic topic);
 		void DeleteAllIndexedWordsForTopic(Topic topic);
 		void SaveSearchWord(SearchWord searchWord);
 	}
@@ -81,11 +80,6 @@ namespace PopForums.Services
 		public void DeleteJunkWord(string word)
 		{
 			_searchRepository.DeleteJunkWord(word);
-		}
-
-		public void MarkTopicAsIndexed(Topic topic)
-		{
-			_searchRepository.MarkTopicAsIndexed(topic.TopicID);
 		}
 
 		public void DeleteAllIndexedWordsForTopic(Topic topic)

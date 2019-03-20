@@ -19,7 +19,7 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 		private readonly ICacheHelper _cache;
-		internal const string TopicFields = "pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID";
+		internal const string TopicFields = "pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.UrlName, pf_Topic.AnswerPostID";
 
 		public Topic GetLastUpdatedTopic(int forumID)
 		{
@@ -123,13 +123,13 @@ WITH Entries AS (
 SELECT ROW_NUMBER() OVER (ORDER BY IsPinned DESC, LastPostTime DESC)
 AS Row, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ForumID = @ForumID 
 AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0)))
 
 SELECT TopicID, ForumID, Title, ReplyCount, ViewCount, 
 StartedByUserID, StartedByName, LastPostUserID, LastPostName, 
-LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
+LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1
@@ -153,7 +153,7 @@ WITH FirstEntries AS (
 SELECT ROW_NUMBER() OVER (PARTITION BY pf_Topic.TopicID ORDER BY IsPinned DESC, LastPostTime DESC)
 AS GroupRow, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount,
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName,
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.UrlName, pf_Topic.AnswerPostID
 FROM pf_Topic JOIN pf_Post ON pf_Topic.TopicID = pf_Post.TopicID
 WHERE pf_Post.UserID = @UserID AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND pf_Topic.IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
@@ -166,7 +166,7 @@ WHERE  GroupRow = 1)
 
 SELECT TopicID, Entries.ForumID, Entries.Title, ReplyCount, ViewCount,
 StartedByUserID, StartedByName, LastPostUserID, Entries.LastPostName,
-Entries.LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
+Entries.LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
@@ -190,13 +190,13 @@ WITH Entries AS (
 SELECT ROW_NUMBER() OVER (ORDER BY LastPostTime DESC)
 AS Row, pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			sql += @")
 SELECT TopicID, ForumID, Title, ReplyCount, ViewCount, 
 StartedByUserID, StartedByName, LastPostUserID, LastPostName, 
-LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID
+LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName, AnswerPostID
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1
@@ -245,7 +245,7 @@ END";
 			var sql = @"
 SELECT pf_Topic.TopicID, pf_Topic.ForumID, pf_Topic.Title, pf_Topic.ReplyCount, pf_Topic.ViewCount, 
 pf_Topic.StartedByUserID, pf_Topic.StartedByName, pf_Topic.LastPostUserID, pf_Topic.LastPostName, 
-pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.IsIndexed, pf_Topic.UrlName, pf_Topic.AnswerPostID 
+pf_Topic.LastPostTime, pf_Topic.IsClosed, pf_Topic.IsPinned, pf_Topic.IsDeleted, pf_Topic.UrlName, pf_Topic.AnswerPostID 
 FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0))";
 			sql = GenerateExcludedForumSql(sql, excludedForums);
 			List<Topic> topics = null;
@@ -262,11 +262,11 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			return list;
 		}
 
-		public virtual int Create(int forumID, string title, int replyCount, int viewCount, int startedByUserID, string startedByName, int lastPostUserID, string lastPostName, DateTime lastPostTime, bool isClosed, bool isPinned, bool isDeleted, bool isIndexed, string urlName)
+		public virtual int Create(int forumID, string title, int replyCount, int viewCount, int startedByUserID, string startedByName, int lastPostUserID, string lastPostName, DateTime lastPostTime, bool isClosed, bool isPinned, bool isDeleted, string urlName)
 		{
 			var result = 0;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.QuerySingle<int>("INSERT INTO pf_Topic (ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName) VALUES (@ForumID, @Title, @ReplyCount, @ViewCount, @StartedByUserID, @StartedByName, @LastPostUserID, @LastPostName, @LastPostTime, @IsClosed, @IsPinned, @IsDeleted, @IsIndexed, @UrlName);SELECT CAST(SCOPE_IDENTITY() as int)", new { ForumID = forumID, Title = title, ReplyCount = replyCount, ViewCount = viewCount, StartedByUserID = startedByUserID, StartedByName = startedByName, LastPostUserID = lastPostUserID, LastPostName = lastPostName, LastPostTime = lastPostTime, IsClosed = isClosed, IsPinned = isPinned, IsDeleted = isDeleted, IsIndexed = isIndexed, UrlName = urlName }));
+				result = connection.QuerySingle<int>("INSERT INTO pf_Topic (ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName) VALUES (@ForumID, @Title, @ReplyCount, @ViewCount, @StartedByUserID, @StartedByName, @LastPostUserID, @LastPostName, @LastPostTime, @IsClosed, @IsPinned, @IsDeleted, @UrlName);SELECT CAST(SCOPE_IDENTITY() as int)", new { ForumID = forumID, Title = title, ReplyCount = replyCount, ViewCount = viewCount, StartedByUserID = startedByUserID, StartedByName = startedByName, LastPostUserID = lastPostUserID, LastPostName = lastPostName, LastPostTime = lastPostTime, IsClosed = isClosed, IsPinned = isPinned, IsDeleted = isDeleted, UrlName = urlName }));
 			return result;
 		}
 
@@ -280,12 +280,6 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
 				connection.Execute("UPDATE pf_Topic SET ViewCount = ViewCount + 1 WHERE TopicID = @TopicID", new { TopicID = topicID }));
-		}
-
-		public void MarkTopicForIndexing(int topicID)
-		{
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute("UPDATE pf_Topic SET IsIndexed = 0 WHERE TopicID = @TopicID", new { TopicID = topicID }));
 		}
 
 		public void UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime)

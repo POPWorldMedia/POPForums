@@ -71,12 +71,11 @@ namespace PopForums.AzureKit.Search
 					var serviceIndexClient = serviceClient.Indexes.GetClient(IndexName);
 					var batch = IndexBatch.New(actions);
 					serviceIndexClient.Documents.Index(batch);
-					_searchService.MarkTopicAsIndexed(topic);
 				}
 				catch (Exception exc)
 				{
 					_errorLog.Log(exc, ErrorSeverity.Error);
-					_topicService.MarkTopicForIndexing(topic.TopicID);
+					_topicService.QueueTopicForIndexing(topic.TopicID);
 				}
 		    }
 	    }

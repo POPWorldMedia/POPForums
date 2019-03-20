@@ -70,18 +70,14 @@ namespace PopForums.AwsKit.Search
 				{
 					_errorLog.Log(indexResult.OriginalException, ErrorSeverity.Error, $"Debug information: {indexResult.DebugInformation}");
 					// TODO: Replace this with some Polly or get real about queues/deadletter
-					_topicService.MarkTopicForIndexing(topic.TopicID);
-				}
-				else
-				{
-					_searchService.MarkTopicAsIndexed(topic);
+					_topicService.QueueTopicForIndexing(topic.TopicID);
 				}
 			}
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
 				// TODO: Replace this with some Polly or get real about queues/deadletter
-				_topicService.MarkTopicForIndexing(topic.TopicID);
+				_topicService.QueueTopicForIndexing(topic.TopicID);
 			}
 		}
 	}

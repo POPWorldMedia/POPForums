@@ -26,8 +26,16 @@ namespace PopForums.AzureKit.Functions
 			var serviceProvider = services.BuildServiceProvider();
 			var userSessionService = serviceProvider.GetService<IUserSessionService>();
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
+			var errorLog = serviceProvider.GetService<IErrorLog>();
 
-			userSessionService.CleanUpExpiredSessions();
+			try
+			{
+				userSessionService.CleanUpExpiredSessions();
+			}
+			catch (Exception exc)
+			{
+				errorLog.Log(exc, ErrorSeverity.Error);
+			}
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");

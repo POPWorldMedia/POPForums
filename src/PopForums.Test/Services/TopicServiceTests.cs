@@ -240,7 +240,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void PostReplyMarksTopicForIndexing()
+		public void PostQueuesMarksTopicForIndexing()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
@@ -250,7 +250,6 @@ namespace PopForums.Test.Services
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
 			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
@@ -579,7 +578,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdateTopicMarksTopicForIndexingWithMod()
+		public void UpdateTopicQueuesTopicForIndexingWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
@@ -590,7 +589,6 @@ namespace PopForums.Test.Services
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 

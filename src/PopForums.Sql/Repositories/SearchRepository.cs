@@ -44,12 +44,6 @@ namespace PopForums.Sql.Repositories
 				connection.Execute("DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord", new { JunkWord = word }));
 		}
 
-		public void MarkTopicAsIndexed(int topicID)
-		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("UPDATE pf_Topic SET IsIndexed = 1 WHERE TopicID = @TopicID", new { TopicID = topicID }));
-		}
-
 		public virtual void DeleteAllIndexedWordsForTopic(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>
@@ -140,7 +134,7 @@ namespace PopForums.Sql.Repositories
 
 			sb.Append("),\r\nEntries as (SELECT *,ROW_NUMBER() OVER (ORDER BY ");
 			sb.Append(orderBy);
-			sb.Append(") AS Row, COUNT(*) OVER () as cnt FROM FirstEntries WHERE GroupRow = 1)\r\nSELECT TopicID, ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, IsIndexed, UrlName, AnswerPostID, cnt FROM Entries WHERE Row BETWEEN @StartRow AND @StartRow + @PageSize - 1");
+			sb.Append(") AS Row, COUNT(*) OVER () as cnt FROM FirstEntries WHERE GroupRow = 1)\r\nSELECT TopicID, ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName, AnswerPostID, cnt FROM Entries WHERE Row BETWEEN @StartRow AND @StartRow + @PageSize - 1");
 
 			if (words.Length == 0)
 				return new Response<List<Topic>>(new List<Topic>());
@@ -171,9 +165,8 @@ namespace PopForums.Sql.Repositories
 					IsClosed = reader.GetBoolean(10),
 					IsPinned = reader.GetBoolean(11),
 					IsDeleted = reader.GetBoolean(12),
-					IsIndexed = reader.GetBoolean(13),
-					UrlName = reader.GetString(14),
-					AnswerPostID = reader.NullIntDbHelper(15)
+					UrlName = reader.GetString(13),
+					AnswerPostID = reader.NullIntDbHelper(14)
 				};
 				topics.Add(topic);
 				topicCount = Convert.ToInt32(reader["cnt"]);

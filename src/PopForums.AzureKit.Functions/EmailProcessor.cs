@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
+using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
 using PopForums.Sql;
@@ -32,10 +33,11 @@ namespace PopForums.AzureKit.Functions
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
 			var errorLog = serviceProvider.GetService<IErrorLog>();
 
-			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
-			var message = queuedEmailRepo.GetMessage(payload.MessageID);
+			QueuedEmailMessage message = null;
 			try
 			{
+				var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
+				message = queuedEmailRepo.GetMessage(payload.MessageID);
 				smtpWrapper.Send(message);
 			}
 			catch (Exception exc)

@@ -264,7 +264,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void EditPostMarksTopicForIndexing()
+		public void EditPostQueuesTopicForIndexing()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123, Name = "dude" };
@@ -272,8 +272,7 @@ namespace PopForums.Test.Services
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 
 			service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
-
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(post.TopicID), Times.Once());
+			
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 

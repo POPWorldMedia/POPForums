@@ -199,7 +199,6 @@ namespace PopForums.Services
 			post.IsEdited = true;
 			_postRepository.Update(post);
 			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
-			_topicRepository.MarkTopicForIndexing(post.TopicID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = post.TopicID});
 		}
 

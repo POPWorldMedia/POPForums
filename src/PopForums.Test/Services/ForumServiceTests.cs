@@ -59,7 +59,7 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 			_mockPostRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).Returns(69);
 			_mockForumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
-			_mockTopicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
+			_mockTopicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
 			forumService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
 			return user;
 		}
@@ -473,7 +473,7 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 			topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
-			_mockTopicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, false, "parsed-title"), Times.Once());
+			_mockTopicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 		}
 
 		[Fact]
@@ -560,11 +560,10 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void PostNewTopicMarksTopicForIndexing()
+		public void PostNewTopicQueuesTopicForIndexing()
 		{
 			DoUpNewTopic();
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
-			_mockTopicRepo.Verify(x => x.MarkTopicForIndexing(111), Times.Once());
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
@@ -582,7 +581,7 @@ namespace PopForums.Test.Services
 			_mockTopicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 			_mockTextParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_mockTopicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, false, "parsed-title")).Returns(2);
+			_mockTopicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
 			var topic = topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.NewTopic, true), Times.Once());
 		}
@@ -601,7 +600,7 @@ namespace PopForums.Test.Services
 			_mockTopicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 			_mockTextParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_mockTopicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, false, "parsed-title")).Returns(2);
+			_mockTopicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
 			var topic = topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
 			Assert.Equal(2, topic.TopicID);
 			Assert.Equal(forum.ForumID, topic.ForumID);
@@ -614,7 +613,6 @@ namespace PopForums.Test.Services
 			Assert.Equal(user.Name, topic.LastPostName);
 			Assert.False(topic.IsClosed);
 			Assert.False(topic.IsDeleted);
-			Assert.False(topic.IsIndexed);
 			Assert.False(topic.IsPinned);
 			Assert.Equal("parsed-title", topic.UrlName);
 		}

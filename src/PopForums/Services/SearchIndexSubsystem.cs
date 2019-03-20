@@ -28,8 +28,7 @@ namespace PopForums.Services
 			var topic = _topicService.Get(topicID);
 			if (topic == null)
 				return;
-
-			_searchService.MarkTopicAsIndexed(topic);
+			
 			_searchService.DeleteAllIndexedWordsForTopic(topic);
 
 			var junkList = _searchService.GetJunkWords();

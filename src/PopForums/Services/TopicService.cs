@@ -33,7 +33,7 @@ namespace PopForums.Services
 		int TopicLastPostID(int topicID);
 		void HardDeleteTopic(Topic topic, User user);
 		void SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
-		void MarkTopicForIndexing(int topicID);
+		void QueueTopicForIndexing(int topicID);
 	}
 
 	public class TopicService : ITopicService
@@ -152,7 +152,6 @@ namespace PopForums.Services
 			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
 			_forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 			_forumRepository.IncrementPostCount(topic.ForumID);
-			_topicRepository.MarkTopicForIndexing(topic.TopicID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			_profileRepository.SetLastPostID(user.UserID, postID);
 			if (unsubscribeLinkGenerator != null)
@@ -271,7 +270,6 @@ namespace PopForums.Services
 				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
 				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
-				_topicRepository.MarkTopicForIndexing(topic.TopicID);
 				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
@@ -326,9 +324,8 @@ namespace PopForums.Services
 			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}
 
-		public void MarkTopicForIndexing(int topicID)
+		public void QueueTopicForIndexing(int topicID)
 		{
-			_topicRepository.MarkTopicForIndexing(topicID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID });
 		}
 	}

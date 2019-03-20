@@ -198,7 +198,6 @@ CREATE TABLE [dbo].[pf_Topic](
 	[IsClosed] [bit] NOT NULL,
 	[IsPinned] [bit] NOT NULL,
 	[IsDeleted] [bit] NOT NULL,
-	[IsIndexed] [bit] NOT NULL,
 	[UrlName] [nvarchar](256) NOT NULL,
 	[AnswerPostID] [int] NULL,
 	CONSTRAINT [PK_pf_Topic] PRIMARY KEY NONCLUSTERED 
@@ -215,13 +214,6 @@ CREATE CLUSTERED INDEX [IX_pf_Topic_ForumID] ON [dbo].[pf_Topic]
 ALTER TABLE [dbo].[pf_Topic]  WITH CHECK ADD  CONSTRAINT [FK_pf_Topic_pf_Forum] FOREIGN KEY([ForumID])
 REFERENCES [dbo].[pf_Forum] ([ForumID])
 ON DELETE CASCADE
-
-
-CREATE NONCLUSTERED INDEX [pf_Topic_IsIndexed_IsDeleted] ON [dbo].[pf_Topic] 
-(
-	[IsIndexed] ASC,
-	[IsDeleted] ASC
-) 
 
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_pf_Topic_UrlName] ON [dbo].[pf_Topic] 
