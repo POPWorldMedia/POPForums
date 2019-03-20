@@ -10,7 +10,6 @@ using PopForums.Repositories;
 using PopForums.ScoringGame;
 using PopForums.Services;
 using System.Collections.Generic;
-using Org.BouncyCastle.Crypto.Paddings;
 
 namespace PopForums.Test.Services
 {
@@ -26,6 +25,8 @@ namespace PopForums.Test.Services
 		private Mock<ILastReadService> _mockLastReadService;
 		private Mock<IEventPublisher> _eventPublisher;
 		private Mock<IBroker> _broker;
+		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
+		private Mock<ITenantService> _tenantService;
 
 		private ForumService GetService()
 		{
@@ -39,7 +40,9 @@ namespace PopForums.Test.Services
 			_mockLastReadService = new Mock<ILastReadService>();
 			_eventPublisher = new Mock<IEventPublisher>();
 			_broker = new Mock<IBroker>();
-			return new ForumService(_mockForumRepo.Object, _mockTopicRepo.Object, _mockPostRepo.Object, _mockCategoryRepo.Object, _mockProfileRepo.Object, _mockTextParser.Object, _mockSettingsManager.Object, _mockLastReadService.Object, _eventPublisher.Object, _broker.Object);
+			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
+			_tenantService = new Mock<ITenantService>();
+			return new ForumService(_mockForumRepo.Object, _mockTopicRepo.Object, _mockPostRepo.Object, _mockCategoryRepo.Object, _mockProfileRepo.Object, _mockTextParser.Object, _mockSettingsManager.Object, _mockLastReadService.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
 		}
 
 		private User DoUpNewTopic()
@@ -560,7 +563,9 @@ namespace PopForums.Test.Services
 		public void PostNewTopicMarksTopicForIndexing()
 		{
 			DoUpNewTopic();
+			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			_mockTopicRepo.Verify(x => x.MarkTopicForIndexing(111), Times.Once());
+			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]

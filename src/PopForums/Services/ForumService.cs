@@ -48,7 +48,7 @@ namespace PopForums.Services
 
 	public class ForumService : IForumService
 	{
-		public ForumService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, ICategoryRepository categoryRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ILastReadService lastReadService, IEventPublisher eventPublisher, IBroker broker)
+		public ForumService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, ICategoryRepository categoryRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ILastReadService lastReadService, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
 		{
 			_forumRepository = forumRepository;
 			_topicRepository = topicRepository;
@@ -60,6 +60,8 @@ namespace PopForums.Services
 			_lastReadService = lastReadService;
 			_eventPublisher = eventPublisher;
 			_broker = broker;
+			_searchIndexQueueRepository = searchIndexQueueRepository;
+			_tenantService = tenantService;
 		}
 
 		private readonly IForumRepository _forumRepository;
@@ -72,6 +74,8 @@ namespace PopForums.Services
 		private readonly ILastReadService _lastReadService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IBroker _broker;
+		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
+		private readonly ITenantService _tenantService;
 
 		public Forum Get(int forumID)
 		{
@@ -279,6 +283,7 @@ namespace PopForums.Services
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
 			_topicRepository.MarkTopicForIndexing(topic.TopicID);
+			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			return topic;
 		}
 

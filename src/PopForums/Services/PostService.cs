@@ -36,7 +36,7 @@ namespace PopForums.Services
 
 	public class PostService : IPostService
 	{
-		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, IFeedService feedService, ITopicRepository topicRepository)
+		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, IFeedService feedService, ITopicRepository topicRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
 		{
 			_postRepository = postRepository;
 			_profileRepository = profileRepository;
@@ -49,6 +49,8 @@ namespace PopForums.Services
 			_userService = userService;
 			_feedService = feedService;
 			_topicRepository = topicRepository;
+			_searchIndexQueueRepository = searchIndexQueueRepository;
+			_tenantService = tenantService;
 		}
 
 		private readonly IPostRepository _postRepository;
@@ -62,6 +64,8 @@ namespace PopForums.Services
 		private readonly IUserService _userService;
 		private readonly IFeedService _feedService;
 		private readonly ITopicRepository _topicRepository;
+		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
+		private readonly ITenantService _tenantService;
 
 		public List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -196,6 +200,7 @@ namespace PopForums.Services
 			_postRepository.Update(post);
 			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 			_topicRepository.MarkTopicForIndexing(post.TopicID);
+			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = post.TopicID});
 		}
 
 		public void Delete(Post post, User user)

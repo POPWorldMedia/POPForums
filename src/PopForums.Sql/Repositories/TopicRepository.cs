@@ -286,8 +286,6 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 		{
 			_sqlObjectFactory.GetConnection().Using(connection => 
 				connection.Execute("UPDATE pf_Topic SET IsIndexed = 0 WHERE TopicID = @TopicID", new { TopicID = topicID }));
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute("INSERT INTO pf_SearchQueue (TopicID) VALUES (@TopicID)", new { TopicID = topicID }));
 		}
 
 		public void UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime)

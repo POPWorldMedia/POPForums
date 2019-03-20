@@ -13,7 +13,7 @@ namespace PopForums.Services
 		void CreateJunkWord(string word);
 		void DeleteJunkWord(string word);
 		Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
-		Topic GetNextTopicForIndexing();
+		int GetNextTopicIDForIndexing();
 		void MarkTopicAsIndexed(Topic topic);
 		void DeleteAllIndexedWordsForTopic(Topic topic);
 		void SaveSearchWord(SearchWord searchWord);
@@ -21,16 +21,18 @@ namespace PopForums.Services
 
 	public class SearchService : ISearchService
 	{
-		public SearchService(ISearchRepository searchRepository, ISettingsManager settingsManager, IForumService forumService)
+		public SearchService(ISearchRepository searchRepository, ISettingsManager settingsManager, IForumService forumService, ISearchIndexQueueRepository searchIndexQueueRepository)
 		{
 			_searchRepository = searchRepository;
 			_settingsManager = settingsManager;
 			_forumService = forumService;
+			_searchIndexQueueRepository = searchIndexQueueRepository;
 		}
 
 		private readonly ISearchRepository _searchRepository;
 		private readonly ISettingsManager _settingsManager;
 		private readonly IForumService _forumService;
+		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 
 		public static Regex SearchWordPattern = new Regex(@"[\w'\@\#\$\%\^\&\*]{2,}", RegexOptions.None);
 
@@ -60,9 +62,10 @@ namespace PopForums.Services
 			return topics;
 		}
 
-		public Topic GetNextTopicForIndexing()
+		public int GetNextTopicIDForIndexing()
 		{
-			return _searchRepository.GetNextTopicForIndexing();
+			var payload = _searchIndexQueueRepository.Dequeue();
+			return payload.TopicID;
 		}
 
 		public List<string> GetJunkWords()

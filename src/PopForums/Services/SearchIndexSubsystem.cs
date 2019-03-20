@@ -7,23 +7,25 @@ namespace PopForums.Services
 {
 	public interface ISearchIndexSubsystem
 	{
-		void DoIndex();
+		void DoIndex(int topicID, string tenantID);
 	}
 
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
 		private readonly ISearchService _searchService;
 		private readonly IPostService _postService;
+		private readonly ITopicService _topicService;
 
-		public SearchIndexSubsystem(ISearchService searchService, IPostService postService)
+		public SearchIndexSubsystem(ISearchService searchService, IPostService postService, ITopicService topicService)
 		{
 			_searchService = searchService;
 			_postService = postService;
+			_topicService = topicService;
 		}
 
-		public void DoIndex()
+		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _searchService.GetNextTopicForIndexing();
+			var topic = _topicService.Get(topicID);
 			if (topic == null)
 				return;
 

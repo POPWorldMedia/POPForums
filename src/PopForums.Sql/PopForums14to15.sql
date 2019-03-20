@@ -70,3 +70,10 @@ CREATE TABLE [dbo].[pf_AwardCalculationQueue](
 	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
 	[Payload] [nvarchar](256) NOT NULL
 )
+
+DROP TABLE [dbo].[pf_SearchQueue]
+
+CREATE TABLE [dbo].[pf_SearchQueue](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
+)

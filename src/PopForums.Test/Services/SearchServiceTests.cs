@@ -14,13 +14,15 @@ namespace PopForums.Test.Services
 		private Mock<ISettingsManager> _mockSettingsManager;
 		private Mock<ISearchRepository> _mockSearchRepo;
 		private Mock<IForumService> _mockForumService;
+		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
 
 		private SearchService GetService()
 		{
 			_mockSearchRepo = new Mock<ISearchRepository>();
 			_mockSettingsManager = new Mock<ISettingsManager>();
 			_mockForumService = new Mock<IForumService>();
-			return new SearchService(_mockSearchRepo.Object, _mockSettingsManager.Object, _mockForumService.Object);
+			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
+			return new SearchService(_mockSearchRepo.Object, _mockSettingsManager.Object, _mockForumService.Object, _searchIndexQueueRepo.Object);
 		}
 
 		[Fact]

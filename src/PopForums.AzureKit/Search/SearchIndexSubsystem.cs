@@ -28,9 +28,9 @@ namespace PopForums.AzureKit.Search
 			_errorLog = errorLog;
 		}
 
-		public void DoIndex()
+		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _searchService.GetNextTopicForIndexing();
+			var topic = _topicService.Get(topicID);
 			if (topic != null)
 			{
 				var serviceClient = new SearchServiceClient(_config.SearchUrl, new SearchCredentials(_config.SearchKey));
@@ -57,7 +57,8 @@ namespace PopForums.AzureKit.Search
 					IsPinned = topic.IsPinned,
 					UrlName = topic.UrlName,
 					LastPostName = topic.LastPostName,
-					Posts = parsedPosts
+					Posts = parsedPosts,
+					TenantID = tenantID
 				};
 
 				var actions =
@@ -98,7 +99,8 @@ namespace PopForums.AzureKit.Search
 					new Field("isPinned", DataType.Boolean) {IsSortable = false, IsSearchable = false},
 					new Field("urlName", DataType.String) {IsSortable = false, IsSearchable = false},
 					new Field("lastPostName", DataType.String) {IsSortable = false, IsSearchable = false},
-					new Field("posts", DataType.Collection(DataType.String)) {IsSortable = false, IsSearchable = true}
+					new Field("posts", DataType.Collection(DataType.String)) {IsSortable = false, IsSearchable = true},
+					new Field("tenantID", DataType.String) {IsSearchable = true}
 			    },
 				ScoringProfiles = new []
 				{

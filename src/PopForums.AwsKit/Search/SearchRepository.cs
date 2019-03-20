@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nest;
-using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Sql;
@@ -33,8 +31,6 @@ namespace PopForums.AwsKit.Search
 		{
 			throw new NotImplementedException();
 		}
-
-		// GetNextTopicForIndexing() uses base
 
 		// MarkTopicAsIndexed(int topicID) uses base
 

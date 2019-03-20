@@ -891,8 +891,8 @@ CREATE CLUSTERED INDEX IX_pf_EmailQueue_Id ON pf_EmailQueue (Id)
 
 
 CREATE TABLE [dbo].[pf_SearchQueue](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[TopicID] [int] NOT NULL
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
 )
 
 CREATE CLUSTERED INDEX IX_pf_SearchQueue_ID ON pf_SearchQueue (ID)

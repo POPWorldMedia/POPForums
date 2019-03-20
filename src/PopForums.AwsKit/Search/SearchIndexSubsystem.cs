@@ -13,23 +13,21 @@ namespace PopForums.AwsKit.Search
 		private readonly IPostService _postService;
 		private readonly ITopicService _topicService;
 		private readonly IErrorLog _errorLog;
-		private readonly ITenantService _tenantService;
 		private readonly IElasticSearchClientWrapper _elasticSearchClientWrapper;
 
-		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, ITopicService topicService, IErrorLog errorLog, ITenantService tenantService, IElasticSearchClientWrapper elasticSearchClientWrapper)
+		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, ITopicService topicService, IErrorLog errorLog, IElasticSearchClientWrapper elasticSearchClientWrapper)
 		{
 			_textParsingService = textParsingService;
 			_searchService = searchService;
 			_postService = postService;
 			_topicService = topicService;
 			_errorLog = errorLog;
-			_tenantService = tenantService;
 			_elasticSearchClientWrapper = elasticSearchClientWrapper;
 		}
 
-		public void DoIndex()
+		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _searchService.GetNextTopicForIndexing();
+			var topic = _topicService.Get(topicID);
 			if (topic == null)
 				return;
 
@@ -47,7 +45,6 @@ namespace PopForums.AwsKit.Search
 				parsedText = _textParsingService.RemoveForumCode(parsedText);
 				return parsedText;
 			}).ToArray();
-			var tenantID = _tenantService.GetTenant();
 			var searchTopic = new SearchTopic
 			{
 				Id = topic.TopicID.ToString(),

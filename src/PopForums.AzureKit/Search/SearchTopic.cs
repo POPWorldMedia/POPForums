@@ -19,5 +19,6 @@ namespace PopForums.AzureKit.Search
 		public string UrlName { get; set; }
 		public string LastPostName { get; set; }
 		public string[] Posts { get; set; }
+		public string TenantID { get; set; }
     }
 }

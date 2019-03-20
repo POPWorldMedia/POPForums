@@ -39,8 +39,6 @@ namespace PopForums.AzureKit.Search
 		    throw new NotImplementedException();
 	    }
 
-	    // GetNextTopicForIndexing() uses base
-
 	    // MarkTopicAsIndexed(int topicID) uses base
 
 	    public override void DeleteAllIndexedWordsForTopic(int topicID)

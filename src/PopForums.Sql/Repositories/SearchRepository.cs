@@ -44,25 +44,6 @@ namespace PopForums.Sql.Repositories
 				connection.Execute("DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord", new { JunkWord = word }));
 		}
 
-		public Topic GetNextTopicForIndexing()
-		{
-			var sql = @"WITH cte AS (
-SELECT TOP(1) TopicID
-FROM pf_SearchQueue WITH (ROWLOCK, READPAST)
-ORDER BY Id)
-DELETE FROM cte
-OUTPUT DELETED.TopicID;";
-			var topicID = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				topicID = connection.QuerySingleOrDefault<int>(sql));
-			if (topicID == 0)
-				return null;
-			Topic topic = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				topic = connection.QuerySingleOrDefault<Topic>($"SELECT {TopicRepository.TopicFields} FROM pf_Topic WHERE TopicID = @TopicID", new { TopicID = topicID }));
-			return topic;
-		}
-
 		public void MarkTopicAsIndexed(int topicID)
 		{
 			_sqlObjectFactory.GetConnection().Using(connection =>

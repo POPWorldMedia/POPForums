@@ -65,6 +65,7 @@ namespace PopForums.Sql
 			services.AddTransient<IProfileRepository, ProfileRepository>();
 			services.AddTransient<IQueuedEmailMessageRepository, QueuedEmailMessageRepository>();
 			services.AddTransient<IRoleRepository, RoleRepository>();
+			services.AddTransient<ISearchIndexQueueRepository, SearchIndexQueueRepository>();
 			services.AddTransient<ISearchRepository, SearchRepository>();
 			services.AddTransient<ISecurityLogRepository, SecurityLogRepository>();
 			services.AddTransient<ISettingsRepository, SettingsRepository>();
