@@ -79,11 +79,11 @@ namespace PopForums.Web
 
 			// use Azure Functions queues for POP Forums using AzureKit for background tasks...
 			// do NOT call AddPopForumsBackgroundServices()
-			//services.AddPopForumsAzureFunctionsAndQueues();
+			services.AddPopForumsAzureFunctionsAndQueues();
 
 			// creates an instance of the background services for POP Forums... call this last in forum setup,
 			// but don't use if you're running these in functions
-			services.AddPopForumsBackgroundServices();
+			//services.AddPopForumsBackgroundServices();
 		}
 		
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -10,6 +10,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PopForums.AwsKit\PopForums.AwsKit.csproj" />
     <ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
     <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
