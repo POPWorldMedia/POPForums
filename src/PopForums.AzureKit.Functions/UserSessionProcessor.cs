@@ -13,7 +13,7 @@ namespace PopForums.AzureKit.Functions
     public static class UserSessionProcessor
     {
         [FunctionName("UserSessionProcessor")]
-        public static void Run([TimerTrigger("*/1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
