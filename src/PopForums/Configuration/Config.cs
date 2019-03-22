@@ -9,6 +9,7 @@
 		string SearchUrl { get; }
 		string SearchKey { get; }
 		string QueueConnectionString { get; }
+		string SearchProvider { get; }
 	}
 
 	public class Config : IConfig
@@ -39,5 +40,6 @@
 		public string SearchUrl => _configContainer.SearchUrl;
 		public string SearchKey => _configContainer.SearchKey;
 		public string QueueConnectionString => _configContainer.QueueConnectionString;
+		public string SearchProvider => _configContainer.SearchProvider;
 	}
 }

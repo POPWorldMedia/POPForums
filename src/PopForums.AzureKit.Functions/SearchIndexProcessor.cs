@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PopForums.AwsKit;
 using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
 using PopForums.Extensions;
@@ -30,6 +31,23 @@ namespace PopForums.AzureKit.Functions
 			services.AddTransient<IBroker, BrokerSink>();
 
 			var serviceProvider = services.BuildServiceProvider();
+
+			string searchType;
+			var config = serviceProvider.GetService<IConfig>();
+			switch (config.SearchProvider.ToLower())
+			{
+				case "elasticsearch":
+					searchType = "Default (PopForums.AwsKit)";
+					services.AddPopForumsElasticSearch();
+					break;
+				case "azuresearch":
+					searchType = "Azure Search (PopForums.AzureKit)";
+					services.AddPopForumsAzureSearch();
+					break;
+				default:
+					searchType = "Default (PopForums.Sql)";
+					break;
+			}
 			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
 			var errorLog = serviceProvider.GetService<IErrorLog>();
@@ -45,7 +63,7 @@ namespace PopForums.AzureKit.Functions
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue AwardCalculationProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			log.LogInformation($"C# Queue SearchIndexProcessor ({searchType}) function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}

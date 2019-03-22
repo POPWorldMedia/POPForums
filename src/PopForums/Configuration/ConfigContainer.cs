@@ -9,5 +9,6 @@
 		public string SearchUrl { get; set; }
 		public string SearchKey { get; set; }
 		public string QueueConnectionString { get; set; }
+		public string SearchProvider { get; set; }
 	}
 }
