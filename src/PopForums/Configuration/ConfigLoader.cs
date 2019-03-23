@@ -20,7 +20,8 @@ namespace PopForums.Configuration
 			container.CacheForceLocalOnly = Convert.ToBoolean(config["PopForums:Cache:ForceLocalOnly"]);
 			container.SearchUrl = config["PopForums:Search:Url"];
 			container.SearchKey = config["PopForums:Search:Key"];
-			container.SearchProvider = config["PopForums:Search:Provider"];
+			var searchProvider = config["PopForums:Search:Provider"];
+			container.SearchProvider = searchProvider ?? string.Empty;
 			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
 			return container;
 		} 
