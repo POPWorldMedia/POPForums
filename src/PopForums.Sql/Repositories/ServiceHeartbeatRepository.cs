@@ -18,20 +18,12 @@ namespace PopForums.Sql.Repositories
 
 		public void RecordHeartbeat(string serviceName, string machineName, DateTime lastRun)
 		{
-			// Not crazy about this lock, but there appear to be multiple instances of this running 
-			// when in a web context, causing PK violations when the old record isn't deleted. Of course 
-			// this goes away when running in Azure functions on a consumption plan.
-			lock (_heartbeatlock)
+			_sqlObjectFactory.GetConnection().Using(connection =>
 			{
-				_sqlObjectFactory.GetConnection().Using(connection =>
-				{
-					connection.Execute("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName", new { ServiceName = serviceName, MachineName = machineName });
-					connection.Execute("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)", new { ServiceName = serviceName, MachineName = machineName, LastRun = lastRun });
-				});
-			}
+				connection.Execute("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName", new { ServiceName = serviceName, MachineName = machineName });
+				connection.Execute("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)", new { ServiceName = serviceName, MachineName = machineName, LastRun = lastRun });
+			});
 		}
-
-		private static object _heartbeatlock = new Object();
 
 		public List<ServiceHeartbeat> GetAll()
 		{

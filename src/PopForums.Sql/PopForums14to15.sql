@@ -83,3 +83,11 @@ DROP INDEX [pf_Topic_IsIndexed_IsDeleted] ON [dbo].[pf_Topic]
 
 IF EXISTS( SELECT TOP 1 1 FROM sys.objects o INNER JOIN sys.columns c ON o.object_id = c.object_id WHERE o.name = 'pf_Topic' AND c.name = 'IsIndexed')
 ALTER TABLE dbo.pf_Topic DROP COLUMN [IsIndexed]
+
+DROP TABLE [dbo].[pf_ServiceHeartbeat]
+
+CREATE TABLE [dbo].[pf_ServiceHeartbeat](
+	[ServiceName] [nvarchar](256) NOT NULL,
+	[MachineName] [nvarchar](256) NOT NULL,
+	[LastRun] [datetime] NOT NULL,
+)

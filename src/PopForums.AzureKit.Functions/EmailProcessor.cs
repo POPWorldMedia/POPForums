@@ -49,7 +49,15 @@ namespace PopForums.AzureKit.Functions
 			}
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
-        }
+			try
+			{
+				serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
+			}
+			catch(Exception exc)
+			{
+				// we don't want to risk spamming anyone because of a database failure
+				log.LogError(exc, $"Logging the service heartbeat for {nameof(EmailProcessor)} failed.");
+			}
+		}
     }
 }

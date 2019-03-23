@@ -892,15 +892,11 @@ CREATE CLUSTERED INDEX IX_pf_SearchQueue_ID ON pf_SearchQueue (ID)
 
 
 CREATE TABLE [dbo].[pf_ServiceHeartbeat](
-	[ServiceName] [nvarchar](75) NOT NULL,
-	[MachineName] [nvarchar](50) NOT NULL,
+	[ServiceName] [nvarchar](256) NOT NULL,
+	[MachineName] [nvarchar](256) NOT NULL,
 	[LastRun] [datetime] NOT NULL,
- CONSTRAINT [PK_pf_ServiceHeartbeat] PRIMARY KEY CLUSTERED 
-(
-	[ServiceName] ASC,
-	[MachineName] ASC
 )
-)
+
 
 
 
