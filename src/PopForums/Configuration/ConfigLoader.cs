@@ -23,6 +23,8 @@ namespace PopForums.Configuration
 			var searchProvider = config["PopForums:Search:Provider"];
 			container.SearchProvider = searchProvider ?? string.Empty;
 			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
+			var logTopicViews = config["PopForums:LogTopicViews"];
+			container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);
 			return container;
 		} 
 	}

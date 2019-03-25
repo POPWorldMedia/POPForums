@@ -62,6 +62,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<ITextParsingService, TextParsingService>();
 		    services.AddTransient<ITimeFormattingService, TimeFormattingService>();
 		    services.AddTransient<ITopicService, TopicService>();
+		    services.AddTransient<ITopicViewLogService, TopicViewLogService>();
 		    services.AddTransient<IUserService, UserService>();
 		    services.AddTransient<IUserSessionService, UserSessionService>();
 		    services.AddTransient<IServiceHeartbeatService, ServiceHeartbeatService>();

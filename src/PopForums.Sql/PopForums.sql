@@ -899,6 +899,19 @@ CREATE TABLE [dbo].[pf_ServiceHeartbeat](
 
 
 
+CREATE TABLE [dbo].[pf_TopicViewLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY NONCLUSTERED,
+	[UserID] [int] NULL,
+	[TopicID] [int] NULL,
+	[TimeStamp] [datetime] NOT NULL
+)
+
+CREATE CLUSTERED INDEX [IX_pf_TopicViewLog] ON [dbo].[pf_TopicViewLog]
+(
+	[TimeStamp] ASC
+)
+
+
 
 
 

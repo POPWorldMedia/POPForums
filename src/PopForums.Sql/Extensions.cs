@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
 using PopForums.Sql.Repositories;
@@ -31,6 +32,23 @@ namespace PopForums.Sql
 				{
 					connection.Open();
 					action(connection);
+				}
+				finally
+				{
+					connection.Close();
+					connection.Dispose();
+				}
+			}
+		}
+
+		public static async Task UsingAsync(this DbConnection connection, Func<DbConnection, Task> action)
+		{
+			using (connection)
+			{
+				try
+				{
+					await connection.OpenAsync();
+					await action(connection);
 				}
 				finally
 				{
@@ -72,6 +90,7 @@ namespace PopForums.Sql
 			services.AddTransient<ISetupRepository, SetupRepository>();
 			services.AddTransient<ISubscribedTopicsRepository, SubscribedTopicsRepository>();
 			services.AddTransient<ITopicRepository, TopicRepository>();
+			services.AddTransient<ITopicViewLogRepository, TopicViewLogRepository>();
 			services.AddTransient<IUserAvatarRepository, UserAvatarRepository>();
 			services.AddTransient<IUserAwardRepository, UserAwardRepository>();
 			services.AddTransient<IUserImageRepository, UserImageRepository>();

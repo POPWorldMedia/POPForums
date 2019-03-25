@@ -10,6 +10,7 @@
 		string SearchKey { get; }
 		string QueueConnectionString { get; }
 		string SearchProvider { get; }
+		bool LogTopicViews { get; }
 	}
 
 	public class Config : IConfig
@@ -41,5 +42,6 @@
 		public string SearchKey => _configContainer.SearchKey;
 		public string QueueConnectionString => _configContainer.QueueConnectionString;
 		public string SearchProvider => _configContainer.SearchProvider;
+		public bool LogTopicViews => _configContainer.LogTopicViews;
 	}
 }

@@ -91,3 +91,21 @@ CREATE TABLE [dbo].[pf_ServiceHeartbeat](
 	[MachineName] [nvarchar](256) NOT NULL,
 	[LastRun] [datetime] NOT NULL,
 )
+
+
+IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND  TABLE_NAME = 'pf_TopicViewLog'))
+BEGIN
+	CREATE TABLE [dbo].[pf_TopicViewLog](
+		[ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY NONCLUSTERED,
+		[UserID] [int] NULL,
+		[TopicID] [int] NULL,
+		[TimeStamp] [datetime] NOT NULL
+	)
+END
+
+IF IndexProperty(Object_Id('pf_TopicViewLog'), 'IX_pf_TopicViewLog_TimeStamp', 'IndexId') IS NULL
+CREATE CLUSTERED INDEX [IX_pf_TopicViewLog_TimeStamp] ON [dbo].[pf_TopicViewLog]
+(
+	[TimeStamp] ASC
+)
+
