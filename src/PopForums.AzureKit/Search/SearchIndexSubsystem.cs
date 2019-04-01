@@ -11,24 +11,33 @@ namespace PopForums.AzureKit.Search
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
 		private readonly ITextParsingService _textParsingService;
+		private readonly ISearchService _searchService;
+		private readonly IPostService _postService;
+		private readonly IConfig _config;
+		private readonly ITopicService _topicService;
+		private readonly IErrorLog _errorLog;
 		public static string IndexName = "popforumstopics";
 
-		public SearchIndexSubsystem(ITextParsingService textParsingService)
+		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, IConfig config, ITopicService topicService, IErrorLog errorLog)
 		{
 			_textParsingService = textParsingService;
+			_searchService = searchService;
+			_postService = postService;
+			_config = config;
+			_topicService = topicService;
+			_errorLog = errorLog;
 		}
 
-		public void DoIndex(ISearchService searchService, ISettingsManager settingsManager, IPostService postService,
-			IConfig config, ITopicService topicService, IErrorLog errorLog)
+		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = searchService.GetNextTopicForIndexing();
+			var topic = _topicService.Get(topicID);
 			if (topic != null)
 			{
-				var serviceClient = new SearchServiceClient(config.SearchUrl, new SearchCredentials(config.SearchKey));
+				var serviceClient = new SearchServiceClient(_config.SearchUrl, new SearchCredentials(_config.SearchKey));
 				if (!serviceClient.Indexes.Exists(IndexName))
 					CreateIndex(serviceClient);
 
-				var posts = postService.GetPosts(topic, false).ToArray();
+				var posts = _postService.GetPosts(topic, false).ToArray();
 				var parsedPosts = posts.Select(x =>
 					{
 						var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);
@@ -48,11 +57,12 @@ namespace PopForums.AzureKit.Search
 					IsPinned = topic.IsPinned,
 					UrlName = topic.UrlName,
 					LastPostName = topic.LastPostName,
-					Posts = parsedPosts
+					Posts = parsedPosts,
+					TenantID = tenantID
 				};
 
 				var actions =
-				new IndexAction<SearchTopic>[]
+				new[]
 				{
 					IndexAction.Upload(searchTopic)
 				};
@@ -61,12 +71,11 @@ namespace PopForums.AzureKit.Search
 					var serviceIndexClient = serviceClient.Indexes.GetClient(IndexName);
 					var batch = IndexBatch.New(actions);
 					serviceIndexClient.Documents.Index(batch);
-					searchService.MarkTopicAsIndexed(topic);
 				}
 				catch (Exception exc)
 				{
-					errorLog.Log(exc, ErrorSeverity.Error);
-					topicService.MarkTopicForIndexing(topic.TopicID);
+					_errorLog.Log(exc, ErrorSeverity.Error);
+					_topicService.QueueTopicForIndexing(topic.TopicID);
 				}
 		    }
 	    }
@@ -89,7 +98,8 @@ namespace PopForums.AzureKit.Search
 					new Field("isPinned", DataType.Boolean) {IsSortable = false, IsSearchable = false},
 					new Field("urlName", DataType.String) {IsSortable = false, IsSearchable = false},
 					new Field("lastPostName", DataType.String) {IsSortable = false, IsSearchable = false},
-					new Field("posts", DataType.Collection(DataType.String)) {IsSortable = false, IsSearchable = true}
+					new Field("posts", DataType.Collection(DataType.String)) {IsSortable = false, IsSearchable = true},
+					new Field("tenantID", DataType.String) {IsSearchable = true}
 			    },
 				ScoringProfiles = new []
 				{

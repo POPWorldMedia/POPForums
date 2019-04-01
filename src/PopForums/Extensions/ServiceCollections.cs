@@ -16,6 +16,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IConfig, Config>();
 		    services.AddTransient<IErrorLog, ErrorLog>();
 		    services.AddTransient<ISettingsManager, SettingsManager>();
+		    services.AddTransient<ITenantService, TenantService>();
 
 			// email
 		    services.AddTransient<IForgotPasswordMailer, ForgotPasswordMailer>();
@@ -53,6 +54,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IPostService, PostService>();
 		    services.AddTransient<IPrivateMessageService, PrivateMessageService>();
 		    services.AddTransient<IProfileService, ProfileService>();
+		    services.AddTransient<IQueuedEmailService, QueuedEmailService>();
 		    services.AddTransient<ISearchService, SearchService>();
 		    services.AddTransient<ISecurityLogService, SecurityLogService>();
 		    services.AddTransient<ISetupService, SetupService>();
@@ -60,6 +62,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<ITextParsingService, TextParsingService>();
 		    services.AddTransient<ITimeFormattingService, TimeFormattingService>();
 		    services.AddTransient<ITopicService, TopicService>();
+		    services.AddTransient<ITopicViewLogService, TopicViewLogService>();
 		    services.AddTransient<IUserService, UserService>();
 		    services.AddTransient<IUserSessionService, UserSessionService>();
 		    services.AddTransient<IServiceHeartbeatService, ServiceHeartbeatService>();

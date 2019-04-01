@@ -44,6 +44,11 @@
 
 <pf-pagerlinks actionName="Result" controllerName="Search" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" routeParameters="@routeParameters" />
 
+@if ((bool) ViewBag.IsError)
+{
+	<div class="alert alert-danger">@PopForums.Resources.SearchError</div>
+}
+
 @if (Model.Topics.Count == 0 && !String.IsNullOrEmpty(ViewBag.Query))
 {
 	<p>@PopForums.Resources.NoResults</p>

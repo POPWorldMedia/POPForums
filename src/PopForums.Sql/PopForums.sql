@@ -125,12 +125,20 @@ CREATE TABLE [dbo].[pf_SecurityLog](
 	[ActivityDate] [datetime] NOT NULL
 ) 
 
-
-CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP] ON [dbo].[pf_SecurityLog] 
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_IP_ActivityDate] ON [dbo].[pf_SecurityLog] 
 (
-	[IP] ASC
-) 
+	[IP] ASC, [ActivityDate] DESC
+)
 
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_UserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[UserID] ASC, [ActivityDate] DESC
+)
+
+CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_TargetUserID_ActivityDate] ON [dbo].[pf_SecurityLog] 
+(
+	[TargetUserID] ASC, [ActivityDate] DESC
+)
 
 
 -- ******************************************************** pf_Category
@@ -190,7 +198,6 @@ CREATE TABLE [dbo].[pf_Topic](
 	[IsClosed] [bit] NOT NULL,
 	[IsPinned] [bit] NOT NULL,
 	[IsDeleted] [bit] NOT NULL,
-	[IsIndexed] [bit] NOT NULL,
 	[UrlName] [nvarchar](256) NOT NULL,
 	[AnswerPostID] [int] NULL,
 	CONSTRAINT [PK_pf_Topic] PRIMARY KEY NONCLUSTERED 
@@ -207,13 +214,6 @@ CREATE CLUSTERED INDEX [IX_pf_Topic_ForumID] ON [dbo].[pf_Topic]
 ALTER TABLE [dbo].[pf_Topic]  WITH CHECK ADD  CONSTRAINT [FK_pf_Topic_pf_Forum] FOREIGN KEY([ForumID])
 REFERENCES [dbo].[pf_Forum] ([ForumID])
 ON DELETE CASCADE
-
-
-CREATE NONCLUSTERED INDEX [pf_Topic_IsIndexed_IsDeleted] ON [dbo].[pf_Topic] 
-(
-	[IsIndexed] ASC,
-	[IsDeleted] ASC
-) 
 
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_pf_Topic_UrlName] ON [dbo].[pf_Topic] 
@@ -265,17 +265,15 @@ ALTER TABLE [dbo].[pf_Post]  WITH CHECK ADD  CONSTRAINT [FK_pf_Post_pf_Topic] FO
 REFERENCES [dbo].[pf_Topic] ([TopicID])
 ON DELETE CASCADE
 
-
 CREATE NONCLUSTERED INDEX [IX_pf_Post_UserID] ON [dbo].[pf_Post] 
 (
 	[UserID] ASC,
 	[IsDeleted] ASC
 ) 
 
-
-CREATE NONCLUSTERED INDEX [IX_pf_Post_IP] ON [dbo].[pf_Post] 
+CREATE NONCLUSTERED INDEX [IX_pf_Post_IP_PostTime] ON [dbo].[pf_Post] 
 (
-	[IP] ASC
+	[IP] ASC, [PostTime] DESC
 ) 
 
 
@@ -795,10 +793,8 @@ CREATE TABLE [dbo].[pf_EventDefinition](
 -- ****************************** [pf_AwardCalculationQueue]
 
 CREATE TABLE [dbo].[pf_AwardCalculationQueue](
-	[ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
-	[EventDefinitionID] [nvarchar](256) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[TimeStamp] [datetime] NOT NULL
+	[Id] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	[Payload] [nvarchar](256) NOT NULL
 )
 
 
@@ -887,8 +883,8 @@ CREATE CLUSTERED INDEX IX_pf_EmailQueue_Id ON pf_EmailQueue (Id)
 
 
 CREATE TABLE [dbo].[pf_SearchQueue](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[TopicID] [int] NOT NULL
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
 )
 
 CREATE CLUSTERED INDEX IX_pf_SearchQueue_ID ON pf_SearchQueue (ID)
@@ -896,14 +892,23 @@ CREATE CLUSTERED INDEX IX_pf_SearchQueue_ID ON pf_SearchQueue (ID)
 
 
 CREATE TABLE [dbo].[pf_ServiceHeartbeat](
-	[ServiceName] [nvarchar](75) NOT NULL,
-	[MachineName] [nvarchar](50) NOT NULL,
+	[ServiceName] [nvarchar](256) NOT NULL,
+	[MachineName] [nvarchar](256) NOT NULL,
 	[LastRun] [datetime] NOT NULL,
- CONSTRAINT [PK_pf_ServiceHeartbeat] PRIMARY KEY CLUSTERED 
-(
-	[ServiceName] ASC,
-	[MachineName] ASC
 )
+
+
+
+CREATE TABLE [dbo].[pf_TopicViewLog](
+	[ID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY NONCLUSTERED,
+	[UserID] [int] NULL,
+	[TopicID] [int] NULL,
+	[TimeStamp] [datetime] NOT NULL
+)
+
+CREATE CLUSTERED INDEX [IX_pf_TopicViewLog] ON [dbo].[pf_TopicViewLog]
+(
+	[TimeStamp] ASC
 )
 
 

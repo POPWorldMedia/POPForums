@@ -46,7 +46,9 @@ namespace PopForums.Services
 
 		public void CreateLogEntry(User user, User targetUser, string ip, string message, SecurityLogType securityLogType)
 		{
-			CreateLogEntry(user == null ? (int?)null : user.UserID, targetUser == null ? (int?)null : targetUser.UserID, ip, message, securityLogType);
+			if (!string.IsNullOrEmpty(message) && message.Length > 255)
+				message = message.Substring(0, 255);
+			CreateLogEntry(user?.UserID, targetUser?.UserID, ip, message, securityLogType);
 		}
 
 		public void CreateLogEntry(int? userID, int? targetUserID, string ip, string message, SecurityLogType securityLogType)

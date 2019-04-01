@@ -1,7 +1,7 @@
 using System;
 using PopForums.Configuration;
 using PopForums.Models;
-using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Email
 {
@@ -12,14 +12,14 @@ namespace PopForums.Email
 
 	public class ForgotPasswordMailer : IForgotPasswordMailer
 	{
-		public ForgotPasswordMailer(ISettingsManager settingsManager, IQueuedEmailMessageRepository queuedEmailRepo)
+		public ForgotPasswordMailer(ISettingsManager settingsManager, IQueuedEmailService queuedEmailService)
 		{
 			_settingsManager = settingsManager;
-			_queuedQueuedEmailRepo = queuedEmailRepo;
+			_queuedEmailService = queuedEmailService;
 		}
 
 		private readonly ISettingsManager _settingsManager;
-		private readonly IQueuedEmailMessageRepository _queuedQueuedEmailRepo;
+		private readonly IQueuedEmailService _queuedEmailService;
 
 		public void ComposeAndQueue(User user, string resetLink)
 		{
@@ -40,7 +40,7 @@ namespace PopForums.Email
 				FromName = settings.ForumTitle,
 				QueueTime = DateTime.UtcNow
 			};
-			_queuedQueuedEmailRepo.CreateMessage(message);
+			_queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

@@ -27,6 +27,8 @@ namespace PopForums.Test.Services
 		private Mock<IBroker> _broker;
 		private Mock<ISearchRepository> _searchRepo;
 		private Mock<IUserRepository> _userRepo;
+		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
+		private Mock<ITenantService> _tenantService;
 
 		private TopicService GetTopicService()
 		{
@@ -43,7 +45,9 @@ namespace PopForums.Test.Services
 			_broker = new Mock<IBroker>();
 			_searchRepo = new Mock<ISearchRepository>();
 			_userRepo = new Mock<IUserRepository>();
-			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object, _userRepo.Object);
+			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
+			_tenantService = new Mock<ITenantService>();
+			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object, _userRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
 		}
 
 		private static User GetUser()
@@ -236,16 +240,17 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void PostReplyMarksTopicForIndexing()
+		public void PostQueuesMarksTopicForIndexing()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 2 };
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var topicService = GetTopicService();
 			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
 			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
+			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]
@@ -573,7 +578,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdateTopicMarksTopicForIndexingWithMod()
+		public void UpdateTopicQueuesTopicForIndexingWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
@@ -582,8 +587,9 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(topic.TopicID), Times.Once());
+			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]

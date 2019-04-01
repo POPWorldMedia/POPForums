@@ -14,16 +14,16 @@ namespace PopForums.Email
 
 	public class UserEmailer : IUserEmailer
 	{
-		public UserEmailer(IProfileService profileService, ISettingsManager settingsManager, IQueuedEmailMessageRepository queuedEmailRepo)
+		public UserEmailer(IProfileService profileService, ISettingsManager settingsManager, IQueuedEmailService queuedEmailService)
 		{
 			_profileService = profileService;
 			_settingsManager = settingsManager;
-			_queuedQueuedEmailRepo = queuedEmailRepo;
+			_queuedEmailService = queuedEmailService;
 		}
 
 		private readonly IProfileService _profileService;
 		private readonly ISettingsManager _settingsManager;
-		private readonly IQueuedEmailMessageRepository _queuedQueuedEmailRepo;
+		private readonly IQueuedEmailService _queuedEmailService;
 
 		public bool IsUserEmailable(User user)
 		{
@@ -41,13 +41,13 @@ namespace PopForums.Email
 			if (fromUser == null)
 				throw new ArgumentNullException("fromUser");
 			var settings = _settingsManager.Current;
-			var body = String.Format(@"E-mail sent via {0} (senders's IP: {1}):
+			var body = $@"E-mail sent via {settings.ForumTitle} (senders's IP: {ip}):
 
-{2}
+{text}
 
 ______________________
-{3}"
-				, settings.ForumTitle, ip, text, settings.MailSignature);
+
+{settings.MailSignature}";
 			var message = new QueuedEmailMessage
 			{
 				Body = body,
@@ -58,7 +58,7 @@ ______________________
 				FromName = fromUser.Name,
 				QueueTime = DateTime.UtcNow
 			};
-			_queuedQueuedEmailRepo.CreateMessage(message);
+			_queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

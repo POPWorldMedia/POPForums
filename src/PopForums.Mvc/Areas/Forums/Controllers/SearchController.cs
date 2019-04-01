@@ -54,8 +54,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var titles = _forumService.GetAllForumTitles();
 			PagerContext pagerContext;
 			var topics = _searchService.GetTopics(query, searchType, user, includeDeleted, page, out pagerContext);
-			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			_lastReadService.GetTopicReadStatus(user, container);
+			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics.Data };
+			ViewBag.IsError = !topics.IsValid;
+			if (topics.IsValid)
+				_lastReadService.GetTopicReadStatus(user, container);
 			return View("Index", container);
 		}
 	}

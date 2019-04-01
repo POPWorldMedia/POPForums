@@ -5,13 +5,11 @@ namespace PopForums.Configuration
 {
 	public class ConfigLoader
 	{
-		public ConfigContainer GetConfig(string basePath)
+		public ConfigContainer GetConfig(string basePath, string configFileName)
 		{
-			if (String.IsNullOrWhiteSpace(basePath))
-				throw new ArgumentException("Can't setup PopForums configuration without specifying the base path of the app, where PopForums.json should be found.", nameof(basePath));
 			var builder = new ConfigurationBuilder();
 			builder.SetBasePath(basePath);
-			builder.AddJsonFile("PopForums.json");
+			builder.AddJsonFile(configFileName, optional: true);
 			builder.AddEnvironmentVariables("APPSETTING_");
 			var config = builder.Build();
 			var container = new ConfigContainer();
@@ -22,6 +20,11 @@ namespace PopForums.Configuration
 			container.CacheForceLocalOnly = Convert.ToBoolean(config["PopForums:Cache:ForceLocalOnly"]);
 			container.SearchUrl = config["PopForums:Search:Url"];
 			container.SearchKey = config["PopForums:Search:Key"];
+			var searchProvider = config["PopForums:Search:Provider"];
+			container.SearchProvider = searchProvider ?? string.Empty;
+			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
+			var logTopicViews = config["PopForums:LogTopicViews"];
+			container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);
 			return container;
 		} 
 	}

@@ -18,7 +18,7 @@ namespace PopForums.Email
 			// only allow Instance to create a new instance
 		}
 
-		public void SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IErrorLog errorLog)
+		public void SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
 		{
 			if (!Monitor.TryEnter(_syncRoot))
 			{
@@ -29,7 +29,12 @@ namespace PopForums.Email
 				var messageGroup = new List<QueuedEmailMessage>();
 				for (var i = 1; i <= settingsManager.Current.MailerQuantity; i++)
 				{
-					var queuedMessage = queuedEmailRepository.GetOldestQueuedEmailMessage();
+					var payload = emailQueueRepository.Dequeue();
+					if (payload == null)
+						break;
+					if (payload.EmailQueuePayloadType != EmailQueuePayloadType.FullMessage)
+						throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
+					var queuedMessage = queuedEmailRepository.GetMessage(payload.MessageID);
 					if (queuedMessage == null)
 						break;
 					messageGroup.Add(queuedMessage);

@@ -1235,4 +1235,7 @@
   <data name="AppRestartRequired" xml:space="preserve">
     <value>App herstart vereist</value>
   </data>
+  <data name="SearchError" xml:space="preserve">
+    <value>Er is een zoekfout opgetreden</value>
+  </data>
 </root>

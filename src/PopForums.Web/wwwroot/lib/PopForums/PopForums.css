@@ -305,6 +305,11 @@
 	font-style: normal;
 }
 
+.miniProfile a.icon {
+	text-decoration: none !important;
+	margin-right: .5em;
+}
+
 [class^="icon-"], [class*=" icon-"] {
 	font-family: 'pfglyphs' !important;
 	speak: none;

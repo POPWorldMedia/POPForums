@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface IAwardCalculationQueueRepository
 	{
-		void Enqueue(string eventDefinitionID, int userID);
+		void Enqueue(AwardCalculationPayload payload);
 		KeyValuePair<string, int> Dequeue();
 	}
 }

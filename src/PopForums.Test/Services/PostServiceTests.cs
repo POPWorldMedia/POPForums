@@ -25,6 +25,8 @@ namespace PopForums.Test.Services
 		private Mock<IUserService> _userService;
 		private Mock<IFeedService> _feedService;
 		private Mock<ITopicRepository> _topicRepo;
+		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
+		private Mock<ITenantService> _tenantService;
 
 		private PostService GetService()
 		{
@@ -40,8 +42,10 @@ namespace PopForums.Test.Services
 			_userService = new Mock<IUserService>();
 			_feedService = new Mock<IFeedService>();
 			_topicRepo = new Mock<ITopicRepository>();
+			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
+			_tenantService = new Mock<ITenantService>();
 			_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _feedService.Object, _topicRepo.Object);
+			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _feedService.Object, _topicRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
 		}
 
 		[Fact]
@@ -260,15 +264,16 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void EditPostMarksTopicForIndexing()
+		public void EditPostQueuesTopicForIndexing()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123, Name = "dude" };
 			var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999};
+			_tenantService.Setup(x => x.GetTenant()).Returns("");
 
 			service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
-
-			_topicRepo.Verify(x => x.MarkTopicForIndexing(post.TopicID), Times.Once());
+			
+			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]

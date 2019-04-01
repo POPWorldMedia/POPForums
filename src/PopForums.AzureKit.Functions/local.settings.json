@@ -1,0 +1,25 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "PopForums": {
+    "Database": {
+      "ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;"
+    },
+    "Cache": {
+      "Seconds": 180,
+      "ConnectionString": "127.0.0.1:6379,abortConnect=false",
+      "ForceLocalOnly": false
+    },
+    "Search": {
+      "Url": "http://localhost:9200",
+      "Key": "99011A70D3D50D251B0A6141A97B40E7",
+      "Provider": "" 
+    },
+    "Queue": {
+      "ConnectionString": "UseDevelopmentStorage=true"
+    }
+  }
+}

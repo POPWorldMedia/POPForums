@@ -7,18 +7,31 @@
 
 <div class="miniProfile">
 	@PopForums.Resources.Joined: @TimeFormattingService.GetFormattedTime(Model.Joined, profile)<br />
-	@if (!String.IsNullOrWhiteSpace(Model.Location)) {
+	@if (!String.IsNullOrWhiteSpace(Model.Location))
+	{
 		@PopForums.Resources.Location<text>: </text>@Model.Location<br />
 	}
-	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" target="_blank">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br/>
+	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" target="_blank">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
+	@if (!String.IsNullOrWhiteSpace(Model.Facebook))
+	{
+		<a href="https://facebook.com/@Model.Facebook" target="_blank" class="icon"><span class="icon-facebook2"></span></a>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Twitter))
+	{
+		<a href="https://twitter.com/@Model.Twitter" target="_blank" class="icon"><span class="icon-twitter"></span></a>
+	}
+	@if (!String.IsNullOrWhiteSpace(Model.Instagram))
+	{
+		<a href="https://www.instagram.com/@Model.Instagram" target="_blank" class="icon"><span class="icon-instagram"></span></a>
+	}
 	<a asp-action="ViewProfile" asp-route-id="@Model.UserID" target="_blank">Full Profile</a>
 	@if (Model.ShowDetails)
- { @:| 
-		<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@PopForums.Resources.SendPM</a> @:| 
+	{@:|
+		<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@PopForums.Resources.SendPM</a> @:|
 		<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@PopForums.Resources.SendEmailButton</a>
- }
+	}
 	@if (!String.IsNullOrWhiteSpace(Model.Web))
- {
-		<text>| </text><a href="@Model.Web" target="_blank">@PopForums.Resources.WebVisit: @Model.Web</a>
- }
+	{
+		<text>| </text><a href="@Model.Web" target="_blank">@PopForums.Resources.WebVisit</a>
+	}
 </div>

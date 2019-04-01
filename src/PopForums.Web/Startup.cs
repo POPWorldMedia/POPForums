@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using PopForums.AwsKit;
 using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Sql;
@@ -54,8 +55,6 @@ namespace PopForums.Web
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
 			});
-			
-			services.AddSignalR();
 
 			// sets up the dependencies for the base, SQL and web libraries in POP Forums
 			services.AddPopForumsBase();
@@ -66,11 +65,25 @@ namespace PopForums.Web
 			// use Redis cache for POP Forums using AzureKit
 			//services.AddPopForumsRedisCache();
 
+			// required for real-time updating of POP Forums
+			services.AddSignalR();
+			// use this instead of previous line if you need to route SignalR messages
+			// over a Redis backplane for multi-instance host
+			//services.AddSignalR().AddRedisBackplaneForPopForums();
+
 			// use Azure Search for POP Forums using AzureKit
 			//services.AddPopForumsAzureSearch();
 
-			// creates an instance of the background services for POP Forums... call this last in forum setup
-			services.AddPopForumsBackgroundServices();
+			// use ElasticSearch for POP Forums using AwsKit
+			//services.AddPopForumsElasticSearch();
+
+			// use Azure Functions queues for POP Forums using AzureKit for background tasks...
+			// do NOT call AddPopForumsBackgroundServices()
+			services.AddPopForumsAzureFunctionsAndQueues();
+
+			// creates an instance of the background services for POP Forums... call this last in forum setup,
+			// but don't use if you're running these in functions
+			//services.AddPopForumsBackgroundServices();
 		}
 		
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -48,7 +48,7 @@ namespace PopForums.Services
 
 	public class ForumService : IForumService
 	{
-		public ForumService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, ICategoryRepository categoryRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ILastReadService lastReadService, IEventPublisher eventPublisher, IBroker broker)
+		public ForumService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, ICategoryRepository categoryRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ILastReadService lastReadService, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
 		{
 			_forumRepository = forumRepository;
 			_topicRepository = topicRepository;
@@ -60,6 +60,8 @@ namespace PopForums.Services
 			_lastReadService = lastReadService;
 			_eventPublisher = eventPublisher;
 			_broker = broker;
+			_searchIndexQueueRepository = searchIndexQueueRepository;
+			_tenantService = tenantService;
 		}
 
 		private readonly IForumRepository _forumRepository;
@@ -72,6 +74,8 @@ namespace PopForums.Services
 		private readonly ILastReadService _lastReadService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IBroker _broker;
+		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
+		private readonly ITenantService _tenantService;
 
 		public Forum Get(int forumID)
 		{
@@ -263,12 +267,12 @@ namespace PopForums.Services
 				newPost.FullText = _textParsingService.ClientHtmlToHtml(newPost.FullText);
 			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
 			var timeStamp = DateTime.UtcNow;
-			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, false, urlName);
+			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
 			var postID = _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
 			_forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
 			_forumRepository.IncrementPostAndTopicCount(forum.ForumID);
 			_profileRepository.SetLastPostID(user.UserID, postID);
-			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsIndexed = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
+			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 			var topicLink = topicLinkGenerator(topic);
 			var message = String.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
@@ -278,7 +282,7 @@ namespace PopForums.Services
 			forum = _forumRepository.Get(forum.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
-			_topicRepository.MarkTopicForIndexing(topic.TopicID);
+			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			return topic;
 		}
 

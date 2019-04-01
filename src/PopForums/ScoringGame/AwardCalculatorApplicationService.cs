@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Configuration;
+using PopForums.Repositories;
 using PopForums.Services;
 
 namespace PopForums.ScoringGame
@@ -11,15 +12,17 @@ namespace PopForums.ScoringGame
 		{
 			_settingsManager = container.GetService<ISettingsManager>();
 			_awardCalculator = container.GetService<IAwardCalculator>();
+			_awardCalcQueueRepo = container.GetService<IAwardCalculationQueueRepository>();
 			base.Start(container);
 		}
 
 		private ISettingsManager _settingsManager;
 		private IAwardCalculator _awardCalculator;
+		private IAwardCalculationQueueRepository _awardCalcQueueRepo;
 
 		protected override void ServiceAction()
 		{
-			AwardCalculatorWorker.Instance.ProcessCalculation(_awardCalculator, ErrorLog);
+			AwardCalculatorWorker.Instance.ProcessCalculation(_awardCalculator, _awardCalcQueueRepo, ErrorLog);
 		}
 
 		protected override int GetInterval()

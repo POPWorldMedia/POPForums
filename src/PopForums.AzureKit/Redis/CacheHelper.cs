@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using PopForums.Configuration;
+using PopForums.Services;
 using StackExchange.Redis;
 
 namespace PopForums.AzureKit.Redis
@@ -10,15 +11,17 @@ namespace PopForums.AzureKit.Redis
     public class CacheHelper : ICacheHelper
     {
 	    private readonly IErrorLog _errorLog;
+	    private readonly ITenantService _tenantService;
 	    private readonly IConfig _config;
 	    private static ConnectionMultiplexer _cacheConnection;
 	    private static ConnectionMultiplexer _messageConnection;
 		private static IMemoryCache _cache;
 		private const string _removeChannel = "pf.cache.remove";
 
-	    public CacheHelper(IErrorLog errorLog)
+	    public CacheHelper(IErrorLog errorLog, ITenantService tenantService)
 	    {
 		    _errorLog = errorLog;
+		    _tenantService = tenantService;
 		    _config = new Config();
 			// Redis cache
 		    if (_cacheConnection == null)
@@ -42,6 +45,12 @@ namespace PopForums.AzureKit.Redis
 		    }
 	    }
 
+	    private string PrefixTenantOnKey(string key)
+	    {
+		    var tenantID = _tenantService.GetTenant();
+		    return tenantID + key;
+	    }
+
 	    private static void SetupLocalCache()
 	    {
 		    var options = new MemoryCacheOptions();
@@ -54,7 +63,8 @@ namespace PopForums.AzureKit.Redis
 		}
 
 	    public void SetCacheObject(string key, object value, double seconds)
-		{
+	    {
+		    key = PrefixTenantOnKey(key);
 			var timeSpan = TimeSpan.FromSeconds(seconds);
 			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
 			_cache.Set(key, value, options);
@@ -72,6 +82,7 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetLongTermCacheObject(string key, object value)
 		{
+			key = PrefixTenantOnKey(key);
 			var options = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(60) };
 			_cache.Set(key, value, options);
 			try
@@ -88,6 +99,7 @@ namespace PopForums.AzureKit.Redis
 
 	    public void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value)
 		{
+			rootKey = PrefixTenantOnKey(rootKey);
 			_cache.TryGetValue(rootKey, out Dictionary<int, List<T>> rootPages);
 			if (rootPages == null)
 				rootPages = new Dictionary<int, List<T>>();
@@ -101,6 +113,7 @@ namespace PopForums.AzureKit.Redis
 
 		public void RemoveCacheObject(string key)
 		{
+			key = PrefixTenantOnKey(key);
 			_cache.Remove(key);
 			try
 			{
@@ -117,6 +130,7 @@ namespace PopForums.AzureKit.Redis
 
 	    public T GetCacheObject<T>(string key)
 		{
+			key = PrefixTenantOnKey(key);
 			var cacheObject = _cache.Get(key);
 			if (cacheObject != null)
 				return (T)cacheObject;
@@ -141,6 +155,7 @@ namespace PopForums.AzureKit.Redis
 
 	    public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
 		{
+			rootKey = PrefixTenantOnKey(rootKey);
 			Dictionary<int, List<T>> rootPages;
 			_cache.TryGetValue(rootKey, out rootPages);
 			if (rootPages == null)

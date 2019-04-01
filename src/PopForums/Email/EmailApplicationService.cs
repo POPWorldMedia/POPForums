@@ -13,16 +13,18 @@ namespace PopForums.Email
 			_settingsManager = serviceProvider.GetService<ISettingsManager>();
 			_smtpWrapper = serviceProvider.GetService<ISmtpWrapper>();
 			_queuedEmailRepository = serviceProvider.GetService<IQueuedEmailMessageRepository>();
+			_emailQueueRepository = serviceProvider.GetService<IEmailQueueRepository>();
 			base.Start(serviceProvider);
 		}
 
 		private ISettingsManager _settingsManager;
 		private ISmtpWrapper _smtpWrapper;
 		private IQueuedEmailMessageRepository _queuedEmailRepository;
+		private IEmailQueueRepository _emailQueueRepository;
 
 		protected override void ServiceAction()
 		{
-			MailWorker.Instance.SendQueuedMessages(_settingsManager, _smtpWrapper, _queuedEmailRepository, ErrorLog);
+			MailWorker.Instance.SendQueuedMessages(_settingsManager, _smtpWrapper, _queuedEmailRepository, _emailQueueRepository, ErrorLog);
 		}
 
 		protected override int GetInterval()
