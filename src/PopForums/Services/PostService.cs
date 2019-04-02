@@ -187,6 +187,8 @@ namespace PopForums.Services
 
 		public void EditPost(Post post, PostEdit postEdit, User editingUser)
 		{
+			// TODO: text parsing is controller for new topic and replies, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
+			// TODO: also not checking for empty posts
 			var oldText = post.FullText;
 			post.Title = _textParsingService.Censor(postEdit.Title);
 			if (postEdit.IsPlainText)

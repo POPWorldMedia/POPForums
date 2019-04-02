@@ -261,10 +261,7 @@ namespace PopForums.Services
 			if (!permissionContext.UserCanPost || !permissionContext.UserCanView)
 				throw new Exception(String.Format("User {0} can't post to forum {1}.", user.Name, forum.Title));
 			newPost.Title = _textParsingService.Censor(newPost.Title);
-			if (newPost.IsPlainText)
-				newPost.FullText = _textParsingService.ForumCodeToHtml(newPost.FullText);
-			else
-				newPost.FullText = _textParsingService.ClientHtmlToHtml(newPost.FullText);
+			// TODO: text parsing is controller, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
 			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
 			var timeStamp = DateTime.UtcNow;
 			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);

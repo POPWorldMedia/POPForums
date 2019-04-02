@@ -393,5 +393,13 @@ namespace PopForums.Test.Services
 			var result = service.ForumCodeToHtml("(and [url=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\"]'millennium' is spelled with two n's[/url] regardless of whether the new one starts in 2000 or 2001.)");
 			Assert.Equal("<p>(and <a href=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\" target=\"_blank\">'millennium' is spelled with two n's</a> regardless of whether the new one starts in 2000 or 2001.)</p>", result);
 		}
+
+		[Fact]
+		public void DontParagraphAnEmptyString()
+		{
+			var service = GetService();
+			var result = service.CleanForumCodeToHtml(string.Empty);
+			Assert.Equal(result, string.Empty);
+		}
 	}
 }

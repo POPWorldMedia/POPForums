@@ -374,8 +374,8 @@ namespace PopForums.Services
 
 			// line breaks and block elements
 			text = Regex.Replace(text, @"(\r\n){3,}", "\r\n\r\n");
-			if (!text.StartsWith("[quote]")) text = "<p>" + text;
-			if (!text.EndsWith("[/quote]")) text += "</p>";
+			if (!text.StartsWith("[quote]") && !string.IsNullOrWhiteSpace(text)) text = "<p>" + text;
+			if (!text.EndsWith("[/quote]") && !string.IsNullOrWhiteSpace(text)) text += "</p>";
 			text = text.Replace("[quote]", "<blockquote>");
 			text = text.Replace("[/quote]", "</blockquote>");
 			text = Regex.Replace(text, @"(?<!(</blockquote>))\r\n\r\n(?!(<p>|<blockquote>|</blockquote>))", "</p><p>", RegexOptions.IgnoreCase);

@@ -27,6 +27,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void RemoveEmptyLinesWithOnlySpace()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p>&nbsp;</p>\r\n<p>&nbsp;</p>");
+			Assert.Equal(result, string.Empty);
+		}
+
+		[Fact]
 		public void DitchStartAndEndPara()
 		{
 			var service = GetService();
