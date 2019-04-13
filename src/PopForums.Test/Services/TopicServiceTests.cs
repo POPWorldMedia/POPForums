@@ -138,10 +138,9 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 			var newPost = new NewPost {FullText = "mah text", Title = "mah title", IncludeSignature = true};
-			_textParser.Setup(t => t.ClientHtmlToHtml(newPost.FullText)).Returns("parsed text");
 			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
 			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", It.IsAny<Func<User, string>>(), "", x => "");
-			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "mah text", postTime, false, user.Name, null, false, 0));
 		}
 
 		[Fact]
@@ -155,36 +154,6 @@ namespace PopForums.Test.Services
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
 			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
 			_subService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, string>>()), Times.Once());
-		}
-
-		[Fact]
-		public void PostReplyHitsTextParserRichText()
-		{
-			var topic = new Topic { TopicID = 1 };
-			var user = GetUser();
-			var postTime = DateTime.UtcNow;
-			var topicService = GetTopicService();
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, IsPlainText = false };
-			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-			_textParser.Verify(t => t.Censor("mah title"), Times.Once());
-			_textParser.Verify(t => t.ClientHtmlToHtml("mah text"), Times.Once());
-			_textParser.Verify(t => t.ForumCodeToHtml("mah text"), Times.Exactly(0));
-		}
-
-		[Fact]
-		public void PostReplyHitsTextParserPlainText()
-		{
-			var topic = new Topic { TopicID = 1 };
-			var user = GetUser();
-			var postTime = DateTime.UtcNow;
-			var topicService = GetTopicService();
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, IsPlainText = true };
-			topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-			_textParser.Verify(t => t.Censor("mah title"), Times.Once());
-			_textParser.Verify(t => t.ClientHtmlToHtml("mah text"), Times.Exactly(0));
-			_textParser.Verify(t => t.ForumCodeToHtml("mah text"), Times.Once());
 		}
 
 		[Fact]
@@ -319,12 +288,11 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).Returns(123);
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
 			var post = topicService.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
 			Assert.Equal(topic.TopicID, post.TopicID);
-			Assert.Equal("parsed text", post.FullText);
+			Assert.Equal("mah text", post.FullText);
 			Assert.Equal("127.0.0.1", post.IP);
 			Assert.False(post.IsDeleted);
 			Assert.False(post.IsEdited);

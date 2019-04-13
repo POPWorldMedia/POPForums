@@ -477,46 +477,6 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void PostNewTopicCallsTextParserRichText()
-		{
-			var forum = new Forum { ForumID = 1 };
-			var user = GetUser();
-			const string ip = "127.0.0.1";
-			const string title = "mah title";
-			const string text = "mah text";
-			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
-			var topicService = GetService();
-			_mockForumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
-			_mockTopicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
-			_mockTextParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
-			_mockTextParser.Verify(t => t.Censor("mah title"), Times.Once());
-			_mockTextParser.Verify(t => t.ClientHtmlToHtml("mah text"), Times.Once());
-			_mockTextParser.Verify(t => t.ForumCodeToHtml("mah text"), Times.Exactly(0));
-		}
-
-		[Fact]
-		public void PostNewTopicCallsTextParserPlainText()
-		{
-			var forum = new Forum { ForumID = 1 };
-			var user = GetUser();
-			const string ip = "127.0.0.1";
-			const string title = "mah title";
-			const string text = "mah text";
-			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = true };
-			var topicService = GetService();
-			_mockForumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
-			_mockTopicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
-			_mockTextParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_mockTextParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
-			_mockTextParser.Verify(t => t.Censor("mah title"), Times.Once());
-			_mockTextParser.Verify(t => t.ClientHtmlToHtml("mah text"), Times.Exactly(0));
-			_mockTextParser.Verify(t => t.ForumCodeToHtml("mah text"), Times.Exactly(1));
-		}
-
-		[Fact]
 		public void PostNewTopicCallsForumTopicPostIncrement()
 		{
 			DoUpNewTopic();

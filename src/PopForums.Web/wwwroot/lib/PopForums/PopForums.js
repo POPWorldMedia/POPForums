@@ -41,7 +41,7 @@ PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
 
 PopForums.editorSettings = {
-	theme: "modern",
+	theme: "silver",
 	plugins: "paste lists image link",
 	content_css: PopForums.editorCSS,
 	menubar: false,
@@ -52,7 +52,9 @@ PopForums.editorSettings = {
 	image_description: false,
 	image_dimensions: false,
 	browser_spellcheck : true,
-	object_resizing: false
+	object_resizing: false,
+	relative_urls: false,
+	remove_script_host: false
 };
 
 PopForums.checkScroll = function () {

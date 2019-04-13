@@ -16,7 +16,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class ForumController : Controller
 	{
-		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService)
+		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService)
 		{
 			_settingsManager = settingsManager;
 			_forumService = forumService;
@@ -29,6 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_profileService = profileService;
 			_userRetrievalShim = userRetrievalShim;
 			_topicViewLogService = topicViewLogService;
+			_textParsingService = textParsingService;
 		}
 
 		public static string Name = "Forum";
@@ -44,6 +45,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IProfileService _profileService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly ITopicViewLogService _topicViewLogService;
+		private readonly ITextParsingService _textParsingService;
 
 		public ActionResult Index(string urlName, int page = 1)
 		{
@@ -108,6 +110,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
 			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, user))
 				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
+			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
 			if (String.IsNullOrWhiteSpace(newPost.FullText) || String.IsNullOrWhiteSpace(newPost.Title))
 				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 
@@ -323,6 +326,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
 			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, user))
 				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
+			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
 			if (String.IsNullOrEmpty(newPost.FullText))
 				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 			if (newPost.ParentPostID != 0)
@@ -470,7 +474,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		// TODO: test validate [ValidateInput(false)]
 		public ActionResult Edit(int id, PostEdit postEdit)
 		{
 			var post = _postService.Get(id);
