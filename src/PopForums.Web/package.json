@@ -8,8 +8,8 @@
     "jquery": "3.3.1",
     "popper.js": "1.14.6",
     "tinymce": "5.0.3",
-    "vue": "2.5.22",
-    "vue-router": "3.0.2"
+    "vue": "2.6.10",
+    "vue-router": "3.0.4"
   },
   "devDependencies": {
     "gulp": "4.0.0",

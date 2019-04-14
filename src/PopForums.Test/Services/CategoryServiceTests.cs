@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Moq;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -66,6 +67,15 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void DeleteByIdThrowsIfNotFound()
+		{
+			var service = GetService();
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category) null);
+
+			Assert.Throws<Exception>(() => service.Delete(1));
+		}
+
+		[Fact]
 		public void DeleteResetsForumCatIDsToNull()
 		{
 			var service = GetService();
@@ -93,6 +103,15 @@ namespace PopForums.Test.Services
 			Assert.Equal("new", savedCategory.Title);
 			Assert.Equal(123, savedCategory.CategoryID);
 			Assert.Equal(456, savedCategory.SortOrder);
+		}
+
+		[Fact]
+		public void UpdateTitleByIdThrowsIfNotFound()
+		{
+			var service = GetService();
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+
+			Assert.Throws<Exception>(() => service.UpdateTitle(1, ""));
 		}
 
 		[Fact]
@@ -139,6 +158,24 @@ namespace PopForums.Test.Services
 			Assert.Equal(2, cat2.SortOrder);
 			Assert.Equal(4, cat4.SortOrder);
 			Assert.Equal(6, cat3.SortOrder);
+		}
+
+		[Fact]
+		public void MoveUpByIdThrowsIfNotFound()
+		{
+			var service = GetService();
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+
+			Assert.Throws<Exception>(() => service.MoveCategoryUp(1));
+		}
+
+		[Fact]
+		public void MoveDownByIdThrowsIfNotFound()
+		{
+			var service = GetService();
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+
+			Assert.Throws<Exception>(() => service.MoveCategoryDown(1));
 		}
 	}
 }

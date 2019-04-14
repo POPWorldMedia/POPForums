@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -10,8 +11,12 @@ namespace PopForums.Services
 		Category Get(int categoryID);
 		List<Category> GetAll();
 		Category Create(string title);
+		void Delete(int categoryID);
 		void Delete(Category category);
+		void UpdateTitle(int categoryID, string newTitle);
 		void UpdateTitle(Category category, string newTitle);
+		void MoveCategoryUp(int categoryID);
+		void MoveCategoryDown(int categoryID);
 		void MoveCategoryUp(Category category);
 		void MoveCategoryDown(Category category);
 	}
@@ -45,12 +50,28 @@ namespace PopForums.Services
 			return newCategory;
 		}
 
+		public void Delete(int categoryID)
+		{
+			var category = _categoryRepository.Get(categoryID);
+			if (category == null)
+				throw new Exception($"Category with ID {categoryID} does not exist.");
+			Delete(category);
+		}
+
 		public void Delete(Category category)
 		{
 			var forums = _forumRepository.GetAll().Where(f => f.CategoryID == category.CategoryID);
 			foreach (var forum in forums)
 				_forumRepository.UpdateCategoryAssociation(forum.ForumID, null);
 			_categoryRepository.Delete(category.CategoryID);
+		}
+
+		public void UpdateTitle(int categoryID, string newTitle)
+		{
+			var category = _categoryRepository.Get(categoryID);
+			if (category == null)
+				throw new Exception($"Category with ID {categoryID} does not exist.");
+			UpdateTitle(category, newTitle);
 		}
 
 		public void UpdateTitle(Category category, string newTitle)
@@ -70,6 +91,22 @@ namespace PopForums.Services
 				sorted[i].SortOrder = i * 2;
 				_categoryRepository.Update(sorted[i]);
 			}
+		}
+
+		public void MoveCategoryUp(int categoryID)
+		{
+			var category = _categoryRepository.Get(categoryID);
+			if (category == null)
+				throw new Exception($"Can't move CategoryID {categoryID} up because it does not exist.");
+			MoveCategoryUp(category);
+		}
+
+		public void MoveCategoryDown(int categoryID)
+		{
+			var category = _categoryRepository.Get(categoryID);
+			if (category == null)
+				throw new Exception($"Can't move CategoryID {categoryID} down because it does not exist.");
+			MoveCategoryDown(category);
 		}
 
 		public void MoveCategoryUp(Category category)

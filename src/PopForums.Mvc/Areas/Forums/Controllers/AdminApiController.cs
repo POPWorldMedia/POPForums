@@ -22,9 +22,51 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_categoryService = categoryService;
 		}
 
+		// ********** categories
+
 		[HttpGet]
 		public ActionResult<List<Category>> GetCategories()
 		{
+			var categories = _categoryService.GetAll();
+			return categories;
+		}
+
+		[HttpPost]
+		public ActionResult<List<Category>> AddCategory(string title)
+		{
+			_categoryService.Create(title);
+			var categories = _categoryService.GetAll();
+			return categories;
+		}
+
+		[HttpPost]
+		public ActionResult<List<Category>> DeleteCategory(int id)
+		{
+			_categoryService.Delete(id);
+			var categories = _categoryService.GetAll();
+			return categories;
+		}
+
+		[HttpPost]
+		public ActionResult<List<Category>> MoveCategoryUp(int id)
+		{
+			_categoryService.MoveCategoryUp(id);
+			var categories = _categoryService.GetAll();
+			return categories;
+		}
+
+		[HttpPost]
+		public ActionResult<List<Category>> MoveCategoryDown(int id)
+		{
+			_categoryService.MoveCategoryDown(id);
+			var categories = _categoryService.GetAll();
+			return categories;
+		}
+
+		[HttpPost]
+		public ActionResult<List<Category>> EditCategory(int categoryID, string newTitle)
+		{
+			_categoryService.UpdateTitle(categoryID, newTitle);
 			var categories = _categoryService.GetAll();
 			return categories;
 		}
