@@ -232,8 +232,8 @@
 	<main>
 		<h2>@PopForums.Resources.Categories</h2>
 		<div class="form-inline">
-			<input type="text" v-model="newCategory" class="form-control" />
-			<input type="button" v-on:click="saveNew" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3" />
+			<input type="text" v-model="newCategory" class="form-control mb-3" />
+			<input type="button" v-on:click="saveNew" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
 		</div>
 		<table class="table table-hover table-sm mt-3">
 			<tbody>
@@ -241,7 +241,7 @@
 					<td>{{category.title}}</td>
 					<td><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
 					<td><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
-					<td>
+					<td class="text-nowrap">
 						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
 						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
 					</td>
