@@ -1,0 +1,356 @@
+﻿@{
+    Layout = null;
+	var timeZones = DataCollections.TimeZones();
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<title>@PopForums.Resources.PopForumsAdmin</title>
+	<script src="~/lib/vue/dist/vue.js"></script>
+	<script src="~/lib/vue-router/dist/vue-router.min.js"></script>
+	<script src="~/lib/popper.js/dist/popper.min.js"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/axios/dist/axios.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="container">
+		<div id="app">
+			<div class="dropdown mb-3">
+				<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					@PopForums.Resources.PopForumsAdmin
+				</a>
+				<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+					<a class="dropdown-item" asp-action="Index" asp-controller="Home">@PopForums.Resources.ForumHome</a>
+					<div class="dropdown-divider"></div>
+					<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
+					<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
+					<a class="dropdown-item" asp-action="Forums">@PopForums.Resources.Forums</a>
+					<a class="dropdown-item" asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a>
+					<a class="dropdown-item" asp-action="Email">@PopForums.Resources.Email</a>
+					<a class="dropdown-item" asp-action="Search">@PopForums.Resources.Search</a>
+					<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
+					<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
+					<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
+					<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
+					<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
+					<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
+					<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
+					<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
+					<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
+					<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
+					<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
+					<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
+				</div>
+			</div>
+
+			<router-view></router-view>
+		</div>
+	</div>
+
+<script type="x-templates" id="General">
+	<main>
+		<h2>@PopForums.Resources.GeneralSettings</h2>
+		<div>
+			<h3>@PopForums.Resources.ForumSettings</h3>
+			<div class="form-group row">
+				<label for="ForumTitle" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-8"><input type="text" v-model="settings.forumTitle" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="TopicsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.TopicsPerPage</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.topicsPerPage" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="PostsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.PostsPerPage</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.postsPerPage" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="SessionLength" class="col-sm-4 col-form-label">@PopForums.Resources.SessionLength</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.sessionLength" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="MinimumSecondsBetweenPosts" class="col-sm-4 col-form-label">@PopForums.Resources.MinimumTimeBetweenPosts</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.minimumSecondsBetweenPosts" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="IsNewUserApproved"><input type="checkbox" v-model="settings.isNewUserApproved" id="IsNewUserApproved" /> @PopForums.Resources.NewUserApprovedWithoutVerification</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="IsNewUserImageApproved"><input type="checkbox" v-model="settings.isNewUserImageApproved" id="IsNewUserImageApproved" /> @PopForums.Resources.NewUserImageApprovedWithoutMod</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-4 col-form-label">@PopForums.Resources.UserImageMaxDim</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userImageMaxHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userImageMaxWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="input-group col-sm-8">
+						<input type="text" v-model="settings.userImageMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
+						<div class="input-group-append">
+							<div class="input-group-text">kB</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-4 control-label">@PopForums.Resources.UserAvatarMaxDim</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userAvatarMaxHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userAvatarMaxWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="input-group col-sm-8">
+						<input type="text" v-model="settings.userAvatarMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
+						<div class="input-group-append">
+							<div class="input-group-text">kB</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-4 control-label">YouTube</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.youTubeHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.youTubeWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.Parsing</h3>
+
+			<div class="form-group row">
+				<label for="CensorWords" class="col-sm-4 col-form-label">@PopForums.Resources.CensorWords</label>
+				<div class="col-sm-8"><textarea class="form-control" rows="3" v-model="settings.censorWords"></textarea></div>
+			</div>
+			<div class="form-group row">
+				<label for="CensorCharacter" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-3"><input type="text" v-model="settings.censorCharacter" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="AllowImages"><input type="checkbox" v-model="settings.allowImages" id="AllowImages" /> @PopForums.Resources.AllowImages / YouTube</label></div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.Logging</h3>
+
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogSecurity"><input type="checkbox" v-model="settings.logSecurity" id="LogSecurity" /> @PopForums.Resources.LogSecurity</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogModeration"><input type="checkbox" v-model="settings.logModeration" id="LogModeration" /> @PopForums.Resources.LogMod</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogErrors"><input type="checkbox" v-model="settings.logErrors" id="LogErrors" /> @PopForums.Resources.LogErrors</label></div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.ServerTime</h3>
+
+			<div class="form-group row">
+				<label for="ServerTimeZone" class="col-sm-4 col-form-label">@PopForums.Resources.TimeZone</label>
+				<div class="col-sm-8">
+					<select id="ServerTimeZone" v-model="settings.serverTimeZone" class="form-control">
+						@foreach (var i in timeZones)
+						{
+							<option value="@i.Key">@i.Value</option>}
+				</select>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-8 offset-sm-4">
+				<div class="checkbox"><label for="ServerDaylightSaving"><input type="checkbox" v-model="settings.serverDaylightSaving" id="ServerDaylightSaving" /> @PopForums.Resources.UseDaylight</label></div>
+			</div>
+		</div>
+
+		<h3>@PopForums.Resources.TermsOfService</h3>
+
+		<div class="form-group row">
+			<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
+		</div>
+
+		<input type="button" v-on:click="save" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="Categories">
+	<main>
+		<h2>@PopForums.Resources.Categories</h2>
+		<div class="form-inline">
+			<input type="text" v-model="newCategory" class="form-control" />
+			<input type="button" v-on:click="saveNew" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3" />
+		</div>
+		<table class="table table-hover table-sm mt-3">
+			<tbody>
+				<tr v-for="(category, index) in categories">
+					<td>{{category.title}}</td>
+					<td><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
+					<td><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
+					<td>
+						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
+						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<input type="text" v-model="editCategory" class="form-control" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveCat">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+	</script>
+
+<script>
+	const basePath = "../../adminapi/";
+
+	const General = {
+		template: "#General",
+		data() {
+			return {
+				settings: {}
+			}
+		},
+		mounted: function() {
+			axios.get(basePath + "GetSettings").then(response => (this.settings = response.data));
+		},
+		methods: {
+			save: function () {
+				axios.post(basePath + "SaveSettings", this.settings).then(response => (this.settings = response.data));
+			}
+		}
+	}
+
+	const Categories = {
+		template: "#Categories",
+		data() {
+			return {
+				categories: [],
+				newCategory: "",
+				editCategory: "",
+				editID: 0
+			}
+		},
+		mounted: function () {
+			axios.get(basePath + "GetCategories").then(response => (this.categories = response.data));
+		},
+		methods: {
+			saveNew: function () {
+				axios.post(basePath + "AddCategory", { title: this.newCategory }).then(response => (this.categories = response.data));
+				this.newCategory = "";
+			},
+			deleteCat: function(item) {
+				axios.post(basePath + "DeleteCategory/" + item.categoryID).then(response => (this.categories = response.data));
+			},
+			up: function(item) {
+				axios.post(basePath + "MoveCategoryUp/" + item.categoryID).then(response => (this.categories = response.data));
+			},
+			down: function(item) {
+				axios.post(basePath + "MoveCategoryDown/" + item.categoryID).then(response => (this.categories = response.data));
+			},
+			editCat: function (item) {
+				this.editCategory = item.title;
+				this.editID = item.categoryID;
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			saveCat: function() {
+				axios.post(basePath + "EditCategory", { categoryID: this.editID, title: this.editCategory })
+					.then(response => {
+						this.categories = response.data;
+						const e = this.$refs.modal;
+						$(e).modal("hide");
+				});
+			}
+		}
+	}
+
+	const routes = [
+		{ path: '/General', component: General },
+		{ path: '/Categories', component: Categories }
+	];
+
+	const router = new VueRouter({
+		routes: routes,
+		mode: 'history',
+		base: '/forums/admin/app/'
+	});
+
+	const app = new Vue({
+		router
+	}).$mount('#app');
+
+	Vue.config.devtools = true;
+
+</script>
+
+</body>
+</html>
