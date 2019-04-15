@@ -54,7 +54,11 @@ PopForums.editorSettings = {
 	browser_spellcheck : true,
 	object_resizing: false,
 	relative_urls: false,
-	remove_script_host: false
+	remove_script_host: false,
+	contextmenu: "",
+	mobile: {
+		theme: "silver"
+	}
 };
 
 PopForums.checkScroll = function () {
