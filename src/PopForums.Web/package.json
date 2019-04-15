@@ -9,7 +9,8 @@
     "popper.js": "1.14.6",
     "tinymce": "5.0.3",
     "vue": "2.6.10",
-    "vue-router": "3.0.4"
+    "vue-router": "3.0.4",
+    "axios": "0.18.0"
   },
   "devDependencies": {
     "gulp": "4.0.0",

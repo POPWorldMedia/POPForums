@@ -10,6 +10,7 @@ namespace PopForums.Configuration
 		Settings Current { get; }
 		void SaveCurrent();
 		void FlushCurrent();
+		void Save(Settings settings);
 		void SaveCurrent(Dictionary<string, object> dictionary);
 		bool IsLoaded();
 	}
@@ -80,6 +81,12 @@ namespace PopForums.Configuration
 			}
 			_settings = settings;
 			_lastLoad = DateTime.UtcNow;
+		}
+
+		public void Save(Settings settings)
+		{
+			_settings = settings;
+			SaveCurrent();
 		}
 
 		public void SaveCurrent(Dictionary<string, object> dictionary)

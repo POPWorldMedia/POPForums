@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Services;
@@ -13,33 +12,53 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Authorize(Policy = PermanentRoles.Admin, AuthenticationSchemes = PopForumsAuthorizationDefaults.AuthenticationScheme)]
 	[Area("Forums")]
 	[Produces("application/json")]
+	[ApiController]
 	public class AdminApiController : ControllerBase
 	{
+		private readonly ISettingsManager _settingsManager;
 		private readonly ICategoryService _categoryService;
 
-		public AdminApiController(ICategoryService categoryService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService)
 		{
+			_settingsManager = settingsManager;
 			_categoryService = categoryService;
+		}
+
+		// ********** settings
+
+		[HttpGet("/Forums/AdminApi/GetSettings")]
+		public ActionResult<Settings> GetSettings()
+		{
+			var settings = _settingsManager.Current;
+			return settings;
+		}
+
+		[HttpPost("/Forums/AdminApi/SaveSettings")]
+		public ActionResult<Settings> SaveSettings([FromBody]Settings settings)
+		{
+			_settingsManager.Save(settings);
+			var newSettings = _settingsManager.Current;
+			return newSettings;
 		}
 
 		// ********** categories
 
-		[HttpGet]
+		[HttpGet("/Forums/AdminApi/GetCategories")]
 		public ActionResult<List<Category>> GetCategories()
 		{
 			var categories = _categoryService.GetAll();
 			return categories;
 		}
 
-		[HttpPost]
-		public ActionResult<List<Category>> AddCategory(string title)
+		[HttpPost("/Forums/AdminApi/AddCategory")]
+		public ActionResult<List<Category>> AddCategory([FromBody]Category category)
 		{
-			_categoryService.Create(title);
+			_categoryService.Create(category.Title);
 			var categories = _categoryService.GetAll();
 			return categories;
 		}
 
-		[HttpPost]
+		[HttpPost("/Forums/AdminApi/DeleteCategory/{id}")]
 		public ActionResult<List<Category>> DeleteCategory(int id)
 		{
 			_categoryService.Delete(id);
@@ -47,7 +66,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return categories;
 		}
 
-		[HttpPost]
+		[HttpPost("/Forums/AdminApi/MoveCategoryUp/{id}")]
 		public ActionResult<List<Category>> MoveCategoryUp(int id)
 		{
 			_categoryService.MoveCategoryUp(id);
@@ -55,7 +74,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return categories;
 		}
 
-		[HttpPost]
+		[HttpPost("/Forums/AdminApi/MoveCategoryDown/{id}")]
 		public ActionResult<List<Category>> MoveCategoryDown(int id)
 		{
 			_categoryService.MoveCategoryDown(id);
@@ -63,10 +82,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return categories;
 		}
 
-		[HttpPost]
-		public ActionResult<List<Category>> EditCategory(int categoryID, string newTitle)
+		[HttpPost("/Forums/AdminApi/EditCategory")]
+		public ActionResult<List<Category>> EditCategory([FromBody]Category category)
 		{
-			_categoryService.UpdateTitle(categoryID, newTitle);
+			_categoryService.UpdateTitle(category.CategoryID, category.Title);
 			var categories = _categoryService.GetAll();
 			return categories;
 		}
