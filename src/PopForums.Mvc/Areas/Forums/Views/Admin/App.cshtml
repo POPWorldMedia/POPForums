@@ -321,7 +321,7 @@
 				settings: {},
 				alert: false,
 				message: ""
-		}
+			}
 		},
 		props: {
 			loading: Boolean
@@ -411,24 +411,25 @@
 
 	const routes = [
 		{
-			path: "/", component: Top, redirect: "/General",
+			path: "/", component: Top, redirect: "/general",
 			children: [
-				{ path: "/General", component: General },
-				{ path: "/Categories", component: Categories },
-				{ path: "/Forums", component: Forums}
+				{ path: "/general", component: General },
+				{ path: "/categories", component: Categories },
+				{ path: "/forums", component: Forums}
 			]
 		}
 	];
 
 	const router = new VueRouter({
+		caseSensitive: false,
 		routes: routes,
-		mode: 'history',
-		base: '/forums/admin/app/'
+		mode: "history",
+		base: "/forums/admin/app/"
 	});
 
 	const app = new Vue({
 		router
-	}).$mount('#app');
+	}).$mount("#app");
 
 	Vue.config.devtools = true;
 
