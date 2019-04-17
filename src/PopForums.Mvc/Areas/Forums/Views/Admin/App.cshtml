@@ -16,9 +16,17 @@
 	<script src="~/lib/axios/dist/axios.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<style>
+		.fade-enter-active, .fade-leave-active {
+			transition: opacity .5s;
+		}
+		.fade-enter, .fade-leave-to {
+			opacity: 0;
+		}
+	</style>
 </head>
 <body>
-	<div class="container">
+	<div class="container mb-3">
 		<div id="app">
 			<router-view></router-view>
 		</div>
@@ -233,6 +241,8 @@
 		</div>
 
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+
 		</div>
 	</main>
 </script>
@@ -308,10 +318,14 @@
 		template: "#General",
 		data() {
 			return {
-				settings: {}
-			}
+				settings: {},
+				alert: false,
+				message: ""
+		}
 		},
-		props: ["loading"],
+		props: {
+			loading: Boolean
+		},
 		mounted: function () {
 			axios.get(basePath + "GetSettings").then(response => {
 				this.settings = response.data;
@@ -324,7 +338,14 @@
 				axios.post(basePath + "SaveSettings", this.settings).then(response => {
 					this.settings = response.data;
 					this.$emit("setLoading", false);
+					this.showAlert("@PopForums.Resources.SettingsSaved");
 				});
+			},
+			showAlert: function(message) {
+				this.alert = true;
+				this.message = message;
+				var c = this;
+				setTimeout(function() { c.alert = false; }, 5000);
 			}
 		}
 	}
