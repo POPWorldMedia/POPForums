@@ -20,43 +20,52 @@
 <body>
 	<div class="container">
 		<div id="app">
-			<div class="dropdown mb-3">
-				<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					@PopForums.Resources.PopForumsAdmin
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-					<a class="dropdown-item" asp-action="Index" asp-controller="Home">@PopForums.Resources.ForumHome</a>
-					<div class="dropdown-divider"></div>
-					<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
-					<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
-					<a class="dropdown-item" asp-action="Forums">@PopForums.Resources.Forums</a>
-					<a class="dropdown-item" asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a>
-					<a class="dropdown-item" asp-action="Email">@PopForums.Resources.Email</a>
-					<a class="dropdown-item" asp-action="Search">@PopForums.Resources.Search</a>
-					<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
-					<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
-					<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
-					<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
-					<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
-					<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
-					<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
-					<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
-					<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
-					<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
-					<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
-					<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
-				</div>
-			</div>
-
 			<router-view></router-view>
 		</div>
 	</div>
+
+<script type="x-templates" id="Top">
+	<main>
+		<div v-show="loading" class="spinner-border text-primary float-right ml-3 mt-1" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+		<div class="dropdown mb-3">
+			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				@PopForums.Resources.PopForumsAdmin
+			</a>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+				<a class="dropdown-item" asp-action="Index" asp-controller="Home">@PopForums.Resources.ForumHome</a>
+				<div class="dropdown-divider"></div>
+				<router-link to="/General" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
+				<router-link to="/Categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
+				<router-link to="/Forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
+				<a class="dropdown-item" asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a>
+				<a class="dropdown-item" asp-action="Email">@PopForums.Resources.Email</a>
+				<a class="dropdown-item" asp-action="Search">@PopForums.Resources.Search</a>
+				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
+				<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
+				<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
+				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
+				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
+				<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
+				<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
+				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
+				<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
+				<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
+				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
+				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
+			</div>
+		</div>
+
+		<router-view v-on:setLoading="setLoading($event)" v-bind:loading="loading"></router-view>
+	</main>
+</script>
 
 <script type="x-templates" id="General">
 	<main>
@@ -223,7 +232,7 @@
 			<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
 		</div>
 
-		<input type="button" v-on:click="save" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		</div>
 	</main>
 </script>
@@ -267,10 +276,33 @@
 			</div>
 		</div>
 	</main>
-	</script>
+</script>
+
+<script type="x-templates" id="Forums">
+	<main>
+		<h2>@PopForums.Resources.Forums</h2>
+	</main>
+</script>
 
 <script>
 	const basePath = "../../adminapi/";
+
+	const Top = {
+		template: "#Top",
+		data() {
+			return {
+				loading: true
+			}
+		},
+		mounted: function() {
+
+		},
+		methods: {
+			setLoading: function(isLoading) {
+				this.loading = isLoading;
+			}
+		}
+	}
 
 	const General = {
 		template: "#General",
@@ -279,12 +311,20 @@
 				settings: {}
 			}
 		},
-		mounted: function() {
-			axios.get(basePath + "GetSettings").then(response => (this.settings = response.data));
+		props: ["loading"],
+		mounted: function () {
+			axios.get(basePath + "GetSettings").then(response => {
+				this.settings = response.data;
+				this.$emit("setLoading", false);
+			});
 		},
 		methods: {
 			save: function () {
-				axios.post(basePath + "SaveSettings", this.settings).then(response => (this.settings = response.data));
+				this.$emit("setLoading", true);
+				axios.post(basePath + "SaveSettings", this.settings).then(response => {
+					this.settings = response.data;
+					this.$emit("setLoading", false);
+				});
 			}
 		}
 	}
@@ -333,9 +373,30 @@
 		}
 	}
 
+	const Forums = {
+		template: "#Forums",
+		data() {
+			return {
+
+			}
+		},
+		mounted: function() {
+
+		},
+		methods: {
+
+		}
+	}
+
 	const routes = [
-		{ path: '/General', component: General },
-		{ path: '/Categories', component: Categories }
+		{
+			path: "/", component: Top, redirect: "/General",
+			children: [
+				{ path: "/General", component: General },
+				{ path: "/Categories", component: Categories },
+				{ path: "/Forums", component: Forums}
+			]
+		}
 	];
 
 	const router = new VueRouter({
