@@ -417,7 +417,8 @@
 				{ path: "/categories", component: Categories },
 				{ path: "/forums", component: Forums}
 			]
-		}
+		},
+		{ path: "*", redirect: "/general" }
 	];
 
 	const router = new VueRouter({
