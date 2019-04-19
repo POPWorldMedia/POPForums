@@ -42,11 +42,11 @@
 				@PopForums.Resources.PopForumsAdmin
 			</a>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-				<a class="dropdown-item" asp-action="Index" asp-controller="Home">@PopForums.Resources.ForumHome</a>
+				<a class="dropdown-item" href="/Forums">@PopForums.Resources.ForumHome</a>
 				<div class="dropdown-divider"></div>
-				<router-link to="/General" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
-				<router-link to="/Categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
-				<router-link to="/Forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
+				<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
+				<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
+				<router-link to="/forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
 				<a class="dropdown-item" asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a>
 				<a class="dropdown-item" asp-action="Email">@PopForums.Resources.Email</a>
 				<a class="dropdown-item" asp-action="Search">@PopForums.Resources.Search</a>
@@ -252,15 +252,15 @@
 		<h2>@PopForums.Resources.Categories</h2>
 		<div class="form-inline">
 			<input type="text" v-model="newCategory" class="form-control mb-3" />
-			<input type="button" v-on:click="saveNew" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
+			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
 		</div>
 		<table class="table table-hover table-sm mt-3">
 			<tbody>
 				<tr v-for="(category, index) in categories">
 					<td>{{category.title}}</td>
-					<td><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
-					<td><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
-					<td class="text-nowrap">
+					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
+					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
+					<td class="text-nowrap text-right">
 						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
 						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
 					</td>
@@ -314,11 +314,9 @@
 		}
 	}
 
-	const General = {
-		template: "#General",
+	var loadingMixin = {
 		data() {
 			return {
-				settings: {},
 				alert: false,
 				message: ""
 			}
@@ -326,31 +324,54 @@
 		props: {
 			loading: Boolean
 		},
+		beforeMount: function () {
+			this.$emit("setLoading", true);
+		},
 		mounted: function () {
+			this.$emit("setLoading", false);
+		},
+		methods: {
+			startLoad: function() {
+				this.$emit("setLoading", true);
+			},
+			endLoad: function(message) {
+				this.$emit("setLoading", false);
+				if (message) {
+					this.alert = true;
+					this.message = message;
+					var c = this;
+					setTimeout(function() { c.alert = false; }, 5000);
+				}
+			}
+		}
+	}
+
+	const General = {
+		mixins: [loadingMixin],
+		template: "#General",
+		data() {
+			return {
+				settings: {}
+			}
+		},
+		created: function () {
 			axios.get(basePath + "GetSettings").then(response => {
 				this.settings = response.data;
-				this.$emit("setLoading", false);
 			});
 		},
 		methods: {
 			save: function () {
-				this.$emit("setLoading", true);
+				this.startLoad();
 				axios.post(basePath + "SaveSettings", this.settings).then(response => {
 					this.settings = response.data;
-					this.$emit("setLoading", false);
-					this.showAlert("@PopForums.Resources.SettingsSaved");
+					this.endLoad("@PopForums.Resources.SettingsSaved");
 				});
-			},
-			showAlert: function(message) {
-				this.alert = true;
-				this.message = message;
-				var c = this;
-				setTimeout(function() { c.alert = false; }, 5000);
 			}
 		}
 	}
 
 	const Categories = {
+		mixins: [loadingMixin],
 		template: "#Categories",
 		data() {
 			return {
@@ -360,22 +381,38 @@
 				editID: 0
 			}
 		},
-		mounted: function () {
+		created: function () {
 			axios.get(basePath + "GetCategories").then(response => (this.categories = response.data));
 		},
 		methods: {
 			saveNew: function () {
-				axios.post(basePath + "AddCategory", { title: this.newCategory }).then(response => (this.categories = response.data));
+				this.startLoad();
+				axios.post(basePath + "AddCategory", { title: this.newCategory }).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
 				this.newCategory = "";
 			},
 			deleteCat: function(item) {
-				axios.post(basePath + "DeleteCategory/" + item.categoryID).then(response => (this.categories = response.data));
+				this.startLoad();
+				axios.post(basePath + "DeleteCategory/" + item.categoryID).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
 			},
 			up: function(item) {
-				axios.post(basePath + "MoveCategoryUp/" + item.categoryID).then(response => (this.categories = response.data));
+				this.startLoad();
+				axios.post(basePath + "MoveCategoryUp/" + item.categoryID).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
 			},
 			down: function(item) {
-				axios.post(basePath + "MoveCategoryDown/" + item.categoryID).then(response => (this.categories = response.data));
+				this.startLoad();
+				axios.post(basePath + "MoveCategoryDown/" + item.categoryID).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
 			},
 			editCat: function (item) {
 				this.editCategory = item.title;
@@ -384,25 +421,28 @@
 				$(e).modal("show");
 			},
 			saveCat: function() {
+				this.startLoad();
 				axios.post(basePath + "EditCategory", { categoryID: this.editID, title: this.editCategory })
 					.then(response => {
 						this.categories = response.data;
 						const e = this.$refs.modal;
 						$(e).modal("hide");
-				});
+						this.endLoad();
+					});
 			}
 		}
 	}
 
 	const Forums = {
+		mixins: [loadingMixin],
 		template: "#Forums",
 		data() {
 			return {
-
+				forums: []
 			}
 		},
-		mounted: function() {
-
+		created: function() {
+			axios.get(basePath + "GetForums").then(response => (this.forums = response.data));
 		},
 		methods: {
 

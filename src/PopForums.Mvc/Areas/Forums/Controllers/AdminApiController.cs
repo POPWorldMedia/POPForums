@@ -17,11 +17,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	{
 		private readonly ISettingsManager _settingsManager;
 		private readonly ICategoryService _categoryService;
+		private readonly IForumService _forumService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
+			_forumService = forumService;
 		}
 
 		// ********** settings
@@ -88,6 +90,15 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_categoryService.UpdateTitle(category.CategoryID, category.Title);
 			var categories = _categoryService.GetAll();
 			return categories;
+		}
+
+		// ********** settings
+
+		[HttpGet("/Forums/AdminApi/GetForums")]
+		public ActionResult<CategorizedForumContainer> GetForums()
+		{
+			var forums = _forumService.GetCategorizedForumContainer();
+			return forums;
 		}
 	}
 }
