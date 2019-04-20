@@ -18,12 +18,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ISettingsManager _settingsManager;
 		private readonly ICategoryService _categoryService;
 		private readonly IForumService _forumService;
+		private readonly IUserService _userService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
 			_forumService = forumService;
+			_userService = userService;
 		}
 
 		// ********** settings
@@ -92,7 +94,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return categories;
 		}
 
-		// ********** settings
+		// ********** forums
 
 		[HttpGet("/Forums/AdminApi/GetForums")]
 		public ActionResult<List<CategoryContainerWithForums>> GetForums()
@@ -133,6 +135,31 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			var forums = _forumService.GetCategoryContainersWithForums();
 			return forums;
+		}
+
+		// ********** forum permissions
+
+		[HttpGet("/Forums/AdminApi/GetForumPermissions/{id}")]
+		public ActionResult<ForumPermissionContainer> GetForumPermissions(int id)
+		{
+			var forum = _forumService.Get(id);
+			if (forum == null)
+				return NotFound();
+			var container = new ForumPermissionContainer
+			{
+				ForumID = forum.ForumID,
+				AllRoles = _userService.GetAllRoles(),
+				PostRoles = _forumService.GetForumPostRoles(forum),
+				ViewRoles = _forumService.GetForumViewRoles(forum)
+			};
+			return container;
+		}
+
+		[HttpPost("/Forums/AdminApi/ModifyForumRoles")]
+		public EmptyResult ModifyForumRoles(ModifyForumRolesContainer container)
+		{
+			_forumService.ModifyForumRoles(container);
+			return new EmptyResult();
 		}
 	}
 }

@@ -1167,5 +1167,76 @@ namespace PopForums.Test.Services
 			Assert.Equal(lastRead, result.AnswersWithComments[1].LastReadTime);
 			Assert.Equal(lastRead, result.QuestionPostWithComments.LastReadTime);
 		}
+
+		public class ModifyForumRoles : ForumServiceTests
+		{
+			[Fact]
+			public void ThrowsIfNoForumMatch()
+			{
+				var service = GetService();
+				_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+
+				Assert.Throws<Exception>(() => service.ModifyForumRoles(new ModifyForumRolesContainer()));
+			}
+
+			private void CallSetup(ModifyForumRolesType modifyType, out int forumID, out string role)
+			{
+				var service = GetService();
+				var forum = new Forum { ForumID = 123 };
+				forumID = forum.ForumID;
+				role = "role";
+				_mockForumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+
+				service.ModifyForumRoles(new ModifyForumRolesContainer { ForumID = forum.ForumID, ModifyType = modifyType, Role = role });
+			}
+
+			[Fact]
+			public void AddPostCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.AddPost, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.AddPostRole(forumID, role), Times.Once);
+			}
+
+			[Fact]
+			public void RemovePostCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.RemovePost, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.RemovePostRole(forumID, role), Times.Once);
+			}
+
+			[Fact]
+			public void AddViewCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.AddView, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.AddViewRole(forumID, role), Times.Once);
+			}
+
+			[Fact]
+			public void RemoveViewCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.RemoveView, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.RemoveViewRole(forumID, role), Times.Once);
+			}
+
+			[Fact]
+			public void RemoveAllPostCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.RemoveAllPost, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.RemoveAllPostRoles(forumID), Times.Once);
+			}
+
+			[Fact]
+			public void RemoveAllViewCallsRepo()
+			{
+				CallSetup(ModifyForumRolesType.RemoveAllView, out int forumID, out string role);
+
+				_mockForumRepo.Verify(x => x.RemoveAllViewRoles(forumID), Times.Once);
+			}
+		}
 	}
 }

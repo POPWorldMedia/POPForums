@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -13,13 +14,15 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<ISettingsManager> _settingsManager;
 		private Mock<ICategoryService> _categoryService;
 		private Mock<IForumService> _forumService;
+		private Mock<IUserService> _userService;
 
 		private AdminApiController GetController()
 		{
 			_settingsManager = new Mock<ISettingsManager>();
 			_categoryService = new Mock<ICategoryService>();
 			_forumService = new Mock<IForumService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object);
+			_userService = new Mock<IUserService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests
@@ -60,6 +63,30 @@ namespace PopForums.Test.Mvc.Controllers
 				_forumService.Verify(x => x.Update(It.IsAny<Forum>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 				_forumService.Verify(x => x.Create(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 				Assert.IsType<NotFoundResult>(result.Result);
+			}
+		}
+
+		public class GetForumPermissions : AdminApiControllerTests
+		{
+			[Fact]
+			public void ContainerIsComposed()
+			{
+				var controller = GetController();
+				var forum = new Forum{ForumID = 123};
+				_forumService.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				var all = new List<string> {"a", "b"};
+				_userService.Setup(x => x.GetAllRoles()).Returns(all);
+				var allView = new List<string> {"c", "d"};
+				_forumService.Setup(x => x.GetForumViewRoles(forum)).Returns(allView);
+				var allPost = new List<string> {"e", "f"};
+				_forumService.Setup(x => x.GetForumPostRoles(forum)).Returns(allPost);
+
+				var container = controller.GetForumPermissions(forum.ForumID);
+
+				Assert.Equal(forum.ForumID, container.Value.ForumID);
+				Assert.Same(all, container.Value.AllRoles);
+				Assert.Same(allView, container.Value.ViewRoles);
+				Assert.Same(allPost, container.Value.PostRoles);
 			}
 		}
 	}

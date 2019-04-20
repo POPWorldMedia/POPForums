@@ -47,6 +47,7 @@ namespace PopForums.Services
 		int GetAggregatePostCount();
 		List<int> GetViewableForumIDsFromViewRestrictedForums(User user);
 		TopicContainerForQA MapTopicContainerForQA(TopicContainer topicContainer);
+		void ModifyForumRoles(ModifyForumRolesContainer container);
 	}
 
 	public class ForumService : IForumService
@@ -457,6 +458,36 @@ namespace PopForums.Services
 				result.AnswersWithComments.Add(new PostWithChildren { Post = item, Children = comments, LastReadTime = topicContainer.LastReadTime });
 			}
 			return result;
+		}
+
+		public void ModifyForumRoles(ModifyForumRolesContainer container)
+		{
+			var forum = Get(container.ForumID);
+			if (forum == null)
+				throw new Exception($"ForumID {container.ForumID} not found.");
+			switch (container.ModifyType)
+			{
+				case ModifyForumRolesType.AddPost:
+					AddPostRole(forum, container.Role);
+					break;
+				case ModifyForumRolesType.RemovePost:
+					RemovePostRole(forum, container.Role);
+					break;
+				case ModifyForumRolesType.AddView:
+					AddViewRole(forum, container.Role);
+					break;
+				case ModifyForumRolesType.RemoveView:
+					RemoveViewRole(forum, container.Role);
+					break;
+				case ModifyForumRolesType.RemoveAllPost:
+					RemoveAllPostRoles(forum);
+					break;
+				case ModifyForumRolesType.RemoveAllView:
+					RemoveAllViewRoles(forum);
+					break;
+				default:
+					throw new Exception("ModifyForumRoles doesn't know what to do.");
+			}
 		}
 	}
 }

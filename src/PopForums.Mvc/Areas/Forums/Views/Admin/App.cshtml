@@ -47,7 +47,7 @@
 				<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
 				<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
 				<router-link to="/forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
-				<a class="dropdown-item" asp-action="ForumPermissions">@PopForums.Resources.ForumPermisions</a>
+				<router-link to="/forumpermissions" class="dropdown-item">@PopForums.Resources.ForumPermisions</router-link>
 				<a class="dropdown-item" asp-action="Email">@PopForums.Resources.Email</a>
 				<a class="dropdown-item" asp-action="Search">@PopForums.Resources.Search</a>
 				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
@@ -385,6 +385,47 @@
 	</main>
 </script>
 
+<script type="x-templates" id="ForumPermissions">
+	<main>
+		<h2>@PopForums.Resources.ForumPermisions</h2>
+
+		<div class="form-group">
+			<label>@PopForums.Resources.Forum</label>
+			<select id="ForumSelect" class="form-control" v-model="selectedForum" v-on:change="forumChange">
+				<optgroup v-for="c in categories" v-bind:label="c.category.title">
+					<option v-for="f in c.forums" v-bind:value="f.forumID">{{f.title}}</option>
+				</optgroup>
+			</select>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-3">@PopForums.Resources.PostingRoles</div>
+				<div class="offset-5 col-3">@PopForums.Resources.ViewingRoles</div>
+			</div>
+			<div class="row">
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedPost"><option v-for="r in postRoles">{{r}}</option></select></div>
+				<div class="col-1">
+					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addPost', selectedAll)" /><br />
+					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary" v-on:click="modify('removePost', selectedPost)" />
+				</div>
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedAll"><option v-for="r in allRoles">{{r}}</option></select></div>
+				<div class="col-1">
+					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addView', selectedAll)" /><br />
+					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary" v-on:click="modify('removeView', selectedView)" />
+				</div>
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedView"><option v-for="r in viewRoles">{{r}}</option></select></div>
+			</div>
+			<div class="row">
+				<div class="col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllPost', null)" /></div>
+				<div class="offset-5 col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllView', null)" /></div>
+			</div>
+		</div>
+
+		<p>@PopForums.Resources.ForumPermissionInstructions</p>
+	</main>
+</script>
+
 <script>
 	const basePath = "../../adminapi/";
 
@@ -580,13 +621,58 @@
 		}
 	}
 
+	const ForumPermissions = {
+		mixins: [loadingMixin],
+		template: "#ForumPermissions",
+		data() {
+			return {
+				categories: [],
+				selectedForum: null,
+				allRoles: [],
+				postRoles: [],
+				viewRoles: [],
+				selectedAll: null,
+				selectedPost: null,
+				selectedView: null
+			}
+		},
+		created: function() {
+			axios.get(basePath + "GetForums").then(response => (this.categories = response.data));
+			this.updatePerm();
+		},
+		methods: {
+			forumChange: function() {
+				this.updatePerm();
+			},
+			updatePerm: function() {
+				if (this.selectedForum) {
+					this.startLoad();
+					axios.get(basePath + "GetForumPermissions/" + this.selectedForum).then(response => {
+						this.allRoles = response.data.allRoles;
+						this.viewRoles = response.data.viewRoles;
+						this.postRoles = response.data.postRoles;
+						this.endLoad();
+					});
+				}
+			},
+			modify: function (modifyType, role) {
+				this.startLoad();
+				axios.post(basePath + "ModifyForumRoles", {forumID: this.selectedForum, modifyType: modifyType, role: role}).then(response => {
+					this.endLoad();
+					this.updatePerm();
+				});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
 			children: [
 				{ path: "/general", component: General },
 				{ path: "/categories", component: Categories },
-				{ path: "/forums", component: Forums}
+				{ path: "/forums", component: Forums},
+				{ path: "/forumpermissions", component: ForumPermissions}
 			]
 		},
 		{ path: "*", redirect: "/general" }
