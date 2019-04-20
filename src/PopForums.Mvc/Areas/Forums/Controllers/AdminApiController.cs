@@ -95,9 +95,43 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** settings
 
 		[HttpGet("/Forums/AdminApi/GetForums")]
-		public ActionResult<CategorizedForumContainer> GetForums()
+		public ActionResult<List<CategoryContainerWithForums>> GetForums()
 		{
-			var forums = _forumService.GetCategorizedForumContainer();
+			var forums = _forumService.GetCategoryContainersWithForums();
+			return forums;
+		}
+
+		[HttpPost("/Forums/AdminApi/MoveForumUp/{id}")]
+		public ActionResult<List<CategoryContainerWithForums>> MoveForumUp(int id)
+		{
+			_forumService.MoveForumUp(id);
+			var forums = _forumService.GetCategoryContainersWithForums();
+			return forums;
+		}
+
+		[HttpPost("/Forums/AdminApi/MoveForumDown/{id}")]
+		public ActionResult<List<CategoryContainerWithForums>> MoveForumDown(int id)
+		{
+			_forumService.MoveForumDown(id);
+			var forums = _forumService.GetCategoryContainersWithForums();
+			return forums;
+		}
+
+		[HttpPost("/Forums/AdminApi/SaveForum")]
+		public ActionResult<List<CategoryContainerWithForums>> SaveForum([FromBody]Forum forumEdit)
+		{
+			if (forumEdit.CategoryID == 0)
+				forumEdit.CategoryID = null;
+			if (forumEdit.ForumID == 0)
+				_forumService.Create(forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, -1, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
+			else
+			{
+				var forum = _forumService.Get(forumEdit.ForumID);
+				if (forum == null)
+					return NotFound();
+				_forumService.Update(forum, forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
+			}
+			var forums = _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
 	}

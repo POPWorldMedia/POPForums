@@ -624,6 +624,24 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void MoveForumUpThrowsIfNoForum()
+		{
+			var service = GetService();
+			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+
+			Assert.Throws<Exception>(() => service.MoveForumUp(1));
+		}
+
+		[Fact]
+		public void MoveForumDownThrowsIfNoForum()
+		{
+			var service = GetService();
+			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum)null);
+
+			Assert.Throws<Exception>(() => service.MoveForumDown(1));
+		}
+
+		[Fact]
 		public void PostRestrictions()
 		{
 			var service = GetService();
@@ -847,6 +865,98 @@ namespace PopForums.Test.Services
 			_mockSettingsManager.Setup(s => s.Current.ForumTitle).Returns("");
 			service.GetCategorizedForumContainerFilteredForUser(user);
 			_mockLastReadService.Verify(l => l.GetForumReadStatus(user, It.IsAny<CategorizedForumContainer>()), Times.Exactly(1));
+		}
+
+		[Fact]
+		public void GetCategoryContainersWithForumsMapsCatsWithUnCatForums()
+		{
+			var service = GetService();
+			var categories = new List<Category>
+			{
+				new Category {CategoryID = 1, SortOrder = 5},
+				new Category {CategoryID = 2, SortOrder = 1},
+				new Category {CategoryID = 3, SortOrder = 3}
+			};
+			_mockCategoryRepo.Setup(x => x.GetAll()).Returns(categories);
+			var forums = new List<Forum>
+			{
+				new Forum {ForumID = 1, CategoryID = null},
+				new Forum {ForumID = 2, CategoryID = categories[0].CategoryID, SortOrder = 3},
+				new Forum {ForumID = 3, CategoryID = categories[0].CategoryID, SortOrder = 1},
+				new Forum {ForumID = 4, CategoryID = categories[0].CategoryID, SortOrder = 7},
+				new Forum {ForumID = 5, CategoryID = categories[0].CategoryID, SortOrder = 5},
+				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID}
+			};
+			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+
+			var result = service.GetCategoryContainersWithForums();
+
+			Assert.Equal(0, result[0].Category.CategoryID);
+			Assert.Equal(2, result[1].Category.CategoryID);
+			Assert.Equal(3, result[2].Category.CategoryID);
+			Assert.Equal(1, result[3].Category.CategoryID);
+		}
+
+		[Fact]
+		public void GetCategoryContainersWithForumsMapsCatsWithoutUnCatForums()
+		{
+			var service = GetService();
+			var categories = new List<Category>
+			{
+				new Category {CategoryID = 1, SortOrder = 5},
+				new Category {CategoryID = 2, SortOrder = 1},
+				new Category {CategoryID = 3, SortOrder = 3}
+			};
+			_mockCategoryRepo.Setup(x => x.GetAll()).Returns(categories);
+			var forums = new List<Forum>
+			{
+				new Forum {ForumID = 2, CategoryID = categories[0].CategoryID, SortOrder = 3},
+				new Forum {ForumID = 3, CategoryID = categories[0].CategoryID, SortOrder = 1},
+				new Forum {ForumID = 4, CategoryID = categories[0].CategoryID, SortOrder = 7},
+				new Forum {ForumID = 5, CategoryID = categories[0].CategoryID, SortOrder = 5},
+				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID}
+			};
+			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+
+			var result = service.GetCategoryContainersWithForums();
+
+			Assert.Equal(2, result[0].Category.CategoryID);
+			Assert.Equal(3, result[1].Category.CategoryID);
+			Assert.Equal(1, result[2].Category.CategoryID);
+		}
+
+		[Fact]
+		public void GetCategoryContainersWithForumsMapsForums()
+		{
+			var service = GetService();
+			var categories = new List<Category>
+			{
+				new Category {CategoryID = 1, SortOrder = 5},
+				new Category {CategoryID = 2, SortOrder = 1},
+				new Category {CategoryID = 3, SortOrder = 3}
+			};
+			_mockCategoryRepo.Setup(x => x.GetAll()).Returns(categories);
+			var forums = new List<Forum>
+			{
+				new Forum {ForumID = 1, CategoryID = null, SortOrder = 3},
+				new Forum {ForumID = 2, CategoryID = categories[0].CategoryID, SortOrder = 3},
+				new Forum {ForumID = 3, CategoryID = categories[0].CategoryID, SortOrder = 1},
+				new Forum {ForumID = 4, CategoryID = categories[0].CategoryID, SortOrder = 7},
+				new Forum {ForumID = 5, CategoryID = categories[0].CategoryID, SortOrder = 5},
+				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID},
+				new Forum {ForumID = 7, CategoryID = null, SortOrder = 1},
+			};
+			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+
+			var result = service.GetCategoryContainersWithForums();
+
+			Assert.Equal(7, result[0].Forums.ToArray()[0].ForumID);
+			Assert.Equal(1, result[0].Forums.ToArray()[1].ForumID);
+			Assert.Equal(3, result[3].Forums.ToArray()[0].ForumID);
+			Assert.Equal(2, result[3].Forums.ToArray()[1].ForumID);
+			Assert.Equal(5, result[3].Forums.ToArray()[2].ForumID);
+			Assert.Equal(4, result[3].Forums.ToArray()[3].ForumID);
+			Assert.Equal(6, result[2].Forums.ToArray()[0].ForumID);
 		}
 
 		[Fact]

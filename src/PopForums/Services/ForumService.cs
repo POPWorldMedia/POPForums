@@ -22,6 +22,7 @@ namespace PopForums.Services
 		void IncrementPostCount(Forum forum);
 		void IncrementPostAndTopicCount(Forum forum);
 		CategorizedForumContainer GetCategorizedForumContainer();
+		List<CategoryContainerWithForums> GetCategoryContainersWithForums();
 		CategorizedForumContainer GetCategorizedForumContainerFilteredForUser(User user);
 		List<int> GetNonViewableForumIDs(User user);
 		ForumPermissionContext GetPermissionContext(Forum forum, User user);
@@ -29,7 +30,9 @@ namespace PopForums.Services
 		Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator);
 		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum);
 		void MoveForumUp(Forum forum);
+		void MoveForumUp(int forumID);
 		void MoveForumDown(Forum forum);
+		void MoveForumDown(int forumID);
 		List<string> GetForumPostRoles(Forum forum);
 		List<string> GetForumViewRoles(Forum forum);
 		void AddPostRole(Forum forum, string role);
@@ -146,6 +149,22 @@ namespace PopForums.Services
 			var container = new CategorizedForumContainer(categories, forums);
 			container.ForumTitle = _settingsManager.Current.ForumTitle;
 			return container;
+		}
+
+		public List<CategoryContainerWithForums> GetCategoryContainersWithForums()
+		{
+			var containers = new List<CategoryContainerWithForums>();
+			var forums = _forumRepository.GetAll().ToList();
+			var categories = _categoryRepository.GetAll().OrderBy(x => x.SortOrder);
+			var uncategorized = forums.Where(x => !x.CategoryID.HasValue).OrderBy(x => x.SortOrder).ToList();
+			if (uncategorized.Count > 0)
+				containers.Add(new CategoryContainerWithForums {Category = new Category { Title = Resources.ForumsUncat }, Forums = uncategorized});
+			foreach (var item in categories)
+			{
+				var filteredForums = forums.Where(x => x.CategoryID == item.CategoryID).OrderBy(x => x.SortOrder);
+				containers.Add(new CategoryContainerWithForums { Category = item, Forums = filteredForums });
+			}
+			return containers;
 		}
 
 		public List<int> GetViewableForumIDsFromViewRestrictedForums(User user)
@@ -305,6 +324,22 @@ namespace PopForums.Services
 		{
 			const int change = -3;
 			ChangeForumSortOrder(forum, change);
+		}
+
+		public void MoveForumUp(int forumID)
+		{
+			var forum = _forumRepository.Get(forumID);
+			if (forum == null)
+				throw new Exception($"Forum {forumID} doesn't exist, can't move it up.");
+			MoveForumUp(forum);
+		}
+
+		public void MoveForumDown(int forumID)
+		{
+			var forum = _forumRepository.Get(forumID);
+			if (forum == null)
+				throw new Exception($"Forum {forumID} doesn't exist, can't move it down.");
+			MoveForumDown(forum);
 		}
 
 		public void MoveForumDown(Forum forum)

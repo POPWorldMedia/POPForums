@@ -255,11 +255,18 @@
 			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
 		</div>
 		<table class="table table-hover table-sm mt-3">
+			<thead>
+				<tr>
+					<th colspan="2">@PopForums.Resources.Move</th>
+					<th>@PopForums.Resources.Category</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
 			<tbody>
 				<tr v-for="(category, index) in categories">
-					<td>{{category.title}}</td>
 					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
 					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
+					<td>{{category.title}}</td>
 					<td class="text-nowrap text-right">
 						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
 						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
@@ -291,6 +298,90 @@
 <script type="x-templates" id="Forums">
 	<main>
 		<h2>@PopForums.Resources.Forums</h2>
+		
+		<p><input type="button" class="btn btn-primary" v-on:click="newForum" value="@PopForums.Resources.AddForum" /></p>
+
+		<table class="table table-hover table-sm mt-3">
+			<thead>
+				<tr>
+					<th colspan="2">@PopForums.Resources.Move</th>
+					<th>@PopForums.Resources.Forum</th>
+					<th>@PopForums.Resources.Visible</th>
+					<th>@PopForums.Resources.Archived</th>
+					<th>Q&amp;A</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<template v-for="category in categories">
+					<tr class="bg-primary text-white"><td colspan="7">{{category.category.title}}</td></tr>
+					<tr v-for="(forum, index) in category.forums">
+						<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(forum)" v-if="index != 0" style="width:5em;" /></td>
+						<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(forum)" v-if="index != category.forums.length-1" style="width:5em;" /></td>
+						<td>{{forum.title}}</td>
+						<td><input type="checkbox" v-model="forum.isVisible" disabled /></td>
+						<td><input type="checkbox" v-model="forum.isArchived" disabled /></td>
+						<td><input type="checkbox" v-model="forum.isQAForum" disabled /></td>
+						<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editForum(forum)" /></td>
+					</tr>
+				</template>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group row">
+							<label for="title" class="col-sm-2 col-form-label">@PopForums.Resources.Title</label>
+							<div class="col-sm-10"><input type="text" v-model="editingForum.title" class="form-control" id="title" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="description" class="col-sm-2 col-form-label">@PopForums.Resources.Description</label>
+							<div class="col-sm-10"><input type="text" v-model="editingForum.description" class="form-control" id="description" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="categoryID" class="col-sm-2 col-form-label">@PopForums.Resources.Category</label>
+							<div class="col-sm-10">
+								<select id="categoryID" v-model="editingForum.categoryID" class="form-control">
+									<option v-for="c in categories" v-bind:value="c.category.categoryID">{{c.category.title}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsVisible"><input type="checkbox" v-model="editingForum.isVisible" id="IsVisible" /> @PopForums.Resources.Visible</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsArchived"><input type="checkbox" v-model="editingForum.isArchived" id="IsArchived" /> @PopForums.Resources.Archived</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsQAForum"><input type="checkbox" v-model="editingForum.isQAForum" id="IsQAForum" /> Q&amp;A @PopForums.Resources.Forum</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12">
+								<label for="forumAdapterName" class="col-form-label">@PopForums.Resources.ForumAdapter</label></div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12"><input type="text" v-model="editingForum.forumAdapterName" class="form-control" id="forumAdapterName" /></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveForum">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </script>
 
@@ -438,14 +529,54 @@
 		template: "#Forums",
 		data() {
 			return {
-				forums: []
+				categories: [],
+				editingForum: null
 			}
 		},
 		created: function() {
-			axios.get(basePath + "GetForums").then(response => (this.forums = response.data));
+			axios.get(basePath + "GetForums").then(response => (this.categories = response.data));
+			this.resetForum();
 		},
 		methods: {
-
+			up: function(forum) {
+				this.startLoad();
+				axios.post(basePath + "MoveForumUp/" + forum.forumID).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
+			},
+			down: function(forum) {
+				this.startLoad();
+				axios.post(basePath + "MoveForumDown/" + forum.forumID).then(response => {
+					this.categories = response.data;
+					this.endLoad();
+				});
+			},
+			editForum: function (forum) {
+				this.editingForum = forum;
+				if (!this.editingForum.categoryID)
+					this.editingForum.categoryID = 0;
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			resetForum: function() {
+				this.editingForum = {forumID: 0, title:"", description: "", categoryID: 0, isVisible: true, isArchived: false, isQAForum: false, forumAdapterName: null};
+			},
+			newForum: function() {
+				this.resetForum();
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			saveForum: function() {
+				this.startLoad();
+				axios.post(basePath + "SaveForum", this.editingForum)
+					.then(response => {
+						this.categories = response.data;
+						const e = this.$refs.modal;
+						$(e).modal("hide");
+						this.endLoad();
+					});
+			}
 		}
 	}
 
