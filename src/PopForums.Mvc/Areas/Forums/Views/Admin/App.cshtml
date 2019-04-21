@@ -32,455 +32,455 @@
 		</div>
 	</div>
 
-	<script type="x-templates" id="Top">
-		<main>
-			<div v-show="loading" class="spinner-border text-primary float-right ml-3 mt-1" role="status">
-				<span class="sr-only">Loading...</span>
+<script type="x-templates" id="Top">
+	<main>
+		<div v-show="loading" class="spinner-border text-primary float-right ml-3 mt-1" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+		<div class="dropdown mb-3">
+			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				@PopForums.Resources.PopForumsAdmin
+			</a>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+				<a class="dropdown-item" href="/Forums">@PopForums.Resources.ForumHome</a>
+				<div class="dropdown-divider"></div>
+				<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
+				<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
+				<router-link to="/forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
+				<router-link to="/forumpermissions" class="dropdown-item">@PopForums.Resources.ForumPermisions</router-link>
+				<router-link to="/email" class="dropdown-item">@PopForums.Resources.Email</router-link>
+				<router-link to="/search" class="dropdown-item">@PopForums.Resources.Search</router-link>
+				<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
+				<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
+				<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
+				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
+				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
+				<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
+				<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
+				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
+				<div class="dropdown-divider"></div>
+				<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
+				<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
+				<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
+				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
+				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
 			</div>
-			<div class="dropdown mb-3">
-				<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					@PopForums.Resources.PopForumsAdmin
-				</a>
-				<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-					<a class="dropdown-item" href="/Forums">@PopForums.Resources.ForumHome</a>
-					<div class="dropdown-divider"></div>
-					<router-link to="/general" class="dropdown-item">@PopForums.Resources.GeneralSettings</router-link>
-					<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
-					<router-link to="/forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
-					<router-link to="/forumpermissions" class="dropdown-item">@PopForums.Resources.ForumPermisions</router-link>
-					<router-link to="/email" class="dropdown-item">@PopForums.Resources.Email</router-link>
-					<router-link to="/search" class="dropdown-item">@PopForums.Resources.Search</router-link>
-					<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
-					<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
-					<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
-					<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
-					<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
-					<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
-					<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
-					<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
-					<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
-					<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
-					<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
-					<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
-				</div>
-			</div>
+		</div>
 
-			<router-view v-on:setLoading="setLoading($event)" v-bind:loading="loading"></router-view>
-		</main>
-	</script>
+		<router-view v-on:setLoading="setLoading($event)" v-bind:loading="loading"></router-view>
+	</main>
+</script>
 
-	<script type="x-templates" id="General">
-		<main>
-			<h2>@PopForums.Resources.GeneralSettings</h2>
-			<div>
-				<h3>@PopForums.Resources.ForumSettings</h3>
-				<div class="form-group row">
-					<label for="ForumTitle" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
-					<div class="col-sm-8"><input type="text" v-model="settings.forumTitle" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<label for="TopicsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.TopicsPerPage</label>
-					<div class="col-sm-2"><input type="text" v-model="settings.topicsPerPage" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<label for="PostsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.PostsPerPage</label>
-					<div class="col-sm-2"><input type="text" v-model="settings.postsPerPage" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<label for="SessionLength" class="col-sm-4 col-form-label">@PopForums.Resources.SessionLength</label>
-					<div class="col-sm-2"><input type="text" v-model="settings.sessionLength" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<label for="MinimumSecondsBetweenPosts" class="col-sm-4 col-form-label">@PopForums.Resources.MinimumTimeBetweenPosts</label>
-					<div class="col-sm-2"><input type="text" v-model="settings.minimumSecondsBetweenPosts" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="IsNewUserApproved"><input type="checkbox" v-model="settings.isNewUserApproved" id="IsNewUserApproved" /> @PopForums.Resources.NewUserApprovedWithoutVerification</label></div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="IsNewUserImageApproved"><input type="checkbox" v-model="settings.isNewUserImageApproved" id="IsNewUserImageApproved" /> @PopForums.Resources.NewUserImageApprovedWithoutMod</label></div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-sm-4 col-form-label">@PopForums.Resources.UserImageMaxDim</label>
-					<div class="col-sm-8 form-inline">
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.userImageMaxHeight" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">H</div>
-							</div>
-						</div>
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.userImageMaxWidth" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">W</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="input-group col-sm-8">
-							<input type="text" v-model="settings.userImageMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
-							<div class="input-group-append">
-								<div class="input-group-text">kB</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">@PopForums.Resources.UserAvatarMaxDim</label>
-					<div class="col-sm-8 form-inline">
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.userAvatarMaxHeight" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">H</div>
-							</div>
-						</div>
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.userAvatarMaxWidth" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">W</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="input-group col-sm-8">
-							<input type="text" v-model="settings.userAvatarMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
-							<div class="input-group-append">
-								<div class="input-group-text">kB</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<label class="col-sm-4 control-label">YouTube</label>
-					<div class="col-sm-8 form-inline">
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.youTubeHeight" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">H</div>
-							</div>
-						</div>
-						<div class="input-group col-sm-4">
-							<input type="text" v-model="settings.youTubeWidth" class="form-control" />
-							<div class="input-group-append">
-								<div class="input-group-text">W</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<h3>@PopForums.Resources.Parsing</h3>
-
-				<div class="form-group row">
-					<label for="CensorWords" class="col-sm-4 col-form-label">@PopForums.Resources.CensorWords</label>
-					<div class="col-sm-8"><textarea class="form-control" rows="3" v-model="settings.censorWords"></textarea></div>
-				</div>
-				<div class="form-group row">
-					<label for="CensorCharacter" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
-					<div class="col-sm-3"><input type="text" v-model="settings.censorCharacter" class="form-control" /></div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="AllowImages"><input type="checkbox" v-model="settings.allowImages" id="AllowImages" /> @PopForums.Resources.AllowImages / YouTube</label></div>
-					</div>
-				</div>
-
-				<h3>@PopForums.Resources.Logging</h3>
-
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="LogSecurity"><input type="checkbox" v-model="settings.logSecurity" id="LogSecurity" /> @PopForums.Resources.LogSecurity</label></div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="LogModeration"><input type="checkbox" v-model="settings.logModeration" id="LogModeration" /> @PopForums.Resources.LogMod</label></div>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="LogErrors"><input type="checkbox" v-model="settings.logErrors" id="LogErrors" /> @PopForums.Resources.LogErrors</label></div>
-					</div>
-				</div>
-
-				<h3>@PopForums.Resources.ServerTime</h3>
-
-				<div class="form-group row">
-					<label for="ServerTimeZone" class="col-sm-4 col-form-label">@PopForums.Resources.TimeZone</label>
-					<div class="col-sm-8">
-						<select id="ServerTimeZone" v-model="settings.serverTimeZone" class="form-control">
-							@foreach (var i in timeZones)
-							{
-								<option value="@i.Key">@i.Value</option>}
-						</select>
-					</div>
-				</div>
-				<div class="form-group row">
-					<div class="col-sm-8 offset-sm-4">
-						<div class="checkbox"><label for="ServerDaylightSaving"><input type="checkbox" v-model="settings.serverDaylightSaving" id="ServerDaylightSaving" /> @PopForums.Resources.UseDaylight</label></div>
-					</div>
-				</div>
-
-				<h3>@PopForums.Resources.TermsOfService</h3>
-
-				<div class="form-group row">
-					<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
-				</div>
-
-				<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-				<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
-
-			</div>
-		</main>
-	</script>
-
-	<script type="x-templates" id="Categories">
-		<main>
-			<h2>@PopForums.Resources.Categories</h2>
-			<div class="form-inline">
-				<input type="text" v-model="newCategory" class="form-control mb-3" />
-				<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
-			</div>
-			<table class="table table-hover table-sm mt-3">
-				<thead>
-					<tr>
-						<th colspan="2">@PopForums.Resources.Move</th>
-						<th>@PopForums.Resources.Category</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(category, index) in categories">
-						<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
-						<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
-						<td>{{category.title}}</td>
-						<td class="text-nowrap text-right">
-							<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
-							<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="modal" tabindex="-1" role="dialog" ref="modal">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">@PopForums.Resources.Edit</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<input type="text" v-model="editCategory" class="form-control" />
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" v-on:click="saveCat">@PopForums.Resources.Save</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-	</script>
-
-	<script type="x-templates" id="Forums">
-		<main>
-			<h2>@PopForums.Resources.Forums</h2>
-
-			<p><input type="button" class="btn btn-primary" v-on:click="newForum" value="@PopForums.Resources.AddForum" /></p>
-
-			<table class="table table-hover table-sm mt-3">
-				<thead>
-					<tr>
-						<th colspan="2">@PopForums.Resources.Move</th>
-						<th>@PopForums.Resources.Forum</th>
-						<th>@PopForums.Resources.Visible</th>
-						<th>@PopForums.Resources.Archived</th>
-						<th>Q&amp;A</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-					<template v-for="category in categories">
-						<tr class="bg-primary text-white"><td colspan="7">{{category.category.title}}</td></tr>
-						<tr v-for="(forum, index) in category.forums">
-							<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(forum)" v-if="index != 0" style="width:5em;" /></td>
-							<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(forum)" v-if="index != category.forums.length-1" style="width:5em;" /></td>
-							<td>{{forum.title}}</td>
-							<td><input type="checkbox" v-model="forum.isVisible" disabled /></td>
-							<td><input type="checkbox" v-model="forum.isArchived" disabled /></td>
-							<td><input type="checkbox" v-model="forum.isQAForum" disabled /></td>
-							<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editForum(forum)" /></td>
-						</tr>
-					</template>
-				</tbody>
-			</table>
-			<div class="modal" tabindex="-1" role="dialog" ref="modal">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">@PopForums.Resources.Edit</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="form-group row">
-								<label for="title" class="col-sm-2 col-form-label">@PopForums.Resources.Title</label>
-								<div class="col-sm-10"><input type="text" v-model="editingForum.title" class="form-control" id="title" /></div>
-							</div>
-							<div class="form-group row">
-								<label for="description" class="col-sm-2 col-form-label">@PopForums.Resources.Description</label>
-								<div class="col-sm-10"><input type="text" v-model="editingForum.description" class="form-control" id="description" /></div>
-							</div>
-							<div class="form-group row">
-								<label for="categoryID" class="col-sm-2 col-form-label">@PopForums.Resources.Category</label>
-								<div class="col-sm-10">
-									<select id="categoryID" v-model="editingForum.categoryID" class="form-control">
-										<option v-for="c in categories" v-bind:value="c.category.categoryID">{{c.category.title}}</option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group row">
-								<div class="col-sm-10 offset-sm-2">
-									<div class="checkbox"><label for="IsVisible"><input type="checkbox" v-model="editingForum.isVisible" id="IsVisible" /> @PopForums.Resources.Visible</label></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<div class="col-sm-10 offset-sm-2">
-									<div class="checkbox"><label for="IsArchived"><input type="checkbox" v-model="editingForum.isArchived" id="IsArchived" /> @PopForums.Resources.Archived</label></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<div class="col-sm-10 offset-sm-2">
-									<div class="checkbox"><label for="IsQAForum"><input type="checkbox" v-model="editingForum.isQAForum" id="IsQAForum" /> Q&amp;A @PopForums.Resources.Forum</label></div>
-								</div>
-							</div>
-							<div class="form-group row">
-								<div class="col-sm-12">
-									<label for="forumAdapterName" class="col-form-label">@PopForums.Resources.ForumAdapter</label>
-								</div>
-							</div>
-							<div class="form-group row">
-								<div class="col-sm-12"><input type="text" v-model="editingForum.forumAdapterName" class="form-control" id="forumAdapterName" /></div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" v-on:click="saveForum">@PopForums.Resources.Save</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-	</script>
-
-	<script type="x-templates" id="ForumPermissions">
-		<main>
-			<h2>@PopForums.Resources.ForumPermisions</h2>
-
-			<div class="form-group">
-				<label>@PopForums.Resources.Forum</label>
-				<select id="ForumSelect" class="form-control" v-model="selectedForum" v-on:change="forumChange">
-					<optgroup v-for="c in categories" v-bind:label="c.category.title">
-						<option v-for="f in c.forums" v-bind:value="f.forumID">{{f.title}}</option>
-					</optgroup>
-				</select>
-			</div>
-
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-3">@PopForums.Resources.PostingRoles</div>
-					<div class="offset-5 col-3">@PopForums.Resources.ViewingRoles</div>
-				</div>
-				<div class="row">
-					<div class="col-3"><select size="6" class="form-control" v-model="selectedPost"><option v-for="r in postRoles">{{r}}</option></select></div>
-					<div class="col-1">
-						<input type="button" value="&lt;&lt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addPost', selectedAll)" /><br />
-						<input type="button" value="&gt;&gt;" class="btn-sm btn-primary" v-on:click="modify('removePost', selectedPost)" />
-					</div>
-					<div class="col-3"><select size="6" class="form-control" v-model="selectedAll"><option v-for="r in allRoles">{{r}}</option></select></div>
-					<div class="col-1">
-						<input type="button" value="&gt;&gt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addView', selectedAll)" /><br />
-						<input type="button" value="&lt;&lt;" class="btn-sm btn-primary" v-on:click="modify('removeView', selectedView)" />
-					</div>
-					<div class="col-3"><select size="6" class="form-control" v-model="selectedView"><option v-for="r in viewRoles">{{r}}</option></select></div>
-				</div>
-				<div class="row">
-					<div class="col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllPost', null)" /></div>
-					<div class="offset-5 col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllView', null)" /></div>
-				</div>
-			</div>
-
-			<p>@PopForums.Resources.ForumPermissionInstructions</p>
-		</main>
-	</script>
-
-	<script type="x-templates" id="Email">
-		<main>
-			<h2>@PopForums.Resources.Email</h2>
-
+<script type="x-templates" id="General">
+	<main>
+		<h2>@PopForums.Resources.GeneralSettings</h2>
+		<div>
+			<h3>@PopForums.Resources.ForumSettings</h3>
 			<div class="form-group row">
-				<label for="SmtpServer" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpServer</label>
-				<div class="col-sm-8"><input type="text" v-model="settings.smtpServer" id="SmtpServer" class="form-control" /></div>
+				<label for="ForumTitle" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-8"><input type="text" v-model="settings.forumTitle" class="form-control" /></div>
 			</div>
 			<div class="form-group row">
-				<label for="SmtpPort" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpPort</label>
-				<div class="col-sm-3"><input type="text" v-model="settings.smtpPort" id="SmtpPort" class="form-control" /></div>
+				<label for="TopicsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.TopicsPerPage</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.topicsPerPage" class="form-control" /></div>
 			</div>
 			<div class="form-group row">
-				<label for="MailerAddress" class="col-sm-4 col-form-label">@PopForums.Resources.FromEmailAddress</label>
-				<div class="col-sm-8"><input type="text" v-model="settings.mailerAddress" id="MailerAddress" class="form-control" /></div>
+				<label for="PostsPerPage" class="col-sm-4 col-form-label">@PopForums.Resources.PostsPerPage</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.postsPerPage" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="SessionLength" class="col-sm-4 col-form-label">@PopForums.Resources.SessionLength</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.sessionLength" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<label for="MinimumSecondsBetweenPosts" class="col-sm-4 col-form-label">@PopForums.Resources.MinimumTimeBetweenPosts</label>
+				<div class="col-sm-2"><input type="text" v-model="settings.minimumSecondsBetweenPosts" class="form-control" /></div>
 			</div>
 			<div class="form-group row">
 				<div class="col-sm-8 offset-sm-4">
-					<div class="checkbox"><label for="UseSslSmtp"><input type="checkbox" v-model="settings.useSslSmtp" id="UseSslSmtp" /> @PopForums.Resources.UseSsl</label></div>
+					<div class="checkbox"><label for="IsNewUserApproved"><input type="checkbox" v-model="settings.isNewUserApproved" id="IsNewUserApproved" /> @PopForums.Resources.NewUserApprovedWithoutVerification</label></div>
 				</div>
 			</div>
 			<div class="form-group row">
 				<div class="col-sm-8 offset-sm-4">
-					<div class="checkbox"><label for="UseEsmtp"><input type="checkbox" v-model="settings.useEsmtp" id="UseEsmtp" /> @PopForums.Resources.UseEsmtpCred</label></div>
+					<div class="checkbox"><label for="IsNewUserImageApproved"><input type="checkbox" v-model="settings.isNewUserImageApproved" id="IsNewUserImageApproved" /> @PopForums.Resources.NewUserImageApprovedWithoutMod</label></div>
 				</div>
 			</div>
 			<div class="form-group row">
-				<label for="SmtpUser" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpUser</label>
-				<div class="col-sm-8"><input type="text" v-model="settings.smtpUser" id="SmtpUser" class="form-control" /></div>
+				<label class="col-sm-4 col-form-label">@PopForums.Resources.UserImageMaxDim</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userImageMaxHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userImageMaxWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group row">
-				<label for="SmtpPassword" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpPassword</label>
-				<div class="col-sm-8"><input type="text" v-model="settings.smtpPassword" id="SmtpPassword" class="form-control" /></div>
+				<div class="col-sm-8 offset-sm-4">
+					<div class="input-group col-sm-8">
+						<input type="text" v-model="settings.userImageMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
+						<div class="input-group-append">
+							<div class="input-group-text">kB</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group row">
-				<label for="MailSendingInverval" class="col-sm-4 col-form-label">@PopForums.Resources.SendingInterval</label>
-				<div class="col-sm-3"><input type="text" v-model="settings.mailSendingInverval" id="MailSendingInverval" class="form-control" /></div>
+				<label class="col-sm-4 control-label">@PopForums.Resources.UserAvatarMaxDim</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userAvatarMaxHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.userAvatarMaxWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group row">
-				<label for="MailerQuantity" class="col-sm-4 col-form-label">Mailer quantity</label>
-				<div class="col-sm-3"><input type="text" v-model="settings.mailerQuantity" id="MailerQuantity" class="form-control" /></div>
+				<div class="col-sm-8 offset-sm-4">
+					<div class="input-group col-sm-8">
+						<input type="text" v-model="settings.userAvatarMaxkBytes" class="form-control" placeholder="@PopForums.Resources.Size" />
+						<div class="input-group-append">
+							<div class="input-group-text">kB</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="form-group row">
-				<label class="col-sm-4 col-form-label">@PopForums.Resources.Signature</label>
+				<label class="col-sm-4 control-label">YouTube</label>
+				<div class="col-sm-8 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.youTubeHeight" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">H</div>
+						</div>
+					</div>
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.youTubeWidth" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">W</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.Parsing</h3>
+
+			<div class="form-group row">
+				<label for="CensorWords" class="col-sm-4 col-form-label">@PopForums.Resources.CensorWords</label>
+				<div class="col-sm-8"><textarea class="form-control" rows="3" v-model="settings.censorWords"></textarea></div>
+			</div>
+			<div class="form-group row">
+				<label for="CensorCharacter" class="col-sm-4 col-form-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-3"><input type="text" v-model="settings.censorCharacter" class="form-control" /></div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="AllowImages"><input type="checkbox" v-model="settings.allowImages" id="AllowImages" /> @PopForums.Resources.AllowImages / YouTube</label></div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.Logging</h3>
+
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogSecurity"><input type="checkbox" v-model="settings.logSecurity" id="LogSecurity" /> @PopForums.Resources.LogSecurity</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogModeration"><input type="checkbox" v-model="settings.logModeration" id="LogModeration" /> @PopForums.Resources.LogMod</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="LogErrors"><input type="checkbox" v-model="settings.logErrors" id="LogErrors" /> @PopForums.Resources.LogErrors</label></div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.ServerTime</h3>
+
+			<div class="form-group row">
+				<label for="ServerTimeZone" class="col-sm-4 col-form-label">@PopForums.Resources.TimeZone</label>
 				<div class="col-sm-8">
-					<textarea v-model="settings.mailSignature" class="form-control" rows="4"></textarea>
+					<select id="ServerTimeZone" v-model="settings.serverTimeZone" class="form-control">
+						@foreach (var i in timeZones)
+						{
+							<option value="@i.Key">@i.Value</option>}
+					</select>
 				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="ServerDaylightSaving"><input type="checkbox" v-model="settings.serverDaylightSaving" id="ServerDaylightSaving" /> @PopForums.Resources.UseDaylight</label></div>
+				</div>
+			</div>
+
+			<h3>@PopForums.Resources.TermsOfService</h3>
+
+			<div class="form-group row">
+				<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
 			</div>
 
 			<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 			<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 
-		</main>
-	</script>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="Categories">
+	<main>
+		<h2>@PopForums.Resources.Categories</h2>
+		<div class="form-inline">
+			<input type="text" v-model="newCategory" class="form-control mb-3" />
+			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
+		</div>
+		<table class="table table-hover table-sm mt-3">
+			<thead>
+				<tr>
+					<th colspan="2">@PopForums.Resources.Move</th>
+					<th>@PopForums.Resources.Category</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(category, index) in categories">
+					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
+					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
+					<td>{{category.title}}</td>
+					<td class="text-nowrap text-right">
+						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
+						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<input type="text" v-model="editCategory" class="form-control" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveCat">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="Forums">
+	<main>
+		<h2>@PopForums.Resources.Forums</h2>
+
+		<p><input type="button" class="btn btn-primary" v-on:click="newForum" value="@PopForums.Resources.AddForum" /></p>
+
+		<table class="table table-hover table-sm mt-3">
+			<thead>
+				<tr>
+					<th colspan="2">@PopForums.Resources.Move</th>
+					<th>@PopForums.Resources.Forum</th>
+					<th>@PopForums.Resources.Visible</th>
+					<th>@PopForums.Resources.Archived</th>
+					<th>Q&amp;A</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<template v-for="category in categories">
+					<tr class="bg-primary text-white"><td colspan="7">{{category.category.title}}</td></tr>
+					<tr v-for="(forum, index) in category.forums">
+						<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(forum)" v-if="index != 0" style="width:5em;" /></td>
+						<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(forum)" v-if="index != category.forums.length-1" style="width:5em;" /></td>
+						<td>{{forum.title}}</td>
+						<td><input type="checkbox" v-model="forum.isVisible" disabled /></td>
+						<td><input type="checkbox" v-model="forum.isArchived" disabled /></td>
+						<td><input type="checkbox" v-model="forum.isQAForum" disabled /></td>
+						<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editForum(forum)" /></td>
+					</tr>
+				</template>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group row">
+							<label for="title" class="col-sm-2 col-form-label">@PopForums.Resources.Title</label>
+							<div class="col-sm-10"><input type="text" v-model="editingForum.title" class="form-control" id="title" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="description" class="col-sm-2 col-form-label">@PopForums.Resources.Description</label>
+							<div class="col-sm-10"><input type="text" v-model="editingForum.description" class="form-control" id="description" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="categoryID" class="col-sm-2 col-form-label">@PopForums.Resources.Category</label>
+							<div class="col-sm-10">
+								<select id="categoryID" v-model="editingForum.categoryID" class="form-control">
+									<option v-for="c in categories" v-bind:value="c.category.categoryID">{{c.category.title}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsVisible"><input type="checkbox" v-model="editingForum.isVisible" id="IsVisible" /> @PopForums.Resources.Visible</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsArchived"><input type="checkbox" v-model="editingForum.isArchived" id="IsArchived" /> @PopForums.Resources.Archived</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10 offset-sm-2">
+								<div class="checkbox"><label for="IsQAForum"><input type="checkbox" v-model="editingForum.isQAForum" id="IsQAForum" /> Q&amp;A @PopForums.Resources.Forum</label></div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12">
+								<label for="forumAdapterName" class="col-form-label">@PopForums.Resources.ForumAdapter</label>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12"><input type="text" v-model="editingForum.forumAdapterName" class="form-control" id="forumAdapterName" /></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveForum">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="ForumPermissions">
+	<main>
+		<h2>@PopForums.Resources.ForumPermisions</h2>
+
+		<div class="form-group">
+			<label>@PopForums.Resources.Forum</label>
+			<select id="ForumSelect" class="form-control" v-model="selectedForum" v-on:change="forumChange">
+				<optgroup v-for="c in categories" v-bind:label="c.category.title">
+					<option v-for="f in c.forums" v-bind:value="f.forumID">{{f.title}}</option>
+				</optgroup>
+			</select>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-3">@PopForums.Resources.PostingRoles</div>
+				<div class="offset-5 col-3">@PopForums.Resources.ViewingRoles</div>
+			</div>
+			<div class="row">
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedPost"><option v-for="r in postRoles">{{r}}</option></select></div>
+				<div class="col-1">
+					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addPost', selectedAll)" /><br />
+					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary" v-on:click="modify('removePost', selectedPost)" />
+				</div>
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedAll"><option v-for="r in allRoles">{{r}}</option></select></div>
+				<div class="col-1">
+					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addView', selectedAll)" /><br />
+					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary" v-on:click="modify('removeView', selectedView)" />
+				</div>
+				<div class="col-3"><select size="6" class="form-control" v-model="selectedView"><option v-for="r in viewRoles">{{r}}</option></select></div>
+			</div>
+			<div class="row">
+				<div class="col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllPost', null)" /></div>
+				<div class="offset-5 col-3"><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary mt-3" v-on:click="modify('removeAllView', null)" /></div>
+			</div>
+		</div>
+
+		<p>@PopForums.Resources.ForumPermissionInstructions</p>
+	</main>
+</script>
+
+<script type="x-templates" id="Email">
+	<main>
+		<h2>@PopForums.Resources.Email</h2>
+
+		<div class="form-group row">
+			<label for="SmtpServer" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpServer</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.smtpServer" id="SmtpServer" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label for="SmtpPort" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpPort</label>
+			<div class="col-sm-3"><input type="text" v-model="settings.smtpPort" id="SmtpPort" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label for="MailerAddress" class="col-sm-4 col-form-label">@PopForums.Resources.FromEmailAddress</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.mailerAddress" id="MailerAddress" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-8 offset-sm-4">
+				<div class="checkbox"><label for="UseSslSmtp"><input type="checkbox" v-model="settings.useSslSmtp" id="UseSslSmtp" /> @PopForums.Resources.UseSsl</label></div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-8 offset-sm-4">
+				<div class="checkbox"><label for="UseEsmtp"><input type="checkbox" v-model="settings.useEsmtp" id="UseEsmtp" /> @PopForums.Resources.UseEsmtpCred</label></div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="SmtpUser" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpUser</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.smtpUser" id="SmtpUser" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label for="SmtpPassword" class="col-sm-4 col-form-label">@PopForums.Resources.SmtpPassword</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.smtpPassword" id="SmtpPassword" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label for="MailSendingInverval" class="col-sm-4 col-form-label">@PopForums.Resources.SendingInterval</label>
+			<div class="col-sm-3"><input type="text" v-model="settings.mailSendingInverval" id="MailSendingInverval" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label for="MailerQuantity" class="col-sm-4 col-form-label">Mailer quantity</label>
+			<div class="col-sm-3"><input type="text" v-model="settings.mailerQuantity" id="MailerQuantity" class="form-control" /></div>
+		</div>
+		<div class="form-group row">
+			<label class="col-sm-4 col-form-label">@PopForums.Resources.Signature</label>
+			<div class="col-sm-8">
+				<textarea v-model="settings.mailSignature" class="form-control" rows="4"></textarea>
+			</div>
+		</div>
+
+		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+
+	</main>
+</script>
 
 <script type="x-templates" id="Search">
 	<main>
@@ -504,6 +504,69 @@
 			</select>
 		</div>
 		<input type="button" v-on:click="deleteWord" value="@PopForums.Resources.DeleteJunkWordButton" class="btn btn-primary" />
+	</main>
+</script>
+
+<script type="x-templates" id="ExternalLogins">
+	<main>
+		<h2>@PopForums.Resources.ExternalLogins</h2>
+
+		<p>@PopForums.Resources.AppRestartRequired</p>
+
+		<table class="table">
+			<tr>
+				<th>Google</th>
+				<td><input type="checkbox" v-model="settings.useGoogleLogin" /> (registered redirect URI is http://yourdomain/signin-google)</td>
+			</tr>
+			<tr>
+				<td>ClientId:</td>
+				<td><input type="text" v-model="settings.googleClientId" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>ClientSecret:</td>
+				<td><input type="text" v-model="settings.googleClientSecret" class="form-control" /></td>
+			</tr>
+			<tr>
+				<th>Facebook</th>
+				<td><input type="checkbox" v-model="settings.useFacebookLogin" /></td>
+			</tr>
+			<tr>
+				<td>AppID:</td>
+				<td><input type="text" v-model="settings.facebookAppID" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>AppSecret:</td>
+				<td><input type="text" v-model="settings.facebookAppSecret" class="form-control" /></td>
+			</tr>
+			<tr>
+				<th>Twitter</th>
+				<td><input type="checkbox" v-model="settings.useTwitterLogin" /></td>
+			</tr>
+			<tr>
+				<td>ConsumerKey:</td>
+				<td><input type="text" v-model="settings.twitterConsumerKey" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>ConsumerSecret:</td>
+				<td><input type="text" v-model="settings.twitterConsumerSecret" class="form-control" /></td>
+			</tr>
+			<tr>
+				<th>Microsoft</th>
+				<td><input type="checkbox" v-model="settings.useMicrosoftLogin" /></td>
+			</tr>
+			<tr>
+				<td>ClientID:</td>
+				<td><input type="text" v-model="settings.microsoftClientID" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>ClientSecret:</td>
+				<td><input type="text" v-model="settings.microsoftClientSecret" class="form-control" /></td>
+			</tr>
+		</table>
+
+
+		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 	</main>
 </script>
 
@@ -791,6 +854,11 @@
 				});
 			}
 		}
+		}
+
+	const ExternalLogins = {
+		mixins: [settingsMixin,loadingMixin],
+		template: "#ExternalLogins"
 	}
 
 	const routes = [
@@ -802,7 +870,8 @@
 				{ path: "/forums", component: Forums},
 				{ path: "/forumpermissions", component: ForumPermissions },
 				{ path: "/email", component: Email },
-				{ path: "/search", component: Search }
+				{ path: "/search", component: Search },
+				{ path: "/externallogins", component: ExternalLogins }
 			]
 		},
 		{ path: "*", redirect: "/general" }
