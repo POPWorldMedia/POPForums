@@ -186,5 +186,28 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_searchService.DeleteJunkWord(word);
 			return NoContent();
 		}
+
+		// ********** edit user
+
+		[HttpPost("/Forums/AdminApi/EditUserSearch")]
+		public ActionResult<List<User>> EditUserSearch(UserSearch userSearch)
+		{
+			List<User> users;
+			switch (userSearch.SearchType)
+			{
+				case UserSearch.UserSearchType.Email:
+					users = _userService.SearchByEmail(userSearch.SearchText);
+					break;
+				case UserSearch.UserSearchType.Name:
+					users = _userService.SearchByName(userSearch.SearchText);
+					break;
+				case UserSearch.UserSearchType.Role:
+					users = _userService.SearchByRole(userSearch.SearchText);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(userSearch));
+			}
+			return users;
+		}
 	}
 }

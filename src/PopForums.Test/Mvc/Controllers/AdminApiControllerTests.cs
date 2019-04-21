@@ -15,6 +15,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<ICategoryService> _categoryService;
 		private Mock<IForumService> _forumService;
 		private Mock<IUserService> _userService;
+		private Mock<ISearchService> _searchService;
 
 		private AdminApiController GetController()
 		{
@@ -22,7 +23,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_categoryService = new Mock<ICategoryService>();
 			_forumService = new Mock<IForumService>();
 			_userService = new Mock<IUserService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object);
+			_searchService = new Mock<ISearchService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests
@@ -87,6 +89,51 @@ namespace PopForums.Test.Mvc.Controllers
 				Assert.Same(all, container.Value.AllRoles);
 				Assert.Same(allView, container.Value.ViewRoles);
 				Assert.Same(allPost, container.Value.PostRoles);
+			}
+		}
+
+		public class EditUserSearch : AdminApiControllerTests
+		{
+			[Fact]
+			public void NameSearchCallsNameSearch()
+			{
+				var controller = GetController();
+				var text = "abc";
+				var list = new List<User>();
+				_userService.Setup(x => x.SearchByName(text)).Returns(list);
+
+				var result = controller.EditUserSearch(new UserSearch {SearchText = text, SearchType = UserSearch.UserSearchType.Name});
+
+				_userService.Verify(x => x.SearchByName(text), Times.Once);
+				Assert.Same(list, result.Value);
+			}
+
+			[Fact]
+			public void EmailSearchCallsEmailSearch()
+			{
+				var controller = GetController();
+				var text = "abc";
+				var list = new List<User>();
+				_userService.Setup(x => x.SearchByEmail(text)).Returns(list);
+
+				var result = controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Email });
+
+				_userService.Verify(x => x.SearchByEmail(text), Times.Once);
+				Assert.Same(list, result.Value);
+			}
+
+			[Fact]
+			public void RoleSearchCallsRoleSearch()
+			{
+				var controller = GetController();
+				var text = "abc";
+				var list = new List<User>();
+				_userService.Setup(x => x.SearchByRole(text)).Returns(list);
+
+				var result = controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Role });
+
+				_userService.Verify(x => x.SearchByRole(text), Times.Once);
+				Assert.Same(list, result.Value);
 			}
 		}
 	}

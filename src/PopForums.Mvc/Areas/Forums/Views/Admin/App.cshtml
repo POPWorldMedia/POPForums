@@ -52,7 +52,7 @@
 				<router-link to="/search" class="dropdown-item">@PopForums.Resources.Search</router-link>
 				<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
 				<div class="dropdown-divider"></div>
-				<a class="dropdown-item" asp-action="EditUserSearch">@PopForums.Resources.EditUser</a>
+				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
 				<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
 				<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
 				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
@@ -570,7 +570,33 @@
 	</main>
 </script>
 
-	<script>
+
+<script type="x-templates" id="EditUser">
+	<main>
+		<h2>@PopForums.Resources.EditUser</h2>
+
+		<div class="form-group row">
+			<div class="col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
+			<div class="col-sm-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
+		</div>
+		<div class="form-check form-check-inline mb-3">
+			<input class="form-check-input" type="radio" value="name" id="SearchName" v-model="searchType">
+			<label class="form-check-label" for="SearchName">Name</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="radio" value="email" id="SearchEmail" v-model="searchType">
+			<label class="form-check-label" for="SearchEmail">Email</label>
+		</div>
+		<div class="form-check form-check-inline">
+			<input class="form-check-input" type="radio" value="role" id="SearchRole" v-model="searchType">
+			<label class="form-check-label" for="SearchRole">Role</label>
+		</div>
+		<transition name="fade"><span v-show="searchAlert" class="alert alert-warning">@PopForums.Resources.NoResults</span></transition>
+		<div v-for="u in searchResults">{{u.name}} - {{u.email}}</div>
+	</main>
+</script>
+
+<script>
 	const basePath = "../../adminapi/";
 
 	const Top = {
@@ -861,6 +887,33 @@
 		template: "#ExternalLogins"
 	}
 
+	const EditUser = {
+		mixins: [loadingMixin],
+		template: "#EditUser",
+		data() {
+			return {
+				searchResults: [],
+				searchText: "",
+				searchType: "name",
+				searchAlert: false
+			}
+		},
+		methods: {
+			search: function() {
+				this.startLoad();
+				axios.post(basePath + "EditUserSearch", { searchType: this.searchType, searchText: this.searchText })
+					.then(response => {
+						this.searchResults = response.data;
+						this.endLoad();
+						if (this.searchResults.length === 0)
+							this.searchAlert = true;
+						else
+							this.searchAlert = false;
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -871,7 +924,8 @@
 				{ path: "/forumpermissions", component: ForumPermissions },
 				{ path: "/email", component: Email },
 				{ path: "/search", component: Search },
-				{ path: "/externallogins", component: ExternalLogins }
+				{ path: "/externallogins", component: ExternalLogins },
+				{ path: "/edituser", component: EditUser }
 			]
 		},
 		{ path: "*", redirect: "/general" }
