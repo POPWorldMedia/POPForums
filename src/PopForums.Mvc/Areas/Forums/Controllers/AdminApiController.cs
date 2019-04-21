@@ -13,19 +13,21 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	[Produces("application/json")]
 	[ApiController]
-	public class AdminApiController : ControllerBase
+	public class AdminApiController : Controller
 	{
 		private readonly ISettingsManager _settingsManager;
 		private readonly ICategoryService _categoryService;
 		private readonly IForumService _forumService;
 		private readonly IUserService _userService;
+		private readonly ISearchService _searchService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
 			_forumService = forumService;
 			_userService = userService;
+			_searchService = searchService;
 		}
 
 		// ********** settings
@@ -156,10 +158,33 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/ModifyForumRoles")]
-		public EmptyResult ModifyForumRoles(ModifyForumRolesContainer container)
+		public NoContentResult ModifyForumRoles(ModifyForumRolesContainer container)
 		{
 			_forumService.ModifyForumRoles(container);
-			return new EmptyResult();
+			return NoContent();
+		}
+
+		// ********** search
+
+		[HttpGet("/Forums/AdminApi/GetJunkWords")]
+		public ActionResult<IEnumerable<string>> GetJunkWords()
+		{
+			var words = _searchService.GetJunkWords();
+			return words;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateJunkWord/{word}")]
+		public NoContentResult CreateJunkWord(string word)
+		{
+			_searchService.CreateJunkWord(word);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteJunkWord/{word}")]
+		public NoContentResult DeleteJunkWord(string word)
+		{
+			_searchService.DeleteJunkWord(word);
+			return NoContent();
 		}
 	}
 }

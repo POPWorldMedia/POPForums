@@ -482,20 +482,30 @@
 		</main>
 	</script>
 
-	<script type="x-templates" id="Search">
-		<main>
-			<h2>@PopForums.Resources.Search</h2>
+<script type="x-templates" id="Search">
+	<main>
+		<h2>@PopForums.Resources.Search</h2>
 
-			<div class="form-group row">
-				<label for="SearchIndexingInterval" class="col-sm-4 col-form-label">@PopForums.Resources.Millseconds</label>
-				<div class="col-sm-8"><input type="text" v-model="settings.searchIndexingInterval" id="SearchIndexingInterval" class="form-control" /></div>
-			</div>
+		<div class="form-group row">
+			<label for="SearchIndexingInterval" class="col-sm-4 col-form-label">@PopForums.Resources.Millseconds</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.searchIndexingInterval" id="SearchIndexingInterval" class="form-control" /></div>
+		</div>
+		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 
-			<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-			<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
-
-		</main>
-	</script>
+		<h3 class="mt-3">@PopForums.Resources.JunkWords</h3>
+		<div class="form-group row">
+			<div class="col-sm-8"><input type="text" v-model="newWord" class="form-control" /></div>
+			<div class="col-sm-3"><input type="button" v-on:click="createWord" value="@PopForums.Resources.CreateJunkWordButton" class="btn btn-primary" /></div>
+		</div>
+		<div class="form-group row">
+			<select size="10" class="form-control" v-model="selectedWord">
+				<option v-for="w in junkWords">{{w}}</option>
+			</select>
+		</div>
+		<input type="button" v-on:click="deleteWord" value="@PopForums.Resources.DeleteJunkWordButton" class="btn btn-primary" />
+	</main>
+</script>
 
 	<script>
 	const basePath = "../../adminapi/";
@@ -746,7 +756,41 @@
 
 	const Search = {
 		mixins: [settingsMixin,loadingMixin],
-		template: "#Search"
+		template: "#Search",
+		data() {
+			return {
+				junkWords: [],
+				selectedWord: null,
+				newWord: ""
+			}
+		},
+		created: function() {
+			this.updateJunk();
+		},
+		methods: {
+			updateJunk: function () {
+				this.startLoad();
+				axios.get(basePath + "GetJunkWords").then(response => {
+					this.junkWords = response.data;
+					this.endLoad();
+				});
+			},
+			createWord: function() {
+				this.startLoad();
+				axios.post(basePath + "CreateJunkWord/" + this.newWord).then(response => {
+					this.endLoad();
+					this.newWord = "";
+					this.updateJunk();
+				});
+			},
+			deleteWord: function() {
+				this.startLoad();
+				axios.post(basePath + "DeleteJunkWord/" + this.selectedWord).then(response => {
+					this.endLoad();
+					this.updateJunk();
+				});
+			}
+		}
 	}
 
 	const routes = [
