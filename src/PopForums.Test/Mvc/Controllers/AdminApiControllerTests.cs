@@ -16,6 +16,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IForumService> _forumService;
 		private Mock<IUserService> _userService;
 		private Mock<ISearchService> _searchService;
+		private Mock<IProfileService> _profileService;
 
 		private AdminApiController GetController()
 		{
@@ -24,7 +25,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_forumService = new Mock<IForumService>();
 			_userService = new Mock<IUserService>();
 			_searchService = new Mock<ISearchService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object);
+			_profileService = new Mock<IProfileService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests
