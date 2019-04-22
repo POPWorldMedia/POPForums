@@ -592,12 +592,18 @@
 			<label class="form-check-label" for="SearchRole">Role</label>
 		</div>
 		<transition name="fade"><span v-show="searchAlert" class="alert alert-warning">@PopForums.Resources.NoResults</span></transition>
-		<div v-for="u in searchResults">{{u.name}} - {{u.email}}</div>
+		<div v-for="u in searchResults"><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
+	</main>
+</script>
+
+<script type="x-templates" id="EditUserDetail">
+	<main>
+		<h2>@PopForums.Resources.EditUser</h2>
 	</main>
 </script>
 
 <script>
-	const basePath = "../../adminapi/";
+	const basePath = "/Forums/AdminApi/";
 
 	const Top = {
 		template: "#Top",
@@ -914,6 +920,25 @@
 		}
 	}
 
+	const EditUserDetail = {
+		mixins: [loadingMixin],
+		template: "#EditUserDetail",
+		data() {
+			return {
+				user: null
+			}
+		},
+		created: function () {
+			var u = basePath + "GetUser/" + this.$route.params.id;
+			axios.get(u).then(response => {
+				this.user = response.data;
+			});
+		},
+		methods: {
+
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -925,7 +950,8 @@
 				{ path: "/email", component: Email },
 				{ path: "/search", component: Search },
 				{ path: "/externallogins", component: ExternalLogins },
-				{ path: "/edituser", component: EditUser }
+				{ path: "/edituser", component: EditUser },
+				{ path: "/edituser/:id", component: EditUserDetail }
 			]
 		},
 		{ path: "*", redirect: "/general" }

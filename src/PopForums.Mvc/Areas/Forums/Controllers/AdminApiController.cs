@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
+using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
@@ -20,14 +21,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IForumService _forumService;
 		private readonly IUserService _userService;
 		private readonly ISearchService _searchService;
+		private readonly IProfileService _profileService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
 			_forumService = forumService;
 			_userService = userService;
 			_searchService = searchService;
+			_profileService = profileService;
 		}
 
 		// ********** settings
@@ -208,6 +211,17 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					throw new ArgumentOutOfRangeException(nameof(userSearch));
 			}
 			return users;
+		}
+
+		[HttpGet("/Forums/AdminApi/GetUser/{id}")]
+		public ActionResult<UserEdit> GetUser(int id)
+		{
+			var user = _userService.GetUser(id);
+			if (user == null)
+				return NotFound();
+			var profile = _profileService.GetProfileForEdit(user);
+			var model = new UserEdit(user, profile);
+			return model;
 		}
 	}
 }
