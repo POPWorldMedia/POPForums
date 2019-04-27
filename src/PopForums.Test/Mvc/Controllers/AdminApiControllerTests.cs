@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Controllers;
+using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 using Xunit;
 
@@ -17,6 +19,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IUserService> _userService;
 		private Mock<ISearchService> _searchService;
 		private Mock<IProfileService> _profileService;
+		private Mock<IUserRetrievalShim> _userRetrievalShim;
 
 		private AdminApiController GetController()
 		{
@@ -26,7 +29,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_userService = new Mock<IUserService>();
 			_searchService = new Mock<ISearchService>();
 			_profileService = new Mock<IProfileService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object);
+			_userRetrievalShim = new Mock<IUserRetrievalShim>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests

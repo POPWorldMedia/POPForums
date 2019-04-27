@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
-using PopForums.Mvc.Areas.Forums.Models;
+using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
@@ -22,8 +22,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserService _userService;
 		private readonly ISearchService _searchService;
 		private readonly IProfileService _profileService;
+		private readonly IUserRetrievalShim _userRetrievalShim;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -31,6 +32,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userService = userService;
 			_searchService = searchService;
 			_profileService = profileService;
+			_userRetrievalShim = userRetrievalShim;
 		}
 
 		// ********** settings
@@ -222,6 +224,35 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var profile = _profileService.GetProfileForEdit(user);
 			var model = new UserEdit(user, profile);
 			return model;
+		}
+
+		// ********** user roles
+
+		[HttpGet("/Forums/AdminApi/GetAllRoles")]
+		public ActionResult<IEnumerable<string>> GetAllRoles()
+		{
+			var roles = _userService.GetAllRoles();
+			return roles;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateRole/{role}")]
+		public ActionResult CreateRole(string role)
+		{
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			_userService.CreateRole(role, user, ip);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteRole/{role}")]
+		public ActionResult DeleteRole(string role)
+		{
+			if (role == PermanentRoles.Admin || role == PermanentRoles.Moderator)
+				return NoContent();
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			_userService.DeleteRole(role, user, ip);
+			return NoContent();
 		}
 	}
 }
