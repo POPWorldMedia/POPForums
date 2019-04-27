@@ -53,7 +53,7 @@
 				<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
 				<div class="dropdown-divider"></div>
 				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
-				<a class="dropdown-item" asp-action="UserRoles">@PopForums.Resources.UserRoles</a>
+				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
 				<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
 				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
 				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
@@ -602,6 +602,26 @@
 	</main>
 </script>
 
+<script type="x-templates" id="UserRoles">
+	<main>
+		<h2>@PopForums.Resources.UserRoles</h2>
+		
+		<div class="form-group row">
+			<div class="col-sm-8"><input type="text" v-model="newRole" class="form-control" /></div>
+			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.CreateNewRole" v-on:click="createRole" class="btn btn-primary" :disabled="loading" /></div>
+		</div>
+		
+		<div class="form-group">
+			<select size="6" class="form-control" v-model="selectedAll">
+				<option v-for="r in roles">{{r}}</option>
+			</select>
+		</div>
+		<p><input type="submit" value="@PopForums.Resources.DeleteSelectedRole" v-on:click="deleteRole" :disabled="loading" class="btn btn-primary" /></p>
+
+		<p>@PopForums.Resources.PermRoles</p>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -935,7 +955,49 @@
 			});
 		},
 		methods: {
+		}
+	}
 
+	const UserRoles = {
+		mixins: [loadingMixin],
+		template: "#UserRoles",
+		data() {
+			return {
+				roles: [],
+				newRole: "",
+				selectedAll: null
+			}
+		},
+		created: function () {
+			this.refreshRoles();
+		},
+		methods: {
+			refreshRoles: function() {
+				this.startLoad();
+				axios.get(basePath + "GetAllRoles").then(response => {
+					this.roles = response.data;
+					this.endLoad();
+				});
+			},
+			createRole: function () {
+				if (this.newRole && this.newRole != "") {
+					this.startLoad();
+					axios.post(basePath + "CreateRole/" + this.newRole).then(response => {
+						this.endLoad();
+						this.refreshRoles();
+						this.newRole = "";
+					});
+				}
+			},
+			deleteRole: function() {
+				if (this.selectedAll) {
+					this.startLoad();
+					axios.post(basePath + "DeleteRole/" + this.selectedAll).then(response => {
+						this.endLoad();
+						this.refreshRoles();
+					});
+				}
+			}
 		}
 	}
 
@@ -951,7 +1013,8 @@
 				{ path: "/search", component: Search },
 				{ path: "/externallogins", component: ExternalLogins },
 				{ path: "/edituser", component: EditUser },
-				{ path: "/edituser/:id", component: EditUserDetail }
+				{ path: "/edituser/:id", component: EditUserDetail },
+				{ path: "/userroles", component: UserRoles }
 			]
 		},
 		{ path: "*", redirect: "/general" }
