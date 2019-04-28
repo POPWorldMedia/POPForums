@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
@@ -23,8 +24,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ISearchService _searchService;
 		private readonly IProfileService _profileService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
+		private readonly IImageService _imageService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -33,6 +35,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_searchService = searchService;
 			_profileService = profileService;
 			_userRetrievalShim = userRetrievalShim;
+			_imageService = imageService;
 		}
 
 		// ********** settings
@@ -252,6 +255,29 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			_userService.DeleteRole(role, user, ip);
+			return NoContent();
+		}
+
+		// ********** user image approval
+
+		[HttpGet("/Forums/AdminApi/GetImageApproval")]
+		public ActionResult<UserImageApprovalContainer> GetImageApproval()
+		{
+			var container = _imageService.GetUnapprovedUserImageContainer();
+			return container;
+		}
+
+		[HttpPost("/Forums/AdminApi/ApproveUserImage/{id}")]
+		public ActionResult ApproveUserImage(int id)
+		{
+			_imageService.ApproveUserImage(id);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteUserImage/{id}")]
+		public ActionResult DeleteUserImage(int id)
+		{
+			_imageService.DeleteUserImage(id);
 			return NoContent();
 		}
 	}

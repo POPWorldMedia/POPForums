@@ -54,7 +54,7 @@
 				<div class="dropdown-divider"></div>
 				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
 				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
-				<a class="dropdown-item" asp-action="UserImageApprove">@PopForums.Resources.UserImageApproval</a>
+				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
 				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
 				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
 				<div class="dropdown-divider"></div>
@@ -622,6 +622,26 @@
 	</main>
 </script>
 
+<script type="x-templates" id="UserImageApproval">
+	<main>
+		<h2>@PopForums.Resources.UserImageApproval</h2>
+		
+		<div v-if="isNewUserImageApproved"><p class="alert alert-warning">@PopForums.Resources.UserImageApprovalNotReq</p></div>
+		
+		<div v-for="i in unapproved">
+			<p>
+				{{i.user.name}} - <a v-bind:href="'mailto:' + i.user.email">{{i.user.email}}</a>
+				<img v-bind:src="'/Forums/Image/UserImage/' + i.userImage.userImageID" />
+			</p>
+			<p>
+				<input type="button" value="Approve" class="btn btn-primary mr-3" v-on:click="approveImage(i.userImage.userImageID)" />
+				<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary" v-on:click="deleteImage(i.userImage.userImageID)" />
+			</p>
+			<hr />
+		</div>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1001,6 +1021,44 @@
 		}
 	}
 
+	const UserImageApproval = {
+		mixins: [loadingMixin],
+		template: "#UserImageApproval",
+		data() {
+			return {
+				isNewUserImageApproved: false,
+				unapproved: []
+			}
+		},
+		created: function () {
+			this.refreshData();
+		},
+		methods: {
+			refreshData: function() {
+				this.startLoad();
+				axios.get(basePath + "GetImageApproval").then(response => {
+					this.isNewUserImageApproved = response.data.isNewUserImageApproved;
+					this.unapproved = response.data.unapproved;
+					this.endLoad();
+				});
+			},
+			approveImage: function(id) {
+				this.startLoad();
+				axios.post(basePath + "ApproveUserImage/" + id).then(response => {
+					this.refreshData();
+					this.endLoad();
+				});
+			},
+			deleteImage: function(id) {
+				this.startLoad();
+				axios.post(basePath + "DeleteUserImage/" + id).then(response => {
+					this.refreshData();
+					this.endLoad();
+				});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1014,7 +1072,8 @@
 				{ path: "/externallogins", component: ExternalLogins },
 				{ path: "/edituser", component: EditUser },
 				{ path: "/edituser/:id", component: EditUserDetail },
-				{ path: "/userroles", component: UserRoles }
+				{ path: "/userroles", component: UserRoles },
+				{ path: "/userimageapproval", component: UserImageApproval }
 			]
 		},
 		{ path: "*", redirect: "/general" }

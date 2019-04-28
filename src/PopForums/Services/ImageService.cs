@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
 using SixLabors.ImageSharp;
@@ -23,20 +25,25 @@ namespace PopForums.Services
 		void ApproveUserImage(int userImageID);
 		void DeleteUserImage(int userImageID);
 		UserImage GetUserImage(int userImageID);
+		UserImageApprovalContainer GetUnapprovedUserImageContainer();
 	}
 
 	public class ImageService : IImageService
 	{
-		public ImageService(IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, IProfileService profileService)
+		public ImageService(IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, IProfileService profileService, IUserRepository userRepository, ISettingsManager settingsManager)
 		{
 			_userAvatarRepository = userAvatarRepository;
 			_userImageRepository = userImageRepository;
 			_profileService = profileService;
+			_userRepository = userRepository;
+			_settingsManager = settingsManager;
 		}
 
 		private readonly IUserAvatarRepository _userAvatarRepository;
 		private readonly IUserImageRepository _userImageRepository;
 		private readonly IProfileService _profileService;
+		private readonly IUserRepository _userRepository;
+		private readonly ISettingsManager _settingsManager;
 
 		public bool? IsUserImageApproved(int userImageID)
 		{
@@ -105,6 +112,21 @@ namespace PopForums.Services
 				image.Save(output, new JpegEncoder { Quality = qualityLevel });
 				return output.ToArray();
 			}
+		}
+
+		public UserImageApprovalContainer GetUnapprovedUserImageContainer()
+		{
+			var isNewUserImageApproved = _settingsManager.Current.IsNewUserImageApproved;
+			var dictionary = new Dictionary<UserImage, User>();
+			var unapprovedImages = GetUnapprovedUserImages();
+			var users = _userRepository.GetUsersFromIDs(unapprovedImages.Select(i => i.UserID).ToList());
+			var container = new UserImageApprovalContainer { Unapproved = new List<UserImagePair>(), IsNewUserImageApproved = isNewUserImageApproved };
+			foreach (var image in unapprovedImages)
+			{
+				container.Unapproved.Add(new UserImagePair { User = users.Single(u => u.UserID == image.UserID), UserImage = image });
+				dictionary.Add(image, users.Single(u => u.UserID == image.UserID));
+			}
+			return container;
 		}
 	}
 }
