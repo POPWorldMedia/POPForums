@@ -55,7 +55,7 @@
 				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
 				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
 				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
-				<a class="dropdown-item" asp-action="Ban">@PopForums.Resources.EmailIpBan</a>
+				<router-link to="/emailipban" class="dropdown-item">@PopForums.Resources.EmailIpBan</router-link>
 				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
@@ -642,6 +642,42 @@
 	</main>
 </script>
 
+<script type="x-templates" id="EmailIpBan">
+	<main>
+		<h2>@PopForums.Resources.EmailIpBan</h2>
+
+		<h3>@PopForums.Resources.EmailBan</h3>
+
+		<div class="form-group row">
+			<div class="col-sm-8"><input type="text" v-model="newEmail" class="form-control" /></div>
+			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banEmail" class="btn btn-primary" :disabled="loading" /></div>
+		</div>
+
+		<div class="form-group">
+			<select size="6" class="form-control" v-model="selectedEmail">
+				<option v-for="e in emails">{{e}}</option>
+			</select>
+		</div>
+		<p><input type="submit" value="@PopForums.Resources.BanRemove" v-on:click="removeEmail" :disabled="loading" class="btn btn-primary" /></p>
+
+		<h3>@PopForums.Resources.IpBan</h3>
+
+		<div class="form-group row">
+			<div class="col-sm-8"><input type="text" v-model="newIP" class="form-control" /></div>
+			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banIP" class="btn btn-primary" :disabled="loading" /></div>
+		</div>
+
+		<div class="form-group">
+			<select size="6" class="form-control" v-model="selectedIP">
+				<option v-for="i in ips">{{i}}</option>
+			</select>
+		</div>
+		<p><input type="submit" value="@PopForums.Resources.BanRemove" v-on:click="removeIP" :disabled="loading" class="btn btn-primary" /></p>
+
+
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1059,6 +1095,64 @@
 		}
 	}
 
+	const EmailIpBan = {
+		mixins: [loadingMixin],
+		template: "#EmailIpBan",
+		data() {
+			return {
+				ips: [],
+				emails: [],
+				newEmail: "",
+				newIP: "",
+				selectedIP: null,
+				selectedEmail: null
+			}
+		},
+		created: function() {
+			this.refreshData();
+		},
+		methods: {
+			refreshData: function() {
+				this.startLoad();
+				axios.get(basePath + "GetEmailIPBan").then(response => {
+					this.emails = response.data.emails;
+					this.ips = response.data.ips;
+					this.endLoad();
+				});
+			},
+			banEmail: function () {
+				this.startLoad();
+				axios.post(basePath + "BanEmail/" + this.newEmail).then(response => {
+					this.endLoad();
+					this.newEmail = "";
+					this.refreshData();
+				});
+			},
+			removeEmail: function() {
+				this.startLoad();
+				axios.post(basePath + "RemoveEmail/" + this.selectedEmail).then(response => {
+					this.endLoad();
+					this.refreshData();
+				});
+			},
+			banIP: function () {
+				this.startLoad();
+				axios.post(basePath + "BanIP/" + this.newIP).then(response => {
+					this.endLoad();
+					this.newIP = "";
+					this.refreshData();
+				});
+			},
+			removeIP: function() {
+				this.startLoad();
+				axios.post(basePath + "RemoveIP/" + this.selectedIP).then(response => {
+					this.endLoad();
+					this.refreshData();
+				});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1073,7 +1167,8 @@
 				{ path: "/edituser", component: EditUser },
 				{ path: "/edituser/:id", component: EditUserDetail },
 				{ path: "/userroles", component: UserRoles },
-				{ path: "/userimageapproval", component: UserImageApproval }
+				{ path: "/userimageapproval", component: UserImageApproval },
+				{ path: "/emailipban", component: EmailIpBan }
 			]
 		},
 		{ path: "*", redirect: "/general" }

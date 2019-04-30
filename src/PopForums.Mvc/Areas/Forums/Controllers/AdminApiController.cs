@@ -25,8 +25,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IProfileService _profileService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly IImageService _imageService;
+		private readonly IBanService _banService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -36,6 +37,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_profileService = profileService;
 			_userRetrievalShim = userRetrievalShim;
 			_imageService = imageService;
+			_banService = banService;
 		}
 
 		// ********** settings
@@ -278,6 +280,44 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public ActionResult DeleteUserImage(int id)
 		{
 			_imageService.DeleteUserImage(id);
+			return NoContent();
+		}
+
+		// ********** email ip ban
+		[HttpGet("/Forums/AdminApi/GetEmailIPBan")]
+		public ActionResult<object> GetEmailIPBan()
+		{
+			var emails = _banService.GetEmailBans();
+			var ips = _banService.GetIPBans();
+			var container = new {emails, ips};
+			return container;
+		}
+
+		[HttpPost("/Forums/AdminApi/BanEmail/{email}")]
+		public ActionResult BanEmail(string email)
+		{
+			_banService.BanEmail(email);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/RemoveEmail/{email}")]
+		public ActionResult RemoveEmail(string email)
+		{
+			_banService.RemoveEmailBan(email);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/BanIP/{ip}")]
+		public ActionResult BanIP(string ip)
+		{
+			_banService.BanIP(ip);
+			return NoContent();
+		}
+
+		[HttpPost("/Forums/AdminApi/RemoveIP/{ip}")]
+		public ActionResult RemoveIP(string ip)
+		{
+			_banService.RemoveIPBan(ip);
 			return NoContent();
 		}
 	}
