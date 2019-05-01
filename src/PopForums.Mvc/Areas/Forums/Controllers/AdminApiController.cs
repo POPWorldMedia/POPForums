@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
+using PopForums.Mvc.Areas.Forums.Extensions;
+using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
@@ -26,8 +28,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly IImageService _imageService;
 		private readonly IBanService _banService;
+		private readonly IMailingListService _mailingListService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -38,6 +41,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userRetrievalShim = userRetrievalShim;
 			_imageService = imageService;
 			_banService = banService;
+			_mailingListService = mailingListService;
 		}
 
 		// ********** settings
@@ -284,6 +288,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		// ********** email ip ban
+
 		[HttpGet("/Forums/AdminApi/GetEmailIPBan")]
 		public ActionResult<object> GetEmailIPBan()
 		{
@@ -319,6 +324,20 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			_banService.RemoveIPBan(val.String);
 			return NoContent();
+		}
+
+		// ********** email users
+
+		[HttpPost("/Forums/AdminApi/EmailUsers")]
+		public ActionResult EmailUsers([FromBody]EmailUsersContainer container)
+		{
+			if (string.IsNullOrWhiteSpace(container.Subject) || string.IsNullOrWhiteSpace(container.Body))
+				return StatusCode((int)HttpStatusCode.BadRequest, new {Error = Resources.SubjectAndBodyNotEmpty});
+			var baseString = this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = "--id--", key = "--key--" });
+			baseString = baseString.Replace("--id--", "{0}").Replace("--key--", "{1}");
+			string UnsubscribeLinkGenerator(User user) => string.Format(baseString, user.UserID, _profileService.GetUnsubscribeHash(user));
+			_mailingListService.MailUsers(container.Subject, container.Body, container.HtmlBody, UnsubscribeLinkGenerator);
+			return Ok();
 		}
 	}
 }

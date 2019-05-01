@@ -22,6 +22,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IUserRetrievalShim> _userRetrievalShim;
 		private Mock<IImageService> _imageService;
 		private Mock<IBanService> _banService;
+		private Mock<IMailingListService> _mailingListService;
 
 		private AdminApiController GetController()
 		{
@@ -34,7 +35,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_userRetrievalShim = new Mock<IUserRetrievalShim>();
 			_imageService = new Mock<IImageService>();
 			_banService = new Mock<IBanService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object);
+			_mailingListService = new Mock<IMailingListService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object, _mailingListService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests

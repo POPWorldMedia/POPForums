@@ -56,7 +56,7 @@
 				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
 				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
 				<router-link to="/emailipban" class="dropdown-item">@PopForums.Resources.EmailIpBan</router-link>
-				<a class="dropdown-item" asp-action="EmailUsers">@PopForums.Resources.EmailUsers</a>
+				<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
 				<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
@@ -678,6 +678,28 @@
 	</main>
 </script>
 
+<script type="x-templates" id="EmailUsers">
+	<main>
+		<h2>@PopForums.Resources.EmailUsers</h2>
+
+		<div class="form-group">
+			<label>@PopForums.Resources.Subject</label>
+			<input type="text" class="form-control" v-model="subject" />
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.Body</label>
+			<textarea class="form-control" rows="10" v-model="body"></textarea>
+		</div>
+		<div class="form-group">
+			<label>@PopForums.Resources.BodyHtml @PopForums.Resources.Optional</label>
+			<textarea class="form-control" rows="10" v-model="htmlBody"></textarea>
+		</div>
+		<input type="button" value="@PopForums.Resources.Send" v-on:click="sendMail" class="btn btn-primary mr-3" />
+		<span v-if="isErrorVisible" class="alert alert-warning">{{errorMessage}}</span>
+		<transition name="fade"><span v-if="isSuccess" class="alert alert-warning">@PopForums.Resources.EmailUsersQueued</span></transition>
+</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1153,6 +1175,40 @@
 		}
 	}
 
+	const EmailUsers = {
+		mixins: [loadingMixin],
+		template: "#EmailUsers",
+		data() {
+			return {
+				subject: "",
+				body: "",
+				htmlBody: "",
+				errorMessage: "",
+				isErrorVisible: false,
+				isSuccess: false
+			}
+		},
+		methods: {
+			sendMail: function() {
+				this.isErrorVisible = false;
+				this.startLoad();
+				axios.post(basePath + "EmailUsers", {subject: this.subject, body: this.body, htmlBody: this.htmlBody}).then(response => {
+					this.endLoad();
+					this.subject = "";
+					this.body = "";
+					this.htmlBody = "";
+					this.isSuccess = true;
+					})
+				.catch(e => {
+					this.endLoad();
+					this.isErrorVisible = true;
+					this.isSuccess = false;
+					this.errorMessage = e.response.data.error;
+				});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1168,7 +1224,8 @@
 				{ path: "/edituser/:id", component: EditUserDetail },
 				{ path: "/userroles", component: UserRoles },
 				{ path: "/userimageapproval", component: UserImageApproval },
-				{ path: "/emailipban", component: EmailIpBan }
+				{ path: "/emailipban", component: EmailIpBan },
+				{ path: "/emailusers", component: EmailUsers }
 			]
 		},
 		{ path: "*", redirect: "/general" }
