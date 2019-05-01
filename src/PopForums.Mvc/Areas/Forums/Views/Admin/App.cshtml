@@ -58,7 +58,7 @@
 				<router-link to="/emailipban" class="dropdown-item">@PopForums.Resources.EmailIpBan</router-link>
 				<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
 				<div class="dropdown-divider"></div>
-				<a class="dropdown-item" asp-action="ScoringGame">@PopForums.Resources.ScoringGame</a>
+				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
 				<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
 				<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
 				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
@@ -696,8 +696,21 @@
 		</div>
 		<input type="button" value="@PopForums.Resources.Send" v-on:click="sendMail" class="btn btn-primary mr-3" />
 		<span v-if="isErrorVisible" class="alert alert-warning">{{errorMessage}}</span>
-		<transition name="fade"><span v-if="isSuccess" class="alert alert-warning">@PopForums.Resources.EmailUsersQueued</span></transition>
+		<transition name="fade"><span v-if="isSuccess" class="alert alert-success">@PopForums.Resources.EmailUsersQueued</span></transition>
 </main>
+</script>
+
+<script type="x-templates" id="ScoringGame">
+	<main>
+		<h2>@PopForums.Resources.ScoringGame</h2>
+
+		<div class="form-group">
+			<label>Interval (@PopForums.Resources.Millseconds)</label>
+			<input type="text" v-model="settings.scoringGameCalculatorInterval" class="form-control" />
+		</div>
+		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+	</main>
 </script>
 
 <script>
@@ -1209,6 +1222,11 @@
 		}
 	}
 
+	const ScoringGame = {
+		mixins: [settingsMixin,loadingMixin],
+		template: "#ScoringGame"
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1225,7 +1243,8 @@
 				{ path: "/userroles", component: UserRoles },
 				{ path: "/userimageapproval", component: UserImageApproval },
 				{ path: "/emailipban", component: EmailIpBan },
-				{ path: "/emailusers", component: EmailUsers }
+				{ path: "/emailusers", component: EmailUsers },
+				{ path: "/scoringgame", component: ScoringGame }
 			]
 		},
 		{ path: "*", redirect: "/general" }
