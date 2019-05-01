@@ -293,31 +293,31 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return container;
 		}
 
-		[HttpPost("/Forums/AdminApi/BanEmail/{email}")]
-		public ActionResult BanEmail(string email)
+		[HttpPost("/Forums/AdminApi/BanEmail")]
+		public ActionResult BanEmail([FromBody] SingleString val)
 		{
-			_banService.BanEmail(email);
+			_banService.BanEmail(val.String);
 			return NoContent();
 		}
 
-		[HttpPost("/Forums/AdminApi/RemoveEmail/{email}")]
-		public ActionResult RemoveEmail(string email)
+		[HttpPost("/Forums/AdminApi/RemoveEmail")]
+		public ActionResult RemoveEmail([FromBody] SingleString val)
 		{
-			_banService.RemoveEmailBan(email);
+			_banService.RemoveEmailBan(val.String);
 			return NoContent();
 		}
 
-		[HttpPost("/Forums/AdminApi/BanIP/{ip}")]
-		public ActionResult BanIP(string ip)
+		[HttpPost("/Forums/AdminApi/BanIP")]
+		public ActionResult BanIP([FromBody] SingleString val)
 		{
-			_banService.BanIP(ip);
+			_banService.BanIP(val.String);
 			return NoContent();
 		}
 
-		[HttpPost("/Forums/AdminApi/RemoveIP/{ip}")]
-		public ActionResult RemoveIP(string ip)
+		[HttpPost("/Forums/AdminApi/RemoveIP")]
+		public ActionResult RemoveIP([FromBody] SingleString val)
 		{
-			_banService.RemoveIPBan(ip);
+			_banService.RemoveIPBan(val.String);
 			return NoContent();
 		}
 	}

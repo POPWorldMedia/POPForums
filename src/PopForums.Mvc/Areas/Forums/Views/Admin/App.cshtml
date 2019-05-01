@@ -1122,7 +1122,7 @@
 			},
 			banEmail: function () {
 				this.startLoad();
-				axios.post(basePath + "BanEmail/" + this.newEmail).then(response => {
+				axios.post(basePath + "BanEmail", {string: this.newEmail}).then(response => {
 					this.endLoad();
 					this.newEmail = "";
 					this.refreshData();
@@ -1130,14 +1130,14 @@
 			},
 			removeEmail: function() {
 				this.startLoad();
-				axios.post(basePath + "RemoveEmail/" + this.selectedEmail).then(response => {
+				axios.post(basePath + "RemoveEmail", {string: this.selectedEmail}).then(response => {
 					this.endLoad();
 					this.refreshData();
 				});
 			},
 			banIP: function () {
 				this.startLoad();
-				axios.post(basePath + "BanIP/" + this.newIP).then(response => {
+				axios.post(basePath + "BanIP", {string: this.newIP}).then(response => {
 					this.endLoad();
 					this.newIP = "";
 					this.refreshData();
@@ -1145,7 +1145,7 @@
 			},
 			removeIP: function() {
 				this.startLoad();
-				axios.post(basePath + "RemoveIP/" + this.selectedIP).then(response => {
+				axios.post(basePath + "RemoveIP", {string: this.selectedIP}).then(response => {
 					this.endLoad();
 					this.refreshData();
 				});
