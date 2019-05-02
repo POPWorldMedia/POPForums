@@ -76,7 +76,7 @@
 }
 else
 {
-	<p class="alert alert-danger">@Model.PermissionContext.DenialReason</p>
+	<p class="alert alert-warning">@Model.PermissionContext.DenialReason</p>
 }
 
 @if (user != null && user.IsInRole(PermanentRoles.Moderator))
