@@ -59,7 +59,7 @@
 				<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
 				<div class="dropdown-divider"></div>
 				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
-				<a class="dropdown-item" asp-action="EventDefinitions">@PopForums.Resources.EventDefinitions</a>
+				<router-link to="/eventdefinitions" class="dropdown-item">@PopForums.Resources.EventDefinitions</router-link>
 				<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
 				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
 				<div class="dropdown-divider"></div>
@@ -713,6 +713,67 @@
 	</main>
 </script>
 
+<script type="x-templates" id="EventDefinitions">
+	<main>
+		<h2>@PopForums.Resources.EventDefinitions</h2>
+
+		<p><input type="button" class="btn btn-primary" v-on:click="openNewEvent" value="Add Event" /></p>
+
+		<table class="table table-hover">
+			<tr>
+				<th>ID</th>
+				<th>@PopForums.Resources.Description</th>
+				<th>Point Value</th>
+				<th>Publish to Feed</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr v-for="e in allEvents">
+				<td>{{e.eventDefinitionID}}</td>
+				<td>{{e.description}}</td>
+				<td>{{e.pointValue}}</td>
+				<td><input type="checkbox" disabled="disabled" v-model="e.isPublishedToFeed" /></td>
+				<td>
+					<input type="button" value="Delete" class="btn btn-primary" v-show="!staticIDs.includes(e.eventDefinitionID)" v-on:click="deleteEvent(e)" />
+				</td>
+			</tr>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Add Event</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group row">
+							<label for="EventDefinitionID" class="col-sm-5 col-form-label">EventDefinitionID</label>
+							<div class="col-sm-7"><input type="text" v-model="newEvent.eventDefinitionID" class="form-control" id="EventDefinitionID" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="description" class="col-sm-5 col-form-label">@PopForums.Resources.Description</label>
+							<div class="col-sm-7"><input type="text" v-model="newEvent.description" class="form-control" id="description" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="pointValue" class="col-sm-5 col-form-label"> Point Value</label>
+							<div class="col-sm-7"><input type="text" v-model="newEvent.pointValue" class="form-control" id="pointValue" /></div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-7 offset-sm-5">
+								<div class="checkbox"><label for="ispub"><input type="checkbox" v-model="newEvent.isPublishedToFeed" id="ispub" /> Publish to Feed</label></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="createEvent">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -997,7 +1058,7 @@
 				});
 			}
 		}
-		}
+	}
 
 	const ExternalLogins = {
 		mixins: [settingsMixin,loadingMixin],
@@ -1206,18 +1267,18 @@
 				this.isErrorVisible = false;
 				this.startLoad();
 				axios.post(basePath + "EmailUsers", {subject: this.subject, body: this.body, htmlBody: this.htmlBody}).then(response => {
-					this.endLoad();
-					this.subject = "";
-					this.body = "";
-					this.htmlBody = "";
-					this.isSuccess = true;
+						this.endLoad();
+						this.subject = "";
+						this.body = "";
+						this.htmlBody = "";
+						this.isSuccess = true;
 					})
-				.catch(e => {
-					this.endLoad();
-					this.isErrorVisible = true;
-					this.isSuccess = false;
-					this.errorMessage = e.response.data.error;
-				});
+					.catch(e => {
+						this.endLoad();
+						this.isErrorVisible = true;
+						this.isSuccess = false;
+						this.errorMessage = e.response.data.error;
+					});
 			}
 		}
 	}
@@ -1225,6 +1286,65 @@
 	const ScoringGame = {
 		mixins: [settingsMixin,loadingMixin],
 		template: "#ScoringGame"
+	}
+
+	const EventDefinitions = {
+		mixins: [loadingMixin],
+		template: "#EventDefinitions",
+		data() {
+			return {
+				allEvents: [],
+				staticIDs: [],
+				newEvent: {
+					eventDefinitionID: "",
+					description: "",
+					pointValue: "",
+					isPublishedToFeed: false
+				}
+			}
+		},
+		created: function() {
+			this.refreshData();
+		},
+		methods: {
+			refreshData: function() {
+				this.startLoad();
+				axios.get(basePath + "GetAllEventDefinitions").then(response => {
+					this.allEvents = response.data.allEvents;
+					this.staticIDs = response.data.staticIDs;
+					this.endLoad();
+				});
+			},
+			deleteEvent: function(event) {
+				this.startLoad();
+				axios.post(basePath + "DeleteEvent/" + event.eventDefinitionID)
+					.then(response => {
+						this.refreshData();
+						this.endLoad();
+					});
+			},
+			resetEvent: function() {
+				this.newEvent.eventDefinitionID = "";
+				this.newEvent.description = "";
+				this.newEvent.pointValue = "";
+				this.newEvent.isPublishedToFeed = false;
+			},
+			openNewEvent: function() {
+				this.resetEvent();
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			createEvent: function() {
+				this.startLoad();
+				axios.post(basePath + "CreateEvent", this.newEvent)
+					.then(response => {
+						this.refreshData();
+						const e = this.$refs.modal;
+						$(e).modal("hide");
+						this.endLoad();
+					});
+			}
+		}
 	}
 
 	const routes = [
@@ -1244,7 +1364,8 @@
 				{ path: "/userimageapproval", component: UserImageApproval },
 				{ path: "/emailipban", component: EmailIpBan },
 				{ path: "/emailusers", component: EmailUsers },
-				{ path: "/scoringgame", component: ScoringGame }
+				{ path: "/scoringgame", component: ScoringGame },
+				{ path: "/eventdefinitions", component: EventDefinitions }
 			]
 		},
 		{ path: "*", redirect: "/general" }
@@ -1263,7 +1384,7 @@
 
 	Vue.config.devtools = true;
 
-	</script>
+</script>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
+using PopForums.ScoringGame;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
@@ -29,8 +31,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IImageService _imageService;
 		private readonly IBanService _banService;
 		private readonly IMailingListService _mailingListService;
+		private readonly IEventDefinitionService _eventDefinitionService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -42,6 +45,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_imageService = imageService;
 			_banService = banService;
 			_mailingListService = mailingListService;
+			_eventDefinitionService = eventDefinitionService;
 		}
 
 		// ********** settings
@@ -337,6 +341,31 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			baseString = baseString.Replace("--id--", "{0}").Replace("--key--", "{1}");
 			string UnsubscribeLinkGenerator(User user) => string.Format(baseString, user.UserID, _profileService.GetUnsubscribeHash(user));
 			_mailingListService.MailUsers(container.Subject, container.Body, container.HtmlBody, UnsubscribeLinkGenerator);
+			return Ok();
+		}
+
+		// ********** event definitions
+
+		[HttpGet("/Forums/AdminApi/GetAllEventDefinitions")]
+		public ActionResult<object> GetAllEventDefinitions()
+		{
+			var events = _eventDefinitionService.GetAll();
+			var staticIDs = EventDefinitionService.StaticEvents.Select(x => x.Key).ToArray();
+			var container = new {AllEvents = events, StaticIDs = staticIDs};
+			return container;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateEvent")]
+		public ActionResult CreateEvent([FromBody]EventDefinition newEvent)
+		{
+			_eventDefinitionService.Create(newEvent);
+			return Ok();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteEvent/{id}")]
+		public ActionResult DeleteEvent(string id)
+		{
+			_eventDefinitionService.Delete(id);
 			return Ok();
 		}
 	}
