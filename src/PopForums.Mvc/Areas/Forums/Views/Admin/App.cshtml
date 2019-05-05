@@ -788,7 +788,7 @@
 				<th>&nbsp;</th>
 			</tr>
 			<tr v-for="a in allAwards">
-				<td>{{a.awardDefinitionID}}</td>
+				<td><router-link :to="{path:'/awarddefinitions/'+a.awardDefinitionID}">{{a.awardDefinitionID}}</router-link></td>
 				<td>{{a.title}}</td>
 				<td>{{a.description}}</td>
 				<td><input type="checkbox" disabled="disabled" v-model="a.isSingleTimeAward" /></td>
@@ -827,6 +827,75 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" v-on:click="createAward">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="AwardDefinitionDetail">
+	<main>
+		<h2>Award Detail</h2>
+
+		<table class="table">
+			<tr>
+				<td>Award Definition ID</td>
+				<td>{{award.awardDefinitionID}}</td>
+			</tr>
+			<tr>
+				<td>Title</td>
+				<td>{{award.title}}</td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>{{award.description}}</td>
+			</tr>
+			<tr>
+				<td>Single-time award</td>
+				<td><input type="checkbox" disabled="disabled" v-model="award.isSingleTimeAward" /></td>
+			</tr>
+		</table>
+
+		<h3>Conditions</h3>
+		<p><input type="button" class="btn btn-primary" v-on:click="openNewCondition" value="Add Condition" /></p>
+		<table class="table">
+			<tr>
+				<th>EventDefinitionID</th>
+				<th>Event Count</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr v-for="c in conditions">
+				<td>{{c.eventDefinitionID}}</td>
+				<td>{{c.eventCount}}</td>
+				<td><input type="button" v-on:click="deleteCondition(c)" value="@PopForums.Resources.Delete" class="btn btn-primary" /></td>
+			</tr>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Add Award</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group row">
+							<label for="evid" class="col-sm-5 col-form-label">EventDefinitionID</label>
+							<div class="col-sm-7">
+								<select v-model="newCondition.eventDefinitionID" class="form-control" id="evid">
+									<option v-for="e in allEvents">{{e.eventDefinitionID}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="newcount" class="col-sm-5 col-form-label">Event Count</label>
+							<div class="col-sm-7"><input type="text" v-model="newCondition.eventCount" class="form-control" id="newcount" /></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="createCondition">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -1464,6 +1533,62 @@
 		}
 	}
 
+	const AwardDefinitionDetail = {
+		mixins: [loadingMixin],
+		template: "#AwardDefinitionDetail",
+		data() {
+			return {
+				award: {},
+				conditions: [],
+				allEvents: [],
+				newCondition: {
+					awardDefinitionID: 0,
+					eventDefinitionID: "",
+					eventCount: 0
+				}
+			}
+		},
+		created: function () {
+			this.refreshData();
+		},
+		methods: {
+			refreshData: function () {
+				this.startLoad();
+				var u = basePath + "GetAward/" + this.$route.params.id;
+				axios.get(u).then(response => {
+					this.award = response.data.award;
+					this.conditions = response.data.conditions;
+					this.allEvents = response.data.allEvents;
+					this.endLoad();
+				});
+			},
+			deleteCondition: function(c) {
+				this.startLoad();
+				axios.post(basePath + "DeleteCondition", {awardDefinitionID : this.award.awardDefinitionID, eventDefinitionID: c.eventDefinitionID})
+					.then(response => {
+						this.refreshData();
+						this.endLoad();
+					});
+			},
+			createCondition: function () {
+				this.newCondition.awardDefinitionID = this.award.awardDefinitionID;
+				this.startLoad();
+				axios.post(basePath + "CreateCondition", this.newCondition)
+					.then(response => {
+						this.refreshData();
+						const e = this.$refs.modal;
+						$(e).modal("hide");
+						this.endLoad();
+					});
+			},
+			openNewCondition: function() {
+				this.newCondition.eventCount = "";
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1483,7 +1608,8 @@
 				{ path: "/emailusers", component: EmailUsers },
 				{ path: "/scoringgame", component: ScoringGame },
 				{ path: "/eventdefinitions", component: EventDefinitions },
-				{ path: "/awarddefinitions", component: AwardDefinitions }
+				{ path: "/awarddefinitions", component: AwardDefinitions },
+				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail }
 			]
 		},
 		{ path: "*", redirect: "/general" }

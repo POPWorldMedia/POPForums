@@ -393,5 +393,29 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_awardDefinitionService.Delete(id);
 			return Ok();
 		}
+
+		[HttpGet("/Forums/AdminApi/GetAward/{id}")]
+		public ActionResult<object> GetAward(string id)
+		{
+			var award = _awardDefinitionService.Get(id);
+			var conditions = _awardDefinitionService.GetConditions(award.AwardDefinitionID);
+			var allEvents = _eventDefinitionService.GetAll();
+			var container = new {Award = award, Conditions = conditions, AllEvents = allEvents};
+			return container;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateCondition")]
+		public ActionResult CreateCondition([FromBody]AwardCondition newCondition)
+		{
+			_awardDefinitionService.AddCondition(newCondition);
+			return Ok();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteCondition")]
+		public ActionResult DeleteCondition([FromBody]AwardConditionDeleteContainer container)
+		{
+			_awardDefinitionService.DeleteCondition(container.AwardDefinitionID, container.EventDefinitionID);
+			return Ok();
+		}
 	}
 }
