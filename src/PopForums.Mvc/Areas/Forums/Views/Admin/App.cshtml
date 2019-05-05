@@ -60,7 +60,7 @@
 				<div class="dropdown-divider"></div>
 				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
 				<router-link to="/eventdefinitions" class="dropdown-item">@PopForums.Resources.EventDefinitions</router-link>
-				<a class="dropdown-item" asp-action="AwardDefinitions">@PopForums.Resources.AwardDefinitions</a>
+				<router-link to="/awarddefinitions" class="dropdown-item">@PopForums.Resources.AwardDefinitions</router-link>
 				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
@@ -570,7 +570,6 @@
 	</main>
 </script>
 
-
 <script type="x-templates" id="EditUser">
 	<main>
 		<h2>@PopForums.Resources.EditUser</h2>
@@ -767,6 +766,67 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" v-on:click="createEvent">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="AwardDefinitions">
+	<main>
+		<h2>@PopForums.Resources.AwardDefinitions</h2>
+
+		<p><input type="button" class="btn btn-primary" v-on:click="openNewAward" value="Add Award" /></p>
+
+		<table class="table table-hover">
+			<tr>
+				<th>ID</th>
+				<th>@PopForums.Resources.Title</th>
+				<th>@PopForums.Resources.Description</th>
+				<th>Single-time Award</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr v-for="a in allAwards">
+				<td>{{a.awardDefinitionID}}</td>
+				<td>{{a.title}}</td>
+				<td>{{a.description}}</td>
+				<td><input type="checkbox" disabled="disabled" v-model="a.isSingleTimeAward" /></td>
+				<td>
+					<input type="button" value="Delete" class="btn btn-primary" v-on:click="deleteAward(a)" />
+				</td>
+			</tr>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Add Award</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group row">
+							<label for="awardid" class="col-sm-5 col-form-label">AwardDefinitionID</label>
+							<div class="col-sm-7"><input type="text" v-model="newAward.awardDefinitionID" class="form-control" id="awardid" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="title" class="col-sm-5 col-form-label">@PopForums.Resources.Title</label>
+							<div class="col-sm-7"><input type="text" v-model="newAward.title" class="form-control" id="title" /></div>
+						</div>
+						<div class="form-group row">
+							<label for="description" class="col-sm-5 col-form-label">@PopForums.Resources.Description</label>
+							<div class="col-sm-7"><input type="text" v-model="newAward.description" class="form-control" id="description" /></div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-7 offset-sm-5">
+								<div class="checkbox"><label for="issingle"><input type="checkbox" v-model="newAward.isSingleTimeAward" id="issingle" /> Single-time Award</label></div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="createAward">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -1347,6 +1407,63 @@
 		}
 	}
 
+	const AwardDefinitions = {
+		mixins: [loadingMixin],
+		template: "#AwardDefinitions",
+		data() {
+			return {
+				allAwards: [],
+				newAward: {
+					awardDefinitionID: "",
+					title: "",
+					description: "",
+					isSingleTimeAward: false
+				}
+			}
+		},
+		created: function() {
+			this.refreshData();
+		},
+		methods: {
+			refreshData: function() {
+				this.startLoad();
+				axios.get(basePath + "GetAllAwardDefinitions").then(response => {
+					this.allAwards = response.data;
+					this.endLoad();
+				});
+			},
+			deleteAward: function(award) {
+				this.startLoad();
+				axios.post(basePath + "DeleteAward/" + award.awardDefinitionID)
+					.then(response => {
+						this.refreshData();
+						this.endLoad();
+					});
+			},
+			resetAward: function() {
+				this.newAward.awardDefinitionID = "";
+				this.newAward.title = "";
+				this.newAward.description = "";
+				this.newAward.isSingleTimeAward = false;
+			},
+			openNewAward: function() {
+				this.resetAward();
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			createAward: function() {
+				this.startLoad();
+				axios.post(basePath + "CreateAward", this.newAward)
+					.then(response => {
+						this.refreshData();
+						const e = this.$refs.modal;
+						$(e).modal("hide");
+						this.endLoad();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1365,7 +1482,8 @@
 				{ path: "/emailipban", component: EmailIpBan },
 				{ path: "/emailusers", component: EmailUsers },
 				{ path: "/scoringgame", component: ScoringGame },
-				{ path: "/eventdefinitions", component: EventDefinitions }
+				{ path: "/eventdefinitions", component: EventDefinitions },
+				{ path: "/awarddefinitions", component: AwardDefinitions }
 			]
 		},
 		{ path: "*", redirect: "/general" }

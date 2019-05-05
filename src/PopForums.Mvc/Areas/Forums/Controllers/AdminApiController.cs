@@ -32,8 +32,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IBanService _banService;
 		private readonly IMailingListService _mailingListService;
 		private readonly IEventDefinitionService _eventDefinitionService;
+		private readonly IAwardDefinitionService _awardDefinitionService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -46,6 +47,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_banService = banService;
 			_mailingListService = mailingListService;
 			_eventDefinitionService = eventDefinitionService;
+			_awardDefinitionService = awardDefinitionService;
 		}
 
 		// ********** settings
@@ -366,6 +368,29 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public ActionResult DeleteEvent(string id)
 		{
 			_eventDefinitionService.Delete(id);
+			return Ok();
+		}
+
+		// ********** award definitions
+
+		[HttpGet("/Forums/AdminApi/GetAllAwardDefinitions")]
+		public ActionResult<List<AwardDefinition>> GetAllAwardDefinitions()
+		{
+			var awardDefinitions = _awardDefinitionService.GetAll();
+			return awardDefinitions;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateAward")]
+		public ActionResult CreateAward([FromBody]AwardDefinition newAward)
+		{
+			_awardDefinitionService.Create(newAward);
+			return Ok();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteAward/{id}")]
+		public ActionResult DeleteAward(string id)
+		{
+			_awardDefinitionService.Delete(id);
 			return Ok();
 		}
 	}
