@@ -417,5 +417,15 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_awardDefinitionService.DeleteCondition(container.AwardDefinitionID, container.EventDefinitionID);
 			return Ok();
 		}
+
+		// ********** manual event
+
+		[HttpPost("/Forums/AdminApi/GetNames")]
+		public ActionResult<IEnumerable<object>> GetNames(SingleString name)
+		{
+			var users = _userService.SearchByName(name.String);
+			var projection = users.Select(u => new { u.UserID, u.Name }).ToArray();
+			return projection;
+		}
 	}
 }

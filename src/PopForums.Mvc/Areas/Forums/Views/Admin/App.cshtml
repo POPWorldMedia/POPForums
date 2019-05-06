@@ -61,7 +61,7 @@
 				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
 				<router-link to="/eventdefinitions" class="dropdown-item">@PopForums.Resources.EventDefinitions</router-link>
 				<router-link to="/awarddefinitions" class="dropdown-item">@PopForums.Resources.AwardDefinitions</router-link>
-				<a class="dropdown-item" asp-action="ManualEvent">@PopForums.Resources.ManualEvent</a>
+				<router-link to="/manualevent" class="dropdown-item">@PopForums.Resources.ManualEvent</router-link>
 				<div class="dropdown-divider"></div>
 				<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
 				<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
@@ -732,7 +732,7 @@
 				<td>{{e.pointValue}}</td>
 				<td><input type="checkbox" disabled="disabled" v-model="e.isPublishedToFeed" /></td>
 				<td>
-					<input type="button" value="Delete" class="btn btn-primary" v-show="!staticIDs.includes(e.eventDefinitionID)" v-on:click="deleteEvent(e)" />
+					<input type="button" value="Delete" class="btn btn-primary" v-show="!staticIDs.includes(e.eventDefinitionID)" v-on:click="deleteEvent(e)" :disabled="loading" />
 				</td>
 			</tr>
 		</table>
@@ -765,7 +765,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createEvent">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createEvent" :disabled="loading">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -793,7 +793,7 @@
 				<td>{{a.description}}</td>
 				<td><input type="checkbox" disabled="disabled" v-model="a.isSingleTimeAward" /></td>
 				<td>
-					<input type="button" value="Delete" class="btn btn-primary" v-on:click="deleteAward(a)" />
+					<input type="button" value="Delete" class="btn btn-primary" v-on:click="deleteAward(a)" :disabled="loading" />
 				</td>
 			</tr>
 		</table>
@@ -826,7 +826,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createAward">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createAward" :disabled="loading">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -868,7 +868,7 @@
 			<tr v-for="c in conditions">
 				<td>{{c.eventDefinitionID}}</td>
 				<td>{{c.eventCount}}</td>
-				<td><input type="button" v-on:click="deleteCondition(c)" value="@PopForums.Resources.Delete" class="btn btn-primary" /></td>
+				<td><input type="button" v-on:click="deleteCondition(c)" value="@PopForums.Resources.Delete" class="btn btn-primary" :disabled="loading" /></td>
 			</tr>
 		</table>
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
@@ -895,7 +895,39 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createCondition">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createCondition" :disabled="loading">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="ManualEvent">
+	<main>
+		<h2>@PopForums.Resources.ManualEvent</h2>
+		
+		<div class="form-group">
+			<label><input type="button" class="btn btn-primary" value="@PopForums.Resources.To" v-on:click="openSearch" /></label>
+			<input type="text" disabled v-model="selectedUser.name" class="form-control" />
+		</div>
+
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.To</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div><input type="text" class="form-control" v-model="searchName" v-on:keyup="updateList" placeholder="@PopForums.Resources.Search" /></div>
+						<div class="mt-3">
+							<select size="6" v-model="selectedUser" class="form-control" v-on:change="chooseUser">
+								<option v-for="u in searchResults" v-bind:value="u">{{u.name}}</option>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -1589,6 +1621,40 @@
 		}
 	}
 
+	const ManualEvent = {
+		mixins: [loadingMixin],
+		template: "#ManualEvent",
+		data() {
+			return {
+				allEvents: [],
+				searchName: "",
+				searchResults: [],
+				selectedUser: {}
+			}
+		},
+		created: function () {
+		},
+		methods: {
+			openSearch: function() {
+				const e = this.$refs.modal;
+				$(e).modal("show");
+			},
+			updateList: function () {
+				if (this.searchName.length < 2) return;
+				this.startLoad();
+				axios.post(basePath + "GetNames", {string: this.searchName})
+					.then(response => {
+						this.searchResults = response.data;
+						this.endLoad();
+					});
+			},
+			chooseUser: function () {
+				const e = this.$refs.modal;
+				$(e).modal("hide");
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1609,7 +1675,8 @@
 				{ path: "/scoringgame", component: ScoringGame },
 				{ path: "/eventdefinitions", component: EventDefinitions },
 				{ path: "/awarddefinitions", component: AwardDefinitions },
-				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail }
+				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail },
+				{ path: "/manualevent", component: ManualEvent }
 			]
 		},
 		{ path: "*", redirect: "/general" }
