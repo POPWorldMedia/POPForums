@@ -33,8 +33,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IMailingListService _mailingListService;
 		private readonly IEventDefinitionService _eventDefinitionService;
 		private readonly IAwardDefinitionService _awardDefinitionService;
+		private readonly IEventPublisher _eventPublisher;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -48,6 +49,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_mailingListService = mailingListService;
 			_eventDefinitionService = eventDefinitionService;
 			_awardDefinitionService = awardDefinitionService;
+			_eventPublisher = eventPublisher;
 		}
 
 		// ********** settings
@@ -426,6 +428,41 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var users = _userService.SearchByName(name.String);
 			var projection = users.Select(u => new { u.UserID, u.Name }).ToArray();
 			return projection;
+		}
+
+		[HttpGet("/Forums/AdminApi/GetAllEvents")]
+		public ActionResult<IEnumerable<EventDefinition>> GetAllEvents()
+		{
+			var events = _eventDefinitionService.GetAll();
+			return events;
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateManualEvent")]
+		public ActionResult CreateManualEvent([FromBody] ManualEvent manualEvent)
+		{
+			if (!string.IsNullOrEmpty(manualEvent.EventDefinitionID))
+				return BadRequest("Can't specify an EventDefinitionID.");
+			var user = _userService.GetUser(manualEvent.UserID);
+			if (user == null)
+				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
+			if (!manualEvent.Points.HasValue)
+				return BadRequest("Point value required.");
+			_eventPublisher.ProcessManualEvent(manualEvent.Message, user, manualEvent.Points.Value);
+			return Ok();
+		}
+
+		[HttpPost("/Forums/AdminApi/CreateExistingManualEvent")]
+		public ActionResult CreateExistingManualEvent([FromBody] ManualEvent manualEvent)
+		{
+			if (string.IsNullOrEmpty(manualEvent.EventDefinitionID))
+				return BadRequest("Must specify an EventDefinitionID.");
+			var user = _userService.GetUser(manualEvent.UserID);
+			if (user == null)
+				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
+			if (manualEvent.Points.HasValue)
+				return BadRequest("Point value can't be specified.");
+			_eventPublisher.ProcessEvent(manualEvent.Message, user, manualEvent.EventDefinitionID, false);
+			return Ok();
 		}
 	}
 }

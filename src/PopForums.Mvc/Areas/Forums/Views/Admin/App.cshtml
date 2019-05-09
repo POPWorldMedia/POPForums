@@ -906,11 +906,29 @@
 <script type="x-templates" id="ManualEvent">
 	<main>
 		<h2>@PopForums.Resources.ManualEvent</h2>
-		
+
 		<div class="form-group">
 			<label><input type="button" class="btn btn-primary" value="@PopForums.Resources.To" v-on:click="openSearch" /></label>
 			<input type="text" disabled v-model="selectedUser.name" class="form-control" />
 		</div>
+		<div class="form-group">
+			<label>Feed Message</label>
+			<input type="text" v-model="message" class="form-control" />
+		</div>
+		<hr />
+		<div class="form-group">
+			<label>Points</label>
+			<input type="text" v-model="points" class="form-control" />
+		</div>
+		<input type="button" class="btn btn-primary" value="Publish Points" v-on:click="createManualEvent" />
+		<hr />
+		<div class="form-group">
+			<label>Event Definition ID</label>
+			<select class="form-control" v-model="eventDefinitionID">
+				<option v-for="e in allEvents">{{e.eventDefinitionID}}</option>
+			</select>
+		</div>
+		<input type="button" class="btn btn-primary" value="Publish Existing Event" v-on:click="createExistingManualEvent" />
 
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
 			<div class="modal-dialog" role="document">
@@ -1629,10 +1647,17 @@
 				allEvents: [],
 				searchName: "",
 				searchResults: [],
-				selectedUser: {}
+				selectedUser: {},
+				message: "",
+				points: 0,
+				eventDefinitionID: ""
 			}
 		},
 		created: function () {
+			axios.get(basePath + "GetAllEvents")
+				.then(response => {
+					this.allEvents = response.data;
+				});
 		},
 		methods: {
 			openSearch: function() {
@@ -1651,6 +1676,31 @@
 			chooseUser: function () {
 				const e = this.$refs.modal;
 				$(e).modal("hide");
+			},
+			createManualEvent: function() {
+				this.startLoad();
+				axios.post(basePath + "CreateManualEvent", {userID: this.selectedUser.userID, message: this.message, points: this.points})
+					.then(response => {
+						this.endLoad();
+						this.message = "";
+						this.points = 0;
+					})
+					.catch(error => {
+						alert(error.response.data);
+						this.endLoad();
+					});
+			},
+			createExistingManualEvent: function() {
+				this.startLoad();
+				axios.post(basePath + "CreateExistingManualEvent", {userID: this.selectedUser.userID, message: this.message, points: null, eventDefinitionID: this.eventDefinitionID})
+					.then(response => {
+						this.endLoad();
+						this.message = "";
+					})
+					.catch(error => {
+						alert(error.response.data);
+						this.endLoad();
+					});
 			}
 		}
 	}
