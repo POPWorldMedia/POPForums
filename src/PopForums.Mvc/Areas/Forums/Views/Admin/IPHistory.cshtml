@@ -42,9 +42,9 @@
 	@foreach (var entry in Model) {
 		<tr>
 			<td class="text-nowrap">@TimeFormattingService.GetFormattedTime(entry.EventTime, profile)</td>
-			<td>@entry.Type.Name</td>
+			<td>@entry.Type</td>
 			<td>
-				@switch(entry.Type.Name) {
+				@switch(entry.Type) {
 					case "Post":
 						@Html.ActionLink(entry.Description, "PostLink", "Forum", new { id = entry.ID }, new { target = "_blank" })
 						break;

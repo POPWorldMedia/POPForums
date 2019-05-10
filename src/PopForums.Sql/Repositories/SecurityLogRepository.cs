@@ -45,7 +45,7 @@ namespace PopForums.Sql.Repositories
 						UserID = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2),
 						Name = string.Empty,
 						Description = $"{((SecurityLogType) reader[3]).ToString()} - {(reader.IsDBNull(4) ? null : reader.GetString(4))}",
-						Type = typeof(SecurityLogEntry)
+						Type = "SecurityLogEntry"
 					});
 				}
 			});

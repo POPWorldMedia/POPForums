@@ -63,7 +63,7 @@
 				<router-link to="/awarddefinitions" class="dropdown-item">@PopForums.Resources.AwardDefinitions</router-link>
 				<router-link to="/manualevent" class="dropdown-item">@PopForums.Resources.ManualEvent</router-link>
 				<div class="dropdown-divider"></div>
-				<a class="dropdown-item" asp-action="IPHistory">@PopForums.Resources.IpHistory</a>
+				<router-link to="/iphistory" class="dropdown-item">@PopForums.Resources.IpHistory</router-link>
 				<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
 				<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
 				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
@@ -920,7 +920,7 @@
 			<label>Points</label>
 			<input type="text" v-model="points" class="form-control" />
 		</div>
-		<input type="button" class="btn btn-primary" value="Publish Points" v-on:click="createManualEvent" />
+		<input type="button" class="btn btn-primary" value="Publish Points" v-on:click="createManualEvent" :disabled="loading" />
 		<hr />
 		<div class="form-group">
 			<label>Event Definition ID</label>
@@ -928,7 +928,7 @@
 				<option v-for="e in allEvents">{{e.eventDefinitionID}}</option>
 			</select>
 		</div>
-		<input type="button" class="btn btn-primary" value="Publish Existing Event" v-on:click="createExistingManualEvent" />
+		<input type="button" class="btn btn-primary" value="Publish Existing Event" v-on:click="createExistingManualEvent" :disabled="loading" />
 
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
 			<div class="modal-dialog" role="document">
@@ -950,6 +950,59 @@
 				</div>
 			</div>
 		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="IPHistory">
+	<main>
+		<h2>@PopForums.Resources.IpHistory</h2>
+
+		<div role="form">
+			<div class="form-group">
+				<label>@PopForums.Resources.IP</label>
+				<input type="text" class="form-control" v-model="query.iP" />
+			</div>
+			<div class="form-group">
+				<label>@PopForums.Resources.StartDate</label>
+				<input type="text" class="form-control" v-model="query.start" />
+			</div>
+			<div class="form-group">
+				<label>@PopForums.Resources.EndDate</label>
+				<input type="text" class="form-control" v-model="query.end" />
+			</div>
+			<input type="button" value="@PopForums.Resources.Search" class="btn btn-primary" v-on:click="getHistory" :disabled="loading" />
+		</div>
+
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.EventTime</th>
+					<th>@PopForums.Resources.Type</th>
+					<th>@PopForums.Resources.Description</th>
+					<th>@PopForums.Resources.UserID</th>
+					<th>@PopForums.Resources.Name</th>
+					<th>@PopForums.Resources.ID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in history">
+					<td class="text-nowrap">{{item.eventTime}}</td>
+					<td>{{item.type}}</td>
+					<td>
+						<span v-if="item.type === 'Post'">
+							<a v-bind:href="'/Forums/Forum/PostLink/' + item.id" target="_blank">{{item.description}}</a>
+						</span>
+						<span v-else-if="item.type === 'SecurityLogEntry'">
+							{{item.description}}
+						</span>
+						<span v-else>none</span>
+					</td>
+					<td>{{item.userID}}</td>
+					<td>{{item.name}}</td>
+					<td>{{item.id}}</td>
+				</tr>
+			</tbody>
+		</table>
 	</main>
 </script>
 
@@ -1705,6 +1758,27 @@
 		}
 	}
 
+	const IPHistory = {
+		mixins: [loadingMixin],
+		template: "#IPHistory",
+		data() {
+			return {
+				history: [],
+				query: { iP: "", start: "", end: ""}
+			}
+		},
+		methods: {
+			getHistory: function () {
+				this.startLoad();
+				axios.post(basePath + "QueryIPHistory", this.query)
+					.then(response => {
+						this.history = response.data;
+						this.endLoad();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1726,7 +1800,8 @@
 				{ path: "/eventdefinitions", component: EventDefinitions },
 				{ path: "/awarddefinitions", component: AwardDefinitions },
 				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail },
-				{ path: "/manualevent", component: ManualEvent }
+				{ path: "/manualevent", component: ManualEvent },
+				{ path: "/iphistory", component: IPHistory }
 			]
 		},
 		{ path: "*", redirect: "/general" }

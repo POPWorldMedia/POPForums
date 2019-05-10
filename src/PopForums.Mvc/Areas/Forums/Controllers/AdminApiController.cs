@@ -34,8 +34,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IEventDefinitionService _eventDefinitionService;
 		private readonly IAwardDefinitionService _awardDefinitionService;
 		private readonly IEventPublisher _eventPublisher;
+		private readonly IIPHistoryService _ipHistoryService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -50,6 +51,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_eventDefinitionService = eventDefinitionService;
 			_awardDefinitionService = awardDefinitionService;
 			_eventPublisher = eventPublisher;
+			_ipHistoryService = ipHistoryService;
 		}
 
 		// ********** settings
@@ -463,6 +465,15 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return BadRequest("Point value can't be specified.");
 			_eventPublisher.ProcessEvent(manualEvent.Message, user, manualEvent.EventDefinitionID, false);
 			return Ok();
+		}
+
+		// ********** ip history
+
+		[HttpPost("/Forums/AdminApi/QueryIPHistory")]
+		public ActionResult<List<IPHistoryEvent>> QueryIPHistory([FromBody] IPHistoryQuery query)
+		{
+			var history = _ipHistoryService.GetHistory(query.IP, query.Start, query.End);
+			return history;
 		}
 	}
 }

@@ -164,7 +164,7 @@ SET ROWCOUNT 0";
 			_sqlObjectFactory.GetConnection().Using(connection =>
 				list = connection.Query<IPHistoryEvent>("SELECT PostID AS ID, PostTime AS EventTime, UserID, Name, Title AS Description FROM pf_Post WHERE IP = @IP AND PostTime >= @Start AND PostTime <= @End", new { IP = ip, Start = start, End = end }).ToList());
 			foreach (var item in list)
-				item.Type = typeof(Post);
+				item.Type = "Post";
 			return list;
 		}
 
