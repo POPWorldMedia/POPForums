@@ -9,6 +9,7 @@ namespace PopForums.Models
 		public int UserID { get; set; }
 		public string UserName { get; set; }
 		public ModerationType ModerationType { get; set; }
+		public string ModerationTypeString => ModerationType.ToString();
 		public int? ForumID { get; set; }
 		public int TopicID { get; set; }
 		public int? PostID { get; set; }

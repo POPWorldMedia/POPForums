@@ -65,7 +65,7 @@
 				<div class="dropdown-divider"></div>
 				<router-link to="/iphistory" class="dropdown-item">@PopForums.Resources.IpHistory</router-link>
 				<router-link to="/securitylog" class="dropdown-item">@PopForums.Resources.SecurityLog</router-link>
-				<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
+				<router-link to="/moderationlog" class="dropdown-item">@PopForums.Resources.ModerationLog</router-link>
 				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
 				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
 			</div>
@@ -1059,6 +1059,53 @@
 	</main>
 </script>
 
+<script type="x-templates" id="ModerationLog">
+	<main>
+		<h2>@PopForums.Resources.ModerationLog</h2>
+
+		<div role="form">
+			<div class="form-group">
+				<label>@PopForums.Resources.StartDate</label>
+				<input type="text" class="form-control" v-model="query.start" />
+			</div>
+			<div class="form-group">
+				<label>@PopForums.Resources.EndDate</label>
+				<input type="text" class="form-control" v-model="query.end" />
+			</div>
+			<input type="button" value="@PopForums.Resources.Search" class="btn btn-primary" v-on:click="getHistory" :disabled="loading" />
+		</div>
+
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.EventTime</th>
+					<th>@PopForums.Resources.Name</th>
+					<th>@PopForums.Resources.Type</th>
+					<th>@PopForums.Resources.TopicID</th>
+					<th>@PopForums.Resources.PostID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<template v-for="item in history">
+					<tr>
+						<td class="text-nowrap">{{item.timeStamp}}</td>
+						<td>{{item.userName}}</td>
+						<td>{{item.moderationTypeString}}</td>
+						<td>{{item.topicID}}</td>
+						<td><span v-if="item.postID"><a v-bind:href="'/Forums/Forum/PostLink/' + item.postID" target="_blank">{{item.postID}}</a></span></td>
+					</tr>
+					<tr v-show="item.comment || item.oldText">
+						<td colspan="5">
+							<p v-show="item.comment">@PopForums.Resources.Comment: {{item.comment}}</p>
+							<div v-show="item.oldText" class="alert alert-primary" v-html="item.oldText"></div>
+						</td>
+					</tr>
+				</template>
+			</tbody>
+		</table>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1853,6 +1900,27 @@
 		}
 	}
 
+	const ModerationLog = {
+		mixins: [loadingMixin],
+		template: "#ModerationLog",
+		data() {
+			return {
+				history: [],
+				query: {start: "", end: ""}
+			}
+		},
+		methods: {
+			getHistory: function () {
+				this.startLoad();
+				axios.post(basePath + "QueryModerationLog", this.query)
+					.then(response => {
+						this.history = response.data;
+						this.endLoad();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1876,7 +1944,8 @@
 				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail },
 				{ path: "/manualevent", component: ManualEvent },
 				{ path: "/iphistory", component: IPHistory },
-				{ path: "/securitylog", component: SecurityLog }
+				{ path: "/securitylog", component: SecurityLog },
+				{ path: "/moderationlog", component: ModerationLog }
 			]
 		},
 		{ path: "*", redirect: "/general" }

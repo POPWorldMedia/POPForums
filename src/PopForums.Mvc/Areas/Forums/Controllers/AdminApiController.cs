@@ -36,8 +36,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IIPHistoryService _ipHistoryService;
 		private readonly ISecurityLogService _securityLogService;
+		private readonly IModerationLogService _moderationLogService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService, IModerationLogService moderationLogService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -54,6 +55,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_eventPublisher = eventPublisher;
 			_ipHistoryService = ipHistoryService;
 			_securityLogService = securityLogService;
+			_moderationLogService = moderationLogService;
 		}
 
 		// ********** settings
@@ -496,6 +498,15 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					return BadRequest("Search type invalid.");
 			}
 			return list;
+		}
+
+		// ********** moderation log
+
+		[HttpPost("/Forums/AdminApi/QueryModerationLog")]
+		public ActionResult<List<ModerationLogEntry>> QueryModerationLog([FromBody] IPHistoryQuery query)
+		{
+			var history = _moderationLogService.GetLog(query.Start, query.End);
+			return history;
 		}
 	}
 }
