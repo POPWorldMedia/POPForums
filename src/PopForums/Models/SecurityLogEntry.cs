@@ -6,6 +6,7 @@ namespace PopForums.Models
 	{
 		public int SecurityLogID { get; set; }
 		public SecurityLogType SecurityLogType { get; set; }
+		public string SecurityLogTypeString => SecurityLogType.ToString();
 		public int? UserID { get; set; }
 		public int? TargetUserID { get; set; }
 		public string IP { get; set; }

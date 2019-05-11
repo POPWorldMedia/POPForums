@@ -28,6 +28,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IAwardDefinitionService> _awardDefService;
 		private Mock<IEventPublisher> _eventPublisher;
 		private Mock<IIPHistoryService> _ipHistoryService;
+		private Mock<ISecurityLogService> _securityLogService;
 
 		private AdminApiController GetController()
 		{
@@ -45,7 +46,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_awardDefService = new Mock<IAwardDefinitionService>();
 			_eventPublisher = new Mock<IEventPublisher>();
 			_ipHistoryService = new Mock<IIPHistoryService>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object, _mailingListService.Object, _eventDefService.Object, _awardDefService.Object, _eventPublisher.Object, _ipHistoryService.Object);
+			_securityLogService = new Mock<ISecurityLogService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object, _mailingListService.Object, _eventDefService.Object, _awardDefService.Object, _eventPublisher.Object, _ipHistoryService.Object, _securityLogService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests

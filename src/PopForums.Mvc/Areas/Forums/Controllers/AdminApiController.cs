@@ -35,8 +35,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IAwardDefinitionService _awardDefinitionService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IIPHistoryService _ipHistoryService;
+		private readonly ISecurityLogService _securityLogService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -52,6 +53,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_awardDefinitionService = awardDefinitionService;
 			_eventPublisher = eventPublisher;
 			_ipHistoryService = ipHistoryService;
+			_securityLogService = securityLogService;
 		}
 
 		// ********** settings
@@ -474,6 +476,26 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var history = _ipHistoryService.GetHistory(query.IP, query.Start, query.End);
 			return history;
+		}
+
+		// ********** security log
+
+		[HttpPost("/Forums/AdminApi/QuerySecurityLog")]
+		public ActionResult<List<SecurityLogEntry>> QuerySecurityLog([FromBody] SecurityLogQuery query)
+		{
+			List<SecurityLogEntry> list;
+			switch (query.Type.ToLower())
+			{
+				case "userid":
+					list = _securityLogService.GetLogEntriesByUserID(Convert.ToInt32(query.SearchTerm), query.Start, query.End);
+					break;
+				case "name":
+					list = _securityLogService.GetLogEntriesByUserName(query.SearchTerm, query.Start, query.End);
+					break;
+				default:
+					return BadRequest("Search type invalid.");
+			}
+			return list;
 		}
 	}
 }

@@ -64,7 +64,7 @@
 				<router-link to="/manualevent" class="dropdown-item">@PopForums.Resources.ManualEvent</router-link>
 				<div class="dropdown-divider"></div>
 				<router-link to="/iphistory" class="dropdown-item">@PopForums.Resources.IpHistory</router-link>
-				<a class="dropdown-item" asp-action="SecurityLog">@PopForums.Resources.SecurityLog</a>
+				<router-link to="/securitylog" class="dropdown-item">@PopForums.Resources.SecurityLog</router-link>
 				<a class="dropdown-item" asp-action="ModerationLog">@PopForums.Resources.ModerationLog</a>
 				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
 				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
@@ -1006,6 +1006,59 @@
 	</main>
 </script>
 
+<script type="x-templates" id="SecurityLog">
+	<main>
+		<h2>@PopForums.Resources.SecurityLog</h2>
+
+		<div role="form">
+			<div class="form-group">
+				<label>@PopForums.Resources.Search</label>
+				<input type="text" class="form-control" v-model="query.searchTerm" />
+			</div>
+			<div class="form-group">
+				<label>@PopForums.Resources.StartDate</label>
+				<input type="text" class="form-control" v-model="query.start" />
+			</div>
+			<div class="form-group">
+				<label>@PopForums.Resources.EndDate</label>
+				<input type="text" class="form-control" v-model="query.end" />
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Name" v-model="query.type">
+				<label class="form-check-label" for="inlineRadio1">Name</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="UserID" v-model="query.type">
+				<label class="form-check-label" for="inlineRadio2">UserID</label>
+			</div>
+			<input type="button" value="@PopForums.Resources.Search" class="btn btn-primary" v-on:click="getHistory" :disabled="loading" />
+		</div>
+
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.EventTime</th>
+					<th>@PopForums.Resources.Event</th>
+					<th>@PopForums.Resources.UserID</th>
+					<th>@PopForums.Resources.UserIDTarget</th>
+					<th>@PopForums.Resources.IP</th>
+					<th>@PopForums.Resources.Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in history">
+					<td class="text-nowrap">{{item.activityDate}}</td>
+					<td>{{item.securityLogTypeString}}</td>
+					<td>{{item.userID}}</td>
+					<td>{{item.targetUserID}}</td>
+					<td>{{item.ip}}</td>
+					<td>{{item.message}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1779,6 +1832,27 @@
 		}
 	}
 
+	const SecurityLog = {
+		mixins: [loadingMixin],
+		template: "#SecurityLog",
+		data() {
+			return {
+				history: [],
+				query: {searchTerm: "", type: "Name", start: "", end: ""}
+			}
+		},
+		methods: {
+			getHistory: function () {
+				this.startLoad();
+				axios.post(basePath + "QuerySecurityLog", this.query)
+					.then(response => {
+						this.history = response.data;
+						this.endLoad();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1801,7 +1875,8 @@
 				{ path: "/awarddefinitions", component: AwardDefinitions },
 				{ path: "/awarddefinitions/:id", component: AwardDefinitionDetail },
 				{ path: "/manualevent", component: ManualEvent },
-				{ path: "/iphistory", component: IPHistory }
+				{ path: "/iphistory", component: IPHistory },
+				{ path: "/securitylog", component: SecurityLog }
 			]
 		},
 		{ path: "*", redirect: "/general" }
