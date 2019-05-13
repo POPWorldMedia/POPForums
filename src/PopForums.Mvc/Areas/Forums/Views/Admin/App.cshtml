@@ -67,7 +67,7 @@
 				<router-link to="/securitylog" class="dropdown-item">@PopForums.Resources.SecurityLog</router-link>
 				<router-link to="/moderationlog" class="dropdown-item">@PopForums.Resources.ModerationLog</router-link>
 				<router-link to="/errorlog" class="dropdown-item">@PopForums.Resources.ErrorLog</router-link>
-				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
+				<router-link to="/services" class="dropdown-item">@PopForums.Resources.Services</router-link>
 			</div>
 		</div>
 
@@ -1131,6 +1131,31 @@
 	</main>
 </script>
 
+<script type="x-templates" id="Services">
+	<main>
+		<h2>@PopForums.Resources.Services</h2>
+
+		<p><input type="button" value="@PopForums.Resources.RemoveAll" class="btn btn-primary" v-on:click="clearAll" /></p>
+
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.Name</th>
+					<th>Machine</th>
+					<th>@PopForums.Resources.Last</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in list">
+					<td>{{item.serviceName}}</td>
+					<td>{{item.machineName}}</td>
+					<td class="text-nowrap">{{item.lastRun}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1982,6 +2007,37 @@
 		}
 	}
 
+	const Services = {
+		mixins: [loadingMixin],
+		template: "#Services",
+		data() {
+			return {
+				list: {}
+			}
+		},
+		created: function() {
+			this.getData();
+		},
+		methods: {
+			getData: function() {
+				this.startLoad();
+				axios.get(basePath + "GetServices")
+					.then(response => {
+						this.list = response.data;
+						this.endLoad();
+					});
+			},
+			clearAll: function() {
+				this.startLoad();
+				axios.post(basePath + "ClearServices")
+					.then(response => {
+						this.list = response.data;
+						this.endLoad();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -2007,7 +2063,8 @@
 				{ path: "/iphistory", component: IPHistory },
 				{ path: "/securitylog", component: SecurityLog },
 				{ path: "/moderationlog", component: ModerationLog },
-				{ path: "/errorlog", component: ErrorLog }
+				{ path: "/errorlog", component: ErrorLog },
+				{ path: "/services", component: Services }
 			]
 		},
 		{ path: "*", redirect: "/general" }

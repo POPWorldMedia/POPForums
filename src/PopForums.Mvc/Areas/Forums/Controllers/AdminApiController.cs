@@ -38,8 +38,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ISecurityLogService _securityLogService;
 		private readonly IModerationLogService _moderationLogService;
 		private readonly IErrorLog _errorLog;
+		private readonly IServiceHeartbeatService _serviceHeartbeatService;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService, IModerationLogService moderationLogService, IErrorLog errorLog)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService, IModerationLogService moderationLogService, IErrorLog errorLog, IServiceHeartbeatService serviceHeartbeatService)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -58,6 +59,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_securityLogService = securityLogService;
 			_moderationLogService = moderationLogService;
 			_errorLog = errorLog;
+			_serviceHeartbeatService = serviceHeartbeatService;
 		}
 
 		// ********** settings
@@ -525,6 +527,23 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			_errorLog.DeleteAllErrors();
 			return Ok();
+		}
+
+		// ********** error log
+
+		[HttpGet("/Forums/AdminApi/GetServices")]
+		public ActionResult<List<ServiceHeartbeat>> GetServices()
+		{
+			var list = _serviceHeartbeatService.GetAll();
+			return list;
+		}
+
+		[HttpPost("/Forums/AdminApi/ClearServices")]
+		public ActionResult<List<ServiceHeartbeat>> ClearServices()
+		{
+			_serviceHeartbeatService.ClearAll();
+			var list = _serviceHeartbeatService.GetAll();
+			return list;
 		}
 	}
 }

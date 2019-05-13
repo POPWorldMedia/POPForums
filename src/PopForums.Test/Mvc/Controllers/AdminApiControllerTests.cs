@@ -31,6 +31,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<ISecurityLogService> _securityLogService;
 		private Mock<IModerationLogService> _moderationLogService;
 		private Mock<IErrorLog> _errorLog;
+		private Mock<IServiceHeartbeatService> _serviceHeartbeatService;
 
 		private AdminApiController GetController()
 		{
@@ -51,7 +52,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_securityLogService = new Mock<ISecurityLogService>();
 			_moderationLogService = new Mock<IModerationLogService>();
 			_errorLog = new Mock<IErrorLog>();
-			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object, _mailingListService.Object, _eventDefService.Object, _awardDefService.Object, _eventPublisher.Object, _ipHistoryService.Object, _securityLogService.Object, _moderationLogService.Object, _errorLog.Object);
+			_serviceHeartbeatService = new Mock<IServiceHeartbeatService>();
+			return new AdminApiController(_settingsManager.Object, _categoryService.Object, _forumService.Object, _userService.Object, _searchService.Object, _profileService.Object, _userRetrievalShim.Object, _imageService.Object, _banService.Object, _mailingListService.Object, _eventDefService.Object, _awardDefService.Object, _eventPublisher.Object, _ipHistoryService.Object, _securityLogService.Object, _moderationLogService.Object, _errorLog.Object, _serviceHeartbeatService.Object);
 		}
 
 		public class SaveForum : AdminApiControllerTests
