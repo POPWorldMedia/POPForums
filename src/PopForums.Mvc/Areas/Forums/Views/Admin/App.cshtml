@@ -66,7 +66,7 @@
 				<router-link to="/iphistory" class="dropdown-item">@PopForums.Resources.IpHistory</router-link>
 				<router-link to="/securitylog" class="dropdown-item">@PopForums.Resources.SecurityLog</router-link>
 				<router-link to="/moderationlog" class="dropdown-item">@PopForums.Resources.ModerationLog</router-link>
-				<a class="dropdown-item" asp-action="ErrorLog">@PopForums.Resources.ErrorLog</a>
+				<router-link to="/errorlog" class="dropdown-item">@PopForums.Resources.ErrorLog</router-link>
 				<a class="dropdown-item" asp-action="Services">@PopForums.Resources.Services</a>
 			</div>
 		</div>
@@ -1106,6 +1106,31 @@
 	</main>
 </script>
 
+<script type="x-templates" id="ErrorLog">
+	<main>
+		<h2>@PopForums.Resources.ErrorLog</h2>
+
+		<nav v-show="errorList.pageCount > 1">
+			<ul class="pagination">
+				<li class="page-item" v-show="errorList.pageIndex > 1" v-on:click="getMore(1)"><a class="page-link" href="javascript:void(0)">|&laquo;</a></li>
+				<li class="page-item" v-show="errorList.pageIndex > 2" v-on:click="getMore(errorList.pageIndex - 1)"><a class="page-link" href="javascript:void(0)">&laquo;</a></li>
+				<li class="page-item active"><a class="page-link">{{errorList.pageIndex}} of {{errorList.pageCount}}</a></li>
+				<li class="page-item" v-show="errorList.pageIndex < (errorList.pageCount - 1)" v-on:click="getMore(errorList.pageIndex + 1)"><a class="page-link" href="javascript:void(0)">&raquo;</a></li>
+				<li class="page-item" v-show="errorList.pageIndex < errorList.pageCount" v-on:click="getMore(errorList.pageCount)"><a class="page-link" href="javascript:void(0)">&raquo;|</a></li>
+			</ul>
+		</nav>
+		
+		<p><input type="button" class="btn btn-primary" value="@PopForums.Resources.DeleteAllErrors" v-on:click="deleteAll" /></p>
+
+		<div v-for="item in errorList.list">
+			<p><b>{{item.severityString}}: {{item.timeStamp}} - {{item.message}}</b></p>
+			<div class="small" style="white-space: pre-wrap;">{{item.stackTrace}}</div>
+			<div class="small mt-3" style="white-space: pre-wrap;">{{item.data}}</div>
+			<hr />
+		</div>
+	</main>
+</script>
+
 <script>
 	const basePath = "/Forums/AdminApi/";
 
@@ -1921,6 +1946,42 @@
 		}
 	}
 
+	const ErrorLog = {
+		mixins: [loadingMixin],
+		template: "#ErrorLog",
+		data() {
+			return {
+				errorList: {pageIndex: 1, pageSize: 20, list: []}
+			}
+		},
+		created: function() {
+			this.getErrors();
+		},
+		methods: {
+			getMore: function(newIndex) {
+				this.errorList.pageIndex = newIndex;
+				this.getErrors();
+			},
+			getErrors: function () {
+				this.startLoad();
+				axios.get(basePath + "GetErrorLog/" + this.errorList.pageIndex)
+					.then(response => {
+						this.errorList = response.data;
+						this.endLoad();
+					});
+			},
+			deleteAll() {
+				this.startLoad();
+				axios.post(basePath + "DeleteAllErrors")
+					.then(response => {
+						this.errorList.pageIndex = 1;
+						this.endLoad();
+						this.getErrors();
+					});
+			}
+		}
+	}
+
 	const routes = [
 		{
 			path: "/", component: Top, redirect: "/general",
@@ -1945,7 +2006,8 @@
 				{ path: "/manualevent", component: ManualEvent },
 				{ path: "/iphistory", component: IPHistory },
 				{ path: "/securitylog", component: SecurityLog },
-				{ path: "/moderationlog", component: ModerationLog }
+				{ path: "/moderationlog", component: ModerationLog },
+				{ path: "/errorlog", component: ErrorLog }
 			]
 		},
 		{ path: "*", redirect: "/general" }

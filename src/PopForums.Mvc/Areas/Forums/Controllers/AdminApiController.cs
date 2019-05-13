@@ -37,8 +37,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IIPHistoryService _ipHistoryService;
 		private readonly ISecurityLogService _securityLogService;
 		private readonly IModerationLogService _moderationLogService;
+		private readonly IErrorLog _errorLog;
 
-		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService, IModerationLogService moderationLogService)
+		public AdminApiController(ISettingsManager settingsManager, ICategoryService categoryService, IForumService forumService, IUserService userService, ISearchService searchService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, IImageService imageService, IBanService banService, IMailingListService mailingListService, IEventDefinitionService eventDefinitionService, IAwardDefinitionService awardDefinitionService, IEventPublisher eventPublisher, IIPHistoryService ipHistoryService, ISecurityLogService securityLogService, IModerationLogService moderationLogService, IErrorLog errorLog)
 		{
 			_settingsManager = settingsManager;
 			_categoryService = categoryService;
@@ -56,6 +57,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_ipHistoryService = ipHistoryService;
 			_securityLogService = securityLogService;
 			_moderationLogService = moderationLogService;
+			_errorLog = errorLog;
 		}
 
 		// ********** settings
@@ -507,6 +509,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var history = _moderationLogService.GetLog(query.Start, query.End);
 			return history;
+		}
+
+		// ********** error log
+
+		[HttpGet("/Forums/AdminApi/GetErrorLog/{page}")]
+		public ActionResult<PagedList<ErrorLogEntry>> GetErrorLog(int page)
+		{
+			var list = _errorLog.GetErrors(page, 20);
+			return list;
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteAllErrors")]
+		public ActionResult DeleteAllErrors()
+		{
+			_errorLog.DeleteAllErrors();
+			return Ok();
 		}
 	}
 }

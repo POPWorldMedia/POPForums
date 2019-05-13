@@ -12,6 +12,7 @@ namespace PopForums.Configuration
 		void Log(Exception exception, ErrorSeverity severity);
 		void Log(Exception exception, ErrorSeverity severity, string additionalContext);
 		List<ErrorLogEntry> GetErrors(int pageIndex, int pageSize, out PagerContext pagerContext);
+		PagedList<ErrorLogEntry> GetErrors(int pageIndex, int pageSize);
 		void DeleteError(int errorID);
 		void DeleteAllErrors();
 	}
@@ -76,6 +77,13 @@ namespace PopForums.Configuration
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(errorCount) / Convert.ToDouble(pageSize)));
 			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
 			return errors;
+		}
+
+		public PagedList<ErrorLogEntry> GetErrors(int pageIndex, int pageSize)
+		{
+			var errors = GetErrors(pageIndex, pageSize, out PagerContext pagerContext);
+			var list = new PagedList<ErrorLogEntry> { PageCount = pagerContext.PageCount, PageIndex = pagerContext.PageIndex, PageSize = pagerContext.PageSize, List = errors };
+			return list;
 		}
 
 		public void DeleteError(int errorID)

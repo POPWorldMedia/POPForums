@@ -11,5 +11,6 @@ namespace PopForums.Models
 		public string StackTrace { get; set; }
 		public string Data { get; set; }
 		public ErrorSeverity Severity { get; set; }
+		public string SeverityString => Severity.ToString();
 	}
 }
