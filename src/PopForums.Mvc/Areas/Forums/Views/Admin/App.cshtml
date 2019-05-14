@@ -598,6 +598,158 @@
 <script type="x-templates" id="EditUserDetail">
 	<main>
 		<h2>@PopForums.Resources.EditUser</h2>
+
+		<div class="row">
+			<h2>@PopForums.Resources.Security</h2>
+		</div>
+		<div class="form-group row">
+			<label class="col-2 control-label">@PopForums.Resources.Name</label>
+			<div class="col-10">
+				<p class="form-control-static">{{user.name}}</p>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label class="col-2 control-label">@PopForums.Resources.Email</label>
+			<div class="col-10">
+				<p class="form-control-static"><a v-bind:href="'mailto:' + user.email">{{user.email}}</a></p>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="NewEmail" class="col-2 control-label">@PopForums.Resources.EmailNewOptional</label>
+			<div class="col-10">
+				<input type="email" class="form-control" autocomplete="new-email" v-model="user.newEmail" />
+				<span asp-validation-for="NewEmail"></span>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="NewPassword" class="col-2 control-label">@PopForums.Resources.PasswordNewOptional</label>
+			<div class="col-10">
+				<input type="password" class="form-control" autocomplete="new-password" v-model="user.newPassword" />
+				<span asp-validation-for="NewPassword"></span>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<div class="checkbox">
+					<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" />
+					<label class="form-check-label" for="IsApproved">@PopForums.Resources.IsApproved</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<h2>@PopForums.Resources.Options</h2>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="IsSubscribed" v-model="user.isSubscribed" />
+				<label class="form-check-label" for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="ShowDetails" v-model="user.showDetails" />
+				<label class="form-check-label" for="ShowDetails">@PopForums.Resources.ShowProfileDetails</label>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="IsPlainText" v-model="user.isPlainText" />
+				<label class="form-check-label" for="IsPlainText">@PopForums.Resources.ForcePlainTextBox</label>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="HideVanity" v-model="user.hideVanity" />
+				<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="TimeZone" class="col-2 col-form-label">@PopForums.Resources.TimeZone</label>
+			<div class="col-10">
+				<select id="TimeZone" v-model="user.timeZone" class="form-control">
+					@foreach (var i in timeZones)
+					{
+						<option value="@i.Key">@i.Value</option>}
+				</select>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="IsDaylightSaving" v-model="user.isDaylightSaving" />
+				<label class="form-check-label" for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label>
+			</div>
+		</div>
+
+		<div class="row">
+			<h2>@PopForums.Resources.Details</h2>
+		</div>
+		<div class="form-group row">
+			<label for="Signature" class="col-2 control-label">@PopForums.Resources.Signature</label>
+			<div class="col-10"><textarea id="Signature" class="form-control" rows="3" v-model="user.signature"></textarea></div>
+		</div>
+		<div class="form-group row">
+			<label for="Location" class="col-2 control-label">@PopForums.Resources.Location</label>
+			<div class="col-10">
+				<input type="text" id="Location" class="form-control" v-model="user.location" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="Dob" class="col-2 control-label">@PopForums.Resources.DateOfBirth</label>
+			<div class="col-10">
+				<input type="text" id="Dob" class="form-control" v-model="user.dob" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="Facebook" class="col-2 control-label">Facebook</label>
+			<div class="col-10">
+				<div class="input-group">
+					<div class="input-group-prepend"><div class="input-group-text">https://facebook.com/</div></div>
+					<input type="text" id="Facebook" class="form-control" v-model="user.facebook" />
+				</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="Twitter" class="col-2 control-label">Twitter</label>
+			<div class="col-10">
+				<div class="input-group">
+					<div class="input-group-prepend"><div class="input-group-text">&#64;</div></div>
+					<input type="text" id="Twitter" class="form-control" v-model="user.twitter" />
+				</div>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="Instagram" class="col-2 control-label">Instagram</label>
+			<div class="col-10">
+				<input type="text" id="Instagram" class="form-control" v-model="user.instagram" />
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="Web" class="col-2 control-label">@PopForums.Resources.Web</label>
+			<div class="col-10">
+				<input type="text" id="Web" class="form-control" v-model="user.web" />
+			</div>
+		</div>
+
+		<div class="row">
+			<h2>@PopForums.Resources.Roles</h2>
+		</div>
+		<div class="form-group">
+			<div class="col-10 offset-2">
+				<template v-for="r in roles">
+					<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" />
+					<label :for="'rz' + r">{{r}}</label>
+					<br />
+				</template>
+			</div>
+		</div>
+
+		<input type="button" class="btn btn-primary" value="@PopForums.Resources.Save" :disabled="loading" v-on:click="saveUser" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+
+		<hr />
+		<h3>@PopForums.Resources.Avatar</h3>
+		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target.files)" accept="image/*" class="input-file">
 	</main>
 </script>
 
@@ -1479,7 +1631,8 @@
 		template: "#EditUserDetail",
 		data() {
 			return {
-				user: null
+				user: { newEmail: "", newPassword: "" },
+				roles: []
 			}
 		},
 		created: function () {
@@ -1487,8 +1640,30 @@
 			axios.get(u).then(response => {
 				this.user = response.data;
 			});
+			this.startLoad();
+			axios.get(basePath + "GetAllRoles").then(response => {
+				this.roles = response.data;
+				this.endLoad();
+			});
 		},
 		methods: {
+			saveUser: function () {
+				this.startLoad();
+				axios.post(basePath + "SaveUser", this.user).then(response => {
+					this.endLoad("@PopForums.Resources.SettingsSaved");
+				}).catch(error => {
+					alert(error);
+				});
+			},
+			uploadAvatar: function(fileList) {
+				const formData = new FormData();
+				formData.append("avatarFile", fileList[0], fileList[0].name);
+				axios.post(basePath + "testing", formData).then(response => {
+
+				}).catch(error => {
+					alert(error);
+				});
+			}
 		}
 	}
 

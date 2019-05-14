@@ -253,6 +253,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return model;
 		}
 
+		[HttpPost("/Forums/AdminApi/SaveUser")]
+		public ActionResult SaveUser([FromBody] UserEdit userEdit)
+		{
+			var adminUser = _userRetrievalShim.GetUser(HttpContext);
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			var user = _userService.GetUser(userEdit.UserID);
+			_userService.EditUser(user, userEdit, false, false, null, null, ip, adminUser);
+			return Ok();
+		}
+
 		// ********** user roles
 
 		[HttpGet("/Forums/AdminApi/GetAllRoles")]
