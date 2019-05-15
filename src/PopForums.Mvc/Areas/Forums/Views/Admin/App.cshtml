@@ -749,7 +749,15 @@
 
 		<hr />
 		<h3>@PopForums.Resources.Avatar</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target.files)" accept="image/*" class="input-file">
+		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" class="form-control-file mb-3">
+		<div><img v-if="user.avatarID" v-bind:src="'/Forums/Image/Avatar/' + user.avatarID" /></div>
+		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeAvatar" v-show="user.avatarID" value="@PopForums.Resources.AvatarDelete" /></p>
+
+		<hr />
+		<h3>@PopForums.Resources.Photo</h3>
+		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control-file mb-3">
+		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
+		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
 	</main>
 </script>
 
@@ -1655,13 +1663,32 @@
 					alert(error);
 				});
 			},
-			uploadAvatar: function(fileList) {
+			uploadAvatar: function(target) {
 				const formData = new FormData();
-				formData.append("avatarFile", fileList[0], fileList[0].name);
-				axios.post(basePath + "testing", formData).then(response => {
-
-				}).catch(error => {
-					alert(error);
+				var files = target.files;
+				formData.append("avatarFile", files[0], files[0].name);
+				axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, formData).then(response => {
+					this.user.avatarID = response.data.avatarID;
+					target.value = "";
+				});
+			},
+			removeAvatar: function() {
+				axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, null).then(response => {
+					this.user.avatarID = response.data.avatarID;
+				});
+			},
+			uploadImage: function(target) {
+				const formData = new FormData();
+				var files = target.files;
+				formData.append("imageFile", files[0], files[0].name);
+				axios.post(basePath + "UpdateUserImage/" + this.user.userID, formData).then(response => {
+					this.user.imageID = response.data.imageID;
+					target.value = "";
+				});
+			},
+			removeImage: function() {
+				axios.post(basePath + "UpdateUserImage/" + this.user.userID, null).then(response => {
+					this.user.imageID = response.data.imageID;
 				});
 			}
 		}

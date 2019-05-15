@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
+using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
@@ -251,6 +252,40 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var profile = _profileService.GetProfileForEdit(user);
 			var model = new UserEdit(user, profile);
 			return model;
+		}
+
+		[HttpPost("/Forums/AdminApi/UpdateUserAvatar/{id}")]
+		public ActionResult<dynamic> UpdateUserAvatar(int id)
+		{
+			var user = _userService.GetUser(id);
+			if (user == null)
+				return NotFound();
+			if (Request.Form?.Files?.Count != 1)
+			{
+				_userService.EditUserProfileImages(user, true, false, null, null);
+				return new {AvatarID = (int?)null};
+			}
+			var file = Request.Form.Files[0];
+			_userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
+			var profile = _profileService.GetProfileForEdit(user);
+			return new {profile.AvatarID};
+		}
+
+		[HttpPost("/Forums/AdminApi/UpdateUserImage/{id}")]
+		public ActionResult<dynamic> UpdateUserImage(int id)
+		{
+			var user = _userService.GetUser(id);
+			if (user == null)
+				return NotFound();
+			if (Request.Form?.Files?.Count != 1)
+			{
+				_userService.EditUserProfileImages(user, false, true, null, null);
+				return new { ImageID = (int?)null };
+			}
+			var file = Request.Form.Files[0];
+			_userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
+			var profile = _profileService.GetProfileForEdit(user);
+			return new { profile.ImageID };
 		}
 
 		[HttpPost("/Forums/AdminApi/SaveUser")]
