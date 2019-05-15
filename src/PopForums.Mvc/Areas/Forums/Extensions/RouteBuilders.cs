@@ -77,7 +77,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				);
 			routes.MapRoute(
 				"pfadmin",
-				"Forums/Admin/App/{**app}",
+				"Forums/Admin/{**app}",
 				new { controller = AdminController.Name, action = "App", Area = "Forums" });
 			return routes;
 		}

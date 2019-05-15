@@ -32,7 +32,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				ServerDaylightSaving = true,
 				ServerTimeZone = -5
 			};
-			ViewData[AdminController.TimeZonesKey] = DataCollections.TimeZones();
 			return View(setupVariables);
 		}
 
