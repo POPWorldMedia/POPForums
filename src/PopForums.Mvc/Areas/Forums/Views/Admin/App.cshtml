@@ -241,7 +241,7 @@
 				<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
 			</div>
 
-			<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+			<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 			<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 
 		</div>
@@ -478,7 +478,7 @@
 		</div>
 
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success"> @PopForums.Resources.SettingsSaved </span></transition>
 
 	</main>
 </script>
@@ -492,7 +492,7 @@
 			<div class="col-sm-8"><input type="text" v-model="settings.searchIndexingInterval" id="SearchIndexingInterval" class="form-control" /></div>
 		</div>
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success">@PopForums.Resources.SettingsSaved</span></transition>
 
 		<h3 class="mt-3">@PopForums.Resources.JunkWords</h3>
 		<div class="form-group row">
@@ -566,7 +566,7 @@
 		</table>
 
 
-		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 	</main>
 </script>
@@ -745,7 +745,7 @@
 			</div>
 		</div>
 
-		<input type="button" class="btn btn-primary" value="@PopForums.Resources.Save" :disabled="loading" v-on:click="saveUser" />
+		<input type="button" class="btn btn-primary" value="@PopForums.Resources.Save" :disabled="loading" v-on:click="saveUser('@PopForums.Resources.SettingsSaved')" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 
 		<hr />
@@ -868,7 +868,7 @@
 			<label>Interval (@PopForums.Resources.Millseconds)</label>
 			<input type="text" v-model="settings.scoringGameCalculatorInterval" class="form-control" />
 		</div>
-		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
 	</main>
 </script>

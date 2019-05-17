@@ -60,11 +60,11 @@ var settingsMixin = {
 		});
 	},
 	methods: {
-		save: function () {
+		save: function (message) {
 			this.startLoad();
 			axios.post(basePath + "SaveSettings", this.settings).then(response => {
 				this.settings = response.data;
-				this.endLoad("@PopForums.Resources.SettingsSaved");
+				this.endLoad(message);
 			});
 		}
 	}
@@ -336,10 +336,10 @@ const EditUserDetail = {
 		});
 	},
 	methods: {
-		saveUser: function () {
+		saveUser: function (message) {
 			this.startLoad();
 			axios.post(basePath + "SaveUser", this.user).then(response => {
-				this.endLoad("@PopForums.Resources.SettingsSaved");
+				this.endLoad(message);
 			}).catch(error => {
 				alert(error);
 			});
