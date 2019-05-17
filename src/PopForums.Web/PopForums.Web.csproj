@@ -45,6 +45,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Forums\" />
+    <Folder Include="wwwroot\lib\PopForums\dist\" />
   </ItemGroup>
 
 </Project>

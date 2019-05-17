@@ -37,7 +37,7 @@ PopForums.areaPath = "/Forums";
 PopForums.contentPath = "/lib/PopForums";
 PopForums.currentTopicState = null;
 PopForums.navOffset = 0;
-PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/Editor.css";
+PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.css";
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
 
 PopForums.editorSettings = {
