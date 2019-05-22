@@ -5,7 +5,8 @@ var gulp = require("gulp"),
 	babel = require("gulp-babel"),
 	cssmin = require("gulp-cssmin"),
 	uglify = require("gulp-uglify"),
-	sourcemaps = require("gulp-sourcemaps");
+	sourcemaps = require("gulp-sourcemaps"),
+	rename = require("gulp-rename");
 
 var nodeRoot = "./node_modules/";
 var targetPath = "./wwwroot/lib/";
@@ -30,6 +31,7 @@ gulp.task("js", function() {
 		.pipe(sourcemaps.init())
 		.pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
 		.pipe(uglify())
+		.pipe(rename({ suffix: '.min' }))
 		.pipe(sourcemaps.write("./"))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
@@ -37,6 +39,7 @@ gulp.task("js", function() {
 gulp.task("css", function () {
 	return gulp.src("./wwwroot/lib/PopForums/*.css")
 		.pipe(cssmin())
+		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
