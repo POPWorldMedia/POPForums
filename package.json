@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
   "files": [
-    "src/PopForums.Web/wwwroot/lib/PopForums/dist/**/*"
+    "src/PopForums.Web/wwwroot/lib/PopForums/**/*"
   ],
 	"dependencies": {
 		"@aspnet/signalr": "1.0.0",

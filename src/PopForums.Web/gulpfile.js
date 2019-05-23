@@ -21,13 +21,13 @@ gulp.task("copies", function () {
 		gulp.src(nodeRoot + "vue/dist/**/*").pipe(gulp.dest(targetPath + "/vue/dist")),
 		gulp.src(nodeRoot + "vue-router/dist/**/*").pipe(gulp.dest(targetPath + "/vue-router/dist")),
 		gulp.src(nodeRoot + "axios/dist/**/*").pipe(gulp.dest(targetPath + "/axios/dist")),
-		gulp.src(targetPath + "PopForums/Fonts/**/*").pipe(gulp.dest(targetPath + "/PopForums/dist/Fonts"))
+		gulp.src(targetPath + "PopForums/src/Fonts/**/*").pipe(gulp.dest(targetPath + "/PopForums/dist/Fonts"))
 	];
 	return merge(streams);
 });
 
 gulp.task("js", function() {
-	return gulp.src("./wwwroot/lib/PopForums/*.js")
+	return gulp.src("./wwwroot/lib/PopForums/src/*.js")
 		.pipe(sourcemaps.init())
 		.pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
 		.pipe(uglify())
@@ -37,7 +37,7 @@ gulp.task("js", function() {
 });
 
 gulp.task("css", function () {
-	return gulp.src("./wwwroot/lib/PopForums/*.css")
+	return gulp.src("./wwwroot/lib/PopForums/src/*.css")
 		.pipe(cssmin())
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
