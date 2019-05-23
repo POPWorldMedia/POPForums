@@ -7,7 +7,7 @@
     "bootstrap": "4.3.1",
     "jquery": "3.4.1",
     "popper.js": "1.14.6",
-    "tinymce": "5.0.3",
+    "tinymce": "5.0.6",
     "vue": "2.6.10",
     "vue-router": "3.0.4",
     "axios": "0.18.0"

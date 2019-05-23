@@ -198,7 +198,7 @@ namespace PopForums.Services
 
 			// replace img and a tags
 			text = Regex.Replace(text, @"(<a href="")(\S+)""( *target=""?[_\w]*""?)*>", "[url=$2]", RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"<img .*src=""(\S+)""./>", "[image=$1]", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"<img .*src=""(\S+)"".*/>", "[image=$1]", RegexOptions.IgnoreCase);
 			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""https?://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=https://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
 
 			// catch remaining HTML as invalid

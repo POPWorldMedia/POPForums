@@ -247,5 +247,13 @@ namespace PopForums.Test.Services
 			var result = service.ClientHtmlToForumCode("<p>test</p><p><iframe width=\"123\" height=\"545\" src=\"https://www.youtube.com/embed/789\" frameborder=\"0\" allowfullscreen></iframe></p><p>test</p>");
 			Assert.Equal("test\r\n\r\n[youtube=https://www.youtube.com/watch?v=789]\r\n\r\ntest", result);
 		}
+
+		[Fact]
+		public void ParseImageWithExtraAttributesLikeAlt()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p>test</p>\r\n<p><img src=\"https://scontent.ftpa1-2.fna.fbcdn.net/v/t31.0-8/12119905_10153331542212955_4087525267669435874_o.jpg?_nc_cat=104&amp;_nc_ht=scontent.ftpa1-2.fna&amp;oh=bde1d73b39027f410a9506c19dfb4428&amp;oe=5D95ACD5\" alt=\"\" /></p><p>test</p>");
+			Assert.Equal("test\r\n\r\n[image=https://scontent.ftpa1-2.fna.fbcdn.net/v/t31.0-8/12119905_10153331542212955_4087525267669435874_o.jpg?_nc_cat=104&_nc_ht=scontent.ftpa1-2.fna&oh=bde1d73b39027f410a9506c19dfb4428&oe=5D95ACD5]\r\n\r\ntest", result);
+		}
 	}
 }

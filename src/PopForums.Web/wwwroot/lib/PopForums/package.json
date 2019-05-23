@@ -15,15 +15,12 @@
     "url": "https://github.com/POPWorldMedia/POPForums/issues"
   },
   "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
-  "files": [
-    "src/PopForums.Web/wwwroot/lib/PopForums/**/*"
-  ],
 	"dependencies": {
 		"@aspnet/signalr": "1.0.0",
 		"bootstrap": "4.3.1",
 		"popper.js": "1.14.6",
 		"jquery": "3.4.1",
-		"tinymce": "5.0.3",
+		"tinymce": "5.0.6",
 		"vue": "2.6.10",
 		"vue-router": "3.0.4",
 		"axios": "0.18.0"
