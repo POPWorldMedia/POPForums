@@ -3,13 +3,13 @@
   "version": "15.0.0",
   "scripts": {},
   "dependencies": {
-    "@aspnet/signalr": "1.0.0",
+    "@aspnet/signalr": "1.1.4",
     "bootstrap": "4.3.1",
     "jquery": "3.4.1",
     "popper.js": "1.14.6",
     "tinymce": "5.0.6",
     "vue": "2.6.10",
-    "vue-router": "3.0.4",
+    "vue-router": "3.0.6",
     "axios": "0.18.0"
   },
   "devDependencies": {
