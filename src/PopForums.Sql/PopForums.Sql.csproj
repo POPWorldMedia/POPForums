@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <Description>PopForums.Data.Sql Class Library</Description>
-    <VersionPrefix>14.99.0</VersionPrefix>
+    <VersionPrefix>15.0.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>PopForums.Sql</AssemblyName>
     <PackageId>PopForums.Sql</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>14.99.0</AssemblyVersion>
-	  <FileVersion>14.99.0</FileVersion>
+	  <AssemblyVersion>15.0.0</AssemblyVersion>
+	  <FileVersion>15.0.0</FileVersion>
 	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 	  <Copyright>2019, POP World Media, LLC</Copyright>
