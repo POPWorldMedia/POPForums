@@ -1,7 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+	  <Description>PopForums AwsKit Class Library</Description>
+	  <VersionPrefix>15.0.0</VersionPrefix>
+	  <Authors>Jeff Putz</Authors>
+	  <TargetFramework>netcoreapp2.2</TargetFramework>
+	  <AssemblyName>PopForums.AwsKit</AssemblyName>
+	  <PackageId>PopForums.AwsKit</PackageId>
+	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+	  <AssemblyVersion>15.0.0</AssemblyVersion>
+	  <FileVersion>15.0.0</FileVersion>
+	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
+	  <Copyright>2019, POP World Media, LLC</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
