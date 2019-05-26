@@ -60,7 +60,7 @@ namespace PopForums.Sql.Repositories
 		{
 			ExpiredUserSession session = null;
 			_sqlObjectFactory.GetConnection().Using(connection =>
-				session = connection.QuerySingleOrDefault<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE UserID = @UserID", new { UserID = userID }));
+				session = connection.QueryFirstOrDefault<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE UserID = @UserID", new { UserID = userID }));
 			return session;
 		}
 
