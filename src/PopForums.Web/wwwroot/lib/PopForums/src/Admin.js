@@ -27,12 +27,6 @@ var loadingMixin = {
 	props: {
 		loading: Boolean
 	},
-	beforeMount: function () {
-		this.$emit("setLoading", true);
-	},
-	mounted: function () {
-		this.$emit("setLoading", false);
-	},
 	methods: {
 		startLoad: function () {
 			this.$emit("setLoading", true);
@@ -55,8 +49,10 @@ var settingsMixin = {
 		}
 	},
 	created: function () {
+		this.startLoad();
 		axios.get(basePath + "GetSettings").then(response => {
 			this.settings = response.data;
+			this.endLoad();
 		});
 	},
 	methods: {
