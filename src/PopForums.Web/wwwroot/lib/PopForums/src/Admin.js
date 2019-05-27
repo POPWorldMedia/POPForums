@@ -84,7 +84,11 @@ const Categories = {
 		}
 	},
 	created: function () {
-		axios.get(basePath + "GetCategories").then(response => (this.categories = response.data));
+		this.startLoad();
+		axios.get(basePath + "GetCategories").then(response => {
+			this.categories = response.data;
+			this.endLoad();
+		});
 	},
 	methods: {
 		saveNew: function () {
@@ -145,7 +149,11 @@ const Forums = {
 		}
 	},
 	created: function () {
-		axios.get(basePath + "GetForums").then(response => (this.categories = response.data));
+		this.startLoad();
+		axios.get(basePath + "GetForums").then(response => {
+			this.categories = response.data;
+			this.endLoad();
+		});
 		this.resetForum();
 	},
 	methods: {
@@ -207,7 +215,11 @@ const ForumPermissions = {
 		}
 	},
 	created: function () {
-		axios.get(basePath + "GetForums").then(response => (this.categories = response.data));
+		this.startLoad();
+		axios.get(basePath + "GetForums").then(response => {
+			this.categories = response.data;
+			this.endLoad();
+		});
 		this.updatePerm();
 	},
 	methods: {
@@ -736,9 +748,11 @@ const ManualEvent = {
 		}
 	},
 	created: function () {
+		this.startLoad();
 		axios.get(basePath + "GetAllEvents")
 			.then(response => {
 				this.allEvents = response.data;
+				this.endLoad();
 			});
 	},
 	methods: {
