@@ -1,6 +1,6 @@
 {
   "name": "@popworldmedia/popforums",
-  "version": "15.0.1",
+  "version": "15.0.2",
   "description": "POP Forums client side",
   "scripts": {},
   "repository": {
@@ -22,6 +22,6 @@
 		"tinymce": "5.0.6",
 		"vue": "2.6.10",
 		"vue-router": "3.0.6",
-		"axios": "0.18.0"
+		"axios": "0.19.0"
 	}
 }
