@@ -5,15 +5,15 @@
 		<!-- next two lines temp until 2.2 is up on Azure app service -->
 	  <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
 	  <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
-	  <VersionPrefix>15.0.0</VersionPrefix>
+	  <VersionPrefix>15.0.3</VersionPrefix>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PopForums.Web</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>PopForums.Web</PackageId>
     <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>15.0.0</AssemblyVersion>
-	  <FileVersion>15.0.0</FileVersion>
+	  <AssemblyVersion>15.0.3</AssemblyVersion>
+	  <FileVersion>15.0.3</FileVersion>
 	  <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
 

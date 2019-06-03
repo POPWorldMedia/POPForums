@@ -1,6 +1,6 @@
 {
   "name": "popforums",
-  "version": "15.0.2",
+  "version": "15.0.3",
   "scripts": {},
   "dependencies": {
     "@aspnet/signalr": "1.1.4",
