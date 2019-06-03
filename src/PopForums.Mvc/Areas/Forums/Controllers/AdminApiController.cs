@@ -298,6 +298,28 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Ok();
 		}
 
+		[HttpPost("/Forums/AdminApi/DeleteUser/{id}")]
+		public ActionResult DeleteUser(int id)
+		{
+			DeleteUser(id, false);
+			return Ok();
+		}
+
+		[HttpPost("/Forums/AdminApi/DeleteAndBanUser/{id}")]
+		public ActionResult DeleteAndBanUser(int id)
+		{
+			DeleteUser(id, true);
+			return Ok();
+		}
+
+		private void DeleteUser(int userID, bool isBanned)
+		{
+			var adminUser = _userRetrievalShim.GetUser(HttpContext);
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			var user = _userService.GetUser(userID);
+			_userService.DeleteUser(user, adminUser, ip, isBanned);
+		}
+
 		// ********** user roles
 
 		[HttpGet("/Forums/AdminApi/GetAllRoles")]

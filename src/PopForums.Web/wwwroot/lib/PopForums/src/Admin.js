@@ -379,7 +379,17 @@ const EditUserDetail = {
 			axios.post(basePath + "UpdateUserImage/" + this.user.userID, null).then(response => {
 				this.user.imageID = response.data.imageID;
 			});
-		}
+        },
+        deleteUser: function () {
+            axios.post(basePath + "DeleteUser/" + this.user.userID, null).then(response => {
+                this.$router.push("/edituser");
+            });
+        },
+        deleteAndBanUser: function () {
+            axios.post(basePath + "DeleteAndBanUser/" + this.user.userID, null).then(response => {
+                this.$router.push("/edituser");
+            });
+        }
 	}
 }
 

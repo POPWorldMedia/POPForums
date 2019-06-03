@@ -759,6 +759,12 @@
 		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control-file mb-3">
 		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
+
+		<hr />
+		<div class="text-right">
+			<input type="button" class="btn btn-primary mb-3" value="@PopForums.Resources.DeleteUserButton" v-on:click="deleteUser" /><br />
+			<input type="button" class="btn btn-primary" value="@PopForums.Resources.DeleteAndBanButton" v-on:click="deleteAndBanUser" />
+		</div>
 	</main>
 </script>
 
