@@ -14,7 +14,7 @@ https://popforumsdev.azurewebsites.net/Forums
 [![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
 
 Latest release:
-https://github.com/POPWorldMedia/POPForums/releases/tag/15.0.3
+https://github.com/POPWorldMedia/POPForums/releases/tag/v15.0.3
 
 For the latest information and documentation, and how to get started, check the wiki:
 https://github.com/POPWorldMedia/POPForums/wiki
