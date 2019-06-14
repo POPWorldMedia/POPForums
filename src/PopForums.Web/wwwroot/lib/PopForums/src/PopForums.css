@@ -17,10 +17,6 @@
 	border-radius: 4px;
 }
 
-#ForumContainer #ForumFooter {
-	margin-top: 30px;
-}
-
 #ForumContainer #PostResponseMessage {
 	display: none;
 }
@@ -29,17 +25,9 @@
 	display: none;
 }
 
-#ForumContainer .postTools form {
-	display: inline-block;
-}
-
 #ForumContainer #FixedBreadcrumb {
 	position: fixed;top: 0; display: none;
 	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
-}
-
-#ForumContainer #ModeratorPanel {
-	margin-top: 20px; padding: 10px;
 }
 
 #ForumContainer #FixedBreadcrumb li {
