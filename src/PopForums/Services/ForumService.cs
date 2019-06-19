@@ -27,7 +27,6 @@ namespace PopForums.Services
 		List<int> GetNonViewableForumIDs(User user);
 		ForumPermissionContext GetPermissionContext(Forum forum, User user);
 		ForumPermissionContext GetPermissionContext(Forum forum, User user, Topic topic);
-		Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator);
 		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum);
 		void MoveForumUp(Forum forum);
 		void MoveForumUp(int forumID);
@@ -274,33 +273,6 @@ namespace PopForums.Services
 				context.UserCanModerate = true;
 
 			return context;
-		}
-
-		public Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
-		{
-			if (!permissionContext.UserCanPost || !permissionContext.UserCanView)
-				throw new Exception(String.Format("User {0} can't post to forum {1}.", user.Name, forum.Title));
-			newPost.Title = _textParsingService.Censor(newPost.Title);
-			// TODO: text parsing is controller, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
-			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
-			var timeStamp = DateTime.UtcNow;
-			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
-			var postID = _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
-			_forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
-			_forumRepository.IncrementPostAndTopicCount(forum.ForumID);
-			_profileRepository.SetLastPostID(user.UserID, postID);
-			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
-			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
-			var topicLink = topicLinkGenerator(topic);
-			var message = String.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
-			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Count > 0;
-			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewTopic, forumHasViewRestrictions);
-			_eventPublisher.ProcessEvent(String.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
-			forum = _forumRepository.Get(forum.ForumID);
-			_broker.NotifyForumUpdate(forum);
-			_broker.NotifyTopicUpdate(topic, forum, topicLink);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
-			return topic;
 		}
 
 		private void ChangeForumSortOrder(Forum forum, int change)

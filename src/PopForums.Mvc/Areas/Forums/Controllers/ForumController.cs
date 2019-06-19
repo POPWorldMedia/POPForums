@@ -16,7 +16,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class ForumController : Controller
 	{
-		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService)
+		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService, IPostMasterService postMasterService)
 		{
 			_settingsManager = settingsManager;
 			_forumService = forumService;
@@ -30,6 +30,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userRetrievalShim = userRetrievalShim;
 			_topicViewLogService = topicViewLogService;
 			_textParsingService = textParsingService;
+			_postMasterService = postMasterService;
 		}
 
 		public static string Name = "Forum";
@@ -46,6 +47,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly ITopicViewLogService _topicViewLogService;
 		private readonly ITextParsingService _textParsingService;
+		private readonly IPostMasterService _postMasterService;
 
 		public ActionResult Index(string urlName, int page = 1)
 		{
@@ -118,7 +120,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var urlHelper = Url;
 			var userProfileUrl = urlHelper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
-			var topic = _forumService.PostNewTopic(forum, user, permissionContext, newPost, HttpContext.Connection.RemoteIpAddress.ToString(), userProfileUrl, topicLinkGenerator);
+			var topic = _postMasterService.PostNewTopic(forum, user, permissionContext, newPost, HttpContext.Connection.RemoteIpAddress.ToString(), userProfileUrl, topicLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
 		}
