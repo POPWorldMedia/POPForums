@@ -24,7 +24,8 @@ namespace PopForums.Test.Services
 			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
 			_tenantService = new Mock<ITenantService>();
 			_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
-			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object);
+			_moderationLogService = new Mock<IModerationLogService>();
+			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object);
 		}
 
 		private Mock<ITextParsingService> _textParser;
@@ -37,6 +38,7 @@ namespace PopForums.Test.Services
 		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
 		private Mock<ITenantService> _tenantService;
 		private Mock<ISubscribedTopicsService> _subscribedTopicsService;
+		private Mock<IModerationLogService> _moderationLogService;
 
 		private User DoUpNewTopic()
 		{
@@ -373,6 +375,75 @@ namespace PopForums.Test.Services
 				Assert.True(post.ShowSig);
 				Assert.Equal("parsed title", post.Title);
 				Assert.Equal(user.UserID, post.UserID);
+			}
+		}
+
+		public class EditPostTests : PostMasterServiceTests
+		{
+			[Fact]
+			public void EditPostCensorsTitle()
+			{
+				var service = GetService();
+				service.EditPost(new Post { PostID = 456 }, new PostEdit { Title = "blah" }, new User());
+				_textParser.Verify(t => t.Censor("blah"), Times.Exactly(1));
+			}
+
+			[Fact]
+			public void EditPostPlainTextParsed()
+			{
+				var service = GetService();
+				service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = true }, new User());
+				_textParser.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
+			}
+
+			[Fact]
+			public void EditPostRichTextParsed()
+			{
+				var service = GetService();
+				service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = false }, new User());
+				_textParser.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
+			}
+
+			[Fact]
+			public void EditPostSavesMappedValues()
+			{
+				var service = GetService();
+				var post = new Post { PostID = 67 };
+				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
+				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
+				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
+				service.EditPost(new Post { PostID = 456, ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude" });
+				Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
+				Assert.Equal(456, post.PostID);
+				Assert.Equal("new", post.FullText);
+				Assert.Equal("new title", post.Title);
+				Assert.True(post.ShowSig);
+				Assert.True(post.IsEdited);
+				Assert.Equal("dude", post.LastEditName);
+			}
+
+			[Fact]
+			public void EditPostModeratorLogged()
+			{
+				var service = GetService();
+				var user = new User { UserID = 123, Name = "dude" };
+				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
+				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
+				service.EditPost(new Post { PostID = 456, ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+				_moderationLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
+			}
+
+			[Fact]
+			public void EditPostQueuesTopicForIndexing()
+			{
+				var service = GetService();
+				var user = new User { UserID = 123, Name = "dude" };
+				var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999 };
+				_tenantService.Setup(x => x.GetTenant()).Returns("");
+
+				service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+
+				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 			}
 		}
 	}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using PopForums.Configuration;
-using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -15,13 +14,11 @@ namespace PopForums.Services
 		List<Post> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted, out PagerContext pagerContext);
 		List<Post> GetPosts(Topic topic, bool includeDeleted);
 		Post Get(int postID);
-		List<Post> GetPostWithReplies(int id, bool includeDeleted);
 		Post GetFirstInTopic(Topic topic);
 		bool IsNewPostDupeOrInTimeLimit(NewPost newPost, User user);
 		int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic);
 		int GetPostCount(User user);
 		PostEdit GetPostForEdit(Post post, User user);
-		void EditPost(Post post, PostEdit postEdit, User editingUser);
 		void Delete(Post post, User user);
 		void Undelete(Post post, User user);
 		string GetPostForQuote(Post post, User user, bool forcePlainText);
@@ -36,7 +33,7 @@ namespace PopForums.Services
 
 	public class PostService : IPostService
 	{
-		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, IFeedService feedService, ITopicRepository topicRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
+		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService)
 		{
 			_postRepository = postRepository;
 			_profileRepository = profileRepository;
@@ -47,10 +44,6 @@ namespace PopForums.Services
 			_forumService = forumService;
 			_eventPublisher = eventPublisher;
 			_userService = userService;
-			_feedService = feedService;
-			_topicRepository = topicRepository;
-			_searchIndexQueueRepository = searchIndexQueueRepository;
-			_tenantService = tenantService;
 		}
 
 		private readonly IPostRepository _postRepository;
@@ -62,10 +55,6 @@ namespace PopForums.Services
 		private readonly IForumService _forumService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IUserService _userService;
-		private readonly IFeedService _feedService;
-		private readonly ITopicRepository _topicRepository;
-		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
-		private readonly ITenantService _tenantService;
 
 		public List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -98,11 +87,6 @@ namespace PopForums.Services
 		public List<Post> GetPosts(Topic topic, bool includeDeleted)
 		{
 			return _postRepository.Get(topic.TopicID, includeDeleted);
-		}
-
-		public List<Post> GetPostWithReplies(int id, bool includeDeleted)
-		{
-			return _postRepository.GetPostWithReplies(id, includeDeleted);
 		}
 
 		public Post Get(int postID)
@@ -183,25 +167,6 @@ namespace PopForums.Services
 			else
 				quote = String.Format("[quote]<i>{0} said:</i><br />{1}[/quote]", post.Name, _textParsingService.HtmlToClientHtml(post.FullText));
 			return quote;
-		}
-
-		public void EditPost(Post post, PostEdit postEdit, User editingUser)
-		{
-			// TODO: text parsing is controller for new topic and replies, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
-			// TODO: also not checking for empty posts
-			var oldText = post.FullText;
-			post.Title = _textParsingService.Censor(postEdit.Title);
-			if (postEdit.IsPlainText)
-				post.FullText = _textParsingService.ForumCodeToHtml(postEdit.FullText);
-			else
-				post.FullText = _textParsingService.ClientHtmlToHtml(postEdit.FullText);
-			post.ShowSig = postEdit.ShowSig;
-			post.LastEditTime = DateTime.UtcNow;
-			post.LastEditName = editingUser.Name;
-			post.IsEdited = true;
-			_postRepository.Update(post);
-			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = post.TopicID});
 		}
 
 		public void Delete(Post post, User user)

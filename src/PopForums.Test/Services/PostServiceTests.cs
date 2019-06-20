@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
-using PopForums.Feeds;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -23,8 +22,6 @@ namespace PopForums.Test.Services
 		private Mock<IForumService> _forumService;
 		private Mock<IEventPublisher> _eventPub;
 		private Mock<IUserService> _userService;
-		private Mock<IFeedService> _feedService;
-		private Mock<ITopicRepository> _topicRepo;
 		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
 		private Mock<ITenantService> _tenantService;
 
@@ -40,12 +37,10 @@ namespace PopForums.Test.Services
 			_forumService = new Mock<IForumService>();
 			_eventPub = new Mock<IEventPublisher>();
 			_userService = new Mock<IUserService>();
-			_feedService = new Mock<IFeedService>();
-			_topicRepo = new Mock<ITopicRepository>();
 			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
 			_tenantService = new Mock<ITenantService>();
 			_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _feedService.Object, _topicRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
 		}
 
 		[Fact]
@@ -208,72 +203,6 @@ namespace PopForums.Test.Services
 			Assert.True(postEdit.ShowSig);
 			Assert.False(postEdit.IsPlainText);
 			_textParsingService.Verify(t => t.HtmlToClientHtml("not"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void EditPostCensorsTitle()
-		{
-			var service = GetService();
-			service.EditPost(new Post { PostID = 456 }, new PostEdit{ Title = "blah" }, new User());
-			_textParsingService.Verify(t => t.Censor("blah"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void EditPostPlainTextParsed()
-		{
-			var service = GetService();
-			service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = true }, new User());
-			_textParsingService.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void EditPostRichTextParsed()
-		{
-			var service = GetService();
-			service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = false }, new User());
-			_textParsingService.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void EditPostSavesMappedValues()
-		{
-			var service = GetService();
-			var post = new Post { PostID = 67 };
-			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
-			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
-			service.EditPost(new Post { PostID = 456, ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude" });
-			Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
-			Assert.Equal(456, post.PostID);
-			Assert.Equal("new", post.FullText);
-			Assert.Equal("new title", post.Title);
-			Assert.True(post.ShowSig);
-			Assert.True(post.IsEdited);
-			Assert.Equal("dude", post.LastEditName);
-		}
-
-		[Fact]
-		public void EditPostModeratorLogged()
-		{
-			var service = GetService();
-			var user = new User { UserID = 123, Name = "dude"};
-			_textParsingService.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParsingService.Setup(t => t.Censor("unparsed title")).Returns("new title");
-			service.EditPost(new Post { PostID = 456, ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
-			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void EditPostQueuesTopicForIndexing()
-		{
-			var service = GetService();
-			var user = new User { UserID = 123, Name = "dude" };
-			var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999};
-			_tenantService.Setup(x => x.GetTenant()).Returns("");
-
-			service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
-			
-			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]

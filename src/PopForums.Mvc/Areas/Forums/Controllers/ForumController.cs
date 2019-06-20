@@ -482,7 +482,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
-			_postService.EditPost(post, postEdit, user);
+			_postMasterService.EditPost(post, postEdit, user);
 			return RedirectToAction("PostLink", new { id = post.PostID });
 		}
 

@@ -11,6 +11,7 @@ namespace PopForums.Services
 	{
 		Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator);
 		Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator);
+		void EditPost(Post post, PostEdit postEdit, User editingUser);
 	}
 
 	public class PostMasterService : IPostMasterService
@@ -25,8 +26,9 @@ namespace PopForums.Services
 		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 		private readonly ITenantService _tenantService;
 		private readonly ISubscribedTopicsService _subscribedTopicsService;
+		private readonly IModerationLogService _moderationLogService;
 
-		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService)
+		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService)
 		{
 			_textParsingService = textParsingService;
 			_topicRepository = topicRepository;
@@ -38,6 +40,7 @@ namespace PopForums.Services
 			_searchIndexQueueRepository = searchIndexQueueRepository;
 			_tenantService = tenantService;
 			_subscribedTopicsService = subscribedTopicsService;
+			_moderationLogService = moderationLogService;
 		}
 
 		public Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
@@ -109,6 +112,25 @@ namespace PopForums.Services
 			topic = _topicRepository.Get(topic.TopicID);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
 			return post;
+		}
+
+		public void EditPost(Post post, PostEdit postEdit, User editingUser)
+		{
+			// TODO: text parsing is controller for new topic and replies, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
+			// TODO: also not checking for empty posts
+			var oldText = post.FullText;
+			post.Title = _textParsingService.Censor(postEdit.Title);
+			if (postEdit.IsPlainText)
+				post.FullText = _textParsingService.ForumCodeToHtml(postEdit.FullText);
+			else
+				post.FullText = _textParsingService.ClientHtmlToHtml(postEdit.FullText);
+			post.ShowSig = postEdit.ShowSig;
+			post.LastEditTime = DateTime.UtcNow;
+			post.LastEditName = editingUser.Name;
+			post.IsEdited = true;
+			_postRepository.Update(post);
+			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
+			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
 		}
 	}
 }
