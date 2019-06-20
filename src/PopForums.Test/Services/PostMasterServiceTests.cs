@@ -23,7 +23,8 @@ namespace PopForums.Test.Services
 			_broker = new Mock<IBroker>();
 			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
 			_tenantService = new Mock<ITenantService>();
-			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+			_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
+			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object);
 		}
 
 		private Mock<ITextParsingService> _textParser;
@@ -35,6 +36,7 @@ namespace PopForums.Test.Services
 		private Mock<IBroker> _broker;
 		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
 		private Mock<ITenantService> _tenantService;
+		private Mock<ISubscribedTopicsService> _subscribedTopicsService;
 
 		private User DoUpNewTopic()
 		{
@@ -189,6 +191,188 @@ namespace PopForums.Test.Services
 				Assert.False(topic.IsDeleted);
 				Assert.False(topic.IsPinned);
 				Assert.Equal("parsed-title", topic.UrlName);
+			}
+		}
+
+		public class PostReplyTests : PostNewTopicTests
+		{
+			[Fact]
+			public void PostReplyHitsRepo()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", It.IsAny<Func<User, string>>(), "", x => "");
+				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "mah text", postTime, false, user.Name, null, false, 0));
+			}
+
+			[Fact]
+			public void PostReplyHitsSubscribedService()
+			{
+				var topic = new Topic { TopicID = 1 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, string>>()), Times.Once());
+			}
+
+			[Fact]
+			public void PostReplyIncrementsTopicReplyCount()
+			{
+				var topic = new Topic { TopicID = 1 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_topicRepo.Verify(t => t.IncrementReplyCount(1));
+			}
+
+			[Fact]
+			public void PostReplyIncrementsForumPostCount()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_forumRepo.Verify(f => f.IncrementPostCount(2));
+			}
+
+			[Fact]
+			public void PostReplyUpdatesTopicLastInfo()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_topicRepo.Verify(t => t.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime));
+			}
+
+			[Fact]
+			public void PostReplyUpdatesForumLastInfo()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_forumRepo.Verify(f => f.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name));
+			}
+
+			[Fact]
+			public void PostQueuesMarksTopicForIndexing()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				_tenantService.Setup(x => x.GetTenant()).Returns("");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			}
+
+			[Fact]
+			public void PostReplyNotifiesBroker()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				var forum = new Forum { ForumID = topic.ForumID };
+				_forumRepo.Setup(x => x.Get(topic.ForumID)).Returns(forum);
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_broker.Verify(x => x.NotifyForumUpdate(forum), Times.Once());
+				_broker.Verify(x => x.NotifyTopicUpdate(topic, forum, It.IsAny<string>()), Times.Once());
+				_broker.Verify(x => x.NotifyNewPost(topic, It.IsAny<int>()), Times.Once());
+			}
+
+			[Fact]
+			public void PostReplySetsProfileLastPostID()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				var post = service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_profileRepo.Verify(p => p.SetLastPostID(user.UserID, post.PostID));
+			}
+
+			[Fact]
+			public void PostReplyPublishesEvent()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false), Times.Once());
+			}
+
+			[Fact]
+			public void PostReplyDoesNotPublisheEventOnViewRestrictedForum()
+			{
+				var topic = new Topic { TopicID = 1, ForumID = 2 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string> { "Admin" });
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
+			}
+
+			[Fact]
+			public void PostReplyReturnsHydratedObject()
+			{
+				var topic = new Topic { TopicID = 1 };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).Returns(123);
+				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				var post = service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				Assert.Equal(topic.TopicID, post.TopicID);
+				Assert.Equal("mah text", post.FullText);
+				Assert.Equal("127.0.0.1", post.IP);
+				Assert.False(post.IsDeleted);
+				Assert.False(post.IsEdited);
+				Assert.False(post.IsFirstInTopic);
+				Assert.Equal(user.Name, post.LastEditName);
+				Assert.Null(post.LastEditTime);
+				Assert.Equal(user.Name, post.Name);
+				Assert.Equal(0, post.ParentPostID);
+				Assert.Equal(123, post.PostID);
+				Assert.Equal(postTime, post.PostTime);
+				Assert.True(post.ShowSig);
+				Assert.Equal("parsed title", post.Title);
+				Assert.Equal(user.UserID, post.UserID);
 			}
 		}
 	}

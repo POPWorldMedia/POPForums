@@ -344,7 +344,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
-			var post = _topicService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
+			var post = _postMasterService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
 			_topicViewCountService.SetViewedTopic(topic, HttpContext);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 				_topicService.CloseTopic(topic, user);

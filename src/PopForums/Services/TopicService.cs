@@ -14,7 +14,6 @@ namespace PopForums.Services
 	public interface ITopicService
 	{
 		List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
-		Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator);
 		Topic Get(string urlName);
 		Topic Get(int topicID);
 		void CloseTopic(Topic topic, User user);
@@ -120,50 +119,6 @@ namespace PopForums.Services
 		public Topic Get(int topicID)
 		{
 			return _topicRepository.Get(topicID);
-		}
-
-		public Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator)
-		{
-			newPost.Title = _textParsingService.Censor(newPost.Title);
-			// TODO: text parsing is controller, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
-			var postID = _postRepository.Create(topic.TopicID, parentPostID, ip, isFirstInTopic, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, postTime, false, user.Name, null, false, 0);
-			var post = new Post
-			{
-				PostID = postID,
-				FullText = newPost.FullText,
-				IP = ip,
-				IsDeleted = false,
-				IsEdited = false,
-				IsFirstInTopic = isFirstInTopic,
-				LastEditName = user.Name,
-				LastEditTime = null,
-				Name = user.Name,
-				ParentPostID = parentPostID,
-				PostTime = postTime,
-				ShowSig = newPost.IncludeSignature,
-				Title = newPost.Title,
-				TopicID = topic.TopicID,
-				UserID = user.UserID
-			};
-			_topicRepository.IncrementReplyCount(topic.TopicID);
-			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
-			_forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
-			_forumRepository.IncrementPostCount(topic.ForumID);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
-			_profileRepository.SetLastPostID(user.UserID, postID);
-			if (unsubscribeLinkGenerator != null)
-				_subscribedTopicService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
-			// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
-			var message = String.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
-			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
-			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
-			_broker.NotifyNewPosts(topic, post.PostID);
-			_broker.NotifyNewPost(topic, post.PostID);
-			var forum = _forumRepository.Get(topic.ForumID);
-			_broker.NotifyForumUpdate(forum);
-			topic = _topicRepository.Get(topic.TopicID);
-			_broker.NotifyTopicUpdate(topic, forum, topicLink);
-			return post;
 		}
 
 		public void CloseTopic(Topic topic, User user)
