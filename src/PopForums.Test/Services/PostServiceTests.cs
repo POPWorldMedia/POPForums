@@ -22,8 +22,6 @@ namespace PopForums.Test.Services
 		private Mock<IForumService> _forumService;
 		private Mock<IEventPublisher> _eventPub;
 		private Mock<IUserService> _userService;
-		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
-		private Mock<ITenantService> _tenantService;
 
 		private PostService GetService()
 		{
@@ -37,10 +35,8 @@ namespace PopForums.Test.Services
 			_forumService = new Mock<IForumService>();
 			_eventPub = new Mock<IEventPublisher>();
 			_userService = new Mock<IUserService>();
-			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
-			_tenantService = new Mock<ITenantService>();
 			_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object);
 		}
 
 		[Fact]
