@@ -17,32 +17,18 @@ namespace PopForums.Test.Services
 	{
 		private Mock<IForumRepository> _mockForumRepo;
 		private Mock<ITopicRepository> _mockTopicRepo;
-		private Mock<IPostRepository> _mockPostRepo;
 		private Mock<ICategoryRepository> _mockCategoryRepo;
-		private Mock<IProfileRepository> _mockProfileRepo;
-		private Mock<ITextParsingService> _mockTextParser;
 		private Mock<ISettingsManager> _mockSettingsManager;
 		private Mock<ILastReadService> _mockLastReadService;
-		private Mock<IEventPublisher> _eventPublisher;
-		private Mock<IBroker> _broker;
-		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
-		private Mock<ITenantService> _tenantService;
 
 		private ForumService GetService()
 		{
 			_mockCategoryRepo = new Mock<ICategoryRepository>();
 			_mockForumRepo = new Mock<IForumRepository>();
 			_mockTopicRepo = new Mock<ITopicRepository>();
-			_mockPostRepo = new Mock<IPostRepository>();
-			_mockProfileRepo = new Mock<IProfileRepository>();
-			_mockTextParser = new Mock<ITextParsingService>();
 			_mockSettingsManager = new Mock<ISettingsManager>();
 			_mockLastReadService = new Mock<ILastReadService>();
-			_eventPublisher = new Mock<IEventPublisher>();
-			_broker = new Mock<IBroker>();
-			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
-			_tenantService = new Mock<ITenantService>();
-			return new ForumService(_mockForumRepo.Object, _mockTopicRepo.Object, _mockPostRepo.Object, _mockCategoryRepo.Object, _mockProfileRepo.Object, _mockTextParser.Object, _mockSettingsManager.Object, _mockLastReadService.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+			return new ForumService(_mockForumRepo.Object, _mockTopicRepo.Object, _mockCategoryRepo.Object, _mockSettingsManager.Object, _mockLastReadService.Object);
 		}
 
 		[Fact]
@@ -165,26 +151,6 @@ namespace PopForums.Test.Services
 		//    _mockTopicRepo.Verify(t => t.GetTopicCount(forumID, false), Times.Once());
 		//    _mockForumRepo.Verify(f => f.UpdateTopicAndPostCounts(forumID, topicCount, postCount));
 		//}
-
-		[Fact]
-		public void IncrementPostCount()
-		{
-			const int forumID = 123;
-			var forum = new Forum { ForumID = forumID };
-			var forumService = GetService();
-			forumService.IncrementPostCount(forum);
-			_mockForumRepo.Verify(f => f.IncrementPostCount(forumID), Times.Once());
-		}
-
-		[Fact]
-		public void IncrementTopicAndPostCount()
-		{
-			const int forumID = 123;
-			var forum = new Forum { ForumID = forumID };
-			var forumService = GetService();
-			forumService.IncrementPostAndTopicCount(forum);
-			_mockForumRepo.Verify(f => f.IncrementPostAndTopicCount(forumID), Times.Once());
-		}
 
 		[Fact]
 		public void GetForumsWithCategories()
@@ -441,7 +407,8 @@ namespace PopForums.Test.Services
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
-			service.MoveForumUp(f3);
+			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).Returns(f3);
+			service.MoveForumUp(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(4));
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(f1.ForumID, f1.SortOrder), Times.Once());
@@ -464,7 +431,8 @@ namespace PopForums.Test.Services
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
-			service.MoveForumDown(f3);
+			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).Returns(f3);
+			service.MoveForumDown(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(4));
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(f1.ForumID, f1.SortOrder), Times.Once());
@@ -517,60 +485,6 @@ namespace PopForums.Test.Services
 			var result = service.GetForumViewRoles(forum);
 			_mockForumRepo.Verify(f => f.GetForumViewRoles(forum.ForumID), Times.Once());
 			Assert.Same(roles, result);
-		}
-
-		[Fact]
-		public void AddPostRole()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.AddPostRole(forum, "admin");
-			_mockForumRepo.Verify(f => f.AddPostRole(forum.ForumID, "admin"));
-		}
-
-		[Fact]
-		public void RemovePostRole()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.RemovePostRole(forum, "admin");
-			_mockForumRepo.Verify(f => f.RemovePostRole(forum.ForumID, "admin"));
-		}
-
-		[Fact]
-		public void AddViewRole()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.AddViewRole(forum, "admin");
-			_mockForumRepo.Verify(f => f.AddViewRole(forum.ForumID, "admin"));
-		}
-
-		[Fact]
-		public void RemoveViewRole()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.RemoveViewRole(forum, "admin");
-			_mockForumRepo.Verify(f => f.RemoveViewRole(forum.ForumID, "admin"));
-		}
-
-		[Fact]
-		public void RemoveAllPostRoles()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.RemoveAllPostRoles(forum);
-			_mockForumRepo.Verify(f => f.RemoveAllPostRoles(forum.ForumID));
-		}
-
-		[Fact]
-		public void RemoveAllViewRoles()
-		{
-			var service = GetService();
-			var forum = new Forum { ForumID = 1 };
-			service.RemoveAllViewRoles(forum);
-			_mockForumRepo.Verify(f => f.RemoveAllViewRoles(forum.ForumID));
 		}
 
 		[Fact]
