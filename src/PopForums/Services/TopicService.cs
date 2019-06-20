@@ -25,8 +25,6 @@ namespace PopForums.Services
 		void UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
 		List<Topic> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		void RecalculateReplyCount(Topic topic);
-		Dictionary<int, int> GetFirstPostIDsFromTopics(List<Topic> topics);
-		DateTime? TopicLastPostTime(int topicID);
 		List<Topic> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
@@ -104,11 +102,6 @@ namespace PopForums.Services
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
 			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
 			return topics;
-		}
-
-		public Dictionary<int, int> GetFirstPostIDsFromTopics(List<Topic> topics)
-		{
-			return _postRepository.GetFirstPostIDsFromTopicIDs(topics.Select(x => x.TopicID).ToList());
 		}
 
 		public Topic Get(string urlName)
@@ -237,11 +230,6 @@ namespace PopForums.Services
 		{
 			var replyCount = _postRepository.GetReplyCount(topic.TopicID, false);
 			_topicRepository.UpdateReplyCount(topic.TopicID, replyCount);
-		}
-
-		public DateTime? TopicLastPostTime(int topicID)
-		{
-			return _topicRepository.GetLastPostTime(topicID);
 		}
 
 		public void UpdateLast(Topic topic)
