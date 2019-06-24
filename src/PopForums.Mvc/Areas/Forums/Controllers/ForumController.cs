@@ -16,7 +16,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class ForumController : Controller
 	{
-		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService, IPostMasterService postMasterService)
+		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService)
 		{
 			_settingsManager = settingsManager;
 			_forumService = forumService;
@@ -31,6 +31,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_topicViewLogService = topicViewLogService;
 			_textParsingService = textParsingService;
 			_postMasterService = postMasterService;
+			_forumPermissionService = forumPermissionService;
 		}
 
 		public static string Name = "Forum";
@@ -48,6 +49,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ITopicViewLogService _topicViewLogService;
 		private readonly ITextParsingService _textParsingService;
 		private readonly IPostMasterService _postMasterService;
+		private readonly IForumPermissionService _forumPermissionService;
 
 		public ActionResult Index(string urlName, int page = 1)
 		{
@@ -57,7 +59,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum == null)
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var permissionContext = _forumService.GetPermissionContext(forum, user);
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);
@@ -86,7 +88,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return Content(Resources.LoginToPost);
 			ForumPermissionContext permissionContext;
-			var forum = GetForumByIdWithPermissionContext(id, out permissionContext);
+			var forum = GetForumByIdWithPermissionContext(id, user, out permissionContext);
 			if (!permissionContext.UserCanView)
 				return Content(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -98,14 +100,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		// TODO: [ValidateInput(false)]
 		public JsonResult PostTopic(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Json(new BasicJsonMessage { Message = Resources.LoginToPost, Result = false });
-			ForumPermissionContext permissionContext;
-			var forum = GetForumByIdWithPermissionContext(newPost.ItemID, out permissionContext);
+			var forum = GetForumByIdWithPermissionContext(newPost.ItemID, user, out var permissionContext);
 			if (!permissionContext.UserCanView)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
 			if (!permissionContext.UserCanPost)
@@ -116,7 +116,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (String.IsNullOrWhiteSpace(newPost.FullText) || String.IsNullOrWhiteSpace(newPost.Title))
 				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
 
-			// TODO: test link generation
 			var urlHelper = Url;
 			var userProfileUrl = urlHelper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
@@ -125,13 +124,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
 		}
 
-		private Forum GetForumByIdWithPermissionContext(int forumID, out ForumPermissionContext permissionContext)
+		private Forum GetForumByIdWithPermissionContext(int forumID, User user, out ForumPermissionContext permissionContext)
 		{
 			var forum = _forumService.Get(forumID);
 			if (forum == null)
-				throw new Exception(String.Format("Forum {0} not found", forumID));
-			var user = _userRetrievalShim.GetUser(HttpContext);
-			permissionContext = _forumService.GetPermissionContext(forum, user);
+				throw new Exception($"Forum {forumID} not found");
+			permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
 			return forum;
 		}
 
@@ -144,7 +142,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum == null)
 				throw new Exception(String.Format("Forum {0} not found", topic.ForumID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			return _forumService.GetPermissionContext(forum, user);
+			return _forumPermissionService.GetPermissionContext(forum, user);
 		}
 
 		public ActionResult TopicID(int id)
@@ -166,7 +164,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var adapter = new ForumAdapterFactory(forum);
-			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return NotFound();
@@ -238,7 +236,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
-			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);
@@ -277,7 +275,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			if (topic.IsClosed)
 				return Content(Resources.Closed);
-			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 				return Content(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -321,7 +319,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
 			if (topic.IsClosed)
 				return Json(new BasicJsonMessage { Message = Resources.Closed, Result = false });
-			GetForumByIdWithPermissionContext(topic.ForumID, out permissionContext);
+			GetForumByIdWithPermissionContext(topic.ForumID, user, out permissionContext);
 			if (!permissionContext.UserCanView)
 				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
 			if (!permissionContext.UserCanPost)
@@ -370,20 +368,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user != null)
 				_lastReadService.MarkTopicRead(user, topic);
 			return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
-		}
-
-		public JsonResult FirstPostPreview(int id)
-		{
-			var topic = _topicService.Get(id);
-			if (topic == null)
-				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-			ForumPermissionContext permissionContext;
-			GetForumByIdWithPermissionContext(topic.ForumID, out permissionContext);
-			if (!permissionContext.UserCanView)
-				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
-			var post = _postService.GetFirstInTopic(topic);
-			var result = new BasicJsonMessage { Result = true, Data = new { post.FullText, post.Name, post.UserID } };
-			return Json(result);
 		}
 		
 		public ViewResult Recent(int page = 1)
@@ -520,7 +504,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
-			var permissionContext = _forumService.GetPermissionContext(forum, user, topic);
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);

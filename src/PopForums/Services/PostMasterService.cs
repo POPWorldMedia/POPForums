@@ -27,8 +27,9 @@ namespace PopForums.Services
 		private readonly ITenantService _tenantService;
 		private readonly ISubscribedTopicsService _subscribedTopicsService;
 		private readonly IModerationLogService _moderationLogService;
+		private readonly IForumPermissionService _forumPermissionService;
 
-		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService)
+		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumPermissionService forumPermissionService)
 		{
 			_textParsingService = textParsingService;
 			_topicRepository = topicRepository;
@@ -41,7 +42,13 @@ namespace PopForums.Services
 			_tenantService = tenantService;
 			_subscribedTopicsService = subscribedTopicsService;
 			_moderationLogService = moderationLogService;
+			_forumPermissionService = forumPermissionService;
 		}
+
+		//public BasicJsonMessage<Topic> PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
+		//{
+
+		//}
 
 		public Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
 		{

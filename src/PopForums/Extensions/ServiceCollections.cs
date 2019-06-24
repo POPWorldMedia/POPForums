@@ -68,6 +68,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IServiceHeartbeatService, ServiceHeartbeatService>();
 		    services.AddTransient<ISearchIndexSubsystem, SearchIndexSubsystem>();
 		    services.AddTransient<IPostMasterService, PostMasterService>();
+		    services.AddTransient<IForumPermissionService, ForumPermissionService>();
 	    }
 
 	    public static void AddPopForumsBackgroundServices(this IServiceCollection services)

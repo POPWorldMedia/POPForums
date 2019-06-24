@@ -25,7 +25,8 @@ namespace PopForums.Test.Services
 			_tenantService = new Mock<ITenantService>();
 			_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
 			_moderationLogService = new Mock<IModerationLogService>();
-			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object);
+			_forumPermissionService = new Mock<IForumPermissionService>();
+			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object);
 		}
 
 		private Mock<ITextParsingService> _textParser;
@@ -39,6 +40,7 @@ namespace PopForums.Test.Services
 		private Mock<ITenantService> _tenantService;
 		private Mock<ISubscribedTopicsService> _subscribedTopicsService;
 		private Mock<IModerationLogService> _moderationLogService;
+		private Mock<IForumPermissionService> _forumPermissionService;
 
 		private User DoUpNewTopic()
 		{
