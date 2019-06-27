@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Moq;
+using PopForums.Configuration;
 using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -26,7 +27,9 @@ namespace PopForums.Test.Services
 			_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
 			_moderationLogService = new Mock<IModerationLogService>();
 			_forumPermissionService = new Mock<IForumPermissionService>();
-			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object);
+			_settingsManager = new Mock<ISettingsManager>();
+			_topicViewCountService = new Mock<ITopicViewCountService>();
+			return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object, _settingsManager.Object, _topicViewCountService.Object);
 		}
 
 		private Mock<ITextParsingService> _textParser;
@@ -41,6 +44,8 @@ namespace PopForums.Test.Services
 		private Mock<ISubscribedTopicsService> _subscribedTopicsService;
 		private Mock<IModerationLogService> _moderationLogService;
 		private Mock<IForumPermissionService> _forumPermissionService;
+		private Mock<ISettingsManager> _settingsManager;
+		private Mock<ITopicViewCountService> _topicViewCountService;
 
 		private User DoUpNewTopic()
 		{
@@ -50,17 +55,19 @@ namespace PopForums.Test.Services
 			const string title = "mah title";
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
-			var forumService = GetService();
+			var service = GetService();
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).Returns(69);
+			_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 			_topicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
-			forumService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
+			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanModerate = false, UserCanPost = true, UserCanView = true});
+			service.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 			return user;
 		}
-
+		
 		private User GetUser()
 		{
 			var user = Models.UserTest.GetTestUser();
@@ -71,11 +78,27 @@ namespace PopForums.Test.Services
 		public class PostNewTopicTests : PostMasterServiceTests
 		{
 			[Fact]
-			public void UserWithoutPermissionThrowsOnPost()
+			public void UserWithoutPostPermissionReturnsFalseIsSuccess()
 			{
-				var topicService = GetService();
-				Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum { ForumID = 1 }, GetUser(), new ForumPermissionContext { UserCanPost = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
-				Assert.Throws<Exception>(() => topicService.PostNewTopic(new Forum { ForumID = 1 }, GetUser(), new ForumPermissionContext { UserCanView = false }, new NewPost(), String.Empty, It.IsAny<string>(), x => ""));
+				var service = GetService();
+				var forum = new Forum{ForumID = 1};
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				var user = GetUser();
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true});
+				var result = service.PostNewTopic(user, new NewPost {ItemID = forum.ForumID}, "", "", x => "", x => "");
+				Assert.False(result.IsSuccessful);
+			}
+
+			[Fact]
+			public void UserWithoutViewPermissionReturnsFalseIsSuccess()
+			{
+				var service = GetService();
+				var forum = new Forum { ForumID = 1 };
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				var user = GetUser();
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false });
+				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID }, "", "", x => "", x => "");
+				Assert.False(result.IsSuccessful);
 			}
 
 			[Fact]
@@ -88,11 +111,13 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-				topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
@@ -157,12 +182,14 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string> { "Admin" });
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
-				var topic = topicService.PostNewTopic(forum, user, new ForumPermissionContext { UserCanPost = true, UserCanView = true }, newPost, ip, It.IsAny<string>(), x => "");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.NewTopic, true), Times.Once());
 			}
 
@@ -176,25 +203,27 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost {Title = title, FullText = text, ItemID = 1};
 				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
-				var topic = topicService.PostNewTopic(forum, user, new ForumPermissionContext {UserCanPost = true, UserCanView = true}, newPost, ip, It.IsAny<string>(), x => "");
-				Assert.Equal(2, topic.TopicID);
-				Assert.Equal(forum.ForumID, topic.ForumID);
-				Assert.Equal("parsed title", topic.Title);
-				Assert.Equal(0, topic.ReplyCount);
-				Assert.Equal(0, topic.ViewCount);
-				Assert.Equal(user.UserID, topic.StartedByUserID);
-				Assert.Equal(user.Name, topic.StartedByName);
-				Assert.Equal(user.UserID, topic.LastPostUserID);
-				Assert.Equal(user.Name, topic.LastPostName);
-				Assert.False(topic.IsClosed);
-				Assert.False(topic.IsDeleted);
-				Assert.False(topic.IsPinned);
-				Assert.Equal("parsed-title", topic.UrlName);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+				var result = topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				Assert.Equal(2, result.Data.TopicID);
+				Assert.Equal(forum.ForumID, result.Data.ForumID);
+				Assert.Equal("parsed title", result.Data.Title);
+				Assert.Equal(0, result.Data.ReplyCount);
+				Assert.Equal(0, result.Data.ViewCount);
+				Assert.Equal(user.UserID, result.Data.StartedByUserID);
+				Assert.Equal(user.Name, result.Data.StartedByName);
+				Assert.Equal(user.UserID, result.Data.LastPostUserID);
+				Assert.Equal(user.Name, result.Data.LastPostName);
+				Assert.False(result.Data.IsClosed);
+				Assert.False(result.Data.IsDeleted);
+				Assert.False(result.Data.IsPinned);
+				Assert.Equal("parsed-title", result.Data.UrlName);
 			}
 		}
 

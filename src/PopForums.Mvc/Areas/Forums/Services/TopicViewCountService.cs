@@ -1,32 +1,28 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PopForums.Models;
 using PopForums.Repositories;
+using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Services
 {
-	public interface ITopicViewCountService
-	{
-		void ProcessView(Topic topic, HttpContext context);
-		void SetViewedTopic(Topic topic, HttpContext context);
-	}
-
-	// TODO: Test that this works
 	public class TopicViewCountService : ITopicViewCountService
 	{
-		public TopicViewCountService(ITopicRepository topicRepository)
+		public TopicViewCountService(ITopicRepository topicRepository, IHttpContextAccessor httpContextAccessor)
 		{
 			_topicRepository = topicRepository;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
 		private readonly ITopicRepository _topicRepository;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 		private const string CookieKey = "PopForums.LastTopicID";
 
-		public void ProcessView(Topic topic, HttpContext context)
+		public void ProcessView(Topic topic)
 		{
+			var context = _httpContextAccessor.HttpContext;
 			if (context.Request.Cookies.ContainsKey(CookieKey))
 			{
-				int topicID;
-				if (int.TryParse(context.Request.Cookies[CookieKey], out topicID))
+				if (int.TryParse(context.Request.Cookies[CookieKey], out var topicID))
 				{
 					if (topicID != topic.TopicID)
 						_topicRepository.IncrementViewCount(topic.TopicID);
@@ -34,12 +30,12 @@ namespace PopForums.Mvc.Areas.Forums.Services
 			}
 			else
 				_topicRepository.IncrementViewCount(topic.TopicID);
-			SetViewedTopic(topic, context);
+			SetViewedTopic(topic);
 		}
 
-		public void SetViewedTopic(Topic topic, HttpContext context)
+		public void SetViewedTopic(Topic topic)
 		{
-			context.Response.Cookies.Append(CookieKey, topic.TopicID.ToString());
+			_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, topic.TopicID.ToString());
 		}
 	}
 }

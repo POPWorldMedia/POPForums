@@ -100,28 +100,21 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult PostTopic(NewPost newPost)
+		public IActionResult PostTopic(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
-				return Json(new BasicJsonMessage { Message = Resources.LoginToPost, Result = false });
-			var forum = GetForumByIdWithPermissionContext(newPost.ItemID, user, out var permissionContext);
-			if (!permissionContext.UserCanView)
-				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
-			if (!permissionContext.UserCanPost)
-				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
-			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, user))
-				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
-			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
-			if (String.IsNullOrWhiteSpace(newPost.FullText) || String.IsNullOrWhiteSpace(newPost.Title))
-				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
+				return Forbid();
+			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
+			string TopicLinkGenerator(Topic t) => Url.Action("Topic", "Forum", new {id = t.UrlName});
+			string RedirectLinkGenerator(Topic t) => Url.RouteUrl(new {controller = "Forum", action = "Topic", id = t.UrlName});
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
-			var urlHelper = Url;
-			var userProfileUrl = urlHelper.Action("ViewProfile", "Account", new { id = user.UserID });
-			Func<Topic, string> topicLinkGenerator = t => urlHelper.Action("Topic", "Forum", new { id = t.UrlName });
-			var topic = _postMasterService.PostNewTopic(forum, user, permissionContext, newPost, HttpContext.Connection.RemoteIpAddress.ToString(), userProfileUrl, topicLinkGenerator);
-			_topicViewCountService.SetViewedTopic(topic, HttpContext);
-			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "Topic", id = topic.UrlName }) });
+			var result = _postMasterService.PostNewTopic(user, newPost, ip, userProfileUrl, TopicLinkGenerator, RedirectLinkGenerator);
+
+			if (result.IsSuccessful)
+				return Json(new BasicJsonMessage {Result = true, Redirect = result.Redirect});
+			return Json(new BasicJsonMessage {Result = false, Message = result.Message});
 		}
 
 		private Forum GetForumByIdWithPermissionContext(int forumID, User user, out ForumPermissionContext permissionContext)
@@ -209,7 +202,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
-			_topicViewCountService.ProcessView(topic, HttpContext);
+			_topicViewCountService.ProcessView(topic);
 			await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -256,7 +249,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
-			_topicViewCountService.ProcessView(topic, HttpContext);
+			_topicViewCountService.ProcessView(topic);
 			ViewBag.Low = low;
 			ViewBag.High = high;
 			return View(container);
@@ -343,7 +336,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
 			var post = _postMasterService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
-			_topicViewCountService.SetViewedTopic(topic, HttpContext);
+			_topicViewCountService.SetViewedTopic(topic);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 				_topicService.CloseTopic(topic, user);
 			var urlHelper = Url;

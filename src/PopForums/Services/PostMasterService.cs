@@ -1,4 +1,5 @@
 ﻿using System;
+using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Messaging;
 using PopForums.Models;
@@ -9,9 +10,9 @@ namespace PopForums.Services
 {
 	public interface IPostMasterService
 	{
-		Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator);
 		Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator);
 		void EditPost(Post post, PostEdit postEdit, User editingUser);
+		BasicServiceResponse<Topic> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
 	}
 
 	public class PostMasterService : IPostMasterService
@@ -28,8 +29,10 @@ namespace PopForums.Services
 		private readonly ISubscribedTopicsService _subscribedTopicsService;
 		private readonly IModerationLogService _moderationLogService;
 		private readonly IForumPermissionService _forumPermissionService;
+		private readonly ISettingsManager _settingsManager;
+		private readonly ITopicViewCountService _topicViewCountService;
 
-		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumPermissionService forumPermissionService)
+		public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumPermissionService forumPermissionService, ISettingsManager settingsManager, ITopicViewCountService topicViewCountService)
 		{
 			_textParsingService = textParsingService;
 			_topicRepository = topicRepository;
@@ -43,19 +46,28 @@ namespace PopForums.Services
 			_subscribedTopicsService = subscribedTopicsService;
 			_moderationLogService = moderationLogService;
 			_forumPermissionService = forumPermissionService;
+			_settingsManager = settingsManager;
+			_topicViewCountService = topicViewCountService;
 		}
 
-		//public BasicJsonMessage<Topic> PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
-		//{
-
-		//}
-
-		public Topic PostNewTopic(Forum forum, User user, ForumPermissionContext permissionContext, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator)
+		public BasicServiceResponse<Topic> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator)
 		{
-			if (!permissionContext.UserCanPost || !permissionContext.UserCanView)
-				throw new Exception($"User {user.Name} can't post to forum {forum.Title}.");
+			if (user == null)
+				return GetPostFailMessage(Resources.LoginToPost);
+			var forum = _forumRepository.Get(newPost.ItemID);
+			if (forum == null)
+				throw new Exception($"Forum {newPost.ItemID} not found");
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			if (!permissionContext.UserCanView)
+				return GetPostFailMessage(Resources.ForumNoView);
+			if (!permissionContext.UserCanPost)
+				return GetPostFailMessage(Resources.ForumNoPost);
+			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
+			if (IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
+				return GetPostFailMessage(string.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts));
+			if (string.IsNullOrWhiteSpace(newPost.FullText) || string.IsNullOrWhiteSpace(newPost.Title))
+				return GetPostFailMessage(Resources.PostEmpty);
 			newPost.Title = _textParsingService.Censor(newPost.Title);
-			// TODO: text parsing is controller, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
 			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
 			var timeStamp = DateTime.UtcNow;
 			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
@@ -66,15 +78,24 @@ namespace PopForums.Services
 			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 			var topicLink = topicLinkGenerator(topic);
-			var message = String.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
+			var message = string.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Count > 0;
 			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewTopic, forumHasViewRestrictions);
-			_eventPublisher.ProcessEvent(String.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
+			_eventPublisher.ProcessEvent(string.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
 			forum = _forumRepository.Get(forum.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
-			return topic;
+			_topicViewCountService.SetViewedTopic(topic);
+
+			var redirectLink = redirectLinkGenerator(topic);
+
+			return new BasicServiceResponse<Topic> {Data = topic, Message = null, Redirect = redirectLink, IsSuccessful = true};
+		}
+
+		private BasicServiceResponse<Topic> GetPostFailMessage(string message)
+		{
+			return new BasicServiceResponse<Topic> {Data = null, Message = message, Redirect = null, IsSuccessful = false};
 		}
 
 		public Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator)
@@ -138,6 +159,22 @@ namespace PopForums.Services
 			_postRepository.Update(post);
 			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
+		}
+
+		private bool IsNewPostDupeOrInTimeLimit(string parsedPost, User user)
+		{
+			var postID = _profileRepository.GetLastPostID(user.UserID);
+			if (postID == null)
+				return false;
+			var lastPost = _postRepository.Get(postID.Value);
+			if (lastPost == null)
+				return false;
+			var minimumSeconds = _settingsManager.Current.MinimumSecondsBetweenPosts;
+			if (DateTime.UtcNow.Subtract(lastPost.PostTime).TotalSeconds < minimumSeconds)
+				return true;
+			if (parsedPost == lastPost.FullText)
+				return true;
+			return false;
 		}
 	}
 }

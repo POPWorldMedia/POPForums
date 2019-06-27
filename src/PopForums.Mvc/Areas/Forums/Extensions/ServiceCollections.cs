@@ -20,6 +20,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		/// <returns></returns>
 		public static IServiceCollection AddPopForumsMvc(this IServiceCollection services)
 		{
+			services.AddHttpContextAccessor();
 			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 			services.AddTransient<IBroker, Broker>();
