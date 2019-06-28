@@ -389,7 +389,196 @@ namespace PopForums.Test.Services
 		public class PostReplyTests : PostNewTopicTests
 		{
 			[Fact]
-			public void PostReplyHitsRepo()
+			public void NoUserReturnsFalseIsSuccessful()
+			{
+				var service = GetService();
+
+				var result = service.PostReply(null, 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+			}
+
+			[Fact]
+			public void NoTopicReturnsFalseIsSuccessful()
+			{
+				var service = GetService();
+				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Topic) null);
+
+				var result = service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.TopicNotExist, result.Message);
+			}
+
+			[Fact]
+			public void NoForumThrows()
+			{
+				var service = GetService();
+				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic());
+				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+
+				Assert.Throws<Exception>(() => service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => ""));
+			}
+
+			[Fact]
+			public void NoViewPermissionReturnsFalseIsSuccessful()
+			{
+				var service = GetService();
+				var user = GetUser();
+				var forum = new Forum {ForumID = 1};
+				var topic = new Topic {ForumID = forum.ForumID};
+				var newPost = new NewPost {ItemID = topic.TopicID};
+				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(topic);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanView = false, UserCanPost = true});
+
+				var result = service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.ForumNoView, result.Message);
+			}
+
+			[Fact]
+			public void NoPostPermissionReturnsFalseIsSuccessful()
+			{
+				var service = GetService();
+				var user = GetUser();
+				var forum = new Forum { ForumID = 1 };
+				var topic = new Topic { ForumID = forum.ForumID };
+				var newPost = new NewPost { ItemID = topic.TopicID };
+				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(topic);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanView = true, UserCanPost = false });
+
+				var result = service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.ForumNoPost, result.Message);
+			}
+
+			[Fact]
+			public void ClosedTopicReturnsFalseIsSuccessful()
+			{
+				var service = GetService();
+				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic{IsClosed = true});
+
+				var result = service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.Closed, result.Message);
+			}
+
+			[Fact]
+			public void UsesPlainTextParsed()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = true };
+				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			}
+
+			[Fact]
+			public void UsesRichTextParsed()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
+				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			}
+
+			[Fact]
+			public void DupeOfLastPostFails()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_postRepo.Setup(x => x.Get(654)).Returns(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
+				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
+
+				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
+			}
+
+			[Fact]
+			public void MinTimeSinceLastPostTooShortFails()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("oihf text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_postRepo.Setup(x => x.Get(654)).Returns(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
+				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
+
+				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
+			}
+
+			[Fact]
+			public void EmptyPostFails()
+			{
+				var topic = new Topic { TopicID = 1, Title = "" };
+				var user = GetUser();
+				var postTime = DateTime.UtcNow;
+				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
+
+				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.PostEmpty, result.Message);
+			}
+
+			[Fact]
+			public void HitsRepo()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -408,7 +597,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyHitsSubscribedService()
+			public void HitsSubscribedService()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
@@ -426,7 +615,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyIncrementsTopicReplyCount()
+			public void IncrementsTopicReplyCount()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
@@ -444,7 +633,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyIncrementsForumPostCount()
+			public void IncrementsForumPostCount()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -462,7 +651,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyUpdatesTopicLastInfo()
+			public void UpdatesTopicLastInfo()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -480,7 +669,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyUpdatesForumLastInfo()
+			public void UpdatesForumLastInfo()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -517,7 +706,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyNotifiesBroker()
+			public void NotifiesBroker()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -539,7 +728,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplySetsProfileLastPostID()
+			public void SetsProfileLastPostID()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -557,7 +746,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyPublishesEvent()
+			public void PublishesEvent()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -575,7 +764,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyDoesNotPublisheEventOnViewRestrictedForum()
+			public void DoesNotPublisheEventOnViewRestrictedForum()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -593,7 +782,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void PostReplyReturnsHydratedObject()
+			public void ReturnsHydratedObject()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
