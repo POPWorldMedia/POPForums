@@ -78,6 +78,16 @@ namespace PopForums.Test.Services
 		public class PostNewTopicTests : PostMasterServiceTests
 		{
 			[Fact]
+			public void NoUserReturnsFalseIsSuccess()
+			{
+				var service = GetService();
+
+				var result = service.PostNewTopic(null, new NewPost(), "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+			}
+
+			[Fact]
 			public void UserWithoutPostPermissionReturnsFalseIsSuccess()
 			{
 				var service = GetService();
@@ -85,7 +95,9 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true});
+
 				var result = service.PostNewTopic(user, new NewPost {ItemID = forum.ForumID}, "", "", x => "", x => "");
+
 				Assert.False(result.IsSuccessful);
 			}
 
@@ -97,8 +109,133 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false });
+
 				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID }, "", "", x => "", x => "");
+
 				Assert.False(result.IsSuccessful);
+			}
+
+			[Fact]
+			public void NoForumMatchThrows()
+			{
+				var service = GetService();
+				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+
+				Assert.Throws<Exception>(() => service.PostNewTopic(GetUser(), new NewPost {ItemID = 1}, "", "", x => "", x => ""));
+			}
+
+			[Fact]
+			public void CallsPostRepoCreateWithPlainText()
+			{
+				var forum = new Forum { ForumID = 1 };
+				var user = GetUser();
+				const string ip = "127.0.0.1";
+				const string title = "mah title";
+				const string text = "mah text";
+				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = true };
+				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
+				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
+				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
+				_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
+				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+
+				_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "bb text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
+				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			}
+
+			[Fact]
+			public void CallsPostRepoCreateWithHtmlText()
+			{
+				var forum = new Forum { ForumID = 1 };
+				var user = GetUser();
+				const string ip = "127.0.0.1";
+				const string title = "mah title";
+				const string text = "mah text";
+				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
+				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
+				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
+				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
+				_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
+				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+
+				_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
+				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			}
+
+			[Fact]
+			public void CallsPostRepoWithTopicID()
+			{
+				var forum = new Forum { ForumID = 1 };
+				var user = GetUser();
+				const string ip = "127.0.0.1";
+				const string title = "mah title";
+				const string text = "mah text";
+				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
+				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
+				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
+				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
+				_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
+				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+				_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(543);
+
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+
+				_postRepo.Verify(x => x.Create(543, It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
+			}
+
+			[Fact]
+			public void DupeOfLastPostReturnsFalseIsSuccess()
+			{
+				var service = GetService();
+				var forum = new Forum { ForumID = 1 };
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				var user = GetUser();
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				var lastPost = "last post text";
+				var lastPostID = 456;
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
+				_postRepo.Setup(x => x.Get(lastPostID)).Returns(new Post {FullText = lastPost, PostTime = DateTime.MinValue});
+				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
+				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+
+				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = lastPost }, "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
+			}
+
+			[Fact]
+			public void MinimumTimeBetweenPostsNotMetReturnsFalseIsSuccess()
+			{
+				var service = GetService();
+				var forum = new Forum { ForumID = 1 };
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				var user = GetUser();
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				var lastPost = "last post text";
+				var lastPostID = 456;
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
+				_postRepo.Setup(x => x.Get(lastPostID)).Returns(new Post { FullText = lastPost, PostTime = DateTime.UtcNow });
+				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
+				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+
+				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = "oiheorihgeorihg" }, "", "", x => "", x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
 			}
 
 			[Fact]
@@ -118,6 +255,28 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
 				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			}
+
+			[Fact]
+			public void TitleIsParsed()
+			{
+				var forum = new Forum { ForumID = 1 };
+				var user = GetUser();
+				const string ip = "127.0.0.1";
+				const string title = "mah title";
+				const string text = "mah text";
+				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
+				var topicService = GetService();
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
+				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
+				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
+				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+
+				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
