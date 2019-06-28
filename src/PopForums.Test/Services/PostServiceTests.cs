@@ -104,61 +104,6 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void DupeAndTimeCheckNoPreviousPost()
-		{
-			var postService = GetService();
-			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
-			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns((int?)null);
-			Assert.False(postService.IsNewPostDupeOrInTimeLimit(new NewPost(), user));
-		}
-
-		[Fact]
-		public void DupeAndTimeCheckIsInTimeLimit()
-		{
-			var postService = GetService();
-			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
-			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, PostTime = DateTime.UtcNow.AddSeconds(-15)});
-			_settings.Setup(s => s.MinimumSecondsBetweenPosts).Returns(20);
-			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost(), user));
-		}
-
-		[Fact]
-		public void DupeAndTimeCheckIsDupeTextPlainText()
-		{
-			var postService = GetService();
-			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
-			const string dupeText = "whatever";
-			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = dupeText });
-			_textParsingService.Setup(x => x.ForumCodeToHtml(dupeText)).Returns(dupeText);
-			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = true}, user));
-		}
-
-		[Fact]
-		public void DupeAndTimeCheckIsDupeTextRichText()
-		{
-			var postService = GetService();
-			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
-			const string dupeText = "whatever";
-			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = dupeText });
-			_textParsingService.Setup(x => x.ClientHtmlToHtml(dupeText)).Returns(dupeText);
-			Assert.True(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = dupeText, IsPlainText = false }, user));
-		}
-
-		[Fact]
-		public void DupeAndTimeCheckIsNotInTimeLimitOrDupeText()
-		{
-			var postService = GetService();
-			var user = UserServiceTests.GetDummyUser("Jeff", "jeff@popw.com");
-			_profileRepo.Setup(p => p.GetLastPostID(user.UserID)).Returns(123);
-			_postRepo.Setup(p => p.Get(123)).Returns(new Post { PostID = 456, FullText = "one thing", PostTime = DateTime.UtcNow.AddSeconds(-30) });
-			_settings.Setup(s => s.MinimumSecondsBetweenPosts).Returns(20);
-			Assert.False(postService.IsNewPostDupeOrInTimeLimit(new NewPost { FullText = "another" }, user));
-		}
-
-		[Fact]
 		public void GetPostCountCallsRepo()
 		{
 			var postService = GetService();
@@ -363,25 +308,6 @@ namespace PopForums.Test.Services
 			_topicService.Verify(t => t.UpdateLast(topic), Times.Once());
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
-		}
-
-		[Fact]
-		public void GetFirstInTopicThrowsWithNull()
-		{
-			var service = GetService();
-			_postRepo.Setup(p => p.GetFirstInTopic(It.IsAny<int>())).Returns((Post) null);
-			Assert.Throws<Exception>(() => service.GetFirstInTopic(new Topic { TopicID = 1 }));
-		}
-
-		[Fact]
-		public void GetFirstInTopicReturnsFromRepo()
-		{
-			var service = GetService();
-			var post = new Post { PostID = 123 };
-			_postRepo.Setup(p => p.GetFirstInTopic(It.IsAny<int>())).Returns(post);
-			var result = service.GetFirstInTopic(new Topic { TopicID = 2 });
-			Assert.Same(post, result);
-			_postRepo.Verify(p => p.GetFirstInTopic(It.IsAny<int>()), Times.Exactly(1));
 		}
 
 		[Fact]

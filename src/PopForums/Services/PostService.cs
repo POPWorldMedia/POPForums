@@ -14,8 +14,6 @@ namespace PopForums.Services
 		List<Post> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted, out PagerContext pagerContext);
 		List<Post> GetPosts(Topic topic, bool includeDeleted);
 		Post Get(int postID);
-		Post GetFirstInTopic(Topic topic);
-		bool IsNewPostDupeOrInTimeLimit(NewPost newPost, User user);
 		int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic);
 		int GetPostCount(User user);
 		PostEdit GetPostForEdit(Post post, User user);
@@ -92,31 +90,6 @@ namespace PopForums.Services
 		public Post Get(int postID)
 		{
 			return _postRepository.Get(postID);
-		}
-
-		public Post GetFirstInTopic(Topic topic)
-		{
-			var post = _postRepository.GetFirstInTopic(topic.TopicID);
-			if (post == null)
-				throw new Exception("No first post found for TopicID " + topic.TopicID);
-			return post;
-		}
-
-		public bool IsNewPostDupeOrInTimeLimit(NewPost newPost, User user)
-		{
-			var postID = _profileRepository.GetLastPostID(user.UserID);
-			if (postID == null)
-				return false;
-			var lastPost = _postRepository.Get(postID.Value);
-			if (lastPost == null)
-				return false;
-			var minimumSeconds = _settingsManager.Current.MinimumSecondsBetweenPosts;
-			if (DateTime.UtcNow.Subtract(lastPost.PostTime).TotalSeconds < minimumSeconds)
-				return true;
-			var parsedText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
-			if (parsedText == lastPost.FullText)
-				return true;
-			return false;
 		}
 
 		public int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic)
