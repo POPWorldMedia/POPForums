@@ -14,7 +14,7 @@ namespace PopForums.Services
 		void RemoveSubscribedTopic(User user, Topic topic);
 		void TryRemoveSubscribedTopic(User user, Topic topic);
 		void MarkSubscribedTopicViewed(User user, Topic topic);
-		void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, string> unsubscribeLinkGenerator);
+		void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator);
 		List<Topic> GetTopics(User user, int pageIndex, out PagerContext pagerContext);
 		bool IsTopicSubscribed(User user, Topic topic);
 	}
@@ -55,7 +55,7 @@ namespace PopForums.Services
 			_subscribedTopicsRepository.MarkSubscribedTopicViewed(user.UserID, topic.TopicID);
 		}
 
-		public void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, string> unsubscribeLinkGenerator)
+		public void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
 		{
 			new Thread(() => {
 				var users = _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
@@ -63,7 +63,7 @@ namespace PopForums.Services
 				{
 					if (user.UserID != postingUser.UserID)
 					{
-						var unsubScribeLink = unsubscribeLinkGenerator(user);
+						var unsubScribeLink = unsubscribeLinkGenerator(user, topic);
 						_subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
 					}
 				}

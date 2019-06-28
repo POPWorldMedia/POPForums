@@ -10,9 +10,9 @@ namespace PopForums.Services
 {
 	public interface IPostMasterService
 	{
-		Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator);
 		void EditPost(Post post, PostEdit postEdit, User editingUser);
 		BasicServiceResponse<Topic> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
+		BasicServiceResponse<Post> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
 	}
 
 	public class PostMasterService : IPostMasterService
@@ -98,10 +98,41 @@ namespace PopForums.Services
 			return new BasicServiceResponse<Topic> {Data = null, Message = message, Redirect = null, IsSuccessful = false};
 		}
 
-		public Post PostReply(Topic topic, User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, string topicLink, Func<User, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator)
+		private BasicServiceResponse<Post> GetReplyFailMessage(string message)
 		{
+			return new BasicServiceResponse<Post> { Data = null, Message = message, Redirect = null, IsSuccessful = false };
+		}
+
+		public BasicServiceResponse<Post> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator)
+		{
+			if (user == null)
+				return GetReplyFailMessage(Resources.LoginToPost);
+			var topic = _topicRepository.Get(newPost.ItemID);
+			if (topic == null)
+				return GetReplyFailMessage(Resources.TopicNotExist);
+			if (topic.IsClosed)
+				return GetReplyFailMessage(Resources.Closed);
+			var forum = _forumRepository.Get(topic.ForumID);
+			if (forum == null)
+				throw new Exception($"That's not good. Trying to reply to a topic orphaned from Forum {topic.ForumID}, which doesn't exist.");
+			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			if (!permissionContext.UserCanView)
+				return GetReplyFailMessage(Resources.ForumNoView);
+			if (!permissionContext.UserCanPost)
+				return GetReplyFailMessage(Resources.ForumNoPost);
+			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
+			if (IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
+				return GetReplyFailMessage(string.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts));
+			if (string.IsNullOrEmpty(newPost.FullText))
+				return GetReplyFailMessage(Resources.PostEmpty);
+			if (newPost.ParentPostID != 0)
+			{
+				var parentPost = _postRepository.Get(newPost.ParentPostID);
+				if (parentPost == null || parentPost.TopicID != topic.TopicID)
+					return GetReplyFailMessage("This reply attempt is being made to a post in another topic");
+			}
 			newPost.Title = _textParsingService.Censor(newPost.Title);
-			// TODO: text parsing is controller, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
+
 			var postID = _postRepository.Create(topic.TopicID, parentPostID, ip, isFirstInTopic, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, postTime, false, user.Name, null, false, 0);
 			var post = new Post
 			{
@@ -127,19 +158,27 @@ namespace PopForums.Services
 			_forumRepository.IncrementPostCount(topic.ForumID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 			_profileRepository.SetLastPostID(user.UserID, postID);
+			var topicLink = topicLinkGenerator(topic);
 			if (unsubscribeLinkGenerator != null)
 				_subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
 			// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
-			var message = String.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
+			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
 			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
 			_broker.NotifyNewPosts(topic, post.PostID);
 			_broker.NotifyNewPost(topic, post.PostID);
-			var forum = _forumRepository.Get(topic.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			topic = _topicRepository.Get(topic.TopicID);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
-			return post;
+			_topicViewCountService.SetViewedTopic(topic);
+			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
+			{
+				_moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
+				_topicRepository.CloseTopic(topic.TopicID);
+			}
+			var redirectLink = redirectLinkGenerator(post);
+
+			return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 		}
 
 		public void EditPost(Post post, PostEdit postEdit, User editingUser)

@@ -395,11 +395,16 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", It.IsAny<Func<User, string>>(), "", x => "");
-				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "mah text", postTime, false, user.Name, null, false, 0));
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 			}
 
 			[Fact]
@@ -409,10 +414,15 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-				_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, string>>()), Times.Once());
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+				_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, Topic, string>>()), Times.Once());
 			}
 
 			[Fact]
@@ -422,9 +432,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
 				_topicRepo.Verify(t => t.IncrementReplyCount(1));
 			}
 
@@ -435,9 +450,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_forumRepo.Verify(f => f.IncrementPostCount(2));
 			}
 
@@ -448,9 +468,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_topicRepo.Verify(t => t.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime));
 			}
 
@@ -461,9 +486,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_forumRepo.Verify(f => f.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name));
 			}
 
@@ -474,10 +504,15 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum {ForumID = topic.ForumID};
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanPost = true, UserCanView = true});
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 			}
 
@@ -489,11 +524,15 @@ namespace PopForums.Test.Services
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.Get(topic.ForumID)).Returns(forum);
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_broker.Verify(x => x.NotifyForumUpdate(forum), Times.Once());
 				_broker.Verify(x => x.NotifyTopicUpdate(topic, forum, It.IsAny<string>()), Times.Once());
 				_broker.Verify(x => x.NotifyNewPost(topic, It.IsAny<int>()), Times.Once());
@@ -506,10 +545,15 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				var post = service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-				_profileRepo.Verify(p => p.SetLastPostID(user.UserID, post.PostID));
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				_profileRepo.Verify(p => p.SetLastPostID(user.UserID, result.Data.PostID), Times.Once);
 			}
 
 			[Fact]
@@ -519,9 +563,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false), Times.Once());
 			}
 
@@ -532,9 +581,14 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
+				var forum = new Forum {ForumID = topic.ForumID};
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string> { "Admin" });
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
 			}
 
@@ -547,24 +601,29 @@ namespace PopForums.Test.Services
 				var service = GetService();
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).Returns(123);
+				var forum = new Forum { ForumID = topic.ForumID };
+				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
+				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true };
-				var post = service.PostReply(topic, user, 0, "127.0.0.1", false, newPost, postTime, "", u => "", "", x => "");
-				Assert.Equal(topic.TopicID, post.TopicID);
-				Assert.Equal("mah text", post.FullText);
-				Assert.Equal("127.0.0.1", post.IP);
-				Assert.False(post.IsDeleted);
-				Assert.False(post.IsEdited);
-				Assert.False(post.IsFirstInTopic);
-				Assert.Equal(user.Name, post.LastEditName);
-				Assert.Null(post.LastEditTime);
-				Assert.Equal(user.Name, post.Name);
-				Assert.Equal(0, post.ParentPostID);
-				Assert.Equal(123, post.PostID);
-				Assert.Equal(postTime, post.PostTime);
-				Assert.True(post.ShowSig);
-				Assert.Equal("parsed title", post.Title);
-				Assert.Equal(user.UserID, post.UserID);
+				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				Assert.Equal(topic.TopicID, result.Data.TopicID);
+				Assert.Equal("parsed text", result.Data.FullText);
+				Assert.Equal("127.0.0.1", result.Data.IP);
+				Assert.False(result.Data.IsDeleted);
+				Assert.False(result.Data.IsEdited);
+				Assert.False(result.Data.IsFirstInTopic);
+				Assert.Equal(user.Name, result.Data.LastEditName);
+				Assert.Null(result.Data.LastEditTime);
+				Assert.Equal(user.Name, result.Data.Name);
+				Assert.Equal(0, result.Data.ParentPostID);
+				Assert.Equal(123, result.Data.PostID);
+				Assert.Equal(postTime, result.Data.PostTime);
+				Assert.True(result.Data.ShowSig);
+				Assert.Equal("parsed title", result.Data.Title);
+				Assert.Equal(user.UserID, result.Data.UserID);
 			}
 		}
 

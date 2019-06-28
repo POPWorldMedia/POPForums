@@ -119,7 +119,7 @@ namespace PopForums.Test.Services
 			var list = new List<User> {new User { UserID = 1 }, new User { UserID = 2 } };
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
 			var topicLink = "foo";
-			Func<User, string> gen = u => "x" + u.UserID;
+			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
 			var barrier = new Barrier(1);
 			Action action = () => {
 				service.NotifySubscribers(topic, new User { UserID = 45643 }, topicLink, gen);
@@ -140,7 +140,7 @@ namespace PopForums.Test.Services
 			var list = new List<User> { user, new User { UserID = 2 } };
 			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
 			var topicLink = "foo";
-			Func<User, string> gen = u => "x" + u.UserID;
+			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
 			var barrier = new Barrier(1);
 			Action action = () =>
 			{

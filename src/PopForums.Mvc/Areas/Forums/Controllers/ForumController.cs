@@ -300,47 +300,19 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		// TODO: test validation [ValidateInput(false)]
 		public JsonResult PostReply(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			if (user == null)
-				return Json(new BasicJsonMessage { Message = Resources.LoginToPost, Result = false });
-			ForumPermissionContext permissionContext;
-			var topic = _topicService.Get(newPost.ItemID);
-			if (topic == null)
-				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-			if (topic.IsClosed)
-				return Json(new BasicJsonMessage { Message = Resources.Closed, Result = false });
-			GetForumByIdWithPermissionContext(topic.ForumID, user, out permissionContext);
-			if (!permissionContext.UserCanView)
-				return Json(new BasicJsonMessage { Message = Resources.ForumNoView, Result = false });
-			if (!permissionContext.UserCanPost)
-				return Json(new BasicJsonMessage { Message = Resources.ForumNoPost, Result = false });
-			if (_postService.IsNewPostDupeOrInTimeLimit(newPost, user))
-				return Json(new BasicJsonMessage { Message = String.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts), Result = false });
-			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
-			if (String.IsNullOrEmpty(newPost.FullText))
-				return Json(new BasicJsonMessage { Message = Resources.PostEmpty, Result = false });
-			if (newPost.ParentPostID != 0)
-			{
-				var parentPost = _postService.Get(newPost.ParentPostID);
-				if (parentPost == null || parentPost.TopicID != topic.TopicID)
-					return Json(new BasicJsonMessage { Message = "This reply attempt is being made to a post in another topic", Result = false });
-			}
-			
-			var topicLink = this.FullUrlHelper("GoToNewestPost", Name, new { id = topic.TopicID });
-			Func<User, string> unsubscribeLinkGenerator =
-				u => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new { topicID = topic.TopicID, authKey = u.AuthorizationKey });
-			var helper = Url;
-			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
-			Func<Post, string> postLinkGenerator = p => helper.Action("PostLink", "Forum", new { id = p.PostID });
-			var post = _postMasterService.PostReply(topic, user, newPost.ParentPostID, HttpContext.Connection.RemoteIpAddress.ToString(), false, newPost, DateTime.UtcNow, topicLink, unsubscribeLinkGenerator, userProfileUrl, postLinkGenerator);
-			_topicViewCountService.SetViewedTopic(topic);
-			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
-				_topicService.CloseTopic(topic, user);
-			var urlHelper = Url;
-			return Json(new BasicJsonMessage { Result = true, Redirect = urlHelper.RouteUrl(new { controller = "Forum", action = "PostLink", id = post.PostID }) });
+			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
+			string TopicLinkGenerator(Topic t) => this.FullUrlHelper("GoToNewestPost", Name, new { id = t.TopicID });
+			string UnsubscribeLinkGenerator(User u, Topic t) => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new {topicID = t.TopicID, authKey = u.AuthorizationKey});
+			string PostLinkGenerator(Post p) => Url.Action("PostLink", "Forum", new {id = p.PostID});
+			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new {controller = "Forum", action = "PostLink", id = p.PostID});
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+
+			var result = _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, UnsubscribeLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
+
+			return Json(new BasicJsonMessage { Result = true, Redirect = result.Redirect });
 		}
 
 		public ActionResult Post(int id)
