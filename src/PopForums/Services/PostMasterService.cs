@@ -165,10 +165,11 @@ namespace PopForums.Services
 			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
 			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
+			topic = _topicRepository.Get(topic.TopicID);
+			forum = _forumRepository.Get(forum.ForumID);
 			_broker.NotifyNewPosts(topic, post.PostID);
 			_broker.NotifyNewPost(topic, post.PostID);
 			_broker.NotifyForumUpdate(forum);
-			topic = _topicRepository.Get(topic.TopicID);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
 			_topicViewCountService.SetViewedTopic(topic);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
