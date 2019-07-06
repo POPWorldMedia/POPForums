@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security;
 using PopForums.Configuration;
 using PopForums.Extensions;
-using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -35,36 +33,26 @@ namespace PopForums.Services
 
 	public class TopicService : ITopicService
 	{
-		public TopicService(IForumRepository forumRepository, ITopicRepository topicRepository, IPostRepository postRepository, IProfileRepository profileRepository, ITextParsingService textParsingService, ISettingsManager settingsManager, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IBroker broker, ISearchRepository searchRepository, IUserRepository userRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
+		public TopicService(ITopicRepository topicRepository, IPostRepository postRepository, ISettingsManager settingsManager, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, ISearchRepository searchRepository, IUserRepository userRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
 		{
-			_forumRepository = forumRepository;
 			_topicRepository = topicRepository;
 			_postRepository = postRepository;
-			_profileRepository = profileRepository;
 			_settingsManager = settingsManager;
-			_textParsingService = textParsingService;
-			_subscribedTopicService = subscribedTopicsService;
 			_moderationLogService = moderationLogService;
 			_forumService = forumService;
 			_eventPublisher = eventPublisher;
-			_broker = broker;
 			_searchRepository = searchRepository;
 			_userRepository = userRepository;
 			_searchIndexQueueRepository = searchIndexQueueRepository;
 			_tenantService = tenantService;
 		}
 
-		private readonly IForumRepository _forumRepository;
 		private readonly ITopicRepository _topicRepository;
 		private readonly IPostRepository _postRepository;
-		private readonly IProfileRepository _profileRepository;
 		private readonly ISettingsManager _settingsManager;
-		private readonly ITextParsingService _textParsingService;
-		private readonly ISubscribedTopicsService _subscribedTopicService;
 		private readonly IModerationLogService _moderationLogService;
 		private readonly IForumService _forumService;
 		private readonly IEventPublisher _eventPublisher;
-		private readonly IBroker _broker;
 		private readonly ISearchRepository _searchRepository;
 		private readonly IUserRepository _userRepository;
 		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;

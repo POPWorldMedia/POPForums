@@ -8,11 +8,9 @@ namespace PopForums.Services
 		void BanIP(string ip);
 		void RemoveIPBan(string ip);
 		List<string> GetIPBans();
-		bool IPIsBanned(string ip);
 		void BanEmail(string email);
 		void RemoveEmailBan(string email);
 		List<string> GetEmailBans();
-		bool EmailIsBanned(string email);
 	}
 
 	public class BanService : IBanService
@@ -39,11 +37,6 @@ namespace PopForums.Services
 			return _banRepository.GetIPBans();
 		}
 
-		public bool IPIsBanned(string ip)
-		{
-			return _banRepository.IPIsBanned(ip);
-		}
-
 		public void BanEmail(string email)
 		{
 			_banRepository.BanEmail(email);
@@ -57,11 +50,6 @@ namespace PopForums.Services
 		public List<string> GetEmailBans()
 		{
 			return _banRepository.GetEmailBans();
-		}
-
-		public bool EmailIsBanned(string email)
-		{
-			return _banRepository.EmailIsBanned(email);
 		}
 	}
 }

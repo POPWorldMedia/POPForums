@@ -15,16 +15,11 @@ namespace PopForums.Test.Services
 	public class TopicServiceTests
 	{
 		private Mock<ISettingsManager> _settingsManager;
-		private Mock<IForumRepository> _forumRepo;
 		private Mock<ITopicRepository> _topicRepo;
 		private Mock<IPostRepository> _postRepo;
-		private Mock<IProfileRepository> _profileRepo;
-		private Mock<ITextParsingService> _textParser;
-		private Mock<ISubscribedTopicsService> _subService;
 		private Mock<IModerationLogService> _modService;
 		private Mock<IForumService> _forumService;
 		private Mock<IEventPublisher> _eventPublisher;
-		private Mock<IBroker> _broker;
 		private Mock<ISearchRepository> _searchRepo;
 		private Mock<IUserRepository> _userRepo;
 		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
@@ -33,21 +28,16 @@ namespace PopForums.Test.Services
 		private TopicService GetTopicService()
 		{
 			_settingsManager = new Mock<ISettingsManager>();
-			_forumRepo = new Mock<IForumRepository>();
 			_topicRepo = new Mock<ITopicRepository>();
 			_postRepo = new Mock<IPostRepository>();
-			_profileRepo = new Mock<IProfileRepository>();
-			_textParser = new Mock<ITextParsingService>();
-			_subService = new Mock<ISubscribedTopicsService>();
 			_modService = new Mock<IModerationLogService>();
 			_forumService = new Mock<IForumService>();
 			_eventPublisher = new Mock<IEventPublisher>();
-			_broker = new Mock<IBroker>();
 			_searchRepo = new Mock<ISearchRepository>();
 			_userRepo = new Mock<IUserRepository>();
 			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
 			_tenantService = new Mock<ITenantService>();
-			return new TopicService(_forumRepo.Object, _topicRepo.Object, _postRepo.Object, _profileRepo.Object, _textParser.Object, _settingsManager.Object, _subService.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _broker.Object, _searchRepo.Object, _userRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+			return new TopicService(_topicRepo.Object, _postRepo.Object, _settingsManager.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _searchRepo.Object, _userRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
 		}
 
 		private static User GetUser()

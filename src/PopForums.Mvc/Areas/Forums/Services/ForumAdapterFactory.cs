@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using PopForums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Services
@@ -8,22 +7,19 @@ namespace PopForums.Mvc.Areas.Forums.Services
 	{
 		public ForumAdapterFactory(Forum forum)
 		{
-			if (!String.IsNullOrWhiteSpace(forum.ForumAdapterName))
+			if (!string.IsNullOrWhiteSpace(forum.ForumAdapterName))
 			{
 				var type = Type.GetType(forum.ForumAdapterName);
 				if (type == null)
-					throw new Exception(String.Format("Can't find ForumAdapter \"{0}\" (Forum ID: {1}, Title: {2})", forum.ForumAdapterName, forum.ForumID, forum.Title));
+					throw new Exception($"Can't find ForumAdapter \"{forum.ForumAdapterName}\" (Forum ID: {forum.ForumID}, Title: {forum.Title})");
 				var instance = Activator.CreateInstance(type);
 				if (!typeof(IForumAdapter).IsAssignableFrom(instance.GetType()))
-					throw new Exception(String.Format("ForumAdapter \"{0}\" does not implement IForumAdapter (Forum ID: {1}, Title: {2})", forum.ForumAdapterName, forum.ForumID, forum.Title));
+					throw new Exception($"ForumAdapter \"{forum.ForumAdapterName}\" does not implement IForumAdapter (Forum ID: {forum.ForumID}, Title: {forum.Title})");
 				ForumAdapter = (IForumAdapter)instance;
 			}
 		}
 
-		public bool IsAdapterEnabled
-		{
-			get { return ForumAdapter != null; }
-		}
-		public IForumAdapter ForumAdapter { get; private set; }
+		public bool IsAdapterEnabled => ForumAdapter != null;
+		public IForumAdapter ForumAdapter { get; }
 	}
 }
