@@ -10,7 +10,7 @@ namespace PopForums.Services
 {
 	public interface IPostMasterService
 	{
-		void EditPost(Post post, PostEdit postEdit, User editingUser);
+		BasicServiceResponse<Post> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator);
 		BasicServiceResponse<Topic> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
 		BasicServiceResponse<Post> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
 	}
@@ -182,16 +182,19 @@ namespace PopForums.Services
 			return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 		}
 
-		public void EditPost(Post post, PostEdit postEdit, User editingUser)
+		public BasicServiceResponse<Post> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator)
 		{
-			// TODO: text parsing is controller for new topic and replies, see issue #121 https://github.com/POPWorldMedia/POPForums/issues/121
-			// TODO: also not checking for empty posts
+			var post = _postRepository.Get(postID);
+			if (!editingUser.IsPostEditable(post))
+				return GetReplyFailMessage(Resources.Forbidden);
 			var oldText = post.FullText;
 			post.Title = _textParsingService.Censor(postEdit.Title);
 			if (postEdit.IsPlainText)
 				post.FullText = _textParsingService.ForumCodeToHtml(postEdit.FullText);
 			else
 				post.FullText = _textParsingService.ClientHtmlToHtml(postEdit.FullText);
+			if (string.IsNullOrEmpty(postEdit.FullText))
+				return GetReplyFailMessage(Resources.PostEmpty);
 			post.ShowSig = postEdit.ShowSig;
 			post.LastEditTime = DateTime.UtcNow;
 			post.LastEditName = editingUser.Name;
@@ -199,6 +202,8 @@ namespace PopForums.Services
 			_postRepository.Update(post);
 			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
+			var redirectLink = redirectLinkGenerator(post);
+			return new BasicServiceResponse<Post> { Data = post, IsSuccessful = true, Message = string.Empty, Redirect = redirectLink };
 		}
 
 		private bool IsNewPostDupeOrInTimeLimit(string parsedPost, User user)

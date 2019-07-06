@@ -427,12 +427,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public ActionResult Edit(int id, PostEdit postEdit)
 		{
-			var post = _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			if (!user.IsPostEditable(post))
-				return StatusCode(403);
-			_postMasterService.EditPost(post, postEdit, user);
-			return RedirectToAction("PostLink", new { id = post.PostID });
+			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new { controller = "Forum", action = "PostLink", id = p.PostID });
+			var result = _postMasterService.EditPost(id, postEdit, user, RedirectLinkGenerator);
+			if (result.IsSuccessful)
+				return Redirect(result.Redirect);
+			ViewBag.Message = result.Message;
+			return View(postEdit);
 		}
 
 		[HttpPost]

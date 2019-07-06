@@ -818,39 +818,65 @@ namespace PopForums.Test.Services
 
 		public class EditPostTests : PostMasterServiceTests
 		{
+			private new User GetUser()
+			{
+				return new User {UserID = 123, Roles = new List<string>()};
+			}
+
 			[Fact]
-			public void EditPostCensorsTitle()
+			public void FailsBecauseNoUserMatch()
 			{
 				var service = GetService();
-				service.EditPost(new Post { PostID = 456 }, new PostEdit { Title = "blah" }, new User());
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post {UserID = 789});
+
+				var result = service.EditPost(456, new PostEdit(), new User {UserID = 111, Roles = new List<string>()}, x => "");
+
+				Assert.False(result.IsSuccessful);
+				Assert.Equal(Resources.Forbidden, result.Message);
+			}
+
+			[Fact]
+			public void CensorsTitle()
+			{
+				var service = GetService();
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 				_textParser.Verify(t => t.Censor("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void EditPostPlainTextParsed()
+			public void PlainTextParsed()
 			{
 				var service = GetService();
-				service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = true }, new User());
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = true }, GetUser(), x => "");
 				_textParser.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void EditPostRichTextParsed()
+			public void RichTextParsed()
 			{
 				var service = GetService();
-				service.EditPost(new Post { PostID = 456 }, new PostEdit { FullText = "blah", IsPlainText = false }, new User());
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+
+				service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = false }, GetUser(), x => "");
+
 				_textParser.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void EditPostSavesMappedValues()
+			public void SavesMappedValues()
 			{
 				var service = GetService();
 				var post = new Post { PostID = 67 };
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
 				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
-				service.EditPost(new Post { PostID = 456, ShowSig = false }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude" });
+
+				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
+
+				Assert.True(result.IsSuccessful);
 				Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
 				Assert.Equal(456, post.PostID);
 				Assert.Equal("new", post.FullText);
@@ -861,27 +887,49 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void EditPostModeratorLogged()
+			public void ModeratorLogged()
 			{
 				var service = GetService();
-				var user = new User { UserID = 123, Name = "dude" };
+				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>()};
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
-				service.EditPost(new Post { PostID = 456, ShowSig = false, FullText = "old text" }, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"});
+
+				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
+
+				Assert.True(result.IsSuccessful);
 				_moderationLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void EditPostQueuesTopicForIndexing()
+			public void QueuesTopicForIndexing()
 			{
 				var service = GetService();
-				var user = new User { UserID = 123, Name = "dude" };
-				var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999 };
+				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>() };
+				var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999, UserID = user.UserID };
+				_postRepo.Setup(x => x.Get(456)).Returns(post);
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 
-				service.EditPost(post, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user);
+				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
+				Assert.True(result.IsSuccessful);
 				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			}
+
+			[Fact]
+			public void ModeratorCanEdit()
+			{
+				var service = GetService();
+				var post = new Post { PostID = 67 };
+				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
+				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
+				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
+
+				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>(new []{PermanentRoles.Moderator})}, x => "");
+
+				Assert.True(result.IsSuccessful);
+				_postRepo.Verify(x => x.Update(It.IsAny<Post>()), Times.Once);
 			}
 		}
 	}

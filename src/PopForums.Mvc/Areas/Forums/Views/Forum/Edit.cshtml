@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = PopForums.Resources.EditPost;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var message = ViewBag.Message;
 }
 
 @section HeaderContent
@@ -27,11 +28,11 @@
 
 <form method="post">
 	<div class="postForm" role="form">
-		<input asp-for="Title" type="hidden"/>
+		<input asp-for="Title" type="hidden" />
 		<textarea asp-for="FullText" class="form-control"></textarea>
 		<div class="checkbox">
 			<label for="IncludeSignature">
-				<input type="checkbox" asp-for="ShowSig"/>
+				<input type="checkbox" asp-for="ShowSig" />
 				@PopForums.Resources.IncludeSignature
 			</label>
 		</div>
@@ -39,10 +40,11 @@
 			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
 			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
 		</div>
-		<input type="hidden" asp-for="IsPlainText"/>
+		<input type="hidden" asp-for="IsPlainText" />
 	</div>
 	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
+	@if (message != null) {<span class="alert alert-danger mt-3">@message</span>}
 </form>
 
 <div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
