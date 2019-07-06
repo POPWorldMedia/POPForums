@@ -34,7 +34,6 @@
 var PopForums = {};
 
 PopForums.areaPath = "/Forums";
-PopForums.contentPath = "/lib/PopForums";
 PopForums.currentTopicState = null;
 PopForums.navOffset = 0;
 PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
@@ -704,18 +703,16 @@ PopForums.populateTopicRow = function (data) {
 	row.find(".lastPostTime").text(data.lastPostTime);
 	row.find(".lastPostName").text(data.lastPostName);
 	row.find(".fTime").attr("data-utc", data.utc);
-	row.find(".newIndicator img").attr("src", PopForums.contentPath + "/" + data.image);
 	return row;
 };
 
 PopForums.updateForumStats = function (data) {
-	var row = $("[data-forumID='" + data.forumID + "']");
+	var row = $("[data-forumid='" + data.forumID + "']");
 	row.find(".topicCount").text(data.topicCount);
 	row.find(".postCount").text(data.postCount);
 	row.find(".lastPostTime").text(data.lastPostTime);
 	row.find(".lastPostName").text(data.lastPostName);
 	row.find(".fTime").attr("data-utc", data.utc);
-	row.find(".newIndicator img").attr("src", PopForums.contentPath + "/" + data.image);
 };
 
 PopForums.startTimeUpdater = function () {

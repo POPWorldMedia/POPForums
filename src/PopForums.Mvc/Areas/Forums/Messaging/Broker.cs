@@ -9,7 +9,6 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 {
     public class Broker : IBroker
 	{
-		// TODO: test all of these!
 		public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext)
 		{
 			_timeFormattingService = timeFormattingService;
@@ -45,7 +44,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public void NotifyForumUpdate(Forum forum)
 		{
-			_forumsHubContext.Clients.All.SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o"), Image = "NewIndicator.png" });
+			_forumsHubContext.Clients.All.SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
 		}
 
 		public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
@@ -54,7 +53,6 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 			var result = new
 			{
 				Link = topicLink,
-				Image = "NewIndicator.png",
 				topic.TopicID,
 				topic.StartedByName,
 				topic.Title,
