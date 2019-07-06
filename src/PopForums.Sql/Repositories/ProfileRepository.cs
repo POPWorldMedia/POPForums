@@ -54,7 +54,7 @@ namespace PopForums.Sql.Repositories
 		{
 			int? postID = null;
 			_sqlObjectFactory.GetConnection().Using(connection => 
-				postID = connection.QuerySingle<int?>("SELECT LastPostID FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
+				postID = connection.QuerySingleOrDefault<int?>("SELECT LastPostID FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
 			return postID;
 		}
 
