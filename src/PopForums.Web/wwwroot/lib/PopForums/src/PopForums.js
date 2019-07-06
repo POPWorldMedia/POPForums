@@ -713,6 +713,7 @@ PopForums.updateForumStats = function (data) {
 	row.find(".lastPostTime").text(data.lastPostTime);
 	row.find(".lastPostName").text(data.lastPostName);
 	row.find(".fTime").attr("data-utc", data.utc);
+	row.find(".newIndicator .icon-file-text2").removeClass("text-muted").addClass("text-primary");
 };
 
 PopForums.startTimeUpdater = function () {
