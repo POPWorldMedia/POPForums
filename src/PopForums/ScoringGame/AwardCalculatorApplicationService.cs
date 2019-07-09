@@ -20,9 +20,9 @@ namespace PopForums.ScoringGame
 		private IAwardCalculator _awardCalculator;
 		private IAwardCalculationQueueRepository _awardCalcQueueRepo;
 
-		protected override void ServiceAction()
+		protected override async void ServiceAction()
 		{
-			AwardCalculatorWorker.Instance.ProcessCalculation(_awardCalculator, _awardCalcQueueRepo, ErrorLog);
+			await AwardCalculatorWorker.Instance.ProcessCalculation(_awardCalculator, _awardCalcQueueRepo, ErrorLog);
 		}
 
 		protected override int GetInterval()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -35,7 +36,7 @@ namespace PopForums.Test.ScoringGame
 		private Mock<ITenantService> _tenantService;
 
 		[Fact]
-		public void EnqueueDoesWhatItSaysItShould()
+		public async Task EnqueueDoesWhatItSaysItShould()
 		{
 			var calc = GetCalc();
 			var user = new User();
@@ -43,8 +44,8 @@ namespace PopForums.Test.ScoringGame
 			var tenantID = "t1";
 			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
 			var payload = new AwardCalculationPayload();
-			_awardCalcRepo.Setup(x => x.Enqueue(It.IsAny<AwardCalculationPayload>())).Callback<AwardCalculationPayload>(a => payload = a);
-			calc.QueueCalculation(user, eventDef);
+			_awardCalcRepo.Setup(x => x.Enqueue(It.IsAny<AwardCalculationPayload>())).Returns(Task.CompletedTask).Callback<AwardCalculationPayload>(a => payload = a);
+			await calc.QueueCalculation(user, eventDef);
 			_awardCalcRepo.Verify(x => x.Enqueue(It.IsAny<AwardCalculationPayload>()), Times.Once());
 			Assert.Equal(tenantID, payload.TenantID);
 			Assert.Equal(eventDef.EventDefinitionID, payload.EventDefinitionID);
@@ -57,7 +58,7 @@ namespace PopForums.Test.ScoringGame
 			var user = new User();
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns((EventDefinition) null);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
-			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>("oih", user.UserID));
+			_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>("oih", user.UserID));
 			calc.ProcessCalculation(null, 0);
 			_errorLog.Verify(x => x.Log(It.IsAny<Exception>(), ErrorSeverity.Warning), Times.Once());
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
@@ -70,7 +71,7 @@ namespace PopForums.Test.ScoringGame
 			var eventDef = new EventDefinition {EventDefinitionID = "oi"};
 			var user = new User();
 			var awardDef = new AwardDefinition {AwardDefinitionID = "sweet", IsSingleTimeAward = true};
-			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
+			_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).Returns(new List<AwardDefinition> {awardDef});
@@ -91,7 +92,7 @@ namespace PopForums.Test.ScoringGame
 			            new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			            new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 			        };
-			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
+			_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).Returns(new List<AwardDefinition> { awardDef });
@@ -115,7 +116,7 @@ namespace PopForums.Test.ScoringGame
 			            new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			            new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 			        };
-			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
+			_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).Returns(new List<AwardDefinition> { awardDef });
@@ -140,7 +141,7 @@ namespace PopForums.Test.ScoringGame
 			            new AwardCondition { AwardDefinitionID = secondAwardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			            new AwardCondition { AwardDefinitionID = secondAwardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 			        };
-			_awardCalcRepo.Setup(x => x.Dequeue()).Returns(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
+			_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
 			_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).Returns(eventDef);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns(user);
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).Returns(new List<AwardDefinition> { firstAwardDef, secondAwardDef });

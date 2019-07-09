@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -8,7 +9,7 @@ namespace PopForums.ScoringGame
 {
 	public interface IAwardCalculator
 	{
-		void QueueCalculation(User user, EventDefinition eventDefinition);
+		Task QueueCalculation(User user, EventDefinition eventDefinition);
 		void ProcessCalculation(string eventDefinitionID, int userID);
 	}
 
@@ -35,11 +36,11 @@ namespace PopForums.ScoringGame
 		private readonly IPointLedgerRepository _pointLedgerRepository;
 		private readonly ITenantService _tenantService;
 
-		public void QueueCalculation(User user, EventDefinition eventDefinition)
+		public async Task QueueCalculation(User user, EventDefinition eventDefinition)
 		{
 			var tenantID = _tenantService.GetTenant();
 			var payload = new AwardCalculationPayload {EventDefinitionID = eventDefinition.EventDefinitionID, UserID = user.UserID, TenantID = tenantID};
-			_awardCalcRepository.Enqueue(payload);
+			await _awardCalcRepository.Enqueue(payload);
 		}
 
 		public void ProcessCalculation(string eventDefinitionID, int userID)

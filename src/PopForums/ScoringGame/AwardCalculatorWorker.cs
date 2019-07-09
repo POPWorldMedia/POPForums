@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Repositories;
 
@@ -7,19 +8,16 @@ namespace PopForums.ScoringGame
 {
 	public class AwardCalculatorWorker
 	{
-		private static readonly object _syncRoot = new Object();
-
 		private AwardCalculatorWorker()
 		{
 			// only allow Instance to create a new instance
 		}
 
-		public void ProcessCalculation(IAwardCalculator calculator, IAwardCalculationQueueRepository awardCalculationQueueRepository, IErrorLog errorLog)
+		public async Task ProcessCalculation(IAwardCalculator calculator, IAwardCalculationQueueRepository awardCalculationQueueRepository, IErrorLog errorLog)
 		{
-			if (!Monitor.TryEnter(_syncRoot)) return;
 			try
 			{
-				var nextItem = awardCalculationQueueRepository.Dequeue();
+				var nextItem = await awardCalculationQueueRepository.Dequeue();
 				if (string.IsNullOrEmpty(nextItem.Key))
 					return;
 				calculator.ProcessCalculation(nextItem.Key, nextItem.Value);
@@ -27,10 +25,6 @@ namespace PopForums.ScoringGame
 			catch (Exception exc)
 			{
 				errorLog.Log(exc, ErrorSeverity.Error);
-			}
-			finally
-			{
-				Monitor.Exit(_syncRoot);
 			}
 		}
 

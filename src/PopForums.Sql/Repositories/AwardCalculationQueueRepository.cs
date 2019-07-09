@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using PopForums.Models;
@@ -15,27 +16,27 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public void Enqueue(AwardCalculationPayload payload)
+		public async Task Enqueue(AwardCalculationPayload payload)
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_AwardCalculationQueue (Payload) VALUES (@Payload)", new { Payload = serializedPayload }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_AwardCalculationQueue (Payload) VALUES (@Payload)", new { Payload = serializedPayload }));
 		}
 
-		public KeyValuePair<string, int> Dequeue()
+		public async Task<KeyValuePair<string, int>> Dequeue()
 		{
-			string serializedPayload = null;
+			Task<string> serializedPayload = null;
 			var sql = @"WITH cte AS (
 SELECT TOP(1) Payload
 FROM pf_AwardCalculationQueue WITH (ROWLOCK, READPAST)
 ORDER BY Id)
 DELETE FROM cte
 OUTPUT DELETED.Payload;";
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				serializedPayload = connection.QuerySingleOrDefault<string>(sql));
-			if (string.IsNullOrEmpty(serializedPayload))
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				serializedPayload = connection.QuerySingleOrDefaultAsync<string>(sql));
+			if (string.IsNullOrEmpty(serializedPayload.Result))
 				return new KeyValuePair<string, int>();
-			var payload = JsonConvert.DeserializeObject<AwardCalculationPayload>(serializedPayload);
+			var payload = JsonConvert.DeserializeObject<AwardCalculationPayload>(serializedPayload.Result);
 			return new KeyValuePair<string, int>(payload.EventDefinitionID, payload.UserID);
 		}
 	}
