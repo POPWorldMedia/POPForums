@@ -10,7 +10,7 @@ namespace PopForums.AwsKit.Search
 {
 	public interface IElasticSearchClientWrapper
 	{
-		IIndexResponse IndexTopic(SearchTopic searchTopic);
+		IndexResponse IndexTopic(SearchTopic searchTopic);
 		Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
 		void VerifyIndexCreate();
 	}
@@ -33,7 +33,7 @@ namespace PopForums.AwsKit.Search
 			_client = new ElasticClient(settings);
 		}
 
-		public IIndexResponse IndexTopic(SearchTopic searchTopic)
+		public IndexResponse IndexTopic(SearchTopic searchTopic)
 		{
 			var indexResult = _client.IndexDocument(searchTopic);
 
@@ -93,10 +93,10 @@ namespace PopForums.AwsKit.Search
 
 		public void VerifyIndexCreate()
 		{
-			var isExists = _client.IndexExists(new IndexExistsRequest(IndexName)).Exists;
+			var isExists = _client.Indices.Exists(new IndexExistsRequest(IndexName)).Exists;
 			if (isExists)
 				return;
-			var createIndexResponse = _client.CreateIndex(IndexName, c => c
+			var createIndexResponse = _client.Indices.Create(IndexName, c => c
 				.Settings(s => s
 					.Analysis(a => a
 						.Analyzers(aa => aa
@@ -106,26 +106,24 @@ namespace PopForums.AwsKit.Search
 						)
 					)
 				)
-				.Mappings(m => m
-					.Map<SearchTopic>(mm => mm
-						.Properties(p => p
-							.Text(t => t
-								.Name(n => n.Posts)
-								.Analyzer("standard_english")
-							)
-							.Text(t => t
-								.Name(n => n.FirstPost)
-								.Analyzer("standard_english")
-							)
-							.Text(t => t
-								.Name(n => n.Title)
-								.Analyzer("standard_english")
-								.Fielddata(true)
-							)
-							.Text(t => t
-								.Name(n => n.StartedByName)
-								.Fielddata(true)
-							)
+				.Map<SearchTopic>(mm => mm
+					.Properties(p => p
+						.Text(t => t
+							.Name(n => n.Posts)
+							.Analyzer("standard_english")
+						)
+						.Text(t => t
+							.Name(n => n.FirstPost)
+							.Analyzer("standard_english")
+						)
+						.Text(t => t
+							.Name(n => n.Title)
+							.Analyzer("standard_english")
+							.Fielddata(true)
+						)
+						.Text(t => t
+							.Name(n => n.StartedByName)
+							.Fielddata(true)
 						)
 					)
 				)
