@@ -16,6 +16,7 @@ namespace PopForums.AzureKit.Redis
 	    private static ConnectionMultiplexer _cacheConnection;
 	    private static ConnectionMultiplexer _messageConnection;
 		private static IMemoryCache _cache;
+		private static object _syncroot = new Object();
 		private const string _removeChannel = "pf.cache.remove";
 
 	    public CacheHelper(IErrorLog errorLog, ITenantService tenantService)
@@ -26,7 +27,11 @@ namespace PopForums.AzureKit.Redis
 			// Redis cache
 		    if (_cacheConnection == null)
 		    {
-			    _cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
+			    lock (_syncroot)
+			    {
+				    if (_cacheConnection == null)
+						_cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
+			    }
 		    }
 			// Local cache
 			if (_cache == null)
@@ -34,14 +39,17 @@ namespace PopForums.AzureKit.Redis
 			// Redis messaging to invalidate local cache entries
 			if (_messageConnection == null)
 		    {
-			    _messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
-			    var db = _messageConnection.GetSubscriber();
-			    db.Subscribe(_removeChannel, (channel, value) =>
-				{
-					if (_cache == null)
-						return;
-					_cache.Remove(value.ToString());
-				});
+			    lock (_syncroot)
+			    {
+				    _messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
+				    var db = _messageConnection.GetSubscriber();
+				    db.Subscribe(_removeChannel, (channel, value) =>
+				    {
+					    if (_cache == null)
+						    return;
+					    _cache.Remove(value.ToString());
+				    });
+			    }
 		    }
 	    }
 
@@ -53,8 +61,11 @@ namespace PopForums.AzureKit.Redis
 
 	    private static void SetupLocalCache()
 	    {
-		    var options = new MemoryCacheOptions();
-		    _cache = new MemoryCache(options);
+		    lock (_syncroot)
+		    {
+			    var options = new MemoryCacheOptions();
+			    _cache = new MemoryCache(options);
+		    }
 	    }
 
 	    public void SetCacheObject(string key, object value)
