@@ -37,7 +37,7 @@ namespace PopForums.AzureKit.Functions
 			switch (config.SearchProvider.ToLower())
 			{
 				case "elasticsearch":
-					searchType = "Default (PopForums.AwsKit)";
+					searchType = "ElasticSearch (PopForums.AwsKit)";
 					services.AddPopForumsElasticSearch();
 					break;
 				case "azuresearch":
@@ -48,6 +48,9 @@ namespace PopForums.AzureKit.Functions
 					searchType = "Default (PopForums.Sql)";
 					break;
 			}
+
+			serviceProvider = services.BuildServiceProvider();
+
 			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
 			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
 			var errorLog = serviceProvider.GetService<IErrorLog>();
