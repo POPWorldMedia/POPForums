@@ -31,7 +31,7 @@ namespace PopForums.Services
 
 	public class PostService : IPostService
 	{
-		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService)
+		public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
 		{
 			_postRepository = postRepository;
 			_profileRepository = profileRepository;
@@ -42,6 +42,8 @@ namespace PopForums.Services
 			_forumService = forumService;
 			_eventPublisher = eventPublisher;
 			_userService = userService;
+			_searchIndexQueueRepository = searchIndexQueueRepository;
+			_tenantService = tenantService;
 		}
 
 		private readonly IPostRepository _postRepository;
@@ -53,6 +55,8 @@ namespace PopForums.Services
 		private readonly IForumService _forumService;
 		private readonly IEventPublisher _eventPublisher;
 		private readonly IUserService _userService;
+		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
+		private readonly ITenantService _tenantService;
 
 		public List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
 		{
@@ -162,6 +166,7 @@ namespace PopForums.Services
 					_topicService.UpdateLast(topic);
 					_forumService.UpdateCounts(forum);
 					_forumService.UpdateLast(forum);
+					_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				}
 			}
 			else
@@ -184,6 +189,7 @@ namespace PopForums.Services
 				var forum = _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
+				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to undelete post.");

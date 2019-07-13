@@ -22,6 +22,8 @@ namespace PopForums.Test.Services
 		private Mock<IForumService> _forumService;
 		private Mock<IEventPublisher> _eventPub;
 		private Mock<IUserService> _userService;
+		private Mock<ISearchIndexQueueRepository> _searchIndexQueue;
+		private Mock<ITenantService> _tenantService;
 
 		private PostService GetService()
 		{
@@ -35,8 +37,10 @@ namespace PopForums.Test.Services
 			_forumService = new Mock<IForumService>();
 			_eventPub = new Mock<IEventPublisher>();
 			_userService = new Mock<IUserService>();
+			_searchIndexQueue = new Mock<ISearchIndexQueueRepository>();
+			_tenantService = new Mock<ITenantService>();
 			_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object);
+			return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueue.Object, _tenantService.Object);
 		}
 
 		[Fact]
@@ -228,11 +232,17 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			var payload = new SearchIndexPayload();
+			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);
+
 			service.Delete(post, user);
+
 			_topicService.Verify(t => t.RecalculateReplyCount(topic), Times.Exactly(1));
 			_topicService.Verify(t => t.UpdateLast(topic), Times.Once());
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
+			_searchIndexQueue.Verify(x => x.Enqueue(payload), Times.Once);
+			Assert.Equal(topic.TopicID, payload.TopicID);
 		}
 
 		[Fact]
@@ -303,11 +313,17 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 67, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			var payload = new SearchIndexPayload();
+			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);
+
 			service.Undelete(post, user);
+
 			_topicService.Verify(t => t.RecalculateReplyCount(topic), Times.Exactly(1));
 			_topicService.Verify(t => t.UpdateLast(topic), Times.Once());
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
+			_searchIndexQueue.Verify(x => x.Enqueue(payload), Times.Once);
+			Assert.Equal(topic.TopicID, payload.TopicID);
 		}
 
 		[Fact]
