@@ -1,4 +1,4 @@
-POPForums
+POP Forums
 =========
 
 A forum application with real-time updating and multiple languages.
@@ -24,4 +24,5 @@ https://www.myget.org/feed/Packages/popforums
 
 ## Prerequisites:
 * .NET Core v2.2.
-* AzureKit optionally requires Redis for two-level cache, Azure Search for Azure Search.
+* AzureKit optionally requires Redis for two-level cache, Azure Search for Search.
+* AwsKit optionally requires ElasticSearch for search.
