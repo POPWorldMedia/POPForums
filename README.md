@@ -24,5 +24,6 @@ https://www.myget.org/feed/Packages/popforums
 
 ## Prerequisites:
 * .NET Core v2.2.
+* npm and Node.js to build the front-end.
 * AzureKit optionally requires Redis for two-level cache, Azure Search for Search.
 * AwsKit optionally requires ElasticSearch for search.
