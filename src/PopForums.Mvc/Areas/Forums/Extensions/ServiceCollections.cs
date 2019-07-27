@@ -7,6 +7,7 @@ using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Messaging;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
+using PopIdentity.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Extensions
 {
@@ -21,8 +22,10 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		public static IServiceCollection AddPopForumsMvc(this IServiceCollection services)
 		{
 			services.AddHttpContextAccessor();
+			services.AddPopIdentity();
 			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
+			services.AddTransient<IExternalLoginRoutingService, ExternalLoginRoutingService>();
 			services.AddTransient<IBroker, Broker>();
 			// this is required for error logging:
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

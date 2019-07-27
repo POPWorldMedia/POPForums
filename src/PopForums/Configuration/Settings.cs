@@ -52,6 +52,13 @@ namespace PopForums.Configuration
 			UseMicrosoftLogin = false;
 			MicrosoftClientID = String.Empty;
 			MicrosoftClientSecret = String.Empty;
+			UseOAuth2Login = false;
+			OAuth2ClientID = string.Empty;
+			OAuth2ClientSecret = string.Empty;
+			OAuth2LoginUrl = string.Empty;
+			OAuth2TokenUrl = string.Empty;
+			OAuth2DisplayName = string.Empty;
+			OAuth2Scope = "email";
 			YouTubeHeight = 360;
 			YouTubeWidth = 640;
 			GoogleClientId = String.Empty;
@@ -104,6 +111,13 @@ namespace PopForums.Configuration
 		public virtual bool UseMicrosoftLogin { get; set; }
 		public virtual string MicrosoftClientID { get; set; }
 		public virtual string MicrosoftClientSecret { get; set; }
+		public virtual bool UseOAuth2Login { get; set; }
+		public virtual string OAuth2ClientID { get; set; }
+		public virtual string OAuth2ClientSecret { get; set; }
+		public virtual string OAuth2LoginUrl { get; set; }
+		public virtual string OAuth2TokenUrl { get; set; }
+		public virtual string OAuth2DisplayName { get; set; }
+		public virtual string OAuth2Scope { get; set; }
 		public virtual int YouTubeHeight { get; set; }
 		public virtual int YouTubeWidth { get; set; }
 		public virtual string GoogleClientId { get; set; }

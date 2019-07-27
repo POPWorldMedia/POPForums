@@ -540,18 +540,6 @@
 				<td><input type="text" v-model="settings.facebookAppSecret" class="form-control" /></td>
 			</tr>
 			<tr>
-				<th>Twitter</th>
-				<td><input type="checkbox" v-model="settings.useTwitterLogin" /></td>
-			</tr>
-			<tr>
-				<td>ConsumerKey:</td>
-				<td><input type="text" v-model="settings.twitterConsumerKey" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>ConsumerSecret:</td>
-				<td><input type="text" v-model="settings.twitterConsumerSecret" class="form-control" /></td>
-			</tr>
-			<tr>
 				<th>Microsoft</th>
 				<td><input type="checkbox" v-model="settings.useMicrosoftLogin" /></td>
 			</tr>
@@ -562,6 +550,34 @@
 			<tr>
 				<td>ClientSecret:</td>
 				<td><input type="text" v-model="settings.microsoftClientSecret" class="form-control" /></td>
+			</tr>
+			<tr>
+				<th>OAuth2 returning JWT</th>
+				<td><input type="checkbox" v-model="settings.useOAuth2Login" /></td>
+			</tr>
+			<tr>
+				<td>Client ID:</td>
+				<td><input type="text" v-model="settings.oAuth2ClientID" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>Client Secret:</td>
+				<td><input type="text" v-model="settings.oAuth2ClientSecret" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>Base login URL:</td>
+				<td><input type="text" v-model="settings.oAuth2LoginUrl" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>Token URL:</td>
+				<td><input type="text" v-model="settings.oAuth2TokenUrl" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>Display name:</td>
+				<td><input type="text" v-model="settings.oAuth2DisplayName" class="form-control" /></td>
+			</tr>
+			<tr>
+				<td>Scope (separate by space):</td>
+				<td><input type="text" v-model="settings.oAuth2Scope" class="form-control" /></td>
 			</tr>
 		</table>
 
