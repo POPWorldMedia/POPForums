@@ -30,11 +30,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IFacebookCallbackProcessor _facebookCallbackProcessor;
 		private readonly IGoogleCallbackProcessor _googleCallbackProcessor;
 		private readonly IMicrosoftCallbackProcessor _microsoftCallbackProcessor;
-		private readonly IOAuth2JwtCallbackProcessor<GenericResult> _oAuth2JwtCallbackProcessor;
+		private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserService _userService;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor<GenericResult> oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -91,28 +91,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
-			var auth = await HttpContext.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			var user = User;
 
-			var tokens = auth.Properties.GetTokens();
-			var token = tokens.FirstOrDefault(x => x.Name == "pfsocial");
-			if (token == null)
-				return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
-			var result = JsonConvert.DeserializeObject<FacebookResult>(token.Value);
+			// do something with the result
 
-			var externalAuthResult = new ExternalAuthenticationResult
-			{
-				Issuer = "Facebook",
-				Email = result.Email,
-				Name = result.Name,
-				ProviderKey = result.ID
-			};
-			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalAuthResult, ip);
-			if (matchResult.Successful)
-			{
-				_userService.Login(matchResult.User, ip);
-				await PerformSignInAsync(matchResult.User, HttpContext);
-				return Redirect(returnUrl);
-			}
 			ViewBag.Referrer = returnUrl;
 			return Content("test"); // use the view from the old auth controller
 		}
@@ -142,15 +124,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			{
 				// TODO: deal with this
 			}
+			
+			// persist result
 
-			var auth = await HttpContext.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
-
-			// auth.Properties is null here, which makes sense because no middleware has set it to anything
-
-			var tokens = new List<AuthenticationToken>();
-			var serializedResult = JsonConvert.SerializeObject(result.ResultData);
-			tokens.Add(new AuthenticationToken {Name = "pfsocial", Value = serializedResult });
-			auth.Properties.StoreTokens(tokens);
 			// need the returnUrl to eventually land them where they started
 			return RedirectToAction("ExternalLoginCallback", new { returnUrl = "/" });
 		}
