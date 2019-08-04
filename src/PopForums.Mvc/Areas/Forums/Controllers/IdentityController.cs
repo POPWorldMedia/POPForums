@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -33,8 +34,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserService _userService;
+		private readonly IDataProtectionProvider _dataProtectionProvider;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IDataProtectionProvider dataProtectionProvider)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -45,6 +47,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_oAuth2JwtCallbackProcessor = oAuth2JwtCallbackProcessor;
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userService = userService;
+			_dataProtectionProvider = dataProtectionProvider;
 		}
 
 		public string Name = "Identity";
@@ -94,6 +97,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = User;
 
 			// do something with the result
+			var protector = _dataProtectionProvider.CreateProtector(nameof(IdentityController));
+			var encryptedTempAuth = Request.Cookies["tempauth"];
+			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
+			var result = JsonConvert.DeserializeObject<CallbackResult>(decryptedSerialized);
 
 			ViewBag.Referrer = returnUrl;
 			return Content("test"); // use the view from the old auth controller
@@ -126,6 +133,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			
 			// persist result
+			var protector = _dataProtectionProvider.CreateProtector(nameof(IdentityController));
+			var serializedResult = JsonConvert.SerializeObject(result);
+			var encryptedResult = protector.Protect(serializedResult);
+			Response.Cookies.Append("tempauth", encryptedResult);
 
 			// need the returnUrl to eventually land them where they started
 			return RedirectToAction("ExternalLoginCallback", new { returnUrl = "/" });
