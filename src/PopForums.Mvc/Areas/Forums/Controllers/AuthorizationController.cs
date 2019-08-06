@@ -108,14 +108,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
 
-		[HttpPost]
-		[AllowAnonymous]
-		public IActionResult ExternalLogin(string provider, string returnUrl = null)
-		{
-			var redirectUrl = Url.Action(nameof(ExternalLoginCallback), Name, new { ReturnUrl = returnUrl });
-			var properties = ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-			return Challenge(properties, provider);
-		}
+		//[HttpPost]
+		//[AllowAnonymous]
+		//public IActionResult ExternalLogin(string provider, string returnUrl = null)
+		//{
+		//	var redirectUrl = Url.Action(nameof(ExternalLoginCallback), Name, new { ReturnUrl = returnUrl });
+		//	var properties = ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+		//	return Challenge(properties, provider);
+		//}
 
 		private const string LoginProviderKey = "LoginProvider";
 		private const string XsrfKey = "XsrfId";
@@ -131,35 +131,35 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return properties;
 		}
 
-		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
-		{
-			if (remoteError != null)
-			{
-				// TODO: deal with this
-			}
-			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-            var info = await GetExternalLoginInfoAsync(HttpContext);
-			if (info == null)
-				return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
-			var email = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Email) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Email).Value : null;
-			var name = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Name) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Name).Value : null;
-			var externalAuthResult = new ExternalAuthenticationResult
-			{
-				Issuer = info.LoginProvider,
-				Email = email,
-				Name = name,
-				ProviderKey = info.ProviderKey
-			};
-			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalAuthResult, ip);
-			if (matchResult.Successful)
-			{
-				_userService.Login(matchResult.User, ip);
-				await PerformSignInAsync(matchResult.User, HttpContext);
-				return Redirect(returnUrl);
-			}
-			ViewBag.Referrer = returnUrl;
-			return View();
-		}
+		//public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+		//{
+		//	if (remoteError != null)
+		//	{
+		//		// TODO: deal with this
+		//	}
+		//	var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+  //          var info = await GetExternalLoginInfoAsync(HttpContext);
+		//	if (info == null)
+		//		return RedirectToAction("Login", "Account", new { error = Resources.ExpiredLogin });
+		//	var email = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Email) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Email).Value : null;
+		//	var name = info.ExternalPrincipal.HasClaim(x => x.Type == ClaimTypes.Name) ? info.ExternalPrincipal.FindFirst(ClaimTypes.Name).Value : null;
+		//	var externalAuthResult = new ExternalAuthenticationResult
+		//	{
+		//		Issuer = info.LoginProvider,
+		//		Email = email,
+		//		Name = name,
+		//		ProviderKey = info.ProviderKey
+		//	};
+		//	var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalAuthResult, ip);
+		//	if (matchResult.Successful)
+		//	{
+		//		_userService.Login(matchResult.User, ip);
+		//		await PerformSignInAsync(matchResult.User, HttpContext);
+		//		return Redirect(returnUrl);
+		//	}
+		//	ViewBag.Referrer = returnUrl;
+		//	return View();
+		//}
 
 		// PopForums doesn't use the Xsrf property, because it associates claims with user accounts, not 
 		// accounts with claims. For example, a user can't add a Facebook association while already logged in.
@@ -194,7 +194,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return null;
 			}
 			var name = auth.Principal.FindFirst(ClaimTypes.Name)?.Value;
-			return new ExternalLoginInfo(auth.Principal, provider, providerKey, name);
+			return new ExternalLoginInfo(provider, providerKey, name);
 		}
 	}
 }

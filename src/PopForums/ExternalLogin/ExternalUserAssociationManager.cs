@@ -8,7 +8,7 @@ namespace PopForums.ExternalLogin
 {
 	public interface IExternalUserAssociationManager
 	{
-		ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip);
+		ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip);
 		void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip);
 		List<ExternalUserAssociation> GetExternalUserAssociations(User user);
 		void RemoveAssociation(User user, int externalUserAssociationID, string ip);
@@ -27,20 +27,20 @@ namespace PopForums.ExternalLogin
 		private readonly IUserRepository _userRepository;
 		private readonly ISecurityLogService _securityLogService;
 
-		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalAuthenticationResult externalAuthenticationResult, string ip)
+		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip)
 		{
-			if (externalAuthenticationResult == null)
-				throw new ArgumentNullException(nameof(externalAuthenticationResult));
-			var match = _externalUserAssociationRepository.Get(externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey);
+			if (externalLoginInfo == null)
+				throw new ArgumentNullException(nameof(externalLoginInfo));
+			var match = _externalUserAssociationRepository.Get(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
 			if (match == null)
 			{
-				_securityLogService.CreateLogEntry((int?)null, null, ip, String.Format("Issuer: {0}, Provider: {1}, Name: {2}", externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey, externalAuthenticationResult.Name), SecurityLogType.ExternalAssociationCheckFailed);
+				_securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
 				return new ExternalUserAssociationMatchResult {Successful = false};
 			}
 			var user = _userRepository.GetUser(match.UserID);
 			if (user == null)
 			{
-				_securityLogService.CreateLogEntry((int?)null, null, ip, String.Format("Issuer: {0}, Provider: {1}, Name: {2}", externalAuthenticationResult.Issuer, externalAuthenticationResult.ProviderKey, externalAuthenticationResult.Name), SecurityLogType.ExternalAssociationCheckFailed);
+				_securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
 				return new ExternalUserAssociationMatchResult {Successful = false};
 			}
 			var result = new ExternalUserAssociationMatchResult
@@ -49,22 +49,22 @@ namespace PopForums.ExternalLogin
 				             ExternalUserAssociation = match,
 				             User = user
 			             };
-			_securityLogService.CreateLogEntry(user, user, ip, String.Format("Issuer: {0}, Provider: {1}, Name: {2}", match.Issuer, match.ProviderKey, match.Name), SecurityLogType.ExternalAssociationCheckSuccessful);
+			_securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {match.Issuer}, Provider: {match.ProviderKey}, Name: {match.Name}", SecurityLogType.ExternalAssociationCheckSuccessful);
 			return result;
 		}
 
 		public void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip)
 		{
 			if (user == null)
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			if (externalLoginInfo != null)
 			{
-				if (String.IsNullOrEmpty(externalLoginInfo.LoginProvider))
+				if (string.IsNullOrEmpty(externalLoginInfo.LoginProvider))
 					throw new NullReferenceException("The external login info contains no provider.");
-				if (String.IsNullOrEmpty(externalLoginInfo.ProviderKey))
+				if (string.IsNullOrEmpty(externalLoginInfo.ProviderKey))
 					throw new NullReferenceException("The external login info contains no provider key.");
 				_externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
-				_securityLogService.CreateLogEntry(user, user, ip, String.Format("Provider: {0}, DisplayName: {1}", externalLoginInfo.LoginProvider, externalLoginInfo.ProviderDisplayName), SecurityLogType.ExternalAssociationSet);
+				_securityLogService.CreateLogEntry(user, user, ip, $"Provider: {externalLoginInfo.LoginProvider}, DisplayName: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationSet);
 			}
 		}
 
@@ -79,9 +79,9 @@ namespace PopForums.ExternalLogin
 			if (association == null)
 				return;
 			if (association.UserID != user.UserID)
-				throw new Exception(String.Format("Can't delete external user association {0} because it doesn't match UserID {1}.", externalUserAssociationID, user.UserID));
+				throw new Exception($"Can't delete external user association {externalUserAssociationID} because it doesn't match UserID {user.UserID}.");
 			_externalUserAssociationRepository.Delete(externalUserAssociationID);
-			_securityLogService.CreateLogEntry(user, user, ip, String.Format("Issuer: {0}, Provider: {1}, Name: {2}", association.Issuer, association.ProviderKey, association.Name), SecurityLogType.ExternalAssociationRemoved);
+			_securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {association.Issuer}, Provider: {association.ProviderKey}, Name: {association.Name}", SecurityLogType.ExternalAssociationRemoved);
 		}
 	}
 }

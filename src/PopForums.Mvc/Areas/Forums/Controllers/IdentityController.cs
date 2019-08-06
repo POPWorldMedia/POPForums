@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PopForums.Configuration;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
+using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 using PopIdentity;
 using PopIdentity.Providers.Facebook;
@@ -34,9 +32,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserService _userService;
-		private readonly IDataProtectionProvider _dataProtectionProvider;
+		private readonly IExternalLoginTempService _externalLoginTempService;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IDataProtectionProvider dataProtectionProvider)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -47,17 +45,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_oAuth2JwtCallbackProcessor = oAuth2JwtCallbackProcessor;
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userService = userService;
-			_dataProtectionProvider = dataProtectionProvider;
+			_externalLoginTempService = externalLoginTempService;
 		}
 
 		public string Name = "Identity";
-
-		public class GenericResult
-		{
-			public string ID { get; set; }
-			public string Name { get; set; }
-			public string Email { get; set; }
-		}
 
 		[HttpPost]
 		public IActionResult ExternalLogin(string provider)
@@ -86,6 +77,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				default: throw new NotImplementedException($"The external login \"{provider}\" is not configured.");
 			}
 		}
+
 		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
 		{
 			if (remoteError != null)
@@ -93,17 +85,39 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				// TODO: deal with this
 			}
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-
-			var user = User;
-
-			// do something with the result
-			var protector = _dataProtectionProvider.CreateProtector(nameof(IdentityController));
-			var encryptedTempAuth = Request.Cookies["tempauth"];
-			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
-			var result = JsonConvert.DeserializeObject<CallbackResult>(decryptedSerialized);
+			var authResult = _externalLoginTempService.Read();
+			var externalLoginInfo = new ExternalLoginInfo(authResult.ProviderType.ToString(), authResult.ResultData.ID, authResult.ResultData.Name);
+			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
+			if (matchResult.Successful)
+			{
+				_userService.Login(matchResult.User, ip);
+				_externalLoginTempService.Remove();
+				await PerformSignInAsync(matchResult.User, HttpContext);
+				return Redirect(returnUrl);
+			}
 
 			ViewBag.Referrer = returnUrl;
-			return Content("test"); // use the view from the old auth controller
+			return View(); // use the view from the old auth controller
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> LoginAndAssociate(string email, string password)
+		{
+			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			if (_userService.Login(email, password, ip, out var user))
+			{
+				var authResult = _externalLoginTempService.Read();
+				if (authResult != null)
+				{
+					var externalLoginInfo = new ExternalLoginInfo(authResult.ProviderType.ToString(), authResult.ResultData.ID, authResult.ResultData.Name);
+					_externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+					_externalLoginTempService.Remove();
+					await PerformSignInAsync(user, HttpContext);
+					return Json(new BasicJsonMessage { Result = true });
+				}
+			}
+
+			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
 
 		public static async Task PerformSignInAsync(User user, HttpContext httpContext)
@@ -133,10 +147,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			
 			// persist result
-			var protector = _dataProtectionProvider.CreateProtector(nameof(IdentityController));
-			var serializedResult = JsonConvert.SerializeObject(result);
-			var encryptedResult = protector.Protect(serializedResult);
-			Response.Cookies.Append("tempauth", encryptedResult);
+			_externalLoginTempService.Persist(result);
 
 			// need the returnUrl to eventually land them where they started
 			return RedirectToAction("ExternalLoginCallback", new { returnUrl = "/" });

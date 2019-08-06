@@ -83,7 +83,7 @@ PopForums.processLogin = function () {
 };
 
 PopForums.processLoginExternal = function () {
-	PopForums.processLoginBase("/Authorization/LoginAndAssociate");
+	PopForums.processLoginBase("/Identity/LoginAndAssociate");
 };
 
 PopForums.processLoginBase = function (path) {
