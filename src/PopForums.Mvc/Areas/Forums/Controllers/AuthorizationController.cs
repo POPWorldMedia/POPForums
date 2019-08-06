@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -192,7 +193,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			{
 				return null;
 			}
-			return new ExternalLoginInfo(auth.Principal, provider, providerKey, provider);
+			var name = auth.Principal.FindFirst(ClaimTypes.Name)?.Value;
+			return new ExternalLoginInfo(auth.Principal, provider, providerKey, name);
 		}
 	}
 }

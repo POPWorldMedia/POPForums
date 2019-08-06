@@ -30,14 +30,14 @@ else
 	<table class="table grid table-hover">
 		@foreach (var item in Model)
 		{
-			<tr>
+			<tr class="row">
 				<td class="col-2">
 					<form asp-action="RemoveExternalLogin" asp-route-id="@item.ExternalUserAssociationID" method="post">
 						<input type="submit" value="Remove" class="btn btn-primary" />
 					</form>
 				</td>
-				<td class="col-4">@item.Issuer</td>
-				<td class="col-6">@item.Name</td>
+				<td class="col-2">@item.Issuer</td>
+				<td class="col-8">@item.Name</td>
 			</tr>
 		}
 	</table>
