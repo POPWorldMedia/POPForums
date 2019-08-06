@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using PopIdentity;
+using PopForums.Mvc.Areas.Forums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Services
 {
 	public interface IExternalLoginTempService
 	{
-		void Persist(CallbackResult callbackResult);
-		CallbackResult Read();
+		void Persist(ExternalLoginState externalLoginState);
+		ExternalLoginState Read();
 		void Remove();
 	}
 
@@ -16,7 +16,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 	{
 		private readonly IDataProtectionProvider _dataProtectionProvider;
 		private readonly IHttpContextAccessor _httpContextAccessor;
-		private const string CookieKey = "pf_authtemp";
+		private const string CookieKey = "pf_temploginstate";
 
 		public ExternalLoginTempService(IDataProtectionProvider dataProtectionProvider, IHttpContextAccessor httpContextAccessor)
 		{
@@ -24,20 +24,20 @@ namespace PopForums.Mvc.Areas.Forums.Services
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public void Persist(CallbackResult callbackResult)
+		public void Persist(ExternalLoginState externalLoginState)
 		{
 			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
-			var serializedResult = JsonConvert.SerializeObject(callbackResult);
+			var serializedResult = JsonConvert.SerializeObject(externalLoginState);
 			var encryptedResult = protector.Protect(serializedResult);
 			_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult);
 		}
 
-		public CallbackResult Read()
+		public ExternalLoginState Read()
 		{
 			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
 			var encryptedTempAuth = _httpContextAccessor.HttpContext.Request.Cookies[CookieKey];
 			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
-			var result = JsonConvert.DeserializeObject<CallbackResult>(decryptedSerialized);
+			var result = JsonConvert.DeserializeObject<ExternalLoginState>(decryptedSerialized);
 			return result;
 		}
 

@@ -10,6 +10,7 @@ using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
+using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 using PopIdentity;
@@ -51,31 +52,41 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public string Name = "Identity";
 
 		[HttpPost]
-		public IActionResult ExternalLogin(string provider)
+		public IActionResult ExternalLogin(string provider, string returnUrl)
 		{
 			var state = _stateHashingService.SetCookieAndReturnHash();
+			string redirect;
+			ProviderType providerType;
 			switch (provider.ToLower())
 			{
 				case "facebook":
 					var facebookRedirect = this.FullUrlHelper(nameof(FacebookCallback), Name);
-					var facebookLink = _loginLinkFactory.GetLink(ProviderType.Facebook, facebookRedirect, state, _settingsManager.Current.FacebookAppID);
-					return Redirect(facebookLink);
+					redirect = _loginLinkFactory.GetLink(ProviderType.Facebook, facebookRedirect, state, _settingsManager.Current.FacebookAppID);
+					providerType = ProviderType.Facebook;
+					break;
 				case "google":
-					var googleRedirect = this.FullUrlHelper(nameof(GoogleCallback), Name);
-					var googleLink = _loginLinkFactory.GetLink(ProviderType.Google, googleRedirect, state, _settingsManager.Current.GoogleClientId);
-					return Redirect(googleLink);
+					var googleRedirect = this.FullUrlHelper(nameof(FacebookCallback), Name);
+					redirect = _loginLinkFactory.GetLink(ProviderType.Google, googleRedirect, state, _settingsManager.Current.GoogleClientId);
+					providerType = ProviderType.Google;
+					break;
 				case "microsoft":
-					var msftRedirect = this.FullUrlHelper(nameof(MicrosoftCallback), Name);
-					var msftLink = _loginLinkFactory.GetLink(ProviderType.Microsoft, msftRedirect, state, _settingsManager.Current.MicrosoftClientID);
-					return Redirect(msftLink);
+					var msftRedirect = this.FullUrlHelper(nameof(FacebookCallback), Name);
+					redirect = _loginLinkFactory.GetLink(ProviderType.Microsoft, msftRedirect, state, _settingsManager.Current.MicrosoftClientID);
+					providerType = ProviderType.Microsoft;
+					break;
 				case "oauth2":
-					var oauthRedirect = this.FullUrlHelper(nameof(OAuth2Callback), Name);
+					var oauthRedirect = this.FullUrlHelper(nameof(FacebookCallback), Name);
 					var linkGenerator = new OAuth2LoginUrlGenerator();
 					var oauthClaims = new List<string>(new[] { "openid", "email" });
-					var oauthLink = linkGenerator.GetUrl(_settingsManager.Current.OAuth2LoginUrl, _settingsManager.Current.OAuth2ClientID, oauthRedirect, state, oauthClaims);
-					return Redirect(oauthLink);
+					redirect = linkGenerator.GetUrl(_settingsManager.Current.OAuth2LoginUrl, _settingsManager.Current.OAuth2ClientID, oauthRedirect, state, oauthClaims);
+					providerType = ProviderType.OAuth2;
+					break;
 				default: throw new NotImplementedException($"The external login \"{provider}\" is not configured.");
 			}
+
+			var loginState = new ExternalLoginState {ProviderType = providerType, ReturnUrl = returnUrl };
+			_externalLoginTempService.Persist(loginState);
+			return Redirect(redirect);
 		}
 
 		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -85,8 +96,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				// TODO: deal with this
 			}
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			var authResult = _externalLoginTempService.Read();
-			var externalLoginInfo = new ExternalLoginInfo(authResult.ProviderType.ToString(), authResult.ResultData.ID, authResult.ResultData.Name);
+			var loginState = _externalLoginTempService.Read();
+			var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.CallbackResult.ResultData.ID, loginState.CallbackResult.ResultData.Name);
 			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 			if (matchResult.Successful)
 			{
@@ -95,9 +106,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				await PerformSignInAsync(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
-
 			ViewBag.Referrer = returnUrl;
-			return View(); // use the view from the old auth controller
+			return View();
 		}
 
 		[HttpPost]
@@ -106,17 +116,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			if (_userService.Login(email, password, ip, out var user))
 			{
-				var authResult = _externalLoginTempService.Read();
-				if (authResult != null)
+				var loginState = _externalLoginTempService.Read();
+				if (loginState != null)
 				{
-					var externalLoginInfo = new ExternalLoginInfo(authResult.ProviderType.ToString(), authResult.ResultData.ID, authResult.ResultData.Name);
+					var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.CallbackResult.ResultData.ID, loginState.CallbackResult.ResultData.Name);
 					_externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
 					_externalLoginTempService.Remove();
 					await PerformSignInAsync(user, HttpContext);
 					return Json(new BasicJsonMessage { Result = true });
 				}
 			}
-
 			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
 
@@ -139,33 +148,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<IActionResult> FacebookCallback()
 		{
+			// TODO: refactor here, you can get the provider and conditionally use the right callback
+			// TODO: delete the old twitter settings, also from tests
 			var facebookRedirect = this.FullUrlHelper(nameof(FacebookCallback), Name);
 			var result = await _facebookCallbackProcessor.VerifyCallback(facebookRedirect, _settingsManager.Current.FacebookAppID, _settingsManager.Current.FacebookAppSecret);
 			if (!result.IsSuccessful)
 			{
 				// TODO: deal with this
 			}
-			
 			// persist result
-			_externalLoginTempService.Persist(result);
+			var loginState = _externalLoginTempService.Read();
+			// TODO: what if it's missing?
+			loginState.CallbackResult = result;
+			_externalLoginTempService.Persist(loginState);
 
 			// need the returnUrl to eventually land them where they started
-			return RedirectToAction("ExternalLoginCallback", new { returnUrl = "/" });
-		}
-
-		public async Task<IActionResult> GoogleCallback()
-		{
-			throw new NotImplementedException();
-		}
-
-		public async Task<IActionResult> MicrosoftCallback()
-		{
-			throw new NotImplementedException();
-		}
-
-		public async Task<IActionResult> OAuth2Callback()
-		{
-			throw new NotImplementedException();
+			return RedirectToAction("ExternalLoginCallback", new { returnUrl = loginState.ReturnUrl });
 		}
 	}
 }
