@@ -46,9 +46,6 @@ namespace PopForums.Configuration
 			UseFacebookLogin = false;
 			FacebookAppID = String.Empty;
 			FacebookAppSecret = String.Empty;
-			UseTwitterLogin = false;
-			TwitterConsumerKey = String.Empty;
-			TwitterConsumerSecret = String.Empty;
 			UseMicrosoftLogin = false;
 			MicrosoftClientID = String.Empty;
 			MicrosoftClientSecret = String.Empty;
@@ -105,9 +102,6 @@ namespace PopForums.Configuration
 		public virtual bool UseFacebookLogin { get; set; }
 		public virtual string FacebookAppID { get; set; }
 		public virtual string FacebookAppSecret { get; set; }
-		public virtual bool UseTwitterLogin { get; set; }
-		public virtual string TwitterConsumerKey { get; set; }
-		public virtual string TwitterConsumerSecret { get; set; }
 		public virtual bool UseMicrosoftLogin { get; set; }
 		public virtual string MicrosoftClientID { get; set; }
 		public virtual string MicrosoftClientSecret { get; set; }

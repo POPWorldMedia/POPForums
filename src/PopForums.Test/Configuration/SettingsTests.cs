@@ -154,9 +154,6 @@ namespace PopForums.Test.Configuration
 			const bool useFacebookLogin = true;
 			const string facebookAppID = "oiwoeighw";
 			const string facebookAppSecret = "oiwhwohgcgr";
-			const bool useTwitterLogin = true;
-			const string twitterConsumerKey = "w8hgcoweggew";
-			const string twitterConsumerSecret = "ohgwfhweh";
 			const bool useMicrosoftLogin = true;
 			const string microsoftClientID = "hhvcwefwege";
 			const string microsoftClientSecret = "oiwhgoigrccaa";
@@ -213,9 +210,6 @@ namespace PopForums.Test.Configuration
 									{"UseFacebookLogin", useFacebookLogin},
 									{"FacebookAppID", facebookAppID},
 									{"FacebookAppSecret", facebookAppSecret},
-									{"UseTwitterLogin", useTwitterLogin},
-									{"TwitterConsumerKey", twitterConsumerKey},
-									{"TwitterConsumerSecret", twitterConsumerSecret},
 									{"UseMicrosoftLogin", useMicrosoftLogin},
 									{"MicrosoftClientID", microsoftClientID},
 									{"MicrosoftClientSecret", microsoftClientSecret},
@@ -279,9 +273,6 @@ namespace PopForums.Test.Configuration
 			settings.UseFacebookLogin = useFacebookLogin;
 			settings.FacebookAppID = facebookAppID;
 			settings.FacebookAppSecret = facebookAppSecret;
-			settings.UseTwitterLogin = useTwitterLogin;
-			settings.TwitterConsumerKey = twitterConsumerKey;
-			settings.TwitterConsumerSecret = twitterConsumerSecret;
 			settings.UseMicrosoftLogin = useMicrosoftLogin;
 			settings.MicrosoftClientID = microsoftClientID;
 			settings.MicrosoftClientSecret = microsoftClientSecret;
@@ -340,9 +331,6 @@ namespace PopForums.Test.Configuration
 			const bool useFacebookLogin = true;
 			const string facebookAppID = "oiwoeighw";
 			const string facebookAppSecret = "oiwhwohgcgr";
-			const bool useTwitterLogin = true;
-			const string twitterConsumerKey = "w8hgcoweggew";
-			const string twitterConsumerSecret = "ohgwfhweh";
 			const bool useMicrosoftLogin = true;
 			const string microsoftClientID = "hhvcwefwege";
 			const string microsoftClientSecret = "oiwhgoigrccaa";
@@ -395,9 +383,6 @@ namespace PopForums.Test.Configuration
 									{"UseFacebookLogin", useFacebookLogin},
 									{"FacebookAppID", facebookAppID},
 									{"FacebookAppSecret", facebookAppSecret},
-									{"UseTwitterLogin", useTwitterLogin},
-									{"TwitterConsumerKey", twitterConsumerKey},
-									{"TwitterConsumerSecret", twitterConsumerSecret},
 									{"UseMicrosoftLogin", useMicrosoftLogin},
 									{"MicrosoftClientID", microsoftClientID},
 									{"MicrosoftClientSecret", microsoftClientSecret},

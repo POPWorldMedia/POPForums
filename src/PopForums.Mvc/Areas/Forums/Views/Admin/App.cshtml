@@ -511,11 +511,12 @@
 <script type="x-templates" id="ExternalLogins">
 	<main>
 		<h2>@PopForums.Resources.ExternalLogins</h2>
+		<p>(registered redirect URI is https://yourdomain/Forums/Identity/CallbackHandler)</p>
 
 		<table class="table">
 			<tr>
 				<th>Google</th>
-				<td><input type="checkbox" v-model="settings.useGoogleLogin" /> (registered redirect URI is http://yourdomain/signin-google)</td>
+				<td><input type="checkbox" v-model="settings.useGoogleLogin" /></td>
 			</tr>
 			<tr>
 				<td>ClientId:</td>
