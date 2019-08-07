@@ -34,8 +34,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserService _userService;
 		private readonly IExternalLoginTempService _externalLoginTempService;
+		private readonly IUserRetrievalShim _userRetrievalShim;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -47,9 +48,50 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userService = userService;
 			_externalLoginTempService = externalLoginTempService;
+			_userRetrievalShim = userRetrievalShim;
 		}
 
-		public string Name = "Identity";
+		public static string Name = "Identity";
+
+		[HttpPost]
+		public async Task<IActionResult> Login(string email, string password)
+		{
+			User user;
+			if (_userService.Login(email, password, HttpContext.Connection.RemoteIpAddress.ToString(), out user))
+			{
+				await PerformSignInAsync(user, HttpContext);
+				return Json(new BasicJsonMessage { Result = true });
+			}
+
+			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
+		}
+
+		[HttpGet]
+		public async Task<RedirectResult> Logout()
+		{
+			string link;
+			if (Request == null || string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
+				link = Url.Action("Index", HomeController.Name);
+			else
+			{
+				link = Request.Headers["Referer"];
+				if (!link.Contains(Request.Host.Value))
+					link = Url.Action("Index", HomeController.Name);
+			}
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			return Redirect(link);
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> LogoutAsync()
+		{
+			var user = _userRetrievalShim.GetUser(HttpContext);
+			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+			return Json(new BasicJsonMessage { Result = true });
+		}
 
 		[HttpPost]
 		public IActionResult ExternalLogin(string provider, string returnUrl)

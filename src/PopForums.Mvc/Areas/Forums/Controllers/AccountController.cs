@@ -22,7 +22,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class AccountController : Controller
 	{
-		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IAuthenticationSchemeProvider authenticationSchemeProvider, IExternalLoginRoutingService externalLoginRoutingService)
+		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IAuthenticationSchemeProvider authenticationSchemeProvider, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService)
 		{
 			_userService = userService;
 			_settingsManager = settingsManager;
@@ -41,6 +41,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userRetrievalShim = userRetrievalShim;
 			_authenticationSchemeProvider = authenticationSchemeProvider;
 			_externalLoginRoutingService = externalLoginRoutingService;
+			_externalLoginTempService = externalLoginTempService;
 		}
 
 		public static string Name = "Account";
@@ -65,6 +66,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 		private readonly IExternalLoginRoutingService _externalLoginRoutingService;
+		private readonly IExternalLoginTempService _externalLoginTempService;
 
 		public ViewResult Create()
 		{
@@ -75,6 +77,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				IsSubscribed = true,
 				TimeZone = _settingsManager.Current.ServerTimeZone
 			};
+			var loginState = _externalLoginTempService.Read();
+			if (loginState != null)
+			{
+				signupData.Email = loginState.ResultData.Email;
+				signupData.Name = loginState.ResultData.Name;
+			}
 			return View(signupData);
 		}
 
@@ -106,12 +114,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				}
 				else
 					ViewData["Result"] = Resources.AccountReadyCheckEmail;
-				
-				var authResult = await AuthorizationController.GetExternalLoginInfoAsync(HttpContext);
-				if (authResult != null)
-					_externalUserAssociationManager.Associate(user, authResult, ip);
 
-				await AuthorizationController.PerformSignInAsync(user, HttpContext);
+				var loginState = _externalLoginTempService.Read();
+				if (loginState != null)
+				{
+					var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
+					_externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+					_externalLoginTempService.Remove();
+				}
+
+				await IdentityController.PerformSignInAsync(user, HttpContext);
 
 				return View("AccountCreated");
 			}

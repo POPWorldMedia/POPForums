@@ -31,6 +31,7 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IUserRetrievalShim> _userRetrievalShim;
 		private Mock<IAuthenticationSchemeProvider> _authSchemeProvider;
 		private Mock<IExternalLoginRoutingService> _externalLoginRoutingService;
+		private Mock<IExternalLoginTempService> _externalLoginTempService;
 
 		private AccountController GetController()
 		{
@@ -51,7 +52,8 @@ namespace PopForums.Test.Mvc.Controllers
 			_userRetrievalShim = new Mock<IUserRetrievalShim>();
 			_authSchemeProvider = new Mock<IAuthenticationSchemeProvider>();
 			_externalLoginRoutingService = new Mock<IExternalLoginRoutingService>();
-			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _authSchemeProvider.Object, _externalLoginRoutingService.Object);
+			_externalLoginTempService = new Mock<IExternalLoginTempService>();
+			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _authSchemeProvider.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object);
 		}
 
 		[Fact]

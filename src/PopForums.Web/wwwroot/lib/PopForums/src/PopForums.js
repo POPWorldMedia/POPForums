@@ -79,7 +79,7 @@ PopForums.checkScroll = function () {
 };
 
 PopForums.processLogin = function () {
-	PopForums.processLoginBase("/Authorization/Login");
+	PopForums.processLoginBase("/Identity/Login");
 };
 
 PopForums.processLoginExternal = function () {
