@@ -1,0 +1,20 @@
+﻿@model string
+@{
+	ViewBag.Title = PopForums.Resources.Login + " - " + PopForums.Resources.Error;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<div>
+	<h1>@PopForums.Resources.Login - @PopForums.Resources.Error</h1>
+	<ul id="TopBreadcrumb" class="breadcrumb">
+		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Forums">@PopForums.Resources.Forums</a></li>
+	</ul>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<p>@PopForums.Resources.Error: @Model</p>
+		
+		<p><a asp-controller="Account" asp-action="Login" asp-area="Forums">@PopForums.Resources.Login</a></p>
+	</div>
+</div>

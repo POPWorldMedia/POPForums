@@ -131,15 +131,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Redirect(redirect);
 		}
 
-		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
 		{
-			if (remoteError != null)
-			{
-				// TODO: deal with this
-			}
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var loginState = _externalLoginTempService.Read();
-			// TODO: what if loginstate is null?
+			if (loginState == null)
+				return View("ExternalError", Resources.LoginBad);
 			var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
 			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 			if (matchResult.Successful)
@@ -192,8 +189,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<IActionResult> CallbackHandler()
 		{
 			var loginState = _externalLoginTempService.Read();
-			// TODO: what if it's missing?
-			// TODO: delete the old twitter settings, also from tests
+			if (loginState == null)
+				return View("ExternalError", Resources.LoginBad);
 			var redirectUri = this.FullUrlHelper(nameof(CallbackHandler), Name);
 			CallbackResult result;
 			switch (loginState.ProviderType)
@@ -215,13 +212,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			if (!result.IsSuccessful)
 			{
-				// TODO: deal with this
+				return View("ExternalError", result.Message);
 			}
-			// persist result
 			loginState.ResultData = result.ResultData;
 			_externalLoginTempService.Persist(loginState);
 
-			// need the returnUrl to eventually land them where they started
 			return RedirectToAction("ExternalLoginCallback", new { returnUrl = loginState.ReturnUrl });
 		}
 	}
