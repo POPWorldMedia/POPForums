@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using PopForums.Configuration;
 using PopForums.Messaging;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Messaging;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
+using PopIdentity.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Extensions
 {
@@ -21,8 +21,11 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		public static IServiceCollection AddPopForumsMvc(this IServiceCollection services)
 		{
 			services.AddHttpContextAccessor();
+			services.AddPopIdentity();
 			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();
 			services.AddTransient<ITopicViewCountService, TopicViewCountService>();
+			services.AddTransient<IExternalLoginRoutingService, ExternalLoginRoutingService>();
+			services.AddTransient<IExternalLoginTempService, ExternalLoginTempService>();
 			services.AddTransient<IBroker, Broker>();
 			// this is required for error logging:
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -31,44 +34,9 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 			var setupService = serviceProvider.GetService<ISetupService>();
 			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
 				return services;
-			var settingsManager = serviceProvider.GetService<ISettingsManager>();
-			var settings = settingsManager.Current;
 
-			var authenticationBuilder = services.AddAuthentication()
+			services.AddAuthentication()
 				.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option => option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0));
-
-			if (settings.UseTwitterLogin)
-				authenticationBuilder.AddTwitter(x =>
-				{
-					x.ConsumerKey = settings.TwitterConsumerKey;
-					x.ConsumerSecret = settings.TwitterConsumerSecret;
-					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
-				});
-
-			if (settings.UseFacebookLogin)
-				authenticationBuilder.AddFacebook(x =>
-				{
-					x.AppId = settings.FacebookAppID;
-					x.AppSecret = settings.FacebookAppSecret;
-					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
-				});
-
-			if (settings.UseGoogleLogin)
-				authenticationBuilder.AddGoogle(x =>
-				{
-					x.ClientId = settings.GoogleClientId;
-					x.ClientSecret = settings.GoogleClientSecret;
-					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
-
-				});
-
-			if (settings.UseMicrosoftLogin)
-				authenticationBuilder.AddMicrosoftAccount(x =>
-				{
-					x.ClientId = settings.MicrosoftClientID;
-					x.ClientSecret = settings.MicrosoftClientSecret;
-					x.SignInScheme = PopForumsAuthorizationDefaults.AuthenticationScheme;
-				});
 
 			return services;
 		}

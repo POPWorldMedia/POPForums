@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http.Authentication
 @inject IUserRetrievalShim UserRetrievalShim
-@model List<Microsoft.AspNetCore.Authentication.AuthenticationScheme>
+@model Dictionary<PopIdentity.ProviderType, string>
 @{
     ViewBag.Title = PopForums.Resources.Login;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -42,13 +42,13 @@
 
 	if (Model.Count > 0)
 	{
-		<form asp-controller="Authorization" asp-action="ExternalLogin" asp-route-ReturnUrl="@ViewBag.Referrer">
+		<form asp-controller="Identity" asp-action="ExternalLogin" asp-route-ReturnUrl="@ViewBag.Referrer">
 			@Html.AntiForgeryToken()
 			<h2>@PopForums.Resources.ExternalLogins</h2>
 			<p>
-				@foreach (var authenticationDescription in Model)
+				@foreach (var item in Model)
 				{
-					<button type="submit" id="@authenticationDescription.Name" name="provider" value="@authenticationDescription.Name" class="btn btn-primary">@authenticationDescription.DisplayName</button>
+					<button type="submit" id="@item.Key" name="provider" value="@item.Key" class="btn btn-primary">@item.Value</button>
 				}
 			</p>
 		</form>

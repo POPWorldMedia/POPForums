@@ -38,7 +38,7 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult(), "");
+			var result = manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
 
 			Assert.False(result.Successful);
 			Assert.Null(result.ExternalUserAssociation);
@@ -52,7 +52,7 @@ namespace PopForums.Test.ExternalLogin
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns(new ExternalUserAssociation());
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalAuthenticationResult(), "");
+			var result = manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
 
 			Assert.False(result.Successful);
 			Assert.Null(result.ExternalUserAssociation);
@@ -67,7 +67,7 @@ namespace PopForums.Test.ExternalLogin
 			var user = new User {UserID = association.UserID};
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
-			var authResult = new ExternalAuthenticationResult {Issuer = "Google", ProviderKey = "abc"};
+			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
 			var result = manager.ExternalUserAssociationCheck(authResult, "");
 
@@ -85,7 +85,7 @@ namespace PopForums.Test.ExternalLogin
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			const string ip = "1.1.1.1";
-			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
 			manager.ExternalUserAssociationCheck(authResult, ip);
 
@@ -98,7 +98,7 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation)null);
 			const string ip = "1.1.1.1";
-			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
 			manager.ExternalUserAssociationCheck(authResult, ip);
 
@@ -113,7 +113,7 @@ namespace PopForums.Test.ExternalLogin
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns((User)null);
 			const string ip = "1.1.1.1";
-			var authResult = new ExternalAuthenticationResult { Issuer = "Google", ProviderKey = "abc" };
+			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
 			manager.ExternalUserAssociationCheck(authResult, ip);
 
@@ -143,7 +143,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 
-			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(), new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", null, "wewg"), String.Empty));
+			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(), new ExternalLoginInfo("efwef", "", ""), string.Empty));
 		}
 
 		[Fact]
@@ -151,7 +151,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var user = new User {UserID = 123};
-			var externalAuthResult = new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", "wfweg", "wewg");
+			var externalAuthResult = new ExternalLoginInfo("wegggw", "wfweg", "wewg");
 
 			manager.Associate(user, externalAuthResult, String.Empty);
 
@@ -163,7 +163,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			var user = new User { UserID = 123 };
-			var externalAuthResult = new ExternalLoginInfo(new ClaimsPrincipal(), "wegggw", "wfweg", "wewg");
+			var externalAuthResult = new ExternalLoginInfo("wegggw", "wfweg", "wewg");
 			const string ip = "1.1.1.1";
 
 			manager.Associate(user, externalAuthResult, ip);

@@ -46,9 +46,6 @@ namespace PopForums.Configuration
 			UseFacebookLogin = false;
 			FacebookAppID = String.Empty;
 			FacebookAppSecret = String.Empty;
-			UseTwitterLogin = false;
-			TwitterConsumerKey = String.Empty;
-			TwitterConsumerSecret = String.Empty;
 			UseMicrosoftLogin = false;
 			MicrosoftClientID = String.Empty;
 			MicrosoftClientSecret = String.Empty;
@@ -56,6 +53,13 @@ namespace PopForums.Configuration
 			YouTubeWidth = 640;
 			GoogleClientId = String.Empty;
 			GoogleClientSecret = String.Empty;
+			UseOAuth2Login = false;
+			OAuth2ClientID = string.Empty;
+			OAuth2ClientSecret = string.Empty;
+			OAuth2LoginUrl = string.Empty;
+			OAuth2TokenUrl = string.Empty;
+			OAuth2DisplayName = string.Empty;
+			OAuth2Scope = "email";
 		}
 
 		public virtual string TermsOfService { get; set; }
@@ -98,9 +102,6 @@ namespace PopForums.Configuration
 		public virtual bool UseFacebookLogin { get; set; }
 		public virtual string FacebookAppID { get; set; }
 		public virtual string FacebookAppSecret { get; set; }
-		public virtual bool UseTwitterLogin { get; set; }
-		public virtual string TwitterConsumerKey { get; set; }
-		public virtual string TwitterConsumerSecret { get; set; }
 		public virtual bool UseMicrosoftLogin { get; set; }
 		public virtual string MicrosoftClientID { get; set; }
 		public virtual string MicrosoftClientSecret { get; set; }
@@ -108,5 +109,12 @@ namespace PopForums.Configuration
 		public virtual int YouTubeWidth { get; set; }
 		public virtual string GoogleClientId { get; set; }
 		public virtual string GoogleClientSecret { get; set; }
+		public virtual bool UseOAuth2Login { get; set; }
+		public virtual string OAuth2ClientID { get; set; }
+		public virtual string OAuth2ClientSecret { get; set; }
+		public virtual string OAuth2LoginUrl { get; set; }
+		public virtual string OAuth2TokenUrl { get; set; }
+		public virtual string OAuth2DisplayName { get; set; }
+		public virtual string OAuth2Scope { get; set; }
 	}
 }
