@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using System;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using PopForums.Configuration;
 using PopForums.Mvc.Areas.Forums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Services
@@ -16,12 +18,14 @@ namespace PopForums.Mvc.Areas.Forums.Services
 	{
 		private readonly IDataProtectionProvider _dataProtectionProvider;
 		private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly IErrorLog _errorLog;
 		private const string CookieKey = "pf_temploginstate";
 
-		public ExternalLoginTempService(IDataProtectionProvider dataProtectionProvider, IHttpContextAccessor httpContextAccessor)
+		public ExternalLoginTempService(IDataProtectionProvider dataProtectionProvider, IHttpContextAccessor httpContextAccessor, IErrorLog errorLog)
 		{
 			_dataProtectionProvider = dataProtectionProvider;
 			_httpContextAccessor = httpContextAccessor;
+			_errorLog = errorLog;
 		}
 
 		public void Persist(ExternalLoginState externalLoginState)
@@ -36,6 +40,12 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		{
 			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
 			var encryptedTempAuth = _httpContextAccessor.HttpContext.Request.Cookies[CookieKey];
+			if (string.IsNullOrEmpty(encryptedTempAuth))
+			{
+				var exc = new Exception("The temporary auth cookie is missing.");
+				_errorLog.Log(exc, ErrorSeverity.Error);
+				return null;
+			}
 			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
 			var result = JsonConvert.DeserializeObject<ExternalLoginState>(decryptedSerialized);
 			return result;
