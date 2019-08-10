@@ -35,8 +35,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserService _userService;
 		private readonly IExternalLoginTempService _externalLoginTempService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
+		private readonly ISecurityLogService _securityLogService;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -49,6 +50,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userService = userService;
 			_externalLoginTempService = externalLoginTempService;
 			_userRetrievalShim = userRetrievalShim;
+			_securityLogService = securityLogService;
 		}
 
 		public static string Name = "Identity";
@@ -136,7 +138,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var loginState = _externalLoginTempService.Read();
 			if (loginState == null)
+			{
+				_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 				return View("ExternalError", Resources.LoginBad);
+			}
 			var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
 			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 			if (matchResult.Successful)
@@ -165,6 +170,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					await PerformSignInAsync(user, HttpContext);
 					return Json(new BasicJsonMessage { Result = true });
 				}
+				else
+				{
+					_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on association", SecurityLogType.ExternalAssociationCheckFailed);
+					return Json(new BasicJsonMessage { Result = false, Message = Resources.Error + ": " + Resources.LoginBad });
+				}
 			}
 			return Json(new BasicJsonMessage { Result = false, Message = Resources.LoginBad });
 		}
@@ -190,7 +200,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var loginState = _externalLoginTempService.Read();
 			if (loginState == null)
-				return View("ExternalError", Resources.LoginBad);
+			{
+				var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+				_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
+				return View("ExternalError", Resources.Error + ": " + Resources.LoginBad);
+			}
 			var redirectUri = this.FullUrlHelper(nameof(CallbackHandler), Name);
 			CallbackResult result;
 			switch (loginState.ProviderType)
