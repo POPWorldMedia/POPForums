@@ -19,7 +19,7 @@
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.App" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-	  <PackageReference Include="PopIdentity" Version="0.9.0-CI-20190807-012544" />
+	  <PackageReference Include="PopIdentity" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
