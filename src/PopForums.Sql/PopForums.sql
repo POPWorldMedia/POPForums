@@ -13,11 +13,9 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 	[Salt] [uniqueidentifier] NULL
 ) 
 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name])
+CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_Email] ON [dbo].[pf_PopForumsUser]([Email])
 
-CREATE INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name]) 
-
-
-CREATE INDEX [IX_PopForumsUser_Email] ON [dbo].[pf_PopForumsUser]([Email]) 
 
 
 
