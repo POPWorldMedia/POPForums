@@ -63,6 +63,8 @@ namespace PopForums.ExternalLogin
 					throw new NullReferenceException("The external login info contains no provider.");
 				if (string.IsNullOrEmpty(externalLoginInfo.ProviderKey))
 					throw new NullReferenceException("The external login info contains no provider key.");
+				if (string.IsNullOrEmpty(externalLoginInfo.ProviderDisplayName))
+					externalLoginInfo.ProviderDisplayName = string.Empty;
 				_externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
 				_securityLogService.CreateLogEntry(user, user, ip, $"Provider: {externalLoginInfo.LoginProvider}, DisplayName: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationSet);
 			}

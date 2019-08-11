@@ -452,13 +452,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(externalLoginList);
 		}
 
-		private List<AuthenticationScheme> GetExternalLoginList()
-		{
-			var schemes = _authenticationSchemeProvider.GetAllSchemesAsync().Result
-				.Where(x => !string.IsNullOrWhiteSpace(x.DisplayName)).ToList();
-			return schemes;
-		}
-
 		public ActionResult EmailUser(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
