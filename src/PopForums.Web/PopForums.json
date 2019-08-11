@@ -15,6 +15,11 @@
     "Queue": {
       "ConnectionString": "UseDevelopmentStorage=true"
     },
-    "LogTopicViews": true 
+    "LogTopicViews": true,
+    "ReCaptcha": {
+      "UseReCaptcha": true,
+      "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
+      "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
+    }
   }
 }

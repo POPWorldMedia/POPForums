@@ -1249,4 +1249,7 @@
   <data name="SearchError" xml:space="preserve">
     <value>There was a search error</value>
   </data>
+  <data name="BotError" xml:space="preserve">
+    <value>You might be a robot</value>
+  </data>
 </root>

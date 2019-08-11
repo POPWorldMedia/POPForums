@@ -25,6 +25,10 @@ namespace PopForums.Configuration
 			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
 			var logTopicViews = config["PopForums:LogTopicViews"];
 			container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);
+			var useReCaptcha = config["PopForums:ReCaptcha:UseReCaptcha"];
+			container.UseReCaptcha = useReCaptcha != null && bool.Parse(useReCaptcha);
+			container.ReCaptchaSiteKey = config["PopForums:ReCaptcha:SiteKey"];
+			container.ReCaptchaSecretKey = config["PopForums:ReCaptcha:SecretKey"];
 			return container;
 		} 
 	}

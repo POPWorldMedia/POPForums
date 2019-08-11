@@ -11,5 +11,8 @@
 		public string QueueConnectionString { get; set; }
 		public string SearchProvider { get; set; }
 		public bool LogTopicViews { get; set; }
+		public bool UseReCaptcha { get; set; }
+		public string ReCaptchaSiteKey { get; set; }
+		public string ReCaptchaSecretKey { get; set; }
 	}
 }

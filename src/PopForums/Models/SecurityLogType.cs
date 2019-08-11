@@ -22,6 +22,7 @@ namespace PopForums.Models
 		ExternalAssociationSet = 17,
 		ExternalAssociationRemoved = 18,
 		ExternalAssociationCheckSuccessful = 19,
-		ExternalAssociationCheckFailed = 20
+		ExternalAssociationCheckFailed = 20,
+		ReCaptchaFailed = 21
 	}
 }

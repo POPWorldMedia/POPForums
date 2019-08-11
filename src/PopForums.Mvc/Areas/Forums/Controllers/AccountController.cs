@@ -22,7 +22,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class AccountController : Controller
 	{
-		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IAuthenticationSchemeProvider authenticationSchemeProvider, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService)
+		public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
 		{
 			_userService = userService;
 			_settingsManager = settingsManager;
@@ -39,9 +39,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_userAwardService = userAwardService;
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userRetrievalShim = userRetrievalShim;
-			_authenticationSchemeProvider = authenticationSchemeProvider;
 			_externalLoginRoutingService = externalLoginRoutingService;
 			_externalLoginTempService = externalLoginTempService;
+			_config = config;
+			_reCaptchaService = reCaptchaService;
 		}
 
 		public static string Name = "Account";
@@ -64,9 +65,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserAwardService _userAwardService;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserRetrievalShim _userRetrievalShim;
-		private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 		private readonly IExternalLoginRoutingService _externalLoginRoutingService;
 		private readonly IExternalLoginTempService _externalLoginTempService;
+		private readonly IConfig _config;
+		private readonly IReCaptchaService _reCaptchaService;
 
 		public ViewResult Create()
 		{
@@ -97,6 +99,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ViewResult> Create(SignupData signupData)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			if (_config.UseReCaptcha)
+			{
+				var reCaptchaResponse = await _reCaptchaService.VerifyToken(signupData.Token, ip);
+				if (!reCaptchaResponse.IsSuccess)
+					ModelState.AddModelError("Email", Resources.BotError);
+			}
 			ValidateSignupData(signupData, ModelState, ip);
 			if (ModelState.IsValid)
 			{

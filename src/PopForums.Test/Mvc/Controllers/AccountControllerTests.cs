@@ -29,9 +29,10 @@ namespace PopForums.Test.Mvc.Controllers
 		private Mock<IUserAwardService> _userAwardService;
 		private Mock<IExternalUserAssociationManager> _externalUserAssocManager;
 		private Mock<IUserRetrievalShim> _userRetrievalShim;
-		private Mock<IAuthenticationSchemeProvider> _authSchemeProvider;
 		private Mock<IExternalLoginRoutingService> _externalLoginRoutingService;
 		private Mock<IExternalLoginTempService> _externalLoginTempService;
+		private Mock<IConfig> _config;
+		private Mock<IReCaptchaService> _recaptchaService;
 
 		private AccountController GetController()
 		{
@@ -50,10 +51,11 @@ namespace PopForums.Test.Mvc.Controllers
 			_userAwardService = new Mock<IUserAwardService>();
 			_externalUserAssocManager = new Mock<IExternalUserAssociationManager>();
 			_userRetrievalShim = new Mock<IUserRetrievalShim>();
-			_authSchemeProvider = new Mock<IAuthenticationSchemeProvider>();
 			_externalLoginRoutingService = new Mock<IExternalLoginRoutingService>();
 			_externalLoginTempService = new Mock<IExternalLoginTempService>();
-			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _authSchemeProvider.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object);
+			_config = new Mock<IConfig>();
+			_recaptchaService = new Mock<IReCaptchaService>();
+			return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _clientSettingsMapper.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
 		}
 
 		[Fact]

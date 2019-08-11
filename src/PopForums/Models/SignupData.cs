@@ -13,6 +13,7 @@ namespace PopForums.Models
 		public bool IsSubscribed { get; set; }
 		public bool IsCoppa { get; set; }
 		public bool IsTos { get; set; }
+		public string Token { get; set; }
 
 		public static string GetCoppaDate()
 		{
