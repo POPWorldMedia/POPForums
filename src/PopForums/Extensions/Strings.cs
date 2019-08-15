@@ -9,15 +9,38 @@ namespace PopForums.Extensions
 {
 	public static class Strings
 	{
-        public static string GetMD5Hash(this string text)
+        public static string GetSHA256Hash(this string text)
 		{
-			if (String.IsNullOrWhiteSpace(text))
+			if (string.IsNullOrWhiteSpace(text))
 			{
-				return String.Empty;
+				return string.Empty;
 			}
-			byte[] input = Encoding.UTF8.GetBytes(text);
-			byte[] output = MD5.Create().ComputeHash(input);
-			return Convert.ToBase64String(output);
+			var input = Encoding.UTF8.GetBytes(text);
+			using (var sha256 = SHA256.Create())
+			{
+				var output = sha256.ComputeHash(input);
+				return Convert.ToBase64String(output);
+			}
+		}
+
+		public static string GetSHA256Hash(this string text, Guid salt)
+		{
+			var concatString = text + salt;
+			return GetSHA256Hash(concatString);
+		}
+
+		public static string GetMD5Hash(this string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+			{
+				return string.Empty;
+			}
+			var input = Encoding.UTF8.GetBytes(text);
+			using (var md5 = MD5.Create())
+			{
+				var output = md5.ComputeHash(input);
+				return Convert.ToBase64String(output);
+			}
 		}
 
 		public static string GetMD5Hash(this string text, Guid salt)
@@ -46,7 +69,7 @@ namespace PopForums.Extensions
 			var urlName = name.ToUrlName();
 			var originalName = urlName;
 			var matchTest = urlName.Replace("-", @"\-");
-			var count = matchingStartsWith.Where(m => Regex.IsMatch(m, @"^(" + matchTest + @")(\-\d)?$")).Count();
+			var count = matchingStartsWith.Count(m => Regex.IsMatch(m, @"^(" + matchTest + @")(\-\d)?$"));
 			if (count > 0)
 				urlName = urlName + "-" + (count + 1);
 			while (matchingStartsWith.Exists(x => x == urlName))

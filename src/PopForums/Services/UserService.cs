@@ -42,7 +42,6 @@ namespace PopForums.Services
 		void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
 		UserEdit GetUserEdit(User user);
 		void EditUserProfile(User user, UserEditProfile userEditProfile);
-		bool VerifyPassword(User user, string password);
 		bool IsPasswordValid(string password, out string errorMessage);
         bool IsEmailInUseByDifferentUser(User user, string email);
 		List<User> GetUsersOnline();
@@ -90,9 +89,9 @@ namespace PopForums.Services
 		public void SetPassword(User targetUser, string password, string ip, User user)
 		{
 			var salt = Guid.NewGuid();
-			var hashedPassword = password.GetMD5Hash(salt);
+			var hashedPassword = password.GetSHA256Hash(salt);
 			_userRepository.SetHashedPassword(targetUser, hashedPassword, salt);
-			_securityLogService.CreateLogEntry(user, targetUser, ip, String.Empty, SecurityLogType.PasswordChange);
+			_securityLogService.CreateLogEntry(user, targetUser, ip, string.Empty, SecurityLogType.PasswordChange);
 		}
 
 		public bool CheckPassword(string email, string password, out Guid? salt)
@@ -100,10 +99,34 @@ namespace PopForums.Services
 			string hashedPassword;
 			var storedHash = _userRepository.GetHashedPasswordByEmail(email, out salt);
 			if (salt.HasValue)
+				hashedPassword = password.GetSHA256Hash(salt.Value);
+			else
+				hashedPassword = password.GetSHA256Hash();
+			if (storedHash == hashedPassword)
+				return true;
+			// legacy check
+			return CheckOldHashedPassword(email, password, salt, storedHash);
+		}
+
+		/// <summary>
+		/// This method is used to maintain compatibility with really old and crusty instances of POP Forums
+		/// that used MD5 to hash passwords. It upgrades those passwords if they match.
+		/// </summary>
+		private bool CheckOldHashedPassword(string email, string password, Guid? salt, string storedHash)
+		{
+			string hashedPassword;
+			if (salt.HasValue)
 				hashedPassword = password.GetMD5Hash(salt.Value);
 			else
 				hashedPassword = password.GetMD5Hash();
-			return storedHash == hashedPassword;
+			if (storedHash == hashedPassword)
+			{
+				// upgrade the password hash
+				var user = _userRepository.GetUserByEmail(email);
+				SetPassword(user, password, string.Empty, null);
+				return true;
+			}
+			return false;
 		}
 
 		public User GetUser(int userID)
@@ -200,7 +223,7 @@ namespace PopForums.Services
 			var creationDate = DateTime.UtcNow;
 			var authorizationKey = Guid.NewGuid();
 			var salt = Guid.NewGuid();
-			var hashedPassword = password.GetMD5Hash(salt);
+			var hashedPassword = password.GetSHA256Hash(salt);
 			var user = _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey, salt);
 			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated);
 			return user;
@@ -461,18 +484,6 @@ namespace PopForums.Services
 			profile.Facebook = userEditProfile.Facebook;
 			profile.Twitter = userEditProfile.Twitter;
 			_profileRepository.Update(profile);
-		}
-
-		public bool VerifyPassword(User user, string password)
-		{
-			Guid? salt;
-			string hashedPassword;
-			var savedHashedPassword = _userRepository.GetHashedPasswordByEmail(user.Email, out salt);
-			if (salt.HasValue)
-				hashedPassword = password.GetMD5Hash(salt.Value);
-			else
-				hashedPassword = password.GetMD5Hash();
-			return hashedPassword == savedHashedPassword;
 		}
 
 		public bool IsPasswordValid(string password, out string errorMessage)

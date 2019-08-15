@@ -304,15 +304,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public ViewResult ChangePassword(UserEditSecurity userEdit)
 		{
-			string errorMessage;
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			if (!_userService.VerifyPassword(user, userEdit.OldPassword))
+			if (!_userService.CheckPassword(user.Email, userEdit.OldPassword, out _))
 				ViewBag.PasswordResult = Resources.OldPasswordIncorrect;
 			else if (!userEdit.NewPasswordsMatch())
 				ViewBag.PasswordResult = Resources.RetypePasswordMustMatch;
-			else if (!_userService.IsPasswordValid(userEdit.NewPassword, out errorMessage))
+			else if (!_userService.IsPasswordValid(userEdit.NewPassword, out var errorMessage))
 				ViewBag.PasswordResult = errorMessage;
 			else
 			{

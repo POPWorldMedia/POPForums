@@ -7,6 +7,13 @@ namespace PopForums.Test.Extensions
 	public class StringTests
 	{
 		[Fact]
+		public void GetSHA256HashString()
+		{
+			var output = "fred".GetSHA256Hash();
+			Assert.Equal("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", output);
+		}
+
+		[Fact]
 		public void GetMD5HashString()
 		{
 			var output = "fred".GetMD5Hash();

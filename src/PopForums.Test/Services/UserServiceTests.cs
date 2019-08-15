@@ -54,7 +54,7 @@ namespace PopForums.Test.Services
 
 			userService.SetPassword(user, "fred", String.Empty, user);
 
-			var hashedPassword = "fred".GetMD5Hash(salt);
+			var hashedPassword = "fred".GetSHA256Hash(salt);
 			_mockUserRepo.Verify(r => r.SetHashedPassword(user, hashedPassword, salt));
 		}
 
@@ -63,7 +63,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			Guid? salt;
-			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns("VwqQv7+MfqtdxdTiaDLVsQ==");
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=");
 
 			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
 		}
@@ -83,7 +83,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			Guid? salt = Guid.NewGuid();
-			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
 			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
@@ -94,7 +94,7 @@ namespace PopForums.Test.Services
 		{
 			var userService = GetMockedUserService();
 			Guid? salt = Guid.NewGuid();
-			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
 			Assert.False(userService.CheckPassword(String.Empty, "dsfsdfsdfsdf", out salt));
@@ -494,7 +494,7 @@ namespace PopForums.Test.Services
 			var user = UserTest.GetTestUser();
 			var userService = GetMockedUserService();
 			Guid? salt = Guid.NewGuid();
-			var saltedHash = password.GetMD5Hash(salt.Value);
+			var saltedHash = password.GetSHA256Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(saltedHash);
 			_mockUserRepo.Setup(r => r.GetUserByEmail(email)).Returns(user);
 			_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
@@ -518,7 +518,7 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			Guid? salt = Guid.NewGuid();
 			Guid? nosalt;
-			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out nosalt)).Returns(password.GetMD5Hash());
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out nosalt)).Returns(password.GetSHA256Hash());
 			_mockUserRepo.Setup(r => r.GetUserByEmail(email)).Returns(user);
 			_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
 			_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
@@ -529,7 +529,7 @@ namespace PopForums.Test.Services
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, "", SecurityLogType.Login), Times.Once());
-			var saltyPassword = password.GetMD5Hash(salt.Value);
+			var saltyPassword = password.GetSHA256Hash(salt.Value);
 			_mockUserRepo.Verify(x => x.SetHashedPassword(user, saltyPassword, salt.Value), Times.Once());
 		}
 
@@ -959,64 +959,6 @@ namespace PopForums.Test.Services
 			Assert.Equal("parsed", profile.Signature);
 			Assert.Equal(-7, profile.TimeZone);
 			Assert.Equal("w", profile.Web);
-		}
-
-		[Fact]
-		public void VerifyPasswordSuccess()
-		{
-			const string password = "blah";
-			var hashed = password.GetMD5Hash();
-			var service = GetMockedUserService();
-			Guid? salt;
-			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns(hashed);
-
-			var result = service.VerifyPassword(new User { UserID = 123, Email = "a@b.com"}, password);
-
-			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
-			Assert.True(result);
-		}
-
-		[Fact]
-		public void VerifyPasswordWithSaltSuccess()
-		{
-			const string password = "blah";
-			var service = GetMockedUserService();
-			Guid? salt = Guid.NewGuid();
-			var hashed = password.GetMD5Hash(salt.Value);
-			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns(hashed);
-
-			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
-
-			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
-			Assert.True(result);
-		}
-
-		[Fact]
-		public void VerifyPasswordFail()
-		{
-			const string password = "blah";
-			var service = GetMockedUserService();
-			Guid? salt;
-			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns("2233435");
-
-			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
-
-			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
-			Assert.False(result);
-		}
-
-		[Fact]
-		public void VerifyPasswordWithSaltFail()
-		{
-			const string password = "blah";
-			var service = GetMockedUserService();
-			Guid? salt = Guid.NewGuid();
-			_mockUserRepo.Setup(u => u.GetHashedPasswordByEmail("a@b.com", out salt)).Returns("2233435");
-
-			var result = service.VerifyPassword(new User { UserID = 1, Email = "a@b.com" }, password);
-
-			_mockUserRepo.Verify(u => u.GetHashedPasswordByEmail("a@b.com", out salt), Times.Once());
-			Assert.False(result);
 		}
 
 		[Fact]
