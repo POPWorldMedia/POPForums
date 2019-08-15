@@ -101,6 +101,69 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void CheckPasswordPassesWithoutSaltOnMD5Fallback()
+		{
+			var userService = GetMockedUserService();
+			Guid? salt = null;
+			var hashedPassword = "fred".GetMD5Hash();
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
+
+			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+		}
+
+		[Fact]
+		public void CheckPasswordPassesWithSaltOnMD5Fallback()
+		{
+			var userService = GetMockedUserService();
+			Guid? salt = Guid.NewGuid();
+			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
+
+			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+		}
+
+		[Fact]
+		public void CheckPasswordFailsOnMD5FallbackNoMatch()
+		{
+			var userService = GetMockedUserService();
+			Guid? salt = Guid.NewGuid();
+			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
+
+			Assert.False(userService.CheckPassword(String.Empty, "blah", out salt));
+		}
+
+		[Fact]
+		public void CheckPasswordFailsMD5FallbackDoesNotCallUpdate()
+		{
+			var userService = GetMockedUserService();
+			Guid? salt = Guid.NewGuid();
+			var email = "a@b.com";
+			var user = new User { Email = email };
+			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(hashedPassword);
+			_mockUserRepo.Setup(x => x.GetUserByEmail(email)).Returns(user);
+
+			Assert.False(userService.CheckPassword(email, "abc", out salt));
+			_mockUserRepo.Verify(x => x.SetHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Never);
+		}
+
+		[Fact]
+		public void CheckPasswordPassesWithSaltOnMD5FallbackCallsUpdate()
+		{
+			var userService = GetMockedUserService();
+			Guid? salt = Guid.NewGuid();
+			var email = "a@b.com";
+			var user = new User {Email = email};
+			var hashedPassword = "fred".GetMD5Hash(salt.Value);
+			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(hashedPassword);
+			_mockUserRepo.Setup(x => x.GetUserByEmail(email)).Returns(user);
+
+			Assert.True(userService.CheckPassword(email, "fred", out salt));
+			_mockUserRepo.Verify(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
+		}
+
+		[Fact]
 		public void GetUser()
 		{
 			const int id = 1;
