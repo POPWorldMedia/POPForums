@@ -27,7 +27,9 @@ namespace PopForums.AzureKit.Queue
 			await queue.AddMessageAsync(message);
 		}
 
+#pragma warning disable 1998
 		public async Task<KeyValuePair<string, int>> Dequeue()
+#pragma warning restore 1998
 		{
 			throw new System.NotImplementedException($"{nameof(Dequeue)} should never be called because it's automatically bound to an Azure function.");
 		}
