@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using PopForums.Extensions;
 using PopForums.Messaging;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Messaging;
@@ -20,6 +21,7 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		/// <returns></returns>
 		public static IServiceCollection AddPopForumsMvc(this IServiceCollection services)
 		{
+			services.AddPopForumsBase();
 			services.AddHttpContextAccessor();
 			services.AddPopIdentity();
 			services.AddTransient<IUserRetrievalShim, UserRetrievalShim>();

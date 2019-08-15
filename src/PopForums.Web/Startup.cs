@@ -53,10 +53,9 @@ namespace PopForums.Web
 				options.Filters.Add(typeof(PopForumsUserAttribute));
 			});
 
-			// sets up the dependencies for the base, SQL and web libraries in POP Forums
-			services.AddPopForumsBase();
+			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();
-			// this adds dependencies from the MVC project and sets up authentication for the forum
+			// this adds dependencies from the MVC project (and base dependencies) and sets up authentication for the forum
 			services.AddPopForumsMvc();
 
 			// use Redis cache for POP Forums using AzureKit
