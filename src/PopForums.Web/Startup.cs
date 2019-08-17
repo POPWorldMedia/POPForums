@@ -1,24 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using PopForums.AwsKit;
 using PopForums.AzureKit;
 using PopForums.Configuration;
-using PopForums.Sql;
-using PopForums.Extensions;
-using PopForums.ExternalLogin;
-using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Mvc.Areas.Forums.Authorization;
-using PopForums.Services;
+using PopForums.Mvc.Areas.Forums.Extensions;
+using PopForums.Sql;
 
 namespace PopForums.Web
 {
@@ -38,7 +28,7 @@ namespace PopForums.Web
 		}
 
 		public IConfigurationRoot Configuration { get; set; }
-		
+
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.Configure<AuthorizationOptions>(options =>
@@ -81,15 +71,18 @@ namespace PopForums.Web
 			// but don't use if you're running these in functions
 			//services.AddPopForumsBackgroundServices();
 		}
-		
+
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
 			// Records exceptions and info to the POP Forums database.
 			loggerFactory.AddPopForumsLogger(app);
 
+			// Enables languages
+			app.UsePopForumsCultures();
+
 			app.UseStaticFiles();
 
-			// Not unique to POP Forums, but required.
+			// Not unique to POP Forums, but required. Call before UsePopForumsAuth().
 			app.UseAuthentication();
 
 			// Populate the POP Forums identity in every request.
@@ -109,22 +102,12 @@ namespace PopForums.Web
 				// app routes
 
 				routes.MapRoute(
-					name: "areaRoute",
-					template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+					"areaRoute",
+					"{area:exists}/{controller=Home}/{action=Index}/{id?}");
 				routes.MapRoute(
-					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
+					"default",
+					"{controller=Home}/{action=Index}/{id?}");
 			});
-
-			// TODO: abstract this
-			var supportedCultures = new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("de"), new CultureInfo("es"), new CultureInfo("nl"), new CultureInfo("uk"), new CultureInfo("zh-TW") };
-            app.UseRequestLocalization(new RequestLocalizationOptions {
-                DefaultRequestCulture = new RequestCulture("en", "en"),
-                SupportedCultures = supportedCultures,
-                SupportedUICultures = supportedCultures
-            });
-			//CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es");
-			//CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es");
 		}
 	}
 }
