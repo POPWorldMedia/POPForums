@@ -10,7 +10,7 @@ namespace PopForums.ScoringGame
 	public interface IAwardCalculator
 	{
 		Task QueueCalculation(User user, EventDefinition eventDefinition);
-		void ProcessCalculation(string eventDefinitionID, int userID);
+		Task ProcessCalculation(string eventDefinitionID, int userID);
 	}
 
 	public class AwardCalculator : IAwardCalculator
@@ -43,7 +43,7 @@ namespace PopForums.ScoringGame
 			await _awardCalcRepository.Enqueue(payload);
 		}
 
-		public void ProcessCalculation(string eventDefinitionID, int userID)
+		public async Task ProcessCalculation(string eventDefinitionID, int userID)
 		{
 			var eventDefinition = _eventDefinitionService.GetEventDefinition(eventDefinitionID);
 			var user = _userRepository.GetUser(userID);
@@ -66,7 +66,7 @@ namespace PopForums.ScoringGame
 					if (isAwarded)
 						continue;
 				}
-				var conditions = _awardDefinitionService.GetConditions(award.AwardDefinitionID);
+				var conditions = await _awardDefinitionService.GetConditions(award.AwardDefinitionID);
 				var conditionsMet = 0;
 				foreach (var condition in conditions)
 				{

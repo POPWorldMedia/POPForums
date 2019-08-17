@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
@@ -474,26 +475,26 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpGet("/Forums/AdminApi/GetAward/{id}")]
-		public ActionResult<object> GetAward(string id)
+		public async Task<ActionResult<object>> GetAward(string id)
 		{
 			var award = _awardDefinitionService.Get(id);
-			var conditions = _awardDefinitionService.GetConditions(award.AwardDefinitionID);
+			var conditions = await _awardDefinitionService.GetConditions(award.AwardDefinitionID);
 			var allEvents = _eventDefinitionService.GetAll();
 			var container = new {Award = award, Conditions = conditions, AllEvents = allEvents};
 			return container;
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateCondition")]
-		public ActionResult CreateCondition([FromBody]AwardCondition newCondition)
+		public async Task<ActionResult> CreateCondition([FromBody]AwardCondition newCondition)
 		{
-			_awardDefinitionService.AddCondition(newCondition);
+			await _awardDefinitionService.AddCondition(newCondition);
 			return Ok();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteCondition")]
-		public ActionResult DeleteCondition([FromBody]AwardConditionDeleteContainer container)
+		public async Task<ActionResult> DeleteCondition([FromBody]AwardConditionDeleteContainer container)
 		{
-			_awardDefinitionService.DeleteCondition(container.AwardDefinitionID, container.EventDefinitionID);
+			await _awardDefinitionService.DeleteCondition(container.AwardDefinitionID, container.EventDefinitionID);
 			return Ok();
 		}
 

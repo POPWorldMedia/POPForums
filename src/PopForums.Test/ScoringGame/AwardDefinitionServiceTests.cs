@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -28,23 +29,23 @@ namespace PopForums.Test.ScoringGame
 		}
 
 		[Fact]
-		public void SaveConditionsDeletesOldOnes()
+		public async Task SaveConditionsDeletesOldOnes()
 		{
 			var awardDef = new AwardDefinition {AwardDefinitionID = "awarddef"};
 			var service = GetService();
-			service.SaveConditions(awardDef, new List<AwardCondition>());
+			await service.SaveConditions(awardDef, new List<AwardCondition>());
 			_awardConditionRepo.Verify(x => x.DeleteConditions(awardDef.AwardDefinitionID), Times.Once());
 		}
 
 		[Fact]
-		public void SaveConditionsSetsAllAwardDefIDs()
+		public async Task SaveConditionsSetsAllAwardDefIDs()
 		{
 			var awardDef = new AwardDefinition { AwardDefinitionID = "awarddef" };
 			var list = new List<AwardCondition> { new AwardCondition { AwardDefinitionID = "bad" }, new AwardCondition { AwardDefinitionID = "toobad" } };
 			var savingList = new List<AwardCondition>();
 			var service = GetService();
 			_awardConditionRepo.Setup(x => x.SaveConditions(It.IsAny<List<AwardCondition>>())).Callback<List<AwardCondition>>(x => savingList = x);
-			service.SaveConditions(awardDef, list);
+			await service.SaveConditions(awardDef, list);
 			Assert.Equal(savingList[0].AwardDefinitionID, awardDef.AwardDefinitionID);
 			Assert.Equal(savingList[1].AwardDefinitionID, awardDef.AwardDefinitionID);
 		}

@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.ScoringGame;
 
 namespace PopForums.Repositories
 {
 	public interface IAwardConditionRepository
 	{
-		List<AwardCondition> GetConditions(string awardDefinitionID);
-		void DeleteConditions(string awardDefinitionID);
-		void SaveConditions(List<AwardCondition> conditions);
-		void DeleteConditionsByEventDefinitionID(string eventDefinitionID);
-		void DeleteCondition(string awardDefinitionID, string eventDefinitionID);
+		Task<List<AwardCondition>> GetConditions(string awardDefinitionID);
+		Task DeleteConditions(string awardDefinitionID);
+		Task SaveConditions(List<AwardCondition> conditions);
+		Task DeleteConditionsByEventDefinitionID(string eventDefinitionID);
+		Task DeleteCondition(string awardDefinitionID, string eventDefinitionID);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -15,38 +16,39 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public List<AwardCondition> GetConditions(string awardDefinitionID)
+		public async Task<List<AwardCondition>> GetConditions(string awardDefinitionID)
 		{
-			var list = new List<AwardCondition>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<AwardCondition>("SELECT AwardDefinitionID, EventDefinitionID, EventCount FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID  = awardDefinitionID }).ToList());
+			Task<IEnumerable<AwardCondition>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<AwardCondition>("SELECT AwardDefinitionID, EventDefinitionID, EventCount FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID  = awardDefinitionID }));
+			var list = result.Result.ToList();
 			return list;
 		}
 
-		public void DeleteConditions(string awardDefinitionID)
+		public async Task DeleteConditions(string awardDefinitionID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID = awardDefinitionID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID", new { AwardDefinitionID = awardDefinitionID }));
 		}
 
-		public void DeleteCondition(string awardDefinitionID, string eventDefinitionID)
+		public async Task DeleteCondition(string awardDefinitionID, string eventDefinitionID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID AND EventDefinitionID = @EventDefinitionID", new { AwardDefinitionID = awardDefinitionID, EventDefinitionID = eventDefinitionID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_AwardCondition WHERE AwardDefinitionID = @AwardDefinitionID AND EventDefinitionID = @EventDefinitionID", new { AwardDefinitionID = awardDefinitionID, EventDefinitionID = eventDefinitionID }));
 		}
 
-		public void DeleteConditionsByEventDefinitionID(string eventDefinitionID)
+		public async Task DeleteConditionsByEventDefinitionID(string eventDefinitionID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_AwardCondition WHERE EventDefinitionID = @EventDefinitionID", new { EventDefinitionID = eventDefinitionID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_AwardCondition WHERE EventDefinitionID = @EventDefinitionID", new { EventDefinitionID = eventDefinitionID }));
 		}
 
-		public void SaveConditions(List<AwardCondition> conditions)
+		public async Task SaveConditions(List<AwardCondition> conditions)
 		{
 			foreach (var condition in conditions)
 			{
-				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Execute("INSERT INTO pf_AwardCondition (AwardDefinitionID, EventDefinitionID, EventCount) VALUES (@AwardDefinitionID, @EventDefinitionID, @EventCount)", new { condition.AwardDefinitionID, condition.EventDefinitionID, condition.EventCount }));
+				await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+					connection.ExecuteAsync("INSERT INTO pf_AwardCondition (AwardDefinitionID, EventDefinitionID, EventCount) VALUES (@AwardDefinitionID, @EventDefinitionID, @EventCount)", new { condition.AwardDefinitionID, condition.EventDefinitionID, condition.EventCount }));
 			}
 		}
 	}

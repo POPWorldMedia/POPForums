@@ -20,7 +20,7 @@ namespace PopForums.ScoringGame
 				var nextItem = await awardCalculationQueueRepository.Dequeue();
 				if (string.IsNullOrEmpty(nextItem.Key))
 					return;
-				calculator.ProcessCalculation(nextItem.Key, nextItem.Value);
+				await calculator.ProcessCalculation(nextItem.Key, nextItem.Value);
 			}
 			catch (Exception exc)
 			{
