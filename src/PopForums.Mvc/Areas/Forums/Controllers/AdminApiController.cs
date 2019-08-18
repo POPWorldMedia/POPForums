@@ -84,79 +84,79 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** categories
 
 		[HttpGet("/Forums/AdminApi/GetCategories")]
-		public ActionResult<List<Category>> GetCategories()
+		public async Task<ActionResult<List<Category>>> GetCategories()
 		{
-			var categories = _categoryService.GetAll();
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		[HttpPost("/Forums/AdminApi/AddCategory")]
-		public ActionResult<List<Category>> AddCategory([FromBody]Category category)
+		public async Task<ActionResult<List<Category>>> AddCategory([FromBody]Category category)
 		{
-			_categoryService.Create(category.Title);
-			var categories = _categoryService.GetAll();
+			await _categoryService.Create(category.Title);
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteCategory/{id}")]
-		public ActionResult<List<Category>> DeleteCategory(int id)
+		public async Task<ActionResult<List<Category>>> DeleteCategory(int id)
 		{
-			_categoryService.Delete(id);
-			var categories = _categoryService.GetAll();
+			await _categoryService.Delete(id);
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		[HttpPost("/Forums/AdminApi/MoveCategoryUp/{id}")]
-		public ActionResult<List<Category>> MoveCategoryUp(int id)
+		public async Task<ActionResult<List<Category>>> MoveCategoryUp(int id)
 		{
-			_categoryService.MoveCategoryUp(id);
-			var categories = _categoryService.GetAll();
+			await _categoryService.MoveCategoryUp(id);
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		[HttpPost("/Forums/AdminApi/MoveCategoryDown/{id}")]
-		public ActionResult<List<Category>> MoveCategoryDown(int id)
+		public async Task<ActionResult<List<Category>>> MoveCategoryDown(int id)
 		{
-			_categoryService.MoveCategoryDown(id);
-			var categories = _categoryService.GetAll();
+			await _categoryService.MoveCategoryDown(id);
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		[HttpPost("/Forums/AdminApi/EditCategory")]
-		public ActionResult<List<Category>> EditCategory([FromBody]Category category)
+		public async Task<ActionResult<List<Category>>> EditCategory([FromBody]Category category)
 		{
-			_categoryService.UpdateTitle(category.CategoryID, category.Title);
-			var categories = _categoryService.GetAll();
+			await _categoryService.UpdateTitle(category.CategoryID, category.Title);
+			var categories = await _categoryService.GetAll();
 			return categories;
 		}
 
 		// ********** forums
 
 		[HttpGet("/Forums/AdminApi/GetForums")]
-		public ActionResult<List<CategoryContainerWithForums>> GetForums()
+		public async Task<ActionResult<List<CategoryContainerWithForums>>> GetForums()
 		{
-			var forums = _forumService.GetCategoryContainersWithForums();
+			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
 
 		[HttpPost("/Forums/AdminApi/MoveForumUp/{id}")]
-		public ActionResult<List<CategoryContainerWithForums>> MoveForumUp(int id)
+		public async Task<ActionResult<List<CategoryContainerWithForums>>> MoveForumUp(int id)
 		{
 			_forumService.MoveForumUp(id);
-			var forums = _forumService.GetCategoryContainersWithForums();
+			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
 
 		[HttpPost("/Forums/AdminApi/MoveForumDown/{id}")]
-		public ActionResult<List<CategoryContainerWithForums>> MoveForumDown(int id)
+		public async Task<ActionResult<List<CategoryContainerWithForums>>> MoveForumDown(int id)
 		{
 			_forumService.MoveForumDown(id);
-			var forums = _forumService.GetCategoryContainersWithForums();
+			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
 
 		[HttpPost("/Forums/AdminApi/SaveForum")]
-		public ActionResult<List<CategoryContainerWithForums>> SaveForum([FromBody]Forum forumEdit)
+		public async Task<ActionResult<List<CategoryContainerWithForums>>> SaveForum([FromBody]Forum forumEdit)
 		{
 			if (forumEdit.CategoryID == 0)
 				forumEdit.CategoryID = null;
@@ -169,7 +169,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					return NotFound();
 				_forumService.Update(forum, forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
 			}
-			var forums = _forumService.GetCategoryContainersWithForums();
+			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
 

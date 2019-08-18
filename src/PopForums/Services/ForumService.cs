@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
@@ -17,9 +18,9 @@ namespace PopForums.Services
 		void UpdateLast(Forum forum);
 		void UpdateLast(Forum forum, DateTime lastTime, string lastName);
 		void UpdateCounts(Forum forum);
-		CategorizedForumContainer GetCategorizedForumContainer();
-		List<CategoryContainerWithForums> GetCategoryContainersWithForums();
-		CategorizedForumContainer GetCategorizedForumContainerFilteredForUser(User user);
+		Task<CategorizedForumContainer> GetCategorizedForumContainer();
+		Task<List<CategoryContainerWithForums>> GetCategoryContainersWithForums();
+		Task<CategorizedForumContainer> GetCategorizedForumContainerFilteredForUser(User user);
 		List<int> GetNonViewableForumIDs(User user);
 		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum);
 		void MoveForumUp(int forumID);
@@ -104,24 +105,25 @@ namespace PopForums.Services
 			}).Start();
 		}
 
-		public CategorizedForumContainer GetCategorizedForumContainer()
+		public async Task<CategorizedForumContainer> GetCategorizedForumContainer()
 		{
 			var forums = _forumRepository.GetAll();
-			var categories = _categoryRepository.GetAll();
+			var categories = await _categoryRepository.GetAll();
 			var container = new CategorizedForumContainer(categories, forums);
 			container.ForumTitle = _settingsManager.Current.ForumTitle;
 			return container;
 		}
 
-		public List<CategoryContainerWithForums> GetCategoryContainersWithForums()
+		public async Task<List<CategoryContainerWithForums>> GetCategoryContainersWithForums()
 		{
 			var containers = new List<CategoryContainerWithForums>();
 			var forums = _forumRepository.GetAll().ToList();
-			var categories = _categoryRepository.GetAll().OrderBy(x => x.SortOrder);
+			var categories = await _categoryRepository.GetAll();
+			var orderedCategories = categories.OrderBy(x => x.SortOrder);
 			var uncategorized = forums.Where(x => !x.CategoryID.HasValue).OrderBy(x => x.SortOrder).ToList();
 			if (uncategorized.Count > 0)
 				containers.Add(new CategoryContainerWithForums {Category = new Category { Title = Resources.ForumsUncat }, Forums = uncategorized});
-			foreach (var item in categories)
+			foreach (var item in orderedCategories)
 			{
 				var filteredForums = forums.Where(x => x.CategoryID == item.CategoryID).OrderBy(x => x.SortOrder);
 				containers.Add(new CategoryContainerWithForums { Category = item, Forums = filteredForums });
@@ -136,11 +138,11 @@ namespace PopForums.Services
 			return noViewRestrictionForums.Select(x => x.ForumID).ToList();
 		}
 
-		public CategorizedForumContainer GetCategorizedForumContainerFilteredForUser(User user)
+		public async Task<CategorizedForumContainer> GetCategorizedForumContainerFilteredForUser(User user)
 		{
 			var nonViewableForumIDs = GetNonViewableForumIDs(user);
 			var forums = _forumRepository.GetAllVisible().Where(f => !nonViewableForumIDs.Contains(f.ForumID));
-			var categories = _categoryRepository.GetAll();
+			var categories = await _categoryRepository.GetAll();
 			var container = new CategorizedForumContainer(categories, forums);
 			_lastReadService.GetForumReadStatus(user, container);
 			container.ForumTitle = _settingsManager.Current.ForumTitle;

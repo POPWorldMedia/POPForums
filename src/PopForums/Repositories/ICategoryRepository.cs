@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface ICategoryRepository
 	{
-		Category Get(int categoryID);
-		List<Category> GetAll();
-		Category Create(string newTitle, int sortOrder);
-		void Delete(int categoryID);
-		void Update(Category category);
+		Task<Category> Get(int categoryID);
+		Task<List<Category>> GetAll();
+		Task<Category> Create(string newTitle, int sortOrder);
+		Task Delete(int categoryID);
+		Task Update(Category category);
 	}
 }

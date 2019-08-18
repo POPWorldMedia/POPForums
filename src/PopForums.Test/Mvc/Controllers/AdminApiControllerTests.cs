@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -84,12 +85,12 @@ namespace PopForums.Test.Mvc.Controllers
 				_forumService.Verify(x => x.Create(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 			}
 			[Fact]
-			public void ReturnsNotFoundIfForumIsNotReal()
+			public async Task ReturnsNotFoundIfForumIsNotReal()
 			{
 				var controller = GetController();
 				_forumService.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum)null);
 
-				var result = controller.SaveForum(new Forum{ForumID = 123});
+				var result = await controller.SaveForum(new Forum{ForumID = 123});
 
 				_forumService.Verify(x => x.Update(It.IsAny<Forum>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 				_forumService.Verify(x => x.Create(It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never);

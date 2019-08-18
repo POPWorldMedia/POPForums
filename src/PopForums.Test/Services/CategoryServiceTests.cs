@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -22,18 +23,18 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetAll()
+		public async Task GetAll()
 		{
 			var service = GetService();
 			var allCats = new List<Category>();
-			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(allCats);
-			var result = service.GetAll();
+			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(allCats);
+			var result = await service.GetAll();
 			Assert.Same(allCats, result);
 			_mockCategoryRepo.Verify(c => c.GetAll(), Times.Once());
 		}
 
 		[Fact]
-		public void Create()
+		public async Task Create()
 		{
 			const string newTitle = "new category";
 			var cat1 = new Category { CategoryID = 123, SortOrder = 0 };
@@ -43,9 +44,9 @@ namespace PopForums.Test.Services
 			var newCat = new Category { CategoryID = 999, Title = newTitle, SortOrder = -2};
 			var cats = new List<Category> { cat1, cat2, cat3, cat4, newCat };
 			var service = GetService();
-			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);
-			_mockCategoryRepo.Setup(c => c.Create(newTitle, -2)).Returns(newCat);
-			var result = service.Create(newTitle);
+			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(cats);
+			_mockCategoryRepo.Setup(c => c.Create(newTitle, -2)).ReturnsAsync(newCat);
+			var result = await service.Create(newTitle);
 			Assert.Equal(0, result.SortOrder);
 			Assert.Equal(999, result.CategoryID);
 			Assert.Equal(newTitle, result.Title);
@@ -67,12 +68,12 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void DeleteByIdThrowsIfNotFound()
+		public async Task DeleteByIdThrowsIfNotFound()
 		{
 			var service = GetService();
-			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category) null);
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Category) null);
 
-			Assert.Throws<Exception>(() => service.Delete(1));
+			await Assert.ThrowsAsync<Exception>(async () => await service.Delete(1));
 		}
 
 		[Fact]
@@ -106,16 +107,16 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdateTitleByIdThrowsIfNotFound()
+		public async Task UpdateTitleByIdThrowsIfNotFound()
 		{
 			var service = GetService();
-			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Category)null);
 
-			Assert.Throws<Exception>(() => service.UpdateTitle(1, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await service.UpdateTitle(1, ""));
 		}
 
 		[Fact]
-		public void MoveUp()
+		public async Task MoveUp()
 		{
 			var cat1 = new Category { CategoryID = 123, SortOrder = 0};
 			var cat2 = new Category { CategoryID = 456, SortOrder = 2};
@@ -123,8 +124,8 @@ namespace PopForums.Test.Services
 			var cat4 = new Category { CategoryID = 1000, SortOrder = 6};
 			var cats = new List<Category> { cat1, cat2, cat3, cat4 };
 			var service = GetService();
-			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);
-			service.MoveCategoryUp(cat3);
+			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(cats);
+			await service.MoveCategoryUp(cat3);
 			_mockCategoryRepo.Verify(c => c.GetAll(), Times.Once());
 			_mockCategoryRepo.Verify(c => c.Update(It.IsAny<Category>()), Times.Exactly(4));
 			_mockCategoryRepo.Verify(c => c.Update(cat1), Times.Once());
@@ -138,7 +139,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void MoveDown()
+		public async Task MoveDown()
 		{
 			var cat1 = new Category { CategoryID = 123, SortOrder = 0 };
 			var cat2 = new Category { CategoryID = 456, SortOrder = 2 };
@@ -146,8 +147,8 @@ namespace PopForums.Test.Services
 			var cat4 = new Category { CategoryID = 1000, SortOrder = 6 };
 			var cats = new List<Category> { cat1, cat2, cat3, cat4 };
 			var service = GetService();
-			_mockCategoryRepo.Setup(c => c.GetAll()).Returns(cats);
-			service.MoveCategoryDown(cat3);
+			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(cats);
+			await service.MoveCategoryDown(cat3);
 			_mockCategoryRepo.Verify(c => c.GetAll(), Times.Once());
 			_mockCategoryRepo.Verify(c => c.Update(It.IsAny<Category>()), Times.Exactly(4));
 			_mockCategoryRepo.Verify(c => c.Update(cat1), Times.Once());
@@ -161,21 +162,21 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void MoveUpByIdThrowsIfNotFound()
+		public async Task MoveUpByIdThrowsIfNotFound()
 		{
 			var service = GetService();
-			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Category)null);
 
-			Assert.Throws<Exception>(() => service.MoveCategoryUp(1));
+			await Assert.ThrowsAsync<Exception>(async () => await service.MoveCategoryUp(1));
 		}
 
 		[Fact]
-		public void MoveDownByIdThrowsIfNotFound()
+		public async Task MoveDownByIdThrowsIfNotFound()
 		{
 			var service = GetService();
-			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Category)null);
+			_mockCategoryRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Category)null);
 
-			Assert.Throws<Exception>(() => service.MoveCategoryDown(1));
+			await Assert.ThrowsAsync<Exception>(async () => await service.MoveCategoryDown(1));
 		}
 	}
 }

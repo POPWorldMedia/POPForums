@@ -178,7 +178,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					_lastReadService.MarkTopicRead(user, topic);
 				if (user.IsInRole(PermanentRoles.Moderator))
 				{
-					var categorizedForums = _forumService.GetCategorizedForumContainer();
+					var categorizedForums = await _forumService.GetCategorizedForumContainer();
 					var categorizedForumSelectList = new List<SelectListItem>();
 					foreach (var uncategorizedForum in categorizedForums.UncategorizedForums)
 						categorizedForumSelectList.Add(new SelectListItem { Value = uncategorizedForum.ForumID.ToString(), Text = uncategorizedForum.Title, Selected = forum.ForumID == uncategorizedForum.ForumID});
