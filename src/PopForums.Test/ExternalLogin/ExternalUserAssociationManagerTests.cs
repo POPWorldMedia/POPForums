@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.ExternalLogin;
 using PopForums.Models;
@@ -25,20 +26,20 @@ namespace PopForums.Test.ExternalLogin
 		private Mock<ISecurityLogService> _securityLogService;
 
 		[Fact]
-		public void ExternalUserAssociationCheckThrowsWithNullArg()
+		public async Task ExternalUserAssociationCheckThrowsWithNullArg()
 		{
 			var manager = GetManager();
 
-			Assert.Throws<ArgumentNullException>(() => manager.ExternalUserAssociationCheck(null, ""));
+			await Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.ExternalUserAssociationCheck(null, ""));
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultFalseWithNullsIfNoMatchingAssociation()
+		public async Task ExternalUserAssociationCheckResultFalseWithNullsIfNoMatchingAssociation()
 		{
 			var manager = GetManager();
-			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation) null);
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((ExternalUserAssociation) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
+			var result = await manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
 
 			Assert.False(result.Successful);
 			Assert.Null(result.ExternalUserAssociation);
@@ -46,13 +47,13 @@ namespace PopForums.Test.ExternalLogin
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultFalseWithNullsIfNoMatchingUser()
+		public async Task ExternalUserAssociationCheckResultFalseWithNullsIfNoMatchingUser()
 		{
 			var manager = GetManager();
-			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns(new ExternalUserAssociation());
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ExternalUserAssociation());
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
 
-			var result = manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
+			var result = await manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
 
 			Assert.False(result.Successful);
 			Assert.Null(result.ExternalUserAssociation);
@@ -60,16 +61,16 @@ namespace PopForums.Test.ExternalLogin
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultTrueWithHydratedResultIfMatchingAssociationAndUser()
+		public async Task ExternalUserAssociationCheckResultTrueWithHydratedResultIfMatchingAssociationAndUser()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc"};
 			var user = new User {UserID = association.UserID};
-			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
-			var result = manager.ExternalUserAssociationCheck(authResult, "");
+			var result = await manager.ExternalUserAssociationCheck(authResult, "");
 
 			Assert.True(result.Successful);
 			Assert.Same(user, result.User);
@@ -77,193 +78,193 @@ namespace PopForums.Test.ExternalLogin
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultTrueCallsSecurityLog()
+		public async Task ExternalUserAssociationCheckResultTrueCallsSecurityLog()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
 			var user = new User {UserID = association.UserID};
-			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
 			const string ip = "1.1.1.1";
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
-			manager.ExternalUserAssociationCheck(authResult, ip);
+			await manager.ExternalUserAssociationCheck(authResult, ip);
 
 			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckSuccessful));
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultFalseNoMatchCallsSecurityLog()
+		public async Task ExternalUserAssociationCheckResultFalseNoMatchCallsSecurityLog()
 		{
 			var manager = GetManager();
-			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).Returns((ExternalUserAssociation)null);
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((ExternalUserAssociation)null);
 			const string ip = "1.1.1.1";
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
-			manager.ExternalUserAssociationCheck(authResult, ip);
+			await manager.ExternalUserAssociationCheck(authResult, ip);
 
 			_securityLogService.Verify(x => x.CreateLogEntry((int?)null, null, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckFailed), Times.Once());
 		}
 
 		[Fact]
-		public void ExternalUserAssociationCheckResultFalseNoUserCallsSecurityLog()
+		public async Task ExternalUserAssociationCheckResultFalseNoUserCallsSecurityLog()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
-			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
 			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns((User)null);
 			const string ip = "1.1.1.1";
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
-			manager.ExternalUserAssociationCheck(authResult, ip);
+			await manager.ExternalUserAssociationCheck(authResult, ip);
 
 			_securityLogService.Verify(x => x.CreateLogEntry((int?)null, null, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationCheckFailed), Times.Once());
 		}
 
 		[Fact]
-		public void AssociateThrowsWithNullUser()
+		public async Task AssociateThrowsWithNullUser()
 		{
 			var manager = GetManager();
 
-			Assert.Throws<ArgumentNullException>(() => manager.Associate(null, It.IsAny<ExternalLoginInfo>(), String.Empty));
+			await Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.Associate(null, It.IsAny<ExternalLoginInfo>(), String.Empty));
 		}
 
 		[Fact]
-		public void AssociateNeverCallsRepoWithNullExternalAuthResult()
+		public async Task AssociateNeverCallsRepoWithNullExternalAuthResult()
 		{
 			var manager = GetManager();
 
-			manager.Associate(new User(), null, String.Empty);
+			await manager.Associate(new User(), null, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 		}
 
 		[Fact]
-		public void AssociateThrowsWithNoProviderKey()
+		public async Task AssociateThrowsWithNoProviderKey()
 		{
 			var manager = GetManager();
 
-			Assert.Throws<NullReferenceException>(() => manager.Associate(new User(), new ExternalLoginInfo("efwef", "", ""), string.Empty));
+			await Assert.ThrowsAsync<NullReferenceException>(async () => await manager.Associate(new User(), new ExternalLoginInfo("efwef", "", ""), string.Empty));
 		}
 
 		[Fact]
-		public void AssociateMapsObjectsToRepoCall()
+		public async Task AssociateMapsObjectsToRepoCall()
 		{
 			var manager = GetManager();
 			var user = new User {UserID = 123};
 			var externalAuthResult = new ExternalLoginInfo("wegggw", "wfweg", "wewg");
 
-			manager.Associate(user, externalAuthResult, String.Empty);
+			await manager.Associate(user, externalAuthResult, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Save(user.UserID, externalAuthResult.LoginProvider, externalAuthResult.ProviderKey, externalAuthResult.ProviderDisplayName), Times.Once());
 		}
 
 		[Fact]
-		public void AssociateSuccessCallsSecurityLog()
+		public async Task AssociateSuccessCallsSecurityLog()
 		{
 			var manager = GetManager();
 			var user = new User { UserID = 123 };
 			var externalAuthResult = new ExternalLoginInfo("wegggw", "wfweg", "wewg");
 			const string ip = "1.1.1.1";
 
-			manager.Associate(user, externalAuthResult, ip);
+			await manager.Associate(user, externalAuthResult, ip);
 
 			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationSet), Times.Once());
 		}
 
 		[Fact]
-		public void GetExternalUserAssociationsCallsRepoByUserID()
+		public async Task GetExternalUserAssociationsCallsRepoByUserID()
 		{
 			var manager = GetManager();
 			var user = new User { UserID = 123 };
 
-			manager.GetExternalUserAssociations(user);
+			await manager.GetExternalUserAssociations(user);
 
 			_externalUserAssociationRepo.Verify(x => x.GetByUser(user.UserID), Times.Once());
 		}
 
 		[Fact]
-		public void GetExternalUserAssociationsReturnsCollectionFromRepo()
+		public async Task GetExternalUserAssociationsReturnsCollectionFromRepo()
 		{
 			var manager = GetManager();
 			var user = new User { UserID = 123 };
 			var collection = new List<ExternalUserAssociation>();
-			_externalUserAssociationRepo.Setup(x => x.GetByUser(user.UserID)).Returns(collection);
+			_externalUserAssociationRepo.Setup(x => x.GetByUser(user.UserID)).ReturnsAsync(collection);
 
-			var result = manager.GetExternalUserAssociations(user);
+			var result = await manager.GetExternalUserAssociations(user);
 
 			Assert.Same(collection, result);
 		}
 
 		[Fact]
-		public void RemoveAssociationNeverCallsRepoIfNoAssociationIsFound()
+		public async Task RemoveAssociationNeverCallsRepoIfNoAssociationIsFound()
 		{
 			var manager = GetManager();
-			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((ExternalUserAssociation) null);
+			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((ExternalUserAssociation) null);
 
-			manager.RemoveAssociation(new User(), 4556, String.Empty);
+			await manager.RemoveAssociation(new User(), 4556, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void RemoveAssociationLogsTheRemoval()
+		public async Task RemoveAssociationLogsTheRemoval()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation {ExternalUserAssociationID = 123, Issuer = "Google", Name = "Jeffy", ProviderKey = "oihfoihfef", UserID = 456};
 			var user = new User {UserID = association.UserID};
 			const string ip = "1.1.1.1";
-			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).ReturnsAsync(association);
 
-			manager.RemoveAssociation(user, association.ExternalUserAssociationID, ip);
+			await manager.RemoveAssociation(user, association.ExternalUserAssociationID, ip);
 
 			_securityLogService.Verify(x => x.CreateLogEntry(user, user, ip, It.IsAny<string>(), SecurityLogType.ExternalAssociationRemoved), Times.Once());
 		}
 
 		[Fact]
-		public void RemoveAssociationThrowsIfUserIDsDontMatch()
+		public async Task RemoveAssociationThrowsIfUserIDsDontMatch()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
 			var user = new User { UserID = 789 };
-			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).ReturnsAsync(association);
 
-			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
+			await Assert.ThrowsAsync<Exception>(async () => await manager.RemoveAssociation(user, association.ExternalUserAssociationID, string.Empty));
 		}
 
 		[Fact]
-		public void RemoveAssociationCallsRepoOnSuccessfulMatch()
+		public async Task RemoveAssociationCallsRepoOnSuccessfulMatch()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 123, UserID = 456 };
 			var user = new User { UserID = association.UserID };
-			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).ReturnsAsync(association);
 
-			manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
+			await manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(association.ExternalUserAssociationID), Times.Once());
 		}
 
 		[Fact]
-		public void GetExternalUserAssociationsThrowsIfAssociationDoesntMatchUser()
+		public async Task GetExternalUserAssociationsThrowsIfAssociationDoesntMatchUser()
 		{
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = 789};
 			var user = new User();
-			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).ReturnsAsync(association);
 
-			Assert.Throws<Exception>(() => manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty));
+			await Assert.ThrowsAsync<Exception>(async () => await manager.RemoveAssociation(user, association.ExternalUserAssociationID, string.Empty));
 		}
 
 		[Fact]
-		public void GetExternalUserAssociationsCallsRepoWithMatchingUserIDs()
+		public async Task GetExternalUserAssociationsCallsRepoWithMatchingUserIDs()
 		{
 			var manager = GetManager();
 			var user = new User { UserID = 123 };
 			var association = new ExternalUserAssociation { ExternalUserAssociationID = 456, UserID = user.UserID };
-			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).Returns(association);
+			_externalUserAssociationRepo.Setup(x => x.Get(association.ExternalUserAssociationID)).ReturnsAsync(association);
 
-			manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
+			await manager.RemoveAssociation(user, association.ExternalUserAssociationID, String.Empty);
 
 			_externalUserAssociationRepo.Verify(x => x.Delete(association.ExternalUserAssociationID), Times.Once());
 		}

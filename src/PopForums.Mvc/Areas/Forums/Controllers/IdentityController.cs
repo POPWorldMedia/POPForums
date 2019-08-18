@@ -143,7 +143,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return View("ExternalError", Resources.LoginBad);
 			}
 			var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
-			var matchResult = _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
+			var matchResult = await _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 			if (matchResult.Successful)
 			{
 				_userService.Login(matchResult.User, ip);
@@ -165,7 +165,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (loginState != null)
 				{
 					var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
-					_externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+					await _externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
 					_externalLoginTempService.Remove();
 					await PerformSignInAsync(user, HttpContext);
 					return Json(new BasicJsonMessage { Result = true });

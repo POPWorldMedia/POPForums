@@ -127,7 +127,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (loginState != null)
 				{
 					var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
-					_externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+					await _externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
 					_externalLoginTempService.Remove();
 				}
 
@@ -501,22 +501,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
-		public ViewResult ExternalLogins()
+		public async Task<ViewResult> ExternalLogins()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			var externalAssociations = _externalUserAssociationManager.GetExternalUserAssociations(user);
+			var externalAssociations = await _externalUserAssociationManager.GetExternalUserAssociations(user);
 			ViewBag.Referrer = Url.Action("ExternalLogins");
 			return View(externalAssociations);
 		}
 
-		public ActionResult RemoveExternalLogin(int id)
+		public async Task<ActionResult> RemoveExternalLogin(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			_externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
 			return RedirectToAction("ExternalLogins");
 		}
 	}

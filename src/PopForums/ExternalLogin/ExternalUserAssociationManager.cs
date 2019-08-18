@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -8,10 +9,10 @@ namespace PopForums.ExternalLogin
 {
 	public interface IExternalUserAssociationManager
 	{
-		ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip);
-		void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip);
-		List<ExternalUserAssociation> GetExternalUserAssociations(User user);
-		void RemoveAssociation(User user, int externalUserAssociationID, string ip);
+		Task<ExternalUserAssociationMatchResult> ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip);
+		Task Associate(User user, ExternalLoginInfo externalLoginInfo, string ip);
+		Task<List<ExternalUserAssociation>> GetExternalUserAssociations(User user);
+		Task RemoveAssociation(User user, int externalUserAssociationID, string ip);
 	}
 
 	public class ExternalUserAssociationManager : IExternalUserAssociationManager
@@ -27,11 +28,11 @@ namespace PopForums.ExternalLogin
 		private readonly IUserRepository _userRepository;
 		private readonly ISecurityLogService _securityLogService;
 
-		public ExternalUserAssociationMatchResult ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip)
+		public async Task<ExternalUserAssociationMatchResult> ExternalUserAssociationCheck(ExternalLoginInfo externalLoginInfo, string ip)
 		{
 			if (externalLoginInfo == null)
 				throw new ArgumentNullException(nameof(externalLoginInfo));
-			var match = _externalUserAssociationRepository.Get(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
+			var match = await _externalUserAssociationRepository.Get(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
 			if (match == null)
 			{
 				_securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
@@ -53,7 +54,7 @@ namespace PopForums.ExternalLogin
 			return result;
 		}
 
-		public void Associate(User user, ExternalLoginInfo externalLoginInfo, string ip)
+		public async Task Associate(User user, ExternalLoginInfo externalLoginInfo, string ip)
 		{
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
@@ -65,24 +66,24 @@ namespace PopForums.ExternalLogin
 					throw new NullReferenceException("The external login info contains no provider key.");
 				if (string.IsNullOrEmpty(externalLoginInfo.ProviderDisplayName))
 					externalLoginInfo.ProviderDisplayName = string.Empty;
-				_externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
+				await _externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
 				_securityLogService.CreateLogEntry(user, user, ip, $"Provider: {externalLoginInfo.LoginProvider}, DisplayName: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationSet);
 			}
 		}
 
-		public List<ExternalUserAssociation> GetExternalUserAssociations(User user)
+		public async Task<List<ExternalUserAssociation>> GetExternalUserAssociations(User user)
 		{
-			return _externalUserAssociationRepository.GetByUser(user.UserID);
+			return await _externalUserAssociationRepository.GetByUser(user.UserID);
 		}
 
-		public void RemoveAssociation(User user, int externalUserAssociationID, string ip)
+		public async Task RemoveAssociation(User user, int externalUserAssociationID, string ip)
 		{
-			var association = _externalUserAssociationRepository.Get(externalUserAssociationID);
+			var association = await _externalUserAssociationRepository.Get(externalUserAssociationID);
 			if (association == null)
 				return;
 			if (association.UserID != user.UserID)
 				throw new Exception($"Can't delete external user association {externalUserAssociationID} because it doesn't match UserID {user.UserID}.");
-			_externalUserAssociationRepository.Delete(externalUserAssociationID);
+			await _externalUserAssociationRepository.Delete(externalUserAssociationID);
 			_securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {association.Issuer}, Provider: {association.ProviderKey}, Name: {association.Name}", SecurityLogType.ExternalAssociationRemoved);
 		}
 	}
