@@ -454,30 +454,30 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** award definitions
 
 		[HttpGet("/Forums/AdminApi/GetAllAwardDefinitions")]
-		public ActionResult<List<AwardDefinition>> GetAllAwardDefinitions()
+		public async Task<ActionResult<List<AwardDefinition>>> GetAllAwardDefinitions()
 		{
-			var awardDefinitions = _awardDefinitionService.GetAll();
+			var awardDefinitions = await _awardDefinitionService.GetAll();
 			return awardDefinitions;
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateAward")]
-		public ActionResult CreateAward([FromBody]AwardDefinition newAward)
+		public async Task<ActionResult> CreateAward([FromBody]AwardDefinition newAward)
 		{
-			_awardDefinitionService.Create(newAward);
+			await _awardDefinitionService.Create(newAward);
 			return Ok();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteAward/{id}")]
-		public ActionResult DeleteAward(string id)
+		public async Task<ActionResult> DeleteAward(string id)
 		{
-			_awardDefinitionService.Delete(id);
+			await _awardDefinitionService.Delete(id);
 			return Ok();
 		}
 
 		[HttpGet("/Forums/AdminApi/GetAward/{id}")]
 		public async Task<ActionResult<object>> GetAward(string id)
 		{
-			var award = _awardDefinitionService.Get(id);
+			var award = await _awardDefinitionService.Get(id);
 			var conditions = await _awardDefinitionService.GetConditions(award.AwardDefinitionID);
 			var allEvents = _eventDefinitionService.GetAll();
 			var container = new {Award = award, Conditions = conditions, AllEvents = allEvents};

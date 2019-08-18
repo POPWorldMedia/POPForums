@@ -6,13 +6,13 @@ namespace PopForums.ScoringGame
 {
 	public interface IAwardDefinitionService
 	{
-		AwardDefinition Get(string awardDefinitionID);
-		List<AwardDefinition> GetByEventDefinitionID(string eventDefinitionID);
-		void Create(AwardDefinition awardDefinition);
-		void Delete(string awardDefinitionID);
+		Task<AwardDefinition> Get(string awardDefinitionID);
+		Task<List<AwardDefinition>> GetByEventDefinitionID(string eventDefinitionID);
+		Task Create(AwardDefinition awardDefinition);
+		Task Delete(string awardDefinitionID);
 		Task<List<AwardCondition>> GetConditions(string awardDefinitionID);
 		Task SaveConditions(AwardDefinition awardDefinition, List<AwardCondition> conditions);
-		List<AwardDefinition> GetAll();
+		Task<List<AwardDefinition>> GetAll();
 		Task DeleteCondition(string awardDefinitionID, string eventDefinitionID);
 		Task AddCondition(AwardCondition awardDefintion);
 	}
@@ -28,29 +28,29 @@ namespace PopForums.ScoringGame
 		private readonly IAwardDefinitionRepository _awardDefinitionRepository;
 		private readonly IAwardConditionRepository _awardConditionRepository;
 
-		public AwardDefinition Get(string awardDefinitionID)
+		public async Task<AwardDefinition> Get(string awardDefinitionID)
 		{
-			return _awardDefinitionRepository.Get(awardDefinitionID);
+			return await _awardDefinitionRepository.Get(awardDefinitionID);
 		}
 
-		public List<AwardDefinition> GetAll()
+		public async Task<List<AwardDefinition>> GetAll()
 		{
-			return _awardDefinitionRepository.GetAll();
+			return await _awardDefinitionRepository.GetAll();
 		}
 
-		public List<AwardDefinition> GetByEventDefinitionID(string eventDefinitionID)
+		public async Task<List<AwardDefinition>> GetByEventDefinitionID(string eventDefinitionID)
 		{
-			return _awardDefinitionRepository.GetByEventDefinitionID(eventDefinitionID);
+			return await _awardDefinitionRepository.GetByEventDefinitionID(eventDefinitionID);
 		}
 
-		public void Create(AwardDefinition awardDefinition)
+		public async Task Create(AwardDefinition awardDefinition)
 		{
-			_awardDefinitionRepository.Create(awardDefinition.AwardDefinitionID, awardDefinition.Title, awardDefinition.Description, awardDefinition.IsSingleTimeAward);
+			await _awardDefinitionRepository.Create(awardDefinition.AwardDefinitionID, awardDefinition.Title, awardDefinition.Description, awardDefinition.IsSingleTimeAward);
 		}
 
-		public void Delete(string awardDefinitionID)
+		public async Task Delete(string awardDefinitionID)
 		{
-			_awardDefinitionRepository.Delete(awardDefinitionID);
+			await _awardDefinitionRepository.Delete(awardDefinitionID);
 		}
 
 		public async Task<List<AwardCondition>> GetConditions(string awardDefinitionID)

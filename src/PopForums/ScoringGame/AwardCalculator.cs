@@ -57,7 +57,7 @@ namespace PopForums.ScoringGame
 				_errorLog.Log(new Exception($"Event calculation attempt on nonexistent user {userID}"), ErrorSeverity.Warning);
 				return;
 			}
-			var associatedAwards = _awardDefinitionService.GetByEventDefinitionID(eventDefinition.EventDefinitionID);
+			var associatedAwards = await _awardDefinitionService.GetByEventDefinitionID(eventDefinition.EventDefinitionID);
 			foreach (var award in associatedAwards)
 			{
 				if (award.IsSingleTimeAward)

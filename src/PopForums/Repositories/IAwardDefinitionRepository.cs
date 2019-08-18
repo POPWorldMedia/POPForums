@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.ScoringGame;
 
 namespace PopForums.Repositories
 {
 	public interface IAwardDefinitionRepository
 	{
-		AwardDefinition Get(string awardDefinitionID);
-		List<AwardDefinition> GetAll();
-		List<AwardDefinition> GetByEventDefinitionID(string eventDefinitionID);
-		void Create(string awardDefinitionID, string title, string description, bool isSingleTimeAward);
-		void Delete(string awardDefinitionID);
+		Task<AwardDefinition> Get(string awardDefinitionID);
+		Task<List<AwardDefinition>> GetAll();
+		Task<List<AwardDefinition>> GetByEventDefinitionID(string eventDefinitionID);
+		Task Create(string awardDefinitionID, string title, string description, bool isSingleTimeAward);
+		Task Delete(string awardDefinitionID);
 	}
 }
