@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -17,14 +18,14 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public ErrorLogEntry Create(DateTime timeStamp, string message, string stackTrace, string data, ErrorSeverity severity)
+		public async Task<ErrorLogEntry> Create(DateTime timeStamp, string message, string stackTrace, string data, ErrorSeverity severity)
 		{
-			var errorID = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				errorID = connection.QuerySingle<int>("INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity);SELECT CAST(SCOPE_IDENTITY() as int)", new { TimeStamp = timeStamp, Message = message, StackTrace = stackTrace, Data = data, Severity = severity }));
+			Task<int> errorID = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				errorID = connection.QuerySingleAsync<int>("INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity);SELECT CAST(SCOPE_IDENTITY() as int)", new { TimeStamp = timeStamp, Message = message, StackTrace = stackTrace, Data = data, Severity = severity }));
 			var errorLog = new ErrorLogEntry
 			               	{
-			               		ErrorID = errorID,
+			               		ErrorID = errorID.Result,
 			               		TimeStamp = timeStamp,
 			               		Message = message,
 			               		StackTrace = stackTrace,
@@ -34,15 +35,15 @@ namespace PopForums.Sql.Repositories
 			return errorLog;
 		}
 
-		public int GetErrorCount()
+		public async Task<int> GetErrorCount()
 		{
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				count = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pf_ErrorLog"));
-			return count;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				count = connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pf_ErrorLog"));
+			return await count;
 		}
 
-		public List<ErrorLogEntry> GetErrors(int startRow, int pageSize)
+		public async Task<List<ErrorLogEntry>> GetErrors(int startRow, int pageSize)
 		{
 			const string sql = @"
 DECLARE @Counter int
@@ -61,22 +62,23 @@ WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
 
 SET ROWCOUNT 0";
-			List<ErrorLogEntry> logEntries = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				logEntries = connection.Query<ErrorLogEntry>(sql, new { StartRow = startRow, PageSize = pageSize }).ToList());
+			Task<IEnumerable<ErrorLogEntry>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<ErrorLogEntry>(sql, new { StartRow = startRow, PageSize = pageSize }));
+			var logEntries = result.Result.ToList();
 			return logEntries;
 		}
 
-		public void DeleteError(int errorID)
+		public async Task DeleteError(int errorID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_ErrorLog WHERE ErrorID = @ErrorID", new { ErrorID = errorID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_ErrorLog WHERE ErrorID = @ErrorID", new { ErrorID = errorID }));
 		}
 
-		public void DeleteAllErrors()
+		public async Task DeleteAllErrors()
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("TRUNCATE TABLE pf_ErrorLog"));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("TRUNCATE TABLE pf_ErrorLog"));
 		}
 	}
 }

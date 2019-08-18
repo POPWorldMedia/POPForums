@@ -591,9 +591,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteAllErrors")]
-		public ActionResult DeleteAllErrors()
+		public async Task<ActionResult> DeleteAllErrors()
 		{
-			_errorLog.DeleteAllErrors();
+			await _errorLog.DeleteAllErrors();
 			return Ok();
 		}
 
