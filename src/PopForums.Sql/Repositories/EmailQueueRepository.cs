@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Threading.Tasks;
+using Dapper;
 using Newtonsoft.Json;
 using PopForums.Email;
 using PopForums.Repositories;
@@ -14,27 +15,27 @@ namespace PopForums.Sql.Repositories
 			_sqlObjectFactory = sqlObjectFactory;
 		}
 
-		public void Enqueue(EmailQueuePayload payload)
+		public async Task Enqueue(EmailQueuePayload payload)
 		{
 			var serializedPayload = JsonConvert.SerializeObject(payload);
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_EmailQueue (Payload) VALUES (@Payload)", new { Payload = serializedPayload }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_EmailQueue (Payload) VALUES (@Payload)", new { Payload = serializedPayload }));
 		}
 
-		public EmailQueuePayload Dequeue()
+		public async Task<EmailQueuePayload> Dequeue()
 		{
-			string serializedPayload = null;
+			Task<string> serializedPayload = null;
 			var sql = @"WITH cte AS (
 SELECT TOP(1) Payload
 FROM pf_EmailQueue WITH (ROWLOCK, READPAST)
 ORDER BY Id)
 DELETE FROM cte
 OUTPUT DELETED.Payload;";
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				serializedPayload = connection.QuerySingleOrDefault<string>(sql));
-			if (string.IsNullOrEmpty(serializedPayload))
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				serializedPayload = connection.QuerySingleOrDefaultAsync<string>(sql));
+			if (string.IsNullOrEmpty(serializedPayload.Result))
 				return null;
-			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(serializedPayload);
+			var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(serializedPayload.Result);
 			return payload;
 		}
 	}

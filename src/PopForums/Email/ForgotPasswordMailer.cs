@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
@@ -7,7 +8,7 @@ namespace PopForums.Email
 {
 	public interface IForgotPasswordMailer
 	{
-		void ComposeAndQueue(User user, string resetLink);
+		Task ComposeAndQueue(User user, string resetLink);
 	}
 
 	public class ForgotPasswordMailer : IForgotPasswordMailer
@@ -21,7 +22,7 @@ namespace PopForums.Email
 		private readonly ISettingsManager _settingsManager;
 		private readonly IQueuedEmailService _queuedEmailService;
 
-		public void ComposeAndQueue(User user, string resetLink)
+		public async Task ComposeAndQueue(User user, string resetLink)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
@@ -40,7 +41,7 @@ namespace PopForums.Email
 				FromName = settings.ForumTitle,
 				QueueTime = DateTime.UtcNow
 			};
-			_queuedEmailService.CreateAndQueueEmail(message);
+			await _queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

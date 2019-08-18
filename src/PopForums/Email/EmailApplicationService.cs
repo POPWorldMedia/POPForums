@@ -24,7 +24,9 @@ namespace PopForums.Email
 
 		protected override void ServiceAction()
 		{
+#pragma warning disable 4014
 			MailWorker.Instance.SendQueuedMessages(_settingsManager, _smtpWrapper, _queuedEmailRepository, _emailQueueRepository, ErrorLog);
+#pragma warning restore 4014
 		}
 
 		protected override int GetInterval()

@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Threading.Tasks;
+using Moq;
 using PopForums.Email;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -22,20 +23,20 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void CreateAndQueueEmailCallsRepoWithMessage()
+		public async Task CreateAndQueueEmailCallsRepoWithMessage()
 		{
 			var service = GetService();
 			var message = new QueuedEmailMessage();
 			_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).Returns(1);
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 
-			service.CreateAndQueueEmail(message);
+			await service.CreateAndQueueEmail(message);
 
 			_queuedEmailMessageRepo.Verify(x => x.CreateMessage(message), Times.Once);
 		}
 
 		[Fact]
-		public void CreateAndQueueEmailCallsEmailQueueWithCorrectPayload()
+		public async Task CreateAndQueueEmailCallsEmailQueueWithCorrectPayload()
 		{
 			var service = GetService();
 			var messageID = 123;
@@ -46,7 +47,7 @@ namespace PopForums.Test.Services
 			var payload = new EmailQueuePayload();
 			_emailQueueRepo.Setup(x => x.Enqueue(It.IsAny<EmailQueuePayload>())).Callback<EmailQueuePayload>(p => payload = p);
 
-			service.CreateAndQueueEmail(message);
+			await service.CreateAndQueueEmail(message);
 
 			Assert.Equal(messageID, payload.MessageID);
 			Assert.Equal(EmailQueuePayloadType.FullMessage, payload.EmailQueuePayloadType);

@@ -1,4 +1,5 @@
-﻿using PopForums.Email;
+﻿using System.Threading.Tasks;
+using PopForums.Email;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -6,7 +7,7 @@ namespace PopForums.Services
 {
 	public interface IQueuedEmailService
 	{
-		void CreateAndQueueEmail(QueuedEmailMessage queuedEmailMessage);
+		Task CreateAndQueueEmail(QueuedEmailMessage queuedEmailMessage);
 	}
 
 	public class QueuedEmailService : IQueuedEmailService
@@ -22,12 +23,12 @@ namespace PopForums.Services
 			_tenantService = tenantService;
 		}
 
-		public void CreateAndQueueEmail(QueuedEmailMessage queuedEmailMessage)
+		public async Task CreateAndQueueEmail(QueuedEmailMessage queuedEmailMessage)
 		{
 			var id = _queuedEmailMessageRepository.CreateMessage(queuedEmailMessage);
 			var tenantID = _tenantService.GetTenant();
 			var payload = new EmailQueuePayload { MessageID = id, EmailQueuePayloadType = EmailQueuePayloadType.FullMessage, TenantID = tenantID };
-			_emailQueueRepository.Enqueue(payload);
+			await _emailQueueRepository.Enqueue(payload);
 		}
 	}
 }

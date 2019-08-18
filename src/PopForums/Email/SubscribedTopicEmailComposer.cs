@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
-using PopForums.Repositories;
 using PopForums.Services;
 
 namespace PopForums.Email
 {
 	public interface ISubscribedTopicEmailComposer
 	{
-		void ComposeAndQueue(Topic topic, User user, string topicLink, string unsubscribeLink);
+		Task ComposeAndQueue(Topic topic, User user, string topicLink, string unsubscribeLink);
 	}
 
 	public class SubscribedTopicEmailComposer : ISubscribedTopicEmailComposer
@@ -24,10 +24,10 @@ namespace PopForums.Email
 		private readonly IQueuedEmailService _queuedEmailService;
 
 
-		public void ComposeAndQueue(Topic topic, User user, string topicLink, string unsubscribeLink)
+		public async Task ComposeAndQueue(Topic topic, User user, string topicLink, string unsubscribeLink)
 		{
 			var settings = _settingsManager.Current;
-			var body = String.Format(Resources.SubscribedEmailBody, settings.ForumTitle, topic.Title, topicLink, unsubscribeLink, settings.MailSignature, Environment.NewLine);
+			var body = string.Format(Resources.SubscribedEmailBody, settings.ForumTitle, topic.Title, topicLink, unsubscribeLink, settings.MailSignature, Environment.NewLine);
 			var message = new QueuedEmailMessage
 			              	{
 			              		Body = body, 
@@ -38,7 +38,7 @@ namespace PopForums.Email
 								FromName = settings.ForumTitle, 
 								QueueTime = DateTime.UtcNow
 			              	};
-			_queuedEmailService.CreateAndQueueEmail(message);
+			await _queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

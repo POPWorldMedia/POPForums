@@ -48,7 +48,7 @@ namespace PopForums.Services
 		List<User> GetUsersOnline();
 		Task<bool> IsIPBanned(string ip);
 		Task<bool> IsEmailBanned(string email);
-		void GeneratePasswordResetEmail(User user, string resetLink);
+		Task GeneratePasswordResetEmail(User user, string resetLink);
 		void ResetPassword(User user, string newPassword, string ip);
 		List<User> GetUsersFromIDs(IList<int> ids);
 		int GetTotalUsers();
@@ -508,7 +508,7 @@ namespace PopForums.Services
 			return _userRepository.GetTotalUsers();
 		}
 
-		public void GeneratePasswordResetEmail(User user, string resetLink)
+		public async Task GeneratePasswordResetEmail(User user, string resetLink)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
@@ -516,7 +516,7 @@ namespace PopForums.Services
 			UpdateAuthorizationKey(user, newAuth);
 			user.AuthorizationKey = newAuth;
 			var link = resetLink + "/" + newAuth;
-			_forgotPasswordMailer.ComposeAndQueue(user, link);
+			await _forgotPasswordMailer.ComposeAndQueue(user, link);
 		}
 
 		public void ResetPassword(User user, string newPassword, string ip)

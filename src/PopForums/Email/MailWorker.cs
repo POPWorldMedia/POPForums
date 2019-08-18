@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,16 +10,16 @@ namespace PopForums.Email
 {
 	public class MailWorker
 	{
-		private static readonly object _syncRoot = new Object();
+		private static readonly object SyncRoot = new object();
 
 		private MailWorker()
 		{
 			// only allow Instance to create a new instance
 		}
 
-		public void SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
+		public async Task SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
 		{
-			if (!Monitor.TryEnter(_syncRoot))
+			if (!Monitor.TryEnter(SyncRoot))
 			{
 				return;
 			}
@@ -29,7 +28,7 @@ namespace PopForums.Email
 				var messageGroup = new List<QueuedEmailMessage>();
 				for (var i = 1; i <= settingsManager.Current.MailerQuantity; i++)
 				{
-					var payload = emailQueueRepository.Dequeue();
+					var payload = await emailQueueRepository.Dequeue();
 					if (payload == null)
 						break;
 					if (payload.EmailQueuePayloadType != EmailQueuePayloadType.FullMessage)
@@ -51,7 +50,7 @@ namespace PopForums.Email
 						if (message == null)
 							errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
 						else
-							errorLog.Log(exc, ErrorSeverity.Email, String.Format("MessageID: {0}, To: <{1}> {2}, Subject: {3}", message.MessageID, message.ToEmail, message.ToName, message.Subject));
+							errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
 					}
 				});
 			}
@@ -61,7 +60,7 @@ namespace PopForums.Email
 			}
 			finally
 			{
-				Monitor.Exit(_syncRoot);
+				Monitor.Exit(SyncRoot);
 			}
 		}
 

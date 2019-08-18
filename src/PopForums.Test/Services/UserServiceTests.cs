@@ -1145,31 +1145,31 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void ForgotPasswordCallsMailerForGoodUser()
+		public async Task ForgotPasswordCallsMailerForGoodUser()
 		{
 			var user = new User { UserID = 2, Email = "a@b.com" };
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).Returns(user);
-			service.GeneratePasswordResetEmail(user, "http");
+			await service.GeneratePasswordResetEmail(user, "http");
 			_mockForgotMailer.Verify(f => f.ComposeAndQueue(user, It.IsAny<string>()), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void ForgotPasswordGeneratesNewAuthKey()
+		public async Task ForgotPasswordGeneratesNewAuthKey()
 		{
 			var user = new User { UserID = 2, Email = "a@b.com" };
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).Returns(user);
-			service.GeneratePasswordResetEmail(user, "http");
+			await service.GeneratePasswordResetEmail(user, "http");
 			_mockUserRepo.Verify(u => u.UpdateAuthorizationKey(user, It.IsAny<Guid>()), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void ForgotPasswordThrowsForNoUser()
+		public async Task ForgotPasswordThrowsForNoUser()
 		{
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(u => u.GetUserByEmail(It.IsAny<string>())).Returns((User)null);
-			Assert.Throws<ArgumentNullException>(() => service.GeneratePasswordResetEmail(null, "http"));
+			await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.GeneratePasswordResetEmail(null, "http"));
 			_mockForgotMailer.Verify(f => f.ComposeAndQueue(It.IsAny<User>(), It.IsAny<string>()), Times.Exactly(0));
 		}
 	}

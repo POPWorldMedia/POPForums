@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Models;
@@ -57,14 +58,14 @@ namespace PopForums.Services
 
 		public void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
 		{
-			new Thread(() => {
+			new Thread(async () => {
 				var users = _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
 				foreach (var user in users)
 				{
 					if (user.UserID != postingUser.UserID)
 					{
 						var unsubScribeLink = unsubscribeLinkGenerator(user, topic);
-						_subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
+						await _subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
 					}
 				}
 				_subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);

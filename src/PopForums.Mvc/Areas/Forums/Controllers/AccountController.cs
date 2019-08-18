@@ -211,7 +211,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult Forgot(string email)
+		public async Task<ViewResult> Forgot(string email)
 		{
 			var user = _userService.GetUserByEmail(email);
 			if (user == null)
@@ -222,7 +222,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			{
 				ViewBag.Result = Resources.ForgotInstructionsSent;
 				var resetLink = this.FullUrlHelper("ResetPassword", "Account");
-				_userService.GeneratePasswordResetEmail(user, resetLink);
+				await _userService.GeneratePasswordResetEmail(user, resetLink);
 			}
 			return View();
 		}
