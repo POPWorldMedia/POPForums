@@ -3,6 +3,7 @@ using PopForums.Repositories;
 using PopForums.ScoringGame;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace PopForums.Test.ScoringGame
@@ -20,30 +21,30 @@ namespace PopForums.Test.ScoringGame
 		private Mock<IAwardConditionRepository> _awardConditionRepo;
 
 		[Fact]
-		public void GetReturnsFromRepo()
+		public async Task GetReturnsFromRepo()
 		{
 			var service = GetService();
 			var def = new EventDefinition {EventDefinitionID = "whatevs", PointValue = 2, Description = "stuff"};
-			_eventDefRepo.Setup(x => x.Get(def.EventDefinitionID)).Returns(def);
-			var result = service.GetEventDefinition(def.EventDefinitionID);
+			_eventDefRepo.Setup(x => x.Get(def.EventDefinitionID)).ReturnsAsync(def);
+			var result = await service.GetEventDefinition(def.EventDefinitionID);
 			Assert.Same(def, result);
 		}
 
 		[Fact]
-		public void GetStaticPostVoteReturnsStaticObject()
+		public async Task GetStaticPostVoteReturnsStaticObject()
 		{
 			var service = GetService();
-			var result = service.GetEventDefinition(EventDefinitionService.StaticEventIDs.PostVote);
+			var result = await service.GetEventDefinition(EventDefinitionService.StaticEventIDs.PostVote);
 			Assert.Same(EventDefinitionService.StaticEvents[EventDefinitionService.StaticEventIDs.PostVote], result);
 		}
 
 		[Fact]
-		public void GetAllMergesStaticWithRepo()
+		public async Task GetAllMergesStaticWithRepo()
 		{
 			var service = GetService();
 			var list = new List<EventDefinition> {new EventDefinition {EventDefinitionID = "aaa"}, new EventDefinition {EventDefinitionID = "zzz"}};
-			_eventDefRepo.Setup(x => x.GetAll()).Returns(list);
-			var result = service.GetAll();
+			_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
+			var result = await service.GetAll();
 			Assert.Equal(6, result.Count);
 			Assert.True(result.Count(x => x.EventDefinitionID == "aaa") == 1);
 			Assert.True(result.Where(x => x.EventDefinitionID == "zzz").Count() == 1);
@@ -53,12 +54,12 @@ namespace PopForums.Test.ScoringGame
 		}
 
 		[Fact]
-		public void GetAllMergesAndOrders()
+		public async Task GetAllMergesAndOrders()
 		{
 			var service = GetService();
 			var list = new List<EventDefinition> { new EventDefinition { EventDefinitionID = "aaa" }, new EventDefinition { EventDefinitionID = "zzz" } };
-			_eventDefRepo.Setup(x => x.GetAll()).Returns(list);
-			var result = service.GetAll();
+			_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
+			var result = await service.GetAll();
 			Assert.Equal(6, result.Count);
 			Assert.Equal("aaa", result[0].EventDefinitionID);
 			Assert.Equal(EventDefinitionService.StaticEventIDs.NewPost, result[1].EventDefinitionID);
@@ -68,20 +69,20 @@ namespace PopForums.Test.ScoringGame
 		}
 
 		[Fact]
-		public void CreatePassesToRepo()
+		public async Task CreatePassesToRepo()
 		{
 			var service = GetService();
 			var eventDef = new EventDefinition();
-			service.Create(eventDef);
+			await service.Create(eventDef);
 			_eventDefRepo.Verify(x => x.Create(eventDef), Times.Once());
 		}
 
 		[Fact]
-		public void DeleteCallsEventDefRepoAndAwardConditionRepo()
+		public async Task DeleteCallsEventDefRepoAndAwardConditionRepo()
 		{
 			var service = GetService();
 			const string eventDefID = "ohnoes!";
-			service.Delete(eventDefID);
+			await service.Delete(eventDefID);
 			_eventDefRepo.Verify(x => x.Delete(eventDefID), Times.Once());
 			_awardConditionRepo.Verify(x => x.DeleteConditionsByEventDefinitionID(eventDefID), Times.Once());
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.Configuration;
 using PopForums.Messaging;
@@ -47,7 +48,7 @@ namespace PopForums.Test.Services
 		private Mock<ISettingsManager> _settingsManager;
 		private Mock<ITopicViewCountService> _topicViewCountService;
 
-		private User DoUpNewTopic()
+		private async Task<User> DoUpNewTopic()
 		{
 			var forum = new Forum { ForumID = 1 };
 			var user = GetUser();
@@ -64,7 +65,7 @@ namespace PopForums.Test.Services
 			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 			_topicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
 			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanModerate = false, UserCanPost = true, UserCanView = true});
-			service.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await service.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 			return user;
 		}
 		
@@ -78,17 +79,17 @@ namespace PopForums.Test.Services
 		public class PostNewTopicTests : PostMasterServiceTests
 		{
 			[Fact]
-			public void NoUserReturnsFalseIsSuccess()
+			public async Task NoUserReturnsFalseIsSuccess()
 			{
 				var service = GetService();
 
-				var result = service.PostNewTopic(null, new NewPost(), "", "", x => "", x => "");
+				var result = await service.PostNewTopic(null, new NewPost(), "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 			}
 
 			[Fact]
-			public void UserWithoutPostPermissionReturnsFalseIsSuccess()
+			public async Task UserWithoutPostPermissionReturnsFalseIsSuccess()
 			{
 				var service = GetService();
 				var forum = new Forum{ForumID = 1};
@@ -96,13 +97,13 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true});
 
-				var result = service.PostNewTopic(user, new NewPost {ItemID = forum.ForumID}, "", "", x => "", x => "");
+				var result = await service.PostNewTopic(user, new NewPost {ItemID = forum.ForumID}, "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 			}
 
 			[Fact]
-			public void UserWithoutViewPermissionReturnsFalseIsSuccess()
+			public async Task UserWithoutViewPermissionReturnsFalseIsSuccess()
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
@@ -110,22 +111,22 @@ namespace PopForums.Test.Services
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false });
 
-				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID }, "", "", x => "", x => "");
+				var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID }, "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 			}
 
 			[Fact]
-			public void NoForumMatchThrows()
+			public async Task NoForumMatchThrows()
 			{
 				var service = GetService();
 				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
 
-				Assert.Throws<Exception>(() => service.PostNewTopic(GetUser(), new NewPost {ItemID = 1}, "", "", x => "", x => ""));
+				await Assert.ThrowsAsync<Exception>(async () => await service.PostNewTopic(GetUser(), new NewPost {ItemID = 1}, "", "", x => "", x => ""));
 			}
 
 			[Fact]
-			public void CallsPostRepoCreateWithPlainText()
+			public async Task CallsPostRepoCreateWithPlainText()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -142,14 +143,14 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
 
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 
 				_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "bb text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
 			[Fact]
-			public void CallsPostRepoCreateWithHtmlText()
+			public async Task CallsPostRepoCreateWithHtmlText()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -166,14 +167,14 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
 
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 
 				_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
 			[Fact]
-			public void CallsPostRepoWithTopicID()
+			public async Task CallsPostRepoWithTopicID()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -191,13 +192,13 @@ namespace PopForums.Test.Services
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
 				_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(543);
 
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 
 				_postRepo.Verify(x => x.Create(543, It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
 			}
 
 			[Fact]
-			public void DupeOfLastPostReturnsFalseIsSuccess()
+			public async Task DupeOfLastPostReturnsFalseIsSuccess()
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
@@ -211,14 +212,14 @@ namespace PopForums.Test.Services
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 
-				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = lastPost }, "", "", x => "", x => "");
+				var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = lastPost }, "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
 			}
 
 			[Fact]
-			public void MinimumTimeBetweenPostsNotMetReturnsFalseIsSuccess()
+			public async Task MinimumTimeBetweenPostsNotMetReturnsFalseIsSuccess()
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
@@ -232,14 +233,14 @@ namespace PopForums.Test.Services
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 
-				var result = service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = "oiheorihgeorihg" }, "", "", x => "", x => "");
+				var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = "oiheorihgeorihg" }, "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
 			}
 
 			[Fact]
-			public void CallsTopicRepoCreate()
+			public async Task CallsTopicRepoCreate()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -254,12 +255,12 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
 			[Fact]
-			public void TitleIsParsed()
+			public async Task TitleIsParsed()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -275,64 +276,64 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
 
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 
 				_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
 			}
 
 			[Fact]
-			public void CallsForumTopicPostIncrement()
+			public async Task CallsForumTopicPostIncrement()
 			{
-				DoUpNewTopic();
+				await DoUpNewTopic();
 				_forumRepo.Verify(f => f.IncrementPostAndTopicCount(1), Times.Once());
 			}
 
 			[Fact]
-			public void CallsForumUpdateLastUser()
+			public async Task CallsForumUpdateLastUser()
 			{
-				var user = DoUpNewTopic();
+				var user = await DoUpNewTopic();
 				_forumRepo.Verify(f => f.UpdateLastTimeAndUser(1, It.IsAny<DateTime>(), user.Name), Times.Once());
 			}
 
 			[Fact]
-			public void CallsProfileSetLastPost()
+			public async Task CallsProfileSetLastPost()
 			{
-				var user = DoUpNewTopic();
+				var user = await DoUpNewTopic();
 				_profileRepo.Verify(p => p.SetLastPostID(user.UserID, 69), Times.Once());
 			}
 
 			[Fact]
-			public void PublishesNewTopicEvent()
+			public async Task PublishesNewTopicEvent()
 			{
-				var user = DoUpNewTopic();
+				var user = await DoUpNewTopic();
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewTopic, false), Times.Once());
 			}
 
 			[Fact]
-			public void PublishesNewPostEvent()
+			public async Task PublishesNewPostEvent()
 			{
-				var user = DoUpNewTopic();
+				var user = await DoUpNewTopic();
 				_eventPublisher.Verify(x => x.ProcessEvent(String.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
 			}
 
 			[Fact]
-			public void CallsBroker()
+			public async Task CallsBroker()
 			{
-				DoUpNewTopic();
+				await DoUpNewTopic();
 				_broker.Verify(x => x.NotifyForumUpdate(It.IsAny<Forum>()), Times.Once());
 				_broker.Verify(x => x.NotifyTopicUpdate(It.IsAny<Topic>(), It.IsAny<Forum>(), It.IsAny<string>()), Times.Once());
 			}
 
 			[Fact]
-			public void QueuesTopicForIndexing()
+			public async Task QueuesTopicForIndexing()
 			{
-				DoUpNewTopic();
+				await DoUpNewTopic();
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 			}
 
 			[Fact]
-			public void DoesNotPublishToFeedIfForumHasViewRestrictions()
+			public async Task DoesNotPublishToFeedIfForumHasViewRestrictions()
 			{
 				var forum = new Forum { ForumID = 1 };
 				var user = GetUser();
@@ -348,12 +349,12 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-				topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.NewTopic, true), Times.Once());
 			}
 
 			[Fact]
-			public void ReturnsTopic()
+			public async Task ReturnsTopic()
 			{
 				var forum = new Forum {ForumID = 1};
 				var user = GetUser();
@@ -369,7 +370,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).Returns(2);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-				var result = topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+				var result = await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 				Assert.Equal(2, result.Data.TopicID);
 				Assert.Equal(forum.ForumID, result.Data.ForumID);
 				Assert.Equal("parsed title", result.Data.Title);

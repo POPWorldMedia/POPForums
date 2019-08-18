@@ -100,7 +100,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult PostTopic(NewPost newPost)
+		public async Task<IActionResult> PostTopic(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -110,7 +110,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			string RedirectLinkGenerator(Topic t) => Url.RouteUrl(new {controller = "Forum", action = "Topic", id = t.UrlName});
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
-			var result = _postMasterService.PostNewTopic(user, newPost, ip, userProfileUrl, TopicLinkGenerator, RedirectLinkGenerator);
+			var result = await _postMasterService.PostNewTopic(user, newPost, ip, userProfileUrl, TopicLinkGenerator, RedirectLinkGenerator);
 
 			if (result.IsSuccessful)
 				return Json(new BasicJsonMessage {Result = true, Redirect = result.Redirect});

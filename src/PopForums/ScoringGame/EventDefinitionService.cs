@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Repositories;
 
 namespace PopForums.ScoringGame
 {
 	public interface IEventDefinitionService
 	{
-		EventDefinition GetEventDefinition(string eventDefinitionID);
-		List<EventDefinition> GetAll();
-		void Create(EventDefinition eventDefinition);
-		void Delete(string eventDefinitionID);
+		Task<EventDefinition> GetEventDefinition(string eventDefinitionID);
+		Task<List<EventDefinition>> GetAll();
+		Task Create(EventDefinition eventDefinition);
+		Task Delete(string eventDefinitionID);
 	}
 
 	public class EventDefinitionService : IEventDefinitionService
@@ -39,28 +40,28 @@ namespace PopForums.ScoringGame
 		private readonly IEventDefinitionRepository _eventDefinitionRepository;
 		private readonly IAwardConditionRepository _awardConditionRepository;
 
-		public EventDefinition GetEventDefinition(string eventDefinitionID)
+		public async Task<EventDefinition> GetEventDefinition(string eventDefinitionID)
 		{
 			if (StaticEvents.ContainsKey(eventDefinitionID))
 				return StaticEvents[eventDefinitionID];
-			return _eventDefinitionRepository.Get(eventDefinitionID);
+			return await _eventDefinitionRepository.Get(eventDefinitionID);
 		}
 
-		public List<EventDefinition> GetAll()
+		public async Task<List<EventDefinition>> GetAll()
 		{
 			var merged = StaticEvents.Select(x => x.Value).ToList();
-			merged.AddRange(_eventDefinitionRepository.GetAll());
+			merged.AddRange(await _eventDefinitionRepository.GetAll());
 			return merged.OrderBy(x => x.EventDefinitionID).ToList();
 		}
 
-		public void Create(EventDefinition eventDefinition)
+		public async Task Create(EventDefinition eventDefinition)
 		{
-			_eventDefinitionRepository.Create(eventDefinition);
+			await _eventDefinitionRepository.Create(eventDefinition);
 		}
 
-		public void Delete(string eventDefinitionID)
+		public async Task Delete(string eventDefinitionID)
 		{
-			_awardConditionRepository.DeleteConditionsByEventDefinitionID(eventDefinitionID);
+			await _awardConditionRepository.DeleteConditionsByEventDefinitionID(eventDefinitionID);
 			_eventDefinitionRepository.Delete(eventDefinitionID);
 		}
 	}

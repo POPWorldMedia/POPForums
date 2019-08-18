@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using PopForums.Feeds;
 using PopForums.Models;
@@ -28,88 +29,88 @@ namespace PopForums.Test.ScoringGame
 		private Mock<IProfileService> _profileService;
 
 		[Fact]
-		public void ProcessEventPublishesToLedger()
+		public async Task ProcessEventPublishesToLedger()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition {EventDefinitionID = "blah", PointValue = 42};
 			const string message = "msg";
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
 			var entry = new PointLedgerEntry();
 			_pointLedgerRepo.Setup(x => x.RecordEntry(It.IsAny<PointLedgerEntry>())).Callback<PointLedgerEntry>(x => entry = x);
-			publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
+			await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 			Assert.Equal(user.UserID, entry.UserID);
 			Assert.Equal(eventDef.EventDefinitionID, entry.EventDefinitionID);
 			Assert.Equal(eventDef.PointValue, entry.Points);
 		}
 
 		[Fact]
-		public void ProcessEventPublishesToFeedService()
+		public async Task ProcessEventPublishesToFeedService()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
 			const string message = "msg";
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 			_feedService.Verify(x => x.PublishToFeed(user, message, eventDef.PointValue, It.IsAny<DateTime>()), Times.Once());
 		}
 
 		[Fact]
-		public void ProcessEventPublishesToFeedServiceForActivity()
+		public async Task ProcessEventPublishesToFeedServiceForActivity()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
 			const string message = "msg";
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 			_feedService.Verify(x => x.PublishToActivityFeed(message), Times.Once());
 		}
 
 		[Fact]
-		public void ProcessEventDoesNotPublishToFeedServiceForActivityWhenEventDefSaysNo()
+		public async Task ProcessEventDoesNotPublishToFeedServiceForActivityWhenEventDefSaysNo()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
 			const string message = "msg";
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 			_feedService.Verify(x => x.PublishToActivityFeed(message), Times.Never());
 		}
 
 		[Fact]
-		public void ProcessEventDoesNotPublishToFeedServiceWhenEventDefSaysNo()
+		public async Task ProcessEventDoesNotPublishToFeedServiceWhenEventDefSaysNo()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
 			const string message = "msg";
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 			_feedService.Verify(x => x.PublishToFeed(user, message, eventDef.PointValue, It.IsAny<DateTime>()), Times.Never());
 		}
 
 		[Fact]
-		public void ProcessEventCallsCalculator()
+		public async Task ProcessEventCallsCalculator()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
 			_awardCalc.Verify(x => x.QueueCalculation(user, eventDef), Times.Once());
 		}
 
 		[Fact]
-		public void ProcessEventUpdatesProfilePointTotal()
+		public async Task ProcessEventUpdatesProfilePointTotal()
 		{
 			var user = new User { UserID = 123 };
 			var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 			var publisher = GetPublisher();
-			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).Returns(eventDef);
-			publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
+			_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+			await publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
 			_profileService.Verify(x => x.UpdatePointTotal(user), Times.Once());
 		}
 

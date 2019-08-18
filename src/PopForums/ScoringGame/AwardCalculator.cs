@@ -45,7 +45,7 @@ namespace PopForums.ScoringGame
 
 		public async Task ProcessCalculation(string eventDefinitionID, int userID)
 		{
-			var eventDefinition = _eventDefinitionService.GetEventDefinition(eventDefinitionID);
+			var eventDefinition = await _eventDefinitionService.GetEventDefinition(eventDefinitionID);
 			var user = _userRepository.GetUser(userID);
 			if (eventDefinition == null)
 			{

@@ -429,25 +429,25 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** event definitions
 
 		[HttpGet("/Forums/AdminApi/GetAllEventDefinitions")]
-		public ActionResult<object> GetAllEventDefinitions()
+		public async Task<ActionResult<object>> GetAllEventDefinitions()
 		{
-			var events = _eventDefinitionService.GetAll();
+			var events = await _eventDefinitionService.GetAll();
 			var staticIDs = EventDefinitionService.StaticEvents.Select(x => x.Key).ToArray();
 			var container = new {AllEvents = events, StaticIDs = staticIDs};
 			return container;
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateEvent")]
-		public ActionResult CreateEvent([FromBody]EventDefinition newEvent)
+		public async Task<ActionResult> CreateEvent([FromBody]EventDefinition newEvent)
 		{
-			_eventDefinitionService.Create(newEvent);
+			await _eventDefinitionService.Create(newEvent);
 			return Ok();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteEvent/{id}")]
-		public ActionResult DeleteEvent(string id)
+		public async Task<ActionResult> DeleteEvent(string id)
 		{
-			_eventDefinitionService.Delete(id);
+			await _eventDefinitionService.Delete(id);
 			return Ok();
 		}
 
@@ -479,7 +479,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var award = await _awardDefinitionService.Get(id);
 			var conditions = await _awardDefinitionService.GetConditions(award.AwardDefinitionID);
-			var allEvents = _eventDefinitionService.GetAll();
+			var allEvents = await _eventDefinitionService.GetAll();
 			var container = new {Award = award, Conditions = conditions, AllEvents = allEvents};
 			return container;
 		}
@@ -509,9 +509,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpGet("/Forums/AdminApi/GetAllEvents")]
-		public ActionResult<IEnumerable<EventDefinition>> GetAllEvents()
+		public async Task<ActionResult<IEnumerable<EventDefinition>>> GetAllEvents()
 		{
-			var events = _eventDefinitionService.GetAll();
+			var events = await _eventDefinitionService.GetAll();
 			return events;
 		}
 
@@ -530,7 +530,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateExistingManualEvent")]
-		public ActionResult CreateExistingManualEvent([FromBody] ManualEvent manualEvent)
+		public async Task<ActionResult> CreateExistingManualEvent([FromBody] ManualEvent manualEvent)
 		{
 			if (string.IsNullOrEmpty(manualEvent.EventDefinitionID))
 				return BadRequest("Must specify an EventDefinitionID.");
@@ -539,7 +539,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
 			if (manualEvent.Points.HasValue)
 				return BadRequest("Point value can't be specified.");
-			_eventPublisher.ProcessEvent(manualEvent.Message, user, manualEvent.EventDefinitionID, false);
+			await _eventPublisher.ProcessEvent(manualEvent.Message, user, manualEvent.EventDefinitionID, false);
 			return Ok();
 		}
 

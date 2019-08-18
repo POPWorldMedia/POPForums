@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.ScoringGame;
 
 namespace PopForums.Repositories
 {
 	public interface IEventDefinitionRepository
 	{
-		EventDefinition Get(string eventDefinitionID);
-		List<EventDefinition> GetAll();
-		void Create(EventDefinition eventDefinition);
+		Task<EventDefinition> Get(string eventDefinitionID);
+		Task<List<EventDefinition>> GetAll();
+		Task Create(EventDefinition eventDefinition);
 		void Delete(string eventDefinitionID);
 	}
 }
