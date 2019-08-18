@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Repositories;
 
 namespace PopForums.Services
 {
 	public interface IBanService
 	{
-		void BanIP(string ip);
-		void RemoveIPBan(string ip);
-		List<string> GetIPBans();
-		void BanEmail(string email);
-		void RemoveEmailBan(string email);
-		List<string> GetEmailBans();
+		Task BanIP(string ip);
+		Task RemoveIPBan(string ip);
+		Task<List<string>> GetIPBans();
+		Task BanEmail(string email);
+		Task RemoveEmailBan(string email);
+		Task<List<string>> GetEmailBans();
 	}
 
 	public class BanService : IBanService
@@ -22,34 +23,34 @@ namespace PopForums.Services
 
 		private readonly IBanRepository _banRepository;
 
-		public void BanIP(string ip)
+		public async Task BanIP(string ip)
 		{
-			_banRepository.BanIP(ip);
+			await _banRepository.BanIP(ip);
 		}
 
-		public void RemoveIPBan(string ip)
+		public async Task RemoveIPBan(string ip)
 		{
-			_banRepository.RemoveIPBan(ip);
+			await _banRepository.RemoveIPBan(ip);
 		}
 
-		public List<string> GetIPBans()
+		public async Task<List<string>> GetIPBans()
 		{
-			return _banRepository.GetIPBans();
+			return await _banRepository.GetIPBans();
 		}
 
-		public void BanEmail(string email)
+		public async Task BanEmail(string email)
 		{
-			_banRepository.BanEmail(email);
+			await _banRepository.BanEmail(email);
 		}
 
-		public void RemoveEmailBan(string email)
+		public async Task RemoveEmailBan(string email)
 		{
-			_banRepository.RemoveEmailBan(email);
+			await _banRepository.RemoveEmailBan(email);
 		}
 
-		public List<string> GetEmailBans()
+		public async Task<List<string>> GetEmailBans()
 		{
-			return _banRepository.GetEmailBans();
+			return await _banRepository.GetEmailBans();
 		}
 	}
 }

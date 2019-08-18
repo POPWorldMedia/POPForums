@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
@@ -37,14 +36,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		[PopForumsAuthorizationIgnore]
 		[HttpPost]
-		public ActionResult Index(SetupVariables setupVariables)
+		public async Task<ActionResult> Index(SetupVariables setupVariables)
 		{
 			if (_setupService.IsDatabaseSetup())
 				return StatusCode(403);
-			Exception exc;
-			var user = _setupService.SetupDatabase(setupVariables, out exc);
-			if (exc != null)
-				return View("Exception", exc);
+			var result = await _setupService.SetupDatabase(setupVariables);
+			if (result.Item2 != null)
+				return View("Exception", result.Item2);
 			// can't login here because all of the normal app startup was skipped
 			//await AuthorizationController.PerformSignInAsync(true, user, HttpContext);
 			return View("Success");

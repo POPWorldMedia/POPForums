@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
@@ -311,7 +312,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void CreateUser()
+		public async Task CreateUser()
 		{
 			const string name = "jeff";
 			const string nameCensor = "jeffcensor";
@@ -322,7 +323,7 @@ namespace PopForums.Test.Services
 			var dummyUser = GetDummyUser(nameCensor, email);
 			_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(dummyUser);
 			_mockTextParser.Setup(t => t.Censor(name)).Returns(nameCensor);
-			var user = userService.CreateUser(name, email, password, true, ip);
+			var user = await userService.CreateUser(name, email, password, true, ip);
 			Assert.Equal(dummyUser.Name, user.Name);
 			Assert.Equal(dummyUser.Email, user.Email);
 			_mockTextParser.Verify(t => t.Censor(name), Times.Once());
@@ -332,7 +333,7 @@ namespace PopForums.Test.Services
 
 
 		[Fact]
-		public void CreateUserFromSignup()
+		public async Task CreateUserFromSignup()
 		{
 			const string name = "jeff";
 			const string nameCensor = "jeffcensor";
@@ -346,21 +347,21 @@ namespace PopForums.Test.Services
 			var settings = new Settings();
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
 			var signUpdata = new SignupData {Email = email, Name = name, Password = password};
-			var user = userManager.CreateUser(signUpdata, ip);
+			var user = await userManager.CreateUser(signUpdata, ip);
 			_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
 		}
 
 		[Fact]
-		public void CreateInvalidEmail()
+		public async Task CreateInvalidEmail()
 		{
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-			Assert.Throws<Exception>(() => userService.CreateUser("", "a b@oihfwe", "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("", "a b@oihfwe", "", true, ""));
 		}
 
 		[Fact]
-		public void CreateUsedName()
+		public async Task CreateUsedName()
 		{
 			const string usedName = "jeff";
 			const string email = "a@b.com";
@@ -368,52 +369,52 @@ namespace PopForums.Test.Services
 			_mockTextParser.Setup(t => t.Censor("jeff")).Returns("jeff");
 			_mockTextParser.Setup(t => t.Censor("anynamejeff")).Returns("anynamejeff");
 			_mockUserRepo.Setup(r => r.GetUserByName(It.IsRegex("^" + usedName + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser(usedName, email));
-			Assert.Throws<Exception>(() => userService.CreateUser(usedName, email, "", true, ""));
-			Assert.Throws<Exception>(() => userService.CreateUser(usedName.ToUpper(), email, "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser(usedName, email, "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser(usedName.ToUpper(), email, "", true, ""));
 		}
 
 		[Fact]
-		public void CreateNameNull()
+		public async Task CreateNameNull()
 		{
 			var userManager = GetMockedUserService();
-			Assert.Throws<Exception>(() => userManager.CreateUser(null, "a@b.com", "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userManager.CreateUser(null, "a@b.com", "", true, ""));
 		}
 
 		[Fact]
-		public void CreateNameEmpty()
+		public async Task CreateNameEmpty()
 		{
 			var userManager = GetMockedUserService();
-			Assert.Throws<Exception>(() => userManager.CreateUser(String.Empty, "a@b.com", "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userManager.CreateUser(String.Empty, "a@b.com", "", true, ""));
 		}
 
 		[Fact]
-		public void CreateUsedEmail()
+		public async Task CreateUsedEmail()
 		{
 			const string usedEmail = "a@b.com";
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
 			_mockUserRepo.Setup(r => r.GetUserByEmail(It.IsRegex("^" + usedEmail + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser("jeff", usedEmail));
-			Assert.Throws<Exception>(() => userService.CreateUser("", usedEmail, "", true, ""));
+			await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("", usedEmail, "", true, ""));
 		}
 
 		[Fact]
-		public void CreateEmailBanned()
+		public async Task CreateEmailBanned()
 		{
 			const string bannedEmail = "a@b.com";
 			var userService = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-			_mockBanRepo.Setup(b => b.EmailIsBanned(bannedEmail)).Returns(true);
-			Assert.Throws<Exception>(() => userService.CreateUser("name", bannedEmail, "", true, ""));
+			_mockBanRepo.Setup(b => b.EmailIsBanned(bannedEmail)).ReturnsAsync(true);
+			await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("name", bannedEmail, "", true, ""));
 		}
 
 		[Fact]
-		public void CreateIPBanned()
+		public async Task CreateIPBanned()
 		{
 			const string bannedIP = "1.2.3.4";
 			var userManager = GetMockedUserService();
 			_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-			_mockBanRepo.Setup(b => b.IPIsBanned(bannedIP)).Returns(true);
-			Assert.Throws<Exception>(() => userManager.CreateUser("", "a@b.com", "", true, bannedIP));
+			_mockBanRepo.Setup(b => b.IPIsBanned(bannedIP)).ReturnsAsync(true);
+			await Assert.ThrowsAsync<Exception>(async () => await userManager.CreateUser("", "a@b.com", "", true, bannedIP));
 		}
 
 		[Fact]

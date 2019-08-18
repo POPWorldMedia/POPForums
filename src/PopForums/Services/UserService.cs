@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -19,8 +20,8 @@ namespace PopForums.Services
 		User GetUserByAuhtorizationKey(Guid authorizationKey);
 		bool IsNameInUse(string name);
 		bool IsEmailInUse(string email);
-		User CreateUser(SignupData signupData, string ip);
-		User CreateUser(string name, string email, string password, bool isApproved, string ip);
+		Task<User> CreateUser(SignupData signupData, string ip);
+		Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip);
 		void DeleteUser(User targetUser, User user, string ip, bool ban);
 		void UpdateLastActicityDate(User user);
 		void ChangeEmail(User targetUser, string newEmail, User user, string ip);
@@ -45,8 +46,8 @@ namespace PopForums.Services
 		bool IsPasswordValid(string password, out string errorMessage);
         bool IsEmailInUseByDifferentUser(User user, string email);
 		List<User> GetUsersOnline();
-		bool IsIPBanned(string ip);
-		bool IsEmailBanned(string email);
+		Task<bool> IsIPBanned(string ip);
+		Task<bool> IsEmailBanned(string email);
 		void GeneratePasswordResetEmail(User user, string resetLink);
 		void ResetPassword(User user, string newPassword, string ip);
 		List<User> GetUsersFromIDs(IList<int> ids);
@@ -190,42 +191,42 @@ namespace PopForums.Services
 			return otherUser.Email != user.Email;
 		}
 
-		public bool IsIPBanned(string ip)
+		public async Task<bool> IsIPBanned(string ip)
 		{
-			return _banRepository.IPIsBanned(ip);
+			return await _banRepository.IPIsBanned(ip);
 		}
 
-		public bool IsEmailBanned(string email)
+		public async Task<bool> IsEmailBanned(string email)
 		{
-			return _banRepository.EmailIsBanned(email);
+			return await _banRepository.EmailIsBanned(email);
 		}
 
-		public User CreateUser(SignupData signupData, string ip)
+		public async Task<User> CreateUser(SignupData signupData, string ip)
 		{
-			return CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
+			return await CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
 		}
 
-		public User CreateUser(string name, string email, string password, bool isApproved, string ip)
+		public async Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip)
 		{
 			name = _textParsingService.Censor(name);
 			if (!email.IsEmailAddress())
 				throw new Exception("E-mail address invalid.");
-			if (String.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(name))
 				throw new Exception("Name must not be empty or null.");
 			if (IsNameInUse(name))
-				throw new Exception(String.Format("The name \"{0}\" is already in use.", name));
+				throw new Exception($"The name \"{name}\" is already in use.");
 			if (IsEmailInUse(email))
-				throw new Exception(String.Format("The e-mail \"{0}\" is already in use.", email));
-			if (IsIPBanned(ip))
-				throw new Exception(String.Format("The IP {0} is banned.", ip));
-			if (IsEmailBanned(email))
-				throw new Exception(String.Format("The e-mail {0} is banned.", email));
+				throw new Exception($"The e-mail \"{email}\" is already in use.");
+			if (await IsIPBanned(ip))
+				throw new Exception($"The IP {ip} is banned.");
+			if (await IsEmailBanned(email))
+				throw new Exception($"The e-mail {email} is banned.");
 			var creationDate = DateTime.UtcNow;
 			var authorizationKey = Guid.NewGuid();
 			var salt = Guid.NewGuid();
 			var hashedPassword = password.GetSHA256Hash(salt);
 			var user = _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey, salt);
-			_securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated);
+			_securityLogService.CreateLogEntry(null, user, ip, string.Empty, SecurityLogType.UserCreated);
 			return user;
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Repositories;
 
@@ -14,60 +15,64 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public void BanIP(string ip)
+		public async Task BanIP(string ip)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_IPBan (IPBan) VALUES (@IPBan)", new { IPBan = ip }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_IPBan (IPBan) VALUES (@IPBan)", new { IPBan = ip }));
 		}
 
-		public void RemoveIPBan(string ip)
+		public async Task RemoveIPBan(string ip)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_IPBan WHERE IPBan = @IPBan", new { IPBan = ip }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_IPBan WHERE IPBan = @IPBan", new { IPBan = ip }));
 		}
 
-		public List<string> GetIPBans()
+		public async Task<List<string>> GetIPBans()
 		{
-			var list = new List<string>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<string>("SELECT IPBan FROM pf_IPBan ORDER BY IPBan").ToList());
+			Task<IEnumerable<string>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<string>("SELECT IPBan FROM pf_IPBan ORDER BY IPBan"));
+			var list = result.Result.ToList();
 			return list;
 		}
 
-		public bool IPIsBanned(string ip)
+		public async Task<bool> IPIsBanned(string ip)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Query<string>("SELECT * FROM pf_IPBan WHERE CHARINDEX(pf_IPBan.IPBan, @IPBan) > 0", new { IPBan = ip }).Any());
-			return result;
+			Task<IEnumerable<string>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<string>("SELECT * FROM pf_IPBan WHERE CHARINDEX(pf_IPBan.IPBan, @IPBan) > 0", new { IPBan = ip }));
+			var isBanned = result.Result.Any();
+			return isBanned;
 		}
 
-		public void BanEmail(string email)
+		public async Task BanEmail(string email)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_EmailBan (EmailBan) VALUES (@EmailBan)", new { EmailBan = email }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_EmailBan (EmailBan) VALUES (@EmailBan)", new { EmailBan = email }));
 		}
 
-		public void RemoveEmailBan(string email)
+		public async Task RemoveEmailBan(string email)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_EmailBan WHERE EmailBan = @EmailBan", new { EmailBan = email }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_EmailBan WHERE EmailBan = @EmailBan", new { EmailBan = email }));
 		}
 
-		public List<string> GetEmailBans()
+		public async Task<List<string>> GetEmailBans()
 		{
-			var list = new List<string>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<string>("SELECT EmailBan FROM pf_EmailBan ORDER BY EmailBan").ToList());
+			Task<IEnumerable<string>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<string>("SELECT EmailBan FROM pf_EmailBan ORDER BY EmailBan"));
+			var list = result.Result.ToList();
 			return list;
 		}
 
-		public bool EmailIsBanned(string email)
+		public async Task<bool> EmailIsBanned(string email)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Query<string>("SELECT * FROM pf_EmailBan WHERE EmailBan = @EmailBan", new { EmailBan = email }).Any());
-			return result;
+			Task<IEnumerable<string>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<string>("SELECT * FROM pf_EmailBan WHERE EmailBan = @EmailBan", new { EmailBan = email }));
+			var isBanned = result.Result.Any();
+			return isBanned;
 		}
 	}
 }

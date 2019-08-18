@@ -376,39 +376,39 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** email ip ban
 
 		[HttpGet("/Forums/AdminApi/GetEmailIPBan")]
-		public ActionResult<object> GetEmailIPBan()
+		public async Task<ActionResult<object>> GetEmailIPBan()
 		{
-			var emails = _banService.GetEmailBans();
-			var ips = _banService.GetIPBans();
+			var emails = await _banService.GetEmailBans();
+			var ips = await _banService.GetIPBans();
 			var container = new {emails, ips};
 			return container;
 		}
 
 		[HttpPost("/Forums/AdminApi/BanEmail")]
-		public ActionResult BanEmail([FromBody] SingleString val)
+		public async Task<ActionResult> BanEmail([FromBody] SingleString val)
 		{
-			_banService.BanEmail(val.String);
+			await _banService.BanEmail(val.String);
 			return NoContent();
 		}
 
 		[HttpPost("/Forums/AdminApi/RemoveEmail")]
-		public ActionResult RemoveEmail([FromBody] SingleString val)
+		public async Task<ActionResult> RemoveEmail([FromBody] SingleString val)
 		{
-			_banService.RemoveEmailBan(val.String);
+			await _banService.RemoveEmailBan(val.String);
 			return NoContent();
 		}
 
 		[HttpPost("/Forums/AdminApi/BanIP")]
-		public ActionResult BanIP([FromBody] SingleString val)
+		public async Task<ActionResult> BanIP([FromBody] SingleString val)
 		{
-			_banService.BanIP(val.String);
+			await _banService.BanIP(val.String);
 			return NoContent();
 		}
 
 		[HttpPost("/Forums/AdminApi/RemoveIP")]
-		public ActionResult RemoveIP([FromBody] SingleString val)
+		public async Task<ActionResult> RemoveIP([FromBody] SingleString val)
 		{
-			_banService.RemoveIPBan(val.String);
+			await _banService.RemoveIPBan(val.String);
 			return NoContent();
 		}
 

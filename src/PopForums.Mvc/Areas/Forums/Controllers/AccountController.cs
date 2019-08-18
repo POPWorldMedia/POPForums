@@ -105,10 +105,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (!reCaptchaResponse.IsSuccess)
 					ModelState.AddModelError("Email", Resources.BotError);
 			}
-			ValidateSignupData(signupData, ModelState, ip);
+			await ValidateSignupData(signupData, ModelState, ip);
 			if (ModelState.IsValid)
 			{
-				var user = _userService.CreateUser(signupData, ip);
+				var user = await _userService.CreateUser(signupData, ip);
 				_profileService.Create(user, signupData);
 				// TODO: get rid of FullUrlHelper extension
 				var verifyUrl = this.FullUrlHelper("Verify", "Account");
@@ -139,32 +139,31 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(signupData);
 		}
 
-		private void ValidateSignupData(SignupData signupData, ModelStateDictionary modelState, string ip)
+		private async Task ValidateSignupData(SignupData signupData, ModelStateDictionary modelState, string ip)
 		{
 			if (!signupData.IsCoppa)
 				modelState.AddModelError("IsCoppa", Resources.MustBe13);
 			if (!signupData.IsTos)
 				modelState.AddModelError("IsTos", Resources.MustAcceptTOS);
-			string passwordError;
-			var passwordValid = _userService.IsPasswordValid(signupData.Password, out passwordError);
+			var passwordValid = _userService.IsPasswordValid(signupData.Password, out var passwordError);
 			if (!passwordValid)
 				modelState.AddModelError("Password", passwordError);
 			if (signupData.Password != signupData.PasswordRetype)
 				modelState.AddModelError("PasswordRetype", Resources.RetypeYourPassword);
-			if (String.IsNullOrWhiteSpace(signupData.Name))
+			if (string.IsNullOrWhiteSpace(signupData.Name))
 				modelState.AddModelError("Name", Resources.NameRequired);
 			else if (_userService.IsNameInUse(signupData.Name))
 				modelState.AddModelError("Name", Resources.NameInUse);
-			if (String.IsNullOrWhiteSpace(signupData.Email))
+			if (string.IsNullOrWhiteSpace(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailRequired);
 			else
 				if (!signupData.Email.IsEmailAddress())
-				modelState.AddModelError("Email", Resources.ValidEmailAddressRequired);
+					modelState.AddModelError("Email", Resources.ValidEmailAddressRequired);
 			else if (signupData.Email != null && _userService.IsEmailInUse(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailInUse);
-			if (signupData.Email != null && _userService.IsEmailBanned(signupData.Email))
+			if (signupData.Email != null && await _userService.IsEmailBanned(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailBanned);
-			if (_userService.IsIPBanned(ip))
+			if (await _userService.IsIPBanned(ip))
 				modelState.AddModelError("Email", Resources.IPBanned);
 		}
 
