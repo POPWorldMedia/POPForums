@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
@@ -354,18 +355,18 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void VotePostCallsRepoWithPostIDAndUserID()
+		public async Task VotePostCallsRepoWithPostIDAndUserID()
 		{
 			var service = GetService();
 			var post = new Post { PostID = 1 };
 			var user = new User { UserID = 2 };
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(new Dictionary<int, string>());
-			service.VotePost(post, user, "abc", "def", "ghi");
+			await service.VotePost(post, user, "abc", "def", "ghi");
 			_postRepo.Verify(x => x.VotePost(post.PostID, user.UserID), Times.Once());
 		}
 
 		[Fact]
-		public void VotePostCalcsAndSetsCount()
+		public async Task VotePostCalcsAndSetsCount()
 		{
 			var service = GetService();
 			var post = new Post { PostID = 1 };
@@ -373,19 +374,19 @@ namespace PopForums.Test.Services
 			const int votes = 32;
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(new Dictionary<int, string>());
 			_postRepo.Setup(x => x.CalculateVoteCount(post.PostID)).Returns(votes);
-			service.VotePost(post, user, "abc", "def", "ghi");
+			await service.VotePost(post, user, "abc", "def", "ghi");
 			_postRepo.Verify(x => x.SetVoteCount(post.PostID, votes), Times.Once());
 		}
 
 		[Fact]
-		public void VotePostDoesntAllowDupeVote()
+		public async Task VotePostDoesntAllowDupeVote()
 		{
 			var service = GetService();
 			var post = new Post { PostID = 1 };
 			var user = new User { UserID = 2 };
 			var voters = new Dictionary<int, string> { { 1, "Foo" }, { user.UserID, "Dude" }, { 3, null }, { 4, "Chica" } };
 			_postRepo.Setup(x => x.GetVotes(post.PostID)).Returns(voters);
-			service.VotePost(post, user, "abc", "def", "ghi");
+			await service.VotePost(post, user, "abc", "def", "ghi");
 			_postRepo.Verify(x => x.VotePost(post.PostID, user.UserID), Times.Never());
 		}
 
@@ -476,39 +477,39 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void VoteUpDoesntCallPublisherWhenUserFromPostDoesNotExist()
+		public async Task VoteUpDoesntCallPublisherWhenUserFromPostDoesNotExist()
 		{
 			var service = GetService();
 			_userService.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post { PostID = 123 }, new User { UserID = 456 }, "", "", "");
+			await service.VotePost(new Post { PostID = 123 }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), false), Times.Never());
 		}
 
 		[Fact]
-		public void VoteUpCallsEventPub()
+		public async Task VoteUpCallsEventPub()
 		{
 			var service = GetService();
 			var voteUpUser = new User { UserID = 777 };
 			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
+			await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), voteUpUser, EventDefinitionService.StaticEventIDs.PostVote, false), Times.Once());
 		}
 
 		[Fact]
-		public void VoteUpDoesNotCallWhenUserIsPoster()
+		public async Task VoteUpDoesNotCallWhenUserIsPoster()
 		{
 			var service = GetService();
 			var voteUpUser = new User { UserID = 456 };
 			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
-			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
+			await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false), Times.Never());
 		}
 
 		[Fact]
-		public void VoteUpPassesPubStringWithFormattedStuff()
+		public async Task VoteUpPassesPubStringWithFormattedStuff()
 		{
 			var service = GetService();
 			var voteUpUser = new User { UserID = 777 };
@@ -519,7 +520,7 @@ namespace PopForums.Test.Services
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).Returns(new Dictionary<int, string>());
 			var message = String.Empty;
 			_eventPub.Setup(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false)).Callback<string, User, string, bool>((x, y, z, a) => message = x);
-			service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, userUrl, topicUrl, title);
+			await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, userUrl, topicUrl, title);
 			Assert.Contains(userUrl, message);
 			Assert.Contains(topicUrl, message);
 			Assert.Contains(title, message);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Extensions;
 using PopForums.Models;
@@ -27,7 +28,7 @@ namespace PopForums.Services
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
 		void HardDeleteTopic(Topic topic, User user);
-		void SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
+		Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
 		void QueueTopicForIndexing(int topicID);
 	}
 
@@ -234,7 +235,7 @@ namespace PopForums.Services
 			return post.PostID;
 		}
 
-		public void SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl)
+		public async Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl)
 		{
 			if (user.UserID != topic.StartedByUserID)
 				throw new SecurityException("Only the user that started a topic may set its answer.");
@@ -247,7 +248,7 @@ namespace PopForums.Services
 			{
 				// <a href="{0}">{1}</a> chose an answer for the question: <a href="{2}">{3}</a>
 				var message = String.Format(Resources.QuestionAnswered, userUrl, user.Name, topicUrl, topic.Title);
-				_eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
+				await _eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
 			}
 			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}

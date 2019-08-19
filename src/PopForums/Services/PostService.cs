@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -22,7 +23,7 @@ namespace PopForums.Services
 		string GetPostForQuote(Post post, User user, bool forcePlainText);
 		List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end);
 		int GetLastPostID(int topicID);
-		void VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle);
+		Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle);
 		VotePostContainer GetVoters(Post post);
 		int GetVoteCount(Post post);
 		List<int> GetVotedPostIDs(User user, List<Post> posts);
@@ -205,7 +206,7 @@ namespace PopForums.Services
 			return _postRepository.GetLastPostID(topicID);
 		}
 
-		public void VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle)
+		public async Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle)
 		{
 			if (post.UserID == user.UserID)
 				return;
@@ -220,7 +221,7 @@ namespace PopForums.Services
 			{
 				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
 				var message = String.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
-				_eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
+				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
 			}
 		}
 

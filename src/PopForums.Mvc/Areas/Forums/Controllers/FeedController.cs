@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using PopForums.Feeds;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
@@ -15,9 +16,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		    _feedService = feedService;
 		}
 
-		public ViewResult Index()
+		public async Task<ViewResult> Index()
 		{
-			var feed = _feedService.GetFeed();
+			var feed = await _feedService.GetFeed();
 			return View(feed);
 		}
 	}

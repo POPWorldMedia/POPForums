@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
@@ -498,49 +499,49 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void SetAnswerThrowsWhenUserNotTopicStarter()
+		public async Task SetAnswerThrowsWhenUserNotTopicStarter()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 789 };
-			Assert.Throws<SecurityException>(() => service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
+			await Assert.ThrowsAsync<SecurityException>(async () => await service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
 		}
 
 		[Fact]
-		public void SetAnswerThrowsIfPostIDOfAnswerDoesntExist()
+		public async Task SetAnswerThrowsIfPostIDOfAnswerDoesntExist()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
-			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
 		}
 
 		[Fact]
-		public void SetAnswerThrowsIfPostIsNotPartOfTopic()
+		public async Task SetAnswerThrowsIfPostIsNotPartOfTopic()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post { PostID = 789, TopicID = 111 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
-			Assert.Throws<InvalidOperationException>(() => service.SetAnswer(user, topic, post, "", ""));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetAnswer(user, topic, post, "", ""));
 		}
 
 		[Fact]
-		public void SetAnswerCallsTopicRepoWithUpdatedValue()
+		public async Task SetAnswerCallsTopicRepoWithUpdatedValue()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post { PostID = 789, TopicID = topic.TopicID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
-			service.SetAnswer(user, topic, post, "", "");
+			await service.SetAnswer(user, topic, post, "", "");
 			_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
 		}
 
 		[Fact]
-		public void SetAnswerCallsEventPubWhenThereIsNoPreviousAnswerOnTheTopic()
+		public async Task SetAnswerCallsEventPubWhenThereIsNoPreviousAnswerOnTheTopic()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
@@ -549,12 +550,12 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID};
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
-			service.SetAnswer(user, topic, post, "", "");
+			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false), Times.Once());
 		}
 
 		[Fact]
-		public void SetAnswerDoesNotCallEventPubWhenTheAnswerUserDoesNotExist()
+		public async Task SetAnswerDoesNotCallEventPubWhenTheAnswerUserDoesNotExist()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
@@ -562,12 +563,12 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = 777 };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
-			service.SetAnswer(user, topic, post, "", "");
+			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}
 
 		[Fact]
-		public void SetAnswerDoesNotCallEventPubWhenTheTopicAlreadyHasAnAnswer()
+		public async Task SetAnswerDoesNotCallEventPubWhenTheTopicAlreadyHasAnAnswer()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
@@ -576,12 +577,12 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
-			service.SetAnswer(user, topic, post, "", "");
+			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}
 
 		[Fact]
-		public void SetAnswerDoesNotCallEventPubWhenTopicUserIDIsSameAsAnswerUserID()
+		public async Task SetAnswerDoesNotCallEventPubWhenTopicUserIDIsSameAsAnswerUserID()
 		{
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
@@ -589,7 +590,7 @@ namespace PopForums.Test.Services
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = user.UserID };
 			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
 			_userRepo.Setup(x => x.GetUser(user.UserID)).Returns(user);
-			service.SetAnswer(user, topic, post, "", "");
+			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}
 	}

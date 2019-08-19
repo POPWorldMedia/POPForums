@@ -516,7 +516,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateManualEvent")]
-		public ActionResult CreateManualEvent([FromBody] ManualEvent manualEvent)
+		public async Task<ActionResult> CreateManualEvent([FromBody] ManualEvent manualEvent)
 		{
 			if (!string.IsNullOrEmpty(manualEvent.EventDefinitionID))
 				return BadRequest("Can't specify an EventDefinitionID.");
@@ -525,7 +525,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
 			if (!manualEvent.Points.HasValue)
 				return BadRequest("Point value required.");
-			_eventPublisher.ProcessManualEvent(manualEvent.Message, user, manualEvent.Points.Value);
+			await _eventPublisher.ProcessManualEvent(manualEvent.Message, user, manualEvent.Points.Value);
 			return Ok();
 		}
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -16,41 +17,41 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public List<FeedEvent> GetFeed(int userID, int itemCount)
+		public async Task<List<FeedEvent>> GetFeed(int userID, int itemCount)
 		{
-			var list = new List<FeedEvent>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<FeedEvent>($"SELECT TOP {itemCount} UserID, Message, Points, TimeStamp FROM pf_Feed WHERE UserID = @UserID ORDER BY TimeStamp DESC", new { UserID = userID} ).ToList());
-			return list;
+			Task<IEnumerable<FeedEvent>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<FeedEvent>($"SELECT TOP {itemCount} UserID, Message, Points, TimeStamp FROM pf_Feed WHERE UserID = @UserID ORDER BY TimeStamp DESC", new { UserID = userID} ));
+			return result.Result.ToList();
 		}
 
-		public List<FeedEvent> GetFeed(int itemCount)
+		public async Task<List<FeedEvent>> GetFeed(int itemCount)
 		{
-			var list = new List<FeedEvent>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<FeedEvent>($"SELECT TOP {itemCount} UserID, Message, Points, TimeStamp FROM pf_Feed ORDER BY TimeStamp DESC").ToList());
-			return list;
+			Task<IEnumerable<FeedEvent>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<FeedEvent>($"SELECT TOP {itemCount} UserID, Message, Points, TimeStamp FROM pf_Feed ORDER BY TimeStamp DESC"));
+			return result.Result.ToList();
 		}
 
-		public void PublishEvent(int userID, string message, int points, DateTime timeStamp)
+		public async Task PublishEvent(int userID, string message, int points, DateTime timeStamp)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_Feed (UserID, Message, Points, TimeStamp) VALUES (@UserID, @Message, @Points, @TimeStamp)", new { UserID = userID, Message = message, Points = points, TimeStamp = timeStamp }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_Feed (UserID, Message, Points, TimeStamp) VALUES (@UserID, @Message, @Points, @TimeStamp)", new { UserID = userID, Message = message, Points = points, TimeStamp = timeStamp }));
 		}
 
-		public DateTime GetOldestTime(int userID, int takeCount)
+		public async Task<DateTime> GetOldestTime(int userID, int takeCount)
 		{
-			var feed = GetFeed(userID, takeCount);
+			var feed = await GetFeed(userID, takeCount);
 			if (feed.Count == 0)
 				return new DateTime(1990, 1, 1);
 			var last = feed.Last();
 			return last.TimeStamp;
 		}
 
-		public void DeleteOlderThan(int userID, DateTime timeCutOff)
+		public async Task DeleteOlderThan(int userID, DateTime timeCutOff)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_Feed WHERE UserID = @UserID AND TimeStamp < @TimeStamp", new { UserID = userID, TimeStamp = timeCutOff }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_Feed WHERE UserID = @UserID AND TimeStamp < @TimeStamp", new { UserID = userID, TimeStamp = timeCutOff }));
 		}
 	}
 }

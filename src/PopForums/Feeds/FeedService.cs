@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -8,9 +9,9 @@ namespace PopForums.Feeds
 {
 	public interface IFeedService
 	{
-		void PublishToFeed(User user, string message, int points, DateTime timeStamp);
-		List<FeedEvent> GetFeed(User user);
-		List<FeedEvent> GetFeed();
+		Task PublishToFeed(User user, string message, int points, DateTime timeStamp);
+		Task<List<FeedEvent>> GetFeed(User user);
+		Task<List<FeedEvent>> GetFeed();
 		void PublishToActivityFeed(string message);
 	}
 
@@ -28,23 +29,23 @@ namespace PopForums.Feeds
 		
 		public const int MaxFeedCount = 50;
 
-		public void PublishToFeed(User user, string message, int points, DateTime timeStamp)
+		public async Task PublishToFeed(User user, string message, int points, DateTime timeStamp)
 		{
 			if (user == null)
 				return;
-			_feedRepository.PublishEvent(user.UserID, message, points, timeStamp);
-			var cutOff = _feedRepository.GetOldestTime(user.UserID, MaxFeedCount);
-			_feedRepository.DeleteOlderThan(user.UserID, cutOff);
+			await _feedRepository.PublishEvent(user.UserID, message, points, timeStamp);
+			var cutOff = await _feedRepository.GetOldestTime(user.UserID, MaxFeedCount);
+			await _feedRepository.DeleteOlderThan(user.UserID, cutOff);
 		}
 
-		public List<FeedEvent> GetFeed(User user)
+		public async Task<List<FeedEvent>> GetFeed(User user)
 		{
-			return _feedRepository.GetFeed(user.UserID, MaxFeedCount);
+			return await _feedRepository.GetFeed(user.UserID, MaxFeedCount);
 		}
 
-		public List<FeedEvent> GetFeed()
+		public async Task<List<FeedEvent>> GetFeed()
 		{
-			return _feedRepository.GetFeed(MaxFeedCount);
+			return await _feedRepository.GetFeed(MaxFeedCount);
 		}
 
 		public void PublishToActivityFeed(string message)

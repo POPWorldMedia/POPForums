@@ -390,39 +390,39 @@ namespace PopForums.Test.Services
 		public class PostReplyTests : PostNewTopicTests
 		{
 			[Fact]
-			public void NoUserReturnsFalseIsSuccessful()
+			public async Task NoUserReturnsFalseIsSuccessful()
 			{
 				var service = GetService();
 
-				var result = service.PostReply(null, 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+				var result = await service.PostReply(null, 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 			}
 
 			[Fact]
-			public void NoTopicReturnsFalseIsSuccessful()
+			public async Task NoTopicReturnsFalseIsSuccessful()
 			{
 				var service = GetService();
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Topic) null);
 
-				var result = service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+				var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.TopicNotExist, result.Message);
 			}
 
 			[Fact]
-			public void NoForumThrows()
+			public async Task NoForumThrows()
 			{
 				var service = GetService();
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic());
 				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
 
-				Assert.Throws<Exception>(() => service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => ""));
+				await Assert.ThrowsAsync<Exception>(async () => await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => ""));
 			}
 
 			[Fact]
-			public void NoViewPermissionReturnsFalseIsSuccessful()
+			public async Task NoViewPermissionReturnsFalseIsSuccessful()
 			{
 				var service = GetService();
 				var user = GetUser();
@@ -433,14 +433,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanView = false, UserCanPost = true});
 
-				var result = service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+				var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.ForumNoView, result.Message);
 			}
 
 			[Fact]
-			public void NoPostPermissionReturnsFalseIsSuccessful()
+			public async Task NoPostPermissionReturnsFalseIsSuccessful()
 			{
 				var service = GetService();
 				var user = GetUser();
@@ -451,26 +451,26 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanView = true, UserCanPost = false });
 
-				var result = service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+				var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.ForumNoPost, result.Message);
 			}
 
 			[Fact]
-			public void ClosedTopicReturnsFalseIsSuccessful()
+			public async Task ClosedTopicReturnsFalseIsSuccessful()
 			{
 				var service = GetService();
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic{IsClosed = true});
 
-				var result = service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+				var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.Closed, result.Message);
 			}
 
 			[Fact]
-			public void UsesPlainTextParsed()
+			public async Task UsesPlainTextParsed()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -484,12 +484,12 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = true };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 			}
 
 			[Fact]
-			public void UsesRichTextParsed()
+			public async Task UsesRichTextParsed()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -503,12 +503,12 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 			}
 
 			[Fact]
-			public void DupeOfLastPostFails()
+			public async Task DupeOfLastPostFails()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -525,14 +525,14 @@ namespace PopForums.Test.Services
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
 			}
 
 			[Fact]
-			public void MinTimeSinceLastPostTooShortFails()
+			public async Task MinTimeSinceLastPostTooShortFails()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -549,14 +549,14 @@ namespace PopForums.Test.Services
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
 			}
 
 			[Fact]
-			public void EmptyPostFails()
+			public async Task EmptyPostFails()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -572,14 +572,14 @@ namespace PopForums.Test.Services
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+				var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.PostEmpty, result.Message);
 			}
 
 			[Fact]
-			public void HitsRepo()
+			public async Task HitsRepo()
 			{
 				var topic = new Topic { TopicID = 1, Title = "" };
 				var user = GetUser();
@@ -593,12 +593,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
 				_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 			}
 
 			[Fact]
-			public void HitsSubscribedService()
+			public async Task HitsSubscribedService()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
@@ -611,12 +613,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
 				_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, Topic, string>>()), Times.Once());
 			}
 
 			[Fact]
-			public void IncrementsTopicReplyCount()
+			public async Task IncrementsTopicReplyCount()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
@@ -629,12 +633,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+
 				_topicRepo.Verify(t => t.IncrementReplyCount(1));
 			}
 
 			[Fact]
-			public void IncrementsForumPostCount()
+			public async Task IncrementsForumPostCount()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -647,12 +653,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_forumRepo.Verify(f => f.IncrementPostCount(2));
 			}
 
 			[Fact]
-			public void UpdatesTopicLastInfo()
+			public async Task UpdatesTopicLastInfo()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -665,12 +673,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_topicRepo.Verify(t => t.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime));
 			}
 
 			[Fact]
-			public void UpdatesForumLastInfo()
+			public async Task UpdatesForumLastInfo()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -683,12 +693,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_forumRepo.Verify(f => f.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name));
 			}
 
 			[Fact]
-			public void PostQueuesMarksTopicForIndexing()
+			public async Task PostQueuesMarksTopicForIndexing()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -702,12 +714,14 @@ namespace PopForums.Test.Services
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 			}
 
 			[Fact]
-			public void NotifiesBroker()
+			public async Task NotifiesBroker()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -722,14 +736,16 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.Get(topic.ForumID)).Returns(forum);
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_broker.Verify(x => x.NotifyForumUpdate(forum), Times.Once());
 				_broker.Verify(x => x.NotifyTopicUpdate(topic, forum, It.IsAny<string>()), Times.Once());
 				_broker.Verify(x => x.NotifyNewPost(topic, It.IsAny<int>()), Times.Once());
 			}
 
 			[Fact]
-			public void SetsProfileLastPostID()
+			public async Task SetsProfileLastPostID()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -742,12 +758,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_profileRepo.Verify(p => p.SetLastPostID(user.UserID, result.Data.PostID), Times.Once);
 			}
 
 			[Fact]
-			public void PublishesEvent()
+			public async Task PublishesEvent()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -760,12 +778,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false), Times.Once());
 			}
 
 			[Fact]
-			public void DoesNotPublisheEventOnViewRestrictedForum()
+			public async Task DoesNotPublishEventOnViewRestrictedForum()
 			{
 				var topic = new Topic { TopicID = 1, ForumID = 2 };
 				var user = GetUser();
@@ -778,12 +798,14 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string> { "Admin" });
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
 			}
 
 			[Fact]
-			public void ReturnsHydratedObject()
+			public async Task ReturnsHydratedObject()
 			{
 				var topic = new Topic { TopicID = 1 };
 				var user = GetUser();
@@ -798,7 +820,9 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-				var result = service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
+				var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+
 				Assert.Equal(topic.TopicID, result.Data.TopicID);
 				Assert.Equal("parsed text", result.Data.FullText);
 				Assert.Equal("127.0.0.1", result.Data.IP);

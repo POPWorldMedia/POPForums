@@ -115,7 +115,7 @@ namespace PopForums.Test.ScoringGame
 		}
 
 		[Fact]
-		public void ProcessManualEventPublishesToLedger()
+		public async Task ProcessManualEventPublishesToLedger()
 		{
 			var user = new User { UserID = 123 };
 			const string message = "msg";
@@ -123,29 +123,29 @@ namespace PopForums.Test.ScoringGame
 			var publisher = GetPublisher();
 			var entry = new PointLedgerEntry();
 			_pointLedgerRepo.Setup(x => x.RecordEntry(It.IsAny<PointLedgerEntry>())).Callback<PointLedgerEntry>(x => entry = x);
-			publisher.ProcessManualEvent(message, user, points);
+			await publisher.ProcessManualEvent(message, user, points);
 			Assert.Equal(user.UserID, entry.UserID);
 			Assert.Equal("Manual", entry.EventDefinitionID);
 			Assert.Equal(points, entry.Points);
 		}
 
 		[Fact]
-		public void ProcessManualEventPublishesToFeedService()
+		public async Task ProcessManualEventPublishesToFeedService()
 		{
 			var user = new User { UserID = 123 };
 			const string message = "msg";
 			const int points = 252;
 			var publisher = GetPublisher();
-			publisher.ProcessManualEvent(message, user, points);
+			await publisher.ProcessManualEvent(message, user, points);
 			_feedService.Verify(x => x.PublishToFeed(user, message, points, It.IsAny<DateTime>()), Times.Once());
 		}
 
 		[Fact]
-		public void ProcessManualEventUpdatesProfilePointTotal()
+		public async Task ProcessManualEventUpdatesProfilePointTotal()
 		{
 			var user = new User { UserID = 123 };
 			var publisher = GetPublisher();
-			publisher.ProcessManualEvent("msg", user, 252);
+			await publisher.ProcessManualEvent("msg", user, 252);
 			_profileService.Verify(x => x.UpdatePointTotal(user), Times.Once());
 		}
 	}

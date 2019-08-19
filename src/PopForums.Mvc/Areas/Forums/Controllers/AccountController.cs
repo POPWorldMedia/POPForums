@@ -394,7 +394,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ActionResult ViewProfile(int id)
+		public async Task<ActionResult> ViewProfile(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
@@ -405,7 +405,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = _postService.GetPostCount(user);
-			model.Feed = _feedService.GetFeed(user);
+			model.Feed = await _feedService.GetFeed(user);
 			model.UserAwards = _userAwardService.GetAwards(user);
 			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
 			if (viewingUser == null)

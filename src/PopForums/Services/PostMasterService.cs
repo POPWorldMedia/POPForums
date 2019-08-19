@@ -13,7 +13,7 @@ namespace PopForums.Services
 	{
 		BasicServiceResponse<Post> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator);
 		Task<BasicServiceResponse<Topic>> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
-		BasicServiceResponse<Post> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
+		Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
 	}
 
 	public class PostMasterService : IPostMasterService
@@ -104,7 +104,7 @@ namespace PopForums.Services
 			return new BasicServiceResponse<Post> { Data = null, Message = message, Redirect = null, IsSuccessful = false };
 		}
 
-		public BasicServiceResponse<Post> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator)
+		public async Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator)
 		{
 			if (user == null)
 				return GetReplyFailMessage(Resources.LoginToPost);
@@ -165,7 +165,7 @@ namespace PopForums.Services
 			// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
 			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
-			_eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
+			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
 			topic = _topicRepository.Get(topic.TopicID);
 			forum = _forumRepository.Get(forum.ForumID);
 			_broker.NotifyNewPosts(topic, post.PostID);

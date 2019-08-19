@@ -300,7 +300,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult PostReply(NewPost newPost)
+		public async Task<JsonResult> PostReply(NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
@@ -310,7 +310,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new {controller = "Forum", action = "PostLink", id = p.PostID});
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 
-			var result = _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, UnsubscribeLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
+			var result = await _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, UnsubscribeLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
 
 			return Json(new BasicJsonMessage { Result = true, Redirect = result.Redirect });
 		}
@@ -503,7 +503,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult VotePost(int id)
+		public async Task<ActionResult> VotePost(int id)
 		{
 			var post = _postService.Get(id);
 			if (post == null)
@@ -517,7 +517,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var helper = Url;
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
-			_postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
+			await _postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
 			var count = _postService.GetVoteCount(post);
 			return View("Votes", count);
 		}
@@ -536,7 +536,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SetAnswer(int topicID, int postID)
+		public async Task<ActionResult> SetAnswer(int topicID, int postID)
 		{
 			var post = _postService.Get(postID);
 			if (post == null)
@@ -552,7 +552,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				var helper = Url;
 				var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 				var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
-				_topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
+				await _topicService.SetAnswer(user, topic, post, userProfileUrl, topicUrl);
 			}
 			catch (SecurityException) // TODO: what is this?
 			{
