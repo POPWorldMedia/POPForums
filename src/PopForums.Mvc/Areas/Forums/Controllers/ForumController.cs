@@ -153,7 +153,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var forum = _forumService.Get(topic.ForumID);
 			if (forum == null)
-				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
 
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var adapter = new ForumAdapterFactory(forum);
@@ -170,7 +170,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user != null)
 			{
 				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
-				isFavorite = _favoriteTopicService.IsTopicFavorite(user, topic);
+				isFavorite = await _favoriteTopicService.IsTopicFavorite(user, topic);
 				isSubscribed = _subService.IsTopicSubscribed(user, topic);
 				if (isSubscribed)
 					_subService.MarkSubscribedTopicViewed(user, topic);
@@ -207,7 +207,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (adapter.IsAdapterEnabled)
 			{
 				adapter.ForumAdapter.AdaptTopic(this, container);
-				if (String.IsNullOrWhiteSpace(adapter.ForumAdapter.ViewName))
+				if (string.IsNullOrWhiteSpace(adapter.ForumAdapter.ViewName))
 					return View(adapter.ForumAdapter.Model);
 				return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 			}

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
@@ -22,50 +22,48 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetTopicsFromRepo()
+		public async Task GetTopicsFromRepo()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
 			var list = new List<Topic>();
-			_mockFaveRepo.Setup(s => s.GetFavoriteTopics(user.UserID, 1, 20)).Returns(list);
-			PagerContext pagerContext;
-			var result = service.GetTopics(user, 1, out pagerContext);
-			Assert.Same(list, result);
+			_mockFaveRepo.Setup(s => s.GetFavoriteTopics(user.UserID, 1, 20)).ReturnsAsync(list);
+			var result = await service.GetTopics(user, 1);
+			Assert.Same(list, result.Item1);
 		}
 
 		[Fact]
-		public void AddFaveTopic()
+		public async Task AddFaveTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			service.AddFavoriteTopic(user, topic);
+			await service.AddFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.AddFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void RemoveFaveTopic()
+		public async Task RemoveFaveTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			service.RemoveFavoriteTopic(user, topic);
+			await service.RemoveFavoriteTopic(user, topic);
 			_mockFaveRepo.Verify(s => s.RemoveFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void GetTopicsStartRowCalcd()
+		public async Task GetTopicsStartRowCalcd()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
-			PagerContext pagerContext;
-			service.GetTopics(user, 3, out pagerContext);
+			var result = await service.GetTopics(user, 3);
 			_mockFaveRepo.Verify(s => s.GetFavoriteTopics(user.UserID, 41, 20), Times.Once());
-			pagerContext.PageSize = settings.TopicsPerPage;
+			result.Item2.PageSize = settings.TopicsPerPage;
 		}
 	}
 }

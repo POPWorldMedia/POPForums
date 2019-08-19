@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -8,10 +9,10 @@ namespace PopForums.Services
 {
 	public interface IFavoriteTopicService
 	{
-		List<Topic> GetTopics(User user, int pageIndex, out PagerContext pagerContext);
-		bool IsTopicFavorite(User user, Topic topic);
-		void AddFavoriteTopic(User user, Topic topic);
-		void RemoveFavoriteTopic(User user, Topic topic);
+		Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
+		Task<bool> IsTopicFavorite(User user, Topic topic);
+		Task AddFavoriteTopic(User user, Topic topic);
+		Task RemoveFavoriteTopic(User user, Topic topic);
 	}
 
 	public class FavoriteTopicService : IFavoriteTopicService
@@ -25,30 +26,30 @@ namespace PopForums.Services
 		private readonly ISettingsManager _settingsManager;
 		private readonly IFavoriteTopicsRepository _favoriteTopicRepository;
 
-		public List<Topic> GetTopics(User user, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)
 		{
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var topics = _favoriteTopicRepository.GetFavoriteTopics(user.UserID, startRow, pageSize);
-			var topicCount = _favoriteTopicRepository.GetFavoriteTopicCount(user.UserID);
+			var topics = await _favoriteTopicRepository.GetFavoriteTopics(user.UserID, startRow, pageSize);
+			var topicCount = await _favoriteTopicRepository.GetFavoriteTopicCount(user.UserID);
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return topics;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			return Tuple.Create(topics, pagerContext);
 		}
 
-		public bool IsTopicFavorite(User user, Topic topic)
+		public async Task<bool> IsTopicFavorite(User user, Topic topic)
 		{
-			return _favoriteTopicRepository.IsTopicFavorite(user.UserID, topic.TopicID);
+			return await _favoriteTopicRepository.IsTopicFavorite(user.UserID, topic.TopicID);
 		}
 
-		public void AddFavoriteTopic(User user, Topic topic)
+		public async Task AddFavoriteTopic(User user, Topic topic)
 		{
-			_favoriteTopicRepository.AddFavoriteTopic(user.UserID, topic.TopicID);
+			await _favoriteTopicRepository.AddFavoriteTopic(user.UserID, topic.TopicID);
 		}
 
-		public void RemoveFavoriteTopic(User user, Topic topic)
+		public async Task RemoveFavoriteTopic(User user, Topic topic)
 		{
-			_favoriteTopicRepository.RemoveFavoriteTopic(user.UserID, topic.TopicID);
+			await _favoriteTopicRepository.RemoveFavoriteTopic(user.UserID, topic.TopicID);
 		}
 	}
 }
