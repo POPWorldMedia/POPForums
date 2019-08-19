@@ -12,8 +12,8 @@ namespace PopForums.Services
 {
 	public interface IForumService
 	{
-		Forum Get(int forumID);
-		Forum Get(string urlName);
+		Task<Forum> Get(int forumID);
+		Task<Forum> Get(string urlName);
 		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName, bool isQAForum);
 		void UpdateLast(Forum forum);
 		void UpdateLast(Forum forum, DateTime lastTime, string lastName);
@@ -23,8 +23,8 @@ namespace PopForums.Services
 		Task<CategorizedForumContainer> GetCategorizedForumContainerFilteredForUser(User user);
 		List<int> GetNonViewableForumIDs(User user);
 		void Update(Forum forum, int? categoryID, string title, string description, bool isVisible, bool isArchived, string forumAdapterName, bool isQAForum);
-		void MoveForumUp(int forumID);
-		void MoveForumDown(int forumID);
+		Task MoveForumUp(int forumID);
+		Task MoveForumDown(int forumID);
 		List<string> GetForumPostRoles(Forum forum);
 		List<string> GetForumViewRoles(Forum forum);
 		Dictionary<int, string> GetAllForumTitles();
@@ -33,7 +33,7 @@ namespace PopForums.Services
 		int GetAggregatePostCount();
 		List<int> GetViewableForumIDsFromViewRestrictedForums(User user);
 		TopicContainerForQA MapTopicContainerForQA(TopicContainer topicContainer);
-		void ModifyForumRoles(ModifyForumRolesContainer container);
+		Task ModifyForumRoles(ModifyForumRolesContainer container);
 	}
 
 	public class ForumService : IForumService
@@ -53,14 +53,14 @@ namespace PopForums.Services
 		private readonly ISettingsManager _settingsManager;
 		private readonly ILastReadService _lastReadService;
 
-		public Forum Get(int forumID)
+		public async Task<Forum> Get(int forumID)
 		{
-			return _forumRepository.Get(forumID);
+			return await _forumRepository.Get(forumID);
 		}
 
-		public Forum Get(string urlName)
+		public async Task<Forum> Get(string urlName)
 		{
-			return _forumRepository.Get(urlName);
+			return await _forumRepository.Get(urlName);
 		}
 
 		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string forumAdapterName, bool isQAForum)
@@ -181,18 +181,18 @@ namespace PopForums.Services
 			}
 		}
 
-		public void MoveForumUp(int forumID)
+		public async Task MoveForumUp(int forumID)
 		{
-			var forum = _forumRepository.Get(forumID);
+			var forum = await _forumRepository.Get(forumID);
 			if (forum == null)
 				throw new Exception($"Forum {forumID} doesn't exist, can't move it up.");
 			const int change = -3;
 			ChangeForumSortOrder(forum, change);
 		}
 
-		public void MoveForumDown(int forumID)
+		public async Task MoveForumDown(int forumID)
 		{
-			var forum = _forumRepository.Get(forumID);
+			var forum = await _forumRepository.Get(forumID);
 			if (forum == null)
 				throw new Exception($"Forum {forumID} doesn't exist, can't move it down.");
 			const int change = 3;
@@ -280,9 +280,9 @@ namespace PopForums.Services
 			return result;
 		}
 
-		public void ModifyForumRoles(ModifyForumRolesContainer container)
+		public async Task ModifyForumRoles(ModifyForumRolesContainer container)
 		{
-			var forum = Get(container.ForumID);
+			var forum = await Get(container.ForumID);
 			if (forum == null)
 				throw new Exception($"ForumID {container.ForumID} not found.");
 			switch (container.ModifyType)

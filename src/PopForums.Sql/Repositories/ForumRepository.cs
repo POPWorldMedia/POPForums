@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -30,20 +31,20 @@ namespace PopForums.Sql.Repositories
 			public const string AggregatePostCount = "PopForums.Forum.AggreatePostCount";
 		}
 
-		public Forum Get(int forumID)
+		public async Task<Forum> Get(int forumID)
 		{
-			Forum forum = null;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				forum = connection.QuerySingleOrDefault<Forum>("SELECT " + ForumFields + " FROM pf_Forum WHERE ForumID = @ForumID", new { ForumID = forumID }));
-			return forum;
+			Task<Forum> forum = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				forum = connection.QuerySingleOrDefaultAsync<Forum>("SELECT " + ForumFields + " FROM pf_Forum WHERE ForumID = @ForumID", new { ForumID = forumID }));
+			return await forum;
 		}
 
-		public Forum Get(string urlName)
+		public async Task<Forum> Get(string urlName)
 		{
-			Forum forum = null;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				forum = connection.QuerySingleOrDefault<Forum>("SELECT " + ForumFields + " FROM pf_Forum WHERE UrlName = @UrlName", new { UrlName = urlName }));
-			return forum;
+			Task<Forum> forum = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				forum = connection.QuerySingleOrDefaultAsync<Forum>("SELECT " + ForumFields + " FROM pf_Forum WHERE UrlName = @UrlName", new { UrlName = urlName }));
+			return await forum;
 		}
 
 		public Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName, bool isQAForum)

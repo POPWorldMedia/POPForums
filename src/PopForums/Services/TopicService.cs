@@ -19,15 +19,15 @@ namespace PopForums.Services
 		void OpenTopic(Topic topic, User user);
 		void PinTopic(Topic topic, User user);
 		void UnpinTopic(Topic topic, User user);
-		void DeleteTopic(Topic topic, User user);
-		void UndeleteTopic(Topic topic, User user);
-		void UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
+		Task DeleteTopic(Topic topic, User user);
+		Task UndeleteTopic(Topic topic, User user);
+		Task UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
 		List<Topic> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		void RecalculateReplyCount(Topic topic);
 		List<Topic> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
-		void HardDeleteTopic(Topic topic, User user);
+		Task HardDeleteTopic(Topic topic, User user);
 		Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
 		void QueueTopicForIndexing(int topicID);
 	}
@@ -147,14 +147,14 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator to unpin topic.");
 		}
 
-		public void DeleteTopic(Topic topic, User user)
+		public async Task DeleteTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator) || user.UserID == topic.StartedByUserID)
 			{
 				_moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
 				_topicRepository.DeleteTopic(topic.TopicID);
 				RecalculateReplyCount(topic);
-				var forum = _forumService.Get(topic.ForumID);
+				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
 			}
@@ -162,14 +162,14 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator or topic starter to delete topic.");
 		}
 
-		public void HardDeleteTopic(Topic topic, User user)
+		public async Task HardDeleteTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Admin))
 			{
 				_moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
 				_searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
 				_topicRepository.HardDeleteTopic(topic.TopicID);
-				var forum = _forumService.Get(topic.ForumID);
+				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
 			}
@@ -177,14 +177,14 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Admin to hard delete topic.");
 		}
 
-		public void UndeleteTopic(Topic topic, User user)
+		public async Task UndeleteTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				_moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
 				_topicRepository.UndeleteTopic(topic.TopicID);
 				RecalculateReplyCount(topic);
-				var forum = _forumService.Get(topic.ForumID);
+				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
 			}
@@ -192,7 +192,7 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator to undelete topic.");
 		}
 
-		public void UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user)
+		public async Task UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
@@ -207,7 +207,7 @@ namespace PopForums.Services
 				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
-				var oldForum = _forumService.Get(oldTopic.ForumID);
+				var oldForum = await _forumService.Get(oldTopic.ForumID);
 				_forumService.UpdateCounts(oldForum);
 				_forumService.UpdateLast(oldForum);
 			}

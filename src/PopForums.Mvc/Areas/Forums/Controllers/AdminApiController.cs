@@ -142,7 +142,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/MoveForumUp/{id}")]
 		public async Task<ActionResult<List<CategoryContainerWithForums>>> MoveForumUp(int id)
 		{
-			_forumService.MoveForumUp(id);
+			await _forumService.MoveForumUp(id);
 			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
@@ -150,7 +150,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/MoveForumDown/{id}")]
 		public async Task<ActionResult<List<CategoryContainerWithForums>>> MoveForumDown(int id)
 		{
-			_forumService.MoveForumDown(id);
+			await _forumService.MoveForumDown(id);
 			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
 		}
@@ -164,7 +164,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				_forumService.Create(forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, -1, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
 			else
 			{
-				var forum = _forumService.Get(forumEdit.ForumID);
+				var forum = await _forumService.Get(forumEdit.ForumID);
 				if (forum == null)
 					return NotFound();
 				_forumService.Update(forum, forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
@@ -176,9 +176,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** forum permissions
 
 		[HttpGet("/Forums/AdminApi/GetForumPermissions/{id}")]
-		public ActionResult<ForumPermissionContainer> GetForumPermissions(int id)
+		public async Task<ActionResult<ForumPermissionContainer>> GetForumPermissions(int id)
 		{
-			var forum = _forumService.Get(id);
+			var forum = await _forumService.Get(id);
 			if (forum == null)
 				return NotFound();
 			var container = new ForumPermissionContainer
@@ -192,9 +192,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/ModifyForumRoles")]
-		public NoContentResult ModifyForumRoles(ModifyForumRolesContainer container)
+		public async Task<NoContentResult> ModifyForumRoles(ModifyForumRolesContainer container)
 		{
-			_forumService.ModifyForumRoles(container);
+			await _forumService.ModifyForumRoles(container);
 			return NoContent();
 		}
 

@@ -152,16 +152,16 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void DeleteThrowsForNonAuthorAndNonMod()
+		public async Task DeleteThrowsForNonAuthorAndNonMod()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67 };
-			Assert.Throws<Exception>(() => service.Delete(post, user));
+			await Assert.ThrowsAsync<Exception>(async () => await service.Delete(post, user));
 		}
 
 		[Fact]
-		public void DeleteCallDeleteTopicIfFirstInTopic()
+		public async Task DeleteCallDeleteTopicIfFirstInTopic()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -169,13 +169,13 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = true, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			service.Delete(post, user);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
+			await service.Delete(post, user);
 			_topicService.Verify(t => t.DeleteTopic(topic, user), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteCallLogs()
+		public async Task DeleteCallLogs()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -183,13 +183,13 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			service.Delete(post, user);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
+			await service.Delete(post, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostDelete, post, String.Empty, String.Empty), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteSetsEditFields()
+		public async Task DeleteSetsEditFields()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -197,17 +197,17 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsEdited = false };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
-			service.Delete(post, user);
+			await service.Delete(post, user);
 			Assert.True(editedPost.IsEdited);
 			Assert.Equal(user.Name, editedPost.LastEditName);
 			Assert.True(editedPost.LastEditTime.HasValue);
 		}
 
 		[Fact]
-		public void DeleteCallSetsIsDeletedAndUpdates()
+		public async Task DeleteCallSetsIsDeletedAndUpdates()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -215,16 +215,16 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsDeleted = false };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
-			service.Delete(post, user);
+			await service.Delete(post, user);
 			Assert.Equal(post.PostID, persistedPost.PostID);
 			Assert.True(persistedPost.IsDeleted);
 		}
 
 		[Fact]
-		public void DeleteCallFiresRecalcs()
+		public async Task DeleteCallFiresRecalcs()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -232,11 +232,11 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var payload = new SearchIndexPayload();
 			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);
 
-			service.Delete(post, user);
+			await service.Delete(post, user);
 
 			_topicService.Verify(t => t.RecalculateReplyCount(topic), Times.Exactly(1));
 			_topicService.Verify(t => t.UpdateLast(topic), Times.Once());
@@ -247,16 +247,16 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UndeleteThrowsForNonMod()
+		public async Task UndeleteThrowsForNonMod()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID };
-			Assert.Throws<Exception>(() => service.Undelete(post, user));
+			await Assert.ThrowsAsync<Exception>(async () => await service.Undelete(post, user));
 		}
 
 		[Fact]
-		public void UndeleteCallLogs()
+		public async Task UndeleteCallLogs()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -264,13 +264,13 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator }};
 			var post = new Post { PostID = 67, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
-			service.Undelete(post, user);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
+			await service.Undelete(post, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostUndelete, post, String.Empty, String.Empty), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UndeleteSetsEditFields()
+		public async Task UndeleteSetsEditFields()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -278,17 +278,17 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsEdited = false, UserID = user.UserID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
-			service.Undelete(post, user);
+			await service.Undelete(post, user);
 			Assert.True(editedPost.IsEdited);
 			Assert.Equal(user.Name, editedPost.LastEditName);
 			Assert.True(editedPost.LastEditTime.HasValue);
 		}
 
 		[Fact]
-		public void UndeleteCallSetsIsDeletedAndUpdates()
+		public async Task UndeleteCallSetsIsDeletedAndUpdates()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -296,16 +296,16 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsDeleted = true };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
-			service.Undelete(post, user);
+			await service.Undelete(post, user);
 			Assert.Equal(post.PostID, persistedPost.PostID);
 			Assert.False(persistedPost.IsDeleted);
 		}
 
 		[Fact]
-		public void UndeleteCallFiresRecalcs()
+		public async Task UndeleteCallFiresRecalcs()
 		{
 			var forum = new Forum { ForumID = 5 };
 			var topic = new Topic { TopicID = 4, ForumID = forum.ForumID };
@@ -313,11 +313,11 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID };
 			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
-			_forumService.Setup(f => f.Get(forum.ForumID)).Returns(forum);
+			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var payload = new SearchIndexPayload();
 			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);
 
-			service.Undelete(post, user);
+			await service.Undelete(post, user);
 
 			_topicService.Verify(t => t.RecalculateReplyCount(topic), Times.Exactly(1));
 			_topicService.Verify(t => t.UpdateLast(topic), Times.Once());

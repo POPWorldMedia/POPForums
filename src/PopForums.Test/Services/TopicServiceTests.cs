@@ -205,145 +205,145 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void DeleteTopicThrowsWithNonMod()
+		public async Task DeleteTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.DeleteTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.DeleteTopic(topic, user));
 		}
 
 		[Fact]
-		public void DeleteTopicDeletesWithMod()
+		public async Task DeleteTopicDeletesWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.DeleteTopic(topic, user);
+			await topicService.DeleteTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicDelete, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.DeleteTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteTopicUpdatesCounts()
+		public async Task DeleteTopicUpdatesCounts()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
-			topicService.DeleteTopic(topic, user);
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			await topicService.DeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteTopicUpdatesLast()
+		public async Task DeleteTopicUpdatesLast()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
-			topicService.DeleteTopic(topic, user);
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			await topicService.DeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteTopicUpdatesReplyCount()
+		public async Task DeleteTopicUpdatesReplyCount()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).Returns(42);
-			topicService.DeleteTopic(topic, user);
+			await topicService.DeleteTopic(topic, user);
 			_topicRepo.Verify(t => t.UpdateReplyCount(topic.TopicID, 42), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void DeleteTopicDeletesWithStarter()
+		public async Task DeleteTopicDeletesWithStarter()
 		{
 			var user = GetUser();
 			var topic = new Topic { TopicID = 1, StartedByUserID = user.UserID };
 			var topicService = GetTopicService();
-			topicService.DeleteTopic(topic, user);
+			await topicService.DeleteTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicDelete, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.DeleteTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UndeleteTopicThrowsWithNonMod()
+		public async Task UndeleteTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.UndeleteTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.UndeleteTopic(topic, user));
 		}
 
 		[Fact]
-		public void UndeleteTopicUndeletesWithMod()
+		public async Task UndeleteTopicUndeletesWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.UndeleteTopic(topic, user);
+			await topicService.UndeleteTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicUndelete, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UndeleteTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UndeleteTopicUpdatesCounts()
+		public async Task UndeleteTopicUpdatesCounts()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
-			topicService.UndeleteTopic(topic, user);
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			await topicService.UndeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UndeleteTopicUpdatesLast()
+		public async Task UndeleteTopicUpdatesLast()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 123 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_forumService.Setup(f => f.Get(topic.ForumID)).Returns(forum);
-			topicService.UndeleteTopic(topic, user);
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			await topicService.UndeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UndeleteTopicUpdatesReplyCount()
+		public async Task UndeleteTopicUpdatesReplyCount()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).Returns(42);
-			topicService.UndeleteTopic(topic, user);
+			await topicService.UndeleteTopic(topic, user);
 			_topicRepo.Verify(t => t.UpdateReplyCount(topic.TopicID, 42), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UpdateTopicThrowsWithNonMod()
+		public async Task UpdateTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.UpdateTitleAndForum(topic, new Forum { ForumID = 2 }, "blah", user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.UpdateTitleAndForum(topic, new Forum { ForumID = 2 }, "blah", user));
 		}
 
 		[Fact]
-		public void UpdateTopicUpdatesTitleWithMod()
+		public async Task UpdateTopicUpdatesTitleWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
@@ -352,13 +352,13 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
+			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, "new title", "new-title"), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UpdateTopicQueuesTopicForIndexingWithMod()
+		public async Task UpdateTopicQueuesTopicForIndexingWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID };
@@ -368,12 +368,12 @@ namespace PopForums.Test.Services
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
-			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
+			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
 
 		[Fact]
-		public void UpdateTopicMovesTopicWithMod()
+		public async Task UpdateTopicMovesTopicWithMod()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = 7, Title = String.Empty };
@@ -382,13 +382,13 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 3 });
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
+			await topicService.UpdateTitleAndForum(topic, forum, string.Empty, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicMoved, topic, forum, It.IsAny<string>()), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, String.Empty, String.Empty), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UpdateTopicWithNewTitleChangesUrlNameOnTopicParameter()
+		public async Task UpdateTopicWithNewTitleChangesUrlNameOnTopicParameter()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var topic = new Topic { TopicID = 1, ForumID = forum.ForumID, UrlName = "old" };
@@ -397,12 +397,12 @@ namespace PopForums.Test.Services
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
-			topicService.UpdateTitleAndForum(topic, forum, "new title", user);
+			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			Assert.Equal("new-title", topic.UrlName);
 		}
 
 		[Fact]
-		public void UpdateTopicMovesUpdatesCountAndLastOnOldForum()
+		public async Task UpdateTopicMovesUpdatesCountAndLastOnOldForum()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var oldForum = new Forum { ForumID = 3 };
@@ -411,15 +411,15 @@ namespace PopForums.Test.Services
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
-			_forumService.Setup(f => f.Get(oldForum.ForumID)).Returns(oldForum);
+			_forumService.Setup(f => f.Get(oldForum.ForumID)).ReturnsAsync(oldForum);
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
+			await topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UpdateTopicMovesUpdatesCountAndLastOnNewForum()
+		public async Task UpdateTopicMovesUpdatesCountAndLastOnNewForum()
 		{
 			var forum = new Forum { ForumID = 2 };
 			var oldForum = new Forum { ForumID = 3 };
@@ -428,9 +428,9 @@ namespace PopForums.Test.Services
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
 			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
-			_forumService.Setup(f => f.Get(oldForum.ForumID)).Returns(oldForum);
+			_forumService.Setup(f => f.Get(oldForum.ForumID)).ReturnsAsync(oldForum);
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
+			await topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_forumService.Verify(f => f.UpdateCounts(oldForum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(oldForum), Times.Exactly(1));
 		}
@@ -447,53 +447,53 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void HardDeleteThrowsIfUserNotAdmin()
+		public async Task HardDeleteThrowsIfUserNotAdmin()
 		{
 			var user = new User { UserID = 123, Roles = new List<string>() };
 			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => service.HardDeleteTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.HardDeleteTopic(topic, user));
 		}
 
 		[Fact]
-		public void HardDeleteCallsModerationService()
+		public async Task HardDeleteCallsModerationService()
 		{
 			var user = new User { UserID = 123, Roles = new List<string> { "Admin" } };
 			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
-			service.HardDeleteTopic(topic, user);
+			await service.HardDeleteTopic(topic, user);
 			_modService.Verify(x => x.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null), Times.Once());
 		}
 
 		[Fact]
-		public void HardDeleteCallsSearchRepoToDeleteSearchWords()
+		public async Task HardDeleteCallsSearchRepoToDeleteSearchWords()
 		{
 			var user = new User { UserID = 123, Roles = new List<string> { "Admin" } };
 			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
-			service.HardDeleteTopic(topic, user);
+			await service.HardDeleteTopic(topic, user);
 			_searchRepo.Verify(x => x.DeleteAllIndexedWordsForTopic(topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void HardDeleteCallsTopiRepoToDeleteTopic()
+		public async Task HardDeleteCallsTopiRepoToDeleteTopic()
 		{
 			var user = new User { UserID = 123, Roles = new List<string> { "Admin" } };
 			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
-			service.HardDeleteTopic(topic, user);
+			await service.HardDeleteTopic(topic, user);
 			_topicRepo.Verify(x => x.HardDeleteTopic(topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void HardDeleteCallsForumServiceToUpdateLastAndCounts()
+		public async Task HardDeleteCallsForumServiceToUpdateLastAndCounts()
 		{
 			var user = new User { UserID = 123, Roles = new List<string> { "Admin" } };
 			var topic = new Topic { TopicID = 45, ForumID = 67};
 			var forum = new Forum { ForumID = topic.ForumID };
 			var service = GetTopicService();
-			_forumService.Setup(x => x.Get(topic.ForumID)).Returns(forum);
-			service.HardDeleteTopic(topic, user);
+			_forumService.Setup(x => x.Get(topic.ForumID)).ReturnsAsync(forum);
+			await service.HardDeleteTopic(topic, user);
 			_forumService.Verify(x => x.UpdateCounts(forum), Times.Once());
 			_forumService.Verify(x => x.UpdateLast(forum), Times.Once());
 		}

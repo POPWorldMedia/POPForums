@@ -18,8 +18,8 @@ namespace PopForums.Services
 		int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic);
 		int GetPostCount(User user);
 		PostEdit GetPostForEdit(Post post, User user);
-		void Delete(Post post, User user);
-		void Undelete(Post post, User user);
+		Task Delete(Post post, User user);
+		Task Undelete(Post post, User user);
 		string GetPostForQuote(Post post, User user, bool forcePlainText);
 		List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end);
 		int GetLastPostID(int topicID);
@@ -147,14 +147,14 @@ namespace PopForums.Services
 			return quote;
 		}
 
-		public void Delete(Post post, User user)
+		public async Task Delete(Post post, User user)
 		{
 			if (user.UserID == post.UserID || user.IsInRole(PermanentRoles.Moderator))
 			{
 				var topic = _topicService.Get(post.TopicID);
-				var forum = _forumService.Get(topic.ForumID);
+				var forum = await _forumService.Get(topic.ForumID);
 				if (post.IsFirstInTopic)
-					_topicService.DeleteTopic(topic, user);
+					await _topicService.DeleteTopic(topic, user);
 				else
 				{
 					_moderationLogService.LogPost(user, ModerationType.PostDelete, post, String.Empty, String.Empty);
@@ -174,7 +174,7 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator or author to delete post.");
 		}
 
-		public void Undelete(Post post, User user)
+		public async Task Undelete(Post post, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
@@ -187,7 +187,7 @@ namespace PopForums.Services
 				var topic = _topicService.Get(post.TopicID);
 				_topicService.RecalculateReplyCount(topic);
 				_topicService.UpdateLast(topic);
-				var forum = _forumService.Get(topic.ForumID);
+				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				_forumService.UpdateLast(forum);
 				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});

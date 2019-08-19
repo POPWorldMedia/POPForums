@@ -61,7 +61,7 @@ namespace PopForums.Test.Services
 			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).Returns(69);
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 			_topicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
 			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanModerate = false, UserCanPost = true, UserCanView = true});
@@ -93,7 +93,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var forum = new Forum{ForumID = 1};
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true});
 
@@ -107,7 +107,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false });
 
@@ -120,7 +120,7 @@ namespace PopForums.Test.Services
 			public async Task NoForumMatchThrows()
 			{
 				var service = GetService();
-				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
 
 				await Assert.ThrowsAsync<Exception>(async () => await service.PostNewTopic(GetUser(), new NewPost {ItemID = 1}, "", "", x => "", x => ""));
 			}
@@ -135,7 +135,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = true };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
@@ -159,7 +159,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
@@ -183,7 +183,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
@@ -202,7 +202,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				var lastPost = "last post text";
@@ -223,7 +223,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 1 };
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				var user = GetUser();
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				var lastPost = "last post text";
@@ -249,7 +249,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
@@ -269,7 +269,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
@@ -342,7 +342,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string> { "Admin" });
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
@@ -363,7 +363,7 @@ namespace PopForums.Test.Services
 				const string text = "mah text";
 				var newPost = new NewPost {Title = title, FullText = text, ItemID = 1};
 				var topicService = GetService();
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).Returns(new List<string>());
 				_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
@@ -416,7 +416,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(new Topic());
-				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+				_forumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
 
 				await Assert.ThrowsAsync<Exception>(async () => await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => ""));
 			}
@@ -430,7 +430,7 @@ namespace PopForums.Test.Services
 				var topic = new Topic {ForumID = forum.ForumID};
 				var newPost = new NewPost {ItemID = topic.TopicID};
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(topic);
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanView = false, UserCanPost = true});
 
 				var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
@@ -448,7 +448,7 @@ namespace PopForums.Test.Services
 				var topic = new Topic { ForumID = forum.ForumID };
 				var newPost = new NewPost { ItemID = topic.TopicID };
 				_topicRepo.Setup(x => x.Get(It.IsAny<int>())).Returns(topic);
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanView = true, UserCanPost = false });
 
 				var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
@@ -480,7 +480,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = true };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
@@ -499,7 +499,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
@@ -518,7 +518,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
 				_postRepo.Setup(x => x.Get(654)).Returns(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
@@ -542,7 +542,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("oihf text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
 				_postRepo.Setup(x => x.Get(654)).Returns(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
@@ -566,7 +566,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
@@ -589,7 +589,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 				_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
@@ -610,7 +610,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -630,7 +630,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -650,7 +650,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -670,7 +670,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -690,7 +690,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -709,7 +709,7 @@ namespace PopForums.Test.Services
 				var forum = new Forum {ForumID = topic.ForumID};
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext {UserCanPost = true, UserCanView = true});
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
@@ -733,8 +733,8 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
-				_forumRepo.Setup(x => x.Get(topic.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+				_forumRepo.Setup(x => x.Get(topic.ForumID)).ReturnsAsync(forum);
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 
 				await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
@@ -755,7 +755,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -775,7 +775,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string>());
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -795,7 +795,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).Returns(new List<string> { "Admin" });
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
@@ -817,7 +817,7 @@ namespace PopForums.Test.Services
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).Returns(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-				_forumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
+				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 

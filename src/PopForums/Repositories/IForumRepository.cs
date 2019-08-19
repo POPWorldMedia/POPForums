@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface IForumRepository
 	{
-		Forum Get(int forumID);
-		Forum Get(string urlName);
+		Task<Forum> Get(int forumID);
+		Task<Forum> Get(string urlName);
 		Forum Create(int? categoryID, string title, string description, bool isVisible, bool isArchived, int sortOrder, string urlName, string forumAdapterName, bool isQAForum);
 		List<Forum> GetForumsInCategory(int? categoryID);
 		List<string> GetUrlNamesThatStartWith(string urlName);

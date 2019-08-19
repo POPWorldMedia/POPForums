@@ -55,7 +55,7 @@ namespace PopForums.Services
 		{
 			if (user == null)
 				return GetPostFailMessage(Resources.LoginToPost);
-			var forum = _forumRepository.Get(newPost.ItemID);
+			var forum = await _forumRepository.Get(newPost.ItemID);
 			if (forum == null)
 				throw new Exception($"Forum {newPost.ItemID} not found");
 			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
@@ -83,7 +83,7 @@ namespace PopForums.Services
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Count > 0;
 			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewTopic, forumHasViewRestrictions);
 			await _eventPublisher.ProcessEvent(string.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
-			forum = _forumRepository.Get(forum.ForumID);
+			forum = await _forumRepository.Get(forum.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
@@ -113,7 +113,7 @@ namespace PopForums.Services
 				return GetReplyFailMessage(Resources.TopicNotExist);
 			if (topic.IsClosed)
 				return GetReplyFailMessage(Resources.Closed);
-			var forum = _forumRepository.Get(topic.ForumID);
+			var forum = await _forumRepository.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception($"That's not good. Trying to reply to a topic orphaned from Forum {topic.ForumID}, which doesn't exist.");
 			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
@@ -167,7 +167,7 @@ namespace PopForums.Services
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
 			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
 			topic = _topicRepository.Get(topic.TopicID);
-			forum = _forumRepository.Get(forum.ForumID);
+			forum = await _forumRepository.Get(forum.ForumID);
 			_broker.NotifyNewPosts(topic, post.PostID);
 			_broker.NotifyNewPost(topic, post.PostID);
 			_broker.NotifyForumUpdate(forum);

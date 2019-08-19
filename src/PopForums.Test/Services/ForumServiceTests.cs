@@ -33,12 +33,12 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void Get()
+		public async Task Get()
 		{
 			const int forumID = 123;
 			var forumService = GetService();
-			_mockForumRepo.Setup(f => f.Get(forumID)).Returns(new Forum {ForumID = forumID});
-			var forum = forumService.Get(forumID);
+			_mockForumRepo.Setup(f => f.Get(forumID)).ReturnsAsync(new Forum {ForumID = forumID});
+			var forum = await forumService.Get(forumID);
 			Assert.Equal(forumID, forum.ForumID);
 			_mockForumRepo.Verify(f => f.Get(forumID), Times.Once());
 		}
@@ -170,7 +170,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void MoveUp()
+		public async Task MoveUp()
 		{
 			var f1 = new Forum { ForumID = 123, SortOrder = 0, CategoryID = 777 };
 			var f2 = new Forum { ForumID = 456, SortOrder = 2, CategoryID = 777 };
@@ -179,8 +179,8 @@ namespace PopForums.Test.Services
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
-			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).Returns(f3);
-			service.MoveForumUp(f3.ForumID);
+			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).ReturnsAsync(f3);
+			await service.MoveForumUp(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(4));
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(f1.ForumID, f1.SortOrder), Times.Once());
@@ -194,7 +194,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void MoveDown()
+		public async Task MoveDown()
 		{
 			var f1 = new Forum { ForumID = 123, SortOrder = 0, CategoryID = 777 };
 			var f2 = new Forum { ForumID = 456, SortOrder = 2, CategoryID = 777 };
@@ -203,8 +203,8 @@ namespace PopForums.Test.Services
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
 			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
-			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).Returns(f3);
-			service.MoveForumDown(f3.ForumID);
+			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).ReturnsAsync(f3);
+			await service.MoveForumDown(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(4));
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(f1.ForumID, f1.SortOrder), Times.Once());
@@ -218,21 +218,21 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void MoveForumUpThrowsIfNoForum()
+		public async Task MoveForumUpThrowsIfNoForum()
 		{
 			var service = GetService();
-			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
 
-			Assert.Throws<Exception>(() => service.MoveForumUp(1));
+			await Assert.ThrowsAsync<Exception>(async () => await service.MoveForumUp(1));
 		}
 
 		[Fact]
-		public void MoveForumDownThrowsIfNoForum()
+		public async Task MoveForumDownThrowsIfNoForum()
 		{
 			var service = GetService();
-			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum)null);
+			_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum)null);
 
-			Assert.Throws<Exception>(() => service.MoveForumDown(1));
+			await Assert.ThrowsAsync<Exception>(async () => await service.MoveForumDown(1));
 		}
 
 		[Fact]
@@ -711,69 +711,68 @@ namespace PopForums.Test.Services
 		public class ModifyForumRoles : ForumServiceTests
 		{
 			[Fact]
-			public void ThrowsIfNoForumMatch()
+			public async Task ThrowsIfNoForumMatch()
 			{
 				var service = GetService();
-				_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Forum) null);
+				_mockForumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
 
-				Assert.Throws<Exception>(() => service.ModifyForumRoles(new ModifyForumRolesContainer()));
+				await Assert.ThrowsAsync<Exception>(async () => await service.ModifyForumRoles(new ModifyForumRolesContainer()));
 			}
 
-			private void CallSetup(ModifyForumRolesType modifyType, out int forumID, out string role)
+			private async Task<Tuple<int, string>> CallSetup(ModifyForumRolesType modifyType)
 			{
 				var service = GetService();
 				var forum = new Forum { ForumID = 123 };
-				forumID = forum.ForumID;
-				role = "role";
-				_mockForumRepo.Setup(x => x.Get(forum.ForumID)).Returns(forum);
-
-				service.ModifyForumRoles(new ModifyForumRolesContainer { ForumID = forum.ForumID, ModifyType = modifyType, Role = role });
+				var role = "role";
+				_mockForumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+				await service.ModifyForumRoles(new ModifyForumRolesContainer { ForumID = forum.ForumID, ModifyType = modifyType, Role = role });
+				return Tuple.Create(forum.ForumID, role);
 			}
 
 			[Fact]
-			public void AddPostCallsRepo()
+			public async Task AddPostCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.AddPost, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.AddPost);
 
 				_mockForumRepo.Verify(x => x.AddPostRole(forumID, role), Times.Once);
 			}
 
 			[Fact]
-			public void RemovePostCallsRepo()
+			public async Task RemovePostCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.RemovePost, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.RemovePost);
 
 				_mockForumRepo.Verify(x => x.RemovePostRole(forumID, role), Times.Once);
 			}
 
 			[Fact]
-			public void AddViewCallsRepo()
+			public async Task AddViewCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.AddView, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.AddView);
 
 				_mockForumRepo.Verify(x => x.AddViewRole(forumID, role), Times.Once);
 			}
 
 			[Fact]
-			public void RemoveViewCallsRepo()
+			public async Task RemoveViewCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.RemoveView, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.RemoveView);
 
 				_mockForumRepo.Verify(x => x.RemoveViewRole(forumID, role), Times.Once);
 			}
 
 			[Fact]
-			public void RemoveAllPostCallsRepo()
+			public async Task RemoveAllPostCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.RemoveAllPost, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.RemoveAllPost);
 
 				_mockForumRepo.Verify(x => x.RemoveAllPostRoles(forumID), Times.Once);
 			}
 
 			[Fact]
-			public void RemoveAllViewCallsRepo()
+			public async Task RemoveAllViewCallsRepo()
 			{
-				CallSetup(ModifyForumRolesType.RemoveAllView, out int forumID, out string role);
+				var (forumID, role) = await CallSetup(ModifyForumRolesType.RemoveAllView);
 
 				_mockForumRepo.Verify(x => x.RemoveAllViewRoles(forumID), Times.Once);
 			}
