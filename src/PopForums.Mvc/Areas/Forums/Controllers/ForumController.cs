@@ -59,7 +59,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum == null)
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);
@@ -121,7 +121,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(forumID);
 			if (forum == null)
 				throw new Exception($"Forum {forumID} not found");
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			return Tuple.Create(forum, permissionContext);
 		}
 
@@ -134,7 +134,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum == null)
 				throw new Exception($"Forum {topic.ForumID} not found");
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			return Tuple.Create(permissionContext, topic);
 		}
 
@@ -157,7 +157,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var adapter = new ForumAdapterFactory(forum);
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return NotFound();
@@ -229,7 +229,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);
@@ -268,7 +268,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			if (topic.IsClosed)
 				return Content(Resources.Closed);
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 				return Content(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -334,15 +334,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
 		}
 		
-		public ViewResult Recent(int page = 1)
+		public async Task<ViewResult> Recent(int page = 1)
 		{
 			var includeDeleted = false;
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
-			PagerContext pagerContext;
-			var topics = _forumService.GetRecentTopics(user, includeDeleted, page, out pagerContext);
+			var (topics, pagerContext) = await _forumService.GetRecentTopics(user, includeDeleted, page);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
 			_lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
@@ -469,7 +468,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user, topic);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
 			{
 				return StatusCode(403);

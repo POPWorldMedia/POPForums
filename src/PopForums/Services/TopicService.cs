@@ -22,9 +22,9 @@ namespace PopForums.Services
 		Task DeleteTopic(Topic topic, User user);
 		Task UndeleteTopic(Topic topic, User user);
 		Task UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
-		List<Topic> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
+		Task<Tuple<List<Topic>, PagerContext>> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex);
 		void RecalculateReplyCount(Topic topic);
-		List<Topic> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
+		Task<List<Topic>> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
 		void UpdateLast(Topic topic);
 		int TopicLastPostID(int topicID);
 		Task HardDeleteTopic(Topic topic, User user);
@@ -74,23 +74,23 @@ namespace PopForums.Services
 			return topics;
 		}
 
-		public List<Topic> GetTopics(User viewingUser, Forum forum, bool includeDeleted)
+		public async Task<List<Topic>> GetTopics(User viewingUser, Forum forum, bool includeDeleted)
 		{
-			var nonViewableForumIDs = _forumService.GetNonViewableForumIDs(viewingUser);
+			var nonViewableForumIDs = await _forumService.GetNonViewableForumIDs(viewingUser);
 			var topics = _topicRepository.Get(forum.ForumID, includeDeleted, nonViewableForumIDs);
 			return topics;
 		}
 
-		public List<Topic> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex)
 		{
-			var nonViewableForumIDs = _forumService.GetNonViewableForumIDs(viewingUser);
+			var nonViewableForumIDs = await _forumService.GetNonViewableForumIDs(viewingUser);
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
 			var topics = _topicRepository.GetTopicsByUser(postUser.UserID, includeDeleted, nonViewableForumIDs, startRow, pageSize);
 			var topicCount = _topicRepository.GetTopicCountByUser(postUser.UserID, includeDeleted, nonViewableForumIDs);
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return topics;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			return Tuple.Create(topics, pagerContext);
 		}
 
 		public Topic Get(string urlName)
@@ -156,7 +156,7 @@ namespace PopForums.Services
 				RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
-				_forumService.UpdateLast(forum);
+				await _forumService.UpdateLast(forum);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator or topic starter to delete topic.");
@@ -171,7 +171,7 @@ namespace PopForums.Services
 				_topicRepository.HardDeleteTopic(topic.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
-				_forumService.UpdateLast(forum);
+				await _forumService.UpdateLast(forum);
 			}
 			else
 				throw new InvalidOperationException("User must be Admin to hard delete topic.");
@@ -186,7 +186,7 @@ namespace PopForums.Services
 				RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
-				_forumService.UpdateLast(forum);
+				await _forumService.UpdateLast(forum);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to undelete topic.");
@@ -206,10 +206,10 @@ namespace PopForums.Services
 				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
 				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				_forumService.UpdateCounts(forum);
-				_forumService.UpdateLast(forum);
+				await _forumService.UpdateLast(forum);
 				var oldForum = await _forumService.Get(oldTopic.ForumID);
 				_forumService.UpdateCounts(oldForum);
-				_forumService.UpdateLast(oldForum);
+				await _forumService.UpdateLast(oldForum);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to update topic title or move topic.");

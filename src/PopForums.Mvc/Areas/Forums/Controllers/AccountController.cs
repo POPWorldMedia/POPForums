@@ -413,7 +413,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ActionResult Posts(int id, int page = 1)
+		public async Task<ActionResult> Posts(int id, int page = 1)
 		{
 			var postUser = _userService.GetUser(id);
 			if (postUser == null)
@@ -423,8 +423,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
-			PagerContext pagerContext;
-			var topics = _topicService.GetTopics(user, postUser, includeDeleted, page, out pagerContext);
+			var (topics, pagerContext) = await _topicService.GetTopics(user, postUser, includeDeleted, page);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
 			_lastReadService.GetTopicReadStatus(user, container);
 			ViewBag.PostUserName = postUser.Name;

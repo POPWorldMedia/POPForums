@@ -49,7 +49,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
 		{
-			var isForumViewRestricted = _forumRepo.GetForumViewRoles(forum.ForumID).Count > 0;
+			var isForumViewRestricted = _forumRepo.GetForumViewRoles(forum.ForumID).Result.Count > 0;
 			var result = new
 			{
 				Link = topicLink,

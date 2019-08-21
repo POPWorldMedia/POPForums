@@ -44,7 +44,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void Create()
+		public async Task Create()
 		{
 			var forumService = GetService();
 			const int categoryID = 456;
@@ -57,10 +57,10 @@ namespace PopForums.Test.Services
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
 			var forum = new Forum {ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder};
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
-			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			_mockForumRepo.Setup(f => f.GetAll()).Returns(new List<Forum> { new Forum { ForumID = 1, SortOrder = 9 }, new Forum { ForumID = 2, SortOrder = 6 }, forum});
-			var result = forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).ReturnsAsync(forum);
+			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
+			_mockForumRepo.Setup(f => f.GetAll()).ReturnsAsync(new List<Forum> { new Forum { ForumID = 1, SortOrder = 9 }, new Forum { ForumID = 2, SortOrder = 6 }, forum});
+			var result = await forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
 			Assert.Equal(forum, result);
 			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateSortOrder(123, 0), Times.Once());
@@ -69,7 +69,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void CreateMakesUrlTitle()
+		public async Task CreateMakesUrlTitle()
 		{
 			var forumService = GetService();
 			const int categoryID = 456;
@@ -82,14 +82,14 @@ namespace PopForums.Test.Services
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
 			var forum = new Forum { ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
-			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).ReturnsAsync(forum);
+			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
+			await forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
 			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title", adapter, isQAForum), Times.Once());
 		}
 
 		[Fact]
-		public void CreateMakesUrlTitleWithAppendage()
+		public async Task CreateMakesUrlTitleWithAppendage()
 		{
 			var forumService = GetService();
 			const int categoryID = 456;
@@ -102,14 +102,14 @@ namespace PopForums.Test.Services
 			const string adapter = "Jeff.Adapter";
 			const bool isQAForum = true;
 			var forum = new Forum { ForumID = forumID, CategoryID = categoryID, Title = title, Description = desc, IsVisible = isVisible, IsArchived = isArchived, SortOrder = sortOrder };
-			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).Returns(forum);
-			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(title.ToUrlName())).Returns(new List<string> {"forum-title", "forum-title-but-not", "forum-title-2"});
-			forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
+			_mockForumRepo.Setup(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, It.IsAny<String>(), adapter, isQAForum)).ReturnsAsync(forum);
+			_mockForumRepo.Setup(f => f.GetUrlNamesThatStartWith(title.ToUrlName())).ReturnsAsync(new List<string> {"forum-title", "forum-title-but-not", "forum-title-2"});
+			await forumService.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, adapter, isQAForum);
 			_mockForumRepo.Verify(f => f.Create(categoryID, title, desc, isVisible, isArchived, sortOrder, "forum-title-3", adapter, isQAForum), Times.Once());
 		}
 
 		[Fact]
-		public void UpdateLast()
+		public async Task UpdateLast()
 		{
 			const int forumID = 123;
 			const int topicID = 456;
@@ -119,20 +119,20 @@ namespace PopForums.Test.Services
 			var topic = new Topic { TopicID = topicID, LastPostTime = lastTime, LastPostName = lastName };
 			var forumService = GetService();
 			_mockTopicRepo.Setup(t => t.GetLastUpdatedTopic(forum.ForumID)).Returns(topic);
-			forumService.UpdateLast(forum);
+			await forumService.UpdateLast(forum);
 			_mockTopicRepo.Verify(t => t.GetLastUpdatedTopic(forum.ForumID), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateLastTimeAndUser(forum.ForumID, lastTime, lastName), Times.Once());
 		}
 
 		[Fact]
-		public void UpdateLastWithValues()
+		public async Task UpdateLastWithValues()
 		{
 			var forumService = GetService();
 			const int forumID = 123;
 			var lastTime = new DateTime(2001, 2, 2);
 			const string lastName = "Jeff";
 			var forum = new Forum { ForumID = forumID };
-			forumService.UpdateLast(forum, lastTime, lastName);
+			await forumService.UpdateLast(forum, lastTime, lastName);
 			_mockForumRepo.Verify(f => f.UpdateLastTimeAndUser(forum.ForumID, lastTime, lastName), Times.Once());
 		}
 
@@ -159,7 +159,7 @@ namespace PopForums.Test.Services
 			var forums = new List<Forum>();
 			var cats = new List<Category>();
 			var forumService = GetService();
-			_mockForumRepo.Setup(f => f.GetAll()).Returns(forums);
+			_mockForumRepo.Setup(f => f.GetAll()).ReturnsAsync(forums);
 			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(cats);
 			_mockSettingsManager.Setup(s => s.Current.ForumTitle).Returns("whatever");
 			var container = await forumService.GetCategorizedForumContainer();
@@ -178,7 +178,7 @@ namespace PopForums.Test.Services
 			var f4 = new Forum { ForumID = 1000,SortOrder = 6, CategoryID = 777 };
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
+			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).ReturnsAsync(forums);
 			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).ReturnsAsync(f3);
 			await service.MoveForumUp(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
@@ -202,7 +202,7 @@ namespace PopForums.Test.Services
 			var f4 = new Forum { ForumID = 1000, SortOrder = 6, CategoryID = 777 };
 			var forums = new List<Forum> { f1, f2, f3, f4 };
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).Returns(forums);
+			_mockForumRepo.Setup(f => f.GetForumsInCategory(777)).ReturnsAsync(forums);
 			_mockForumRepo.Setup(x => x.Get(f3.ForumID)).ReturnsAsync(f3);
 			await service.MoveForumDown(f3.ForumID);
 			_mockForumRepo.Verify(f => f.GetForumsInCategory(777), Times.Once());
@@ -236,31 +236,31 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void PostRestrictions()
+		public async Task PostRestrictions()
 		{
 			var service = GetService();
 			var forum = new Forum { ForumID = 1 };
 			var roles = new List<string> {"leader", "follower"};
-			_mockForumRepo.Setup(f => f.GetForumPostRoles(forum.ForumID)).Returns(roles);
-			var result = service.GetForumPostRoles(forum);
+			_mockForumRepo.Setup(f => f.GetForumPostRoles(forum.ForumID)).ReturnsAsync(roles);
+			var result = await service.GetForumPostRoles(forum);
 			_mockForumRepo.Verify(f => f.GetForumPostRoles(forum.ForumID), Times.Once());
 			Assert.Same(roles, result);
 		}
 
 		[Fact]
-		public void ViewRestrictions()
+		public async Task ViewRestrictions()
 		{
 			var service = GetService();
 			var forum = new Forum { ForumID = 1 };
 			var roles = new List<string> { "leader", "follower" };
-			_mockForumRepo.Setup(f => f.GetForumViewRoles(forum.ForumID)).Returns(roles);
-			var result = service.GetForumViewRoles(forum);
+			_mockForumRepo.Setup(f => f.GetForumViewRoles(forum.ForumID)).ReturnsAsync(roles);
+			var result = await service.GetForumViewRoles(forum);
 			_mockForumRepo.Verify(f => f.GetForumViewRoles(forum.ForumID), Times.Once());
 			Assert.Same(roles, result);
 		}
 
 		[Fact]
-		public void GetViewableForumIDsFromViewRestrictedForumsReturnsEmptyDictionaryWithoutUser()
+		public async Task GetViewableForumIDsFromViewRestrictedForumsReturnsEmptyDictionaryWithoutUser()
 		{
 			var graph = new Dictionary<int, List<string>>
 			{
@@ -269,35 +269,35 @@ namespace PopForums.Test.Services
 				{3, new List<string> {"blah"}}
 			};
 			var service = GetService();
-			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			_mockForumRepo.Setup(x => x.GetAllVisible()).ReturnsAsync(new List<Forum>
 			{
 				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }
 			});
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetViewableForumIDsFromViewRestrictedForums(null);
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			var result = await service.GetViewableForumIDsFromViewRestrictedForums(null);
 			Assert.Single(result);
 			Assert.Equal(2, result[0]);
 		}
 
 		[Fact]
-		public void GetViewableForumIDsFromViewRestrictedForumsDoesntIncludeForumsWithNoViewRestrictions()
+		public async Task GetViewableForumIDsFromViewRestrictedForumsDoesntIncludeForumsWithNoViewRestrictions()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "blah" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			_mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			_mockForumRepo.Setup(x => x.GetAllVisible()).ReturnsAsync(new List<Forum>
 			{
 				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }
 			});
-			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new [] {"blah"}.ToList() });
+			var result = await service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new [] {"blah"}.ToList() });
 			Assert.Equal(3, result.Count);
 		}
 
 		[Fact]
-		public void GetViewableForumIDsFromViewRestrictedForumsReturnsIDsWithMatchingUserRoles()
+		public async Task GetViewableForumIDsFromViewRestrictedForumsReturnsIDsWithMatchingUserRoles()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
@@ -306,11 +306,12 @@ namespace PopForums.Test.Services
 			graph.Add(4, new List<string> { "burp", "blah" });
 			graph.Add(5, new List<string> { "burp" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph); _mockForumRepo.Setup(x => x.GetAllVisible()).Returns(new List<Forum>
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			_mockForumRepo.Setup(x => x.GetAllVisible()).ReturnsAsync(new List<Forum>
 			{
 				new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 }, new Forum { ForumID = 4 }, new Forum { ForumID = 5 }
 			});
-			var result = service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new[] { "blah", "blep" }.ToList() });
+			var result = await service.GetViewableForumIDsFromViewRestrictedForums(new User { UserID = 123, Roles = new[] { "blah", "blep" }.ToList() });
 			Assert.Equal(4, result.Count);
 			Assert.Contains(1, result);
 			Assert.Contains(2, result);
@@ -320,57 +321,57 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetNonViewableDoesntIncludeForumsWithNoViewRestrictions()
+		public async Task GetNonViewableDoesntIncludeForumsWithNoViewRestrictions()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "blah" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string>()});
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			var result = await service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string>()});
 			Assert.Equal(2, result.Count);
 			Assert.DoesNotContain(2, result);
 		}
 
 		[Fact]
-		public void GetNonViewableDoesntIncludeForumsWithRoleMatchingViewRestrictions()
+		public async Task GetNonViewableDoesntIncludeForumsWithRoleMatchingViewRestrictions()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "OK" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			var result = await service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
 			Assert.Single(result);
 			Assert.DoesNotContain(3, result);
 		}
 
 		[Fact]
-		public void GetNonViewableIncludesForumsWithNoMatchingViewRestrictions()
+		public async Task GetNonViewableIncludesForumsWithNoMatchingViewRestrictions()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "OK" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			var result = await service.GetNonViewableForumIDs(new User { UserID = 123, Roles = new List<string> { "OK" } });
 			Assert.Single(result);
 			Assert.Equal(1, result[0]);
 		}
 
 		[Fact]
-		public void GetNonViewableExcludesViewRestrictionsForNoUser()
+		public async Task GetNonViewableExcludesViewRestrictionsForNoUser()
 		{
 			var graph = new Dictionary<int, List<string>>();
 			graph.Add(1, new List<string> { "blah" });
 			graph.Add(2, new List<string>());
 			graph.Add(3, new List<string> { "OK" });
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			var result = service.GetNonViewableForumIDs(null);
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			var result = await service.GetNonViewableForumIDs(null);
 			Assert.Equal(2, result.Count);
 			Assert.Equal(1, result[0]);
 			Assert.Equal(3, result[1]);
@@ -385,8 +386,8 @@ namespace PopForums.Test.Services
 			graph.Add(3, new List<string> { "OK" });
 			var allForums = new List<Forum> {new Forum { ForumID = 1 }, new Forum { ForumID = 2 }, new Forum { ForumID = 3 } };
 			var service = GetService();
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(graph);
-			_mockForumRepo.Setup(f => f.GetAllVisible()).Returns(allForums);
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(graph);
+			_mockForumRepo.Setup(f => f.GetAllVisible()).ReturnsAsync(allForums);
 			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(new List<Category>());
 			_mockSettingsManager.Setup(s => s.Current.ForumTitle).Returns("whatever");
 			var container = await service.GetCategorizedForumContainerFilteredForUser(new User { UserID = 123, Roles = new List<string> { "OK" } });
@@ -400,8 +401,8 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			_mockCategoryRepo.Setup(c => c.GetAll()).ReturnsAsync(new List<Category>());
-			_mockForumRepo.Setup(f => f.GetAllVisible()).Returns(new List<Forum>());
-			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).Returns(new Dictionary<int, List<string>>());
+			_mockForumRepo.Setup(f => f.GetAllVisible()).ReturnsAsync(new List<Forum>());
+			_mockForumRepo.Setup(f => f.GetForumViewRestrictionRoleGraph()).ReturnsAsync(new Dictionary<int, List<string>>());
 			_mockSettingsManager.Setup(s => s.Current.ForumTitle).Returns("");
 			await service.GetCategorizedForumContainerFilteredForUser(user);
 			_mockLastReadService.Verify(l => l.GetForumReadStatus(user, It.IsAny<CategorizedForumContainer>()), Times.Exactly(1));
@@ -427,7 +428,7 @@ namespace PopForums.Test.Services
 				new Forum {ForumID = 5, CategoryID = categories[0].CategoryID, SortOrder = 5},
 				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID}
 			};
-			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+			_mockForumRepo.Setup(x => x.GetAll()).ReturnsAsync(forums);
 
 			var result = await service.GetCategoryContainersWithForums();
 
@@ -456,7 +457,7 @@ namespace PopForums.Test.Services
 				new Forum {ForumID = 5, CategoryID = categories[0].CategoryID, SortOrder = 5},
 				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID}
 			};
-			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+			_mockForumRepo.Setup(x => x.GetAll()).ReturnsAsync(forums);
 
 			var result = await service.GetCategoryContainersWithForums();
 
@@ -486,7 +487,7 @@ namespace PopForums.Test.Services
 				new Forum {ForumID = 6, CategoryID = categories[2].CategoryID},
 				new Forum {ForumID = 7, CategoryID = null, SortOrder = 1},
 			};
-			_mockForumRepo.Setup(x => x.GetAll()).Returns(forums);
+			_mockForumRepo.Setup(x => x.GetAll()).ReturnsAsync(forums);
 
 			var result = await service.GetCategoryContainersWithForums();
 

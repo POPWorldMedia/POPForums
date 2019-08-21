@@ -161,13 +161,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forumEdit.CategoryID == 0)
 				forumEdit.CategoryID = null;
 			if (forumEdit.ForumID == 0)
-				_forumService.Create(forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, -1, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
+				await _forumService.Create(forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, -1, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
 			else
 			{
 				var forum = await _forumService.Get(forumEdit.ForumID);
 				if (forum == null)
 					return NotFound();
-				_forumService.Update(forum, forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
+				await _forumService.Update(forum, forumEdit.CategoryID, forumEdit.Title, forumEdit.Description, forumEdit.IsVisible, forumEdit.IsArchived, forumEdit.ForumAdapterName, forumEdit.IsQAForum);
 			}
 			var forums = await _forumService.GetCategoryContainersWithForums();
 			return forums;
@@ -185,8 +185,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			{
 				ForumID = forum.ForumID,
 				AllRoles = _userService.GetAllRoles(),
-				PostRoles = _forumService.GetForumPostRoles(forum),
-				ViewRoles = _forumService.GetForumViewRoles(forum)
+				PostRoles = await _forumService.GetForumPostRoles(forum),
+				ViewRoles = await _forumService.GetForumViewRoles(forum)
 			};
 			return container;
 		}

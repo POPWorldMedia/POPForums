@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -42,7 +43,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("Result", new { query, searchType });
 		}
 		
-		public ViewResult Result(string query, SearchType searchType = SearchType.Rank, int page = 1)
+		public async Task<ViewResult> Result(string query, SearchType searchType = SearchType.Rank, int page = 1)
 		{
 			ViewBag.SearchTypes = new SelectList(Enum.GetValues(typeof(SearchType)));
 			ViewBag.Query = query;
@@ -52,8 +53,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
-			PagerContext pagerContext;
-			var topics = _searchService.GetTopics(query, searchType, user, includeDeleted, page, out pagerContext);
+			var (topics, pagerContext) = await _searchService.GetTopics(query, searchType, user, includeDeleted, page);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics.Data };
 			ViewBag.IsError = !topics.IsValid;
 			if (topics.IsValid)
