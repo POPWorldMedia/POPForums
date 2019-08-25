@@ -147,7 +147,7 @@ namespace PopForums.Services
 			var forums = unfilteredForums.Where(f => !nonViewableForumIDs.Contains(f.ForumID));
 			var categories = await _categoryRepository.GetAll();
 			var container = new CategorizedForumContainer(categories, forums);
-			_lastReadService.GetForumReadStatus(user, container);
+			await _lastReadService.GetForumReadStatus(user, container);
 			container.ForumTitle = _settingsManager.Current.ForumTitle;
 			return container;
 		}

@@ -68,7 +68,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			PagerContext pagerContext;
 			var topics = _topicService.GetTopics(forum, permissionContext.UserCanModerate, page, out pagerContext);
 			var container = new ForumTopicContainer { Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext };
-			_lastReadService.GetTopicReadStatus(user, container);
+			await _lastReadService.GetTopicReadStatus(user, container);
 			var adapter = new ForumAdapterFactory(forum);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -169,13 +169,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			DateTime? lastReadTime = DateTime.UtcNow;
 			if (user != null)
 			{
-				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
+				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 				isFavorite = await _favoriteTopicService.IsTopicFavorite(user, topic);
 				isSubscribed = _subService.IsTopicSubscribed(user, topic);
 				if (isSubscribed)
 					_subService.MarkSubscribedTopicViewed(user, topic);
 				if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
-					_lastReadService.MarkTopicRead(user, topic);
+					await _lastReadService.MarkTopicRead(user, topic);
 				if (user.IsInRole(PermanentRoles.Moderator))
 				{
 					var categorizedForums = await _forumService.GetCategorizedForumContainer();
@@ -238,7 +238,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			DateTime? lastReadTime = DateTime.UtcNow;
 			if (user != null)
 			{
-				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
+				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 			}
 
 			PagerContext pagerContext;
@@ -330,7 +330,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var votedPostIDs = _postService.GetVotedPostIDs(user, postList);
 			ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 			if (user != null)
-				_lastReadService.MarkTopicRead(user, topic);
+				await _lastReadService.MarkTopicRead(user, topic);
 			return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
 		}
 		
@@ -343,7 +343,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var titles = _forumService.GetAllForumTitles();
 			var (topics, pagerContext) = await _forumService.GetRecentTopics(user, includeDeleted, page);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			_lastReadService.GetTopicReadStatus(user, container);
+			await _lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 
@@ -356,17 +356,17 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(id);
 			if (forum == null)
 				throw new Exception(String.Format("There is no ForumID {0} to mark as read.", id));
-			_lastReadService.MarkForumRead(user, forum);
+			await _lastReadService.MarkForumRead(user, forum);
 			return RedirectToAction("Index", HomeController.Name);
 		}
 
 		[HttpPost]
-		public RedirectToActionResult MarkAllForumsRead()
+		public async Task<RedirectToActionResult> MarkAllForumsRead()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				throw new Exception("There is no logged in user. Can't mark forum read.");
-			_lastReadService.MarkAllForumsRead(user);
+			await _lastReadService.MarkAllForumsRead(user);
 			return RedirectToAction("Index", HomeController.Name);
 		}
 
@@ -393,7 +393,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Redirect(url);
 		}
 
-		public ActionResult GoToNewestPost(int id)
+		public async Task<ActionResult> GoToNewestPost(int id)
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
@@ -404,7 +404,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				includeDeleted = true;
 			if (user == null)
 				return RedirectToAction("Topic", new { id = topic.UrlName });
-			var post = _lastReadService.GetFirstUnreadPost(user, topic);
+			var post = await _lastReadService.GetFirstUnreadPost(user, topic);
 			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
 			var url = Url.Action("Topic", new { id = topic.UrlName, page }) + "#" + post.PostID;
 			return Redirect(url);
@@ -477,7 +477,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			DateTime? lastReadTime = DateTime.UtcNow;
 			if (user != null)
 			{
-				lastReadTime = _lastReadService.GetLastReadTime(user, topic);
+				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 			}
 
 			PagerContext pagerContext;

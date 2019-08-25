@@ -35,7 +35,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var (topics, pagerContext) = await _favoriteTopicService.GetTopics(user, page);
 			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
-			_lastReadService.GetTopicReadStatus(user, container);
+			await _lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 

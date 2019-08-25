@@ -57,7 +57,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics.Data };
 			ViewBag.IsError = !topics.IsValid;
 			if (topics.IsValid)
-				_lastReadService.GetTopicReadStatus(user, container);
+				await _lastReadService.GetTopicReadStatus(user, container);
 			return View("Index", container);
 		}
 	}

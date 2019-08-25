@@ -425,7 +425,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var titles = _forumService.GetAllForumTitles();
 			var (topics, pagerContext) = await _topicService.GetTopics(user, postUser, includeDeleted, page);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-			_lastReadService.GetTopicReadStatus(user, container);
+			await _lastReadService.GetTopicReadStatus(user, container);
 			ViewBag.PostUserName = postUser.Name;
 			return View(container);
 		}

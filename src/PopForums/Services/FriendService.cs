@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -6,13 +7,13 @@ namespace PopForums.Services
 {
 	public interface IFriendService
 	{
-		List<Friend> GetFriends(User user);
-		List<Friend> GetFriendsOf(User user);
-		List<User> GetUnapprovedFriends(User user);
-		void AddUnapprovedFriend(User fromUser, User toUser);
-		void ApproveFriend(User fromUser, User toUser);
-		void DeleteFriend(User fromUser, User toUser);
-		bool IsFriend(User fromUser, User toUser);
+		Task<List<Friend>> GetFriends(User user);
+		Task<IEnumerable<Friend>> GetFriendsOf(User user);
+		Task<List<User>> GetUnapprovedFriends(User user);
+		Task AddUnapprovedFriend(User fromUser, User toUser);
+		Task ApproveFriend(User fromUser, User toUser);
+		Task DeleteFriend(User fromUser, User toUser);
+		Task<bool> IsFriend(User fromUser, User toUser);
 	}
 
 	public class FriendService : IFriendService
@@ -24,40 +25,40 @@ namespace PopForums.Services
 			_friendRepository = friendRepository;
 		}
 
-		public List<Friend> GetFriends(User user)
+		public async Task<List<Friend>> GetFriends(User user)
 		{
-			return _friendRepository.GetFriends(user.UserID);
+			return await _friendRepository.GetFriends(user.UserID);
 		}
 
-		public List<Friend> GetFriendsOf(User user)
+		public async Task<IEnumerable<Friend>> GetFriendsOf(User user)
 		{
-			return _friendRepository.GetFriendsOf(user.UserID);
+			return await _friendRepository.GetFriendsOf(user.UserID);
 		}
 
-		public List<User> GetUnapprovedFriends(User user)
+		public async Task<List<User>> GetUnapprovedFriends(User user)
 		{
-			return _friendRepository.GetUnapprovedFriends(user.UserID);
+			return await _friendRepository.GetUnapprovedFriends(user.UserID);
 		}
 
-		public void AddUnapprovedFriend(User fromUser, User toUser)
+		public async Task AddUnapprovedFriend(User fromUser, User toUser)
 		{
 			if (fromUser.UserID != toUser.UserID)
-				_friendRepository.AddUnapprovedFriend(fromUser.UserID, toUser.UserID);
+				await _friendRepository.AddUnapprovedFriend(fromUser.UserID, toUser.UserID);
 		}
 
-		public void ApproveFriend(User fromUser, User toUser)
+		public async Task ApproveFriend(User fromUser, User toUser)
 		{
-			_friendRepository.ApproveFriend(fromUser.UserID, toUser.UserID);
+			await _friendRepository.ApproveFriend(fromUser.UserID, toUser.UserID);
 		}
 
-		public void DeleteFriend(User fromUser, User toUser)
+		public async Task DeleteFriend(User fromUser, User toUser)
 		{
-			_friendRepository.DeleteFriend(fromUser.UserID, toUser.UserID);
+			await _friendRepository.DeleteFriend(fromUser.UserID, toUser.UserID);
 		}
 
-		public bool IsFriend(User fromUser, User toUser)
+		public async Task<bool> IsFriend(User fromUser, User toUser)
 		{
-			return _friendRepository.IsFriend(fromUser.UserID, toUser.UserID);
+			return await _friendRepository.IsFriend(fromUser.UserID, toUser.UserID);
 		}
 	}
 }

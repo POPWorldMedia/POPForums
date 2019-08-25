@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -8,15 +9,15 @@ namespace PopForums.Services
 {
 	public interface ILastReadService
 	{
-		void MarkForumRead(User user, Forum forum);
-		void MarkAllForumsRead(User user);
-		void MarkTopicRead(User user, Topic topic);
-		void GetForumReadStatus(User user, CategorizedForumContainer container);
-		void GetTopicReadStatus(User user, PagedTopicContainer container);
-		Post GetFirstUnreadPost(User user, Topic topic);
-		DateTime? GetTopicReadStatus(User user, Topic topic);
-		DateTime? GetForumReadStatus(User user, Forum forum);
-		DateTime? GetLastReadTime(User user, Topic topic);
+		Task MarkForumRead(User user, Forum forum);
+		Task MarkAllForumsRead(User user);
+		Task MarkTopicRead(User user, Topic topic);
+		Task GetForumReadStatus(User user, CategorizedForumContainer container);
+		Task GetTopicReadStatus(User user, PagedTopicContainer container);
+		Task<Post> GetFirstUnreadPost(User user, Topic topic);
+		Task<DateTime?> GetTopicReadStatus(User user, Topic topic);
+		Task<DateTime?> GetForumReadStatus(User user, Forum forum);
+		Task<DateTime?> GetLastReadTime(User user, Topic topic);
 	}
 
 	public class LastReadService : ILastReadService
@@ -30,38 +31,38 @@ namespace PopForums.Services
 		private readonly ILastReadRepository _lastReadRepository;
 		private readonly IPostRepository _postRepository;
 
-		public void MarkForumRead(User user, Forum forum)
+		public async Task MarkForumRead(User user, Forum forum)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
 			if (forum == null)
 				throw new ArgumentNullException("forum");
-			_lastReadRepository.SetForumRead(user.UserID, forum.ForumID, DateTime.UtcNow);
-			_lastReadRepository.DeleteTopicReadsInForum(user.UserID, forum.ForumID);
+			await _lastReadRepository.SetForumRead(user.UserID, forum.ForumID, DateTime.UtcNow);
+			await _lastReadRepository.DeleteTopicReadsInForum(user.UserID, forum.ForumID);
 		}
 
-		public void MarkAllForumsRead(User user)
+		public async Task MarkAllForumsRead(User user)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
-			_lastReadRepository.SetAllForumsRead(user.UserID, DateTime.UtcNow);
-			_lastReadRepository.DeleteAllTopicReads(user.UserID);
+			await _lastReadRepository.SetAllForumsRead(user.UserID, DateTime.UtcNow);
+			await _lastReadRepository.DeleteAllTopicReads(user.UserID);
 		}
 
-		public void MarkTopicRead(User user, Topic topic)
+		public async Task MarkTopicRead(User user, Topic topic)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
 			if (topic == null)
 				throw new ArgumentNullException("topic");
-			_lastReadRepository.SetTopicRead(user.UserID, topic.TopicID, DateTime.UtcNow);
+			await _lastReadRepository.SetTopicRead(user.UserID, topic.TopicID, DateTime.UtcNow);
 		}
 
-		public void GetForumReadStatus(User user, CategorizedForumContainer container)
+		public async Task GetForumReadStatus(User user, CategorizedForumContainer container)
 		{
 			Dictionary<int, DateTime> lastReads = null;
 			if (user != null)
-				lastReads = _lastReadRepository.GetLastReadTimesForForums(user.UserID);
+				lastReads = await _lastReadRepository.GetLastReadTimesForForums(user.UserID);
 			foreach (var forum in container.AllForums)
 			{
 				var status = ReadStatus.NoNewPosts;
@@ -76,32 +77,32 @@ namespace PopForums.Services
 			}
 		}
 
-		public DateTime? GetTopicReadStatus(User user, Topic topic)
+		public async Task<DateTime?> GetTopicReadStatus(User user, Topic topic)
 		{
 			if (user != null)
 			{
-				return _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
+				return await _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
 			}
 			return null;
 		}
 
-		public DateTime? GetForumReadStatus(User user, Forum forum)
+		public async Task<DateTime?> GetForumReadStatus(User user, Forum forum)
 		{
 			if (user != null)
 			{
-				return _lastReadRepository.GetLastReadTimesForForum(user.UserID, forum.ForumID);
+				return await _lastReadRepository.GetLastReadTimesForForum(user.UserID, forum.ForumID);
 			}
 			return null;
 		}
 
-		public void GetTopicReadStatus(User user, PagedTopicContainer container)
+		public async Task GetTopicReadStatus(User user, PagedTopicContainer container)
 		{
 			Dictionary<int, DateTime> lastForumReads = null;
 			Dictionary<int, DateTime> lastTopicReads = null;
 			if (user != null)
 			{
-				lastForumReads = _lastReadRepository.GetLastReadTimesForForums(user.UserID);
-				lastTopicReads = _lastReadRepository.GetLastReadTimesForTopics(user.UserID, container.Topics.Select(t => t.TopicID));
+				lastForumReads = await _lastReadRepository.GetLastReadTimesForForums(user.UserID);
+				lastTopicReads = await _lastReadRepository.GetLastReadTimesForTopics(user.UserID, container.Topics.Select(t => t.TopicID));
 			}
 			foreach (var topic in container.Topics)
 			{
@@ -132,7 +133,7 @@ namespace PopForums.Services
 			}
 		}
 
-		public Post GetFirstUnreadPost(User user, Topic topic)
+		public async Task<Post> GetFirstUnreadPost(User user, Topic topic)
 		{
 			if (topic == null)
 				throw new ArgumentException("Can't use a null topic.", "topic");
@@ -142,20 +143,20 @@ namespace PopForums.Services
 			var postIDs = _postRepository.GetPostIDsWithTimes(topic.TopicID, includeDeleted).Select(d => new { PostID = d.Key, PostTime = d.Value }).ToList();
 			if (user == null)
 				return _postRepository.Get(postIDs[0].PostID);
-			var lastRead = _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
+			var lastRead = await _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
 			if (!lastRead.HasValue)
-				lastRead = _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
+				lastRead = await _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
 			if (!lastRead.HasValue || !postIDs.Any(p => p.PostTime > lastRead.Value))
 				return _postRepository.Get(postIDs[0].PostID);
 			var firstNew = postIDs.First(p => p.PostTime > lastRead.Value);
 			return _postRepository.Get(firstNew.PostID);
 		}
 
-		public DateTime? GetLastReadTime(User user, Topic topic)
+		public async Task<DateTime?> GetLastReadTime(User user, Topic topic)
 		{
-			var lastRead = _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
+			var lastRead = await _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
 			if (!lastRead.HasValue)
-				lastRead = _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
+				lastRead = await _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
 			return lastRead;
 		}
 	}

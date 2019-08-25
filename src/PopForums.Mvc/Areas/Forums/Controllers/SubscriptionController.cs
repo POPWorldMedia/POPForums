@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
@@ -28,7 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IForumService _forumService;
 	    private readonly IUserRetrievalShim _userRetrievalShim;
 
-	    public ViewResult Topics(int page = 1)
+	    public async Task<ViewResult> Topics(int page = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -37,7 +38,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topics = _subService.GetTopics(user, page, out pagerContext);
 			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
-			_lastReadService.GetTopicReadStatus(user, container);
+			await _lastReadService.GetTopicReadStatus(user, container);
 			return View(container);
 		}
 
