@@ -423,11 +423,11 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Edit(int id, PostEdit postEdit)
+		public async Task<ActionResult> Edit(int id, PostEdit postEdit)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new { controller = "Forum", action = "PostLink", id = p.PostID });
-			var result = _postMasterService.EditPost(id, postEdit, user, RedirectLinkGenerator);
+			var result = await _postMasterService.EditPost(id, postEdit, user, RedirectLinkGenerator);
 			if (result.IsSuccessful)
 				return Redirect(result.Redirect);
 			ViewBag.Message = result.Message;

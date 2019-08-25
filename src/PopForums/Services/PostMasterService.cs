@@ -11,7 +11,7 @@ namespace PopForums.Services
 {
 	public interface IPostMasterService
 	{
-		BasicServiceResponse<Post> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator);
+		Task<BasicServiceResponse<Post>> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator);
 		Task<BasicServiceResponse<Topic>> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
 		Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
 	}
@@ -175,7 +175,7 @@ namespace PopForums.Services
 			_topicViewCountService.SetViewedTopic(topic);
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
 				_topicRepository.CloseTopic(topic.TopicID);
 			}
 			var redirectLink = redirectLinkGenerator(post);
@@ -183,7 +183,7 @@ namespace PopForums.Services
 			return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 		}
 
-		public BasicServiceResponse<Post> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator)
+		public async Task<BasicServiceResponse<Post>> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator)
 		{
 			var post = _postRepository.Get(postID);
 			if (!editingUser.IsPostEditable(post))
@@ -201,7 +201,7 @@ namespace PopForums.Services
 			post.LastEditName = editingUser.Name;
 			post.IsEdited = true;
 			_postRepository.Update(post);
-			_moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
+			await _moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
 			var redirectLink = redirectLinkGenerator(post);
 			return new BasicServiceResponse<Post> { Data = post, IsSuccessful = true, Message = string.Empty, Redirect = redirectLink };

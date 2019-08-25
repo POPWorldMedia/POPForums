@@ -849,48 +849,48 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void FailsBecauseNoUserMatch()
+			public async Task FailsBecauseNoUserMatch()
 			{
 				var service = GetService();
 				_postRepo.Setup(x => x.Get(456)).Returns(new Post {UserID = 789});
 
-				var result = service.EditPost(456, new PostEdit(), new User {UserID = 111, Roles = new List<string>()}, x => "");
+				var result = await service.EditPost(456, new PostEdit(), new User {UserID = 111, Roles = new List<string>()}, x => "");
 
 				Assert.False(result.IsSuccessful);
 				Assert.Equal(Resources.Forbidden, result.Message);
 			}
 
 			[Fact]
-			public void CensorsTitle()
+			public async Task CensorsTitle()
 			{
 				var service = GetService();
 				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
-				service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
+				await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 				_textParser.Verify(t => t.Censor("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void PlainTextParsed()
+			public async Task PlainTextParsed()
 			{
 				var service = GetService();
 				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
-				service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = true }, GetUser(), x => "");
+				await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = true }, GetUser(), x => "");
 				_textParser.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void RichTextParsed()
+			public async Task RichTextParsed()
 			{
 				var service = GetService();
 				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
 
-				service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = false }, GetUser(), x => "");
+				await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = false }, GetUser(), x => "");
 
 				_textParser.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void SavesMappedValues()
+			public async Task SavesMappedValues()
 			{
 				var service = GetService();
 				var post = new Post { PostID = 67 };
@@ -899,7 +899,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
 
-				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
+				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
 
 				Assert.True(result.IsSuccessful);
 				Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
@@ -912,7 +912,7 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
-			public void ModeratorLogged()
+			public async Task ModeratorLogged()
 			{
 				var service = GetService();
 				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>()};
@@ -920,14 +920,14 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
 				_postRepo.Setup(x => x.Get(456)).Returns(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"});
 
-				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
+				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
 				Assert.True(result.IsSuccessful);
 				_moderationLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
 			}
 
 			[Fact]
-			public void QueuesTopicForIndexing()
+			public async Task QueuesTopicForIndexing()
 			{
 				var service = GetService();
 				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>() };
@@ -935,14 +935,14 @@ namespace PopForums.Test.Services
 				_postRepo.Setup(x => x.Get(456)).Returns(post);
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 
-				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
+				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
 				Assert.True(result.IsSuccessful);
 				_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 			}
 
 			[Fact]
-			public void ModeratorCanEdit()
+			public async Task ModeratorCanEdit()
 			{
 				var service = GetService();
 				var post = new Post { PostID = 67 };
@@ -951,7 +951,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
 
-				var result = service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>(new []{PermanentRoles.Moderator})}, x => "");
+				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>(new []{PermanentRoles.Moderator})}, x => "");
 
 				Assert.True(result.IsSuccessful);
 				_postRepo.Verify(x => x.Update(It.IsAny<Post>()), Times.Once);

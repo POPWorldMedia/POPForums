@@ -121,85 +121,85 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void CloseTopicThrowsWithNonMod()
+		public async Task CloseTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.CloseTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.CloseTopic(topic, user));
 		}
 
 		[Fact]
-		public void CloseTopicClosesWithMod()
+		public async Task CloseTopicClosesWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.CloseTopic(topic, user);
+			await topicService.CloseTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicClose, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.CloseTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void OpenTopicThrowsWithNonMod()
+		public async Task OpenTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.OpenTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.OpenTopic(topic, user));
 		}
 
 		[Fact]
-		public void OpenTopicOpensWithMod()
+		public async Task OpenTopicOpensWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.OpenTopic(topic, user);
+			await topicService.OpenTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicOpen, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.OpenTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void PinTopicThrowsWithNonMod()
+		public async Task PinTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.PinTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.PinTopic(topic, user));
 		}
 
 		[Fact]
-		public void PinTopicPinsWithMod()
+		public async Task PinTopicPinsWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.PinTopic(topic, user);
+			await topicService.PinTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicPin, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.PinTopic(topic.TopicID), Times.Exactly(1));
 		}
 
 		[Fact]
-		public void UnpinTopicThrowsWithNonMod()
+		public async Task UnpinTopicThrowsWithNonMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			var topicService = GetTopicService();
-			Assert.Throws<InvalidOperationException>(() => topicService.UnpinTopic(topic, user));
+			await Assert.ThrowsAsync<InvalidOperationException>(async () => await topicService.UnpinTopic(topic, user));
 		}
 
 		[Fact]
-		public void UnpinTopicUnpinsWithMod()
+		public async Task UnpinTopicUnpinsWithMod()
 		{
 			var topic = new Topic { TopicID = 1 };
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			topicService.UnpinTopic(topic, user);
+			await topicService.UnpinTopic(topic, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicUnpin, topic, null), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UnpinTopic(topic.TopicID), Times.Exactly(1));
 		}

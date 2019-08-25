@@ -29,30 +29,30 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserRetrievalShim _userRetrievalShim;
 
 		[HttpPost]
-		public RedirectToActionResult TogglePin(int id)
+		public async Task<RedirectToActionResult> TogglePin(int id)
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't pin/unpin.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (topic.IsPinned)
-				_topicService.UnpinTopic(topic, user);
+				await _topicService.UnpinTopic(topic, user);
 			else
-				_topicService.PinTopic(topic, user);
+				await _topicService.PinTopic(topic, user);
 			return RedirectToAction("Topic", "Forum", new { id = topic.UrlName });
 		}
 
 		[HttpPost]
-		public RedirectToActionResult ToggleClosed(int id)
+		public async Task<RedirectToActionResult> ToggleClosed(int id)
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't open/close.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (topic.IsClosed)
-				_topicService.OpenTopic(topic, user);
+				await _topicService.OpenTopic(topic, user);
 			else
-				_topicService.CloseTopic(topic, user);
+				await _topicService.CloseTopic(topic, user);
 			return RedirectToAction("Topic", "Forum", new { id = topic.UrlName });
 		}
 
@@ -102,21 +102,21 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("PostLink", "Forum", new { id = post.PostID });
 		}
 
-		public ViewResult TopicModerationLog(int id)
+		public async Task<ViewResult> TopicModerationLog(int id)
 		{
 			var topic = _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"There is no topic with ID {id} to obtain a moderation log for.");
-			var log = _moderationLogService.GetLog(topic, true);
+			var log = await _moderationLogService.GetLog(topic, true);
 			return View(log);
 		}
 
-		public ViewResult PostModerationLog(int id)
+		public async Task<ViewResult> PostModerationLog(int id)
 		{
 			var post = _postService.Get(id);
 			if (post == null)
 				throw new Exception($"There is no post with ID {id} to obtain a moderation log for.");
-			var log = _moderationLogService.GetLog(post);
+			var log = await _moderationLogService.GetLog(post);
 			return View(log);
 		}
 

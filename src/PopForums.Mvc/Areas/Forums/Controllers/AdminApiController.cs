@@ -575,9 +575,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** moderation log
 
 		[HttpPost("/Forums/AdminApi/QueryModerationLog")]
-		public ActionResult<List<ModerationLogEntry>> QueryModerationLog([FromBody] IPHistoryQuery query)
+		public async Task<ActionResult<List<ModerationLogEntry>>> QueryModerationLog([FromBody] IPHistoryQuery query)
 		{
-			var history = _moderationLogService.GetLog(query.Start, query.End);
+			var history = await _moderationLogService.GetLog(query.Start, query.End);
 			return history;
 		}
 

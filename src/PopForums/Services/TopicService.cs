@@ -15,10 +15,10 @@ namespace PopForums.Services
 		List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
 		Topic Get(string urlName);
 		Topic Get(int topicID);
-		void CloseTopic(Topic topic, User user);
-		void OpenTopic(Topic topic, User user);
-		void PinTopic(Topic topic, User user);
-		void UnpinTopic(Topic topic, User user);
+		Task CloseTopic(Topic topic, User user);
+		Task OpenTopic(Topic topic, User user);
+		Task PinTopic(Topic topic, User user);
+		Task UnpinTopic(Topic topic, User user);
 		Task DeleteTopic(Topic topic, User user);
 		Task UndeleteTopic(Topic topic, User user);
 		Task UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
@@ -103,44 +103,44 @@ namespace PopForums.Services
 			return _topicRepository.Get(topicID);
 		}
 
-		public void CloseTopic(Topic topic, User user)
+		public async Task CloseTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
 				_topicRepository.CloseTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to close topic.");
 		}
 
-		public void OpenTopic(Topic topic, User user)
+		public async Task OpenTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicOpen, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicOpen, topic, null);
 				_topicRepository.OpenTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to open topic.");
 		}
 
-		public void PinTopic(Topic topic, User user)
+		public async Task PinTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicPin, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicPin, topic, null);
 				_topicRepository.PinTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to pin topic.");
 		}
 
-		public void UnpinTopic(Topic topic, User user)
+		public async Task UnpinTopic(Topic topic, User user)
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicUnpin, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicUnpin, topic, null);
 				_topicRepository.UnpinTopic(topic.TopicID);
 			}
 			else
@@ -151,7 +151,7 @@ namespace PopForums.Services
 		{
 			if (user.IsInRole(PermanentRoles.Moderator) || user.UserID == topic.StartedByUserID)
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
 				_topicRepository.DeleteTopic(topic.TopicID);
 				RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
@@ -166,7 +166,7 @@ namespace PopForums.Services
 		{
 			if (user.IsInRole(PermanentRoles.Admin))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
 				_searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
 				_topicRepository.HardDeleteTopic(topic.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
@@ -181,7 +181,7 @@ namespace PopForums.Services
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
+				await _moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
 				_topicRepository.UndeleteTopic(topic.TopicID);
 				RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
@@ -198,9 +198,9 @@ namespace PopForums.Services
 			{
 				var oldTopic = _topicRepository.Get(topic.TopicID);
 				if (oldTopic.ForumID != forum.ForumID)
-					_moderationLogService.LogTopic(user, ModerationType.TopicMoved, topic, forum, String.Format("Moved from {0} to {1}", oldTopic.ForumID, forum.ForumID));
+					await _moderationLogService.LogTopic(user, ModerationType.TopicMoved, topic, forum, String.Format("Moved from {0} to {1}", oldTopic.ForumID, forum.ForumID));
 				if (oldTopic.Title != newTitle)
-					_moderationLogService.LogTopic(user, ModerationType.TopicRenamed, topic, forum, String.Format("Renamed from \"{0}\" to \"{1}\"", oldTopic.Title, newTitle));
+					await _moderationLogService.LogTopic(user, ModerationType.TopicRenamed, topic, forum, String.Format("Renamed from \"{0}\" to \"{1}\"", oldTopic.Title, newTitle));
 				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
 				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);

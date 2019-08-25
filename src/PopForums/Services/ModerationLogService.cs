@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -7,12 +8,12 @@ namespace PopForums.Services
 {
 	public interface IModerationLogService
 	{
-		void LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum);
-		void LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment);
-		void LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText);
-		List<ModerationLogEntry> GetLog(DateTime start, DateTime end);
-		List<ModerationLogEntry> GetLog(Topic topic, bool excludePostEntries);
-		List<ModerationLogEntry> GetLog(Post post);
+		Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum);
+		Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment);
+		Task LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText);
+		Task<List<ModerationLogEntry>> GetLog(DateTime start, DateTime end);
+		Task<List<ModerationLogEntry>> GetLog(Topic topic, bool excludePostEntries);
+		Task<List<ModerationLogEntry>> GetLog(Post post);
 	}
 
 	public class ModerationLogService : IModerationLogService
@@ -24,34 +25,34 @@ namespace PopForums.Services
 
 		private readonly IModerationLogRepository _moderationLogRepo;
 
-		public void LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum)
+		public async Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum)
 		{
-			LogTopic(user, moderationType, topic, forum, String.Empty);
+			await LogTopic(user, moderationType, topic, forum, String.Empty);
 		}
 
-		public void LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment)
+		public async Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment)
 		{
-			_moderationLogRepo.Log(DateTime.UtcNow, user.UserID, user.Name, (int) moderationType, forum != null ? forum.ForumID : (int?)null, topic.TopicID, null, comment, String.Empty);
+			await _moderationLogRepo.Log(DateTime.UtcNow, user.UserID, user.Name, (int) moderationType, forum != null ? forum.ForumID : (int?)null, topic.TopicID, null, comment, string.Empty);
 		}
 
-		public void LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText)
+		public async Task LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText)
 		{
-			_moderationLogRepo.Log(DateTime.UtcNow, user.UserID, user.Name, (int)moderationType, null, post.TopicID, post.PostID, comment, oldText);
+			await _moderationLogRepo.Log(DateTime.UtcNow, user.UserID, user.Name, (int)moderationType, null, post.TopicID, post.PostID, comment, oldText);
 		}
 
-		public List<ModerationLogEntry> GetLog(DateTime start, DateTime end)
+		public async Task<List<ModerationLogEntry>> GetLog(DateTime start, DateTime end)
 		{
-			return _moderationLogRepo.GetLog(start, end);
+			return await _moderationLogRepo.GetLog(start, end);
 		}
 
-		public List<ModerationLogEntry> GetLog(Topic topic, bool excludePostEntries)
+		public async Task<List<ModerationLogEntry>> GetLog(Topic topic, bool excludePostEntries)
 		{
-			return _moderationLogRepo.GetLog(topic.TopicID, excludePostEntries);
+			return await _moderationLogRepo.GetLog(topic.TopicID, excludePostEntries);
 		}
 
-		public List<ModerationLogEntry> GetLog(Post post)
+		public async Task<List<ModerationLogEntry>> GetLog(Post post)
 		{
-			return _moderationLogRepo.GetLog(post.PostID);
+			return await _moderationLogRepo.GetLog(post.PostID);
 		}
 	}
 }

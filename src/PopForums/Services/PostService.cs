@@ -157,7 +157,7 @@ namespace PopForums.Services
 					await _topicService.DeleteTopic(topic, user);
 				else
 				{
-					_moderationLogService.LogPost(user, ModerationType.PostDelete, post, String.Empty, String.Empty);
+					await _moderationLogService.LogPost(user, ModerationType.PostDelete, post, String.Empty, String.Empty);
 					post.IsDeleted = true;
 					post.LastEditTime = DateTime.UtcNow;
 					post.LastEditName = user.Name;
@@ -178,7 +178,7 @@ namespace PopForums.Services
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				_moderationLogService.LogPost(user, ModerationType.PostUndelete, post, String.Empty, String.Empty);
+				await _moderationLogService.LogPost(user, ModerationType.PostUndelete, post, String.Empty, String.Empty);
 				post.IsDeleted = false;
 				post.LastEditTime = DateTime.UtcNow;
 				post.LastEditName = user.Name;
