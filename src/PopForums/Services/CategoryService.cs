@@ -61,9 +61,10 @@ namespace PopForums.Services
 
 		public async Task Delete(Category category)
 		{
-			var forums = _forumRepository.GetAll().Where(f => f.CategoryID == category.CategoryID);
+			var forumResult = await _forumRepository.GetAll();
+			var forums = forumResult.Where(f => f.CategoryID == category.CategoryID);
 			foreach (var forum in forums)
-				_forumRepository.UpdateCategoryAssociation(forum.ForumID, null);
+				await _forumRepository.UpdateCategoryAssociation(forum.ForumID, null);
 			await _categoryRepository.Delete(category.CategoryID);
 		}
 

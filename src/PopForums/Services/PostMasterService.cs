@@ -58,7 +58,7 @@ namespace PopForums.Services
 			var forum = await _forumRepository.Get(newPost.ItemID);
 			if (forum == null)
 				throw new Exception($"Forum {newPost.ItemID} not found");
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 				return GetPostFailMessage(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -73,14 +73,14 @@ namespace PopForums.Services
 			var timeStamp = DateTime.UtcNow;
 			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
 			var postID = _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
-			_forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
-			_forumRepository.IncrementPostAndTopicCount(forum.ForumID);
+			await _forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
+			await _forumRepository.IncrementPostAndTopicCount(forum.ForumID);
 			_profileRepository.SetLastPostID(user.UserID, postID);
 			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 			var topicLink = topicLinkGenerator(topic);
 			var message = string.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
-			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Count > 0;
+			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Result.Count > 0;
 			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewTopic, forumHasViewRestrictions);
 			await _eventPublisher.ProcessEvent(string.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
 			forum = await _forumRepository.Get(forum.ForumID);
@@ -116,7 +116,7 @@ namespace PopForums.Services
 			var forum = await _forumRepository.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception($"That's not good. Trying to reply to a topic orphaned from Forum {topic.ForumID}, which doesn't exist.");
-			var permissionContext = _forumPermissionService.GetPermissionContext(forum, user);
+			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 				return GetReplyFailMessage(Resources.ForumNoView);
 			if (!permissionContext.UserCanPost)
@@ -155,8 +155,8 @@ namespace PopForums.Services
 			};
 			_topicRepository.IncrementReplyCount(topic.TopicID);
 			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
-			_forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
-			_forumRepository.IncrementPostCount(topic.ForumID);
+			await _forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
+			await _forumRepository.IncrementPostCount(topic.ForumID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 			_profileRepository.SetLastPostID(user.UserID, postID);
 			var topicLink = topicLinkGenerator(topic);
@@ -164,7 +164,7 @@ namespace PopForums.Services
 				_subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
 			// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
 			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
-			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Count > 0;
+			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;
 			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
 			topic = _topicRepository.Get(topic.TopicID);
 			forum = await _forumRepository.Get(forum.ForumID);

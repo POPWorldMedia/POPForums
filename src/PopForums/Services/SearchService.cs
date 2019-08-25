@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -12,7 +13,7 @@ namespace PopForums.Services
 		List<string> GetJunkWords();
 		void CreateJunkWord(string word);
 		void DeleteJunkWord(string word);
-		Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
+		Task<Tuple<Response<List<Topic>>, PagerContext>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex);
 		int GetNextTopicIDForIndexing();
 		void DeleteAllIndexedWordsForTopic(Topic topic);
 		void SaveSearchWord(SearchWord searchWord);
@@ -35,13 +36,14 @@ namespace PopForums.Services
 
 		public static Regex SearchWordPattern = new Regex(@"[\w'\@\#\$\%\^\&\*]{2,}", RegexOptions.None);
 
-		public Response<List<Topic>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<Response<List<Topic>>, PagerContext>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex)
 		{
-			var nonViewableForumIDs = _forumService.GetNonViewableForumIDs(user);
+			var nonViewableForumIDs = await _forumService.GetNonViewableForumIDs(user);
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
 			var topicCount = 0;
 			Response<List<Topic>> topics;
+			PagerContext pagerContext;
 			if (String.IsNullOrEmpty(searchTerm))
 				topics = new Response<List<Topic>>(new List<Topic>(), true);
 			else
@@ -58,7 +60,7 @@ namespace PopForums.Services
 				topics = new Response<List<Topic>>(new List<Topic>(), false);
 				pagerContext = new PagerContext {PageCount = 1, PageIndex = 1, PageSize = 1};
 			}
-			return topics;
+			return Tuple.Create(topics, pagerContext);
 		}
 
 		public int GetNextTopicIDForIndexing()

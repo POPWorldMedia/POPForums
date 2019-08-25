@@ -85,7 +85,7 @@ namespace PopForums.Test.Services
 			var f2 = new Forum { ForumID = 2, CategoryID = cat.CategoryID };
 			var f3 = new Forum { ForumID = 3, CategoryID = 456 };
 			var forums = new List<Forum> {f1, f2, f3};
-			_mockForumRepo.Setup(f => f.GetAll()).Returns(forums);
+			_mockForumRepo.Setup(f => f.GetAll()).ReturnsAsync(forums);
 			service.Delete(cat);
 			_mockForumRepo.Verify(f => f.UpdateCategoryAssociation(1, null), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateCategoryAssociation(2, null), Times.Once());

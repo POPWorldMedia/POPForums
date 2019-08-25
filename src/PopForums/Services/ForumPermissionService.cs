@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -6,8 +7,8 @@ namespace PopForums.Services
 {
 	public interface IForumPermissionService
 	{
-		ForumPermissionContext GetPermissionContext(Forum forum, User user);
-		ForumPermissionContext GetPermissionContext(Forum forum, User user, Topic topic);
+		Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user);
+		Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user, Topic topic);
 	}
 
 	public class ForumPermissionService : IForumPermissionService
@@ -19,16 +20,16 @@ namespace PopForums.Services
 			_forumRepository = forumRepository;
 		}
 
-		public ForumPermissionContext GetPermissionContext(Forum forum, User user)
+		public async Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user)
 		{
-			return GetPermissionContext(forum, user, null);
+			return await GetPermissionContext(forum, user, null);
 		}
 
-		public ForumPermissionContext GetPermissionContext(Forum forum, User user, Topic topic)
+		public async Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user, Topic topic)
 		{
 			var context = new ForumPermissionContext { DenialReason = string.Empty };
-			var viewRestrictionRoles = _forumRepository.GetForumViewRoles(forum.ForumID);
-			var postRestrictionRoles = _forumRepository.GetForumPostRoles(forum.ForumID);
+			var viewRestrictionRoles = await _forumRepository.GetForumViewRoles(forum.ForumID);
+			var postRestrictionRoles = await _forumRepository.GetForumPostRoles(forum.ForumID);
 
 			// view
 			if (viewRestrictionRoles.Count == 0)

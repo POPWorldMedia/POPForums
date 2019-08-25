@@ -27,8 +27,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			ViewBag.OnlineUsers = _userService.GetUsersOnline();
 			ViewBag.TotalUsers = _userSessionService.GetTotalSessionCount().ToString("N0");
-			ViewBag.TopicCount = _forumService.GetAggregateTopicCount().ToString("N0");
-			ViewBag.PostCount = _forumService.GetAggregatePostCount().ToString("N0");
+			ViewBag.TopicCount = _forumService.GetAggregateTopicCount().Result.ToString("N0");
+			ViewBag.PostCount = _forumService.GetAggregatePostCount().Result.ToString("N0");
 			ViewBag.RegisteredUsers = _userService.GetTotalUsers().ToString("N0");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			return View(await _forumService.GetCategorizedForumContainerFilteredForUser(user));

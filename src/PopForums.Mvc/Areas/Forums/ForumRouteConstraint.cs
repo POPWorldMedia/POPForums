@@ -24,7 +24,7 @@ namespace PopForums.Mvc.Areas.Forums
 			IEnumerable<String> forumUrlNames;
 			try
 			{
-				forumUrlNames = _forumRepository.GetAllForumUrlNames();
+				forumUrlNames = _forumRepository.GetAllForumUrlNames().Result;
 			}
 			catch (Exception exc)
 			{

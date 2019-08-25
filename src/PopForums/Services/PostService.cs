@@ -166,7 +166,7 @@ namespace PopForums.Services
 					_topicService.RecalculateReplyCount(topic);
 					_topicService.UpdateLast(topic);
 					_forumService.UpdateCounts(forum);
-					_forumService.UpdateLast(forum);
+					await _forumService.UpdateLast(forum);
 					_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				}
 			}
@@ -189,7 +189,7 @@ namespace PopForums.Services
 				_topicService.UpdateLast(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
-				_forumService.UpdateLast(forum);
+				await _forumService.UpdateLast(forum);
 				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			}
 			else
