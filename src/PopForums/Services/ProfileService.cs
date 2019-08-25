@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -19,7 +20,7 @@ namespace PopForums.Services
 		void SetCurrentImageIDToNull(int userID);
 		string GetUnsubscribeHash(User user);
 		bool Unsubscribe(User user, string hash);
-		void UpdatePointTotal(User user);
+		Task UpdatePointTotal(User user);
 	}
 
 	public class ProfileService : IProfileService
@@ -110,9 +111,9 @@ namespace PopForums.Services
 			return true;
 		}
 
-		public void UpdatePointTotal(User user)
+		public async Task UpdatePointTotal(User user)
 		{
-			var total = _pointLedgerRepository.GetPointTotal(user.UserID);
+			var total = await _pointLedgerRepository.GetPointTotal(user.UserID);
 			_profileRepository.UpdatePoints(user.UserID, total);
 		}
 	}

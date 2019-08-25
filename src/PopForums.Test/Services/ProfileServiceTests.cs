@@ -5,6 +5,7 @@ using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PopForums.Test.Services
 {
@@ -191,13 +192,13 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdatePointsUpdatesPoints()
+		public async Task UpdatePointsUpdatesPoints()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			const int total = 87;
-			_pointLedger.Setup(x => x.GetPointTotal(user.UserID)).Returns(total);
-			service.UpdatePointTotal(user);
+			_pointLedger.Setup(x => x.GetPointTotal(user.UserID)).ReturnsAsync(total);
+			await service.UpdatePointTotal(user);
 			_profileRepo.Verify(x => x.UpdatePoints(user.UserID, total), Times.Once());
 		}
 	}

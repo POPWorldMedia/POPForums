@@ -70,7 +70,7 @@ namespace PopForums.ScoringGame
 				var conditionsMet = 0;
 				foreach (var condition in conditions)
 				{
-					var eventCount = _pointLedgerRepository.GetEntryCount(user.UserID, condition.EventDefinitionID);
+					var eventCount = await _pointLedgerRepository.GetEntryCount(user.UserID, condition.EventDefinitionID);
 					if (eventCount >= condition.EventCount)
 						conditionsMet++;
 				}

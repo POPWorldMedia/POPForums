@@ -98,8 +98,8 @@ namespace PopForums.Test.ScoringGame
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> { awardDef });
 			_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).Returns(false);
 			_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(4);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(4);
 			await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
 		}
@@ -122,8 +122,8 @@ namespace PopForums.Test.ScoringGame
 			_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> { awardDef });
 			_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).Returns(false);
 			_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(5);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(5);
 			await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
 		}
@@ -148,8 +148,8 @@ namespace PopForums.Test.ScoringGame
 			_userAwardService.Setup(x => x.IsAwarded(user, secondAwardDef)).Returns(false);
 			_awardDefService.Setup(x => x.GetConditions(firstAwardDef.AwardDefinitionID)).ReturnsAsync(new List<AwardCondition>());
 			_awardDefService.Setup(x => x.GetConditions(secondAwardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).Returns(10);
-			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).Returns(5);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
+			_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(5);
 			await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
 			_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
 		}

@@ -35,8 +35,8 @@ namespace PopForums.ScoringGame
 			var timeStamp = DateTime.UtcNow;
 			var eventDefinition = await _eventDefinitionService.GetEventDefinition(eventDefinitionID);
 			var ledgerEntry = new PointLedgerEntry { UserID = user.UserID, EventDefinitionID = eventDefinitionID, Points = eventDefinition.PointValue, TimeStamp = timeStamp };
-			_pointLedgerRepository.RecordEntry(ledgerEntry);
-			_profileService.UpdatePointTotal(user);
+			await _pointLedgerRepository.RecordEntry(ledgerEntry);
+			await _profileService.UpdatePointTotal(user);
 			if (eventDefinition.IsPublishedToFeed && !overridePublishToActivityFeed)
 			{
 				await _feedService.PublishToFeed(user, feedMessage, eventDefinition.PointValue, timeStamp);
@@ -50,8 +50,8 @@ namespace PopForums.ScoringGame
 			var timeStamp = DateTime.UtcNow;
 			var eventDefinition = new EventDefinition { EventDefinitionID = "Manual", PointValue = pointValue };
 			var ledgerEntry = new PointLedgerEntry { UserID = user.UserID, EventDefinitionID = eventDefinition.EventDefinitionID, Points = eventDefinition.PointValue, TimeStamp = timeStamp };
-			_pointLedgerRepository.RecordEntry(ledgerEntry);
-			_profileService.UpdatePointTotal(user);
+			await _pointLedgerRepository.RecordEntry(ledgerEntry);
+			await _profileService.UpdatePointTotal(user);
 			await _feedService.PublishToFeed(user, feedMessage, eventDefinition.PointValue, timeStamp);
 		}
 	}
