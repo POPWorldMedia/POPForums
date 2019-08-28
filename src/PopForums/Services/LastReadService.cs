@@ -140,16 +140,17 @@ namespace PopForums.Services
 			var includeDeleted = false;
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var postIDs = _postRepository.GetPostIDsWithTimes(topic.TopicID, includeDeleted).Select(d => new { PostID = d.Key, PostTime = d.Value }).ToList();
+			var ids = await _postRepository.GetPostIDsWithTimes(topic.TopicID, includeDeleted);
+			var postIDs	= ids.Select(d => new { PostID = d.Key, PostTime = d.Value }).ToList();
 			if (user == null)
-				return _postRepository.Get(postIDs[0].PostID);
+				return await _postRepository.Get(postIDs[0].PostID);
 			var lastRead = await _lastReadRepository.GetLastReadTimeForTopic(user.UserID, topic.TopicID);
 			if (!lastRead.HasValue)
 				lastRead = await _lastReadRepository.GetLastReadTimesForForum(user.UserID, topic.ForumID);
 			if (!lastRead.HasValue || !postIDs.Any(p => p.PostTime > lastRead.Value))
-				return _postRepository.Get(postIDs[0].PostID);
+				return await _postRepository.Get(postIDs[0].PostID);
 			var firstNew = postIDs.First(p => p.PostTime > lastRead.Value);
-			return _postRepository.Get(firstNew.PostID);
+			return await _postRepository.Get(firstNew.PostID);
 		}
 
 		public async Task<DateTime?> GetLastReadTime(User user, Topic topic)

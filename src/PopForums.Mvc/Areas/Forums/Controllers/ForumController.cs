@@ -193,9 +193,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			List<Post> posts;
 			if (forum.IsQAForum)
-				posts = _postService.GetPosts(topic, permissionContext.UserCanModerate);
+				posts = await _postService.GetPosts(topic, permissionContext.UserCanModerate);
 			else
-				posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
+				(posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
 			if (posts.Count == 0)
 				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
@@ -226,7 +226,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
-				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
@@ -241,8 +241,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 			}
 
-			PagerContext pagerContext;
-			var posts = _postService.GetPosts(topic, permissionContext.UserCanModerate, page, out pagerContext);
+			var (posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
 			if (posts.Count == 0)
 				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
@@ -282,7 +281,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			if (quotePostID != 0)
 			{
-				var post = _postService.Get(quotePostID);
+				var post = await _postService.Get(quotePostID);
 				newPost.FullText = _postService.GetPostForQuote(post, user, profile.IsPlainText);
 			}
 
@@ -317,7 +316,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Post(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
 			var (permissionContext, topic) = await GetPermissionContextByTopicID(post.TopicID);
@@ -355,7 +354,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				throw new Exception("There is no logged in user. Can't mark forum read.");
 			var forum = await _forumService.Get(id);
 			if (forum == null)
-				throw new Exception(String.Format("There is no ForumID {0} to mark as read.", id));
+				throw new Exception($"There is no ForumID {id} to mark as read.");
 			await _lastReadService.MarkForumRead(user, forum);
 			return RedirectToAction("Index", HomeController.Name);
 		}
@@ -376,11 +375,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null || (post.IsDeleted && (user == null || !user.IsInRole(PermanentRoles.Moderator))))
 				return NotFound();
-			Topic topic;
-			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
+			var (page, topic) = await _postService.GetTopicPageForPost(post, includeDeleted);
 			var forum = await _forumService.Get(topic.ForumID);
 			var adapter = new ForumAdapterFactory(forum);
 			if (adapter.IsAdapterEnabled)
@@ -405,14 +403,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return RedirectToAction("Topic", new { id = topic.UrlName });
 			var post = await _lastReadService.GetFirstUnreadPost(user, topic);
-			var page = _postService.GetTopicPageForPost(post, includeDeleted, out topic);
+			var (page, t) = await _postService.GetTopicPageForPost(post, includeDeleted);
 			var url = Url.Action("Topic", new { id = topic.UrlName, page }) + "#" + post.PostID;
 			return Redirect(url);
 		}
 
-		public ActionResult Edit(int id)
+		public async Task<ActionResult> Edit(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -437,7 +435,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> DeletePost(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
@@ -480,8 +478,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 			}
 
-			PagerContext pagerContext;
-			var posts = _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate, out pagerContext);
+			var (posts, pagerContext) = await _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate);
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
 			var votedIDs = _postService.GetVotedPostIDs(user, posts);
@@ -491,9 +488,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("TopicPage", container);
 		}
 
-		public ActionResult Voters(int id)
+		public async Task<ActionResult> Voters(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
 			var voters = _postService.GetVoters(post);
@@ -503,7 +500,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> VotePost(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
 			var topic = _topicService.Get(post.TopicID);
@@ -536,7 +533,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> SetAnswer(int topicID, int postID)
 		{
-			var post = _postService.Get(postID);
+			var post = await _postService.Get(postID);
 			if (post == null)
 				return NotFound();
 			var topic = _topicService.Get(topicID);

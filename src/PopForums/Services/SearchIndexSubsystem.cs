@@ -34,7 +34,7 @@ namespace PopForums.Services
 			var junkList = _searchService.GetJunkWords();
 			var wordList = new List<SearchWord>();
 			var alphaNum = SearchService.SearchWordPattern;
-			var posts = _postService.GetPosts(topic, false);
+			var posts = _postService.GetPosts(topic, false).Result;
 
 			foreach (var post in posts)
 			{

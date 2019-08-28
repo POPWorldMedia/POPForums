@@ -60,7 +60,7 @@ namespace PopForums.Test.Services
 			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).Returns(new List<string>());
 			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
 			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).Returns(69);
+			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).ReturnsAsync(69);
 			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
 			_topicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(111);
@@ -208,7 +208,7 @@ namespace PopForums.Test.Services
 				var lastPost = "last post text";
 				var lastPostID = 456;
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
-				_postRepo.Setup(x => x.Get(lastPostID)).Returns(new Post {FullText = lastPost, PostTime = DateTime.MinValue});
+				_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post {FullText = lastPost, PostTime = DateTime.MinValue});
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 
@@ -229,7 +229,7 @@ namespace PopForums.Test.Services
 				var lastPost = "last post text";
 				var lastPostID = 456;
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
-				_postRepo.Setup(x => x.Get(lastPostID)).Returns(new Post { FullText = lastPost, PostTime = DateTime.UtcNow });
+				_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post { FullText = lastPost, PostTime = DateTime.UtcNow });
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 
@@ -521,7 +521,7 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
-				_postRepo.Setup(x => x.Get(654)).Returns(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
+				_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
@@ -545,7 +545,7 @@ namespace PopForums.Test.Services
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
 				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
-				_postRepo.Setup(x => x.Get(654)).Returns(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
+				_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
@@ -812,7 +812,7 @@ namespace PopForums.Test.Services
 				var postTime = DateTime.UtcNow;
 				var service = GetService();
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-				_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).Returns(123);
+				_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).ReturnsAsync(123);
 				var forum = new Forum { ForumID = topic.ForumID };
 				_topicRepo.Setup(x => x.Get(topic.TopicID)).Returns(topic);
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
@@ -852,7 +852,7 @@ namespace PopForums.Test.Services
 			public async Task FailsBecauseNoUserMatch()
 			{
 				var service = GetService();
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post {UserID = 789});
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post {UserID = 789});
 
 				var result = await service.EditPost(456, new PostEdit(), new User {UserID = 111, Roles = new List<string>()}, x => "");
 
@@ -864,7 +864,7 @@ namespace PopForums.Test.Services
 			public async Task CensorsTitle()
 			{
 				var service = GetService();
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
 				await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 				_textParser.Verify(t => t.Censor("blah"), Times.Exactly(1));
 			}
@@ -873,7 +873,7 @@ namespace PopForums.Test.Services
 			public async Task PlainTextParsed()
 			{
 				var service = GetService();
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
 				await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = true }, GetUser(), x => "");
 				_textParser.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
 			}
@@ -882,7 +882,7 @@ namespace PopForums.Test.Services
 			public async Task RichTextParsed()
 			{
 				var service = GetService();
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
 
 				await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = false }, GetUser(), x => "");
 
@@ -894,7 +894,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var post = new Post { PostID = 67 };
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
 				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
@@ -918,7 +918,7 @@ namespace PopForums.Test.Services
 				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>()};
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"});
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"});
 
 				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
@@ -932,7 +932,7 @@ namespace PopForums.Test.Services
 				var service = GetService();
 				var user = new User { UserID = 123, Name = "dude", Roles = new List<string>() };
 				var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999, UserID = user.UserID };
-				_postRepo.Setup(x => x.Get(456)).Returns(post);
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(post);
 				_tenantService.Setup(x => x.GetTenant()).Returns("");
 
 				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
@@ -946,7 +946,7 @@ namespace PopForums.Test.Services
 			{
 				var service = GetService();
 				var post = new Post { PostID = 67 };
-				_postRepo.Setup(x => x.Get(456)).Returns(new Post { PostID = 456, UserID = 123 });
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
 				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");

@@ -33,7 +33,7 @@ namespace PopForums.AwsKit.Search
 
 			_elasticSearchClientWrapper.VerifyIndexCreate();
 
-			var posts = _postService.GetPosts(topic, false);
+			var posts = _postService.GetPosts(topic, false).Result;
 			if (posts.Count == 0)
 				throw new Exception($"TopicID {topic.TopicID} has no posts to index.");
 			var firstPost = _textParsingService.ClientHtmlToForumCode(posts[0].FullText);

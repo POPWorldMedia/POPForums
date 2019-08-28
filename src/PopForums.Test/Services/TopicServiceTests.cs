@@ -258,7 +258,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).Returns(42);
+			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).ReturnsAsync(42);
 			await topicService.DeleteTopic(topic, user);
 			_topicRepo.Verify(t => t.UpdateReplyCount(topic.TopicID, 42), Times.Exactly(1));
 		}
@@ -328,7 +328,7 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).Returns(42);
+			_postRepo.Setup(t => t.GetReplyCount(topic.TopicID, false)).ReturnsAsync(42);
 			await topicService.UndeleteTopic(topic, user);
 			_topicRepo.Verify(t => t.UpdateReplyCount(topic.TopicID, 42), Times.Exactly(1));
 		}
@@ -436,13 +436,13 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdateLastSetsFieldsFromLastPost()
+		public async Task UpdateLastSetsFieldsFromLastPost()
 		{
 			var topic = new Topic { TopicID = 456 };
 			var post = new Post { PostID = 123, TopicID = topic.TopicID, UserID = 789, Name = "Dude", PostTime = new DateTime(2000, 1, 3)};
 			var service = GetTopicService();
-			_postRepo.Setup(x => x.GetLastInTopic(post.TopicID)).Returns(post);
-			service.UpdateLast(topic);
+			_postRepo.Setup(x => x.GetLastInTopic(post.TopicID)).ReturnsAsync(post);
+			await service.UpdateLast(topic);
 			_topicRepo.Verify(x => x.UpdateLastTimeAndUser(topic.TopicID, post.UserID, post.Name, post.PostTime), Times.Once());
 		}
 
@@ -513,7 +513,7 @@ namespace PopForums.Test.Services
 			var service = GetTopicService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
-			_postRepo.Setup(x => x.Get(It.IsAny<int>())).Returns((Post) null);
+			_postRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Post) null);
 			await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetAnswer(user, topic, new Post { PostID = 789 }, "", ""));
 		}
 
@@ -524,7 +524,7 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post { PostID = 789, TopicID = 111 };
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetAnswer(user, topic, post, "", ""));
 		}
 
@@ -535,7 +535,7 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
 			var post = new Post { PostID = 789, TopicID = topic.TopicID };
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			await service.SetAnswer(user, topic, post, "", "");
 			_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
 		}
@@ -548,7 +548,7 @@ namespace PopForums.Test.Services
 			var answerUser = new User { UserID = 777 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null};
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID};
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
 			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false), Times.Once());
@@ -561,7 +561,7 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = 777 };
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User)null);
 			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -575,7 +575,7 @@ namespace PopForums.Test.Services
 			var answerUser = new User { UserID = 777 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = 666 };
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = answerUser.UserID };
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			_userRepo.Setup(x => x.GetUser(answerUser.UserID)).Returns(answerUser);
 			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
@@ -588,7 +588,7 @@ namespace PopForums.Test.Services
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456, StartedByUserID = user.UserID, AnswerPostID = null };
 			var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = user.UserID };
-			_postRepo.Setup(x => x.Get(post.PostID)).Returns(post);
+			_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
 			_userRepo.Setup(x => x.GetUser(user.UserID)).Returns(user);
 			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());

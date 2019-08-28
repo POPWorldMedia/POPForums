@@ -19,7 +19,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 
 		public int GetLastPostID(int topicID)
 		{
-			return _topicService.TopicLastPostID(topicID);
+			return _topicService.TopicLastPostID(topicID).Result;
 		}
 	}
 }

@@ -45,13 +45,12 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetPostsPageSizeAndStartRowCalcdCorrectly()
+		public async Task GetPostsPageSizeAndStartRowCalcdCorrectly()
 		{
 			var topic = new Topic { TopicID = 1, ReplyCount = 20};
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(2);
-			PagerContext pagerContext;
-			postService.GetPosts(topic, false, 4, out pagerContext);
+			var (posts, pagerContext) = await postService.GetPosts(topic, false, 4);
 			_postRepo.Verify(p => p.Get(1, false, 7, 2), Times.Once());
 			_postRepo.Verify(p => p.GetReplyCount(It.IsAny<int>(), It.IsAny<bool>()), Times.Never());
 			Assert.Equal(11, pagerContext.PageCount);
@@ -59,51 +58,48 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetPostsReplyCountCalledOnIncludeDeleted()
+		public async Task GetPostsReplyCountCalledOnIncludeDeleted()
 		{
 			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(2);
-			_postRepo.Setup(p => p.GetReplyCount(topic.TopicID, true)).Returns(21);
-			PagerContext pagerContext;
-			postService.GetPosts(topic, true, 4, out pagerContext);
+			_postRepo.Setup(p => p.GetReplyCount(topic.TopicID, true)).ReturnsAsync(21);
+			var (posts, pagerContext) = await postService.GetPosts(topic, true, 4);
 			_postRepo.Verify(p => p.GetReplyCount(topic.TopicID, true), Times.Once());
 			Assert.Equal(11, pagerContext.PageCount);
 		}
 
 		[Fact]
-		public void GetPostsPagerContextConstructed()
+		public async Task GetPostsPagerContextConstructed()
 		{
 			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(3);
-			PagerContext pagerContext;
-			postService.GetPosts(topic, false, 4, out pagerContext);
+			var (posts, pagerContext) = await postService.GetPosts(topic, false, 4);
 			Assert.Equal(7, pagerContext.PageCount);
 			Assert.Equal(4, pagerContext.PageIndex);
 		}
 
 		[Fact]
-		public void GetPostsHitsRepo()
+		public async Task GetPostsHitsRepo()
 		{
 			var topic = new Topic { TopicID = 1, ReplyCount = 20 };
 			var posts = new List<Post>();
 			var postService = GetService();
 			_settings.Setup(s => s.PostsPerPage).Returns(3);
-			_postRepo.Setup(p => p.Get(1, false, It.IsAny<int>(), It.IsAny<int>())).Returns(posts);
-			PagerContext pagerContext;
-			var result = postService.GetPosts(topic, false, 4, out pagerContext);
-			Assert.Same(posts, result);
+			_postRepo.Setup(p => p.Get(1, false, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(posts);
+			var result = await postService.GetPosts(topic, false, 4);
+			Assert.Same(posts, result.Item1);
 		}
 
 		[Fact]
-		public void GetCallsRepoAndReturns()
+		public async Task GetCallsRepoAndReturns()
 		{
 			var postService = GetService();
 			var postID = 123;
 			var post = new Post {PostID = postID};
-			_postRepo.Setup(p => p.Get(postID)).Returns(post);
-			var postResult = postService.Get(postID);
+			_postRepo.Setup(p => p.Get(postID)).ReturnsAsync(post);
+			var postResult = await postService.Get(postID);
 			_postRepo.Verify(p => p.Get(postID), Times.Once());
 			Assert.Same(postResult, post);
 		}
@@ -328,28 +324,26 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetPostsToEndSkipsLoadedPosts()
+		public async Task GetPostsToEndSkipsLoadedPosts()
 		{
 			var service = GetService();
 			var posts = new List<Post> {new Post { PostID = 1 }, new Post { PostID = 2 }, new Post { PostID = 3 }, new Post { PostID = 4 } };
-			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
+			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(5);
-			PagerContext pagerContext;
-			var result = service.GetPosts(new Topic { TopicID = 123 }, 2, true, out pagerContext);
-			Assert.Equal(2, result.Count);
-			Assert.Equal(3, result[0].PostID);
-			Assert.Equal(4, result[1].PostID);
+			var result = await service.GetPosts(new Topic { TopicID = 123 }, 2, true);
+			Assert.Equal(2, result.Item1.Count);
+			Assert.Equal(3, result.Item1[0].PostID);
+			Assert.Equal(4, result.Item1[1].PostID);
 		}
 
 		[Fact]
-		public void GetPostsToEndCalcsCorrectPagerContext()
+		public async Task GetPostsToEndCalcsCorrectPagerContext()
 		{
 			var service = GetService();
 			var posts = new List<Post> { new Post { PostID = 1 }, new Post { PostID = 2 }, new Post { PostID = 3 }, new Post { PostID = 4 }, new Post { PostID = 5 }, new Post { PostID = 6 }, new Post { PostID = 7 }, new Post { PostID = 8 } };
-			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).Returns(posts);
+			_postRepo.Setup(p => p.Get(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(posts);
 			_settingsManager.Setup(s => s.Current.PostsPerPage).Returns(3);
-			PagerContext pagerContext;
-			service.GetPosts(new Topic { TopicID = 123 }, 2, true, out pagerContext);
+			var (resultPosts, pagerContext) = await service.GetPosts(new Topic { TopicID = 123 }, 2, true);
 			Assert.Equal(3, pagerContext.PageCount);
 			Assert.Equal(3, pagerContext.PageIndex);
 		}

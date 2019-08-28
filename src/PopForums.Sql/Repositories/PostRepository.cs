@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -25,27 +27,27 @@ namespace PopForums.Sql.Repositories
 		private readonly ICacheHelper _cache;
 		private const string PostFields = "PostID, TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes";
 
-		public virtual int Create(int topicID, int parentPostID, string ip, bool isFirstInTopic, bool showSig, int userID, string name, string title, string fullText, DateTime postTime, bool isEdited, string lastEditName, DateTime? lastEditTime, bool isDeleted, int votes)
+		public virtual async Task<int> Create(int topicID, int parentPostID, string ip, bool isFirstInTopic, bool showSig, int userID, string name, string title, string fullText, DateTime postTime, bool isEdited, string lastEditName, DateTime? lastEditTime, bool isDeleted, int votes)
 		{
-			object postID = null;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				postID = connection.QuerySingle<int>("INSERT INTO pf_Post (TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes) VALUES (@TopicID, @ParentPostID, @IP, @IsFirstInTopic, @ShowSig, @UserID, @Name, @Title, @FullText, @PostTime, @IsEdited, @LastEditName, @LastEditTime, @IsDeleted, @Votes);SELECT CAST(SCOPE_IDENTITY() as int)", new { TopicID = topicID, ParentPostID = parentPostID, IP = ip, IsFirstInTopic = isFirstInTopic, ShowSig = showSig, UserID = userID, Name = name, Title = title, FullText = fullText, PostTime = postTime, IsEdited = isEdited, LastEditTime = lastEditTime, LastEditName = lastEditName, IsDeleted = isDeleted, Votes = votes }));
+			Task<int> postID = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				postID = connection.QuerySingleAsync<int>("INSERT INTO pf_Post (TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes) VALUES (@TopicID, @ParentPostID, @IP, @IsFirstInTopic, @ShowSig, @UserID, @Name, @Title, @FullText, @PostTime, @IsEdited, @LastEditName, @LastEditTime, @IsDeleted, @Votes);SELECT CAST(SCOPE_IDENTITY() as int)", new { TopicID = topicID, ParentPostID = parentPostID, IP = ip, IsFirstInTopic = isFirstInTopic, ShowSig = showSig, UserID = userID, Name = name, Title = title, FullText = fullText, PostTime = postTime, IsEdited = isEdited, LastEditTime = lastEditTime, LastEditName = lastEditName, IsDeleted = isDeleted, Votes = votes }));
 			var key = string.Format(CacheKeys.PostPages, topicID);
 			_cache.RemoveCacheObject(key);
-			return Convert.ToInt32(postID);
+			return await postID;
 		}
 
-		public bool Update(Post post)
+		public async Task<bool> Update(Post post)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				result = connection.Execute("UPDATE pf_Post SET TopicID = @TopicID, ParentPostID = @ParentPostID, IP = @IP, IsFirstInTopic = @IsFirstInTopic, ShowSig = @ShowSig, UserID = @UserID, Name = @Name, Title = @Title, FullText = @FullText, PostTime = @PostTime, IsEdited = @IsEdited, LastEditName = @LastEditName, LastEditTime = @LastEditTime, IsDeleted = @IsDeleted, Votes = @Votes WHERE PostID = @PostID", new { post.TopicID, post.ParentPostID, post.IP, post.IsFirstInTopic, post.ShowSig, post.UserID, post.Name, post.Title, post.FullText, post.PostTime, post.IsEdited, post.LastEditTime, post.LastEditName, post.IsDeleted, post.Votes, post.PostID }) == 1);
+			Task<int> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				result = connection.ExecuteAsync("UPDATE pf_Post SET TopicID = @TopicID, ParentPostID = @ParentPostID, IP = @IP, IsFirstInTopic = @IsFirstInTopic, ShowSig = @ShowSig, UserID = @UserID, Name = @Name, Title = @Title, FullText = @FullText, PostTime = @PostTime, IsEdited = @IsEdited, LastEditName = @LastEditName, LastEditTime = @LastEditTime, IsDeleted = @IsDeleted, Votes = @Votes WHERE PostID = @PostID", new { post.TopicID, post.ParentPostID, post.IP, post.IsFirstInTopic, post.ShowSig, post.UserID, post.Name, post.Title, post.FullText, post.PostTime, post.IsEdited, post.LastEditTime, post.LastEditName, post.IsDeleted, post.Votes, post.PostID }));
 			var key = string.Format(CacheKeys.PostPages, post.TopicID);
 			_cache.RemoveCacheObject(key);
-			return result;
+			return result.Result == 1;
 		}
 
-		public List<Post> Get(int topicID, bool includeDeleted, int startRow, int pageSize)
+		public async Task<List<Post>> Get(int topicID, bool includeDeleted, int startRow, int pageSize)
 		{
 			var key = string.Format(CacheKeys.PostPages, topicID);
 			var page = startRow == 1 ? 1 : (startRow - 1) / pageSize + 1;
@@ -75,78 +77,63 @@ WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
 
 SET ROWCOUNT 0";
-			List<Post> posts = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				posts = connection.Query<Post>(sql, new { TopicID = topicID, IncludeDeleted = includeDeleted, StartRow = startRow, PageSize = pageSize }).ToList());
+			Task<IEnumerable<Post>> posts = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				posts = connection.QueryAsync<Post>(sql, new { TopicID = topicID, IncludeDeleted = includeDeleted, StartRow = startRow, PageSize = pageSize }));
+			var list = posts.Result.ToList();
 			if (!includeDeleted)
 			{
-				_cache.SetPagedListCacheObject(key, page, posts);
+				_cache.SetPagedListCacheObject(key, page, list);
 			}
-			return posts;
+			return list;
 		}
 
-		public List<Post> Get(int topicID, bool includeDeleted)
+		public async Task<List<Post>> Get(int topicID, bool includeDeleted)
 		{
 			const string sql = "SELECT PostID, TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes FROM pf_Post WHERE TopicID = @TopicID AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0)) ORDER BY PostTime";
-			List<Post> posts = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				posts = connection.Query<Post>(sql, new { TopicID = topicID, IncludeDeleted = includeDeleted }).ToList());
-			return posts;
+			Task<IEnumerable<Post>> posts = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				posts = connection.QueryAsync<Post>(sql, new { TopicID = topicID, IncludeDeleted = includeDeleted }));
+			return posts.Result.ToList();
 		}
 
-		public List<Post> GetPostWithReplies(int postID, bool includeDeleted)
+		public async Task<Post> GetLastInTopic(int topicID)
 		{
-			const string sql = "SELECT PostID, TopicID, ParentPostID, IP, IsFirstInTopic, ShowSig, UserID, Name, Title, FullText, PostTime, IsEdited, LastEditName, LastEditTime, IsDeleted, Votes FROM pf_Post WHERE (PostID = @PostID OR ParentPostID = @PostID) AND ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0)) ORDER BY PostTime";
-			List<Post> posts = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				posts = connection.Query<Post>(sql, new { PostID = postID, IncludeDeleted = includeDeleted }).ToList());
-			return posts;
+			Task<Post> post = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				post = connection.QuerySingleOrDefaultAsync<Post>("SELECT TOP 1 " + PostFields + " FROM pf_Post WHERE TopicID = @TopicID AND IsDeleted = 0 ORDER BY PostTime DESC", new { TopicID = topicID}));
+			return await post;
 		}
 
-		public Post GetFirstInTopic(int topicID)
-		{
-			Post post = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				post = connection.QuerySingleOrDefault<Post>("SELECT " + PostFields + " FROM pf_Post WHERE TopicID = @TopicID AND IsFirstInTopic = 1", new { TopicID = topicID }));
-			return post;
-		}
-
-		public Post GetLastInTopic(int topicID)
-		{
-			Post post = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				post = connection.QuerySingleOrDefault<Post>("SELECT TOP 1 " + PostFields + " FROM pf_Post WHERE TopicID = @TopicID AND IsDeleted = 0 ORDER BY PostTime DESC", new { TopicID = topicID}));
-			return post;
-		}
-
-		public int GetReplyCount(int topicID, bool includeDeleted)
+		public async Task<int> GetReplyCount(int topicID, bool includeDeleted)
 		{
 			var sql = "SELECT COUNT(*) FROM pf_Post WHERE TopicID = @TopicID";
 			if (!includeDeleted)
 				sql += " AND IsDeleted = 0 AND IsFirstInTopic = 0";
-			var replyCount = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				replyCount = connection.ExecuteScalar<int>(sql, new { TopicID = topicID }));
-			return replyCount;
+			Task<int> replyCount = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				replyCount = connection.ExecuteScalarAsync<int>(sql, new { TopicID = topicID }));
+			return await replyCount;
 		}
 
-		public Post Get(int postID)
+		public async Task<Post> Get(int postID)
 		{
-			Post post = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				post = connection.QuerySingleOrDefault<Post>("SELECT " + PostFields + " FROM pf_Post WHERE PostID = @PostID", new { PostID = postID }));
-			return post;
+			Task<Post> post = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				post = connection.QuerySingleOrDefaultAsync<Post>("SELECT " + PostFields + " FROM pf_Post WHERE PostID = @PostID", new { PostID = postID }));
+			return await post;
 		}
 
-		public Dictionary<int, DateTime> GetPostIDsWithTimes(int topicID, bool includeDeleted)
+		public async Task<Dictionary<int, DateTime>> GetPostIDsWithTimes(int topicID, bool includeDeleted)
 		{
-			Dictionary<int, DateTime> dictionary = null;
+			Task<IEnumerable<dynamic>> results = null;
 			var sql = "SELECT PostID, PostTime FROM pf_Post WHERE TopicID = @TopicID";
 			if (!includeDeleted)
 				sql += " AND IsDeleted = 0";
 			sql += " ORDER BY PostTime";
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				dictionary = connection.Query(sql, new { TopicID = topicID }).ToDictionary(r => (int)r.PostID, r => (DateTime)r.PostTime));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				results = connection.QueryAsync(sql, new { TopicID = topicID }));
+			var dictionary = results.Result.ToDictionary(r => (int) r.PostID, r => (DateTime) r.PostTime);
 			return dictionary;
 		}
 
@@ -166,16 +153,6 @@ SET ROWCOUNT 0";
 			foreach (var item in list)
 				item.Type = "Post";
 			return list;
-		}
-
-		public Dictionary<int, int> GetFirstPostIDsFromTopicIDs(List<int> topicIDs)
-		{
-			var ids = string.Join(",", topicIDs);
-			var sql = $"SELECT TopicID, PostID FROM pf_Post WHERE IsFirstInTopic = 1 AND TopicID IN ({ids})";
-			Dictionary<int, int> dictionary = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				dictionary = connection.Query(sql).ToDictionary(r => (int)r.TopicID, r => (int)r.PostID));
-			return dictionary;
 		}
 
 		public int GetLastPostID(int topicID)

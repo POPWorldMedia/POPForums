@@ -64,7 +64,7 @@ namespace PopForums.Services
 			if (!permissionContext.UserCanPost)
 				return GetPostFailMessage(Resources.ForumNoPost);
 			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
-			if (IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
+			if (await IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
 				return GetPostFailMessage(string.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts));
 			if (string.IsNullOrWhiteSpace(newPost.FullText) || string.IsNullOrWhiteSpace(newPost.Title))
 				return GetPostFailMessage(Resources.PostEmpty);
@@ -72,7 +72,7 @@ namespace PopForums.Services
 			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
 			var timeStamp = DateTime.UtcNow;
 			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
-			var postID = _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
+			var postID = await _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
 			await _forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
 			await _forumRepository.IncrementPostAndTopicCount(forum.ForumID);
 			_profileRepository.SetLastPostID(user.UserID, postID);
@@ -122,19 +122,19 @@ namespace PopForums.Services
 			if (!permissionContext.UserCanPost)
 				return GetReplyFailMessage(Resources.ForumNoPost);
 			newPost.FullText = newPost.IsPlainText ? _textParsingService.ForumCodeToHtml(newPost.FullText) : _textParsingService.ClientHtmlToHtml(newPost.FullText);
-			if (IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
+			if (await IsNewPostDupeOrInTimeLimit(newPost.FullText, user))
 				return GetReplyFailMessage(string.Format(Resources.PostWait, _settingsManager.Current.MinimumSecondsBetweenPosts));
 			if (string.IsNullOrEmpty(newPost.FullText))
 				return GetReplyFailMessage(Resources.PostEmpty);
 			if (newPost.ParentPostID != 0)
 			{
-				var parentPost = _postRepository.Get(newPost.ParentPostID);
+				var parentPost = await _postRepository.Get(newPost.ParentPostID);
 				if (parentPost == null || parentPost.TopicID != topic.TopicID)
 					return GetReplyFailMessage("This reply attempt is being made to a post in another topic");
 			}
 			newPost.Title = _textParsingService.Censor(newPost.Title);
 
-			var postID = _postRepository.Create(topic.TopicID, parentPostID, ip, isFirstInTopic, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, postTime, false, user.Name, null, false, 0);
+			var postID = await _postRepository.Create(topic.TopicID, parentPostID, ip, isFirstInTopic, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, postTime, false, user.Name, null, false, 0);
 			var post = new Post
 			{
 				PostID = postID,
@@ -185,7 +185,7 @@ namespace PopForums.Services
 
 		public async Task<BasicServiceResponse<Post>> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator)
 		{
-			var post = _postRepository.Get(postID);
+			var post = await _postRepository.Get(postID);
 			if (!editingUser.IsPostEditable(post))
 				return GetReplyFailMessage(Resources.Forbidden);
 			var oldText = post.FullText;
@@ -200,19 +200,19 @@ namespace PopForums.Services
 			post.LastEditTime = DateTime.UtcNow;
 			post.LastEditName = editingUser.Name;
 			post.IsEdited = true;
-			_postRepository.Update(post);
+			await _postRepository.Update(post);
 			await _moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
 			var redirectLink = redirectLinkGenerator(post);
 			return new BasicServiceResponse<Post> { Data = post, IsSuccessful = true, Message = string.Empty, Redirect = redirectLink };
 		}
 
-		private bool IsNewPostDupeOrInTimeLimit(string parsedPost, User user)
+		private async Task<bool> IsNewPostDupeOrInTimeLimit(string parsedPost, User user)
 		{
 			var postID = _profileRepository.GetLastPostID(user.UserID);
 			if (postID == null)
 				return false;
-			var lastPost = _postRepository.Get(postID.Value);
+			var lastPost = await _postRepository.Get(postID.Value);
 			if (lastPost == null)
 				return false;
 			var minimumSeconds = _settingsManager.Current.MinimumSecondsBetweenPosts;

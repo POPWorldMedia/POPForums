@@ -37,7 +37,7 @@ namespace PopForums.AzureKit.Search
 				if (!serviceClient.Indexes.Exists(IndexName))
 					CreateIndex(serviceClient);
 
-				var posts = _postService.GetPosts(topic, false).ToArray();
+				var posts = _postService.GetPosts(topic, false).Result.ToArray();
 				var parsedPosts = posts.Select(x =>
 					{
 						var parsedText = _textParsingService.ClientHtmlToForumCode(x.FullText);

@@ -94,7 +94,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> UndeletePost(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				throw new Exception($"Post with ID {id} not found. Can't undelete.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -113,7 +113,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> PostModerationLog(int id)
 		{
-			var post = _postService.Get(id);
+			var post = await _postService.Get(id);
 			if (post == null)
 				throw new Exception($"There is no post with ID {id} to obtain a moderation log for.");
 			var log = await _moderationLogService.GetLog(post);

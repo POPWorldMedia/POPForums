@@ -23,10 +23,10 @@ namespace PopForums.Services
 		Task UndeleteTopic(Topic topic, User user);
 		Task UpdateTitleAndForum(Topic topic, Forum forum, string newTitle, User user);
 		Task<Tuple<List<Topic>, PagerContext>> GetTopics(User viewingUser, User postUser, bool includeDeleted, int pageIndex);
-		void RecalculateReplyCount(Topic topic);
+		Task RecalculateReplyCount(Topic topic);
 		Task<List<Topic>> GetTopics(User viewingUser, Forum forum, bool includeDeleted);
-		void UpdateLast(Topic topic);
-		int TopicLastPostID(int topicID);
+		Task UpdateLast(Topic topic);
+		Task<int> TopicLastPostID(int topicID);
 		Task HardDeleteTopic(Topic topic, User user);
 		Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
 		void QueueTopicForIndexing(int topicID);
@@ -153,7 +153,7 @@ namespace PopForums.Services
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
 				_topicRepository.DeleteTopic(topic.TopicID);
-				RecalculateReplyCount(topic);
+				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
@@ -183,7 +183,7 @@ namespace PopForums.Services
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
 				_topicRepository.UndeleteTopic(topic.TopicID);
-				RecalculateReplyCount(topic);
+				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
@@ -215,21 +215,21 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator to update topic title or move topic.");
 		}
 
-		public void RecalculateReplyCount(Topic topic)
+		public async Task RecalculateReplyCount(Topic topic)
 		{
-			var replyCount = _postRepository.GetReplyCount(topic.TopicID, false);
+			var replyCount = await _postRepository.GetReplyCount(topic.TopicID, false);
 			_topicRepository.UpdateReplyCount(topic.TopicID, replyCount);
 		}
 
-		public void UpdateLast(Topic topic)
+		public async Task UpdateLast(Topic topic)
 		{
-			var post = _postRepository.GetLastInTopic(topic.TopicID);
+			var post = await _postRepository.GetLastInTopic(topic.TopicID);
 			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, post.UserID, post.Name, post.PostTime);
 		}
 
-		public int TopicLastPostID(int topicID)
+		public async Task<int> TopicLastPostID(int topicID)
 		{
-			var post = _postRepository.GetLastInTopic(topicID);
+			var post = await _postRepository.GetLastInTopic(topicID);
 			if (post == null)
 				return 0;
 			return post.PostID;

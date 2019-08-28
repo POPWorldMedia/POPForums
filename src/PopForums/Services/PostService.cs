@@ -11,11 +11,11 @@ namespace PopForums.Services
 {
 	public interface IPostService
 	{
-		List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
-		List<Post> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted, out PagerContext pagerContext);
-		List<Post> GetPosts(Topic topic, bool includeDeleted);
-		Post Get(int postID);
-		int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic);
+		Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, bool includeDeleted, int pageIndex);
+		Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted);
+		Task<List<Post>> GetPosts(Topic topic, bool includeDeleted);
+		Task<Post> Get(int postID);
+		Task<Tuple<int, Topic>> GetTopicPageForPost(Post post, bool includeDeleted);
 		int GetPostCount(User user);
 		PostEdit GetPostForEdit(Post post, User user);
 		Task Delete(Post post, User user);
@@ -59,52 +59,53 @@ namespace PopForums.Services
 		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 		private readonly ITenantService _tenantService;
 
-		public List<Post> GetPosts(Topic topic, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, bool includeDeleted, int pageIndex)
 		{
 			var pageSize = _settingsManager.Current.PostsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var posts = _postRepository.Get(topic.TopicID, includeDeleted, startRow, pageSize);
+			var posts = await _postRepository.Get(topic.TopicID, includeDeleted, startRow, pageSize);
 			int postCount;
 			if (includeDeleted)
-				postCount = _postRepository.GetReplyCount(topic.TopicID, true);
+				postCount = await _postRepository.GetReplyCount(topic.TopicID, true);
 			else
 				postCount = topic.ReplyCount + 1;
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(postCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return posts;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			return Tuple.Create(posts, pagerContext);
 		}
 
-		public List<Post> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted, out PagerContext pagerContext)
+		public async Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, int lastLoadedPostID, bool includeDeleted)
 		{
-			var allPosts = _postRepository.Get(topic.TopicID, includeDeleted);
+			var allPosts = await _postRepository.Get(topic.TopicID, includeDeleted);
 			var lastIndex = allPosts.FindIndex(p => p.PostID == lastLoadedPostID);
 			if (lastIndex < 0)
-				throw new Exception(String.Format("PostID {0} is not a part of TopicID {1}.", lastLoadedPostID, topic.TopicID));
+				throw new Exception($"PostID {lastLoadedPostID} is not a part of TopicID {topic.TopicID}.");
 			var posts = allPosts.Skip(lastIndex + 1).ToList();
 			var pageSize = _settingsManager.Current.PostsPerPage;
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(allPosts.Count) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = totalPages, PageSize = pageSize };
-			return posts;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = totalPages, PageSize = pageSize };
+			return Tuple.Create(posts, pagerContext);
 		}
 
-		public List<Post> GetPosts(Topic topic, bool includeDeleted)
+		public async Task<List<Post>> GetPosts(Topic topic, bool includeDeleted)
 		{
-			return _postRepository.Get(topic.TopicID, includeDeleted);
+			return await _postRepository.Get(topic.TopicID, includeDeleted);
 		}
 
-		public Post Get(int postID)
+		public async Task<Post> Get(int postID)
 		{
-			return _postRepository.Get(postID);
+			return await _postRepository.Get(postID);
 		}
 
-		public int GetTopicPageForPost(Post post, bool includeDeleted, out Topic topic)
+		public async Task<Tuple<int, Topic>> GetTopicPageForPost(Post post, bool includeDeleted)
 		{
-			topic = _topicService.Get(post.TopicID);
-			var postIDs = _postRepository.GetPostIDsWithTimes(post.TopicID, includeDeleted).Select(p => p.Key).ToList();
+			var topic = _topicService.Get(post.TopicID);
+			var ids = await _postRepository.GetPostIDsWithTimes(post.TopicID, includeDeleted);
+			var postIDs = ids.Select(p => p.Key).ToList();
 			var index = postIDs.IndexOf(post.PostID);
 			var pageSize = _settingsManager.Current.PostsPerPage;
 			var page = Convert.ToInt32(Math.Floor((double)index/pageSize)) + 1;
-			return page;
+			return Tuple.Create(page, topic);
 		}
 
 		public int GetPostCount(User user)
@@ -162,9 +163,9 @@ namespace PopForums.Services
 					post.LastEditTime = DateTime.UtcNow;
 					post.LastEditName = user.Name;
 					post.IsEdited = true;
-					_postRepository.Update(post);
-					_topicService.RecalculateReplyCount(topic);
-					_topicService.UpdateLast(topic);
+					await _postRepository.Update(post);
+					await _topicService.RecalculateReplyCount(topic);
+					await _topicService.UpdateLast(topic);
 					_forumService.UpdateCounts(forum);
 					await _forumService.UpdateLast(forum);
 					_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
@@ -183,10 +184,10 @@ namespace PopForums.Services
 				post.LastEditTime = DateTime.UtcNow;
 				post.LastEditName = user.Name;
 				post.IsEdited = true;
-				_postRepository.Update(post);
+				await _postRepository.Update(post);
 				var topic = _topicService.Get(post.TopicID);
-				_topicService.RecalculateReplyCount(topic);
-				_topicService.UpdateLast(topic);
+				await _topicService.RecalculateReplyCount(topic);
+				await _topicService.UpdateLast(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
