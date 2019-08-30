@@ -16,17 +16,17 @@ namespace PopForums.Services
 		Task<List<Post>> GetPosts(Topic topic, bool includeDeleted);
 		Task<Post> Get(int postID);
 		Task<Tuple<int, Topic>> GetTopicPageForPost(Post post, bool includeDeleted);
-		int GetPostCount(User user);
+		Task<int> GetPostCount(User user);
 		PostEdit GetPostForEdit(Post post, User user);
 		Task Delete(Post post, User user);
 		Task Undelete(Post post, User user);
 		string GetPostForQuote(Post post, User user, bool forcePlainText);
-		List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end);
-		int GetLastPostID(int topicID);
+		Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end);
+		Task<int> GetLastPostID(int topicID);
 		Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle);
-		VotePostContainer GetVoters(Post post);
-		int GetVoteCount(Post post);
-		List<int> GetVotedPostIDs(User user, List<Post> posts);
+		Task<VotePostContainer> GetVoters(Post post);
+		Task<int> GetVoteCount(Post post);
+		Task<List<int>> GetVotedPostIDs(User user, List<Post> posts);
 		string GenerateParsedTextPreview(string text, bool isPlainText);
 	}
 
@@ -108,9 +108,9 @@ namespace PopForums.Services
 			return Tuple.Create(page, topic);
 		}
 
-		public int GetPostCount(User user)
+		public async Task<int> GetPostCount(User user)
 		{
-			return _postRepository.GetPostCount(user.UserID);
+			return await _postRepository.GetPostCount(user.UserID);
 		}
 
 		public PostEdit GetPostForEdit(Post post, User user)
@@ -197,26 +197,26 @@ namespace PopForums.Services
 				throw new InvalidOperationException("User must be Moderator to undelete post.");
 		}
 
-		public List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end)
+		public async Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end)
 		{
-			return _postRepository.GetIPHistory(ip, start, end);
+			return await _postRepository.GetIPHistory(ip, start, end);
 		}
 
-		public int GetLastPostID(int topicID)
+		public async Task<int> GetLastPostID(int topicID)
 		{
-			return _postRepository.GetLastPostID(topicID);
+			return await _postRepository.GetLastPostID(topicID);
 		}
 
 		public async Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle)
 		{
 			if (post.UserID == user.UserID)
 				return;
-			var voters = _postRepository.GetVotes(post.PostID);
+			var voters = await _postRepository.GetVotes(post.PostID);
 			if (voters.ContainsKey(user.UserID))
 				return;
-			_postRepository.VotePost(post.PostID, user.UserID);
-			var votes = _postRepository.CalculateVoteCount(post.PostID);
-			_postRepository.SetVoteCount(post.PostID, votes);
+			await _postRepository.VotePost(post.PostID, user.UserID);
+			var votes = await _postRepository.CalculateVoteCount(post.PostID);
+			await _postRepository.SetVoteCount(post.PostID, votes);
 			var votedUpUser = _userService.GetUser(post.UserID);
 			if (votedUpUser != null)
 			{
@@ -226,9 +226,9 @@ namespace PopForums.Services
 			}
 		}
 
-		public VotePostContainer GetVoters(Post post)
+		public async Task<VotePostContainer> GetVoters(Post post)
 		{
-			var results = _postRepository.GetVotes(post.PostID);
+			var results = await _postRepository.GetVotes(post.PostID);
 			var filtered = results.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
 			var container = new VotePostContainer
 			                	{
@@ -239,17 +239,17 @@ namespace PopForums.Services
 			return container;
 		}
 
-		public int GetVoteCount(Post post)
+		public async Task<int> GetVoteCount(Post post)
 		{
-			return _postRepository.GetVoteCount(post.PostID);
+			return await _postRepository.GetVoteCount(post.PostID);
 		}
 
-		public List<int> GetVotedPostIDs(User user, List<Post> posts)
+		public async Task<List<int>> GetVotedPostIDs(User user, List<Post> posts)
 		{
 			if (user == null)
 				return new List<int>();
 			var ids = posts.Select(x => x.PostID).ToList();
-			return _postRepository.GetVotedPostIDs(user.UserID, ids);
+			return await _postRepository.GetVotedPostIDs(user.UserID, ids);
 		}
 
 		public string GenerateParsedTextPreview(string text, bool isPlainText)

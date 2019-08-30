@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Services
 {
 	public interface IIPHistoryService
 	{
-		List<IPHistoryEvent> GetHistory(string ip, DateTime start, DateTime end);
+		Task<List<IPHistoryEvent>> GetHistory(string ip, DateTime start, DateTime end);
 	}
 
 	public class IPHistoryService : IIPHistoryService
@@ -21,10 +22,10 @@ namespace PopForums.Services
 		private readonly IPostService _postService;
 		private readonly ISecurityLogService _securityLogService;
 
-		public List<IPHistoryEvent> GetHistory(string ip, DateTime start, DateTime end)
+		public async Task<List<IPHistoryEvent>> GetHistory(string ip, DateTime start, DateTime end)
 		{
 			var list = new List<IPHistoryEvent>();
-			list.AddRange(_postService.GetIPHistory(ip, start, end));
+			list.AddRange(await _postService.GetIPHistory(ip, start, end));
 			list.AddRange(_securityLogService.GetIPHistory(ip, start, end));
 			return list.OrderBy(i => i.EventTime).ToList();
 		}

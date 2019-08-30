@@ -14,15 +14,15 @@ namespace PopForums.Repositories
 		Task<int> GetReplyCount(int topicID, bool includeDeleted);
 		Task<Post> Get(int postID);
 		Task<Dictionary<int, DateTime>> GetPostIDsWithTimes(int topicID, bool includeDeleted);
-		int GetPostCount(int userID);
-		List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end);
-		int GetLastPostID(int topicID);
-		int GetVoteCount(int postID);
-		int CalculateVoteCount(int postID);
-		void SetVoteCount(int postID, int votes);
-		void VotePost(int postID, int userID);
-		Dictionary<int, string> GetVotes(int postID);
-		List<int> GetVotedPostIDs(int userID, List<int> postIDs);
+		Task<int> GetPostCount(int userID);
+		Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end);
+		Task<int> GetLastPostID(int topicID);
+		Task<int> GetVoteCount(int postID);
+		Task<int> CalculateVoteCount(int postID);
+		Task SetVoteCount(int postID, int votes);
+		Task VotePost(int postID, int userID);
+		Task<Dictionary<int, string>> GetVotes(int postID);
+		Task<List<int>> GetVotedPostIDs(int userID, List<int> postIDs);
 		Task<Post> GetLastInTopic(int topicID);
 	}
 }

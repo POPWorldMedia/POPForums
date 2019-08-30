@@ -377,7 +377,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("ManagePhotos");
 		}
 
-		public ViewResult MiniProfile(int id)
+		public async Task<ViewResult> MiniProfile(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
@@ -387,7 +387,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (profile.ImageID.HasValue)
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
-			model.PostCount = _postService.GetPostCount(user);
+			model.PostCount = await _postService.GetPostCount(user);
 			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
 			if (viewingUser == null)
 				model.ShowDetails = false;
@@ -404,7 +404,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (profile.ImageID.HasValue)
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
-			model.PostCount = _postService.GetPostCount(user);
+			model.PostCount = await _postService.GetPostCount(user);
 			model.Feed = await _feedService.GetFeed(user);
 			model.UserAwards = _userAwardService.GetAwards(user);
 			var viewingUser = _userRetrievalShim.GetUser(HttpContext);

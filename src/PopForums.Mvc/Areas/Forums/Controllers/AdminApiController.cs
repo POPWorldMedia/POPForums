@@ -546,9 +546,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** ip history
 
 		[HttpPost("/Forums/AdminApi/QueryIPHistory")]
-		public ActionResult<List<IPHistoryEvent>> QueryIPHistory([FromBody] IPHistoryQuery query)
+		public async Task<ActionResult<List<IPHistoryEvent>>> QueryIPHistory([FromBody] IPHistoryQuery query)
 		{
-			var history = _ipHistoryService.GetHistory(query.IP, query.Start, query.End);
+			var history = await _ipHistoryService.GetHistory(query.IP, query.Start, query.End);
 			return history;
 		}
 

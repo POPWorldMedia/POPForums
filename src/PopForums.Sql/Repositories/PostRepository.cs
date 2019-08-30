@@ -137,85 +137,88 @@ SET ROWCOUNT 0";
 			return dictionary;
 		}
 
-		public int GetPostCount(int userID)
+		public async Task<int> GetPostCount(int userID)
 		{
-			var postCount = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				postCount = connection.ExecuteScalar<int>("SELECT COUNT(PostID) FROM pf_Post JOIN pf_Topic ON pf_Post.TopicID = pf_Topic.TopicID WHERE pf_Post.UserID = @UserID AND pf_Post.IsDeleted = 0 AND pf_Topic.IsDeleted = 0", new { UserID = userID }));
-			return postCount;
+			Task<int> postCount = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				postCount = connection.ExecuteScalarAsync<int>("SELECT COUNT(PostID) FROM pf_Post JOIN pf_Topic ON pf_Post.TopicID = pf_Topic.TopicID WHERE pf_Post.UserID = @UserID AND pf_Post.IsDeleted = 0 AND pf_Topic.IsDeleted = 0", new { UserID = userID }));
+			return await postCount;
 		}
 
-		public List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end)
+		public async Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end)
 		{
-			List<IPHistoryEvent> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<IPHistoryEvent>("SELECT PostID AS ID, PostTime AS EventTime, UserID, Name, Title AS Description FROM pf_Post WHERE IP = @IP AND PostTime >= @Start AND PostTime <= @End", new { IP = ip, Start = start, End = end }).ToList());
+			Task<IEnumerable<IPHistoryEvent>> events = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				events = connection.QueryAsync<IPHistoryEvent>("SELECT PostID AS ID, PostTime AS EventTime, UserID, Name, Title AS Description FROM pf_Post WHERE IP = @IP AND PostTime >= @Start AND PostTime <= @End", new { IP = ip, Start = start, End = end }));
+			var list = events.Result.ToList();
 			foreach (var item in list)
 				item.Type = "Post";
 			return list;
 		}
 
-		public int GetLastPostID(int topicID)
+		public async Task<int> GetLastPostID(int topicID)
 		{
 			const string sql = "SELECT PostID FROM pf_Post WHERE TopicID = @TopicID AND IsDeleted = 0 ORDER BY PostTime DESC";
-			var id = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				id = connection.QuerySingleOrDefault<int>(sql, new { TopicID = topicID }));
-			return id;
+			Task<int> id = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				id = connection.QuerySingleOrDefaultAsync<int>(sql, new { TopicID = topicID }));
+			return await id;
 		}
 
-		public int GetVoteCount(int postID)
+		public async Task<int> GetVoteCount(int postID)
 		{
 			const string sql = "SELECT Votes FROM pf_Post WHERE PostID = @PostID";
-			var votes = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				votes = connection.QuerySingleOrDefault<int>(sql, new { PostID = postID }));
-			return votes;
+			Task<int> votes = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				votes = connection.QuerySingleOrDefaultAsync<int>(sql, new { PostID = postID }));
+			return await votes;
 		}
 
-		public int CalculateVoteCount(int postID)
+		public async Task<int> CalculateVoteCount(int postID)
 		{
 			const string sql = "SELECT COUNT(*) FROM pf_PostVote WHERE PostID = @PostID";
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				count = connection.ExecuteScalar<int>(sql, new { PostID = postID }));
-			return count;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				count = connection.ExecuteScalarAsync<int>(sql, new { PostID = postID }));
+			return await count;
 		}
 
-		public void SetVoteCount(int postID, int votes)
+		public async Task SetVoteCount(int postID, int votes)
 		{
 			const string sql = "UPDATE pf_Post SET Votes = @Votes WHERE PostID = @PostID";
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute(sql, new { Votes = votes, PostID = postID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				connection.ExecuteAsync(sql, new { Votes = votes, PostID = postID }));
 		}
 
-		public void VotePost(int postID, int userID)
+		public async Task VotePost(int postID, int userID)
 		{
 			const string sql = "INSERT INTO pf_PostVote (PostID, UserID) VALUES (@PostID, @UserID)";
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute(sql, new { PostID = postID, UserID = userID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				connection.ExecuteAsync(sql, new { PostID = postID, UserID = userID }));
 		}
 
-		public Dictionary<int, string> GetVotes(int postID)
+		public async Task<Dictionary<int, string>> GetVotes(int postID)
 		{
-			Dictionary<int, string> results = null;
+			Task<IEnumerable<dynamic>> results = null;
 			const string sql = "SELECT V.UserID, U.Name FROM pf_PostVote V LEFT JOIN pf_PopForumsUser U ON V.UserID = U.UserID WHERE V.PostID = @PostID";
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				results = connection.Query(sql, new { PostID = postID }).ToDictionary(r => (int)r.UserID, r => (string)r.Name));
-			return results;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				results = connection.QueryAsync(sql, new { PostID = postID }));
+			var dictionary = results.Result.ToDictionary(r => (int) r.UserID, r => (string) r.Name);
+			return dictionary;
 		}
 
-		public List<int> GetVotedPostIDs(int userID, List<int> postIDs)
+		public async Task<List<int>> GetVotedPostIDs(int userID, List<int> postIDs)
 		{
-			List<int> list = null;
+			Task<IEnumerable<int>> result = null;
 			if (postIDs.Count == 0)
 				return new List<int>();
 			var inList = postIDs.Aggregate(string.Empty, (current, postID) => current + ("," + postID));
 			if (inList.StartsWith(","))
 				inList = inList.Remove(0, 1);
 			var sql = $"SELECT PostID FROM pf_PostVote WHERE PostID IN ({inList}) AND UserID = @UserID";
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<int>(sql, new { UserID = userID }).ToList());
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<int>(sql, new { UserID = userID }));
+			var list = result.Result.ToList();
 			return list;
 		}
 	}

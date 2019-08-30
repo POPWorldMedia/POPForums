@@ -200,7 +200,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
-			var votedIDs = _postService.GetVotedPostIDs(user, posts);
+			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic);
 			await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
@@ -246,7 +246,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
-			var votedIDs = _postService.GetVotedPostIDs(user, posts);
+			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic);
 			ViewBag.Low = low;
@@ -326,7 +326,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var postList = new List<Post> { post };
 			var signatures = _profileService.GetSignatures(postList);
 			var avatars = _profileService.GetAvatars(postList);
-			var votedPostIDs = _postService.GetVotedPostIDs(user, postList);
+			var votedPostIDs = await _postService.GetVotedPostIDs(user, postList);
 			ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 			if (user != null)
 				await _lastReadService.MarkTopicRead(user, topic);
@@ -449,9 +449,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("PostLink", "Forum", new { id = post.PostID });
 		}
 
-		public ContentResult IsLastPostInTopic(int id, int lastPostID)
+		public async Task<ContentResult> IsLastPostInTopic(int id, int lastPostID)
 		{
-			var last = _postService.GetLastPostID(id);
+			var last = await _postService.GetLastPostID(id);
 			var result = last == lastPostID;
 			return Content(result.ToString());
 		}
@@ -481,7 +481,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var (posts, pagerContext) = await _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate);
 			var signatures = _profileService.GetSignatures(posts);
 			var avatars = _profileService.GetAvatars(posts);
-			var votedIDs = _postService.GetVotedPostIDs(user, posts);
+			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			ViewBag.Low = lowPage;
 			ViewBag.High = pagerContext.PageCount;
@@ -493,7 +493,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
-			var voters = _postService.GetVoters(post);
+			var voters = await _postService.GetVoters(post);
 			return View(voters);
 		}
 
@@ -513,7 +513,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 			var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
 			await _postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
-			var count = _postService.GetVoteCount(post);
+			var count = await _postService.GetVoteCount(post);
 			return View("Votes", count);
 		}
 
