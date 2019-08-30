@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
@@ -46,18 +47,19 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(privateMessages);
 		}
 
-		public ActionResult View(int id)
+		public async Task<ActionResult> View(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var pm = _privateMessageService.Get(id);
+			var pm = await _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
 				return StatusCode(403);
+			var posts = await _privateMessageService.GetPosts(pm);
 			var model = new PrivateMessageView
 			{
 				PrivateMessage = pm,
-				Posts = _privateMessageService.GetPosts(pm)
+				Posts = posts
 			};
 			_privateMessageService.MarkPMRead(user, pm);
 			return View(model);
@@ -81,40 +83,40 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult CreateOne(string subject, string fullText, int userID)
+		public async Task<ActionResult> CreateOne(string subject, string fullText, int userID)
 		{
-			return Create(subject, fullText, userID.ToString(CultureInfo.InvariantCulture));
+			return await Create(subject, fullText, userID.ToString(CultureInfo.InvariantCulture));
 		}
 
 		[HttpPost]
-		public ActionResult Create(string subject, string fullText, string userIDs)
+		public async Task<ActionResult> Create(string subject, string fullText, string userIDs)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			if (String.IsNullOrWhiteSpace(userIDs) || String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(fullText))
+			if (string.IsNullOrWhiteSpace(userIDs) || string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(fullText))
 			{
 				ViewBag.Warning = Resources.PMCreateWarnings;
 				return View("Create");
 			}
 			var ids = userIDs.Split(new[] { ',' }).Select(i => Convert.ToInt32(i));
 			var users = ids.Select(id => _userService.GetUser(id)).ToList();
-			_privateMessageService.Create(subject, fullText, user, users);
+			await _privateMessageService.Create(subject, fullText, user, users);
 			return RedirectToAction("Index");
 		}
 
 		[HttpPost]
-		public ActionResult Reply(int id, string fullText)
+		public async Task<ActionResult> Reply(int id, string fullText)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var pm = _privateMessageService.Get(id);
+			var pm = await _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
 				return StatusCode(403);
 			if (String.IsNullOrEmpty(fullText))
 				fullText = String.Empty;
-			_privateMessageService.Reply(pm, fullText, user);
+			await _privateMessageService.Reply(pm, fullText, user);
 			return RedirectToAction("View", new { id });
 		}
 
@@ -126,12 +128,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult ArchivePM(int id)
+		public async Task<ActionResult> ArchivePM(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var pm = _privateMessageService.Get(id);
+			var pm = await _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
 				return StatusCode(403);
 			_privateMessageService.Archive(user, pm);
@@ -139,12 +141,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult UnarchivePM(int id)
+		public async Task<ActionResult> UnarchivePM(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var pm = _privateMessageService.Get(id);
+			var pm = await _privateMessageService.Get(id);
 			if (!_privateMessageService.IsUserInPM(user, pm))
 				return StatusCode(403);
 			_privateMessageService.Unarchive(user, pm);

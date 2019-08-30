@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface IPrivateMessageRepository
 	{
-		PrivateMessage Get(int pmID);
-		List<PrivateMessagePost> GetPosts(int pmID);
-		int CreatePrivateMessage(PrivateMessage pm);
-		void AddUsers(int pmID, List<int> userIDs, DateTime viewDate, bool isArchived);
-		int AddPost(PrivateMessagePost post);
+		Task<PrivateMessage> Get(int pmID);
+		Task<List<PrivateMessagePost>> GetPosts(int pmID);
+		Task<int> CreatePrivateMessage(PrivateMessage pm);
+		Task AddUsers(int pmID, List<int> userIDs, DateTime viewDate, bool isArchived);
+		Task<int> AddPost(PrivateMessagePost post);
 		List<PrivateMessageUser> GetUsers(int pmID);
 		void SetLastViewTime(int pmID, int userID, DateTime viewDate);
 		void SetArchive(int pmID, int userID, bool isArchived);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -10,12 +11,12 @@ namespace PopForums.Services
 	public interface IPrivateMessageService
 	{
 		IPrivateMessageRepository PrivateMessageRepository { get; }
-		PrivateMessage Get(int pmID);
-		List<PrivateMessagePost> GetPosts(PrivateMessage pm);
+		Task<PrivateMessage> Get(int pmID);
+		Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm);
 		List<PrivateMessage> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex, out PagerContext pagerContext);
 		int GetUnreadCount(User user);
-		PrivateMessage Create(string subject, string fullText, User user, List<User> toUsers);
-		void Reply(PrivateMessage pm, string fullText, User user);
+		Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers);
+		Task Reply(PrivateMessage pm, string fullText, User user);
 		bool IsUserInPM(User user, PrivateMessage pm);
 		void MarkPMRead(User user, PrivateMessage pm);
 		void Archive(User user, PrivateMessage pm);
@@ -35,14 +36,14 @@ namespace PopForums.Services
 		public ISettingsManager SettingsManager { get; private set; }
 		public ITextParsingService TextParsingService { get; private set; }
 
-		public PrivateMessage Get(int pmID)
+		public async Task<PrivateMessage> Get(int pmID)
 		{
-			return PrivateMessageRepository.Get(pmID);
+			return await PrivateMessageRepository.Get(pmID);
 		}
 
-		public List<PrivateMessagePost> GetPosts(PrivateMessage pm)
+		public async Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm)
 		{
-			return PrivateMessageRepository.GetPosts(pm.PMID);
+			return await PrivateMessageRepository.GetPosts(pm.PMID);
 		}
 
 		public List<PrivateMessage> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex, out PagerContext pagerContext)
@@ -60,7 +61,7 @@ namespace PopForums.Services
 			return PrivateMessageRepository.GetUnreadCount(user.UserID);
 		}
 
-		public PrivateMessage Create(string subject, string fullText, User user, List<User> toUsers)
+		public async Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers)
 		{
 			if (String.IsNullOrWhiteSpace(subject))
 				throw new ArgumentNullException("subject");
@@ -80,9 +81,9 @@ namespace PopForums.Services
 							UserNames = names,
 							LastPostTime = now
 			         	};
-			pm.PMID = PrivateMessageRepository.CreatePrivateMessage(pm);
-			PrivateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
-			PrivateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
+			pm.PMID = await PrivateMessageRepository.CreatePrivateMessage(pm);
+			await PrivateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
+			await PrivateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
 			var post = new PrivateMessagePost
 			           	{
 			           		FullText = TextParsingService.ForumCodeToHtml(fullText),
@@ -91,11 +92,11 @@ namespace PopForums.Services
 							PostTime = now,
 							UserID = user.UserID
 			           	};
-			PrivateMessageRepository.AddPost(post);
+			await PrivateMessageRepository.AddPost(post);
 			return pm;
 		}
 
-		public void Reply(PrivateMessage pm, string fullText, User user)
+		public async Task Reply(PrivateMessage pm, string fullText, User user)
 		{
 			if (pm == null || pm.PMID == 0)
 				throw new ArgumentException("Can't reply to a PM that hasn't been persisted.", "pm");
@@ -113,7 +114,7 @@ namespace PopForums.Services
 			           		PostTime = DateTime.UtcNow,
 			           		UserID = user.UserID
 			           	};
-			PrivateMessageRepository.AddPost(post);
+			await PrivateMessageRepository.AddPost(post);
 			var users = PrivateMessageRepository.GetUsers(pm.PMID);
 			foreach (var u in users)
 				PrivateMessageRepository.SetArchive(pm.PMID, u.UserID, false);
