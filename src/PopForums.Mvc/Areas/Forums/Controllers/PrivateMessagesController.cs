@@ -25,24 +25,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public static string Name = "PrivateMessages";
 
-		public ActionResult Index(int page = 1)
+		public async Task<ActionResult> Index(int page = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			PagerContext pagerContext;
-			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page, out pagerContext);
+			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
 
-		public ActionResult Archive(int page = 1)
+		public async Task<ActionResult> Archive(int page = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			PagerContext pagerContext;
-			var privateMessages = _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page, out pagerContext);
+			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
@@ -53,7 +51,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
-			if (!_privateMessageService.IsUserInPM(user, pm))
+			if (await _privateMessageService.IsUserInPM(user, pm) == false)
 				return StatusCode(403);
 			var posts = await _privateMessageService.GetPosts(pm);
 			var model = new PrivateMessageView
@@ -61,7 +59,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				PrivateMessage = pm,
 				Posts = posts
 			};
-			_privateMessageService.MarkPMRead(user, pm);
+			await _privateMessageService.MarkPMRead(user, pm);
 			return View(model);
 		}
 
@@ -112,7 +110,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
-			if (!_privateMessageService.IsUserInPM(user, pm))
+			if (await _privateMessageService.IsUserInPM(user, pm) == false)
 				return StatusCode(403);
 			if (String.IsNullOrEmpty(fullText))
 				fullText = String.Empty;
@@ -134,9 +132,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
-			if (!_privateMessageService.IsUserInPM(user, pm))
+			if (await _privateMessageService.IsUserInPM(user, pm) == false)
 				return StatusCode(403);
-			_privateMessageService.Archive(user, pm);
+			await _privateMessageService.Archive(user, pm);
 			return RedirectToAction("Index");
 		}
 
@@ -147,18 +145,18 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
-			if (!_privateMessageService.IsUserInPM(user, pm))
+			if (await _privateMessageService.IsUserInPM(user, pm) == false)
 				return StatusCode(403);
-			_privateMessageService.Unarchive(user, pm);
+			await _privateMessageService.Unarchive(user, pm);
 			return RedirectToAction("Archive");
 		}
 
-		public ContentResult NewPMCount()
+		public async Task<ContentResult> NewPMCount()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Content(String.Empty);
-			var count = _privateMessageService.GetUnreadCount(user);
+			var count = await _privateMessageService.GetUnreadCount(user);
 			return Content(count.ToString());
 		}
 	}

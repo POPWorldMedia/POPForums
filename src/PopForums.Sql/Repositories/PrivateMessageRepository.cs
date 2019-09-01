@@ -65,7 +65,7 @@ namespace PopForums.Sql.Repositories
 
 		public virtual async Task<int> AddPost(PrivateMessagePost post)
 		{
-			var users = GetUsers(post.PMID);
+			var users = await GetUsers(post.PMID);
 			foreach (var user in users)
 				_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(user.UserID));
 			Task<int> id = null;
@@ -75,29 +75,29 @@ namespace PopForums.Sql.Repositories
 			return post.PMPostID;
 		}
 
-		public List<PrivateMessageUser> GetUsers(int pmID)
+		public async Task<List<PrivateMessageUser>> GetUsers(int pmID)
 		{
-			List<PrivateMessageUser> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<PrivateMessageUser>("SELECT PMID, UserID, LastViewDate, IsArchived FROM pf_PrivateMessageUser WHERE PMID = @PMID", new { PMID = pmID }).ToList());
-			return list;
+			Task<IEnumerable<PrivateMessageUser>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<PrivateMessageUser>("SELECT PMID, UserID, LastViewDate, IsArchived FROM pf_PrivateMessageUser WHERE PMID = @PMID", new { PMID = pmID }));
+			return list.Result.ToList();
 		}
 
-		public void SetLastViewTime(int pmID, int userID, DateTime viewDate)
-		{
-			_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(userID));
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("UPDATE pf_PrivateMessageUser SET LastViewDate = @LastViewDate WHERE UserID = @UserID AND PMID = @PMID", new { LastViewDate = viewDate, UserID = userID, PMID = pmID }));
-		}
-
-		public void SetArchive(int pmID, int userID, bool isArchived)
+		public async Task SetLastViewTime(int pmID, int userID, DateTime viewDate)
 		{
 			_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(userID));
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("UPDATE pf_PrivateMessageUser SET IsArchived = @IsArchived WHERE UserID = @UserID AND PMID = @PMID", new { IsArchived = isArchived, UserID = userID, PMID = pmID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("UPDATE pf_PrivateMessageUser SET LastViewDate = @LastViewDate WHERE UserID = @UserID AND PMID = @PMID", new { LastViewDate = viewDate, UserID = userID, PMID = pmID }));
 		}
 
-		public List<PrivateMessage> GetPrivateMessages(int userID, PrivateMessageBoxType boxType, int startRow, int pageSize)
+		public async Task SetArchive(int pmID, int userID, bool isArchived)
+		{
+			_cacheHelper.RemoveCacheObject(CacheKeys.PMCount(userID));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("UPDATE pf_PrivateMessageUser SET IsArchived = @IsArchived WHERE UserID = @UserID AND PMID = @PMID", new { IsArchived = isArchived, UserID = userID, PMID = pmID }));
+		}
+
+		public async Task<List<PrivateMessage>> GetPrivateMessages(int userID, PrivateMessageBoxType boxType, int startRow, int pageSize)
 		{
 			var isArchived = boxType == PrivateMessageBoxType.Archive;
 			const string sql =
@@ -119,38 +119,38 @@ WHERE Row between
 @StartRow and @StartRow + @PageSize - 1
 
 SET ROWCOUNT 0";
-			List<PrivateMessage> messsages = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				messsages = connection.Query<PrivateMessage>(sql, new { StartRow = startRow, PageSize = pageSize, UserID = userID, IsArchived = isArchived }).ToList());
-			return messsages;
+			Task<IEnumerable<PrivateMessage>> messsages = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				messsages = connection.QueryAsync<PrivateMessage>(sql, new { StartRow = startRow, PageSize = pageSize, UserID = userID, IsArchived = isArchived }));
+			return messsages.Result.ToList();
 		}
 
-		public int GetBoxCount(int userID, PrivateMessageBoxType boxType)
+		public async Task<int> GetBoxCount(int userID, PrivateMessageBoxType boxType)
 		{
 			var isArchived = boxType == PrivateMessageBoxType.Archive;
 			var sql = "SELECT COUNT(*) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE U.UserID = @UserID AND U.IsArchived = @IsArchived";
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = connection.ExecuteScalar<int>(sql, new { UserID = userID, IsArchived = isArchived }));
-			return count;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				count = connection.ExecuteScalarAsync<int>(sql, new { UserID = userID, IsArchived = isArchived }));
+			return await count;
 		}
 
-		public int GetUnreadCount(int userID)
+		public async Task<int> GetUnreadCount(int userID)
 		{
 			var cacheObject = _cacheHelper.GetCacheObject<int?>(CacheKeys.PMCount(userID));
 			if (cacheObject.HasValue)
 				return cacheObject.Value;
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				count = connection.ExecuteScalar<int>("SELECT COUNT(P.PMID) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE LastPostTime > LastViewDate AND U.UserID = @UserID AND U.IsArchived = 0", new { UserID = userID }));
-			_cacheHelper.SetCacheObject(CacheKeys.PMCount(userID), count);
-			return count;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				count = connection.ExecuteScalarAsync<int>("SELECT COUNT(P.PMID) FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE LastPostTime > LastViewDate AND U.UserID = @UserID AND U.IsArchived = 0", new { UserID = userID }));
+			_cacheHelper.SetCacheObject(CacheKeys.PMCount(userID), count.Result);
+			return await count;
 		}
 
-		public void UpdateLastPostTime(int pmID, DateTime lastPostTime)
+		public async Task UpdateLastPostTime(int pmID, DateTime lastPostTime)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				pmID = connection.Execute("UPDATE pf_PrivateMessage SET LastPostTime = @LastPostTime WHERE PMID = @PMID", new { LastPostTime = lastPostTime, PMID = pmID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				connection.ExecuteAsync("UPDATE pf_PrivateMessage SET LastPostTime = @LastPostTime WHERE PMID = @PMID", new { LastPostTime = lastPostTime, PMID = pmID }));
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
@@ -17,13 +18,13 @@ namespace PopForums.Mvc.Areas.Forums.ViewComponents
 		    _privateMessageService = privateMessageService;
 	    }
 
-	    public IViewComponentResult Invoke()
+	    public async Task<IViewComponentResult> InvokeAsync()
 	    {
 		    var container = new UserNavigationContainer();
             container.User = _userRetrievalShim.GetUser(HttpContext);
 		    if (container.User != null)
 		    {
-			    var count = _privateMessageService.GetUnreadCount(container.User);
+			    var count = await _privateMessageService.GetUnreadCount(container.User);
 			    if (count > 0)
 				    container.PMCount = String.Format("<span class=\"badge\">{0}</span>", count);
 		    }

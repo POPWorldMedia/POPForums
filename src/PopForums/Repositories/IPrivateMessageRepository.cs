@@ -12,12 +12,12 @@ namespace PopForums.Repositories
 		Task<int> CreatePrivateMessage(PrivateMessage pm);
 		Task AddUsers(int pmID, List<int> userIDs, DateTime viewDate, bool isArchived);
 		Task<int> AddPost(PrivateMessagePost post);
-		List<PrivateMessageUser> GetUsers(int pmID);
-		void SetLastViewTime(int pmID, int userID, DateTime viewDate);
-		void SetArchive(int pmID, int userID, bool isArchived);
-		List<PrivateMessage> GetPrivateMessages(int userID, PrivateMessageBoxType boxType, int startRow, int pageSize);
-		int GetUnreadCount(int userID);
-		int GetBoxCount(int userID, PrivateMessageBoxType boxType);
-		void UpdateLastPostTime(int pmID, DateTime lastPostTime);
+		Task<List<PrivateMessageUser>> GetUsers(int pmID);
+		Task SetLastViewTime(int pmID, int userID, DateTime viewDate);
+		Task SetArchive(int pmID, int userID, bool isArchived);
+		Task<List<PrivateMessage>> GetPrivateMessages(int userID, PrivateMessageBoxType boxType, int startRow, int pageSize);
+		Task<int> GetUnreadCount(int userID);
+		Task<int> GetBoxCount(int userID, PrivateMessageBoxType boxType);
+		Task UpdateLastPostTime(int pmID, DateTime lastPostTime);
 	}
 }

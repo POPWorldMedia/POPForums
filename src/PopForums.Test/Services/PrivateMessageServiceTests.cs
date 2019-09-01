@@ -194,7 +194,7 @@ namespace PopForums.Test.Services
 			var pm = new PrivateMessage {PMID = 2};
 			var text = "mah message";
 			_mockTextParse.Setup(t => t.ForumCodeToHtml(text)).Returns(text);
-			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).Returns(new List<PrivateMessageUser> {new PrivateMessageUser {UserID = user.UserID}});
+			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> {new PrivateMessageUser {UserID = user.UserID}});
 			await service.Reply(pm, text, user);
 			Assert.Equal(text, post.FullText);
 			Assert.Equal(user.Name, post.Name);
@@ -207,28 +207,28 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var user = new User { UserID = 1 };
-			_mockPMRepo.Setup(p => p.GetUsers(It.IsAny<int>())).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 456 } });
+			_mockPMRepo.Setup(p => p.GetUsers(It.IsAny<int>())).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 456 } });
 			await Assert.ThrowsAsync<Exception>(() => service.Reply(new PrivateMessage { PMID = 2 }, "wohfwo", user));
 		}
 
 		[Fact]
-		public void IsUserInPMTrue()
+		public async Task IsUserInPMTrue()
 		{
 			var service = GetService();
 			var user = new User { UserID = 1 };
 			var pm = new PrivateMessage { PMID = 2 };
-			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = user.UserID } });
-			Assert.True(service.IsUserInPM(user, pm));
+			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = user.UserID } });
+			Assert.True(await service.IsUserInPM(user, pm));
 		}
 
 		[Fact]
-		public void IsUserInPMFalse()
+		public async Task IsUserInPMFalse()
 		{
 			var service = GetService();
 			var user = new User { UserID = 1 };
 			var pm = new PrivateMessage { PMID = 2 };
-			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).Returns(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 765 } });
-			Assert.False(service.IsUserInPM(user, pm));
+			_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 765 } });
+			Assert.False(await service.IsUserInPM(user, pm));
 		}
 	}
 }

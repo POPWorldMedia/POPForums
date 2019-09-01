@@ -10,55 +10,55 @@ namespace PopForums.Services
 {
 	public interface IPrivateMessageService
 	{
-		IPrivateMessageRepository PrivateMessageRepository { get; }
 		Task<PrivateMessage> Get(int pmID);
 		Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm);
-		List<PrivateMessage> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex, out PagerContext pagerContext);
-		int GetUnreadCount(User user);
+		Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex);
+		Task<int> GetUnreadCount(User user);
 		Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers);
 		Task Reply(PrivateMessage pm, string fullText, User user);
-		bool IsUserInPM(User user, PrivateMessage pm);
-		void MarkPMRead(User user, PrivateMessage pm);
-		void Archive(User user, PrivateMessage pm);
-		void Unarchive(User user, PrivateMessage pm);
+		Task<bool> IsUserInPM(User user, PrivateMessage pm);
+		Task MarkPMRead(User user, PrivateMessage pm);
+		Task Archive(User user, PrivateMessage pm);
+		Task Unarchive(User user, PrivateMessage pm);
 	}
 
 	public class PrivateMessageService : IPrivateMessageService
 	{
 		public PrivateMessageService(IPrivateMessageRepository privateMessageRepo, ISettingsManager settingsManager, ITextParsingService textParsingService)
 		{
-			PrivateMessageRepository = privateMessageRepo;
-			SettingsManager = settingsManager;
-			TextParsingService = textParsingService;
+			_privateMessageRepository = privateMessageRepo;
+			_settingsManager = settingsManager;
+			_textParsingService = textParsingService;
 		}
 
-		public IPrivateMessageRepository PrivateMessageRepository { get; private set; }
-		public ISettingsManager SettingsManager { get; private set; }
-		public ITextParsingService TextParsingService { get; private set; }
+		private readonly IPrivateMessageRepository _privateMessageRepository;
+		private readonly ISettingsManager _settingsManager;
+		private readonly ITextParsingService _textParsingService;
 
 		public async Task<PrivateMessage> Get(int pmID)
 		{
-			return await PrivateMessageRepository.Get(pmID);
+			return await _privateMessageRepository.Get(pmID);
 		}
 
 		public async Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm)
 		{
-			return await PrivateMessageRepository.GetPosts(pm.PMID);
+			return await _privateMessageRepository.GetPosts(pm.PMID);
 		}
 
-		public List<PrivateMessage> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex)
 		{
-			var total = PrivateMessageRepository.GetBoxCount(user.UserID, boxType);
-			var pageSize = SettingsManager.Current.TopicsPerPage;
+			var total = await _privateMessageRepository.GetBoxCount(user.UserID, boxType);
+			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(total) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return PrivateMessageRepository.GetPrivateMessages(user.UserID, boxType, startRow, pageSize);
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			var messages = await _privateMessageRepository.GetPrivateMessages(user.UserID, boxType, startRow, pageSize);
+			return Tuple.Create(messages, pagerContext);
 		}
 
-		public int GetUnreadCount(User user)
+		public async Task<int> GetUnreadCount(User user)
 		{
-			return PrivateMessageRepository.GetUnreadCount(user.UserID);
+			return await _privateMessageRepository.GetUnreadCount(user.UserID);
 		}
 
 		public async Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers)
@@ -77,22 +77,22 @@ namespace PopForums.Services
 			var now = DateTime.UtcNow;
 			var pm = new PrivateMessage
 			         	{
-			         		Subject = TextParsingService.EscapeHtmlAndCensor(subject),
+			         		Subject = _textParsingService.EscapeHtmlAndCensor(subject),
 							UserNames = names,
 							LastPostTime = now
 			         	};
-			pm.PMID = await PrivateMessageRepository.CreatePrivateMessage(pm);
-			await PrivateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
-			await PrivateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
+			pm.PMID = await _privateMessageRepository.CreatePrivateMessage(pm);
+			await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
+			await _privateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
 			var post = new PrivateMessagePost
 			           	{
-			           		FullText = TextParsingService.ForumCodeToHtml(fullText),
+			           		FullText = _textParsingService.ForumCodeToHtml(fullText),
 							Name = user.Name,
 							PMID = pm.PMID,
 							PostTime = now,
 							UserID = user.UserID
 			           	};
-			await PrivateMessageRepository.AddPost(post);
+			await _privateMessageRepository.AddPost(post);
 			return pm;
 		}
 
@@ -104,44 +104,44 @@ namespace PopForums.Services
 				throw new ArgumentNullException("fullText");
 			if (user == null)
 				throw new ArgumentNullException("user");
-			if (!IsUserInPM(user, pm))
+			if (await IsUserInPM(user, pm) == false)
 				throw new Exception("Can't add a PM reply for a user not part of the PM.");
 			var post = new PrivateMessagePost
 			           	{
-			           		FullText = TextParsingService.ForumCodeToHtml(fullText),
+			           		FullText = _textParsingService.ForumCodeToHtml(fullText),
 			           		Name = user.Name,
 			           		PMID = pm.PMID,
 			           		PostTime = DateTime.UtcNow,
 			           		UserID = user.UserID
 			           	};
-			await PrivateMessageRepository.AddPost(post);
-			var users = PrivateMessageRepository.GetUsers(pm.PMID);
+			await _privateMessageRepository.AddPost(post);
+			var users = await _privateMessageRepository.GetUsers(pm.PMID);
 			foreach (var u in users)
-				PrivateMessageRepository.SetArchive(pm.PMID, u.UserID, false);
+				await _privateMessageRepository.SetArchive(pm.PMID, u.UserID, false);
 			var now = DateTime.UtcNow;
-			PrivateMessageRepository.UpdateLastPostTime(pm.PMID, now);
-			PrivateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, now);
+			await _privateMessageRepository.UpdateLastPostTime(pm.PMID, now);
+			await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, now);
 		}
 
-		public bool IsUserInPM(User user, PrivateMessage pm)
+		public async Task<bool> IsUserInPM(User user, PrivateMessage pm)
 		{
-			var pmUsers = PrivateMessageRepository.GetUsers(pm.PMID);
-			return (pmUsers.Where(p => p.UserID == user.UserID).Count() != 0);
+			var pmUsers = await _privateMessageRepository.GetUsers(pm.PMID);
+			return pmUsers.Count(p => p.UserID == user.UserID) != 0;
 		}
 
-		public void MarkPMRead(User user, PrivateMessage pm)
+		public async Task MarkPMRead(User user, PrivateMessage pm)
 		{
-			PrivateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, DateTime.UtcNow);
+			await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, DateTime.UtcNow);
 		}
 
-		public void Archive(User user, PrivateMessage pm)
+		public async Task Archive(User user, PrivateMessage pm)
 		{
-			PrivateMessageRepository.SetArchive(pm.PMID, user.UserID, true);
+			await _privateMessageRepository.SetArchive(pm.PMID, user.UserID, true);
 		}
 
-		public void Unarchive(User user, PrivateMessage pm)
+		public async Task Unarchive(User user, PrivateMessage pm)
 		{
-			PrivateMessageRepository.SetArchive(pm.PMID, user.UserID, false);
+			await _privateMessageRepository.SetArchive(pm.PMID, user.UserID, false);
 		}
 	}
 }
