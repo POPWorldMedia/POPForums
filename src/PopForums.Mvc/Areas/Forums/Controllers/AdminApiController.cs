@@ -600,17 +600,17 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** error log
 
 		[HttpGet("/Forums/AdminApi/GetServices")]
-		public ActionResult<List<ServiceHeartbeat>> GetServices()
+		public async Task<ActionResult<List<ServiceHeartbeat>>> GetServices()
 		{
-			var list = _serviceHeartbeatService.GetAll();
+			var list = await _serviceHeartbeatService.GetAll();
 			return list;
 		}
 
 		[HttpPost("/Forums/AdminApi/ClearServices")]
-		public ActionResult<List<ServiceHeartbeat>> ClearServices()
+		public async Task<ActionResult<List<ServiceHeartbeat>>> ClearServices()
 		{
-			_serviceHeartbeatService.ClearAll();
-			var list = _serviceHeartbeatService.GetAll();
+			await _serviceHeartbeatService.ClearAll();
+			var list = await _serviceHeartbeatService.GetAll();
 			return list;
 		}
 	}

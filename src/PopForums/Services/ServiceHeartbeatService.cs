@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -7,9 +8,9 @@ namespace PopForums.Services
 {
 	public interface IServiceHeartbeatService
 	{
-		void RecordHeartbeat(string serviceName, string machineName);
-		List<ServiceHeartbeat> GetAll();
-		void ClearAll();
+		Task RecordHeartbeat(string serviceName, string machineName);
+		Task<List<ServiceHeartbeat>> GetAll();
+		Task ClearAll();
 	}
 
 	public class ServiceHeartbeatService : IServiceHeartbeatService
@@ -21,19 +22,19 @@ namespace PopForums.Services
 			_serviceHeartbeatRepository = serviceHeartbeatRepository;
 		}
 
-		public void RecordHeartbeat(string serviceName, string machineName)
+		public async Task RecordHeartbeat(string serviceName, string machineName)
 		{
-			_serviceHeartbeatRepository.RecordHeartbeat(serviceName, machineName, DateTime.UtcNow);
+			await _serviceHeartbeatRepository.RecordHeartbeat(serviceName, machineName, DateTime.UtcNow);
 		}
 
-		public List<ServiceHeartbeat> GetAll()
+		public async Task<List<ServiceHeartbeat>> GetAll()
 		{
-			return _serviceHeartbeatRepository.GetAll();
+			return await _serviceHeartbeatRepository.GetAll();
 		}
 
-		public void ClearAll()
+		public async Task ClearAll()
 		{
-			_serviceHeartbeatRepository.ClearAll();
+			await _serviceHeartbeatRepository.ClearAll();
 		}
 	}
 }

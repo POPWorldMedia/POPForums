@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -16,27 +17,27 @@ namespace PopForums.Sql.Repositories
 		
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public void RecordHeartbeat(string serviceName, string machineName, DateTime lastRun)
+		public async Task RecordHeartbeat(string serviceName, string machineName, DateTime lastRun)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
+			await _sqlObjectFactory.GetConnection().UsingAsync(async connection =>
 			{
-				connection.Execute("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName", new { ServiceName = serviceName, MachineName = machineName });
-				connection.Execute("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)", new { ServiceName = serviceName, MachineName = machineName, LastRun = lastRun });
+				await connection.ExecuteAsync("DELETE FROM pf_ServiceHeartbeat WHERE ServiceName = @ServiceName AND MachineName = @MachineName", new { ServiceName = serviceName, MachineName = machineName });
+				await connection.ExecuteAsync("INSERT INTO pf_ServiceHeartbeat (ServiceName, MachineName, LastRun) VALUES (@ServiceName, @MachineName, @LastRun)", new { ServiceName = serviceName, MachineName = machineName, LastRun = lastRun });
 			});
 		}
 
-		public List<ServiceHeartbeat> GetAll()
+		public async Task<List<ServiceHeartbeat>> GetAll()
 		{
-			List<ServiceHeartbeat> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				list = connection.Query<ServiceHeartbeat>("SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName").ToList());
-			return list;
+			Task<IEnumerable<ServiceHeartbeat>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				list = connection.QueryAsync<ServiceHeartbeat>("SELECT ServiceName, MachineName, LastRun FROM pf_ServiceHeartbeat ORDER BY ServiceName"));
+			return list.Result.ToList();
 		}
 
-		public void ClearAll()
+		public async Task ClearAll()
 		{
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute("DELETE FROM pf_ServiceHeartbeat"));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				connection.ExecuteAsync("DELETE FROM pf_ServiceHeartbeat"));
 		}
 	}
 }
