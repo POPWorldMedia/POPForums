@@ -217,7 +217,7 @@ namespace PopForums.Services
 			await _postRepository.VotePost(post.PostID, user.UserID);
 			var votes = await _postRepository.CalculateVoteCount(post.PostID);
 			await _postRepository.SetVoteCount(post.PostID, votes);
-			var votedUpUser = _userService.GetUser(post.UserID);
+			var votedUpUser = await _userService.GetUser(post.UserID);
 			if (votedUpUser != null)
 			{
 				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>

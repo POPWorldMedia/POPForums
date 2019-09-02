@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PopForums.Configuration;
@@ -152,14 +149,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				modelState.AddModelError("PasswordRetype", Resources.RetypeYourPassword);
 			if (string.IsNullOrWhiteSpace(signupData.Name))
 				modelState.AddModelError("Name", Resources.NameRequired);
-			else if (_userService.IsNameInUse(signupData.Name))
+			else if (await _userService.IsNameInUse(signupData.Name))
 				modelState.AddModelError("Name", Resources.NameInUse);
 			if (string.IsNullOrWhiteSpace(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailRequired);
 			else
 				if (!signupData.Email.IsEmailAddress())
 					modelState.AddModelError("Email", Resources.ValidEmailAddressRequired);
-			else if (signupData.Email != null && _userService.IsEmailInUse(signupData.Email))
+			else if (signupData.Email != null && await _userService.IsEmailInUse(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailInUse);
 			if (signupData.Email != null && await _userService.IsEmailBanned(signupData.Email))
 				modelState.AddModelError("Email", Resources.EmailBanned);
@@ -188,9 +185,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("Verify", new { id = authorizationCode });
 		}
 
-		public ViewResult RequestCode(string email)
+		public async Task<ViewResult> RequestCode(string email)
 		{
-			var user = _userService.GetUserByEmail(email);
+			var user = await _userService.GetUserByEmail(email);
 			if (user == null)
 			{
 				ViewData["Result"] = Resources.NoUserFoundWithEmail;
@@ -213,7 +210,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ViewResult> Forgot(string email)
 		{
-			var user = _userService.GetUserByEmail(email);
+			var user = await _userService.GetUserByEmail(email);
 			if (user == null)
 			{
 				ViewBag.Result = Resources.EmailNotFound;
@@ -227,12 +224,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
-		public ActionResult ResetPassword(string id)
+		public async Task<ActionResult> ResetPassword(string id)
 		{
 			var authKey = Guid.Empty;
-			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
+			if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 				return StatusCode(403);
-			var user = _userService.GetUserByAuhtorizationKey(authKey);
+			var user = await _userService.GetUserByAuhtorizationKey(authKey);
 			var container = new PasswordResetContainer();
 			if (user == null)
 				container.IsValidUser = false;
@@ -242,18 +239,18 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult ResetPassword(string id, PasswordResetContainer resetContainer)
+		public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 		{
 			var authKey = Guid.Empty;
-			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
+			if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 				return StatusCode(403);
-			var user = _userService.GetUserByAuhtorizationKey(authKey);
+			var user = await _userService.GetUserByAuhtorizationKey(authKey);
 			resetContainer.IsValidUser = true;
 			if (resetContainer.Password != resetContainer.PasswordRetype)
 				ModelState.AddModelError("PasswordRetype", Resources.RetypePasswordMustMatch);
 			string errorMessage;
 			_userService.IsPasswordValid(resetContainer.Password, out errorMessage);
-			if (!String.IsNullOrWhiteSpace(errorMessage))
+			if (!string.IsNullOrWhiteSpace(errorMessage))
 				ModelState.AddModelError("Password", errorMessage);
 			if (!ModelState.IsValid)
 				return View(resetContainer);
@@ -321,20 +318,20 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult ChangeEmail(UserEditSecurity userEdit)
+		public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			if (String.IsNullOrWhiteSpace(userEdit.NewEmail) || !userEdit.NewEmail.IsEmailAddress())
+			if (string.IsNullOrWhiteSpace(userEdit.NewEmail) || !userEdit.NewEmail.IsEmailAddress())
 				ViewBag.EmailResult = Resources.ValidEmailAddressRequired;
 			else if (userEdit.NewEmail != userEdit.NewEmailRetype)
 				ViewBag.EmailResult = Resources.EmailsMustMatch;
-			else if (_userService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
+			else if (await _userService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
 				ViewBag.EmailResult = Resources.EmailInUse;
 			else
 			{
-				_userService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Connection.RemoteIpAddress.ToString());
+				await _userService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Connection.RemoteIpAddress.ToString());
 				if (_settingsManager.Current.IsNewUserApproved)
 					ViewBag.EmailResult = Resources.EmailChangeSuccess;
 				else
@@ -379,7 +376,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> MiniProfile(int id)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null)
 				return View("MiniUserNotFound");
 			var profile = await _profileService.GetProfile(user);
@@ -396,7 +393,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> ViewProfile(int id)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			var profile = await _profileService.GetProfile(user);
@@ -415,7 +412,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Posts(int id, int page = 1)
 		{
-			var postUser = _userService.GetUser(id);
+			var postUser = await _userService.GetUser(id);
 			if (postUser == null)
 				return NotFound();
 			var includeDeleted = false;
@@ -462,7 +459,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var toUser = _userService.GetUser(id);
+			var toUser = await _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
 			if (await _userEmailer.IsUserEmailable(toUser) == false)
@@ -477,7 +474,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var toUser = _userService.GetUser(id);
+			var toUser = await _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
 			if (await _userEmailer.IsUserEmailable(toUser) == false)
@@ -494,7 +491,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> Unsubscribe(int id, string key)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null || (await _profileService.Unsubscribe(user, key) == false))
 				return View("UnsubscribeFailure");
 			return View();

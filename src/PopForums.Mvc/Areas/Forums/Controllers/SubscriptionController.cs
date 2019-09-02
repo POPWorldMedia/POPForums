@@ -42,13 +42,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(container);
 		}
 
-		public ViewResult Unsubscribe(int topicID, string authKey)
+		public async Task<ViewResult> Unsubscribe(int topicID, string authKey)
 		{
 			var container = new TopicUnsubscribeContainer { User = null, Topic = null };
 			Guid parsedKey;
 			if (!Guid.TryParse(authKey, out parsedKey))
 				return View(container);
-			container.User = _userService.GetUserByAuhtorizationKey(parsedKey);
+			container.User = await _userService.GetUserByAuhtorizationKey(parsedKey);
 			container.Topic = _topicService.Get(topicID);
 			_subService.TryRemoveSubscribedTopic(container.User, container.Topic);
 			return View(container);

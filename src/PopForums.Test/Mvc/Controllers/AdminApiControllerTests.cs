@@ -107,7 +107,7 @@ namespace PopForums.Test.Mvc.Controllers
 				var forum = new Forum{ForumID = 123};
 				_forumService.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				var all = new List<string> {"a", "b"};
-				_userService.Setup(x => x.GetAllRoles()).Returns(all);
+				_userService.Setup(x => x.GetAllRoles()).ReturnsAsync(all);
 				var allView = new List<string> {"c", "d"};
 				_forumService.Setup(x => x.GetForumViewRoles(forum)).ReturnsAsync(allView);
 				var allPost = new List<string> {"e", "f"};

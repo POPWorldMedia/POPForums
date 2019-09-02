@@ -184,7 +184,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var container = new ForumPermissionContainer
 			{
 				ForumID = forum.ForumID,
-				AllRoles = _userService.GetAllRoles(),
+				AllRoles = await _userService.GetAllRoles(),
 				PostRoles = await _forumService.GetForumPostRoles(forum),
 				ViewRoles = await _forumService.GetForumViewRoles(forum)
 			};
@@ -247,7 +247,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpGet("/Forums/AdminApi/GetUser/{id}")]
 		public async Task<ActionResult<UserEdit>> GetUser(int id)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			var profile = await _profileService.GetProfileForEdit(user);
@@ -258,7 +258,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/UpdateUserAvatar/{id}")]
 		public async Task<ActionResult<dynamic>> UpdateUserAvatar(int id)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			if (Request.Form?.Files?.Count != 1)
@@ -275,7 +275,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/UpdateUserImage/{id}")]
 		public async Task<ActionResult<dynamic>> UpdateUserImage(int id)
 		{
-			var user = _userService.GetUser(id);
+			var user = await _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			if (Request.Form?.Files?.Count != 1)
@@ -294,59 +294,59 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			var adminUser = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			var user = _userService.GetUser(userEdit.UserID);
+			var user = await _userService.GetUser(userEdit.UserID);
 			await _userService.EditUser(user, userEdit, false, false, null, null, ip, adminUser);
 			return Ok();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteUser/{id}")]
-		public ActionResult DeleteUser(int id)
+		public async Task<ActionResult> DeleteUser(int id)
 		{
-			DeleteUser(id, false);
+			await DeleteUser(id, false);
 			return Ok();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteAndBanUser/{id}")]
-		public ActionResult DeleteAndBanUser(int id)
+		public async Task<ActionResult> DeleteAndBanUser(int id)
 		{
-			DeleteUser(id, true);
+			await DeleteUser(id, true);
 			return Ok();
 		}
 
-		private void DeleteUser(int userID, bool isBanned)
+		private async Task DeleteUser(int userID, bool isBanned)
 		{
 			var adminUser = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			var user = _userService.GetUser(userID);
+			var user = await _userService.GetUser(userID);
 			_userService.DeleteUser(user, adminUser, ip, isBanned);
 		}
 
 		// ********** user roles
 
 		[HttpGet("/Forums/AdminApi/GetAllRoles")]
-		public ActionResult<IEnumerable<string>> GetAllRoles()
+		public async Task<ActionResult<IEnumerable<string>>> GetAllRoles()
 		{
-			var roles = _userService.GetAllRoles();
+			var roles = await _userService.GetAllRoles();
 			return roles;
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateRole/{role}")]
-		public ActionResult CreateRole(string role)
+		public async Task<ActionResult> CreateRole(string role)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			_userService.CreateRole(role, user, ip);
+			await _userService.CreateRole(role, user, ip);
 			return NoContent();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteRole/{role}")]
-		public ActionResult DeleteRole(string role)
+		public async Task<ActionResult> DeleteRole(string role)
 		{
 			if (role == PermanentRoles.Admin || role == PermanentRoles.Moderator)
 				return NoContent();
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			_userService.DeleteRole(role, user, ip);
+			await _userService.DeleteRole(role, user, ip);
 			return NoContent();
 		}
 
@@ -520,7 +520,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			if (!string.IsNullOrEmpty(manualEvent.EventDefinitionID))
 				return BadRequest("Can't specify an EventDefinitionID.");
-			var user = _userService.GetUser(manualEvent.UserID);
+			var user = await _userService.GetUser(manualEvent.UserID);
 			if (user == null)
 				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
 			if (!manualEvent.Points.HasValue)
@@ -534,7 +534,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			if (string.IsNullOrEmpty(manualEvent.EventDefinitionID))
 				return BadRequest("Must specify an EventDefinitionID.");
-			var user = _userService.GetUser(manualEvent.UserID);
+			var user = await _userService.GetUser(manualEvent.UserID);
 			if (user == null)
 				return BadRequest($"UserID {manualEvent.UserID} does not exist.");
 			if (manualEvent.Points.HasValue)

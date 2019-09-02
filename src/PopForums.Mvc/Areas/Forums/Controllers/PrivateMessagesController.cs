@@ -63,7 +63,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(model);
 		}
 
-		public ActionResult Create(int? id)
+		public async Task<ActionResult> Create(int? id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -71,7 +71,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			ViewBag.UserIDs = " ";
 			if (id.HasValue)
 			{
-				var targetUser = _userService.GetUser(id.Value);
+				var targetUser = await _userService.GetUser(id.Value);
 				ViewBag.UserIDs = targetUser.UserID.ToString(CultureInfo.InvariantCulture);
 				ViewBag.UserID = targetUser.UserID.ToString(CultureInfo.InvariantCulture);
 				ViewBag.TargetUserID = targetUser.UserID;
@@ -98,7 +98,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return View("Create");
 			}
 			var ids = userIDs.Split(new[] { ',' }).Select(i => Convert.ToInt32(i));
-			var users = ids.Select(id => _userService.GetUser(id)).ToList();
+			var users = ids.Select(id => _userService.GetUser(id).Result).ToList();
 			await _privateMessageService.Create(subject, fullText, user, users);
 			return RedirectToAction("Index");
 		}
@@ -112,8 +112,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var pm = await _privateMessageService.Get(id);
 			if (await _privateMessageService.IsUserInPM(user, pm) == false)
 				return StatusCode(403);
-			if (String.IsNullOrEmpty(fullText))
-				fullText = String.Empty;
+			if (string.IsNullOrEmpty(fullText))
+				fullText = string.Empty;
 			await _privateMessageService.Reply(pm, fullText, user);
 			return RedirectToAction("View", new { id });
 		}

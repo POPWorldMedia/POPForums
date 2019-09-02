@@ -41,7 +41,7 @@ namespace PopForums.Test.Services
 			_mockBanRepo = new Mock<IBanRepository>();
 			_mockForgotMailer = new Mock<IForgotPasswordMailer>();
 			_mockImageService = new Mock<IImageService>();
-			_mockRoleRepo.Setup(r => r.GetUserRoles(It.IsAny<int>())).Returns(new List<string>());
+			_mockRoleRepo.Setup(r => r.GetUserRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
 			return new UserService(_mockUserRepo.Object, _mockRoleRepo.Object, _mockProfileRepo.Object, _mockSettingsManager.Object, _mockUserAvatarRepo.Object, _mockUserImageRepo.Object, _mockSecurityLogService.Object, _mockTextParser.Object, _mockBanRepo.Object, _mockForgotMailer.Object, _mockImageService.Object);
 		}
 
@@ -165,7 +165,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetUser()
+		public async Task GetUser()
 		{
 			const int id = 1;
 			const string name = "Jeff";
@@ -174,24 +174,24 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			var dummyUser = GetDummyUser(name, email);
 			_mockUserRepo.Setup(r => r.GetUser(id)).Returns(dummyUser);
-			_mockRoleRepo.Setup(r => r.GetUserRoles(id)).Returns(roles);
-			var user = userService.GetUser(id);
+			_mockRoleRepo.Setup(r => r.GetUserRoles(id)).ReturnsAsync(roles);
+			var user = await userService.GetUser(id);
 			Assert.Same(dummyUser, user);
 		}
 
 		[Fact]
-		public void GetUserFail()
+		public async Task GetUserFail()
 		{
 			const int id = 1;
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUser(It.Is<int>(i => i != 1))).Returns(GetDummyUser("", ""));
 			_mockUserRepo.Setup(r => r.GetUser(It.Is<int>(i => i == 1))).Returns((User)null);
-			var user = userService.GetUser(id);
+			var user = await userService.GetUser(id);
 			Assert.Null(user);
 		}
 
 		[Fact]
-		public void GetUserByName()
+		public async Task GetUserByName()
 		{
 			const string name = "Jeff";
 			const string email = "a@b.com";
@@ -199,32 +199,32 @@ namespace PopForums.Test.Services
 			var dummyUser = GetDummyUser(name, email);
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByName(name)).Returns(dummyUser);
-			_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).Returns(roles);
-			var user = userService.GetUserByName(name);
+			_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).ReturnsAsync(roles);
+			var user = await userService.GetUserByName(name);
 			Assert.Same(dummyUser, user);
 		}
 
 		[Fact]
-		public void GetUserByNameFail()
+		public async Task GetUserByNameFail()
 		{
 			const string name = "Jeff";
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByName(It.Is<string>(i => i != name))).Returns(GetDummyUser(name, ""));
 			_mockUserRepo.Setup(r => r.GetUserByName(It.Is<string>(i => i == name))).Returns((User)null);
-			var user = userService.GetUserByName(name);
+			var user = await userService.GetUserByName(name);
 			Assert.Null(user);
 		}
 
 		[Fact]
-		public void GetUserByNameReturnsNullWithNullOrEmptyName()
+		public async Task GetUserByNameReturnsNullWithNullOrEmptyName()
 		{
 			var userService = GetMockedUserService();
-			Assert.Null(userService.GetUserByName(""));
-			Assert.Null(userService.GetUserByName(null));
+			Assert.Null(await userService.GetUserByName(""));
+			Assert.Null(await userService.GetUserByName(null));
 		}
 
 		[Fact]
-		public void GetUserByEmail()
+		public async Task GetUserByEmail()
 		{
 			const string name = "Jeff";
 			const string email = "a@b.com";
@@ -232,19 +232,19 @@ namespace PopForums.Test.Services
 			var dummyUser = GetDummyUser(name, email);
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByEmail(email)).Returns(dummyUser);
-			_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).Returns(roles);
-			var user = userService.GetUserByEmail(email);
+			_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).ReturnsAsync(roles);
+			var user = await userService.GetUserByEmail(email);
 			Assert.Same(dummyUser, user);
 		}
 
 		[Fact]
-		public void GetUserByEmailFail()
+		public async Task GetUserByEmailFail()
 		{
 			const string email = "a@b.com";
 			var userManager = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByEmail(It.Is<string>(i => i != email))).Returns(GetDummyUser("", email));
 			_mockUserRepo.Setup(r => r.GetUserByEmail(It.Is<string>(i => i == email))).Returns((User)null);
-			var user = userManager.GetUserByEmail(email);
+			var user = await userManager.GetUserByEmail(email);
 			Assert.Null(user);
 		}
 
@@ -255,58 +255,58 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void NameIsInUse()
+		public async Task NameIsInUse()
 		{
 			const string name = "jeff";
 			var userService = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByName(It.IsRegex("^" + name + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser(name, "a@b.com"));
-			Assert.True(userService.IsNameInUse(name));
+			Assert.True(await userService.IsNameInUse(name));
 			_mockUserRepo.Verify(r => r.GetUserByName(name), Times.Exactly(1));
-			Assert.False(userService.IsNameInUse("notjeff"));
-			Assert.True(userService.IsNameInUse(name.ToUpper()));
+			Assert.False(await userService.IsNameInUse("notjeff"));
+			Assert.True(await userService.IsNameInUse(name.ToUpper()));
 		}
 
 		[Fact]
-		public void EmailIsInUse()
+		public async Task EmailIsInUse()
 		{
 			const string email = "a@b.com";
 			var userManager = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByEmail(It.IsRegex("^" + email + "$", RegexOptions.IgnoreCase))).Returns(GetDummyUser("jeff", email));
-			Assert.True(userManager.IsEmailInUse(email));
+			Assert.True(await userManager.IsEmailInUse(email));
 			_mockUserRepo.Verify(r => r.GetUserByEmail(email), Times.Exactly(1));
-			Assert.False(userManager.IsEmailInUse("nota@b.com"));
-			Assert.True(userManager.IsEmailInUse(email.ToUpper()));
+			Assert.False(await userManager.IsEmailInUse("nota@b.com"));
+			Assert.True(await userManager.IsEmailInUse(email.ToUpper()));
 		}
 
 		[Fact]
-		public void EmailInUserByAnotherTrue()
+		public async Task EmailInUserByAnotherTrue()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("jeff", "a@b.com");
 			_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).Returns(new User { UserID = 123 });
-			var result = userService.IsEmailInUseByDifferentUser(user, "c@d.com");
+			var result = await userService.IsEmailInUseByDifferentUser(user, "c@d.com");
 			_mockUserRepo.Verify(u => u.GetUserByEmail("c@d.com"), Times.Once());
 			Assert.True(result);
 		}
 
 		[Fact]
-		public void EmailInUserByAnotherFalseBecauseSameUser()
+		public async Task EmailInUserByAnotherFalseBecauseSameUser()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("jeff", "a@b.com");
 			_mockUserRepo.Setup(u => u.GetUserByEmail("a@b.com")).Returns(user);
-			var result = userService.IsEmailInUseByDifferentUser(user, "a@b.com");
+			var result = await userService.IsEmailInUseByDifferentUser(user, "a@b.com");
 			_mockUserRepo.Verify(u => u.GetUserByEmail("a@b.com"), Times.Once());
 			Assert.False(result);
 		}
 
 		[Fact]
-		public void EmailInUserByAnotherFalseBecauseNoUser()
+		public async Task EmailInUserByAnotherFalseBecauseNoUser()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("jeff", "a@b.com");
 			_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).Returns((User)null);
-			var result = userService.IsEmailInUseByDifferentUser(user, "c@d.com");
+			var result = await userService.IsEmailInUseByDifferentUser(user, "c@d.com");
 			_mockUserRepo.Verify(u => u.GetUserByEmail("c@d.com"), Times.Once());
 			Assert.False(result);
 		}
@@ -429,7 +429,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void ChangeEmailSuccess()
+		public async Task ChangeEmailSuccess()
 		{
 			const string oldName = "Jeff";
 			const string oldEmail = "a@b.com";
@@ -441,13 +441,13 @@ namespace PopForums.Test.Services
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(false);
 			var targetUser = GetDummyUser(oldName, oldEmail);
 			var user = new User { UserID = 34243 };
-			userManager.ChangeEmail(targetUser, newEmail, user, "123");
+			await userManager.ChangeEmail(targetUser, newEmail, user, "123");
 			_mockUserRepo.Verify(r => r.ChangeEmail(targetUser, newEmail), Times.Exactly(1));
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: a@b.com, New: c@d.com", SecurityLogType.EmailChange));
 		}
 
 		[Fact]
-		public void ChangeEmailAlreadyInUse()
+		public async Task ChangeEmailAlreadyInUse()
 		{
 			const string oldName = "Jeff";
 			const string oldEmail = "a@b.com";
@@ -458,23 +458,23 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).Returns(GetDummyUser("Diana", newEmail));
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser(oldName, oldEmail);
-			Assert.Throws<Exception>(() => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<Exception>(() => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
 		[Fact]
-		public void ChangeEmailBad()
+		public async Task ChangeEmailBad()
 		{
 			const string badEmail = "a b @ c";
 			var userManager = GetMockedUserService();
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var user = GetDummyUser("", "");
-			Assert.Throws<Exception>(() => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<Exception>(() => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
 		[Fact]
-		public void ChangeEmailMapsIsApprovedFromSettingsToUserRepoCall()
+		public async Task ChangeEmailMapsIsApprovedFromSettingsToUserRepoCall()
 		{
 			const string oldName = "Jeff";
 			const string oldEmail = "a@b.com";
@@ -486,12 +486,12 @@ namespace PopForums.Test.Services
 			_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
 			var targetUser = GetDummyUser(oldName, oldEmail);
 			var user = new User { UserID = 34243 };
-			userManager.ChangeEmail(targetUser, newEmail, user, "123");
+			await userManager.ChangeEmail(targetUser, newEmail, user, "123");
 			_mockUserRepo.Verify(x => x.UpdateIsApproved(targetUser, true), Times.Once());
 		}
 
 		[Fact]
-		public void ChangeNameSuccess()
+		public async Task ChangeNameSuccess()
 		{
 			const string oldName = "Jeff";
 			const string oldEmail = "a@b.com";
@@ -502,13 +502,13 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByName(newName)).Returns((User)null);
 			var targetUser = GetDummyUser(oldName, oldEmail);
 			var user = new User { UserID = 1234531 };
-			userManager.ChangeName(targetUser, newName, user, "123");
+			await userManager.ChangeName(targetUser, newName, user, "123");
 			_mockUserRepo.Verify(r => r.ChangeName(targetUser, newName));
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: Jeff, New: Diana", SecurityLogType.NameChange));
 		}
 
 		[Fact]
-		public void ChangeNameFailUsed()
+		public async Task ChangeNameFailUsed()
 		{
 			const string oldName = "Jeff";
 			const string oldEmail = "a@b.com";
@@ -518,25 +518,25 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByName(oldName)).Returns(GetDummyUser(oldName, oldEmail));
 			_mockUserRepo.Setup(r => r.GetUserByName(newName)).Returns(GetDummyUser(newName, oldEmail));
 			var user = GetDummyUser(oldName, oldEmail);
-			Assert.Throws<Exception>(() => userService.ChangeName(user, newName, It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
 		[Fact]
-		public void ChangeNameNull()
+		public async Task ChangeNameNull()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("Jeff", "a@b.com");
-			Assert.Throws<Exception>(() => userService.ChangeName(user, null, It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, null, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
 		[Fact]
-		public void ChangeNameEmpty()
+		public async Task ChangeNameEmpty()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("Jeff", "a@b.com");
-			Assert.Throws<Exception>(() => userService.ChangeName(user, String.Empty, It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, String.Empty, It.IsAny<User>(), It.IsAny<string>()));
 			_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -550,7 +550,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void LoginSuccess()
+		public async Task LoginSuccess()
 		{
 			const string email = "a@b.com";
 			const string password = "fred";
@@ -562,9 +562,8 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(saltedHash);
 			_mockUserRepo.Setup(r => r.GetUserByEmail(email)).Returns(user);
 			_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
-			User userOut;
 
-			var result = userService.Login(email, password, ip, out userOut);
+			var (result, userOut) = await userService.Login(email, password, ip);
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
@@ -573,7 +572,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void LoginSuccessNoSalt()
+		public async Task LoginSuccessNoSalt()
 		{
 			const string email = "a@b.com";
 			const string password = "fred";
@@ -586,9 +585,8 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetUserByEmail(email)).Returns(user);
 			_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
 			_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
-			User userOut;
 
-			var result = userService.Login(email, password, ip, out userOut);
+			var (result, userOut) = await userService.Login(email, password, ip);
 
 			Assert.True(result);
 			_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
@@ -598,7 +596,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void LoginFail()
+		public async Task LoginFail()
 		{
 			const string email = "a@b.com";
 			const string password = "fred";
@@ -606,9 +604,8 @@ namespace PopForums.Test.Services
 			var userService = GetMockedUserService();
 			Guid? salt;
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(It.IsAny<string>(), out salt)).Returns("1234");
-			User userOut;
 
-			var result = userService.Login(email, password, ip, out userOut);
+			var (result, userOut) = await userService.Login(email, password, ip);
 
 			Assert.False(result);
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin), Times.Once());
@@ -642,44 +639,44 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetAllRoles()
+		public async Task GetAllRoles()
 		{
 			var userService = GetMockedUserService();
 			var list = new List<string>();
-			_mockRoleRepo.Setup(r => r.GetAllRoles()).Returns(list);
-			var result = userService.GetAllRoles();
+			_mockRoleRepo.Setup(r => r.GetAllRoles()).ReturnsAsync(list);
+			var result = await userService.GetAllRoles();
 			_mockRoleRepo.Verify(r => r.GetAllRoles(), Times.Once());
 			Assert.Same(list, result);
 		}
 
 		[Fact]
-		public void CreateRole()
+		public async Task CreateRole()
 		{
 			var userService = GetMockedUserService();
 			const string role = "blah";
-			userService.CreateRole(role, It.IsAny<User>(), It.IsAny<string>());
+			await userService.CreateRole(role, It.IsAny<User>(), It.IsAny<string>());
 			_mockRoleRepo.Verify(r => r.CreateRole(role), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), null, It.IsAny<string>(), "Role: blah", SecurityLogType.RoleCreated), Times.Once());
 		}
 
 		[Fact]
-		public void DeleteRole()
+		public async Task DeleteRole()
 		{
 			var userService = GetMockedUserService();
 			const string role = "blah";
-			userService.DeleteRole(role, It.IsAny<User>(), It.IsAny<string>());
+			await userService.DeleteRole(role, It.IsAny<User>(), It.IsAny<string>());
 			_mockRoleRepo.Verify(r => r.DeleteRole(role), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), null, It.IsAny<string>(), "Role: blah", SecurityLogType.RoleDeleted), Times.Once());
 		}
 
 		[Fact]
-		public void DeleteRoleThrowsOnAdminOrMod()
+		public async Task DeleteRoleThrowsOnAdminOrMod()
 		{
 			var userService = GetMockedUserService();
-			Assert.Throws<InvalidOperationException>(() => userService.DeleteRole("Admin", It.IsAny<User>(), It.IsAny<string>()));
-			Assert.Throws<InvalidOperationException>(() => userService.DeleteRole("Moderator", It.IsAny<User>(), It.IsAny<string>()));
-			Assert.Throws<InvalidOperationException>(() => userService.DeleteRole("admin", It.IsAny<User>(), It.IsAny<string>()));
-			Assert.Throws<InvalidOperationException>(() => userService.DeleteRole("moderator", It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", It.IsAny<User>(), It.IsAny<string>()));
+			await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", It.IsAny<User>(), It.IsAny<string>()));
 			_mockRoleRepo.Verify(r => r.DeleteRole(It.IsAny<string>()), Times.Never());
 		}
 

@@ -19,7 +19,7 @@ namespace PopForums.Mvc.Areas.Forums.Messaging
 			var principal = Context.User;
 			if (principal != null)
 			{
-				var user = _userService.GetUserByName(principal.Identity.Name);
+				var user = _userService.GetUserByName(principal.Identity.Name).Result;
 				var visibleForumIDs = _forumService.GetViewableForumIDsFromViewRestrictedForums(user).Result;
 				foreach (var forumID in visibleForumIDs)
 					Groups.AddToGroupAsync(Context.ConnectionId, "forum" + forumID);

@@ -58,8 +58,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Login(string email, string password)
 		{
-			User user;
-			if (_userService.Login(email, password, HttpContext.Connection.RemoteIpAddress.ToString(), out user))
+			var (result, user) = await _userService.Login(email, password, HttpContext.Connection.RemoteIpAddress.ToString());
+			if (result)
 			{
 				await PerformSignInAsync(user, HttpContext);
 				return Json(new BasicJsonMessage { Result = true });
@@ -159,7 +159,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<JsonResult> LoginAndAssociate(string email, string password)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			if (_userService.Login(email, password, ip, out var user))
+			var (result, user) = await _userService.Login(email, password, ip);
+			if (result)
 			{
 				var loginState = _externalLoginTempService.Read();
 				if (loginState != null)

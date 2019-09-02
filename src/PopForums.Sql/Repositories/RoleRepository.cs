@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Configuration;
-using PopForums.Sql;
-using PopForums.Models;
 using PopForums.Repositories;
 
 namespace PopForums.Sql.Repositories
@@ -28,90 +27,73 @@ namespace PopForums.Sql.Repositories
 			}
 		}
 
-		public void CreateRole(string role)
+		public async Task CreateRole(string role)
 		{
-			var exists = false;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				exists = connection.Query<string>("SELECT Role FROM pf_Role WHERE Role LIKE @Role", new { Role = role }).Any());
-			if (exists)
+			Task<IEnumerable<string>> exists = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				exists = connection.QueryAsync<string>("SELECT Role FROM pf_Role WHERE Role LIKE @Role", new { Role = role }));
+			if (exists.Result.Any())
 				return;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				connection.Execute("INSERT INTO pf_Role (Role) VALUES (@Role)", new { Role = role }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				connection.ExecuteAsync("INSERT INTO pf_Role (Role) VALUES (@Role)", new { Role = role }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.AllRoles);
 		}
 
-		public bool DeleteRole(string role)
+		public async Task<bool> DeleteRole(string role)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				result = connection.Execute("DELETE FROM pf_Role WHERE Role = @Role", new { Role = role }) == 1);
+			Task<int> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				result = connection.ExecuteAsync("DELETE FROM pf_Role WHERE Role = @Role", new { Role = role }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.AllRoles);
-			return result;
+			return result.Result == 1;
 		}
 
-		public List<string> GetAllRoles()
+		public async Task<List<string>> GetAllRoles()
 		{
 			var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.AllRoles);
 			if (cacheObject != null)
 				return cacheObject;
-			List<string> roles = null;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				roles = connection.Query<string>("SELECT Role FROM pf_Role ORDER BY Role").ToList());
-			_cacheHelper.SetCacheObject(CacheKeys.AllRoles, roles);
-			return roles;
+			Task<IEnumerable<string>> roles = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				roles = connection.QueryAsync<string>("SELECT Role FROM pf_Role ORDER BY Role"));
+			_cacheHelper.SetCacheObject(CacheKeys.AllRoles, roles.Result);
+			return roles.Result.ToList();
 		}
 
-		public bool IsUserInRole(int userID, string role)
-		{
-			var roles = GetUserRoles(userID);
-			return roles.Contains(role);
-		}
-
-		public List<string> GetUserRoles(int userID)
+		public async Task<List<string>> GetUserRoles(int userID)
 		{
 			var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.UserRole(userID));
 			if (cacheObject != null)
 				return cacheObject;
-			List<string> roles = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				roles = connection.Query<string>("SELECT Role FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }).ToList());
-			_cacheHelper.SetCacheObject(CacheKeys.UserRole(userID), roles);
-			return roles;
+			Task<IEnumerable<string>> roles = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				roles = connection.QueryAsync<string>("SELECT Role FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }));
+			var list = roles.Result.ToList();
+			_cacheHelper.SetCacheObject(CacheKeys.UserRole(userID), list);
+			return list;
 		}
 
-		public List<User> GetUsersInRole(string role)
+		private async Task AddUserToRole(int userID, string role)
 		{
-			List<User> users = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				users = connection.Query<User>("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser U JOIN pf_PopForumsUserRole R ON U.UserID = R.UserID WHERE Role = @Role", new { Role = role }).ToList());
-			return users;
-		}
-
-		public bool AddUserToRole(int userID, string role)
-		{
-			RemoveUserFromRole(userID, role);
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Execute("INSERT INTO pf_PopForumsUserRole (UserID, Role) VALUES (@UserID, @Role)", new { UserID = userID, Role = role }) == 1);
+			await RemoveUserFromRole(userID, role);
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_PopForumsUserRole (UserID, Role) VALUES (@UserID, @Role)", new { UserID = userID, Role = role }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserRole(userID));
-			return result;
 		}
 
-		public bool RemoveUserFromRole(int userID, string role)
+		private async Task RemoveUserFromRole(int userID, string role)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Execute("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID AND Role = @Role", new { UserID = userID, Role = role }) == 1);
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID AND Role = @Role", new { UserID = userID, Role = role }));
 			_cacheHelper.RemoveCacheObject(CacheKeys.UserRole(userID));
-			return result;
 		}
 
-		public void ReplaceUserRoles(int userID, string[] roles)
+		public async Task ReplaceUserRoles(int userID, string[] roles)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }));
 			foreach (var role in roles)
-				AddUserToRole(userID, role);
+				await AddUserToRole(userID, role);
 		}
 	}
 }

@@ -474,7 +474,7 @@ namespace PopForums.Test.Services
 		public async Task VoteUpDoesntCallPublisherWhenUserFromPostDoesNotExist()
 		{
 			var service = GetService();
-			_userService.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
+			_userService.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync((User) null);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 			await service.VotePost(new Post { PostID = 123 }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), false), Times.Never());
@@ -485,7 +485,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var voteUpUser = new User { UserID = 777 };
-			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
+			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 			await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), voteUpUser, EventDefinitionService.StaticEventIDs.PostVote, false), Times.Once());
@@ -496,7 +496,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var voteUpUser = new User { UserID = 456 };
-			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
+			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 			await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 			_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false), Times.Never());
@@ -510,7 +510,7 @@ namespace PopForums.Test.Services
 			const string userUrl = "http://abc";
 			const string topicUrl = "http://def";
 			const string title = "blah blah blah";
-			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).Returns(voteUpUser);
+			_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
 			_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 			var message = String.Empty;
 			_eventPub.Setup(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false)).Callback<string, User, string, bool>((x, y, z, a) => message = x);
