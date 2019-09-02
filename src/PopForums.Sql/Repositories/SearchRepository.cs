@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -19,52 +20,52 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public virtual List<string> GetJunkWords()
+		public virtual async Task<List<string>> GetJunkWords()
 		{
-			List<string> words = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				words = connection.Query<string>("SELECT JunkWord FROM pf_JunkWords ORDER BY JunkWord").ToList());
-			return words;
+			Task<IEnumerable<string>> words = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				words = connection.QueryAsync<string>("SELECT JunkWord FROM pf_JunkWords ORDER BY JunkWord"));
+			return words.Result.ToList();
 		}
 
-		public virtual void CreateJunkWord(string word)
+		public virtual async Task CreateJunkWord(string word)
 		{
-			var exists = false;
-			_sqlObjectFactory.GetConnection().Using(connection => 
-				exists = connection.Query<string>("SELECT JunkWord FROM pf_JunkWords WHERE JunkWord LIKE @JunkWord", new { JunkWord = word }).Any());
-			if (exists)
+			Task<IEnumerable<string>> exists = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+				exists = connection.QueryAsync<string>("SELECT JunkWord FROM pf_JunkWords WHERE JunkWord LIKE @JunkWord", new { JunkWord = word }));
+			if (exists.Result.Any())
 				return;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_JunkWords (JunkWord) VALUES (@JunkWord)", new { JunkWord = word }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_JunkWords (JunkWord) VALUES (@JunkWord)", new { JunkWord = word }));
 		}
 
-		public virtual void DeleteJunkWord(string word)
+		public virtual async Task DeleteJunkWord(string word)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord", new { JunkWord = word }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_JunkWords WHERE JunkWord = @JunkWord", new { JunkWord = word }));
 		}
 
-		public virtual void DeleteAllIndexedWordsForTopic(int topicID)
+		public virtual async Task DeleteAllIndexedWordsForTopic(int topicID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID", new { TopicID = topicID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID", new { TopicID = topicID }));
 		}
 
-		public virtual void SaveSearchWord(int topicID, string word, int rank)
+		public virtual async Task SaveSearchWord(int topicID, string word, int rank)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)", new { SearchWord = word, TopicID = topicID, Rank = rank }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_TopicSearchWords (SearchWord, TopicID, Rank) VALUES (@SearchWord, @TopicID, @Rank)", new { SearchWord = word, TopicID = topicID, Rank = rank }));
 		}
 
-		public virtual Response<List<Topic>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
+		public virtual async Task<Tuple<Response<List<Topic>>, int>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize)
 		{
-			topicCount = 0;
-			if (searchTerm.Trim() == String.Empty)
-				return new Response<List<Topic>>(new List<Topic>());
+			var topicCount = 0;
+			if (searchTerm.Trim() == string.Empty)
+				return Tuple.Create(new Response<List<Topic>>(new List<Topic>()), topicCount);
 			var topics = new List<Topic>();
 			var wordArray = searchTerm.Split(new [] { ' ' });
 			var wordList = new List<string>();
-			var junkWords = GetJunkWords();
+			var junkWords = await GetJunkWords();
 			var alphaNum = SearchService.SearchWordPattern;
 			for (var x = 0; x < wordArray.Length; x++)
 			{
@@ -108,7 +109,7 @@ namespace PopForums.Sql.Repositories
 				for (int x = 0; x < hiddenForums.Count; x++)
 				{
 					if (x > 0) sb.Append(" AND");
-					sb.Append(String.Format(" NOT ForumID = {0} ", hiddenForums[x]));
+					sb.Append($" NOT ForumID = {hiddenForums[x]} ");
 				}
 			}
 
@@ -137,7 +138,7 @@ namespace PopForums.Sql.Repositories
 			sb.Append(") AS Row, COUNT(*) OVER () as cnt FROM FirstEntries WHERE GroupRow = 1)\r\nSELECT TopicID, ForumID, Title, ReplyCount, ViewCount, StartedByUserID, StartedByName, LastPostUserID, LastPostName, LastPostTime, IsClosed, IsPinned, IsDeleted, UrlName, AnswerPostID, cnt FROM Entries WHERE Row BETWEEN @StartRow AND @StartRow + @PageSize - 1");
 
 			if (words.Length == 0)
-				return new Response<List<Topic>>(new List<Topic>());
+				return Tuple.Create(new Response<List<Topic>>(new List<Topic>()), topicCount);
 
 			var connection = _sqlObjectFactory.GetConnection();
 			var command = connection.Command(_sqlObjectFactory, sb.ToString());
@@ -146,7 +147,7 @@ namespace PopForums.Sql.Repositories
 			foreach (var item in wordParameters)
 				command.AddParameter(_sqlObjectFactory, item.Key, item.Value);
 			connection.Open();
-			var reader = command.ExecuteReader();
+			var reader = await command.ExecuteReaderAsync();
 
 			while (reader.Read())
 			{
@@ -174,7 +175,7 @@ namespace PopForums.Sql.Repositories
 			reader.Dispose();
 			connection.Close();
 			// simple response since results are from database, not external service like ES or Azure
-			return new Response<List<Topic>>(topics);
+			return Tuple.Create(new Response<List<Topic>>(topics), topicCount);
 		}
 	}
 }

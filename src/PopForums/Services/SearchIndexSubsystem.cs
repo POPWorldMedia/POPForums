@@ -31,7 +31,7 @@ namespace PopForums.Services
 			
 			_searchService.DeleteAllIndexedWordsForTopic(topic);
 
-			var junkList = _searchService.GetJunkWords();
+			var junkList = _searchService.GetJunkWords().Result;
 			var wordList = new List<SearchWord>();
 			var alphaNum = SearchService.SearchWordPattern;
 			var posts = _postService.GetPosts(topic, false).Result;

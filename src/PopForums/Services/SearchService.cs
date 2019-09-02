@@ -10,13 +10,13 @@ namespace PopForums.Services
 {
 	public interface ISearchService
 	{
-		List<string> GetJunkWords();
-		void CreateJunkWord(string word);
-		void DeleteJunkWord(string word);
+		Task<List<string>> GetJunkWords();
+		Task CreateJunkWord(string word);
+		Task DeleteJunkWord(string word);
 		Task<Tuple<Response<List<Topic>>, PagerContext>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex);
 		Task<int> GetNextTopicIDForIndexing();
-		void DeleteAllIndexedWordsForTopic(Topic topic);
-		void SaveSearchWord(SearchWord searchWord);
+		Task DeleteAllIndexedWordsForTopic(Topic topic);
+		Task SaveSearchWord(SearchWord searchWord);
 	}
 
 	public class SearchService : ISearchService
@@ -48,7 +48,7 @@ namespace PopForums.Services
 				topics = new Response<List<Topic>>(new List<Topic>(), true);
 			else
 			{
-				topics = _searchRepository.SearchTopics(searchTerm, nonViewableForumIDs, searchType, startRow, pageSize, out topicCount);
+				(topics, topicCount) = await _searchRepository.SearchTopics(searchTerm, nonViewableForumIDs, searchType, startRow, pageSize);
 			}
 			if (topics.IsValid)
 			{
@@ -69,29 +69,29 @@ namespace PopForums.Services
 			return payload.TopicID;
 		}
 
-		public List<string> GetJunkWords()
+		public async Task<List<string>> GetJunkWords()
 		{
-			return _searchRepository.GetJunkWords();
+			return await _searchRepository.GetJunkWords();
 		}
 
-		public void CreateJunkWord(string word)
+		public async Task CreateJunkWord(string word)
 		{
-			_searchRepository.CreateJunkWord(word);
+			await _searchRepository.CreateJunkWord(word);
 		}
 
-		public void DeleteJunkWord(string word)
+		public async Task DeleteJunkWord(string word)
 		{
-			_searchRepository.DeleteJunkWord(word);
+			await _searchRepository.DeleteJunkWord(word);
 		}
 
-		public void DeleteAllIndexedWordsForTopic(Topic topic)
+		public async Task DeleteAllIndexedWordsForTopic(Topic topic)
 		{
-			_searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
+			await _searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
 		}
 
-		public void SaveSearchWord(SearchWord searchWord)
+		public async Task SaveSearchWord(SearchWord searchWord)
 		{
-			_searchRepository.SaveSearchWord(searchWord.TopicID, searchWord.Word, searchWord.Rank);
+			await _searchRepository.SaveSearchWord(searchWord.TopicID, searchWord.Word, searchWord.Rank);
 		}
 	}
 }

@@ -201,23 +201,23 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** search
 
 		[HttpGet("/Forums/AdminApi/GetJunkWords")]
-		public ActionResult<IEnumerable<string>> GetJunkWords()
+		public async Task<ActionResult<IEnumerable<string>>> GetJunkWords()
 		{
-			var words = _searchService.GetJunkWords();
+			var words = await _searchService.GetJunkWords();
 			return words;
 		}
 
 		[HttpPost("/Forums/AdminApi/CreateJunkWord/{word}")]
-		public NoContentResult CreateJunkWord(string word)
+		public async Task<NoContentResult> CreateJunkWord(string word)
 		{
-			_searchService.CreateJunkWord(word);
+			await _searchService.CreateJunkWord(word);
 			return NoContent();
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteJunkWord/{word}")]
-		public NoContentResult DeleteJunkWord(string word)
+		public async Task<NoContentResult> DeleteJunkWord(string word)
 		{
-			_searchService.DeleteJunkWord(word);
+			await _searchService.DeleteJunkWord(word);
 			return NoContent();
 		}
 
