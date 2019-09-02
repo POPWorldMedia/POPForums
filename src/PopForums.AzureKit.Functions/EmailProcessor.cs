@@ -37,7 +37,7 @@ namespace PopForums.AzureKit.Functions
 			try
 			{
 				var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
-				message = queuedEmailRepo.GetMessage(payload.MessageID);
+				message = queuedEmailRepo.GetMessage(payload.MessageID).Result;
 				smtpWrapper.Send(message);
 			}
 			catch (Exception exc)

@@ -27,7 +27,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var message = new QueuedEmailMessage();
-			_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).Returns(1);
+			_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).ReturnsAsync(1);
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 
 			await service.CreateAndQueueEmail(message);
@@ -41,7 +41,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var messageID = 123;
 			var message = new QueuedEmailMessage();
-			_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).Returns(messageID);
+			_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).ReturnsAsync(messageID);
 			var tenantID = "t1";
 			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
 			var payload = new EmailQueuePayload();

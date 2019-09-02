@@ -33,11 +33,11 @@ namespace PopForums.Email
 						break;
 					if (payload.EmailQueuePayloadType != EmailQueuePayloadType.FullMessage)
 						throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
-					var queuedMessage = queuedEmailRepository.GetMessage(payload.MessageID);
+					var queuedMessage = await queuedEmailRepository.GetMessage(payload.MessageID);
 					if (queuedMessage == null)
 						break;
 					messageGroup.Add(queuedMessage);
-					queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
+					await queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
 				}
 				Parallel.ForEach(messageGroup, message =>
 				{

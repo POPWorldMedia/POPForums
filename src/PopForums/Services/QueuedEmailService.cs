@@ -25,7 +25,7 @@ namespace PopForums.Services
 
 		public async Task CreateAndQueueEmail(QueuedEmailMessage queuedEmailMessage)
 		{
-			var id = _queuedEmailMessageRepository.CreateMessage(queuedEmailMessage);
+			var id = await _queuedEmailMessageRepository.CreateMessage(queuedEmailMessage);
 			var tenantID = _tenantService.GetTenant();
 			var payload = new EmailQueuePayload { MessageID = id, EmailQueuePayloadType = EmailQueuePayloadType.FullMessage, TenantID = tenantID };
 			await _emailQueueRepository.Enqueue(payload);
