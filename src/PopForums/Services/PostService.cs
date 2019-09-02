@@ -168,7 +168,7 @@ namespace PopForums.Services
 					await _topicService.UpdateLast(topic);
 					_forumService.UpdateCounts(forum);
 					await _forumService.UpdateLast(forum);
-					_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
+					await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				}
 			}
 			else
@@ -191,7 +191,7 @@ namespace PopForums.Services
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
-				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload {TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID});
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to undelete post.");

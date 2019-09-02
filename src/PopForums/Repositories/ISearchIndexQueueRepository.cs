@@ -1,10 +1,11 @@
-﻿using PopForums.Models;
+﻿using System.Threading.Tasks;
+using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface ISearchIndexQueueRepository
 	{
-		void Enqueue(SearchIndexPayload payload);
-		SearchIndexPayload Dequeue();
+		Task Enqueue(SearchIndexPayload payload);
+		Task<SearchIndexPayload> Dequeue();
 	}
 }

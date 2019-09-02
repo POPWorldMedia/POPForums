@@ -29,7 +29,7 @@ namespace PopForums.Services
 		Task<int> TopicLastPostID(int topicID);
 		Task HardDeleteTopic(Topic topic, User user);
 		Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
-		void QueueTopicForIndexing(int topicID);
+		Task QueueTopicForIndexing(int topicID);
 	}
 
 	public class TopicService : ITopicService
@@ -204,7 +204,7 @@ namespace PopForums.Services
 				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
 				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
-				_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
 				var oldForum = await _forumService.Get(oldTopic.ForumID);
@@ -253,9 +253,9 @@ namespace PopForums.Services
 			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}
 
-		public void QueueTopicForIndexing(int topicID)
+		public async Task QueueTopicForIndexing(int topicID)
 		{
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID });
+			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID });
 		}
 	}
 }

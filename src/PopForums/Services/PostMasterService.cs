@@ -86,7 +86,7 @@ namespace PopForums.Services
 			forum = await _forumRepository.Get(forum.ForumID);
 			_broker.NotifyForumUpdate(forum);
 			_broker.NotifyTopicUpdate(topic, forum, topicLink);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
+			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 			_topicViewCountService.SetViewedTopic(topic);
 
 			var redirectLink = redirectLinkGenerator(topic);
@@ -157,7 +157,7 @@ namespace PopForums.Services
 			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
 			await _forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 			await _forumRepository.IncrementPostCount(topic.ForumID);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
+			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 			await _profileRepository.SetLastPostID(user.UserID, postID);
 			var topicLink = topicLinkGenerator(topic);
 			if (unsubscribeLinkGenerator != null)
@@ -202,7 +202,7 @@ namespace PopForums.Services
 			post.IsEdited = true;
 			await _postRepository.Update(post);
 			await _moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
-			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
+			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID });
 			var redirectLink = redirectLinkGenerator(post);
 			return new BasicServiceResponse<Post> { Data = post, IsSuccessful = true, Message = string.Empty, Redirect = redirectLink };
 		}

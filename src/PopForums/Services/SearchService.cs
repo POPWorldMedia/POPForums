@@ -14,7 +14,7 @@ namespace PopForums.Services
 		void CreateJunkWord(string word);
 		void DeleteJunkWord(string word);
 		Task<Tuple<Response<List<Topic>>, PagerContext>> GetTopics(string searchTerm, SearchType searchType, User user, bool includeDeleted, int pageIndex);
-		int GetNextTopicIDForIndexing();
+		Task<int> GetNextTopicIDForIndexing();
 		void DeleteAllIndexedWordsForTopic(Topic topic);
 		void SaveSearchWord(SearchWord searchWord);
 	}
@@ -44,7 +44,7 @@ namespace PopForums.Services
 			var topicCount = 0;
 			Response<List<Topic>> topics;
 			PagerContext pagerContext;
-			if (String.IsNullOrEmpty(searchTerm))
+			if (string.IsNullOrEmpty(searchTerm))
 				topics = new Response<List<Topic>>(new List<Topic>(), true);
 			else
 			{
@@ -63,9 +63,9 @@ namespace PopForums.Services
 			return Tuple.Create(topics, pagerContext);
 		}
 
-		public int GetNextTopicIDForIndexing()
+		public async Task<int> GetNextTopicIDForIndexing()
 		{
-			var payload = _searchIndexQueueRepository.Dequeue();
+			var payload = await _searchIndexQueueRepository.Dequeue();
 			return payload.TopicID;
 		}
 

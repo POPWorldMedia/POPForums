@@ -18,7 +18,7 @@ namespace PopForums.Services
 			if (!Monitor.TryEnter(_syncRoot, 5000)) return;
 			try
 			{
-				var topicID = searchService.GetNextTopicIDForIndexing();
+				var topicID = searchService.GetNextTopicIDForIndexing().Result;
 				if (topicID == 0)
 					return;
 				var tenantID = tenantService.GetTenant();
