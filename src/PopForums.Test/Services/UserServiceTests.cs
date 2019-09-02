@@ -774,19 +774,19 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetUserEdit()
+		public async Task GetUserEdit()
 		{
 			var service = GetMockedUserService();
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(new Profile { UserID = 1, Web = "blah"});
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(new Profile { UserID = 1, Web = "blah"});
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
-			var result = service.GetUserEdit(user);
+			var result = await service.GetUserEdit(user);
 			Assert.Equal(1, result.UserID);
 			Assert.Equal("blah", result.Web);
 		}
 
 		[Fact]
-		public void EditUserProfileOnly()
+		public async Task EditUserProfileOnly()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
@@ -794,10 +794,10 @@ namespace PopForums.Test.Services
 			var userEdit = new UserEdit();
 			var profile = new Profile();
 			var returnedProfile = GetReturnedProfile(userEdit);
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
 
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 
 			_mockUserRepo.Verify(u => u.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
 			_mockUserRepo.Verify(u => u.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
@@ -827,87 +827,87 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void EditUserApprovalChange()
+		public async Task EditUserApprovalChange()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1, IsApproved = false};
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit {IsApproved = true};
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(user, true), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserNewEmail()
+		public async Task EditUserNewEmail()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1, Email = "c@d.com" };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { NewEmail = "a@b.com" };
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockUserRepo.Verify(u => u.ChangeEmail(user, "a@b.com"), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserNewPassword()
+		public async Task EditUserNewPassword()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { NewPassword = "foo" };
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockUserRepo.Verify(u => u.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserAddRole()
+		public async Task EditUserAddRole()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit { Roles = new [] {"Admin", "Moderator"} };
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockRoleRepo.Verify(r => r.ReplaceUserRoles(1, userEdit.Roles), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Admin", SecurityLogType.UserAddedToRole), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Moderator", SecurityLogType.UserAddedToRole), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserRemoveRole()
+		public async Task EditUserRemoveRole()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string> { "Admin", "Moderator" };
 			var userEdit = new UserEdit { Roles = new[] { "SomethingElse" } };
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(GetReturnedProfile(userEdit));
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockRoleRepo.Verify(r => r.ReplaceUserRoles(1, userEdit.Roles), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Admin", SecurityLogType.UserRemovedFromRole), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Moderator", SecurityLogType.UserRemovedFromRole), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserDeleteAvatar()
+		public async Task EditUserDeleteAvatar()
 		{
 			var service = GetMockedUserService();
 			var user = new User {UserID = 1, Roles = new List<string>()};
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUser(user, userEdit, true, false, null, null, "123", user);
+			await service.EditUser(user, userEdit, true, false, null, null, "123", user);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			Assert.Null(profile.AvatarID);
 		}
 
 		[Fact]
-		public void EditUserNoDeleteAvatar()
+		public async Task EditUserNoDeleteAvatar()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
@@ -915,16 +915,16 @@ namespace PopForums.Test.Services
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			Assert.Equal(3, profile.AvatarID);
 		}
 
 		[Fact]
-		public void EditUserDeletePhoto()
+		public async Task EditUserDeletePhoto()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
@@ -932,16 +932,16 @@ namespace PopForums.Test.Services
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUser(user, userEdit, false, true, null, null, "123", user);
+			await service.EditUser(user, userEdit, false, true, null, null, "123", user);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			Assert.Null(profile.ImageID);
 		}
 
 		[Fact]
-		public void EditUserNoDeletePhoto()
+		public async Task EditUserNoDeletePhoto()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
@@ -949,66 +949,66 @@ namespace PopForums.Test.Services
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUser(user, userEdit, false, false, null, null, "123", user);
+			await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			Assert.Equal(3, profile.ImageID);
 		}
 
 		[Fact]
-		public void EditUserNewAvatar()
+		public async Task EditUserNewAvatar()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
-			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Returns(true);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
 			_mockUserAvatarRepo.Setup(a => a.SaveNewAvatar(1, It.IsAny<byte[]>(), It.IsAny<DateTime>())).Returns(12);
 			var image = new byte[1];
 
-			service.EditUser(user, userEdit, false, false, image, null, "123", user);
+			await service.EditUser(user, userEdit, false, false, image, null, "123", user);
 
 			_mockUserAvatarRepo.Verify(a => a.SaveNewAvatar(1, image, It.IsAny<DateTime>()), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserNewPhoto()
+		public async Task EditUserNewPhoto()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
-			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Returns(true);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
 			_mockUserImageRepo.Setup(a => a.SaveNewImage(1, 0, true, It.IsAny<byte[]>(), It.IsAny<DateTime>())).Returns(12);
 			var image = new byte[1];
 
-			service.EditUser(user, userEdit, false, false, null, image, "123", user);
+			await service.EditUser(user, userEdit, false, false, null, image, "123", user);
 
 			_mockUserImageRepo.Verify(a => a.SaveNewImage(1, 0, true, image, It.IsAny<DateTime>()), Times.Once());
 		}
 
 		[Fact]
-		public void EditUserProfile()
+		public async Task EditUserProfile()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			user.Roles = new List<string>();
 			var returnedProfile = new Profile { UserID = 1 };
 			var profile = new Profile();
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
 			_mockTextParser.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
 			var userEdit = new UserEditProfile
 			               	{
 			               		Dob = new DateTime(2000,1,1), HideVanity = true, Instagram = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w"
 			               	};
-			service.EditUserProfile(user, userEdit);
+			await service.EditUserProfile(user, userEdit);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			Assert.Equal(new DateTime(2000, 1, 1), profile.Dob);
 			Assert.True(profile.HideVanity);
@@ -1026,68 +1026,68 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserEditPhotosDeleteAvatar()
+		public async Task UserEditPhotosDeleteAvatar()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUserProfileImages(user, true, false, null, null);
+			await service.EditUserProfileImages(user, true, false, null, null);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			_mockUserAvatarRepo.Verify(u => u.DeleteAvatarsByUserID(user.UserID));
 			Assert.Null(profile.AvatarID);
 		}
 
 		[Fact]
-		public void UserEditPhotosNoDeleteAvatar()
+		public async Task UserEditPhotosNoDeleteAvatar()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.AvatarID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUserProfileImages(user, false, false, null, null);
+			await service.EditUserProfileImages(user, false, false, null, null);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			_mockUserAvatarRepo.Verify(u => u.DeleteAvatarsByUserID(user.UserID), Times.Never());
 			Assert.Equal(3, profile.AvatarID);
 		}
 
 		[Fact]
-		public void UserEditPhotosDeletePhoto()
+		public async Task UserEditPhotosDeletePhoto()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUserProfileImages(user, false, true, null, null);
+			await service.EditUserProfileImages(user, false, true, null, null);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			_mockUserImageRepo.Verify(u => u.DeleteImagesByUserID(user.UserID));
 			Assert.Null(profile.ImageID);
 		}
 
 		[Fact]
-		public void UserEditPhotosNoDeletePhoto()
+		public async Task UserEditPhotosNoDeletePhoto()
 		{
 			var service = GetMockedUserService();
 			var user = new User { UserID = 1 };
 			var userEdit = new UserEdit();
 			var returnedProfile = GetReturnedProfile(userEdit);
 			returnedProfile.ImageID = 3;
-			_mockProfileRepo.Setup(p => p.GetProfile(1)).Returns(returnedProfile);
+			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			var profile = new Profile();
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-			service.EditUserProfileImages(user, false, false, null, null);
+			await service.EditUserProfileImages(user, false, false, null, null);
 			_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 			_mockUserImageRepo.Verify(u => u.DeleteImagesByUserID(user.UserID), Times.Never());
 			Assert.Equal(3, profile.ImageID);

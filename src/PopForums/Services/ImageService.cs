@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -23,7 +24,7 @@ namespace PopForums.Services
 		byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel);
 		List<UserImage> GetUnapprovedUserImages();
 		void ApproveUserImage(int userImageID);
-		void DeleteUserImage(int userImageID);
+		Task DeleteUserImage(int userImageID);
 		UserImage GetUserImage(int userImageID);
 		UserImageApprovalContainer GetUnapprovedUserImageContainer();
 	}
@@ -60,11 +61,11 @@ namespace PopForums.Services
 			_userImageRepository.ApproveUserImage(userImageID);
 		}
 
-		public void DeleteUserImage(int userImageID)
+		public async Task DeleteUserImage(int userImageID)
 		{
 			var userImage = _userImageRepository.Get(userImageID);
 			if (userImage != null)
-				_profileService.SetCurrentImageIDToNull(userImage.UserID);
+				await _profileService.SetCurrentImageIDToNull(userImage.UserID);
 			_userImageRepository.DeleteUserImage(userImageID);
 		}
 

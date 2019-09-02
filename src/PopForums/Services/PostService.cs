@@ -17,10 +17,10 @@ namespace PopForums.Services
 		Task<Post> Get(int postID);
 		Task<Tuple<int, Topic>> GetTopicPageForPost(Post post, bool includeDeleted);
 		Task<int> GetPostCount(User user);
-		PostEdit GetPostForEdit(Post post, User user);
+		Task<PostEdit> GetPostForEdit(Post post, User user);
 		Task Delete(Post post, User user);
 		Task Undelete(Post post, User user);
-		string GetPostForQuote(Post post, User user, bool forcePlainText);
+		Task<string> GetPostForQuote(Post post, User user, bool forcePlainText);
 		Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end);
 		Task<int> GetLastPostID(int topicID);
 		Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle);
@@ -113,13 +113,13 @@ namespace PopForums.Services
 			return await _postRepository.GetPostCount(user.UserID);
 		}
 
-		public PostEdit GetPostForEdit(Post post, User user)
+		public async Task<PostEdit> GetPostForEdit(Post post, User user)
 		{
 			if (post == null)
 				throw new ArgumentNullException("post");
 			if (user == null)
 				throw new ArgumentNullException("user");
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			var postEdit = new PostEdit(post) { IsPlainText = profile.IsPlainText };
 			if (profile.IsPlainText)
 			{
@@ -131,7 +131,7 @@ namespace PopForums.Services
 			return postEdit;
 		}
 
-		public string GetPostForQuote(Post post, User user, bool forcePlainText)
+		public async Task<string> GetPostForQuote(Post post, User user, bool forcePlainText)
 		{
 			if (post == null)
 				throw new ArgumentNullException("post");
@@ -139,7 +139,7 @@ namespace PopForums.Services
 				return "Post not found";
 			if (user == null)
 				throw new ArgumentNullException("user");
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			string quote;
 			if (profile.IsPlainText || forcePlainText)
 				quote = String.Format("[quote]\r\n[i]{0} said:[/i]\r\n{1}[/quote]", post.Name, _textParsingService.HtmlToForumCode(post.FullText));

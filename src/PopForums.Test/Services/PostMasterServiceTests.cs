@@ -207,7 +207,7 @@ namespace PopForums.Test.Services
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				var lastPost = "last post text";
 				var lastPostID = 456;
-				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(lastPostID);
 				_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post {FullText = lastPost, PostTime = DateTime.MinValue});
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
@@ -228,7 +228,7 @@ namespace PopForums.Test.Services
 				_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 				var lastPost = "last post text";
 				var lastPostID = 456;
-				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(lastPostID);
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(lastPostID);
 				_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post { FullText = lastPost, PostTime = DateTime.UtcNow });
 				_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
@@ -520,7 +520,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
 				_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
@@ -544,7 +544,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("oihf text");
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
 				_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
@@ -568,7 +568,7 @@ namespace PopForums.Test.Services
 				_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("");
 				_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 				_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).Returns(654);
+				_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
 				_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 				var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 

@@ -29,7 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 					foreach (var role in user.Roles)
 						identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
 					context.Items["PopForumsUser"] = user;
-					var profile = profileService.GetProfile(user);
+					var profile = profileService.GetProfile(user).Result;
 					context.Items["PopForumsProfile"] = profile;
 					context.User = new ClaimsPrincipal(identity);
 				}

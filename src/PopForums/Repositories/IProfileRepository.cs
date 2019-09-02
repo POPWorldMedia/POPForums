@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface IProfileRepository
 	{
-		Profile GetProfile(int userID);
-		void Create(Profile profile);
-		bool Update(Profile profile);
-		int? GetLastPostID(int userID);
-		bool SetLastPostID(int userID, int postID);
-		Dictionary<int, string> GetSignatures(List<int> userIDs);
-		Dictionary<int, int> GetAvatars(List<int> userIDs);
-		void SetCurrentImageIDToNull(int userID);
-		void UpdatePoints(int userID, int points);
+		Task<Profile> GetProfile(int userID);
+		Task Create(Profile profile);
+		Task<bool> Update(Profile profile);
+		Task<int?> GetLastPostID(int userID);
+		Task<bool> SetLastPostID(int userID, int postID);
+		Task<Dictionary<int, string>> GetSignatures(List<int> userIDs);
+		Task<Dictionary<int, int>> GetAvatars(List<int> userIDs);
+		Task SetCurrentImageIDToNull(int userID);
+		Task UpdatePoints(int userID, int points);
 	}
 }

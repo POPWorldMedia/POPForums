@@ -75,7 +75,7 @@ namespace PopForums.Services
 			var postID = await _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
 			await _forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
 			await _forumRepository.IncrementPostAndTopicCount(forum.ForumID);
-			_profileRepository.SetLastPostID(user.UserID, postID);
+			await _profileRepository.SetLastPostID(user.UserID, postID);
 			var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 			// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 			var topicLink = topicLinkGenerator(topic);
@@ -158,7 +158,7 @@ namespace PopForums.Services
 			await _forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 			await _forumRepository.IncrementPostCount(topic.ForumID);
 			_searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
-			_profileRepository.SetLastPostID(user.UserID, postID);
+			await _profileRepository.SetLastPostID(user.UserID, postID);
 			var topicLink = topicLinkGenerator(topic);
 			if (unsubscribeLinkGenerator != null)
 				_subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
@@ -209,7 +209,7 @@ namespace PopForums.Services
 
 		private async Task<bool> IsNewPostDupeOrInTimeLimit(string parsedPost, User user)
 		{
-			var postID = _profileRepository.GetLastPostID(user.UserID);
+			var postID = await _profileRepository.GetLastPostID(user.UserID);
 			if (postID == null)
 				return false;
 			var lastPost = await _postRepository.Get(postID.Value);

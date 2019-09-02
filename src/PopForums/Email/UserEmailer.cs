@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 using PopForums.Configuration;
 using PopForums.Models;
-using PopForums.Repositories;
 using PopForums.Services;
 
 namespace PopForums.Email
 {
 	public interface IUserEmailer
 	{
-		bool IsUserEmailable(User user);
-		void ComposeAndQueue(User toUser, User fromUser, string ip, string subject, string text);
+		Task<bool> IsUserEmailable(User user);
+		Task ComposeAndQueue(User toUser, User fromUser, string ip, string subject, string text);
 	}
 
 	public class UserEmailer : IUserEmailer
@@ -25,15 +25,15 @@ namespace PopForums.Email
 		private readonly ISettingsManager _settingsManager;
 		private readonly IQueuedEmailService _queuedEmailService;
 
-		public bool IsUserEmailable(User user)
+		public async Task<bool> IsUserEmailable(User user)
 		{
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			return profile.ShowDetails;
 		}
 
-		public void ComposeAndQueue(User toUser, User fromUser, string ip, string subject, string text)
+		public async Task ComposeAndQueue(User toUser, User fromUser, string ip, string subject, string text)
 		{
-			if (!IsUserEmailable(toUser))
+			if (await IsUserEmailable(toUser) == false)
 				throw new Exception("Can't send e-mail to a user who hides their details.");
 
 			if (toUser == null)
@@ -58,7 +58,7 @@ ______________________
 				FromName = fromUser.Name,
 				QueueTime = DateTime.UtcNow
 			};
-			_queuedEmailService.CreateAndQueueEmail(message);
+			await _queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}
 }

@@ -10,16 +10,16 @@ namespace PopForums.Services
 {
 	public interface IProfileService
 	{
-		Profile GetProfile(User user);
-		void Create(Profile profile);
-		Profile Create(User user, SignupData signupData);
-		void Update(Profile profile);
-		Profile GetProfileForEdit(User user);
-		Dictionary<int, string> GetSignatures(List<Post> posts);
-		Dictionary<int, int> GetAvatars(List<Post> posts);
-		void SetCurrentImageIDToNull(int userID);
+		Task<Profile> GetProfile(User user);
+		Task Create(Profile profile);
+		Task<Profile> Create(User user, SignupData signupData);
+		Task Update(Profile profile);
+		Task<Profile> GetProfileForEdit(User user);
+		Task<Dictionary<int, string>> GetSignatures(List<Post> posts);
+		Task<Dictionary<int, int>> GetAvatars(List<Post> posts);
+		Task SetCurrentImageIDToNull(int userID);
 		string GetUnsubscribeHash(User user);
-		bool Unsubscribe(User user, string hash);
+		Task<bool> Unsubscribe(User user, string hash);
 		Task UpdatePointTotal(User user);
 	}
 
@@ -36,28 +36,28 @@ namespace PopForums.Services
 			_pointLedgerRepository = pointLedgerRepository;
 		}
 
-		public Profile GetProfile(User user)
+		public async Task<Profile> GetProfile(User user)
 		{
 			if (user == null)
 				return null;
-			return _profileRepository.GetProfile(user.UserID);
+			return await _profileRepository.GetProfile(user.UserID);
 		}
 
-		public Profile GetProfileForEdit(User user)
+		public async Task<Profile> GetProfileForEdit(User user)
 		{
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			profile.Signature = _textParsingService.ClientHtmlToForumCode(profile.Signature);
 			return profile;
 		}
 
-		public void Create(Profile profile)
+		public async Task Create(Profile profile)
 		{
 			if (profile.UserID == 0)
 				throw new Exception("Can't create a profile not associated with a valid UserID");
-			_profileRepository.Create(profile);
+			await _profileRepository.Create(profile);
 		}
 
-		public Profile Create(User user, SignupData signupData)
+		public async Task<Profile> Create(User user, SignupData signupData)
 		{
 			var profile = new Profile
             {
@@ -67,32 +67,32 @@ namespace PopForums.Services
 	            IsSubscribed = signupData.IsSubscribed,
 	            IsTos = signupData.IsTos
             };
-			_profileRepository.Create(profile);
+			await _profileRepository.Create(profile);
 			return profile;
 		}
 
-		public void Update(Profile profile)
+		public async Task Update(Profile profile)
 		{
 			profile.Signature = profile.Signature.Trim();
-			if (!_profileRepository.Update(profile))
-				throw new Exception(String.Format("Profile with UserID {0} does not exist.", profile.UserID));
+			if (await _profileRepository.Update(profile) == false)
+				throw new Exception($"Profile with UserID {profile.UserID} does not exist.");
 		}
 
-		public Dictionary<int, string> GetSignatures(List<Post> posts)
+		public async Task<Dictionary<int, string>> GetSignatures(List<Post> posts)
 		{
 			var userIDs = posts.Where(p => p.ShowSig).Select(p => p.UserID).Distinct().ToList();
-			return _profileRepository.GetSignatures(userIDs);
+			return await _profileRepository.GetSignatures(userIDs);
 		}
 
-		public Dictionary<int, int> GetAvatars(List<Post> posts)
+		public async Task<Dictionary<int, int>> GetAvatars(List<Post> posts)
 		{
 			var userIDs = posts.Select(p => p.UserID).Distinct().ToList();
-			return _profileRepository.GetAvatars(userIDs);
+			return await _profileRepository.GetAvatars(userIDs);
 		}
 
-		public void SetCurrentImageIDToNull(int userID)
+		public async Task SetCurrentImageIDToNull(int userID)
 		{
-			_profileRepository.SetCurrentImageIDToNull(userID);
+			await _profileRepository.SetCurrentImageIDToNull(userID);
 		}
 
 		public string GetUnsubscribeHash(User user)
@@ -101,20 +101,20 @@ namespace PopForums.Services
 			return source.GetSHA256Hash();
 		}
 
-		public bool Unsubscribe(User user, string hash)
+		public async Task<bool> Unsubscribe(User user, string hash)
 		{
 			if (GetUnsubscribeHash(user) != hash)
 				return false;
-			var profile = GetProfile(user);
+			var profile = await GetProfile(user);
 			profile.IsSubscribed = false;
-			Update(profile);
+			await Update(profile);
 			return true;
 		}
 
 		public async Task UpdatePointTotal(User user)
 		{
 			var total = await _pointLedgerRepository.GetPointTotal(user.UserID);
-			_profileRepository.UpdatePoints(user.UserID, total);
+			await _profileRepository.UpdatePoints(user.UserID, total);
 		}
 	}
 }

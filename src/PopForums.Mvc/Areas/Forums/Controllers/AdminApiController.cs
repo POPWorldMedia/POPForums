@@ -245,57 +245,57 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpGet("/Forums/AdminApi/GetUser/{id}")]
-		public ActionResult<UserEdit> GetUser(int id)
+		public async Task<ActionResult<UserEdit>> GetUser(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
-			var profile = _profileService.GetProfileForEdit(user);
+			var profile = await _profileService.GetProfileForEdit(user);
 			var model = new UserEdit(user, profile);
 			return model;
 		}
 
 		[HttpPost("/Forums/AdminApi/UpdateUserAvatar/{id}")]
-		public ActionResult<dynamic> UpdateUserAvatar(int id)
+		public async Task<ActionResult<dynamic>> UpdateUserAvatar(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			if (Request.Form?.Files?.Count != 1)
 			{
-				_userService.EditUserProfileImages(user, true, false, null, null);
+				await _userService.EditUserProfileImages(user, true, false, null, null);
 				return new {AvatarID = (int?)null};
 			}
 			var file = Request.Form.Files[0];
-			_userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
-			var profile = _profileService.GetProfileForEdit(user);
+			await _userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
+			var profile = await _profileService.GetProfileForEdit(user);
 			return new {profile.AvatarID};
 		}
 
 		[HttpPost("/Forums/AdminApi/UpdateUserImage/{id}")]
-		public ActionResult<dynamic> UpdateUserImage(int id)
+		public async Task<ActionResult<dynamic>> UpdateUserImage(int id)
 		{
 			var user = _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
 			if (Request.Form?.Files?.Count != 1)
 			{
-				_userService.EditUserProfileImages(user, false, true, null, null);
+				await _userService.EditUserProfileImages(user, false, true, null, null);
 				return new { ImageID = (int?)null };
 			}
 			var file = Request.Form.Files[0];
-			_userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
-			var profile = _profileService.GetProfileForEdit(user);
+			await _userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
+			var profile = await _profileService.GetProfileForEdit(user);
 			return new { profile.ImageID };
 		}
 
 		[HttpPost("/Forums/AdminApi/SaveUser")]
-		public ActionResult SaveUser([FromBody] UserEdit userEdit)
+		public async Task<ActionResult> SaveUser([FromBody] UserEdit userEdit)
 		{
 			var adminUser = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var user = _userService.GetUser(userEdit.UserID);
-			_userService.EditUser(user, userEdit, false, false, null, null, ip, adminUser);
+			await _userService.EditUser(user, userEdit, false, false, null, null, ip, adminUser);
 			return Ok();
 		}
 
@@ -367,9 +367,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost("/Forums/AdminApi/DeleteUserImage/{id}")]
-		public ActionResult DeleteUserImage(int id)
+		public async Task<ActionResult> DeleteUserImage(int id)
 		{
-			_imageService.DeleteUserImage(id);
+			await _imageService.DeleteUserImage(id);
 			return NoContent();
 		}
 

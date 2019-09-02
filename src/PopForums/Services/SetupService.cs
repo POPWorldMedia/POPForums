@@ -82,9 +82,9 @@ namespace PopForums.Services
 			var user = await _userService.CreateUser(setupVariables.Name, setupVariables.Email, setupVariables.Password, true, "");
 			user.Roles = new List<string> {PermanentRoles.Admin, PermanentRoles.Moderator};
 			var profile = new Profile { UserID = user.UserID, IsTos = true, IsSubscribed = true, TimeZone = setupVariables.ServerTimeZone, IsDaylightSaving = setupVariables.ServerDaylightSaving, ShowDetails = true };
-			_profileService.Create(profile);
+			await _profileService.Create(profile);
 			var edit = new UserEdit(user, profile);
-			_userService.EditUser(user, edit, false, false, null, null, "", user);
+			await _userService.EditUser(user, edit, false, false, null, null, "", user);
 			//PopForumsActivation.StartServicesIfRunningInstance();
 			return Tuple.Create(user, exception);
 		}

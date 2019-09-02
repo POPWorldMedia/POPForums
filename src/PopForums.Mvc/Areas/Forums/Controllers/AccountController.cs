@@ -109,7 +109,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (ModelState.IsValid)
 			{
 				var user = await _userService.CreateUser(signupData, ip);
-				_profileService.Create(user, signupData);
+				await _profileService.Create(user, signupData);
 				// TODO: get rid of FullUrlHelper extension
 				var verifyUrl = this.FullUrlHelper("Verify", "Account");
 				var result = _newAccountMailer.Send(user, verifyUrl);
@@ -269,23 +269,23 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
-		public ViewResult EditProfile()
+		public async Task<ViewResult> EditProfile()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			var profile = _profileService.GetProfileForEdit(user);
+			var profile = await _profileService.GetProfileForEdit(user);
 			var userEdit = new UserEditProfile(profile);
 			return View(userEdit);
 		}
 
 		[HttpPost]
-		public ViewResult EditProfile(UserEditProfile userEdit)
+		public async Task<ViewResult> EditProfile(UserEditProfile userEdit)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			_userService.EditUserProfile(user, userEdit);
+			await _userService.EditUserProfile(user, userEdit);
 			ViewBag.Result = Resources.ProfileUpdated;
 			return View(userEdit);
 		}
@@ -349,12 +349,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 		}
 
-		public ViewResult ManagePhotos()
+		public async Task<ViewResult> ManagePhotos()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			var userEdit = new UserEditPhoto(profile);
 			if (profile.ImageID.HasValue)
 				userEdit.IsImageApproved = _imageService.IsUserImageApproved(profile.ImageID.Value);
@@ -362,7 +362,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 		
 		[HttpPost]
-		public ActionResult ManagePhotos(UserEditPhoto userEdit)
+		public async Task<ActionResult> ManagePhotos(UserEditPhoto userEdit)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -373,7 +373,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			byte[] photoFile = null;
 			if (userEdit.PhotoFile != null)
 				photoFile = userEdit.PhotoFile.OpenReadStream().ToBytes();
-			_userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+			await _userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
 			return RedirectToAction("ManagePhotos");
 		}
 
@@ -382,7 +382,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userService.GetUser(id);
 			if (user == null)
 				return View("MiniUserNotFound");
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
@@ -399,7 +399,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userService.GetUser(id);
 			if (user == null)
 				return NotFound();
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
 				userImage = _imageService.GetUserImage(profile.ImageID.Value);
@@ -430,12 +430,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(container);
 		}
 
-		public JsonResult ClientSettings()
+		public async Task<JsonResult> ClientSettings()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Json(_clientSettingsMapper.GetDefault());
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			return Json(_clientSettingsMapper.GetClientSettings(profile));
 		}
 
@@ -457,7 +457,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(externalLoginList);
 		}
 
-		public ActionResult EmailUser(int id)
+		public async Task<ActionResult> EmailUser(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -465,14 +465,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
-			if (!_userEmailer.IsUserEmailable(toUser))
+			if (await _userEmailer.IsUserEmailable(toUser) == false)
 				return StatusCode(403);
 			ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
 			return View(toUser);
 		}
 
 		[HttpPost]
-		public ActionResult EmailUser(int id, string subject, string text)
+		public async Task<ActionResult> EmailUser(int id, string subject, string text)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -480,22 +480,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var toUser = _userService.GetUser(id);
 			if (toUser == null)
 				return NotFound();
-			if (!_userEmailer.IsUserEmailable(toUser))
+			if (await _userEmailer.IsUserEmailable(toUser) == false)
 				return StatusCode(403);
-			if (String.IsNullOrWhiteSpace(subject) || String.IsNullOrWhiteSpace(text))
+			if (string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(text))
 			{
 				ViewBag.EmailResult = Resources.PMCreateWarnings;
 				ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
 				return View(toUser);
 			}
-			_userEmailer.ComposeAndQueue(toUser, user, HttpContext.Connection.RemoteIpAddress.ToString(), subject, text);
+			await _userEmailer.ComposeAndQueue(toUser, user, HttpContext.Connection.RemoteIpAddress.ToString(), subject, text);
 			return View("EmailSent");
 		}
 
-		public ViewResult Unsubscribe(int id, string key)
+		public async Task<ViewResult> Unsubscribe(int id, string key)
 		{
 			var user = _userService.GetUser(id);
-			if (user == null || !_profileService.Unsubscribe(user, key))
+			if (user == null || (await _profileService.Unsubscribe(user, key) == false))
 				return View("UnsubscribeFailure");
 			return View();
 		}

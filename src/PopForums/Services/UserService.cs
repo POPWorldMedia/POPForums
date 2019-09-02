@@ -39,10 +39,10 @@ namespace PopForums.Services
 		List<User> SearchByEmail(string email);
 		List<User> SearchByName(string name);
 		List<User> SearchByRole(string role);
-		void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
-		void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
-		UserEdit GetUserEdit(User user);
-		void EditUserProfile(User user, UserEditProfile userEditProfile);
+		Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
+		Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
+		Task<UserEdit> GetUserEdit(User user);
+		Task EditUserProfile(User user, UserEditProfile userEditProfile);
 		bool IsPasswordValid(string password, out string errorMessage);
         bool IsEmailInUseByDifferentUser(User user, string email);
 		List<User> GetUsersOnline();
@@ -70,7 +70,7 @@ namespace PopForums.Services
 		private readonly IForgotPasswordMailer _forgotPasswordMailer;
 		private readonly IImageService _imageService;
 
-			// TODO: Dependencies on formsauth wrapper and imageservice
+		// TODO: Dependencies on imageservice
 		public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IImageService imageService
 			)
 		{
@@ -370,24 +370,24 @@ namespace PopForums.Services
 			return _userRepository.SearchByRole(role);
 		}
 
-		public UserEdit GetUserEdit(User user)
+		public async Task<UserEdit> GetUserEdit(User user)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			return new UserEdit(user, profile);
 		}
 
-		public void EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user)
+		public async Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user)
 		{
-			if (!String.IsNullOrWhiteSpace(userEdit.NewEmail))
+			if (!string.IsNullOrWhiteSpace(userEdit.NewEmail))
 				ChangeEmail(targetUser, userEdit.NewEmail, user, ip, userEdit.IsApproved);
-			if (!String.IsNullOrWhiteSpace(userEdit.NewPassword))
+			if (!string.IsNullOrWhiteSpace(userEdit.NewPassword))
 				SetPassword(targetUser, userEdit.NewPassword, ip, user);
 			if (targetUser.IsApproved != userEdit.IsApproved)
 				UpdateIsApproved(targetUser, userEdit.IsApproved, user, ip);
 
-			var profile = _profileRepository.GetProfile(targetUser.UserID);
+			var profile = await _profileRepository.GetProfile(targetUser.UserID);
 			profile.IsSubscribed = userEdit.IsSubscribed;
 			profile.ShowDetails = userEdit.ShowDetails;
 			profile.IsPlainText = userEdit.IsPlainText;
@@ -405,7 +405,7 @@ namespace PopForums.Services
 				profile.AvatarID = null;
 			if (removePhoto)
 				profile.ImageID = null;
-			_profileRepository.Update(profile);
+			await _profileRepository.Update(profile);
 
 			var newRoles = userEdit.Roles ?? new string[0];
 			_roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
@@ -420,20 +420,20 @@ namespace PopForums.Services
 			{
 				var avatarID = _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
 				profile.AvatarID = avatarID;
-				_profileRepository.Update(profile);
+				await _profileRepository.Update(profile);
 			}
 
 			if (photoFile != null && photoFile.Length > 0)
 			{
 				var imageID = _userImageRepository.SaveNewImage(targetUser.UserID, 0, true, photoFile, DateTime.UtcNow);
 				profile.ImageID = imageID;
-				_profileRepository.Update(profile);
+				await _profileRepository.Update(profile);
 			}
 		}
 
-		public void EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile)
+		public async Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile)
 		{
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			if (removeAvatar)
 			{
 				_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
@@ -444,7 +444,7 @@ namespace PopForums.Services
 				_userImageRepository.DeleteImagesByUserID(user.UserID);
 				profile.ImageID = null;
 			}
-			_profileRepository.Update(profile);
+			await _profileRepository.Update(profile);
 
 			if (avatarFile != null && avatarFile.Length > 0)
 			{
@@ -452,7 +452,7 @@ namespace PopForums.Services
 				var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70);
 				var avatarID = _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
 				profile.AvatarID = avatarID;
-				_profileRepository.Update(profile);
+				await _profileRepository.Update(profile);
 			}
 
 			if (photoFile != null && photoFile.Length > 0)
@@ -461,14 +461,14 @@ namespace PopForums.Services
 				var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70);
 				var imageID = _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
 				profile.ImageID = imageID;
-				_profileRepository.Update(profile);
+				await _profileRepository.Update(profile);
 			}
 		}
 
 		// TODO: this and some other stuff probably belongs in ProfileService
-		public void EditUserProfile(User user, UserEditProfile userEditProfile)
+		public async Task EditUserProfile(User user, UserEditProfile userEditProfile)
 		{
-			var profile = _profileRepository.GetProfile(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
 			if (profile == null)
 				throw new Exception(String.Format("No profile found for UserID {0}", user.UserID));
 			profile.IsSubscribed = userEditProfile.IsSubscribed;
@@ -484,7 +484,7 @@ namespace PopForums.Services
 			profile.Instagram = userEditProfile.Instagram;
 			profile.Facebook = userEditProfile.Facebook;
 			profile.Twitter = userEditProfile.Twitter;
-			_profileRepository.Update(profile);
+			await _profileRepository.Update(profile);
 		}
 
 		public bool IsPasswordValid(string password, out string errorMessage)

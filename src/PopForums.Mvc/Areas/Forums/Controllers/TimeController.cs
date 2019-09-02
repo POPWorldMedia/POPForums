@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
@@ -23,13 +24,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IUserRetrievalShim _userRetrievalShim;
 
 		[HttpPost]
-		public JsonResult GetTimes(string[] times)
+		public async Task<JsonResult> GetTimes(string[] times)
 		{
 			var list = new List<TimePairs>();
 			if (times == null || times.Length == 0)
 				return Json(list);
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			foreach (var item in times)
 			{
 				var time = DateTime.Parse(item);

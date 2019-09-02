@@ -93,7 +93,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (!permissionContext.UserCanPost)
 				return Content(Resources.ForumNoPost);
 
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			var newPost = new NewPost { ItemID = forum.ForumID, IncludeSignature = profile.Signature.Length > 0, IsPlainText = profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages };
 			return View("NewTopic", newPost);
 		}
@@ -198,8 +198,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				(posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
 			if (posts.Count == 0)
 				return NotFound();
-			var signatures = _profileService.GetSignatures(posts);
-			var avatars = _profileService.GetAvatars(posts);
+			var signatures = await _profileService.GetSignatures(posts);
+			var avatars = await _profileService.GetAvatars(posts);
 			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic);
@@ -244,8 +244,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var (posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
 			if (posts.Count == 0)
 				return NotFound();
-			var signatures = _profileService.GetSignatures(posts);
-			var avatars = _profileService.GetAvatars(posts);
+			var signatures = await _profileService.GetSignatures(posts);
+			var avatars = await _profileService.GetAvatars(posts);
 			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			_topicViewCountService.ProcessView(topic);
@@ -276,13 +276,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var title = topic.Title;
 			if (!title.ToLower().StartsWith("re:"))
 				title = "Re: " + title;
-			var profile = _profileService.GetProfile(user);
+			var profile = await _profileService.GetProfile(user);
 			var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages, ParentPostID = replyID };
 
 			if (quotePostID != 0)
 			{
 				var post = await _postService.Get(quotePostID);
-				newPost.FullText = _postService.GetPostForQuote(post, user, profile.IsPlainText);
+				newPost.FullText = await _postService.GetPostForQuote(post, user, profile.IsPlainText);
 			}
 
 			if (forum.IsQAForum)
@@ -324,8 +324,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return StatusCode(403);
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var postList = new List<Post> { post };
-			var signatures = _profileService.GetSignatures(postList);
-			var avatars = _profileService.GetAvatars(postList);
+			var signatures = await _profileService.GetSignatures(postList);
+			var avatars = await _profileService.GetAvatars(postList);
 			var votedPostIDs = await _postService.GetVotedPostIDs(user, postList);
 			ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 			if (user != null)
@@ -416,7 +416,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
-			var postEdit = _postService.GetPostForEdit(post, user);
+			var postEdit = await _postService.GetPostForEdit(post, user);
 			return View(postEdit);
 		}
 
@@ -463,7 +463,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return NotFound();
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
-				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
@@ -479,8 +479,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 
 			var (posts, pagerContext) = await _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate);
-			var signatures = _profileService.GetSignatures(posts);
-			var avatars = _profileService.GetAvatars(posts);
+			var signatures = await _profileService.GetSignatures(posts);
+			var avatars = await _profileService.GetAvatars(posts);
 			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
 			ViewBag.Low = lowPage;
