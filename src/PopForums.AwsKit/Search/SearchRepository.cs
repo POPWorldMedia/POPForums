@@ -53,7 +53,7 @@ namespace PopForums.AwsKit.Search
 				result = new Response<List<Topic>>(null, false, response.Exception, response.DebugInfo);
 				return Tuple.Create(result, topicCount);
 			}
-			var topics = _topicRepository.Get(response.Data);
+			var topics = await _topicRepository.Get(response.Data);
 			result = new Response<List<Topic>>(topics);
 			return Tuple.Create(result, topicCount);
 		}

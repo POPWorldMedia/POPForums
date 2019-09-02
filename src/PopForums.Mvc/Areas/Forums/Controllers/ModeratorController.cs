@@ -31,7 +31,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> TogglePin(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't pin/unpin.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -45,7 +45,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> ToggleClosed(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't open/close.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -59,7 +59,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> ToggleDeleted(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't delete/undelete.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -76,7 +76,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			int topicID;
 			if (!int.TryParse(collection["TopicID"], out topicID))
 				throw new Exception("Parse TopicID fail.");
-			var topic = _topicService.Get(topicID);
+			var topic = await _topicService.Get(topicID);
 			if (topic == null)
 				throw new Exception($"Topic with ID {topicID} not found. Can't update.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
@@ -104,7 +104,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> TopicModerationLog(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"There is no topic with ID {id} to obtain a moderation log for.");
 			var log = await _moderationLogService.GetLog(topic, true);
@@ -123,7 +123,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> DeleteTopicPermanently(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't undelete.");
 			var user = _userRetrievalShim.GetUser(HttpContext);

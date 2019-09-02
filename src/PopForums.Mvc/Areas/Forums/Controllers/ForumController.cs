@@ -16,7 +16,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class ForumController : Controller
 	{
-		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, ITextParsingService textParsingService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService)
+		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService)
 		{
 			_settingsManager = settingsManager;
 			_forumService = forumService;
@@ -29,7 +29,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_profileService = profileService;
 			_userRetrievalShim = userRetrievalShim;
 			_topicViewLogService = topicViewLogService;
-			_textParsingService = textParsingService;
 			_postMasterService = postMasterService;
 			_forumPermissionService = forumPermissionService;
 		}
@@ -47,7 +46,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IProfileService _profileService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly ITopicViewLogService _topicViewLogService;
-		private readonly ITextParsingService _textParsingService;
 		private readonly IPostMasterService _postMasterService;
 		private readonly IForumPermissionService _forumPermissionService;
 
@@ -65,8 +63,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return StatusCode(403);
 			}
 
-			PagerContext pagerContext;
-			var topics = _topicService.GetTopics(forum, permissionContext.UserCanModerate, page, out pagerContext);
+			var (topics, pagerContext) = await _topicService.GetTopics(forum, permissionContext.UserCanModerate, page);
 			var container = new ForumTopicContainer { Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext };
 			await _lastReadService.GetTopicReadStatus(user, container);
 			var adapter = new ForumAdapterFactory(forum);
@@ -127,7 +124,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		private async Task<Tuple<ForumPermissionContext, Topic>> GetPermissionContextByTopicID(int topicID)
 		{
-			var topic = _topicService.Get(topicID);
+			var topic = await _topicService.Get(topicID);
 			if (topic == null)
 				throw new Exception($"Topic {topicID} not found");
 			var forum = await _forumService.Get(topic.ForumID);
@@ -138,9 +135,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Tuple.Create(permissionContext, topic);
 		}
 
-		public ActionResult TopicID(int id)
+		public async Task<ActionResult> TopicID(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return NotFound();
 			return RedirectToActionPermanent("Topic", new { id = topic.UrlName });
@@ -148,7 +145,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Topic(string id, int page = 1)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return NotFound();
 			var forum = await _forumService.Get(topic.ForumID);
@@ -202,7 +199,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var avatars = await _profileService.GetAvatars(posts);
 			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
-			_topicViewCountService.ProcessView(topic);
+			await _topicViewCountService.ProcessView(topic);
 			await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
 			if (adapter.IsAdapterEnabled)
 			{
@@ -221,7 +218,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> TopicPage(int id, int page, int low, int high)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return NotFound();
 			var forum = await _forumService.Get(topic.ForumID);
@@ -248,7 +245,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var avatars = await _profileService.GetAvatars(posts);
 			var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 			var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
-			_topicViewCountService.ProcessView(topic);
+			await _topicViewCountService.ProcessView(topic);
 			ViewBag.Low = low;
 			ViewBag.High = high;
 			return View(container);
@@ -259,7 +256,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Content(Resources.LoginToPost);
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return Content(Resources.TopicNotExist);
 			var forum = await _forumService.Get(topic.ForumID);
@@ -393,7 +390,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> GoToNewestPost(int id)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return NotFound();
 			var includeDeleted = false;
@@ -442,7 +439,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			await _postService.Delete(post, user);
 			if (post.IsFirstInTopic || !user.IsInRole(PermanentRoles.Moderator))
 			{
-				var topic = _topicService.Get(post.TopicID);
+				var topic = await _topicService.Get(post.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				return RedirectToAction("Index", "Forum", new { urlName = forum.UrlName });
 			}
@@ -458,7 +455,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> TopicPartial(int id, int lastPost, int lowPage)
 		{
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return NotFound();
 			var forum = await _forumService.Get(topic.ForumID);
@@ -503,9 +500,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
-			var topic = _topicService.Get(post.TopicID);
+			var topic = await _topicService.Get(post.TopicID);
 			if (topic == null)
-				throw new Exception(String.Format("Post {0} appears to be orphaned from a topic.", post.PostID));
+				throw new Exception($"Post {post.PostID} appears to be orphaned from a topic.");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
@@ -536,7 +533,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(postID);
 			if (post == null)
 				return NotFound();
-			var topic = _topicService.Get(topicID);
+			var topic = await _topicService.Get(topicID);
 			if (topic == null)
 				return NotFound();
 			var user = _userRetrievalShim.GetUser(HttpContext);

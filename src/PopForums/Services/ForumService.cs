@@ -83,7 +83,7 @@ namespace PopForums.Services
 
 		public async Task UpdateLast(Forum forum)
 		{
-			var topic = _topicRepository.GetLastUpdatedTopic(forum.ForumID);
+			var topic = await _topicRepository.GetLastUpdatedTopic(forum.ForumID);
 			if (topic != null)
 				await UpdateLast(forum, topic.LastPostTime, topic.LastPostName);
 			else
@@ -99,8 +99,8 @@ namespace PopForums.Services
 		{
 			new Thread(() =>
 			{
-				var topicCount = _topicRepository.GetTopicCount(forum.ForumID, false);
-				var postCount = _topicRepository.GetPostCount(forum.ForumID, false);
+				var topicCount = _topicRepository.GetTopicCount(forum.ForumID, false).Result;
+				var postCount = _topicRepository.GetPostCount(forum.ForumID, false).Result;
 				_forumRepository.UpdateTopicAndPostCounts(forum.ForumID, topicCount, postCount);
 			}).Start();
 		}
@@ -222,8 +222,8 @@ namespace PopForums.Services
 			var nonViewableForumIDs = await GetNonViewableForumIDs(user);
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var topics = _topicRepository.Get(includeDeleted, nonViewableForumIDs, startRow, pageSize);
-			var topicCount = _topicRepository.GetTopicCount(includeDeleted, nonViewableForumIDs);
+			var topics = await _topicRepository.Get(includeDeleted, nonViewableForumIDs, startRow, pageSize);
+			var topicCount = await _topicRepository.GetTopicCount(includeDeleted, nonViewableForumIDs);
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
 			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
 			return Tuple.Create(topics, pagerContext);

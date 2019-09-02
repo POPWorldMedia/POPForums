@@ -1,38 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface ITopicRepository
 	{
-		Topic GetLastUpdatedTopic(int forumID);
-		int GetTopicCount(int forumID, bool includeDeleted);
-		int GetTopicCountByUser(int userID, bool includeDeleted, List<int> excludedForums);
-		int GetTopicCount(bool includeDeleted, List<int> excludedForums);
-		int GetPostCount(int forumID, bool includeDelete);
-		Topic Get(int topicID);
-		Topic Get(string urlName);
-		List<Topic> Get(int forumID, bool includeDeleted, int startRow, int pageSize);
-		List<Topic> GetTopicsByUser(int userID, bool includeDeleted, List<int> excludedForums, int startRow, int pageSize);
-		List<Topic> Get(bool includeDeleted, List<int> excludedForums, int startRow, int pageSize);
-		List<Topic> Get(int forumID, bool includeDeleted, List<int> excludedForums);
-		List<string> GetUrlNamesThatStartWith(string urlName);
-		int Create(int forumID, string title, int replyCount, int viewCount, int startedByUserID, string startedByName, int lastPostUserID, string lastPostName, DateTime lastPostTime, bool isClosed, bool isPinned, bool isDeleted, string urlName);
-		void IncrementReplyCount(int topicID);
-		void IncrementViewCount(int topicID);
-		void UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime);
-		void CloseTopic(int topicID);
-		void OpenTopic(int topicID);
-		void PinTopic(int topicID);
-		void UnpinTopic(int topicID);
-		void DeleteTopic(int topicID);
-		void UndeleteTopic(int topicID);
-		void UpdateTitleAndForum(int topicID, int forumID, string newTitle, string newUrlName);
-		void UpdateReplyCount(int topicID, int replyCount);
-		DateTime? GetLastPostTime(int topicID);
-		void HardDeleteTopic(int topicID);
-		void UpdateAnswerPostID(int topicID, int? postID);
-		List<Topic> Get(IEnumerable<int> topicIDs);
+		Task<Topic> GetLastUpdatedTopic(int forumID);
+		Task<int> GetTopicCount(int forumID, bool includeDeleted);
+		Task<int> GetTopicCountByUser(int userID, bool includeDeleted, List<int> excludedForums);
+		Task<int> GetTopicCount(bool includeDeleted, List<int> excludedForums);
+		Task<int> GetPostCount(int forumID, bool includeDelete);
+		Task<Topic> Get(int topicID);
+		Task<Topic> Get(string urlName);
+		Task<List<Topic>> Get(int forumID, bool includeDeleted, int startRow, int pageSize);
+		Task<List<Topic>> GetTopicsByUser(int userID, bool includeDeleted, List<int> excludedForums, int startRow, int pageSize);
+		Task<List<Topic>> Get(bool includeDeleted, List<int> excludedForums, int startRow, int pageSize);
+		Task<List<Topic>> Get(int forumID, bool includeDeleted, List<int> excludedForums);
+		Task<List<string>> GetUrlNamesThatStartWith(string urlName);
+		Task<int> Create(int forumID, string title, int replyCount, int viewCount, int startedByUserID, string startedByName, int lastPostUserID, string lastPostName, DateTime lastPostTime, bool isClosed, bool isPinned, bool isDeleted, string urlName);
+		Task IncrementReplyCount(int topicID);
+		Task IncrementViewCount(int topicID);
+		Task UpdateLastTimeAndUser(int topicID, int userID, string name, DateTime postTime);
+		Task CloseTopic(int topicID);
+		Task OpenTopic(int topicID);
+		Task PinTopic(int topicID);
+		Task UnpinTopic(int topicID);
+		Task DeleteTopic(int topicID);
+		Task UndeleteTopic(int topicID);
+		Task UpdateTitleAndForum(int topicID, int forumID, string newTitle, string newUrlName);
+		Task UpdateReplyCount(int topicID, int replyCount);
+		Task<DateTime?> GetLastPostTime(int topicID);
+		Task HardDeleteTopic(int topicID);
+		Task UpdateAnswerPostID(int topicID, int? postID);
+		Task<List<Topic>> Get(IEnumerable<int> topicIDs);
 	}
 }

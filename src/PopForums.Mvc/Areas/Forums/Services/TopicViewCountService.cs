@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -17,7 +18,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		private readonly IHttpContextAccessor _httpContextAccessor;
 		private const string CookieKey = "PopForums.LastTopicID";
 
-		public void ProcessView(Topic topic)
+		public async Task ProcessView(Topic topic)
 		{
 			var context = _httpContextAccessor.HttpContext;
 			if (context.Request.Cookies.ContainsKey(CookieKey))
@@ -25,11 +26,11 @@ namespace PopForums.Mvc.Areas.Forums.Services
 				if (int.TryParse(context.Request.Cookies[CookieKey], out var topicID))
 				{
 					if (topicID != topic.TopicID)
-						_topicRepository.IncrementViewCount(topic.TopicID);
+						await _topicRepository.IncrementViewCount(topic.TopicID);
 				}
 			}
 			else
-				_topicRepository.IncrementViewCount(topic.TopicID);
+				await _topicRepository.IncrementViewCount(topic.TopicID);
 			SetViewedTopic(topic);
 		}
 

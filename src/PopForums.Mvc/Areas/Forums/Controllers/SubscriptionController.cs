@@ -48,7 +48,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (!Guid.TryParse(authKey, out parsedKey))
 				return View(container);
 			container.User = await _userService.GetUserByAuhtorizationKey(parsedKey);
-			container.Topic = _topicService.Get(topicID);
+			container.Topic = await _topicService.Get(topicID);
 			await _subService.TryRemoveSubscribedTopic(container.User, container.Topic);
 			return View(container);
 		}
@@ -57,7 +57,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ActionResult> Unsubscribe(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			await _subService.TryRemoveSubscribedTopic(user, topic);
 			return RedirectToAction("Topics");
 		}
@@ -68,7 +68,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Json(new BasicJsonMessage { Message = Resources.LoginToPost, Result = false });
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
 			if (await _subService.IsTopicSubscribed(user, topic))

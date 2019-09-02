@@ -99,7 +99,7 @@ namespace PopForums.Services
 
 		public async Task<Tuple<int, Topic>> GetTopicPageForPost(Post post, bool includeDeleted)
 		{
-			var topic = _topicService.Get(post.TopicID);
+			var topic = await _topicService.Get(post.TopicID);
 			var ids = await _postRepository.GetPostIDsWithTimes(post.TopicID, includeDeleted);
 			var postIDs = ids.Select(p => p.Key).ToList();
 			var index = postIDs.IndexOf(post.PostID);
@@ -152,7 +152,7 @@ namespace PopForums.Services
 		{
 			if (user.UserID == post.UserID || user.IsInRole(PermanentRoles.Moderator))
 			{
-				var topic = _topicService.Get(post.TopicID);
+				var topic = await _topicService.Get(post.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				if (post.IsFirstInTopic)
 					await _topicService.DeleteTopic(topic, user);
@@ -185,7 +185,7 @@ namespace PopForums.Services
 				post.LastEditName = user.Name;
 				post.IsEdited = true;
 				await _postRepository.Update(post);
-				var topic = _topicService.Get(post.TopicID);
+				var topic = await _topicService.Get(post.TopicID);
 				await _topicService.RecalculateReplyCount(topic);
 				await _topicService.UpdateLast(topic);
 				var forum = await _forumService.Get(topic.ForumID);

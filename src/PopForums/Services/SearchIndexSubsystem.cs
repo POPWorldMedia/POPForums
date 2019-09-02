@@ -25,7 +25,7 @@ namespace PopForums.Services
 
 		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _topicService.Get(topicID);
+			var topic = _topicService.Get(topicID).Result;
 			if (topic == null)
 				return;
 			

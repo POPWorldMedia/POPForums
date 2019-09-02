@@ -164,7 +164,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = true, TopicID = topic.TopicID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			await service.Delete(post, user);
 			_topicService.Verify(t => t.DeleteTopic(topic, user), Times.Exactly(1));
@@ -178,7 +178,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			await service.Delete(post, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostDelete, post, String.Empty, String.Empty), Times.Exactly(1));
@@ -192,7 +192,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsEdited = false };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
@@ -210,7 +210,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID, IsDeleted = false };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
@@ -227,7 +227,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var post = new Post { PostID = 67, UserID = user.UserID, IsFirstInTopic = false, TopicID = topic.TopicID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var payload = new SearchIndexPayload();
 			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);
@@ -259,7 +259,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator }};
 			var post = new Post { PostID = 67, TopicID = topic.TopicID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			await service.Undelete(post, user);
 			_modLogService.Verify(m => m.LogPost(user, ModerationType.PostUndelete, post, String.Empty, String.Empty), Times.Exactly(1));
@@ -273,7 +273,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsEdited = false, UserID = user.UserID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var editedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(x => editedPost = x);
@@ -291,7 +291,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID, IsDeleted = true };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var persistedPost = new Post();
 			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => persistedPost = p);
@@ -308,7 +308,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			var user = new User { UserID = 123, Roles = new List<string> { PermanentRoles.Moderator } };
 			var post = new Post { PostID = 67, TopicID = topic.TopicID };
-			_topicService.Setup(t => t.Get(topic.TopicID)).Returns(topic);
+			_topicService.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumService.Setup(f => f.Get(forum.ForumID)).ReturnsAsync(forum);
 			var payload = new SearchIndexPayload();
 			_searchIndexQueue.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(p => payload = p);

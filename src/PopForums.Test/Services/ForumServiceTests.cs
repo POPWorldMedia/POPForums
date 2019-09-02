@@ -118,7 +118,7 @@ namespace PopForums.Test.Services
 			var forum = new Forum { ForumID = forumID };
 			var topic = new Topic { TopicID = topicID, LastPostTime = lastTime, LastPostName = lastName };
 			var forumService = GetService();
-			_mockTopicRepo.Setup(t => t.GetLastUpdatedTopic(forum.ForumID)).Returns(topic);
+			_mockTopicRepo.Setup(t => t.GetLastUpdatedTopic(forum.ForumID)).ReturnsAsync(topic);
 			await forumService.UpdateLast(forum);
 			_mockTopicRepo.Verify(t => t.GetLastUpdatedTopic(forum.ForumID), Times.Once());
 			_mockForumRepo.Verify(f => f.UpdateLastTimeAndUser(forum.ForumID, lastTime, lastName), Times.Once());

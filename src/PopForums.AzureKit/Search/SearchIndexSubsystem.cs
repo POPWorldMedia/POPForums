@@ -30,7 +30,7 @@ namespace PopForums.AzureKit.Search
 
 		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _topicService.Get(topicID);
+			var topic = _topicService.Get(topicID).Result;
 			if (topic != null)
 			{
 				var serviceClient = new SearchServiceClient(_config.SearchUrl, new SearchCredentials(_config.SearchKey));

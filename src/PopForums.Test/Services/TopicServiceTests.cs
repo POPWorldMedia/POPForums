@@ -47,74 +47,69 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetTopicsFromRepo()
+		public async Task GetTopicsFromRepo()
 		{
 			var forum = new Forum { ForumID = 1, TopicCount = 3 };
 			var topicService = GetTopicService();
 			var repoTopics = new List<Topic>();
 			var settings = new Settings {TopicsPerPage = 20};
-			_topicRepo.Setup(t => t.Get(1, true, 1, settings.TopicsPerPage)).Returns(repoTopics);
+			_topicRepo.Setup(t => t.Get(1, true, 1, settings.TopicsPerPage)).ReturnsAsync(repoTopics);
 			_settingsManager.Setup(s => s.Current).Returns(settings);
-			PagerContext pagerContext;
-			var topics = topicService.GetTopics(forum, true, 1, out pagerContext);
+			var (topics, _) = await topicService.GetTopics(forum, true, 1);
 			Assert.Same(repoTopics, topics);
 		}
 
 		[Fact]
-		public void GetTopicsStartRowCalcd()
+		public async Task GetTopicsStartRowCalcd()
 		{
 			var forum = new Forum { ForumID = 1, TopicCount = 300 };
 			var topicService = GetTopicService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_settingsManager.Setup(s => s.Current).Returns(settings);
-			PagerContext pagerContext;
-			topicService.GetTopics(forum, false, 3, out pagerContext);
+			await topicService.GetTopics(forum, false, 3);
 			_topicRepo.Verify(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), 41, It.IsAny<int>()), Times.Once());
 		}
 
 		[Fact]
-		public void GetTopicsIncludeDeletedCallsRepoCount()
+		public async Task GetTopicsIncludeDeletedCallsRepoCount()
 		{
 			var forum = new Forum { ForumID = 1 };
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Topic>());
-			_topicRepo.Setup(t => t.GetTopicCount(1, true)).Returns(350);
+			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<Topic>());
+			_topicRepo.Setup(t => t.GetTopicCount(1, true)).ReturnsAsync(350);
 			_settingsManager.Setup(s => s.Current).Returns(new Settings());
-			PagerContext pagerContext;
-			topicService.GetTopics(forum, true, 3, out pagerContext);
+			await topicService.GetTopics(forum, true, 3);
 			_topicRepo.Verify(t => t.GetTopicCount(forum.ForumID, true), Times.Once());
 		}
 
 		[Fact]
-		public void GetTopicsNotIncludeDeletedNotCallRepoCount()
+		public async Task GetTopicsNotIncludeDeletedNotCallRepoCount()
 		{
 			var forum = new Forum { ForumID = 1 };
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).Returns(new List<Topic>());
+			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(new List<Topic>());
 			_settingsManager.Setup(s => s.Current).Returns(new Settings());
-			PagerContext pagerContext;
-			topicService.GetTopics(forum, false, 3, out pagerContext);
+			await topicService.GetTopics(forum, false, 3);
 			_topicRepo.Verify(t => t.GetTopicCount(forum.ForumID, false), Times.Never());
 		}
 
 		[Fact]
-		public void GetTopicsPagerContextIncludesPageIndexAndCalcdTotalPages()
+		public async Task GetTopicsPagerContextIncludesPageIndexAndCalcdTotalPages()
 		{
 			var forum = new Forum {ForumID = 1, TopicCount = 301};
 			var forum2 = new Forum {ForumID = 2, TopicCount = 300};
 			var forum3 = new Forum {ForumID = 3, TopicCount = 299};
 			var topicService = GetTopicService();
 			var settings = new Settings { TopicsPerPage = 20 };
-			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), settings.TopicsPerPage)).Returns(new List<Topic>());
+			_topicRepo.Setup(t => t.Get(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<int>(), settings.TopicsPerPage)).ReturnsAsync(new List<Topic>());
 			_settingsManager.Setup(s => s.Current).Returns(settings);
-			PagerContext pagerContext;
-			topicService.GetTopics(forum, false, 3, out pagerContext);
+			var (_, pagerContext) = await topicService.GetTopics(forum, false, 3);
 			Assert.Equal(3, pagerContext.PageIndex);
 			Assert.Equal(16, pagerContext.PageCount);
-			topicService.GetTopics(forum2, false, 4, out pagerContext);
+			(_, pagerContext) = await topicService.GetTopics(forum2, false, 4);
 			Assert.Equal(4, pagerContext.PageIndex);
 			Assert.Equal(15, pagerContext.PageCount);
-			topicService.GetTopics(forum3, false, 5, out pagerContext);
+			(_, pagerContext) = await topicService.GetTopics(forum3, false, 5);
 			Assert.Equal(5, pagerContext.PageIndex);
 			Assert.Equal(15, pagerContext.PageCount);
 			Assert.Equal(settings.TopicsPerPage, pagerContext.PageSize);
@@ -350,8 +345,8 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = 2 });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicRenamed, topic, forum, It.IsAny<string>()), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, "new title", "new-title"), Times.Exactly(1));
@@ -365,8 +360,8 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = 2 });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 			_tenantService.Setup(x => x.GetTenant()).Returns("");
 			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
@@ -380,8 +375,8 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 3 });
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = 3 });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 			await topicService.UpdateTitleAndForum(topic, forum, string.Empty, user);
 			_modService.Verify(m => m.LogTopic(user, ModerationType.TopicMoved, topic, forum, It.IsAny<string>()), Times.Exactly(1));
 			_topicRepo.Verify(t => t.UpdateTitleAndForum(topic.TopicID, forum.ForumID, String.Empty, String.Empty), Times.Exactly(1));
@@ -395,8 +390,8 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = 2 });
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = 2 });
 			await topicService.UpdateTitleAndForum(topic, forum, "new title", user);
 			Assert.Equal("new-title", topic.UrlName);
 		}
@@ -410,9 +405,9 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
 			_forumService.Setup(f => f.Get(oldForum.ForumID)).ReturnsAsync(oldForum);
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 			await topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_forumService.Verify(f => f.UpdateCounts(forum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
@@ -427,9 +422,9 @@ namespace PopForums.Test.Services
 			var user = GetUser();
 			user.Roles.Add(PermanentRoles.Moderator);
 			var topicService = GetTopicService();
-			_topicRepo.Setup(t => t.Get(topic.TopicID)).Returns(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
+			_topicRepo.Setup(t => t.Get(topic.TopicID)).ReturnsAsync(new Topic { TopicID = 1, ForumID = oldForum.ForumID });
 			_forumService.Setup(f => f.Get(oldForum.ForumID)).ReturnsAsync(oldForum);
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).Returns(new List<string>());
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 			await topicService.UpdateTitleAndForum(topic, forum, String.Empty, user);
 			_forumService.Verify(f => f.UpdateCounts(oldForum), Times.Exactly(1));
 			_forumService.Verify(f => f.UpdateLast(oldForum), Times.Exactly(1));

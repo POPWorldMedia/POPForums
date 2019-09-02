@@ -9,16 +9,14 @@ namespace PopForums.AwsKit.Search
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
 		private readonly ITextParsingService _textParsingService;
-		private readonly ISearchService _searchService;
 		private readonly IPostService _postService;
 		private readonly ITopicService _topicService;
 		private readonly IErrorLog _errorLog;
 		private readonly IElasticSearchClientWrapper _elasticSearchClientWrapper;
 
-		public SearchIndexSubsystem(ITextParsingService textParsingService, ISearchService searchService, IPostService postService, ITopicService topicService, IErrorLog errorLog, IElasticSearchClientWrapper elasticSearchClientWrapper)
+		public SearchIndexSubsystem(ITextParsingService textParsingService, IPostService postService, ITopicService topicService, IErrorLog errorLog, IElasticSearchClientWrapper elasticSearchClientWrapper)
 		{
 			_textParsingService = textParsingService;
-			_searchService = searchService;
 			_postService = postService;
 			_topicService = topicService;
 			_errorLog = errorLog;
@@ -27,7 +25,7 @@ namespace PopForums.AwsKit.Search
 
 		public void DoIndex(int topicID, string tenantID)
 		{
-			var topic = _topicService.Get(topicID);
+			var topic = _topicService.Get(topicID).Result;
 			if (topic == null)
 				return;
 

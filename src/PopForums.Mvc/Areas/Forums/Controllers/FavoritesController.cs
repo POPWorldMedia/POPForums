@@ -43,7 +43,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ActionResult> RemoveFavorite(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			await _favoriteTopicService.RemoveFavoriteTopic(user, topic);
 			return RedirectToAction("Topics");
 		}
@@ -54,7 +54,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return Json(new BasicJsonMessage { Message = Resources.NotLoggedIn, Result = false });
-			var topic = _topicService.Get(id);
+			var topic = await _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
 			if (await _favoriteTopicService.IsTopicFavorite(user, topic))

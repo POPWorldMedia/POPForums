@@ -69,9 +69,9 @@ namespace PopForums.Services
 			if (string.IsNullOrWhiteSpace(newPost.FullText) || string.IsNullOrWhiteSpace(newPost.Title))
 				return GetPostFailMessage(Resources.PostEmpty);
 			newPost.Title = _textParsingService.Censor(newPost.Title);
-			var urlName = newPost.Title.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
+			var urlName = newPost.Title.ToUniqueUrlName(await _topicRepository.GetUrlNamesThatStartWith(newPost.Title.ToUrlName()));
 			var timeStamp = DateTime.UtcNow;
-			var topicID = _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
+			var topicID = await _topicRepository.Create(forum.ForumID, newPost.Title, 0, 0, user.UserID, user.Name, user.UserID, user.Name, timeStamp, false, false, false, urlName);
 			var postID = await _postRepository.Create(topicID, 0, ip, true, newPost.IncludeSignature, user.UserID, user.Name, newPost.Title, newPost.FullText, timeStamp, false, user.Name, null, false, 0);
 			await _forumRepository.UpdateLastTimeAndUser(forum.ForumID, timeStamp, user.Name);
 			await _forumRepository.IncrementPostAndTopicCount(forum.ForumID);
@@ -108,7 +108,7 @@ namespace PopForums.Services
 		{
 			if (user == null)
 				return GetReplyFailMessage(Resources.LoginToPost);
-			var topic = _topicRepository.Get(newPost.ItemID);
+			var topic = await _topicRepository.Get(newPost.ItemID);
 			if (topic == null)
 				return GetReplyFailMessage(Resources.TopicNotExist);
 			if (topic.IsClosed)
@@ -153,8 +153,8 @@ namespace PopForums.Services
 				TopicID = topic.TopicID,
 				UserID = user.UserID
 			};
-			_topicRepository.IncrementReplyCount(topic.TopicID);
-			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
+			await _topicRepository.IncrementReplyCount(topic.TopicID);
+			await _topicRepository.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
 			await _forumRepository.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 			await _forumRepository.IncrementPostCount(topic.ForumID);
 			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
@@ -166,7 +166,7 @@ namespace PopForums.Services
 			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;
 			await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
-			topic = _topicRepository.Get(topic.TopicID);
+			topic = await _topicRepository.Get(topic.TopicID);
 			forum = await _forumRepository.Get(forum.ForumID);
 			_broker.NotifyNewPosts(topic, post.PostID);
 			_broker.NotifyNewPost(topic, post.PostID);
@@ -176,7 +176,7 @@ namespace PopForums.Services
 			if (newPost.CloseOnReply && user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
-				_topicRepository.CloseTopic(topic.TopicID);
+				await _topicRepository.CloseTopic(topic.TopicID);
 			}
 			var redirectLink = redirectLinkGenerator(post);
 

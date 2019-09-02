@@ -12,9 +12,9 @@ namespace PopForums.Services
 {
 	public interface ITopicService
 	{
-		List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext);
-		Topic Get(string urlName);
-		Topic Get(int topicID);
+		Task<Tuple<List<Topic>, PagerContext>> GetTopics(Forum forum, bool includeDeleted, int pageIndex);
+		Task<Topic> Get(string urlName);
+		Task<Topic> Get(int topicID);
 		Task CloseTopic(Topic topic, User user);
 		Task OpenTopic(Topic topic, User user);
 		Task PinTopic(Topic topic, User user);
@@ -59,25 +59,25 @@ namespace PopForums.Services
 		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 		private readonly ITenantService _tenantService;
 
-		public List<Topic> GetTopics(Forum forum, bool includeDeleted, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(Forum forum, bool includeDeleted, int pageIndex)
 		{
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var topics = _topicRepository.Get(forum.ForumID, includeDeleted, startRow, pageSize);
+			var topics = await _topicRepository.Get(forum.ForumID, includeDeleted, startRow, pageSize);
 			int topicCount;
 			if (includeDeleted)
-				topicCount = _topicRepository.GetTopicCount(forum.ForumID, true);
+				topicCount = await _topicRepository.GetTopicCount(forum.ForumID, true);
 			else
 				topicCount = forum.TopicCount;
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return topics;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			return Tuple.Create(topics, pagerContext);
 		}
 
 		public async Task<List<Topic>> GetTopics(User viewingUser, Forum forum, bool includeDeleted)
 		{
 			var nonViewableForumIDs = await _forumService.GetNonViewableForumIDs(viewingUser);
-			var topics = _topicRepository.Get(forum.ForumID, includeDeleted, nonViewableForumIDs);
+			var topics = await _topicRepository.Get(forum.ForumID, includeDeleted, nonViewableForumIDs);
 			return topics;
 		}
 
@@ -86,21 +86,21 @@ namespace PopForums.Services
 			var nonViewableForumIDs = await _forumService.GetNonViewableForumIDs(viewingUser);
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var topics = _topicRepository.GetTopicsByUser(postUser.UserID, includeDeleted, nonViewableForumIDs, startRow, pageSize);
-			var topicCount = _topicRepository.GetTopicCountByUser(postUser.UserID, includeDeleted, nonViewableForumIDs);
+			var topics = await _topicRepository.GetTopicsByUser(postUser.UserID, includeDeleted, nonViewableForumIDs, startRow, pageSize);
+			var topicCount = await _topicRepository.GetTopicCountByUser(postUser.UserID, includeDeleted, nonViewableForumIDs);
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
 			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
 			return Tuple.Create(topics, pagerContext);
 		}
 
-		public Topic Get(string urlName)
+		public async Task<Topic> Get(string urlName)
 		{
-			return _topicRepository.Get(urlName);
+			return await _topicRepository.Get(urlName);
 		}
 
-		public Topic Get(int topicID)
+		public async Task<Topic> Get(int topicID)
 		{
-			return _topicRepository.Get(topicID);
+			return await _topicRepository.Get(topicID);
 		}
 
 		public async Task CloseTopic(Topic topic, User user)
@@ -108,7 +108,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicClose, topic, null);
-				_topicRepository.CloseTopic(topic.TopicID);
+				await _topicRepository.CloseTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to close topic.");
@@ -119,7 +119,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicOpen, topic, null);
-				_topicRepository.OpenTopic(topic.TopicID);
+				await _topicRepository.OpenTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to open topic.");
@@ -130,7 +130,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicPin, topic, null);
-				_topicRepository.PinTopic(topic.TopicID);
+				await _topicRepository.PinTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to pin topic.");
@@ -141,7 +141,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicUnpin, topic, null);
-				_topicRepository.UnpinTopic(topic.TopicID);
+				await _topicRepository.UnpinTopic(topic.TopicID);
 			}
 			else
 				throw new InvalidOperationException("User must be Moderator to unpin topic.");
@@ -152,7 +152,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator) || user.UserID == topic.StartedByUserID)
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
-				_topicRepository.DeleteTopic(topic.TopicID);
+				await _topicRepository.DeleteTopic(topic.TopicID);
 				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
@@ -168,7 +168,7 @@ namespace PopForums.Services
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
 				await _searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
-				_topicRepository.HardDeleteTopic(topic.TopicID);
+				await _topicRepository.HardDeleteTopic(topic.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
@@ -182,7 +182,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
-				_topicRepository.UndeleteTopic(topic.TopicID);
+				await _topicRepository.UndeleteTopic(topic.TopicID);
 				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
@@ -196,14 +196,14 @@ namespace PopForums.Services
 		{
 			if (user.IsInRole(PermanentRoles.Moderator))
 			{
-				var oldTopic = _topicRepository.Get(topic.TopicID);
+				var oldTopic = await _topicRepository.Get(topic.TopicID);
 				if (oldTopic.ForumID != forum.ForumID)
-					await _moderationLogService.LogTopic(user, ModerationType.TopicMoved, topic, forum, String.Format("Moved from {0} to {1}", oldTopic.ForumID, forum.ForumID));
+					await _moderationLogService.LogTopic(user, ModerationType.TopicMoved, topic, forum, $"Moved from {oldTopic.ForumID} to {forum.ForumID}");
 				if (oldTopic.Title != newTitle)
-					await _moderationLogService.LogTopic(user, ModerationType.TopicRenamed, topic, forum, String.Format("Renamed from \"{0}\" to \"{1}\"", oldTopic.Title, newTitle));
-				var urlName = newTitle.ToUniqueUrlName(_topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
+					await _moderationLogService.LogTopic(user, ModerationType.TopicRenamed, topic, forum, $"Renamed from \"{oldTopic.Title}\" to \"{newTitle}\"");
+				var urlName = newTitle.ToUniqueUrlName(await _topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
-				_topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
+				await _topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
 				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
@@ -218,13 +218,13 @@ namespace PopForums.Services
 		public async Task RecalculateReplyCount(Topic topic)
 		{
 			var replyCount = await _postRepository.GetReplyCount(topic.TopicID, false);
-			_topicRepository.UpdateReplyCount(topic.TopicID, replyCount);
+			await _topicRepository.UpdateReplyCount(topic.TopicID, replyCount);
 		}
 
 		public async Task UpdateLast(Topic topic)
 		{
 			var post = await _postRepository.GetLastInTopic(topic.TopicID);
-			_topicRepository.UpdateLastTimeAndUser(topic.TopicID, post.UserID, post.Name, post.PostTime);
+			await _topicRepository.UpdateLastTimeAndUser(topic.TopicID, post.UserID, post.Name, post.PostTime);
 		}
 
 		public async Task<int> TopicLastPostID(int topicID)
@@ -250,7 +250,7 @@ namespace PopForums.Services
 				var message = String.Format(Resources.QuestionAnswered, userUrl, user.Name, topicUrl, topic.Title);
 				await _eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
 			}
-			_topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
+			await _topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
 		}
 
 		public async Task QueueTopicForIndexing(int topicID)

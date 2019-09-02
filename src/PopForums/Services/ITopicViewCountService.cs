@@ -1,10 +1,11 @@
-﻿using PopForums.Models;
+﻿using System.Threading.Tasks;
+using PopForums.Models;
 
 namespace PopForums.Services
 {
 	public interface ITopicViewCountService
 	{
-		void ProcessView(Topic topic);
+		Task ProcessView(Topic topic);
 		void SetViewedTopic(Topic topic);
 	}
 }

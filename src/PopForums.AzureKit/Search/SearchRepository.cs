@@ -87,7 +87,7 @@ namespace PopForums.AzureKit.Search
 				parameters.Select = new [] {"topicID"};
 				var result = serviceIndexClient.Documents.Search<SearchTopic>(searchTerm, parameters);
 				var topicIDs = result.Results.Select(x => Convert.ToInt32(x.Document.TopicID));
-				var topics = _topicRepository.Get(topicIDs);
+				var topics = await _topicRepository.Get(topicIDs);
 				topicCount = Convert.ToInt32(result.Count);
 				return Tuple.Create(new Response<List<Topic>>(topics), topicCount);
 			}
