@@ -470,7 +470,7 @@ namespace PopForums.Services
 		{
 			var profile = await _profileRepository.GetProfile(user.UserID);
 			if (profile == null)
-				throw new Exception(String.Format("No profile found for UserID {0}", user.UserID));
+				throw new Exception($"No profile found for UserID {user.UserID}");
 			profile.IsSubscribed = userEditProfile.IsSubscribed;
 			profile.ShowDetails = userEditProfile.ShowDetails;
 			profile.IsPlainText = userEditProfile.IsPlainText;

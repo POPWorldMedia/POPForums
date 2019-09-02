@@ -285,7 +285,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			}
 			var file = Request.Form.Files[0];
 			await _userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
-			var profile = await _profileService.GetProfileForEdit(user);
+			var profile = await _profileService.GetProfile(user);
 			return new { profile.ImageID };
 		}
 

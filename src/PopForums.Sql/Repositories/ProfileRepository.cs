@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -30,9 +29,15 @@ namespace PopForums.Sql.Repositories
 
 		public async Task<Profile> GetProfile(int userID)
 		{
+			var key = CacheKeys.UserProfile(userID);
+			var cachedItem = _cacheHelper.GetCacheObject<Profile>(key);
+			if (cachedItem != null)
+				return cachedItem;
 			Task<Profile> profile = null;
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 				profile = connection.QuerySingleOrDefaultAsync<Profile>("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, Facebook, Twitter, Instagram, IsTos, TimeZone, IsDaylightSaving, AvatarID, ImageID, HideVanity, LastPostID, Points FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
+			if (profile.Result != null)
+				_cacheHelper.SetCacheObject(key, profile.Result);
 			return await profile;
 		}
 
