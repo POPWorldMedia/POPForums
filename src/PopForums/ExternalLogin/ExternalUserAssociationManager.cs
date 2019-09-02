@@ -35,13 +35,13 @@ namespace PopForums.ExternalLogin
 			var match = await _externalUserAssociationRepository.Get(externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey);
 			if (match == null)
 			{
-				_securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
+				await _securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
 				return new ExternalUserAssociationMatchResult {Successful = false};
 			}
 			var user = _userRepository.GetUser(match.UserID);
 			if (user == null)
 			{
-				_securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
+				await _securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
 				return new ExternalUserAssociationMatchResult {Successful = false};
 			}
 			var result = new ExternalUserAssociationMatchResult
@@ -50,7 +50,7 @@ namespace PopForums.ExternalLogin
 				             ExternalUserAssociation = match,
 				             User = user
 			             };
-			_securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {match.Issuer}, Provider: {match.ProviderKey}, Name: {match.Name}", SecurityLogType.ExternalAssociationCheckSuccessful);
+			await _securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {match.Issuer}, Provider: {match.ProviderKey}, Name: {match.Name}", SecurityLogType.ExternalAssociationCheckSuccessful);
 			return result;
 		}
 
@@ -67,7 +67,7 @@ namespace PopForums.ExternalLogin
 				if (string.IsNullOrEmpty(externalLoginInfo.ProviderDisplayName))
 					externalLoginInfo.ProviderDisplayName = string.Empty;
 				await _externalUserAssociationRepository.Save(user.UserID, externalLoginInfo.LoginProvider, externalLoginInfo.ProviderKey, externalLoginInfo.ProviderDisplayName);
-				_securityLogService.CreateLogEntry(user, user, ip, $"Provider: {externalLoginInfo.LoginProvider}, DisplayName: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationSet);
+				await _securityLogService.CreateLogEntry(user, user, ip, $"Provider: {externalLoginInfo.LoginProvider}, DisplayName: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationSet);
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace PopForums.ExternalLogin
 			if (association.UserID != user.UserID)
 				throw new Exception($"Can't delete external user association {externalUserAssociationID} because it doesn't match UserID {user.UserID}.");
 			await _externalUserAssociationRepository.Delete(externalUserAssociationID);
-			_securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {association.Issuer}, Provider: {association.ProviderKey}, Name: {association.Name}", SecurityLogType.ExternalAssociationRemoved);
+			await _securityLogService.CreateLogEntry(user, user, ip, $"Issuer: {association.Issuer}, Provider: {association.ProviderKey}, Name: {association.Name}", SecurityLogType.ExternalAssociationRemoved);
 		}
 	}
 }

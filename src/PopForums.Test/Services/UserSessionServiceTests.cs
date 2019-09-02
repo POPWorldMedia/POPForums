@@ -6,6 +6,7 @@ using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PopForums.Test.Services
 {
@@ -27,7 +28,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void AnonUserNoCookieGetsCookieAndSessionStart()
+		public async Task AnonUserNoCookieGetsCookieAndSessionStart()
 		{
 			var service = GetService();
 			var deleteCalled = false;
@@ -35,7 +36,7 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 
-			service.ProcessUserRequest(null, null, "1.1.1.1", delete, create);
+			await service.ProcessUserRequest(null, null, "1.1.1.1", delete, create);
 			
 			Assert.False(deleteCalled);
 			Assert.True(createResult.HasValue);
@@ -45,7 +46,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void AnonUserWithCookieUpdateSession()
+		public async Task AnonUserWithCookieUpdateSession()
 		{
 			var service = GetService();
 			var deleteCalled = false;
@@ -56,7 +57,7 @@ namespace PopForums.Test.Services
 			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
 			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(true);
 
-			var result = service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
 			Assert.False(deleteCalled);
 			Assert.Equal(sessionID, result);
@@ -65,7 +66,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserWithAnonCookieStartsLoggedInSession()
+		public async Task UserWithAnonCookieStartsLoggedInSession()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
@@ -77,7 +78,7 @@ namespace PopForums.Test.Services
 			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
 			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(true);
 
-			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 
 			Assert.True(deleteCalled);
 			Assert.Equal(createResult, result);
@@ -90,7 +91,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void AnonUserWithLoggedInSessionEndsOldOneStartsNewOne()
+		public async Task AnonUserWithLoggedInSessionEndsOldOneStartsNewOne()
 		{
 			var service = GetService();
 			var deleteCalled = false;
@@ -101,7 +102,7 @@ namespace PopForums.Test.Services
 			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
 			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(false);
 
-			var result = service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
 			Assert.True(deleteCalled);
 			Assert.Equal(createResult, result);
@@ -113,7 +114,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserWithNoCookieGetsCookieAndSessionStart()
+		public async Task UserWithNoCookieGetsCookieAndSessionStart()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
@@ -123,7 +124,7 @@ namespace PopForums.Test.Services
 			Action<int> create = i => { createResult = i; };
 			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(It.IsAny<int>())).Returns((ExpiredUserSession)null);
 
-			var result = service.ProcessUserRequest(user, null, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(user, null, "1.1.1.1", delete, create);
 
 			Assert.False(deleteCalled);
 			Assert.Equal(createResult, result);
@@ -133,7 +134,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserWithCookieUpdateSession()
+		public async Task UserWithCookieUpdateSession()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
@@ -144,7 +145,7 @@ namespace PopForums.Test.Services
 			const int sessionID = 5467;
 			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
 
-			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 
 			Assert.Null(createResult);
 			Assert.False(deleteCalled);
@@ -154,7 +155,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserSessionNoCookieButHasOldSessionEndsOldSessionStartsNewOne()
+		public async Task UserSessionNoCookieButHasOldSessionEndsOldSessionStartsNewOne()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
@@ -164,7 +165,7 @@ namespace PopForums.Test.Services
 			const int sessionID = 5467;
 			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
-			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
 			Assert.Equal(createResult, result);
 			_mockUserSessionRepo.Verify(u => u.DeleteSessions(user.UserID, sessionID));
@@ -175,7 +176,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UserSessionWithNoMatchingIDEndsOldSessionStartsNewOne()
+		public async Task UserSessionWithNoMatchingIDEndsOldSessionStartsNewOne()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
@@ -185,7 +186,7 @@ namespace PopForums.Test.Services
 			const int sessionID = 5467;
 			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
-			var result = service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
+			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
 			Assert.Equal(createResult, result);
 			_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
@@ -197,7 +198,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void CleanExpiredSessions()
+		public async Task CleanExpiredSessions()
 		{
 			var service = GetService();
 			var sessions = new List<ExpiredUserSession>
@@ -207,7 +208,7 @@ namespace PopForums.Test.Services
 			               	};
 			_mockUserSessionRepo.Setup(u => u.GetAndDeleteExpiredSessions(It.IsAny<DateTime>())).Returns(sessions);
 			_mockSettingsManager.Setup(s => s.Current.SessionLength).Returns(20);
-			service.CleanUpExpiredSessions();
+			await service.CleanUpExpiredSessions();
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, sessions[0].UserID, String.Empty, sessions[0].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[0].LastTime), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, sessions[1].UserID, String.Empty, sessions[1].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[1].LastTime), Times.Once());
 		}

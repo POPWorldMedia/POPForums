@@ -48,7 +48,7 @@ namespace PopForums.Services
 			var content = await httpResult.Content.ReadAsStringAsync();
 			var verifyResult = JsonConvert.DeserializeObject<ReCaptchaResponse>(content);
 			if (!verifyResult.IsSuccess)
-				_securityLogService.CreateLogEntry((User) null, null, ip, string.Empty, SecurityLogType.ReCaptchaFailed);
+				await _securityLogService.CreateLogEntry((User) null, null, ip, string.Empty, SecurityLogType.ReCaptchaFailed);
 			return verifyResult;
 		}
 	}

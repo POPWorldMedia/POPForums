@@ -167,7 +167,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Admin))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
-				_searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
+				await _searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
 				_topicRepository.HardDeleteTopic(topic.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);

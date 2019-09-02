@@ -26,7 +26,7 @@ namespace PopForums.Services
 		{
 			var list = new List<IPHistoryEvent>();
 			list.AddRange(await _postService.GetIPHistory(ip, start, end));
-			list.AddRange(_securityLogService.GetIPHistory(ip, start, end));
+			list.AddRange(await _securityLogService.GetIPHistory(ip, start, end));
 			return list.OrderBy(i => i.EventTime).ToList();
 		}
 	}

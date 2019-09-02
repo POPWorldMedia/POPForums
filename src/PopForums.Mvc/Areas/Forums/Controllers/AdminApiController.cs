@@ -318,7 +318,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var adminUser = _userRetrievalShim.GetUser(HttpContext);
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var user = await _userService.GetUser(userID);
-			_userService.DeleteUser(user, adminUser, ip, isBanned);
+			await _userService.DeleteUser(user, adminUser, ip, isBanned);
 		}
 
 		// ********** user roles
@@ -555,16 +555,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** security log
 
 		[HttpPost("/Forums/AdminApi/QuerySecurityLog")]
-		public ActionResult<List<SecurityLogEntry>> QuerySecurityLog([FromBody] SecurityLogQuery query)
+		public async Task<ActionResult<List<SecurityLogEntry>>> QuerySecurityLog([FromBody] SecurityLogQuery query)
 		{
 			List<SecurityLogEntry> list;
 			switch (query.Type.ToLower())
 			{
 				case "userid":
-					list = _securityLogService.GetLogEntriesByUserID(Convert.ToInt32(query.SearchTerm), query.Start, query.End);
+					list = await _securityLogService.GetLogEntriesByUserID(Convert.ToInt32(query.SearchTerm), query.Start, query.End);
 					break;
 				case "name":
-					list = _securityLogService.GetLogEntriesByUserName(query.SearchTerm, query.Start, query.End);
+					list = await _securityLogService.GetLogEntriesByUserName(query.SearchTerm, query.Start, query.End);
 					break;
 				default:
 					return BadRequest("Search type invalid.");

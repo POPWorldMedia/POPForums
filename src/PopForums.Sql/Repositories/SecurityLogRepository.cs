@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -16,26 +17,26 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public void Create(SecurityLogEntry logEntry)
+		public async Task Create(SecurityLogEntry logEntry)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_SecurityLog (SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate) VALUES (@SecurityLogType, @UserID, @TargetUserID, @IP, @Message, @ActivityDate)", new { logEntry.SecurityLogType, logEntry.UserID, logEntry.TargetUserID, logEntry.IP, logEntry.Message, logEntry.ActivityDate }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_SecurityLog (SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate) VALUES (@SecurityLogType, @UserID, @TargetUserID, @IP, @Message, @ActivityDate)", new { logEntry.SecurityLogType, logEntry.UserID, logEntry.TargetUserID, logEntry.IP, logEntry.Message, logEntry.ActivityDate }));
 		}
 
-		public List<SecurityLogEntry> GetByUserID(int userID, DateTime startDate, DateTime endDate)
+		public async Task<List<SecurityLogEntry>> GetByUserID(int userID, DateTime startDate, DateTime endDate)
 		{
-			List<SecurityLogEntry> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<SecurityLogEntry>("SELECT SecurityLogID, SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate FROM pf_SecurityLog WHERE (UserID = @UserID OR TargetUserID = @UserID) AND ActivityDate >= @StartDate AND ActivityDate <= @EndDate ORDER BY ActivityDate", new { UserID = userID, StartDate = startDate, EndDate = endDate }).ToList());
-			return list;
+			Task<IEnumerable<SecurityLogEntry>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<SecurityLogEntry>("SELECT SecurityLogID, SecurityLogType, UserID, TargetUserID, IP, Message, ActivityDate FROM pf_SecurityLog WHERE (UserID = @UserID OR TargetUserID = @UserID) AND ActivityDate >= @StartDate AND ActivityDate <= @EndDate ORDER BY ActivityDate", new { UserID = userID, StartDate = startDate, EndDate = endDate }));
+			return list.Result.ToList();
 		}
 
-		public List<IPHistoryEvent> GetIPHistory(string ip, DateTime start, DateTime end)
+		public async Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end)
 		{
-			List<IPHistoryEvent> list = new List<IPHistoryEvent>();
-			_sqlObjectFactory.GetConnection().Using(connection =>
+			var list = new List<IPHistoryEvent>();
+			await _sqlObjectFactory.GetConnection().UsingAsync(async connection =>
 			{
-				var reader = connection.ExecuteReader("SELECT SecurityLogID AS ID, ActivityDate AS EventTime, TargetUserID AS UserID, SecurityLogType, Message FROM pf_SecurityLog WHERE IP = @IP AND ActivityDate >= @Start AND ActivityDate <= @End ORDER BY ActivityDate", new {IP = ip, Start = start, End = end});
+				var reader = await connection.ExecuteReaderAsync("SELECT SecurityLogID AS ID, ActivityDate AS EventTime, TargetUserID AS UserID, SecurityLogType, Message FROM pf_SecurityLog WHERE IP = @IP AND ActivityDate >= @Start AND ActivityDate <= @End ORDER BY ActivityDate", new {IP = ip, Start = start, End = end});
 				while (reader.Read())
 				{
 					list.Add(new IPHistoryEvent

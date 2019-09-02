@@ -46,14 +46,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void SetPassword()
+		public async Task SetPassword()
 		{
 			var userService = GetMockedUserService();
 			var user = GetDummyUser("jeff", "a@b.com");
 			var salt = Guid.NewGuid();
 			_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
 
-			userService.SetPassword(user, "fred", String.Empty, user);
+			await userService.SetPassword(user, "fred", String.Empty, user);
 
 			var hashedPassword = "fred".GetSHA256Hash(salt);
 			_mockUserRepo.Verify(r => r.SetHashedPassword(user, hashedPassword, salt));
@@ -66,7 +66,7 @@ namespace PopForums.Test.Services
 			Guid? salt;
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=");
 
-			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+			Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 		}
 
 		[Fact]
@@ -76,7 +76,7 @@ namespace PopForums.Test.Services
 			Guid? salt;
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns("VwqQv7+MfqtdxdTiaDLVsQ==");
 
-			Assert.False(userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf", out salt));
+			Assert.False(userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1);
 		}
 
 		[Fact]
@@ -87,7 +87,7 @@ namespace PopForums.Test.Services
 			var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
-			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+			Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 		}
 
 		[Fact]
@@ -98,7 +98,7 @@ namespace PopForums.Test.Services
 			var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
-			Assert.False(userService.CheckPassword(String.Empty, "dsfsdfsdfsdf", out salt));
+			Assert.False(userService.CheckPassword(String.Empty, "dsfsdfsdfsdf").Result.Item1);
 		}
 
 		[Fact]
@@ -109,7 +109,7 @@ namespace PopForums.Test.Services
 			var hashedPassword = "fred".GetMD5Hash();
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
-			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+			Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 		}
 
 		[Fact]
@@ -120,7 +120,7 @@ namespace PopForums.Test.Services
 			var hashedPassword = "fred".GetMD5Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
-			Assert.True(userService.CheckPassword(String.Empty, "fred", out salt));
+			Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 		}
 
 		[Fact]
@@ -131,7 +131,7 @@ namespace PopForums.Test.Services
 			var hashedPassword = "fred".GetMD5Hash(salt.Value);
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(String.Empty, out salt)).Returns(hashedPassword);
 
-			Assert.False(userService.CheckPassword(String.Empty, "blah", out salt));
+			Assert.False(userService.CheckPassword(String.Empty, "blah").Result.Item1);
 		}
 
 		[Fact]
@@ -145,7 +145,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(hashedPassword);
 			_mockUserRepo.Setup(x => x.GetUserByEmail(email)).Returns(user);
 
-			Assert.False(userService.CheckPassword(email, "abc", out salt));
+			Assert.False(userService.CheckPassword(email, "abc").Result.Item1);
 			_mockUserRepo.Verify(x => x.SetHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Never);
 		}
 
@@ -160,7 +160,7 @@ namespace PopForums.Test.Services
 			_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email, out salt)).Returns(hashedPassword);
 			_mockUserRepo.Setup(x => x.GetUserByEmail(email)).Returns(user);
 
-			Assert.True(userService.CheckPassword(email, "fred", out salt));
+			Assert.True(userService.CheckPassword(email, "fred").Result.Item1);
 			_mockUserRepo.Verify(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
 		}
 
@@ -541,11 +541,11 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void Logout()
+		public async Task Logout()
 		{
 			var userService = GetMockedUserService();
 			var user = UserTest.GetTestUser();
-			userService.Logout(user, "123");
+			await userService.Logout(user, "123");
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, "123", String.Empty, SecurityLogType.Logout));
 		}
 
@@ -613,26 +613,26 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void LoginWithUser()
+		public async Task LoginWithUser()
 		{
 			var user = UserTest.GetTestUser();
 			var service = GetMockedUserService();
 			const string ip = "1.1.1.1";
 
-			service.Login(user, ip);
+			await service.Login(user, ip);
 			
 			_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login), Times.Once());
 		}
 
 		[Fact]
-		public void LoginWithUserPersistCookie()
+		public async Task LoginWithUserPersistCookie()
 		{
 			var user = UserTest.GetTestUser();
 			var service = GetMockedUserService();
 			const string ip = "1.1.1.1";
 
-			service.Login(user, ip);
+			await service.Login(user, ip);
 
 			_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login), Times.Once());
@@ -681,23 +681,23 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void UpdateIsApproved()
+		public async Task UpdateIsApproved()
 		{
 			var userService = GetMockedUserService();
 			var targetUser = GetDummyUser("Jeff", "a@b.com");
 			var user = new User { UserID = 97 };
-			userService.UpdateIsApproved(targetUser, true, user, "123");
+			await userService.UpdateIsApproved(targetUser, true, user, "123");
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, true), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsApproved));
 		}
 
 		[Fact]
-		public void UpdateIsApprovedFalse()
+		public async Task UpdateIsApprovedFalse()
 		{
 			var userService = GetMockedUserService();
 			var targetUser = GetDummyUser("Jeff", "a@b.com");
 			var user = new User { UserID = 97 };
-			userService.UpdateIsApproved(targetUser, false, user, "123");
+			await userService.UpdateIsApproved(targetUser, false, user, "123");
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, false), Times.Once());
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsNotApproved));
 		}
@@ -713,7 +713,7 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void VerifyUserByAuthKey()
+		public async Task VerifyUserByAuthKey()
 		{
 			var key = Guid.NewGuid();
 			const string name = "Jeff";
@@ -722,17 +722,17 @@ namespace PopForums.Test.Services
 			dummyUser.AuthorizationKey = key;
 			var userManager = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByAuthorizationKey(key)).Returns(dummyUser);
-			var user = userManager.VerifyAuthorizationCode(dummyUser.AuthorizationKey, "123");
+			var user = await userManager.VerifyAuthorizationCode(dummyUser.AuthorizationKey, "123");
 			Assert.Same(dummyUser, user);
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(dummyUser, true), Times.Once());
 		}
 
 		[Fact]
-		public void VerifyUserByAuthKeyFail()
+		public async Task VerifyUserByAuthKeyFail()
 		{
 			var service = GetMockedUserService();
 			_mockUserRepo.Setup(r => r.GetUserByAuthorizationKey(It.IsAny<Guid>())).Returns((User)null);
-			var user = service.VerifyAuthorizationCode(Guid.NewGuid(), "123");
+			var user = await service.VerifyAuthorizationCode(Guid.NewGuid(), "123");
 			Assert.Null(user);
 			_mockUserRepo.Verify(u => u.UpdateIsApproved(It.IsAny<User>(), true), Times.Never());
 		}
@@ -1102,42 +1102,42 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void DeleteUserLogs()
+		public async Task DeleteUserLogs()
 		{
 			var targetUser = new User { UserID = 1 };
 			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
-			service.DeleteUser(targetUser, user, "127.0.0.1", true);
+			await service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "127.0.0.1", It.IsAny<string>(), SecurityLogType.UserDeleted));
 		}
 
 		[Fact]
-		public void DeleteUserCallsRepo()
+		public async Task DeleteUserCallsRepo()
 		{
 			var targetUser = new User { UserID = 1 };
 			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
-			service.DeleteUser(targetUser, user, "127.0.0.1", true);
+			await service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockUserRepo.Verify(u => u.DeleteUser(targetUser), Times.Once());
 		}
 
 		[Fact]
-		public void DeleteUserCallsBanRepoIfBanIsTrue()
+		public async Task DeleteUserCallsBanRepoIfBanIsTrue()
 		{
 			var targetUser = new User { UserID = 1, Email = "a@b.com" };
 			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
-			service.DeleteUser(targetUser, user, "127.0.0.1", true);
+			await service.DeleteUser(targetUser, user, "127.0.0.1", true);
 			_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Once());
 		}
 
 		[Fact]
-		public void DeleteUserDoesNotCallBanRepoIfBanIsFalse()
+		public async Task DeleteUserDoesNotCallBanRepoIfBanIsFalse()
 		{
 			var targetUser = new User { UserID = 1, Email = "a@b.com" };
 			var user = new User { UserID = 2 };
 			var service = GetMockedUserService();
-			service.DeleteUser(targetUser, user, "127.0.0.1", false);
+			await service.DeleteUser(targetUser, user, "127.0.0.1", false);
 			_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Never());
 		}
 

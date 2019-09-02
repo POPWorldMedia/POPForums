@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Models;
@@ -20,46 +21,46 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetEntriesByUserID()
+		public async Task GetEntriesByUserID()
 		{
 			var service = GetService();
 			const int id = 123;
-			service.GetLogEntriesByUserID(id, DateTime.MinValue, DateTime.MaxValue);
+			await service.GetLogEntriesByUserID(id, DateTime.MinValue, DateTime.MaxValue);
 			_securityLogRepo.Verify(s => s.GetByUserID(id, DateTime.MinValue, DateTime.MaxValue), Times.Once());
 		}
 
 		[Fact]
-		public void GetEntriesByUserName()
+		public async Task GetEntriesByUserName()
 		{
 			var service = GetService();
 			const int id = 123;
 			const string name = "jeff";
 			_userRepo.Setup(u => u.GetUserByName(name)).Returns(new User { UserID = id, Name = name});
-			service.GetLogEntriesByUserName(name, DateTime.MinValue, DateTime.MaxValue);
+			await service.GetLogEntriesByUserName(name, DateTime.MinValue, DateTime.MaxValue);
 			_securityLogRepo.Verify(s => s.GetByUserID(id, DateTime.MinValue, DateTime.MaxValue), Times.Once());
 		}
 
 		[Fact]
-		public void CreateNullIp()
+		public async Task CreateNullIp()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.CreateLogEntry(new User(), new User(), null, "", SecurityLogType.Undefined));
+			await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateLogEntry(new User(), new User(), null, "", SecurityLogType.Undefined));
 		}
 
 		[Fact]
-		public void CreateNullMessage()
+		public async Task CreateNullMessage()
 		{
 			var service = GetService();
-			Assert.Throws<ArgumentNullException>(() => service.CreateLogEntry(new User(), new User(), "", null, SecurityLogType.Undefined));
+			await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateLogEntry(new User(), new User(), "", null, SecurityLogType.Undefined));
 		}
 
 		[Fact]
-		public void Create()
+		public async Task Create()
 		{
 			var service = GetService();
 			SecurityLogEntry entry = null;
 			_securityLogRepo.Setup(s => s.Create(It.IsAny<SecurityLogEntry>())).Callback<SecurityLogEntry>(e => entry = e);
-			service.CreateLogEntry(new User { UserID = 1 }, new User { UserID = 2 }, "123", "msg", SecurityLogType.Undefined);
+			await service.CreateLogEntry(new User { UserID = 1 }, new User { UserID = 2 }, "123", "msg", SecurityLogType.Undefined);
 			Assert.Equal(1, entry.UserID);
 			Assert.Equal(2, entry.TargetUserID);
 			Assert.Equal("123", entry.IP);

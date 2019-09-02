@@ -115,7 +115,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (_settingsManager.Current.IsNewUserApproved)
 				{
 					ViewData["Result"] = Resources.AccountReady;
-					_userService.Login(user, ip);
+					await _userService.Login(user, ip);
 				}
 				else
 					ViewData["Result"] = Resources.AccountReadyCheckEmail;
@@ -164,18 +164,18 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				modelState.AddModelError("Email", Resources.IPBanned);
 		}
 
-		public ViewResult Verify(string id)
+		public async Task<ViewResult> Verify(string id)
 		{
 			var authKey = Guid.Empty;
-			if (!String.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
+			if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 				return View("VerifyFail");
-			if (String.IsNullOrWhiteSpace(id))
+			if (string.IsNullOrWhiteSpace(id))
 				return View();
-			var user = _userService.VerifyAuthorizationCode(authKey, HttpContext.Connection.RemoteIpAddress.ToString());
+			var user = await _userService.VerifyAuthorizationCode(authKey, HttpContext.Connection.RemoteIpAddress.ToString());
 			if (user == null)
 				return View("VerifyFail");
 			ViewData["Result"] = Resources.AccountVerified;
-			_userService.Login(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.Login(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			return View();
 		}
 
@@ -254,7 +254,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				ModelState.AddModelError("Password", errorMessage);
 			if (!ModelState.IsValid)
 				return View(resetContainer);
-			_userService.ResetPassword(user, resetContainer.Password, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.ResetPassword(user, resetContainer.Password, HttpContext.Connection.RemoteIpAddress.ToString());
 			return RedirectToAction("ResetPasswordSuccess");
 		}
 
@@ -298,12 +298,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public ViewResult ChangePassword(UserEditSecurity userEdit)
+		public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View("EditAccountNoUser");
-			if (!_userService.CheckPassword(user.Email, userEdit.OldPassword, out _))
+			var (isPasswordPassed, _) = await _userService.CheckPassword(user.Email, userEdit.OldPassword);
+			if (!isPasswordPassed)
 				ViewBag.PasswordResult = Resources.OldPasswordIncorrect;
 			else if (!userEdit.NewPasswordsMatch())
 				ViewBag.PasswordResult = Resources.RetypePasswordMustMatch;
@@ -311,7 +312,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				ViewBag.PasswordResult = errorMessage;
 			else
 			{
-				_userService.SetPassword(user, userEdit.NewPassword, HttpContext.Connection.RemoteIpAddress.ToString(), user);
+				await _userService.SetPassword(user, userEdit.NewPassword, HttpContext.Connection.RemoteIpAddress.ToString(), user);
 				ViewBag.PasswordResult = Resources.NewPasswordSaved;
 			}
 			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });

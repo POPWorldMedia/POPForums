@@ -81,7 +81,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					link = Url.Action("Index", HomeController.Name);
 			}
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Redirect(link);
 		}
@@ -90,7 +90,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<JsonResult> LogoutAsync()
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
-			_userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });
 		}
@@ -139,14 +139,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var loginState = _externalLoginTempService.Read();
 			if (loginState == null)
 			{
-				_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
+				await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 				return View("ExternalError", Resources.LoginBad);
 			}
 			var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
 			var matchResult = await _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 			if (matchResult.Successful)
 			{
-				_userService.Login(matchResult.User, ip);
+				await _userService.Login(matchResult.User, ip);
 				_externalLoginTempService.Remove();
 				await PerformSignInAsync(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
@@ -173,7 +173,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				}
 				else
 				{
-					_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on association", SecurityLogType.ExternalAssociationCheckFailed);
+					await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on association", SecurityLogType.ExternalAssociationCheckFailed);
 					return Json(new BasicJsonMessage { Result = false, Message = Resources.Error + ": " + Resources.LoginBad });
 				}
 			}
@@ -203,7 +203,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (loginState == null)
 			{
 				var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-				_securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
+				await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 				return View("ExternalError", Resources.Error + ": " + Resources.LoginBad);
 			}
 			var redirectUri = this.FullUrlHelper(nameof(CallbackHandler), Name);
