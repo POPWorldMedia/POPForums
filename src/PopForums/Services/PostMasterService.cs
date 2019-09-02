@@ -161,7 +161,7 @@ namespace PopForums.Services
 			await _profileRepository.SetLastPostID(user.UserID, postID);
 			var topicLink = topicLinkGenerator(topic);
 			if (unsubscribeLinkGenerator != null)
-				_subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
+				await _subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
 			// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
 			var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 			var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;

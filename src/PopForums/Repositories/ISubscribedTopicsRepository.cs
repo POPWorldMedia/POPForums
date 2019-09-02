@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
 {
 	public interface ISubscribedTopicsRepository
 	{
-		List<Topic> GetSubscribedTopics(int userID, int startRow, int pageSize);
-		int GetSubscribedTopicCount(int userID);
-		List<User> GetSubscribedUsersThatHaveViewed(int topicID);
-		bool IsTopicSubscribed(int userID, int topicID);
-		void AddSubscribedTopic(int userID, int topicID);
-		void RemoveSubscribedTopic(int userID, int topicID);
-		void MarkSubscribedTopicViewed(int userID, int topicID);
-		void MarkSubscribedTopicUnviewed(int topicID);
+		Task<List<Topic>> GetSubscribedTopics(int userID, int startRow, int pageSize);
+		Task<int> GetSubscribedTopicCount(int userID);
+		Task<List<User>> GetSubscribedUsersThatHaveViewed(int topicID);
+		Task<bool> IsTopicSubscribed(int userID, int topicID);
+		Task AddSubscribedTopic(int userID, int topicID);
+		Task RemoveSubscribedTopic(int userID, int topicID);
+		Task MarkSubscribedTopicViewed(int userID, int topicID);
+		Task MarkSubscribedTopicUnviewed(int topicID);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using PopForums.Configuration;
@@ -26,128 +27,131 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void AddSubTopic()
+		public async Task AddSubTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			service.AddSubscribedTopic(user, topic);
+			await service.AddSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void RemoveSubTopic()
+		public async Task RemoveSubTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			service.RemoveSubscribedTopic(user, topic);
+			await service.RemoveSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void TryRemoveSubTopic()
+		public async Task TryRemoveSubTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			service.TryRemoveSubscribedTopic(user, topic);
+			await service.TryRemoveSubscribedTopic(user, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 		}
 
 		[Fact]
-		public void TryRemoveSubTopicNullTopic()
+		public async Task TryRemoveSubTopicNullTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
-			service.TryRemoveSubscribedTopic(user, null);
+			await service.TryRemoveSubscribedTopic(user, null);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void TryRemoveSubTopicNullUser()
+		public async Task TryRemoveSubTopicNullUser()
 		{
 			var service = GetService();
 			var topic = new Topic { TopicID = 456 };
-			service.TryRemoveSubscribedTopic(null, topic);
+			await service.TryRemoveSubscribedTopic(null, topic);
 			_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void MarkSubNullUser()
+		public async Task MarkSubNullUser()
 		{
 			var service = GetService();
 			var topic = new Topic { TopicID = 456 };
-			service.MarkSubscribedTopicViewed(null, topic);
+			await service.MarkSubscribedTopicViewed(null, topic);
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void MarkSubNullTopic()
+		public async Task MarkSubNullTopic()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
-			service.MarkSubscribedTopicViewed(user, null);
+			await service.MarkSubscribedTopicViewed(user, null);
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void MarkSubNotSub()
+		public async Task MarkSubNotSub()
 		{
 			var service = GetService();
-			_mockSubRepo.Setup(s => s.IsTopicSubscribed(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
-			service.MarkSubscribedTopicViewed(It.IsAny<User>(), It.IsAny<Topic>());
+			_mockSubRepo.Setup(s => s.IsTopicSubscribed(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(false);
+			await service.MarkSubscribedTopicViewed(It.IsAny<User>(), It.IsAny<Topic>());
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
 		}
 
 		[Fact]
-		public void MarkSubIsSub()
+		public async Task MarkSubIsSub()
 		{
 			var service = GetService();
 			var user = new User { UserID = 123 };
 			var topic = new Topic { TopicID = 456 };
-			_mockSubRepo.Setup(s => s.IsTopicSubscribed(user.UserID, topic.TopicID)).Returns(true);
-			service.MarkSubscribedTopicViewed(user, topic);
+			_mockSubRepo.Setup(s => s.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(true);
+			await service.MarkSubscribedTopicViewed(user, topic);
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(user.UserID, topic.TopicID), Times.Once());
 		}
 		
 		[Fact(Skip = "Barrier doesn't block the async sends in core.")] // TODO: make this test work
-		public void NotifyCallQueueOnEveryUser()
+		public async Task NotifyCallQueueOnEveryUser()
 		{
 			var service = GetService();
 			var topic = new Topic { TopicID = 123 };
 			var list = new List<User> {new User { UserID = 1 }, new User { UserID = 2 } };
-			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
+			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).ReturnsAsync(list);
 			var topicLink = "foo";
 			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
 			var barrier = new Barrier(1);
-			Action action = () => {
-				service.NotifySubscribers(topic, new User { UserID = 45643 }, topicLink, gen);
-			    barrier.SignalAndWait();
-			};
-			action();
+
+			async Task ActionAsync()
+			{
+				await service.NotifySubscribers(topic, new User {UserID = 45643}, topicLink, gen);
+				barrier.SignalAndWait();
+			}
+
+			await ActionAsync();
 			barrier.Dispose();
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Once());
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[1], topicLink, "x" + list[1].UserID), Times.Once());
 		}
 
         [Fact(Skip = "Barrier doesn't block the async sends in core.")] // TODO: make this test work
-		public void NotifyCallQueueOnEveryUserButPostingUser()
+		public async Task NotifyCallQueueOnEveryUserButPostingUser()
 		{
 			var service = GetService();
 			var topic = new Topic { TopicID = 123 };
 			var user = new User { UserID = 768 };
 			var list = new List<User> { user, new User { UserID = 2 } };
-			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).Returns(list);
+			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).ReturnsAsync(list);
 			var topicLink = "foo";
 			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
 			var barrier = new Barrier(1);
-			Action action = () =>
+			async Task ActionAsync()
 			{
-				service.NotifySubscribers(topic, user, topicLink, gen);
+				await service.NotifySubscribers(topic, user, topicLink, gen);
 				barrier.SignalAndWait();
-			};
-			action.Invoke();
+			}
+			await ActionAsync();
 			barrier.Dispose();
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, It.IsAny<User>(), topicLink, It.IsAny<string>()), Times.Exactly(1));
 			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Exactly(0));
@@ -155,28 +159,26 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetTopicsFromRepo()
+		public async Task GetTopicsFromRepo()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
 			var list = new List<Topic>();
-			_mockSubRepo.Setup(s => s.GetSubscribedTopics(user.UserID, 1, 20)).Returns(list);
-			PagerContext pagerContext;
-			var result = service.GetTopics(user, 1, out pagerContext);
+			_mockSubRepo.Setup(s => s.GetSubscribedTopics(user.UserID, 1, 20)).ReturnsAsync(list);
+			var (result, _) = await service.GetTopics(user, 1);
 			Assert.Same(list, result);
 		}
 
 		[Fact]
-		public void GetTopicsStartRowCalcd()
+		public async Task GetTopicsStartRowCalcd()
 		{
 			var user = new User { UserID = 123 };
 			var service = GetService();
 			var settings = new Settings { TopicsPerPage = 20 };
 			_mockSettingsManager.Setup(s => s.Current).Returns(settings);
-			PagerContext pagerContext;
-			service.GetTopics(user, 3, out pagerContext);
+			var (_, pagerContext) = await service.GetTopics(user, 3);
 			_mockSubRepo.Verify(s => s.GetSubscribedTopics(user.UserID, 41, 20), Times.Once());
 			Assert.Equal(20, pagerContext.PageSize);
 		}

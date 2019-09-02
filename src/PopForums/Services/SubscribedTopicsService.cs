@@ -11,13 +11,13 @@ namespace PopForums.Services
 {
 	public interface ISubscribedTopicsService
 	{
-		void AddSubscribedTopic(User user, Topic topic);
-		void RemoveSubscribedTopic(User user, Topic topic);
-		void TryRemoveSubscribedTopic(User user, Topic topic);
-		void MarkSubscribedTopicViewed(User user, Topic topic);
-		void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator);
-		List<Topic> GetTopics(User user, int pageIndex, out PagerContext pagerContext);
-		bool IsTopicSubscribed(User user, Topic topic);
+		Task AddSubscribedTopic(User user, Topic topic);
+		Task RemoveSubscribedTopic(User user, Topic topic);
+		Task TryRemoveSubscribedTopic(User user, Topic topic);
+		Task MarkSubscribedTopicViewed(User user, Topic topic);
+		Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator);
+		Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
+		Task<bool> IsTopicSubscribed(User user, Topic topic);
 	}
 
 	public class SubscribedTopicsService : ISubscribedTopicsService
@@ -33,33 +33,34 @@ namespace PopForums.Services
 		private readonly ISubscribedTopicEmailComposer _subscribedTopicEmailComposer;
 		private readonly ISettingsManager _settingsManager;
 
-		public void AddSubscribedTopic(User user, Topic topic)
+		public async Task AddSubscribedTopic(User user, Topic topic)
 		{
-			_subscribedTopicsRepository.AddSubscribedTopic(user.UserID, topic.TopicID);
+			await _subscribedTopicsRepository.AddSubscribedTopic(user.UserID, topic.TopicID);
 		}
 
-		public void RemoveSubscribedTopic(User user, Topic topic)
+		public async Task RemoveSubscribedTopic(User user, Topic topic)
 		{
-			_subscribedTopicsRepository.RemoveSubscribedTopic(user.UserID, topic.TopicID);
+			await _subscribedTopicsRepository.RemoveSubscribedTopic(user.UserID, topic.TopicID);
 		}
 
-		public void TryRemoveSubscribedTopic(User user, Topic topic)
+		public async Task TryRemoveSubscribedTopic(User user, Topic topic)
 		{
 			if (user != null && topic != null)
-				RemoveSubscribedTopic(user, topic);
+				await RemoveSubscribedTopic(user, topic);
 		}
 
-		public void MarkSubscribedTopicViewed(User user, Topic topic)
+		public async Task MarkSubscribedTopicViewed(User user, Topic topic)
 		{
 			if (user == null || topic == null)
 				return;
-			_subscribedTopicsRepository.MarkSubscribedTopicViewed(user.UserID, topic.TopicID);
+			await _subscribedTopicsRepository.MarkSubscribedTopicViewed(user.UserID, topic.TopicID);
 		}
 
-		public void NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
+#pragma warning disable 1998
+		public async Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
 		{
 			new Thread(async () => {
-				var users = _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
+				var users = await _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
 				foreach (var user in users)
 				{
 					if (user.UserID != postingUser.UserID)
@@ -68,24 +69,25 @@ namespace PopForums.Services
 						await _subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
 					}
 				}
-				_subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);
+				await _subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);
 			}).Start();
 		}
+#pragma warning restore 1998
 
-		public List<Topic> GetTopics(User user, int pageIndex, out PagerContext pagerContext)
+		public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)
 		{
 			var pageSize = _settingsManager.Current.TopicsPerPage;
 			var startRow = ((pageIndex - 1) * pageSize) + 1;
-			var topics = _subscribedTopicsRepository.GetSubscribedTopics(user.UserID, startRow, pageSize);
-			var topicCount = _subscribedTopicsRepository.GetSubscribedTopicCount(user.UserID);
+			var topics = await _subscribedTopicsRepository.GetSubscribedTopics(user.UserID, startRow, pageSize);
+			var topicCount = await _subscribedTopicsRepository.GetSubscribedTopicCount(user.UserID);
 			var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
-			pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
-			return topics;
+			var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+			return Tuple.Create(topics, pagerContext);
 		}
 
-		public bool IsTopicSubscribed(User user, Topic topic)
+		public async Task<bool> IsTopicSubscribed(User user, Topic topic)
 		{
-			return _subscribedTopicsRepository.IsTopicSubscribed(user.UserID, topic.TopicID);
+			return await _subscribedTopicsRepository.IsTopicSubscribed(user.UserID, topic.TopicID);
 		}
 	}
 }

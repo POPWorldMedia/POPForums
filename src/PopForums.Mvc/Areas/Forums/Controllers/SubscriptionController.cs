@@ -34,8 +34,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View();
-			PagerContext pagerContext;
-			var topics = _subService.GetTopics(user, page, out pagerContext);
+			var (topics, pagerContext) = await _subService.GetTopics(user, page);
 			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
 			await _lastReadService.GetTopicReadStatus(user, container);
@@ -50,21 +49,21 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return View(container);
 			container.User = await _userService.GetUserByAuhtorizationKey(parsedKey);
 			container.Topic = _topicService.Get(topicID);
-			_subService.TryRemoveSubscribedTopic(container.User, container.Topic);
+			await _subService.TryRemoveSubscribedTopic(container.User, container.Topic);
 			return View(container);
 		}
 
 		[HttpPost]
-		public ActionResult Unsubscribe(int id)
+		public async Task<ActionResult> Unsubscribe(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			var topic = _topicService.Get(id);
-			_subService.TryRemoveSubscribedTopic(user, topic);
+			await _subService.TryRemoveSubscribedTopic(user, topic);
 			return RedirectToAction("Topics");
 		}
 
 		[HttpPost]
-		public JsonResult ToggleSubscription(int id)
+		public async Task<JsonResult> ToggleSubscription(int id)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
@@ -72,12 +71,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = _topicService.Get(id);
 			if (topic == null)
 				return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-			if (_subService.IsTopicSubscribed(user, topic))
+			if (await _subService.IsTopicSubscribed(user, topic))
 			{
-				_subService.RemoveSubscribedTopic(user, topic);
+				await _subService.RemoveSubscribedTopic(user, topic);
 				return Json(new BasicJsonMessage { Data = new { isSubscribed = false }, Result = true });
 			}
-			_subService.AddSubscribedTopic(user, topic);
+			await _subService.AddSubscribedTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isSubscribed = true }, Result = true });
 		}
 	}

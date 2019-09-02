@@ -30,7 +30,7 @@ namespace PopForums.Sql.Repositories
 				connection.Execute("DELETE FROM pf_Setting");
 				foreach (var key in dictionary)
 					connection.Execute("INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)", new { Setting = key.Key, Value = key.Value == null ? string.Empty : key.Value.ToString()});
-				});
+			});
 		}
 
 		public bool IsStale(DateTime lastLoad)

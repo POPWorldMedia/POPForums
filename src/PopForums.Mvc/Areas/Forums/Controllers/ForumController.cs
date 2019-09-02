@@ -171,9 +171,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			{
 				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 				isFavorite = await _favoriteTopicService.IsTopicFavorite(user, topic);
-				isSubscribed = _subService.IsTopicSubscribed(user, topic);
+				isSubscribed = await _subService.IsTopicSubscribed(user, topic);
 				if (isSubscribed)
-					_subService.MarkSubscribedTopicViewed(user, topic);
+					await _subService.MarkSubscribedTopicViewed(user, topic);
 				if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
 					await _lastReadService.MarkTopicRead(user, topic);
 				if (user.IsInRole(PermanentRoles.Moderator))
