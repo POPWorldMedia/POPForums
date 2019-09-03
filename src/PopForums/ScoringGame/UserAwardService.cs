@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 using PopForums.Repositories;
 
@@ -7,9 +8,9 @@ namespace PopForums.ScoringGame
 {
 	public interface IUserAwardService
 	{
-		void IssueAward(User user, AwardDefinition awardDefinition);
-		bool IsAwarded(User user, AwardDefinition awardDefinition);
-		List<UserAward> GetAwards(User user);
+		Task IssueAward(User user, AwardDefinition awardDefinition);
+		Task<bool> IsAwarded(User user, AwardDefinition awardDefinition);
+		Task<List<UserAward>> GetAwards(User user);
 	}
 
 	public class UserAwardService : IUserAwardService
@@ -21,19 +22,19 @@ namespace PopForums.ScoringGame
 
 		private readonly IUserAwardRepository _userAwardRepository;
 
-		public void IssueAward(User user, AwardDefinition awardDefinition)
+		public async Task IssueAward(User user, AwardDefinition awardDefinition)
 		{
-			_userAwardRepository.IssueAward(user.UserID, awardDefinition.AwardDefinitionID, awardDefinition.Title, awardDefinition.Description, DateTime.UtcNow);
+			await _userAwardRepository.IssueAward(user.UserID, awardDefinition.AwardDefinitionID, awardDefinition.Title, awardDefinition.Description, DateTime.UtcNow);
 		}
 
-		public bool IsAwarded(User user, AwardDefinition awardDefinition)
+		public async Task<bool> IsAwarded(User user, AwardDefinition awardDefinition)
 		{
-			return _userAwardRepository.IsAwarded(user.UserID, awardDefinition.AwardDefinitionID);
+			return await _userAwardRepository.IsAwarded(user.UserID, awardDefinition.AwardDefinitionID);
 		}
 
-		public List<UserAward> GetAwards(User user)
+		public async Task<List<UserAward>> GetAwards(User user)
 		{
-			return _userAwardRepository.GetAwards(user.UserID);
+			return await _userAwardRepository.GetAwards(user.UserID);
 		}
 	}
 }

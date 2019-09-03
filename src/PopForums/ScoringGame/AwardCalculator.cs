@@ -62,7 +62,7 @@ namespace PopForums.ScoringGame
 			{
 				if (award.IsSingleTimeAward)
 				{
-					var isAwarded = _userAwardService.IsAwarded(user, award);
+					var isAwarded = await _userAwardService.IsAwarded(user, award);
 					if (isAwarded)
 						continue;
 				}
@@ -75,7 +75,7 @@ namespace PopForums.ScoringGame
 						conditionsMet++;
 				}
 				if (conditions.Count != 0 && conditionsMet == conditions.Count)
-					_userAwardService.IssueAward(user, award);
+					await _userAwardService.IssueAward(user, award);
 			}
 		}
 	}

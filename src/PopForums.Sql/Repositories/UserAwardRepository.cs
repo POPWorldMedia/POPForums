@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Repositories;
 using PopForums.ScoringGame;
@@ -16,26 +17,26 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public virtual void IssueAward(int userID, string awardDefinitionID, string title, string description, DateTime timeStamp)
+		public virtual async Task IssueAward(int userID, string awardDefinitionID, string title, string description, DateTime timeStamp)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_UserAward (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp)", new { UserID = userID, AwardDefinitionID = awardDefinitionID, Title = title, Description = description, TimeStamp = timeStamp }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_UserAward (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp)", new { UserID = userID, AwardDefinitionID = awardDefinitionID, Title = title, Description = description, TimeStamp = timeStamp }));
 		}
 
-		public bool IsAwarded(int userID, string awardDefinitionID)
+		public async Task<bool> IsAwarded(int userID, string awardDefinitionID)
 		{
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pf_UserAward WHERE UserID = @UserID AND AwardDefinitionID = @AwardDefinitionID", new { UserID = userID, AwardDefinitionID = awardDefinitionID }));
-			return count > 0;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				count = connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pf_UserAward WHERE UserID = @UserID AND AwardDefinitionID = @AwardDefinitionID", new { UserID = userID, AwardDefinitionID = awardDefinitionID }));
+			return count.Result > 0;
 		}
 
-		public List<UserAward> GetAwards(int userID)
+		public async Task<List<UserAward>> GetAwards(int userID)
 		{
-			List<UserAward> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<UserAward>("SELECT UserAwardID, UserID, AwardDefinitionID, Title, Description, TimeStamp FROM pf_UserAward WHERE UserID = @UserID", new { UserID = userID }).ToList());
-			return list;
+			Task<IEnumerable<UserAward>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<UserAward>("SELECT UserAwardID, UserID, AwardDefinitionID, Title, Description, TimeStamp FROM pf_UserAward WHERE UserID = @UserID", new { UserID = userID }));
+			return list.Result.ToList();
 		}
 	}
 }

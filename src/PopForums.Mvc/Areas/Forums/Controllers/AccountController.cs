@@ -404,7 +404,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = await _postService.GetPostCount(user);
 			model.Feed = await _feedService.GetFeed(user);
-			model.UserAwards = _userAwardService.GetAwards(user);
+			model.UserAwards = await _userAwardService.GetAwards(user);
 			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
 			if (viewingUser == null)
 				model.ShowDetails = false;
