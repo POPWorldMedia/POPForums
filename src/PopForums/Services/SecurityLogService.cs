@@ -39,7 +39,7 @@ namespace PopForums.Services
 
 		public async Task<List<SecurityLogEntry>> GetLogEntriesByUserName(string name, DateTime startDate, DateTime endDate)
 		{
-			var user = _userRepository.GetUserByName(name);
+			var user = await _userRepository.GetUserByName(name);
 			if (user == null)
 				return new List<SecurityLogEntry>();
 			return await _securityLogRepository.GetByUserID(user.UserID, startDate, endDate);

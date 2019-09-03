@@ -23,12 +23,12 @@ namespace PopForums.Services
 		Task<User> CreateUser(SignupData signupData, string ip);
 		Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip);
 		Task DeleteUser(User targetUser, User user, string ip, bool ban);
-		void UpdateLastActicityDate(User user);
+		Task UpdateLastActicityDate(User user);
 		Task ChangeEmail(User targetUser, string newEmail, User user, string ip);
 		Task ChangeEmail(User targetUser, string newEmail, User user, string ip, bool isUserApproved);
 		Task ChangeName(User targetUser, string newName, User user, string ip);
 		Task UpdateIsApproved(User targetUser, bool isApproved, User user, string ip);
-		void UpdateAuthorizationKey(User user, Guid key);
+		Task UpdateAuthorizationKey(User user, Guid key);
 		Task Logout(User user, string ip);
 		Task<Tuple<bool, User>> Login(string email, string password, string ip);
 		Task Login(User user, string ip);
@@ -36,23 +36,23 @@ namespace PopForums.Services
 		Task CreateRole(string role, User user, string ip);
 		Task DeleteRole(string role, User user, string ip);
 		Task<User> VerifyAuthorizationCode(Guid key, string ip);
-		List<User> SearchByEmail(string email);
-		List<User> SearchByName(string name);
-		List<User> SearchByRole(string role);
+		Task<List<User>> SearchByEmail(string email);
+		Task<List<User>> SearchByName(string name);
+		Task<List<User>> SearchByRole(string role);
 		Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
 		Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
 		Task<UserEdit> GetUserEdit(User user);
 		Task EditUserProfile(User user, UserEditProfile userEditProfile);
 		bool IsPasswordValid(string password, out string errorMessage);
         Task<bool> IsEmailInUseByDifferentUser(User user, string email);
-		List<User> GetUsersOnline();
+		Task<List<User>> GetUsersOnline();
 		Task<bool> IsIPBanned(string ip);
 		Task<bool> IsEmailBanned(string email);
 		Task GeneratePasswordResetEmail(User user, string resetLink);
 		Task ResetPassword(User user, string newPassword, string ip);
-		List<User> GetUsersFromIDs(IList<int> ids);
-		int GetTotalUsers();
-		List<User> GetSubscribedUsers();
+		Task<List<User>> GetUsersFromIDs(IList<int> ids);
+		Task<int> GetTotalUsers();
+		Task<List<User>> GetSubscribedUsers();
 		Dictionary<User, int> GetUsersByPointTotals(int top);
 	}
 
@@ -91,15 +91,14 @@ namespace PopForums.Services
 		{
 			var salt = Guid.NewGuid();
 			var hashedPassword = password.GetSHA256Hash(salt);
-			_userRepository.SetHashedPassword(targetUser, hashedPassword, salt);
+			await _userRepository.SetHashedPassword(targetUser, hashedPassword, salt);
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, string.Empty, SecurityLogType.PasswordChange);
 		}
 
 		public async Task<Tuple<bool, Guid?>> CheckPassword(string email, string password)
 		{
 			string hashedPassword;
-			Guid? salt = null;
-			var storedHash = _userRepository.GetHashedPasswordByEmail(email, out salt);
+			var (storedHash, salt) = await _userRepository.GetHashedPasswordByEmail(email);
 			if (salt.HasValue)
 				hashedPassword = password.GetSHA256Hash(salt.Value);
 			else
@@ -125,7 +124,7 @@ namespace PopForums.Services
 			if (storedHash == hashedPassword)
 			{
 				// upgrade the password hash
-				var user = _userRepository.GetUserByEmail(email);
+				var user = await _userRepository.GetUserByEmail(email);
 				await SetPassword(user, password, string.Empty, null);
 				return true;
 			}
@@ -134,7 +133,7 @@ namespace PopForums.Services
 
 		public async Task<User> GetUser(int userID)
 		{
-			var user = _userRepository.GetUser(userID);
+			var user = await _userRepository.GetUser(userID);
 			await PopulateRoles(user);
 			return user;
 		}
@@ -143,14 +142,14 @@ namespace PopForums.Services
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				return null;
-			var user = _userRepository.GetUserByName(name);
+			var user = await _userRepository.GetUserByName(name);
 			await PopulateRoles(user);
 			return user;
 		}
 
 		public async Task<User> GetUserByAuhtorizationKey(Guid authorizationKey)
 		{
-			var user = _userRepository.GetUserByAuthorizationKey(authorizationKey);
+			var user = await _userRepository.GetUserByAuthorizationKey(authorizationKey);
 			await PopulateRoles(user);
 			return user;
 		}
@@ -159,14 +158,14 @@ namespace PopForums.Services
 		{
 			if (string.IsNullOrWhiteSpace(email))
 				return null;
-			var user = _userRepository.GetUserByEmail(email);
+			var user = await _userRepository.GetUserByEmail(email);
 			await PopulateRoles(user);
 			return user;
 		}
 
-		public List<User> GetUsersFromIDs(IList<int> ids)
+		public async Task<List<User>> GetUsersFromIDs(IList<int> ids)
 		{
-			return _userRepository.GetUsersFromIDs(ids);
+			return await _userRepository.GetUsersFromIDs(ids);
 		}
 
 		private async Task PopulateRoles(User user)
@@ -227,7 +226,7 @@ namespace PopForums.Services
 			var authorizationKey = Guid.NewGuid();
 			var salt = Guid.NewGuid();
 			var hashedPassword = password.GetSHA256Hash(salt);
-			var user = _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey, salt);
+			var user = await _userRepository.CreateUser(name, email, creationDate, isApproved, hashedPassword, authorizationKey, salt);
 			await _securityLogService.CreateLogEntry(null, user, ip, string.Empty, SecurityLogType.UserCreated);
 			return user;
 		}
@@ -236,14 +235,14 @@ namespace PopForums.Services
 		{
 			if (ban)
 				await _banRepository.BanEmail(targetUser.Email);
-			_userRepository.DeleteUser(targetUser);
+			await _userRepository.DeleteUser(targetUser);
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, $"Name: {targetUser.Name}, E-mail: {targetUser.Email}", SecurityLogType.UserDeleted);
 		}
 
-		public void UpdateLastActicityDate(User user)
+		public async Task UpdateLastActicityDate(User user)
 		{
 			user.LastActivityDate = DateTime.UtcNow;
-			_userRepository.UpdateLastActivityDate(user, user.LastActivityDate);
+			await _userRepository.UpdateLastActivityDate(user, user.LastActivityDate);
 		}
 
 		public async Task ChangeEmail(User targetUser, string newEmail, User user, string ip)
@@ -258,9 +257,9 @@ namespace PopForums.Services
 			if (await IsEmailInUse(newEmail))
 				throw new Exception($"The e-mail \"{newEmail}\" is already in use.");
 			var oldEmail = targetUser.Email;
-			_userRepository.ChangeEmail(targetUser, newEmail);
+			await _userRepository.ChangeEmail(targetUser, newEmail);
 			targetUser.Email = newEmail;
-			_userRepository.UpdateIsApproved(targetUser, isUserApproved);
+			await _userRepository.UpdateIsApproved(targetUser, isUserApproved);
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, $"Old: {oldEmail}, New: {newEmail}", SecurityLogType.EmailChange);
 		}
 
@@ -271,7 +270,7 @@ namespace PopForums.Services
 			if (await IsNameInUse(newName))
 				throw new Exception($"The name \"{newName}\" is already in use.");
 			var oldName = targetUser.Name;
-			_userRepository.ChangeName(targetUser, newName);
+			await _userRepository.ChangeName(targetUser, newName);
 			targetUser.Name = newName;
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, $"Old: {oldName}, New: {newName}", SecurityLogType.NameChange);
 		}
@@ -280,16 +279,16 @@ namespace PopForums.Services
 		{
 			if (targetUser == null)
 				throw new ArgumentNullException("targetUser");
-			_userRepository.UpdateIsApproved(targetUser, isApproved);
+			await _userRepository.UpdateIsApproved(targetUser, isApproved);
 			var logType = isApproved ? SecurityLogType.IsApproved : SecurityLogType.IsNotApproved;
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, String.Empty, logType);
 		}
 
-		public void UpdateAuthorizationKey(User user, Guid key)
+		public async Task UpdateAuthorizationKey(User user, Guid key)
 		{
 			if (user == null)
 				throw new ArgumentNullException("user");
-			_userRepository.UpdateAuthorizationKey(user, key);
+			await _userRepository.UpdateAuthorizationKey(user, key);
 		}
 
 		public async Task Logout(User user, string ip)
@@ -306,7 +305,7 @@ namespace PopForums.Services
 			{
 				user = await GetUserByEmail(email);
 				user.LastLoginDate = DateTime.UtcNow;
-				_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+				await _userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 				await _securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 				if (!salt.HasValue)
 					await SetPassword(user, password, ip, user);
@@ -322,7 +321,7 @@ namespace PopForums.Services
 		public async Task Login(User user, string ip)
 		{
 			user.LastLoginDate = DateTime.UtcNow;
-			_userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+			await _userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
 			await _securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 		}
 
@@ -347,29 +346,29 @@ namespace PopForums.Services
 
 		public async Task<User> VerifyAuthorizationCode(Guid key, string ip)
 		{
-			var targetUser = _userRepository.GetUserByAuthorizationKey(key);
+			var targetUser = await _userRepository.GetUserByAuthorizationKey(key);
 			if (targetUser == null)
 				return null;
 			var newKey = Guid.NewGuid();
-			UpdateAuthorizationKey(targetUser, newKey);
+			await UpdateAuthorizationKey(targetUser, newKey);
 			await UpdateIsApproved(targetUser, true, null, ip);
 			targetUser.AuthorizationKey = newKey;
 			return targetUser;
 		}
 
-		public List<User> SearchByEmail(string email)
+		public async Task<List<User>> SearchByEmail(string email)
 		{
-			return _userRepository.SearchByEmail(email);
+			return await _userRepository.SearchByEmail(email);
 		}
 
-		public List<User> SearchByName(string name)
+		public async Task<List<User>> SearchByName(string name)
 		{
-			return _userRepository.SearchByName(name);
+			return await _userRepository.SearchByName(name);
 		}
 
-		public List<User> SearchByRole(string role)
+		public async Task<List<User>> SearchByRole(string role)
 		{
-			return _userRepository.SearchByRole(role);
+			return await _userRepository.SearchByRole(role);
 		}
 
 		public async Task<UserEdit> GetUserEdit(User user)
@@ -500,14 +499,14 @@ namespace PopForums.Services
 			return true;
 		}
 
-		public List<User> GetUsersOnline()
+		public async Task<List<User>> GetUsersOnline()
 		{
-			return _userRepository.GetUsersOnline();
+			return await _userRepository.GetUsersOnline();
 		}
 
-		public int GetTotalUsers()
+		public async Task<int> GetTotalUsers()
 		{
-			return _userRepository.GetTotalUsers();
+			return await _userRepository.GetTotalUsers();
 		}
 
 		public async Task GeneratePasswordResetEmail(User user, string resetLink)
@@ -515,7 +514,7 @@ namespace PopForums.Services
 			if (user == null)
 				throw new ArgumentNullException("user");
 			var newAuth = Guid.NewGuid();
-			UpdateAuthorizationKey(user, newAuth);
+			await UpdateAuthorizationKey(user, newAuth);
 			user.AuthorizationKey = newAuth;
 			var link = resetLink + "/" + newAuth;
 			await _forgotPasswordMailer.ComposeAndQueue(user, link);
@@ -524,13 +523,13 @@ namespace PopForums.Services
 		public async Task ResetPassword(User user, string newPassword, string ip)
 		{
 			await SetPassword(user, newPassword, ip, null);
-			UpdateAuthorizationKey(user, Guid.NewGuid());
+			await UpdateAuthorizationKey(user, Guid.NewGuid());
 			await Login(user, ip);
 		}
 
-		public List<User> GetSubscribedUsers()
+		public async Task<List<User>> GetSubscribedUsers()
 		{
-			return _userRepository.GetSubscribedUsers();
+			return await _userRepository.GetSubscribedUsers();
 		}
 
 		public Dictionary<User, int> GetUsersByPointTotals(int top)

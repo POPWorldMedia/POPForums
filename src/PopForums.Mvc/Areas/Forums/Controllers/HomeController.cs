@@ -25,11 +25,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> Index()
 		{
-			ViewBag.OnlineUsers = _userService.GetUsersOnline();
+			ViewBag.OnlineUsers = await _userService.GetUsersOnline();
 			ViewBag.TotalUsers = _userSessionService.GetTotalSessionCount().ToString("N0");
 			ViewBag.TopicCount = _forumService.GetAggregateTopicCount().Result.ToString("N0");
 			ViewBag.PostCount = _forumService.GetAggregatePostCount().Result.ToString("N0");
-			ViewBag.RegisteredUsers = _userService.GetTotalUsers().ToString("N0");
+			var totalUsers = await _userService.GetTotalUsers();
+			ViewBag.RegisteredUsers = totalUsers.ToString("N0");
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			return View(await _forumService.GetCategorizedForumContainerFilteredForUser(user));
 		}

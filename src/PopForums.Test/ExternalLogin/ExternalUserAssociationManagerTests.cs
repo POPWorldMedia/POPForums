@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Moq;
 using PopForums.ExternalLogin;
@@ -51,7 +50,7 @@ namespace PopForums.Test.ExternalLogin
 		{
 			var manager = GetManager();
 			_externalUserAssociationRepo.Setup(x => x.Get(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ExternalUserAssociation());
-			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).Returns((User) null);
+			_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync((User) null);
 
 			var result = await manager.ExternalUserAssociationCheck(new ExternalLoginInfo("", "", ""), "");
 
@@ -67,7 +66,7 @@ namespace PopForums.Test.ExternalLogin
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc"};
 			var user = new User {UserID = association.UserID};
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
-			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
+			_userRepo.Setup(x => x.GetUser(association.UserID)).ReturnsAsync(user);
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
 			var result = await manager.ExternalUserAssociationCheck(authResult, "");
@@ -84,7 +83,7 @@ namespace PopForums.Test.ExternalLogin
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
 			var user = new User {UserID = association.UserID};
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
-			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns(user);
+			_userRepo.Setup(x => x.GetUser(association.UserID)).ReturnsAsync(user);
 			const string ip = "1.1.1.1";
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 
@@ -112,7 +111,7 @@ namespace PopForums.Test.ExternalLogin
 			var manager = GetManager();
 			var association = new ExternalUserAssociation { Issuer = "Google", UserID = 123, ProviderKey = "abc" };
 			_externalUserAssociationRepo.Setup(x => x.Get(association.Issuer, association.ProviderKey)).ReturnsAsync(association);
-			_userRepo.Setup(x => x.GetUser(association.UserID)).Returns((User)null);
+			_userRepo.Setup(x => x.GetUser(association.UserID)).ReturnsAsync((User)null);
 			const string ip = "1.1.1.1";
 			var authResult = new ExternalLoginInfo("Google", "abc", "");
 

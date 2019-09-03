@@ -38,7 +38,7 @@ namespace PopForums.ExternalLogin
 				await _securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);
 				return new ExternalUserAssociationMatchResult {Successful = false};
 			}
-			var user = _userRepository.GetUser(match.UserID);
+			var user = await _userRepository.GetUser(match.UserID);
 			if (user == null)
 			{
 				await _securityLogService.CreateLogEntry((int?)null, null, ip, $"Issuer: {externalLoginInfo.LoginProvider}, Provider: {externalLoginInfo.ProviderKey}, Name: {externalLoginInfo.ProviderDisplayName}", SecurityLogType.ExternalAssociationCheckFailed);

@@ -35,7 +35,7 @@ namespace PopForums.Test.Services
 			var service = GetService();
 			const int id = 123;
 			const string name = "jeff";
-			_userRepo.Setup(u => u.GetUserByName(name)).Returns(new User { UserID = id, Name = name});
+			_userRepo.Setup(u => u.GetUserByName(name)).ReturnsAsync(new User { UserID = id, Name = name});
 			await service.GetLogEntriesByUserName(name, DateTime.MinValue, DateTime.MaxValue);
 			_securityLogRepo.Verify(s => s.GetByUserID(id, DateTime.MinValue, DateTime.MaxValue), Times.Once());
 		}

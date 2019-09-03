@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PopForums.Models;
 
 namespace PopForums.Repositories
@@ -12,38 +13,37 @@ namespace PopForums.Repositories
 		/// <param name="user">User to update with new hashed password.</param>
 		/// <param name="hashedPassword">The string of the hashed password.</param>
 		/// <param name="salt">A Guid that was used in hashing the password.</param>
-		void SetHashedPassword(User user, string hashedPassword, Guid salt);
+		Task SetHashedPassword(User user, string hashedPassword, Guid salt);
 
 		/// <summary>
-		/// Gets the hashed password from the data store of the user whose e-mail is matched.
+		/// Gets the hashed password and salt from the data store of the user whose e-mail is matched.
 		/// </summary>
-		/// <param name="email">E-mail of user to match.</param>
-		/// <param name="salt">An output param that was used in salting the hash.</param>
-		/// <returns>Hashed password, or null if no match is found.</returns>
-		string GetHashedPasswordByEmail(string email, out Guid? salt);
+		/// <param name="email"></param>
+		/// <returns>A tuple containing the hashed password and salt.</returns>
+		Task<Tuple<string, Guid?>> GetHashedPasswordByEmail(string email);
 
 		/// <summary>
 		/// Gets a user by its ID.
 		/// </summary>
 		/// <param name="userID">UserID to match.</param>
 		/// <returns>Matched user, or null if no matching user is found.</returns>
-		User GetUser(int userID);
+		Task<User> GetUser(int userID);
 
 		/// <summary>
 		/// Gets a user by name. Match must be case insensitive.
 		/// </summary>
 		/// <param name="name">Name to match.</param>
 		/// <returns>Matched user, or null if no matching user is found.</returns>
-		User GetUserByName(string name);
+		Task<User> GetUserByName(string name);
 
 		/// <summary>
 		/// Gets a user by e-mail address. Match must be case insensitive.
 		/// </summary>
 		/// <param name="email">E-mail to match.</param>
 		/// <returns>Matched user, or null if no matching user is found.</returns>
-		User GetUserByEmail(string email);
+		Task<User> GetUserByEmail(string email);
 
-		User GetUserByAuthorizationKey(Guid key);
+		Task<User> GetUserByAuthorizationKey(Guid key);
 
 		/// <summary>
 		/// Stores new user data and returns a new User object, with new UserID.
@@ -56,46 +56,46 @@ namespace PopForums.Repositories
 		/// <param name="authorizationKey">A Guid used for authorization measures.</param>
 		/// <param name="salt">A Guid used to salt the password.</param>
 		/// <returns>A new User object, populated with the data store generated UserID.</returns>
-		User CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey, Guid salt);
+		Task<User> CreateUser(string name, string email, DateTime creationDate, bool isApproved, string hashedPassword, Guid authorizationKey, Guid salt);
 
 		/// <summary>
 		/// Updates a user record in the data store with a new LastActivityDate.
 		/// </summary>
 		/// <param name="user">User to update.</param>
 		/// <param name="newDate">New value for LastActivityDate value.</param>
-		void UpdateLastActivityDate(User user, DateTime newDate);
+		Task UpdateLastActivityDate(User user, DateTime newDate);
 
 		/// <summary>
 		/// Updates a user record in the data store with a new LastLoginDate.
 		/// </summary>
 		/// <param name="user">User to update.</param>
 		/// <param name="newDate">New value for LastActivityDate value.</param>
-		void UpdateLastLoginDate(User user, DateTime newDate);
+		Task UpdateLastLoginDate(User user, DateTime newDate);
 
 		/// <summary>
 		/// Updates a user record with a new name.
 		/// </summary>
 		/// <param name="user">User to update.</param>
 		/// <param name="newName">New name. Must not be in use by another user, null or empty.</param>
-		void ChangeName(User user, string newName);
+		Task ChangeName(User user, string newName);
 
 		/// <summary>
 		/// Updates a user record with a new e-mail address.
 		/// </summary>
 		/// <param name="user">User to update.</param>
 		/// <param name="newEmail">New e-mail address. Must not be in use by another user.</param>
-		void ChangeEmail(User user, string newEmail);
+		Task ChangeEmail(User user, string newEmail);
 
-		void UpdateIsApproved(User user, bool isApproved);
-		void UpdateAuthorizationKey(User user, Guid key);
-		List<User> SearchByEmail(string email);
-		List<User> SearchByName(string name);
-		List<User> SearchByRole(string role);
-		List<User> GetUsersOnline();
-		List<User> GetSubscribedUsers();
-		void DeleteUser(User user);
-		List<User> GetUsersFromIDs(IList<int> ids);
-		int GetTotalUsers();
+		Task UpdateIsApproved(User user, bool isApproved);
+		Task UpdateAuthorizationKey(User user, Guid key);
+		Task<List<User>> SearchByEmail(string email);
+		Task<List<User>> SearchByName(string name);
+		Task<List<User>> SearchByRole(string role);
+		Task<List<User>> GetUsersOnline();
+		Task<List<User>> GetSubscribedUsers();
+		Task DeleteUser(User user);
+		Task<List<User>> GetUsersFromIDs(IList<int> ids);
+		Task<int> GetTotalUsers();
 		Dictionary<User, int> GetUsersByPointTotals(int top);
 	}
 }

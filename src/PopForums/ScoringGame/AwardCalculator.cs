@@ -46,7 +46,7 @@ namespace PopForums.ScoringGame
 		public async Task ProcessCalculation(string eventDefinitionID, int userID)
 		{
 			var eventDefinition = await _eventDefinitionService.GetEventDefinition(eventDefinitionID);
-			var user = _userRepository.GetUser(userID);
+			var user = await _userRepository.GetUser(userID);
 			if (eventDefinition == null)
 			{
 				_errorLog.Log(new Exception($"Event calculation attempt on nonexistent event \"{eventDefinitionID}\""), ErrorSeverity.Warning);

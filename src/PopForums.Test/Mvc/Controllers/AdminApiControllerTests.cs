@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PopForums.Configuration;
@@ -125,42 +124,42 @@ namespace PopForums.Test.Mvc.Controllers
 		public class EditUserSearch : AdminApiControllerTests
 		{
 			[Fact]
-			public void NameSearchCallsNameSearch()
+			public async Task NameSearchCallsNameSearch()
 			{
 				var controller = GetController();
 				var text = "abc";
 				var list = new List<User>();
-				_userService.Setup(x => x.SearchByName(text)).Returns(list);
+				_userService.Setup(x => x.SearchByName(text)).ReturnsAsync(list);
 
-				var result = controller.EditUserSearch(new UserSearch {SearchText = text, SearchType = UserSearch.UserSearchType.Name});
+				var result = await controller.EditUserSearch(new UserSearch {SearchText = text, SearchType = UserSearch.UserSearchType.Name});
 
 				_userService.Verify(x => x.SearchByName(text), Times.Once);
 				Assert.Same(list, result.Value);
 			}
 
 			[Fact]
-			public void EmailSearchCallsEmailSearch()
+			public async Task EmailSearchCallsEmailSearch()
 			{
 				var controller = GetController();
 				var text = "abc";
 				var list = new List<User>();
-				_userService.Setup(x => x.SearchByEmail(text)).Returns(list);
+				_userService.Setup(x => x.SearchByEmail(text)).ReturnsAsync(list);
 
-				var result = controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Email });
+				var result = await controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Email });
 
 				_userService.Verify(x => x.SearchByEmail(text), Times.Once);
 				Assert.Same(list, result.Value);
 			}
 
 			[Fact]
-			public void RoleSearchCallsRoleSearch()
+			public async Task RoleSearchCallsRoleSearch()
 			{
 				var controller = GetController();
 				var text = "abc";
 				var list = new List<User>();
-				_userService.Setup(x => x.SearchByRole(text)).Returns(list);
+				_userService.Setup(x => x.SearchByRole(text)).ReturnsAsync(list);
 
-				var result = controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Role });
+				var result = await controller.EditUserSearch(new UserSearch { SearchText = text, SearchType = UserSearch.UserSearchType.Role });
 
 				_userService.Verify(x => x.SearchByRole(text), Times.Once);
 				Assert.Same(list, result.Value);

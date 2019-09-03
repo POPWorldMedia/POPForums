@@ -29,7 +29,7 @@ namespace PopForums.Services
 		{
 			_mailWorker = new Thread(() =>
 			{
-				var users = _userService.GetSubscribedUsers();
+				var users = _userService.GetSubscribedUsers().Result;
 				foreach (var user in users)
 				{
 					var unsubLink = unsubscribeLinkGenerator(user);

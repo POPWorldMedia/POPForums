@@ -224,19 +224,19 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** edit user
 
 		[HttpPost("/Forums/AdminApi/EditUserSearch")]
-		public ActionResult<List<User>> EditUserSearch(UserSearch userSearch)
+		public async Task<ActionResult<List<User>>> EditUserSearch(UserSearch userSearch)
 		{
 			List<User> users;
 			switch (userSearch.SearchType)
 			{
 				case UserSearch.UserSearchType.Email:
-					users = _userService.SearchByEmail(userSearch.SearchText);
+					users = await _userService.SearchByEmail(userSearch.SearchText);
 					break;
 				case UserSearch.UserSearchType.Name:
-					users = _userService.SearchByName(userSearch.SearchText);
+					users = await _userService.SearchByName(userSearch.SearchText);
 					break;
 				case UserSearch.UserSearchType.Role:
-					users = _userService.SearchByRole(userSearch.SearchText);
+					users = await _userService.SearchByRole(userSearch.SearchText);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(userSearch));
@@ -501,9 +501,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** manual event
 
 		[HttpPost("/Forums/AdminApi/GetNames")]
-		public ActionResult<IEnumerable<object>> GetNames(SingleString name)
+		public async Task<ActionResult<IEnumerable<object>>> GetNames(SingleString name)
 		{
-			var users = _userService.SearchByName(name.String);
+			var users = await _userService.SearchByName(name.String);
 			var projection = users.Select(u => new { u.UserID, u.Name }).ToArray();
 			return projection;
 		}

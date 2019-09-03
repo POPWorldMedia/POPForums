@@ -118,9 +118,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("View", new { id });
 		}
 
-		public JsonResult GetNames(string id)
+		public async Task<JsonResult> GetNames(string id)
 		{
-			var users = _userService.SearchByName(id);
+			var users = await _userService.SearchByName(id);
 			var projection = users.Select(u => new { u.UserID, value = u.Name });
 			return Json(projection);
 		}

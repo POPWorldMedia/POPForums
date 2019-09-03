@@ -54,8 +54,8 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
-			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(true);
+			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
+			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(true);
 
 			var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
@@ -75,8 +75,8 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
-			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(true);
+			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
+			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(true);
 
 			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 
@@ -99,8 +99,8 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
-			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).Returns(false);
+			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
+			_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(false);
 
 			var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
@@ -143,7 +143,7 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).Returns(true);
+			_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
 
 			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 

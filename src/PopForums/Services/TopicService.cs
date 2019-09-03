@@ -241,7 +241,7 @@ namespace PopForums.Services
 				throw new SecurityException("Only the user that started a topic may set its answer.");
 			if (post == null || post.TopicID != topic.TopicID)
 				throw new InvalidOperationException("You can't use a post as an answer unless it's a child of the topic.");
-			var answerUser = _userRepository.GetUser(post.UserID);
+			var answerUser = await _userRepository.GetUser(post.UserID);
 			if (answerUser != null // answer user is still valid
 				&& !topic.AnswerPostID.HasValue && // an answer wasn't already chosen
 				topic.StartedByUserID != post.UserID) // the answer isn't coming from the question asker

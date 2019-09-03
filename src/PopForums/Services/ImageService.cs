@@ -120,7 +120,7 @@ namespace PopForums.Services
 			var isNewUserImageApproved = _settingsManager.Current.IsNewUserImageApproved;
 			var dictionary = new Dictionary<UserImage, User>();
 			var unapprovedImages = await GetUnapprovedUserImages();
-			var users = _userRepository.GetUsersFromIDs(unapprovedImages.Select(i => i.UserID).ToList());
+			var users = await _userRepository.GetUsersFromIDs(unapprovedImages.Select(i => i.UserID).ToList());
 			var container = new UserImageApprovalContainer { Unapproved = new List<UserImagePair>(), IsNewUserImageApproved = isNewUserImageApproved };
 			foreach (var image in unapprovedImages)
 			{
