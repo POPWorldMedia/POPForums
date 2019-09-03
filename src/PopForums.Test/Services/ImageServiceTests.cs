@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Threading.Tasks;
+using Moq;
 using PopForums.Configuration;
 using Xunit;
 using PopForums.Repositories;
@@ -25,25 +26,25 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public void GetAvatar()
+		public async Task GetAvatar()
 		{
 			var service = GetService();
 			var bytes = new byte[] {};
-			_avatarRepo.Setup(a => a.GetImageData(1)).Returns(bytes);
+			_avatarRepo.Setup(a => a.GetImageData(1)).ReturnsAsync(bytes);
 
-			var result = service.GetAvatarImageData(1);
+			var result = await service.GetAvatarImageData(1);
 
 			Assert.Same(bytes, result);
 		}
 
 		[Fact]
-		public void GetUserImage()
+		public async Task GetUserImage()
 		{
 			var service = GetService();
 			var bytes = new byte[] { };
-			_imageRepo.Setup(a => a.GetImageData(1)).Returns(bytes);
+			_imageRepo.Setup(a => a.GetImageData(1)).ReturnsAsync(bytes);
 
-			var result = service.GetUserImageData(1);
+			var result = await service.GetUserImageData(1);
 
 			Assert.Same(bytes, result);
 		}

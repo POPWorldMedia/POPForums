@@ -964,7 +964,7 @@ namespace PopForums.Test.Services
 			var returnedProfile = GetReturnedProfile(userEdit);
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
-			_mockUserAvatarRepo.Setup(a => a.SaveNewAvatar(1, It.IsAny<byte[]>(), It.IsAny<DateTime>())).Returns(12);
+			_mockUserAvatarRepo.Setup(a => a.SaveNewAvatar(1, It.IsAny<byte[]>(), It.IsAny<DateTime>())).ReturnsAsync(12);
 			var image = new byte[1];
 
 			await service.EditUser(user, userEdit, false, false, image, null, "123", user);
@@ -982,7 +982,7 @@ namespace PopForums.Test.Services
 			var returnedProfile = GetReturnedProfile(userEdit);
 			_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
 			_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
-			_mockUserImageRepo.Setup(a => a.SaveNewImage(1, 0, true, It.IsAny<byte[]>(), It.IsAny<DateTime>())).Returns(12);
+			_mockUserImageRepo.Setup(a => a.SaveNewImage(1, 0, true, It.IsAny<byte[]>(), It.IsAny<DateTime>())).ReturnsAsync(12);
 			var image = new byte[1];
 
 			await service.EditUser(user, userEdit, false, false, null, image, "123", user);

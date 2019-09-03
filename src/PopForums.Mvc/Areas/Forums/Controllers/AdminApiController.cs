@@ -353,16 +353,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		// ********** user image approval
 
 		[HttpGet("/Forums/AdminApi/GetImageApproval")]
-		public ActionResult<UserImageApprovalContainer> GetImageApproval()
+		public async Task<ActionResult<UserImageApprovalContainer>> GetImageApproval()
 		{
-			var container = _imageService.GetUnapprovedUserImageContainer();
+			var container = await _imageService.GetUnapprovedUserImageContainer();
 			return container;
 		}
 
 		[HttpPost("/Forums/AdminApi/ApproveUserImage/{id}")]
-		public ActionResult ApproveUserImage(int id)
+		public async Task<ActionResult> ApproveUserImage(int id)
 		{
-			_imageService.ApproveUserImage(id);
+			await _imageService.ApproveUserImage(id);
 			return NoContent();
 		}
 

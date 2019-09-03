@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -16,78 +17,78 @@ namespace PopForums.Sql.Repositories
 
 		private readonly ISqlObjectFactory _sqlObjectFactory;
 
-		public byte[] GetImageData(int userImageID)
+		public async Task<byte[]> GetImageData(int userImageID)
 		{
-			byte[] data = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				data = connection.ExecuteScalar<byte[]>("SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
-			return data;
+			Task<byte[]> data = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				data = connection.ExecuteScalarAsync<byte[]>("SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			return await data;
 		}
 
-		public List<UserImage> GetUserImages(int userID)
+		public async Task<List<UserImage>> GetUserImages(int userID)
 		{
-			List<UserImage> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserID = @UserID ORDER BY SortOrder", new { UserID = userID }).ToList());
-			return list;
+			Task<IEnumerable<UserImage>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserID = @UserID ORDER BY SortOrder", new { UserID = userID }));
+			return list.Result.ToList();
 		}
 
-		public int SaveNewImage(int userID, int sortOrder, bool isApproved, byte[] imageData, DateTime timeStamp)
+		public async Task<int> SaveNewImage(int userID, int sortOrder, bool isApproved, byte[] imageData, DateTime timeStamp)
 		{
-			int userImageID = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				userImageID = connection.QuerySingle<int>("INSERT INTO pf_UserImages (UserID, SortOrder, IsApproved, [TimeStamp], ImageData) VALUES (@UserID, @SortOrder, @IsApproved, @TimeStamp, @ImageData);SELECT CAST(SCOPE_IDENTITY() as int)", new { UserID = userID, SortOrder = sortOrder, IsApproved = isApproved, TimeStamp = timeStamp, ImageData = imageData }));
-			return userImageID;
+			Task<int> userImageID = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				userImageID = connection.QuerySingleAsync<int>("INSERT INTO pf_UserImages (UserID, SortOrder, IsApproved, [TimeStamp], ImageData) VALUES (@UserID, @SortOrder, @IsApproved, @TimeStamp, @ImageData);SELECT CAST(SCOPE_IDENTITY() as int)", new { UserID = userID, SortOrder = sortOrder, IsApproved = isApproved, TimeStamp = timeStamp, ImageData = imageData }));
+			return await userImageID;
 		}
 
-		public void DeleteImagesByUserID(int userID)
+		public async Task DeleteImagesByUserID(int userID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_UserImages WHERE UserID = @UserID", new { UserID = userID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_UserImages WHERE UserID = @UserID", new { UserID = userID }));
 		}
 
-		public DateTime? GetLastModificationDate(int userImageID)
+		public async Task<DateTime?> GetLastModificationDate(int userImageID)
 		{
-			DateTime? timeStamp = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				timeStamp = connection.QuerySingleOrDefault<DateTime?>("SELECT [TimeStamp] FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
-			return timeStamp;
+			Task<DateTime?> timeStamp = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				timeStamp = connection.QuerySingleOrDefaultAsync<DateTime?>("SELECT [TimeStamp] FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			return await timeStamp;
 		}
 
-		public List<UserImage> GetUnapprovedUserImages()
+		public async Task<List<UserImage>> GetUnapprovedUserImages()
 		{
-			List<UserImage> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE IsApproved = 0").ToList());
-			return list;
+			Task<IEnumerable<UserImage>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE IsApproved = 0"));
+			return list.Result.ToList();
 		}
 
-		public bool? IsUserImageApproved(int userImageID)
+		public async Task<bool?> IsUserImageApproved(int userImageID)
 		{
-			bool? result = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.QuerySingleOrDefault<bool?>("SELECT IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
-			return result;
+			Task<bool?> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QuerySingleOrDefaultAsync<bool?>("SELECT IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			return await result;
 		}
 
-		public void ApproveUserImage(int userImageID)
+		public async Task ApproveUserImage(int userImageID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("UPDATE pf_UserImages SET IsApproved = 1 WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("UPDATE pf_UserImages SET IsApproved = 1 WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
 		}
 
-		public void DeleteUserImage(int userImageID)
+		public async Task DeleteUserImage(int userImageID)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
 		}
 
-		public UserImage Get(int userImageID)
+		public async Task<UserImage> Get(int userImageID)
 		{
-			UserImage userImage = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				userImage = connection.QuerySingleOrDefault<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
-			return userImage;
+			Task<UserImage> userImage = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				userImage = connection.QuerySingleOrDefaultAsync<UserImage>("SELECT UserImageID, UserID, SortOrder, IsApproved FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
+			return await userImage;
 		}
 	}
 }

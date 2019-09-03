@@ -355,7 +355,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var profile = await _profileService.GetProfile(user);
 			var userEdit = new UserEditPhoto(profile);
 			if (profile.ImageID.HasValue)
-				userEdit.IsImageApproved = _imageService.IsUserImageApproved(profile.ImageID.Value);
+				userEdit.IsImageApproved = await _imageService.IsUserImageApproved(profile.ImageID.Value);
 			return View(userEdit);
 		}
 		
@@ -383,7 +383,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var profile = await _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
-				userImage = _imageService.GetUserImage(profile.ImageID.Value);
+				userImage = await _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = await _postService.GetPostCount(user);
 			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
@@ -400,7 +400,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var profile = await _profileService.GetProfile(user);
 			UserImage userImage = null;
 			if (profile.ImageID.HasValue)
-				userImage = _imageService.GetUserImage(profile.ImageID.Value);
+				userImage = await _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = await _postService.GetPostCount(user);
 			model.Feed = await _feedService.GetFeed(user);

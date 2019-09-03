@@ -420,14 +420,14 @@ namespace PopForums.Services
 
 			if (avatarFile != null && avatarFile.Length > 0)
 			{
-				var avatarID = _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
+				var avatarID = await _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
 				profile.AvatarID = avatarID;
 				await _profileRepository.Update(profile);
 			}
 
 			if (photoFile != null && photoFile.Length > 0)
 			{
-				var imageID = _userImageRepository.SaveNewImage(targetUser.UserID, 0, true, photoFile, DateTime.UtcNow);
+				var imageID = await _userImageRepository.SaveNewImage(targetUser.UserID, 0, true, photoFile, DateTime.UtcNow);
 				profile.ImageID = imageID;
 				await _profileRepository.Update(profile);
 			}
@@ -438,30 +438,30 @@ namespace PopForums.Services
 			var profile = await _profileRepository.GetProfile(user.UserID);
 			if (removeAvatar)
 			{
-				_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
+				await _userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
 				profile.AvatarID = null;
 			}
 			if (removePhoto)
 			{
-				_userImageRepository.DeleteImagesByUserID(user.UserID);
+				await _userImageRepository.DeleteImagesByUserID(user.UserID);
 				profile.ImageID = null;
 			}
 			await _profileRepository.Update(profile);
 
 			if (avatarFile != null && avatarFile.Length > 0)
 			{
-				_userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
+				await _userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
 				var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70);
-				var avatarID = _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
+				var avatarID = await _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
 				profile.AvatarID = avatarID;
 				await _profileRepository.Update(profile);
 			}
 
 			if (photoFile != null && photoFile.Length > 0)
 			{
-				_userImageRepository.DeleteImagesByUserID(user.UserID);
+				await _userImageRepository.DeleteImagesByUserID(user.UserID);
 				var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70);
-				var imageID = _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
+				var imageID = await _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
 				profile.ImageID = imageID;
 				await _profileRepository.Update(profile);
 			}
