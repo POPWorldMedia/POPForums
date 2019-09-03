@@ -10,7 +10,7 @@ namespace PopForums.Services
 	{
 		Task<int> ProcessUserRequest(User user, int? sessionID, string ip, Action deleteSession, Action<int> createSession);
 		Task CleanUpExpiredSessions();
-		int GetTotalSessionCount();
+		Task<int> GetTotalSessionCount();
 	}
 
 	public class UserSessionService : IUserSessionService
@@ -39,18 +39,18 @@ namespace PopForums.Services
 			{
 				sessionID = await StartNewSession(userID, ip, createSession);
 				if (user != null)
-					_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
+					await _userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
 			}
 			else
 			{
 				if (user != null)
-					_userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
-				var updateSuccess = _userSessionRepository.UpdateSession(sessionID.Value, DateTime.UtcNow);
+					await _userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
+				var updateSuccess = await _userSessionRepository.UpdateSession(sessionID.Value, DateTime.UtcNow);
 				if (!updateSuccess)
 					sessionID = await StartNewSession(userID, ip, createSession);
 				else
 				{
-					var isAnon = _userSessionRepository.IsSessionAnonymous(sessionID.Value);
+					var isAnon = await _userSessionRepository.IsSessionAnonymous(sessionID.Value);
 					if (userID.HasValue && isAnon || !userID.HasValue && !isAnon)
 					{
 						deleteSession();
@@ -66,35 +66,35 @@ namespace PopForums.Services
 		{
 			if (userID.HasValue)
 			{
-				var oldUserSession = _userSessionRepository.GetSessionIDByUserID(userID.Value);
+				var oldUserSession = await _userSessionRepository.GetSessionIDByUserID(userID.Value);
 				if (oldUserSession != null)
 					await EndAndDeleteSession(oldUserSession);
 			}
 			var random = new Random();
 			var sessionID = random.Next(int.MinValue, int.MaxValue);
 			await _securityLogService.CreateLogEntry(null, userID, ip, sessionID.ToString(), SecurityLogType.UserSessionStart);
-			_userSessionRepository.CreateSession(sessionID, userID, DateTime.UtcNow);
+			await _userSessionRepository.CreateSession(sessionID, userID, DateTime.UtcNow);
 			createSession(sessionID);
 			return sessionID;
 		}
 
 		private async Task EndAndDeleteSession(ExpiredUserSession oldUserSession)
 		{
-			await _securityLogService.CreateLogEntry(null, oldUserSession.UserID, String.Empty, oldUserSession.SessionID.ToString(), SecurityLogType.UserSessionEnd, oldUserSession.LastTime);
-			_userSessionRepository.DeleteSessions(oldUserSession.UserID, oldUserSession.SessionID);
+			await _securityLogService.CreateLogEntry(null, oldUserSession.UserID, string.Empty, oldUserSession.SessionID.ToString(), SecurityLogType.UserSessionEnd, oldUserSession.LastTime);
+			await _userSessionRepository.DeleteSessions(oldUserSession.UserID, oldUserSession.SessionID);
 		}
 
 		public async Task CleanUpExpiredSessions()
 		{
 			var cutOff = DateTime.UtcNow.Subtract(new TimeSpan(0, _settingsManager.Current.SessionLength, 0));
-			var expiredSessions = _userSessionRepository.GetAndDeleteExpiredSessions(cutOff);
+			var expiredSessions = await _userSessionRepository.GetAndDeleteExpiredSessions(cutOff);
 			foreach (var session in expiredSessions)
-				await _securityLogService.CreateLogEntry(null, session.UserID, String.Empty, session.SessionID.ToString(), SecurityLogType.UserSessionEnd, session.LastTime);
+				await _securityLogService.CreateLogEntry(null, session.UserID, string.Empty, session.SessionID.ToString(), SecurityLogType.UserSessionEnd, session.LastTime);
 		}
 
-		public int GetTotalSessionCount()
+		public async Task<int> GetTotalSessionCount()
 		{
-			return _userSessionRepository.GetTotalSessionCount();
+			return await _userSessionRepository.GetTotalSessionCount();
 		}
 	}
 }

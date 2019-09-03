@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -24,66 +25,66 @@ namespace PopForums.Sql.Repositories
 			public const string CurrentSessionCount = "PopForums.Session.CurrentCount";
 		}
 
-		public void CreateSession(int sessionID, int? userID, DateTime lastTime)
+		public async Task CreateSession(int sessionID, int? userID, DateTime lastTime)
 		{
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("INSERT INTO pf_UserSession (SessionID, UserID, LastTime) VALUES (@SessionID, @UserID, @LastTime)", new { SessionID = sessionID, UserID = userID, LastTime = lastTime }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_UserSession (SessionID, UserID, LastTime) VALUES (@SessionID, @UserID, @LastTime)", new { SessionID = sessionID, UserID = userID, LastTime = lastTime }));
 		}
 
-		public bool UpdateSession(int sessionID, DateTime lastTime)
+		public async Task<bool> UpdateSession(int sessionID, DateTime lastTime)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Execute("UPDATE pf_UserSession SET LastTime = @LastTime WHERE SessionID = @SessionID", new { SessionID = sessionID, LastTime = lastTime }) == 1);
-			return result;
+			Task<int> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.ExecuteAsync("UPDATE pf_UserSession SET LastTime = @LastTime WHERE SessionID = @SessionID", new { SessionID = sessionID, LastTime = lastTime }));
+			return result.Result == 1;
 		}
 
-		public bool IsSessionAnonymous(int sessionID)
+		public async Task<bool> IsSessionAnonymous(int sessionID)
 		{
-			var result = false;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				result = connection.Query("SELECT UserID FROM pf_UserSession WHERE SessionID = @SessionID AND UserID IS NULL", new { SessionID = sessionID }).Any());
-			return result;
+			Task<IEnumerable<int>> result = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				result = connection.QueryAsync<int>("SELECT UserID FROM pf_UserSession WHERE SessionID = @SessionID AND UserID IS NULL", new { SessionID = sessionID }));
+			return result.Result.Any();
 		}
 
-		public List<ExpiredUserSession> GetAndDeleteExpiredSessions(DateTime cutOffDate)
+		public async Task<List<ExpiredUserSession>> GetAndDeleteExpiredSessions(DateTime cutOffDate)
 		{
-			List<ExpiredUserSession> list = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				list = connection.Query<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE LastTime < @CutOff", new { CutOff = cutOffDate }).ToList());
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				connection.Execute("DELETE FROM pf_UserSession WHERE LastTime < @CutOff", new { CutOff = cutOffDate }));
-			return list;
+			Task<IEnumerable<ExpiredUserSession>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE LastTime < @CutOff", new { CutOff = cutOffDate }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("DELETE FROM pf_UserSession WHERE LastTime < @CutOff", new { CutOff = cutOffDate }));
+			return list.Result.ToList();
 		}
 
-		public ExpiredUserSession GetSessionIDByUserID(int userID)
+		public async Task<ExpiredUserSession> GetSessionIDByUserID(int userID)
 		{
-			ExpiredUserSession session = null;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				session = connection.QueryFirstOrDefault<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE UserID = @UserID", new { UserID = userID }));
-			return session;
+			Task<ExpiredUserSession> session = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				session = connection.QueryFirstOrDefaultAsync<ExpiredUserSession>("SELECT SessionID, UserID, LastTime FROM pf_UserSession WHERE UserID = @UserID", new { UserID = userID }));
+			return await session;
 		}
 
-		public void DeleteSessions(int? userID, int sessionID)
+		public async Task DeleteSessions(int? userID, int sessionID)
 		{
 			if (userID.HasValue)
-				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Execute("DELETE FROM pf_UserSession WHERE SessionID = @SessionID OR UserID = @UserID", new { SessionID = sessionID, UserID = userID }));
+				await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+					connection.ExecuteAsync("DELETE FROM pf_UserSession WHERE SessionID = @SessionID OR UserID = @UserID", new { SessionID = sessionID, UserID = userID }));
 			else
-				_sqlObjectFactory.GetConnection().Using(connection =>
-					connection.Execute("DELETE FROM pf_UserSession WHERE SessionID = @SessionID", new { SessionID = sessionID }));
+				await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+					connection.ExecuteAsync("DELETE FROM pf_UserSession WHERE SessionID = @SessionID", new { SessionID = sessionID }));
 		}
 
-		public int GetTotalSessionCount()
+		public async Task<int> GetTotalSessionCount()
 		{
 			var cacheObject = _cacheHelper.GetCacheObject<int>(CacheKeys.CurrentSessionCount);
 			if (cacheObject != 0)
 				return cacheObject;
-			var count = 0;
-			_sqlObjectFactory.GetConnection().Using(connection =>
-				count = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM pf_UserSession"));
-			_cacheHelper.SetCacheObject(CacheKeys.CurrentSessionCount, count, 60);
-			return count;
+			Task<int> count = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				count = connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pf_UserSession"));
+			_cacheHelper.SetCacheObject(CacheKeys.CurrentSessionCount, count.Result, 60);
+			return count.Result;
 		}
 	}
 }

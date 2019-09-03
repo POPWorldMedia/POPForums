@@ -122,7 +122,7 @@ namespace PopForums.Test.Services
 			Action delete = () => { deleteCalled = true; };
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
-			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(It.IsAny<int>())).Returns((ExpiredUserSession)null);
+			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(It.IsAny<int>())).ReturnsAsync((ExpiredUserSession)null);
 
 			var result = await service.ProcessUserRequest(user, null, "1.1.1.1", delete, create);
 
@@ -163,7 +163,7 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
+			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).ReturnsAsync(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
 			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
@@ -184,7 +184,7 @@ namespace PopForums.Test.Services
 			int? createResult = null;
 			Action<int> create = i => { createResult = i; };
 			const int sessionID = 5467;
-			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).Returns(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
+			_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).ReturnsAsync(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
 
 			var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
@@ -206,7 +206,7 @@ namespace PopForums.Test.Services
 			               		new ExpiredUserSession { SessionID = 123, UserID = null, LastTime = new DateTime(2000, 2, 5)},
 			               		new ExpiredUserSession { SessionID = 789, UserID = 456, LastTime = new DateTime(2010, 3, 6)}
 			               	};
-			_mockUserSessionRepo.Setup(u => u.GetAndDeleteExpiredSessions(It.IsAny<DateTime>())).Returns(sessions);
+			_mockUserSessionRepo.Setup(u => u.GetAndDeleteExpiredSessions(It.IsAny<DateTime>())).ReturnsAsync(sessions);
 			_mockSettingsManager.Setup(s => s.Current.SessionLength).Returns(20);
 			await service.CleanUpExpiredSessions();
 			_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, sessions[0].UserID, String.Empty, sessions[0].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[0].LastTime), Times.Once());
