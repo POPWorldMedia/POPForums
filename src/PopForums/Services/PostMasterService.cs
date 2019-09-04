@@ -185,11 +185,23 @@ namespace PopForums.Services
 
 		public async Task<BasicServiceResponse<Post>> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator)
 		{
+			var censoredNewTitle = _textParsingService.Censor(postEdit.Title);
 			var post = await _postRepository.Get(postID);
 			if (!editingUser.IsPostEditable(post))
 				return GetReplyFailMessage(Resources.Forbidden);
 			var oldText = post.FullText;
-			post.Title = _textParsingService.Censor(postEdit.Title);
+			if (post.IsFirstInTopic && post.Title != censoredNewTitle)
+			{
+				if (string.IsNullOrEmpty(censoredNewTitle))
+					return GetReplyFailMessage(Resources.PostEmpty);
+				var oldTitle = post.Title;
+				post.Title = censoredNewTitle;
+				var topic = await _topicRepository.Get(post.TopicID);
+				var forum = await _forumRepository.Get(topic.ForumID);
+				var urlName = censoredNewTitle.ToUniqueUrlName(await _topicRepository.GetUrlNamesThatStartWith(censoredNewTitle.ToUrlName()));
+				await _topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, censoredNewTitle, urlName);
+				await _moderationLogService.LogTopic(editingUser, ModerationType.TopicRenamed, topic, forum, $"Old title: {oldTitle}");
+			}
 			if (postEdit.IsPlainText)
 				post.FullText = _textParsingService.ForumCodeToHtml(postEdit.FullText);
 			else

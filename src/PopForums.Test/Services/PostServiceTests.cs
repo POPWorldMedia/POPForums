@@ -119,13 +119,14 @@ namespace PopForums.Test.Services
 		public async Task GetPostForEditPlainText()
 		{
 			var service = GetService();
-			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true };
+			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true, IsFirstInTopic = true };
 			var user = new User { UserID = 456 };
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(new Profile {IsPlainText = true});
 			_textParsingService.Setup(p => p.HtmlToForumCode("not")).Returns("new text");
 			var postEdit = await service.GetPostForEdit(post, user);
 			Assert.Equal("mah title", postEdit.Title);
 			Assert.Equal("new text", postEdit.FullText);
+			Assert.True(postEdit.IsFirstInTopic);
 			Assert.True(postEdit.ShowSig);
 			Assert.True(postEdit.IsPlainText);
 			_textParsingService.Verify(t => t.HtmlToForumCode("not"), Times.Exactly(1));
@@ -135,13 +136,14 @@ namespace PopForums.Test.Services
 		public async Task GetPostForEditNotPlainText()
 		{
 			var service = GetService();
-			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true };
+			var post = new Post { PostID = 123, Title = "mah title", FullText = "not", ShowSig = true, IsFirstInTopic = true };
 			var user = new User { UserID = 456 };
 			_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(new Profile { IsPlainText = false });
 			_textParsingService.Setup(p => p.HtmlToClientHtml("not")).Returns("new text");
 			var postEdit = await service.GetPostForEdit(post, user);
 			Assert.Equal("mah title", postEdit.Title);
 			Assert.Equal("new text", postEdit.FullText);
+			Assert.True(postEdit.IsFirstInTopic);
 			Assert.True(postEdit.ShowSig);
 			Assert.False(postEdit.IsPlainText);
 			_textParsingService.Verify(t => t.HtmlToClientHtml("not"), Times.Exactly(1));

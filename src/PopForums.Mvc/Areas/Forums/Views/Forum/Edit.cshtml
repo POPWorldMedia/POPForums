@@ -28,11 +28,17 @@
 
 <form method="post">
 	<div class="postForm" role="form">
-		<input asp-for="Title" type="hidden" />
+		@if (Model.IsFirstInTopic)
+		{
+			<div class="form-group">
+				<label for="Comment">@PopForums.Resources.Title</label>
+				<input asp-for="Title" type="text" class="form-control" />
+			</div>
+		}
 		<textarea asp-for="FullText" class="form-control"></textarea>
 		<div class="checkbox">
 			<label for="IncludeSignature">
-				<input type="checkbox" asp-for="ShowSig" />
+				<input type="checkbox" asp-for="ShowSig"/>
 				@PopForums.Resources.IncludeSignature
 			</label>
 		</div>
@@ -40,7 +46,7 @@
 			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
 			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
 		</div>
-		<input type="hidden" asp-for="IsPlainText" />
+		<input type="hidden" asp-for="IsPlainText"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />

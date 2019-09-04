@@ -120,7 +120,7 @@ namespace PopForums.Services
 			if (user == null)
 				throw new ArgumentNullException("user");
 			var profile = await _profileRepository.GetProfile(user.UserID);
-			var postEdit = new PostEdit(post) { IsPlainText = profile.IsPlainText };
+			var postEdit = new PostEdit(post) { IsPlainText = profile.IsPlainText, IsFirstInTopic = post.IsFirstInTopic };
 			if (profile.IsPlainText)
 			{
 				postEdit.FullText = _textParsingService.HtmlToForumCode(post.FullText);

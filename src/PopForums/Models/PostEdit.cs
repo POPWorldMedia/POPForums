@@ -16,5 +16,6 @@
 		public bool ShowSig { get; set; }
 		public string Comment { get; set; }
 		public bool IsPlainText { get; set; }
+		public bool IsFirstInTopic { get; set; }
 	}
 }

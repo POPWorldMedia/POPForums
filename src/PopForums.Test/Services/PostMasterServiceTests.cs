@@ -870,6 +870,58 @@ namespace PopForums.Test.Services
 			}
 
 			[Fact]
+			public async Task NoTitleUpdateWhenNotFirstPostInTopic()
+			{
+				var service = GetService();
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = false, Title = "blah" });
+				_textParser.Setup(x => x.Censor("blah")).Returns("changed");
+
+				await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
+
+				_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			}
+
+			[Fact]
+			public async Task NoTitleUpdateWhenTitleHasNotChanged()
+			{
+				var service = GetService();
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" });
+				_textParser.Setup(x => x.Censor("blah")).Returns("blah");
+
+				await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
+
+				_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			}
+
+			[Fact]
+			public async Task NoEditWhenTitleIsEmpty()
+			{
+				var service = GetService();
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" });
+				_textParser.Setup(x => x.Censor("blah")).Returns("");
+
+				var result = await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
+
+				_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+				Assert.False(result.IsSuccessful);
+			}
+
+			[Fact]
+			public async Task TitleUpdateWhenFirstPostInTopicAndTitleChanged()
+			{
+				var service = GetService();
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, TopicID = 222, UserID = 123, IsFirstInTopic = true, Title = "blah" });
+				_topicRepo.Setup(x => x.Get(222)).ReturnsAsync(new Topic {TopicID = 222, ForumID = 111});
+				_forumRepo.Setup(x => x.Get(111)).ReturnsAsync(new Forum {ForumID = 111});
+				_textParser.Setup(x => x.Censor("blah")).Returns("changed");
+				_topicRepo.Setup(x => x.GetUrlNamesThatStartWith("changed")).ReturnsAsync(new List<string>());
+
+				await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
+
+				_topicRepo.Verify(x => x.UpdateTitleAndForum(222, 111, "changed", "changed"), Times.Once);
+			}
+
+			[Fact]
 			public async Task PlainTextParsed()
 			{
 				var service = GetService();
@@ -893,13 +945,16 @@ namespace PopForums.Test.Services
 			public async Task SavesMappedValues()
 			{
 				var service = GetService();
-				var post = new Post { PostID = 67 };
-				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
+				var post = new Post { PostID = 67, IsFirstInTopic = true };
+				_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true });
 				_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
+				_topicRepo.Setup(x => x.Get(post.TopicID)).ReturnsAsync(new Topic {ForumID = 333});
+				_forumRepo.Setup(x => x.Get(333)).ReturnsAsync(new Forum {ForumID = 333});
+				_topicRepo.Setup(x => x.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
 				_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
 				_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
 
-				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
+				var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, IsFirstInTopic = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
 
 				Assert.True(result.IsSuccessful);
 				Assert.NotEqual(post.LastEditTime, new DateTime(2009, 1, 1));
