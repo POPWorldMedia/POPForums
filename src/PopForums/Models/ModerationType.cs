@@ -16,6 +16,7 @@ namespace PopForums.Models
 		TopicMoved = 11,
 		TopicUndelete = 12,
 		PostUndelete = 13,
-		TopicRenamed = 14
+		TopicRenamed = 14,
+		TopicCloseAuto = 15
 	}
 }

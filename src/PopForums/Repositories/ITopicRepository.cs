@@ -35,5 +35,6 @@ namespace PopForums.Repositories
 		Task HardDeleteTopic(int topicID);
 		Task UpdateAnswerPostID(int topicID, int? postID);
 		Task<List<Topic>> Get(IEnumerable<int> topicIDs);
+		Task<IEnumerable<int>> CloseTopicsOlderThan(DateTime cutoffDate);
 	}
 }

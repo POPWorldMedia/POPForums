@@ -359,5 +359,18 @@ FROM pf_Topic WHERE ForumID = @ForumID AND ((@IncludeDeleted = 1) OR (@IncludeDe
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 				connection.ExecuteAsync("UPDATE pf_Topic SET AnswerPostID = @AnswerPostID WHERE TopicID = @TopicID", new { AnswerPostID = postID, TopicID = topicID }));
 		}
+
+		public async Task<IEnumerable<int>> CloseTopicsOlderThan(DateTime cutoffDate)
+		{
+			const string sql = @"DECLARE @ids TABLE (id int)
+UPDATE pf_Topic SET IsClosed = 1 
+OUTPUT INSERTED.TopicID
+WHERE LastPostTime < @CutoffDate AND IsClosed = 0
+SELECT id FROM @ids";
+			Task<IEnumerable<int>> list = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				list = connection.QueryAsync<int>(sql, new { CutoffDate = cutoffDate }));
+			return await list;
+		}
 	}
 }

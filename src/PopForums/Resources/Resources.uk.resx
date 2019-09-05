@@ -1249,4 +1249,10 @@
   <data name="SearchError" xml:space="preserve">
     <value>Сталася помилка пошуку</value>
   </data>
+  <data name="CloseOldTopics" xml:space="preserve">
+    <value>Закрийте старі теми</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>днів</value>
+  </data>
 </root>

@@ -484,6 +484,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close old topics.
+        /// </summary>
+        public static string CloseOldTopics {
+            get {
+                return ResourceManager.GetString("CloseOldTopics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close on reply.
         /// </summary>
         public static string CloseOnReply {
@@ -579,6 +588,15 @@ namespace PopForums {
         public static string DateOfBirth {
             get {
                 return ResourceManager.GetString("DateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to days.
+        /// </summary>
+        public static string Days {
+            get {
+                return ResourceManager.GetString("Days", resourceCulture);
             }
         }
         

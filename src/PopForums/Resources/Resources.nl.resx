@@ -1238,4 +1238,10 @@
   <data name="SearchError" xml:space="preserve">
     <value>Er is een zoekfout opgetreden</value>
   </data>
+  <data name="CloseOldTopics" xml:space="preserve">
+    <value>Sluit oude onderwerpen</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>dagen</value>
+  </data>
 </root>

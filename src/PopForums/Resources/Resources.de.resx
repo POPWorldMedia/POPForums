@@ -1238,4 +1238,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="SearchError" xml:space="preserve">
     <value>Es ist ein Suchfehler aufgetreten</value>
   </data>
+  <data name="CloseOldTopics" xml:space="preserve">
+    <value>Schließen Sie alte Themen</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Tage</value>
+  </data>
 </root>

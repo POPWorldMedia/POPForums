@@ -17,20 +17,24 @@ namespace PopForums.Services
 			_userSessionService = new UserSessionApplicationService();
 			_searchIndexService = new SearchIndexApplicationService();
 			_awardCalcService = new AwardCalculatorApplicationService();
+			_closeAgedTopicsService = new CloseAgedTopicsApplicationService();
 			_emailService.Start(serviceProvider);
 			_userSessionService.Start(serviceProvider);
 			_searchIndexService.Start(serviceProvider);
 			_awardCalcService.Start(serviceProvider);
+			_closeAgedTopicsService.Start(serviceProvider);
 			ApplicationServices.Add(_emailService);
 			ApplicationServices.Add(_userSessionService);
 			ApplicationServices.Add(_searchIndexService);
 			ApplicationServices.Add(_awardCalcService);
+			ApplicationServices.Add(_closeAgedTopicsService);
 		}
 
 		private static EmailApplicationService _emailService;
 		private static UserSessionApplicationService _userSessionService;
 		private static SearchIndexApplicationService _searchIndexService;
 		private static AwardCalculatorApplicationService _awardCalcService;
+		private static CloseAgedTopicsApplicationService _closeAgedTopicsService;
 
 		public static readonly List<ApplicationServiceBase> ApplicationServices = new List<ApplicationServiceBase>();
 	}

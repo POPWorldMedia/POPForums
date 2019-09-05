@@ -10,6 +10,7 @@ namespace PopForums.Services
 	{
 		Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum);
 		Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment);
+		Task LogTopic(ModerationType moderationType, int topicID);
 		Task LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText);
 		Task<List<ModerationLogEntry>> GetLog(DateTime start, DateTime end);
 		Task<List<ModerationLogEntry>> GetLog(Topic topic, bool excludePostEntries);
@@ -33,6 +34,11 @@ namespace PopForums.Services
 		public async Task LogTopic(User user, ModerationType moderationType, Topic topic, Forum forum, string comment)
 		{
 			await _moderationLogRepo.Log(DateTime.UtcNow, user.UserID, user.Name, (int) moderationType, forum != null ? forum.ForumID : (int?)null, topic.TopicID, null, comment, string.Empty);
+		}
+
+		public async Task LogTopic(ModerationType moderationType, int topicID)
+		{
+			await _moderationLogRepo.Log(DateTime.UtcNow, 0, "System", (int)moderationType, null, topicID, null, string.Empty, string.Empty);
 		}
 
 		public async Task LogPost(User user, ModerationType moderationType, Post post, string comment, string oldText)

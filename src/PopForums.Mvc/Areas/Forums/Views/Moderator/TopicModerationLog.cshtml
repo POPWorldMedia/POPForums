@@ -16,7 +16,14 @@
 		{
 			<tr>
 				<td>@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
-				<td><a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@entry.UserID" target="_blank">@entry.UserName</a></td>
+				@if (entry.UserID == 0)
+				{
+					<td>@entry.UserName</td>
+				}
+				else
+				{
+					<td><a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@entry.UserID" target="_blank">@entry.UserName</a></td>
+				}
 				<td>@entry.ModerationType</td>
 			</tr>
 		}

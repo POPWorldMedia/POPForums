@@ -587,5 +587,43 @@ namespace PopForums.Test.Services
 			await service.SetAnswer(user, topic, post, "", "");
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Never());
 		}
+
+		[Fact]
+		public async Task CloseAgedTopicsDoesNothingWhenSettingIsOff()
+		{
+			var service = GetTopicService();
+			_settingsManager.Setup(x => x.Current.IsClosingAgedTopics).Returns(false);
+
+			await service.CloseAgedTopics();
+
+			_topicRepo.Verify(x => x.CloseTopicsOlderThan(It.IsAny<DateTime>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task CloseAgedTopicsCallsRepoWhenSettingIsOn()
+		{
+			var service = GetTopicService();
+			_settingsManager.Setup(x => x.Current.IsClosingAgedTopics).Returns(true);
+			_topicRepo.Setup(x => x.CloseTopicsOlderThan(It.IsAny<DateTime>())).ReturnsAsync(new List<int>());
+
+			await service.CloseAgedTopics();
+
+			_topicRepo.Verify(x => x.CloseTopicsOlderThan(It.IsAny<DateTime>()), Times.Once);
+		}
+
+		[Fact]
+		public async Task CloseAgedTopicsLogsTopicModeration()
+		{
+			var service = GetTopicService();
+			_settingsManager.Setup(x => x.Current.IsClosingAgedTopics).Returns(true);
+			_topicRepo.Setup(x => x.CloseTopicsOlderThan(It.IsAny<DateTime>())).ReturnsAsync(new List<int>{1,2,3});
+
+			await service.CloseAgedTopics();
+
+			_topicRepo.Verify(x => x.CloseTopicsOlderThan(It.IsAny<DateTime>()), Times.Once);
+			_modService.Verify(x => x.LogTopic(ModerationType.TopicCloseAuto, 1), Times.Once);
+			_modService.Verify(x => x.LogTopic(ModerationType.TopicCloseAuto, 2), Times.Once);
+			_modService.Verify(x => x.LogTopic(ModerationType.TopicCloseAuto, 3), Times.Once);
+		}
 	}
 }

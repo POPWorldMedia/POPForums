@@ -30,6 +30,7 @@ namespace PopForums.Services
 		Task HardDeleteTopic(Topic topic, User user);
 		Task SetAnswer(User user, Topic topic, Post post, string userUrl, string topicUrl);
 		Task QueueTopicForIndexing(int topicID);
+		Task CloseAgedTopics();
 	}
 
 	public class TopicService : ITopicService
@@ -256,6 +257,16 @@ namespace PopForums.Services
 		public async Task QueueTopicForIndexing(int topicID)
 		{
 			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID });
+		}
+
+		public async Task CloseAgedTopics()
+		{
+			if (!_settingsManager.Current.IsClosingAgedTopics)
+				return;
+			var ageCutoff = DateTime.UtcNow.AddDays(-_settingsManager.Current.CloseAgedTopicsDays);
+			var list = await _topicRepository.CloseTopicsOlderThan(ageCutoff);
+			foreach (var id in list)
+				await _moderationLogService.LogTopic(ModerationType.TopicCloseAuto, id);
 		}
 	}
 }

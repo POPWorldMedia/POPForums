@@ -182,6 +182,21 @@
 					</div>
 				</div>
 			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4">
+					<div class="checkbox"><label for="CloseOldTopics"><input type="checkbox" v-model="settings.isClosingAgedTopics" id="CloseOldTopics" /> @PopForums.Resources.CloseOldTopics</label></div>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-sm-8 offset-sm-4 form-inline">
+					<div class="input-group col-sm-4">
+						<input type="text" v-model="settings.closeAgedTopicsDays" class="form-control" />
+						<div class="input-group-append">
+							<div class="input-group-text">@PopForums.Resources.Days</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<h3>@PopForums.Resources.Parsing</h3>
 
@@ -225,7 +240,8 @@
 					<select id="ServerTimeZone" v-model="settings.serverTimeZone" class="form-control">
 						@foreach (var i in timeZones)
 						{
-							<option value="@i.Key">@i.Value</option>}
+							<option value="@i.Key">@i.Value</option>
+}
 					</select>
 				</div>
 			</div>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using PopForums.Repositories;
 
 namespace PopForums.Configuration
@@ -53,7 +52,7 @@ namespace PopForums.Configuration
 				var property = settings.GetType().GetProperty(setting);
 				if (property == null)
 				{
-					_errorLog.Log(null, ErrorSeverity.Warning, String.Format("Settings repository returned a setting called {0}, which does not exist in code.", setting));
+					_errorLog.Log(null, ErrorSeverity.Warning, $"Settings repository returned a setting called {setting}, which does not exist in code.");
 				}
 				else
 				{
@@ -75,7 +74,7 @@ namespace PopForums.Configuration
 							property.SetValue(settings, Convert.ToDateTime(dictionary[setting]), null);
 							break;
 						default:
-							throw new Exception(String.Format("Settings loader not coded to convert values of type {0}.", property.PropertyType.FullName));
+							throw new Exception($"Settings loader not coded to convert values of type {property.PropertyType.FullName}.");
 					}
 				}
 			}
@@ -97,7 +96,7 @@ namespace PopForums.Configuration
 				var property = _settings.GetType().GetProperty(item.Key);
 				if (property == null)
 					continue;
-					//throw new Exception(String.Format("Tried to save a Settings property called \"{0}\", but it doesn't exist.", item.Key));
+				//throw new Exception(String.Format("Tried to save a Settings property called \"{0}\", but it doesn't exist.", item.Key));
 				var stringValue = Convert.ToString(item.Value);
 				switch (property.PropertyType.FullName)
 				{
@@ -118,7 +117,7 @@ namespace PopForums.Configuration
 						property.SetValue(_settings, Convert.ToDateTime(stringValue), null);
 						break;
 					default:
-						throw new Exception(String.Format("Settings save not coded to convert values of type {0}.", property.PropertyType.FullName));
+						throw new Exception($"Settings save not coded to convert values of type {property.PropertyType.FullName}.");
 				}
 			}
 			SaveCurrent();

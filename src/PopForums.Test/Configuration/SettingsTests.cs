@@ -111,16 +111,17 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Verify(s => s.Get(), Times.Once());
 		}
 
-		[Fact(Skip = "this is out of date")]
+		[Fact]
 		public void SaveCurrent()
 		{
 			const string tos = "blah blah blah";
 			const int timeZone = -8;
+			const bool serverDaylightSaving = false;
 			const bool isNewUserApproved = false;
 			const int topicsPerPage = 72;
 			const int postsPerPage = 42;
-			const int minimumSecondsBetweenPosts = 33;
 			const string title = "superawesome forum";
+			const int minimumSecondsBetweenPosts = 33;
 			const string smtpServer = "mail.?.com";
 			const int smtpPort = 69;
 			const string mailerAddress = "a@b.com";
@@ -129,7 +130,6 @@ namespace PopForums.Test.Configuration
 			const string smtpPassword = "jkl";
 			const int mailSendingInverval = 500;
 			const bool useSslSmtp = true;
-			const bool serverDaylightSaving = false;
 			const int sessionLength = 20;
 			const string censorWords = "shit";
 			const string censorCharacter = "x";
@@ -168,6 +168,8 @@ namespace PopForums.Test.Configuration
 			const string oAuth2LoginUrl = "ef";
 			const string oAuth2TokenUrl = "w";
 			const string oAuth2Scope = "email";
+			const bool isClosingAgedTopics = true;
+			const int closeAgedTopicsDays = 757;
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -220,10 +222,12 @@ namespace PopForums.Test.Configuration
 									{"UseOAuth2Login", useOAuth2Login},
 									{"OAuth2ClientID", oAuth2ClientID },
 									{"OAuth2ClientSecret", oAuth2ClientSecret },
-									{"OAuth2DisplayName", oAuth2DisplayName },
 									{"OAuth2LoginUrl", oAuth2LoginUrl },
 									{"OAuth2TokenUrl", oAuth2TokenUrl },
-									{"OAuth2Scope", oAuth2Scope }
+									{"OAuth2DisplayName", oAuth2DisplayName },
+									{"OAuth2Scope", oAuth2Scope },
+									{"IsClosingAgedTopics", isClosingAgedTopics},
+									{"CloseAgedTopicsDays", closeAgedTopicsDays}
 								 };
 
 			var settingsRepo = new Mock<ISettingsRepository>();
@@ -276,15 +280,19 @@ namespace PopForums.Test.Configuration
 			settings.UseMicrosoftLogin = useMicrosoftLogin;
 			settings.MicrosoftClientID = microsoftClientID;
 			settings.MicrosoftClientSecret = microsoftClientSecret;
+			settings.YouTubeHeight = youTubeHeight;
+			settings.YouTubeWidth = youTubeWidth;
 			settings.GoogleClientId = googleClientId;
 			settings.GoogleClientSecret = googleClientSecret;
 			settings.UseOAuth2Login = useOAuth2Login;
 			settings.OAuth2ClientID = oAuth2ClientID;
 			settings.OAuth2ClientSecret = oAuth2ClientSecret;
-			settings.OAuth2DisplayName = oAuth2DisplayName;
 			settings.OAuth2LoginUrl = oAuth2LoginUrl;
 			settings.OAuth2TokenUrl = oAuth2TokenUrl;
+			settings.OAuth2DisplayName = oAuth2DisplayName;
 			settings.OAuth2Scope = oAuth2Scope;
+			settings.IsClosingAgedTopics = isClosingAgedTopics;
+			settings.CloseAgedTopicsDays = closeAgedTopicsDays;
 			settingsManager.SaveCurrent();
 
 			settingsRepo.Verify(s => s.Save(dictionary), Times.Once());

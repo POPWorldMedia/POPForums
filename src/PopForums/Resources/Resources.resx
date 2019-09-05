@@ -1252,4 +1252,10 @@
   <data name="BotError" xml:space="preserve">
     <value>You might be a robot</value>
   </data>
+  <data name="CloseOldTopics" xml:space="preserve">
+    <value>Close old topics</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>days</value>
+  </data>
 </root>

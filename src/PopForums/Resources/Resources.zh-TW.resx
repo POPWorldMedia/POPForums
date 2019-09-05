@@ -1225,4 +1225,10 @@
   <data name="SearchError" xml:space="preserve">
     <value>有一个搜索错误</value>
   </data>
+  <data name="CloseOldTopics" xml:space="preserve">
+    <value>關閉舊主題</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>天</value>
+  </data>
 </root>
