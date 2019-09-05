@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
 using PopForums.Extensions;
+using PopForums.Messaging;
 using PopForums.Services;
 using PopForums.Sql;
 
@@ -22,6 +23,7 @@ namespace PopForums.AzureKit.Functions
 			services.AddPopForumsBase();
 			services.AddPopForumsSql();
 			services.AddPopForumsAzureFunctionsAndQueues();
+			services.AddTransient<IBroker, BrokerSink>();
 
 			var serviceProvider = services.BuildServiceProvider();
 			var topicService = serviceProvider.GetService<ITopicService>();
