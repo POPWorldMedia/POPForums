@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -48,7 +49,12 @@ namespace PopForums.Sql.Repositories
 		public virtual async Task DeleteAllIndexedWordsForTopic(int topicID)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-				connection.ExecuteAsync("DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID", new { TopicID = topicID }));
+			{
+				var command = new SqlCommand("DELETE FROM pf_TopicSearchWords WHERE TopicID = @TopicID", (SqlConnection)connection);
+				command.CommandTimeout = 120;
+				command.Parameters.Add(new SqlParameter("TopicID", topicID));
+				return command.ExecuteNonQueryAsync();
+			});
 		}
 
 		public virtual async Task SaveSearchWord(int topicID, string word, int rank)
