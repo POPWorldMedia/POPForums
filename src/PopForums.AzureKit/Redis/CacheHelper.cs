@@ -19,11 +19,11 @@ namespace PopForums.AzureKit.Redis
 		private static object _syncroot = new Object();
 		private const string _removeChannel = "pf.cache.remove";
 
-	    public CacheHelper(IErrorLog errorLog, ITenantService tenantService)
+	    public CacheHelper(IErrorLog errorLog, ITenantService tenantService, IConfig config)
 	    {
 		    _errorLog = errorLog;
 		    _tenantService = tenantService;
-		    _config = new Config();
+		    _config = config;
 			// Redis cache
 		    if (_cacheConnection == null)
 		    {
