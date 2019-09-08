@@ -6,7 +6,8 @@ var gulp = require("gulp"),
 	cssmin = require("gulp-cssmin"),
 	uglify = require("gulp-uglify"),
 	sourcemaps = require("gulp-sourcemaps"),
-	rename = require("gulp-rename");
+	rename = require("gulp-rename"),
+	bump = require("gulp-bump");
 
 var nodeRoot = "./node_modules/";
 var targetPath = "./wwwroot/lib/";
@@ -43,6 +44,12 @@ gulp.task("css", function () {
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
-gulp.task("min", gulp.series(["copies","js","css"]));
+gulp.task("bump", function () {
+	return gulp.src("./wwwroot/lib/PopForums/package.json")
+		.pipe(bump({ type: "prerelease" }))
+		.pipe(gulp.dest("./wwwroot/lib/PopForums/"));
+});
+
+gulp.task("min", gulp.series(["copies","js","css", "bump"]));
 
 gulp.task("default", gulp.series("min"));

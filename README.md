@@ -19,8 +19,9 @@ https://github.com/POPWorldMedia/POPForums/releases/tag/v15.0.3
 For the latest information and documentation, and how to get started, check the wiki:
 https://github.com/POPWorldMedia/POPForums/wiki
 
-The latest CI build packages can be found on MyGet:
-https://www.myget.org/feed/Packages/popforums
+The latest CI build packages can be found with these feeds on MyGet:
+https://www.myget.org/F/popforums/api/v3/index.json
+https://www.myget.org/F/popforums/npm/
 
 ## Prerequisites:
 * .NET Core v2.2.
