@@ -246,7 +246,10 @@ PopForums.loadFeed = function () {
 		list.prepend(row);
 		row.fadeIn();
 	});
-	connection.start();
+	connection.start()
+		.then(function () {
+			return connection.invoke("listenToAll");
+		});
 	PopForums.startTimeUpdater();
 };
 
@@ -639,7 +642,10 @@ PopForums.homeSetup = function () {
 	connection.on("notifyForumUpdate", function (data) {
 		PopForums.updateForumStats(data);
 	});
-	connection.start();
+	connection.start()
+		.then(function () {
+			return connection.invoke("listenToAll");
+		});
 	PopForums.startTimeUpdater();
 };
 
