@@ -8,10 +8,7 @@ namespace PopForums.Configuration
 	{
 		Settings Current { get; }
 		void SaveCurrent();
-		void FlushCurrent();
 		void Save(Settings settings);
-		void SaveCurrent(Dictionary<string, object> dictionary);
-		bool IsLoaded();
 	}
 
 	public class SettingsManager : ISettingsManager
@@ -24,9 +21,9 @@ namespace PopForums.Configuration
 
 		private readonly ISettingsRepository _settingsRepository;
 		private readonly IErrorLog _errorLog;
-		private static Settings _settings;
 		private static DateTime _lastLoad;
 		private static readonly object SyncRoot = new object();
+		private Settings _settings;
 
 		public Settings Current
 		{
@@ -36,11 +33,6 @@ namespace PopForums.Configuration
 					LoadSettings();
 				return _settings;
 			}
-		}
-
-		public bool IsLoaded()
-		{
-			return _settings != null;
 		}
 
 		private void LoadSettings()
@@ -88,41 +80,6 @@ namespace PopForums.Configuration
 			SaveCurrent();
 		}
 
-		public void SaveCurrent(Dictionary<string, object> dictionary)
-		{
-			LoadSettings();
-			foreach (var item in dictionary)
-			{
-				var property = _settings.GetType().GetProperty(item.Key);
-				if (property == null)
-					continue;
-				//throw new Exception(String.Format("Tried to save a Settings property called \"{0}\", but it doesn't exist.", item.Key));
-				var stringValue = Convert.ToString(item.Value);
-				switch (property.PropertyType.FullName)
-				{
-					case "System.Boolean":
-						var state = stringValue.Contains("true"); // hack to handle double values in MVC checkbox controls
-						property.SetValue(_settings, Convert.ToBoolean(state), null);
-						break;
-					case "System.String":
-						property.SetValue(_settings, stringValue, null);
-						break;
-					case "System.Int32":
-						property.SetValue(_settings, Convert.ToInt32(stringValue), null);
-						break;
-					case "System.Double":
-						property.SetValue(_settings, Convert.ToDouble(stringValue), null);
-						break;
-					case "System.DateTime":
-						property.SetValue(_settings, Convert.ToDateTime(stringValue), null);
-						break;
-					default:
-						throw new Exception($"Settings save not coded to convert values of type {property.PropertyType.FullName}.");
-				}
-			}
-			SaveCurrent();
-		}
-
 		public void SaveCurrent()
 		{
 			var dictionary = new Dictionary<string, object>();
@@ -135,11 +92,6 @@ namespace PopForums.Configuration
 				}
 				_settingsRepository.Save(dictionary);
 			}
-		}
-
-		public void FlushCurrent()
-		{
-			_settings = null;
 		}
 	}
 }

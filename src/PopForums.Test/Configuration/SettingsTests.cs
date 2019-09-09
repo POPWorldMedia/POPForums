@@ -16,7 +16,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 
@@ -50,7 +49,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.Get()).Returns(dictionary);
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 
@@ -70,7 +68,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 			var settings2 = settingsManager.Current;
@@ -89,7 +86,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.IsStale(It.IsAny<DateTime>())).Returns(true);
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 			settings = settingsManager.Current;
@@ -104,7 +100,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.IsStale(It.IsAny<DateTime>())).Returns(false);
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 			settings = settingsManager.Current;
@@ -234,7 +229,6 @@ namespace PopForums.Test.Configuration
 			settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
 			var errorLog = new Mock<IErrorLog>();
 			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-			settingsManager.FlushCurrent();
 
 			var settings = settingsManager.Current;
 			settings.TermsOfService = tos;
@@ -296,128 +290,6 @@ namespace PopForums.Test.Configuration
 			settingsManager.SaveCurrent();
 
 			settingsRepo.Verify(s => s.Save(dictionary), Times.Once());
-		}
-
-		[Fact]
-		public void SaveCurrentFromDictionary()
-		{
-			const string tos = "blah blah blah";
-			const int timeZone = -8;
-			const bool isNewUserApproved = false;
-			const int topicsPerPage = 72;
-			const int postsPerPage = 42;
-			const int minimumSecondsBetweenPosts = 33;
-			const string title = "superawesome forum";
-			const string smtpServer = "mail.?.com";
-			const int smtpPort = 69;
-			const string mailerAddress = "a@b.com";
-			const bool useEsmtp = true;
-			const string smtpUser = "b@c.com";
-			const string smtpPassword = "jkl";
-			const int mailSendingInverval = 500;
-			const bool useSslSmtp = true;
-			const bool serverDaylightSaving = false;
-			const int sessionLength = 20;
-			const string censorWords = "shit";
-			const string censorCharacter = "x";
-			const bool allowImages = true;
-			const bool logSecurity = false;
-			const bool logModeration = false;
-			const bool logErrors = false;
-			const bool isNewUserImageApproved = true;
-			const int searchIndexingInterval = 768;
-			const bool isSearchIndexingEnabled = false;
-			const bool isMailerEnabled = false;
-			const int userImageMaxHeight = 999;
-			const int userImageMaxWidth = 888;
-			const int userImageMaxkBytes = 77;
-			const int userAvatarMaxHeight = 665;
-			const int userAvatarMaxWidth = 554;
-			const int userAvatarMaxkBytes = 33;
-			const string mailSignature = "this is the sig";
-			const bool useGoogleLogin = true;
-			const bool useFacebookLogin = true;
-			const string facebookAppID = "oiwoeighw";
-			const string facebookAppSecret = "oiwhwohgcgr";
-			const bool useMicrosoftLogin = true;
-			const string microsoftClientID = "hhvcwefwege";
-			const string microsoftClientSecret = "oiwhgoigrccaa";
-			const int youTubeHeight = 360;
-			const int youTubeWidth = 640;
-			const bool useOAuth2Login = true;
-			const string oAuth2ClientID = "efew";
-			const string oAuth2ClientSecret = "cons";
-			const string oAuth2LoginUrl ="ef";
-			const string oAuth2TokenUrl = "w";
-			const string oAuth2DisplayName = "we3t";
-			const string oAuth2Scope = "email";
-			var dictionary = new Dictionary<string, object>
-			                 	{
-			                 		{"TermsOfService", tos},
-									{"ServerTimeZone", timeZone},
-									{"ServerDaylightSaving", serverDaylightSaving},
-									{"IsNewUserApproved", isNewUserApproved},
-									{"TopicsPerPage", topicsPerPage},
-									{"PostsPerPage", postsPerPage},
-									{"ForumTitle", title},
-									{"MinimumSecondsBetweenPosts", minimumSecondsBetweenPosts},
-									{"SmtpServer", smtpServer},
-									{"SmtpPort", smtpPort},
-									{"MailerAddress", mailerAddress},
-									{"UseEsmtp", useEsmtp},
-									{"SmtpUser", smtpUser},
-									{"SmtpPassword", smtpPassword},
-									{"MailSendingInverval", mailSendingInverval},
-									{"UseSslSmtp", useSslSmtp},
-									{"SessionLength", sessionLength},
-									{"CensorWords", censorWords},
-									{"CensorCharacter", censorCharacter},
-									{"AllowImages", allowImages},
-									{"LogSecurity", logSecurity},
-									{"LogModeration", logModeration},
-									{"LogErrors", logErrors},
-									{"IsNewUserImageApproved", isNewUserImageApproved},
-									{"SearchIndexingInterval", searchIndexingInterval},
-									{"IsSearchIndexingEnabled", isSearchIndexingEnabled},
-									{"IsMailerEnabled", isMailerEnabled},
-									{"UserImageMaxHeight", userImageMaxHeight},
-									{"UserImageMaxWidth", userImageMaxWidth},
-									{"UserImageMaxkBytes", userImageMaxkBytes},
-									{"UserAvatarMaxHeight", userAvatarMaxHeight},
-									{"UserAvatarMaxWidth", userAvatarMaxWidth},
-									{"UserAvatarMaxkBytes", userAvatarMaxkBytes},
-									{"MailSignature", mailSignature},
-									{"UseGoogleLogin", useGoogleLogin},
-									{"UseFacebookLogin", useFacebookLogin},
-									{"FacebookAppID", facebookAppID},
-									{"FacebookAppSecret", facebookAppSecret},
-									{"UseMicrosoftLogin", useMicrosoftLogin},
-									{"MicrosoftClientID", microsoftClientID},
-									{"MicrosoftClientSecret", microsoftClientSecret},
-									{"YouTubeHeight", youTubeHeight},
-									{"YouTubeWidth", youTubeWidth},
-									{"UseOAuth2Login", useOAuth2Login},
-									{"OAuth2ClientID", oAuth2ClientID },
-									{"OAuth2ClientSecret", oAuth2ClientSecret },
-									{"OAuth2DisplayName", oAuth2DisplayName },
-									{"OAuth2TokenUrl", oAuth2TokenUrl },
-									{"OAuth2LoginUrl", oAuth2LoginUrl },
-									{"OAuth2Scope", oAuth2Scope }
-								 };
-
-			var settingsRepo = new Mock<ISettingsRepository>();
-			settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-			var errorLog = new Mock<IErrorLog>();
-			var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
-
-			settingsManager.SaveCurrent(dictionary);
-			Assert.Equal(tos, settingsManager.Current.TermsOfService);
-			Assert.Equal(timeZone, settingsManager.Current.ServerTimeZone);
-			Assert.Equal(isNewUserApproved, settingsManager.Current.IsNewUserApproved);
-			Assert.Equal(topicsPerPage, settingsManager.Current.TopicsPerPage);
-			Assert.Equal(postsPerPage, settingsManager.Current.PostsPerPage);
-
-			settingsRepo.Verify(s => s.Save(It.IsAny<Dictionary<string, object>>()), Times.Once());
 		}
 	}
 }
