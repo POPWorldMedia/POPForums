@@ -16,8 +16,8 @@ namespace PopForums.AzureKit.Redis
 	    private static ConnectionMultiplexer _cacheConnection;
 	    private static ConnectionMultiplexer _messageConnection;
 		private static IMemoryCache _cache;
-		private static object _syncroot = new Object();
-		private const string _removeChannel = "pf.cache.remove";
+		private static readonly object SyncRoot = new object();
+		private const string RemoveChannel = "pf.cache.remove";
 
 	    public CacheHelper(IErrorLog errorLog, ITenantService tenantService, IConfig config)
 	    {
@@ -27,7 +27,7 @@ namespace PopForums.AzureKit.Redis
 			// Redis cache
 		    if (_cacheConnection == null)
 		    {
-			    lock (_syncroot)
+			    lock (SyncRoot)
 			    {
 				    if (_cacheConnection == null)
 						_cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
@@ -39,11 +39,11 @@ namespace PopForums.AzureKit.Redis
 			// Redis messaging to invalidate local cache entries
 			if (_messageConnection == null)
 		    {
-			    lock (_syncroot)
+			    lock (SyncRoot)
 			    {
 				    _messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
 				    var db = _messageConnection.GetSubscriber();
-				    db.Subscribe(_removeChannel, (channel, value) =>
+				    db.Subscribe(RemoveChannel, (channel, value) =>
 				    {
 					    if (_cache == null)
 						    return;
@@ -56,12 +56,12 @@ namespace PopForums.AzureKit.Redis
 	    private string PrefixTenantOnKey(string key)
 	    {
 		    var tenantID = _tenantService.GetTenant();
-		    return tenantID + key;
+		    return $"{tenantID}:{key}";
 	    }
 
 	    private static void SetupLocalCache()
 	    {
-		    lock (_syncroot)
+		    lock (SyncRoot)
 		    {
 			    var options = new MemoryCacheOptions();
 			    _cache = new MemoryCache(options);
@@ -131,7 +131,7 @@ namespace PopForums.AzureKit.Redis
 				var db = _cacheConnection.GetDatabase();
 				db.KeyDelete(key);
 				var bus = _messageConnection.GetDatabase();
-				bus.Publish(_removeChannel, key, CommandFlags.FireAndForget);
+				bus.Publish(RemoveChannel, key, CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
 			{
@@ -149,8 +149,8 @@ namespace PopForums.AzureKit.Redis
 			{
 				var db = _cacheConnection.GetDatabase();
 				var result = db.StringGet(key);
-				if (String.IsNullOrEmpty(result))
-					return default(T);
+				if (string.IsNullOrEmpty(result))
+					return default;
 				var deserialized = JsonConvert.DeserializeObject<T>(result);
 				var timeSpan = TimeSpan.FromSeconds(_config.CacheSeconds);
 				var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
@@ -160,15 +160,14 @@ namespace PopForums.AzureKit.Redis
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				return default(T);
+				return default;
 			}
 		}
 
 	    public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
 		{
 			rootKey = PrefixTenantOnKey(rootKey);
-			Dictionary<int, List<T>> rootPages;
-			_cache.TryGetValue(rootKey, out rootPages);
+			_cache.TryGetValue(rootKey, out Dictionary<int, List<T>> rootPages);
 			if (rootPages == null)
 				return null;
 			if (rootPages.ContainsKey(page))
