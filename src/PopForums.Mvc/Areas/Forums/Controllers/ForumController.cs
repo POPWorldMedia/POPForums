@@ -375,7 +375,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(id);
 			if (post == null || (post.IsDeleted && (user == null || !user.IsInRole(PermanentRoles.Moderator))))
 				return NotFound();
-			var (page, topic) = await _postService.GetTopicPageForPost(post, includeDeleted);
+			var (pageNumber, topic) = await _postService.GetTopicPageForPost(post, includeDeleted);
 			var forum = await _forumService.Get(topic.ForumID);
 			var adapter = new ForumAdapterFactory(forum);
 			if (adapter.IsAdapterEnabled)
@@ -384,7 +384,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (result != null)
 					return result;
 			}
-			var url = Url.Action("Topic", new { id = topic.UrlName, page }) + "#" + post.PostID;
+			var url = Url.Action("Topic", new { id = topic.UrlName, pageNumber }) + "#" + post.PostID;
 			return Redirect(url);
 		}
 
@@ -400,8 +400,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (user == null)
 				return RedirectToAction("Topic", new { id = topic.UrlName });
 			var post = await _lastReadService.GetFirstUnreadPost(user, topic);
-			var (page, t) = await _postService.GetTopicPageForPost(post, includeDeleted);
-			var url = Url.Action("Topic", new { id = topic.UrlName, page }) + "#" + post.PostID;
+			var (pageNumber, t) = await _postService.GetTopicPageForPost(post, includeDeleted);
+			var url = Url.Action("Topic", new { id = topic.UrlName, pageNumber }) + "#" + post.PostID;
 			return Redirect(url);
 		}
 
