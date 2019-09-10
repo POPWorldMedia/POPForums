@@ -4,7 +4,7 @@
 {
 	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
 	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
-	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
 	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 }
 else
@@ -13,8 +13,8 @@ else
 		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.User.Name</a>
 		<div class="dropdown-menu" role="menu">
 			<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@Model.User.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
-			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-page="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
-			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-page="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
+			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
+			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
 			<div class="dropdown-divider"></div>
 			<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
 			<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
@@ -32,7 +32,7 @@ else
 	<li class="nav-item dropdown">
 		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum</a>
 		<div class="dropdown-menu" role="menu">
-			<a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Recent</a>
+			<a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Recent</a>
 			<a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ActivityFeed</a>
 			<a asp-controller="@HomeController.Name" asp-action="Index" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ForumHome</a>
 		</div>

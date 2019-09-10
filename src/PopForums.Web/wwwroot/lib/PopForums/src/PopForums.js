@@ -361,7 +361,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		var id = topicID;
 		var postStream = $("#PostStream");
 		var button = $(this).detach();
-		$.get(PopForums.areaPath + "/Forum/TopicPage/" + id + "?page=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage, function (result) {
+		$.get(PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage, function (result) {
 			var stuff = $(result);
 			var links = stuff.find(".pagerLinks").detach();
 			postStream.prepend(stuff);
@@ -518,7 +518,7 @@ PopForums.LoadMorePosts = function (topicID, clickedButton) {
 	var id = topicID;
 	var postStream = $("#PostStream");
 	var button = $(clickedButton).detach();
-	$.get(PopForums.areaPath + "/Forum/TopicPage/" + id + "?page=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage, function (result) {
+	$.get(PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage, function (result) {
 		var stuff = $(result);
 		var links = stuff.find(".pagerLinks").detach();
 		var newLastPostID = stuff.find(".lastPostID").detach();

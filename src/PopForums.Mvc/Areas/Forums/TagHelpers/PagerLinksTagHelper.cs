@@ -61,7 +61,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 			{
 				// first page link
 				builder.Append("<li class=\"page-item\">");
-				var firstRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = 1 });
+				var firstRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, pageNumber = 1 });
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						firstRouteDictionary.Add(item.Key, item.Value);
@@ -76,7 +76,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					if (Low != 0)
 						previousIndex = Low - 1;
 					builder.Append("<li class=\"page-item\">");
-					var previousRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = previousIndex });
+					var previousRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, pageNumber = previousIndex });
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							previousRouteDictionary.Add(item.Key, item.Value);
@@ -108,7 +108,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					else
 					{
 						builder.Append("<li>");
-						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
+						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "pageNumber", x } };
 						if (RouteParameters != null)
 							foreach (var item in RouteParameters)
 								numericRouteDictionary.Add(item.Key, item.Value);
@@ -145,7 +145,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					else
 					{
 						builder.Append("<li class=\"page-item\">");
-						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "page", x } };
+						var numericRouteDictionary = new RouteValueDictionary { { "controller", ControllerName }, { "action", ActionName }, { "pageNumber", x } };
 						if (RouteParameters != null)
 							foreach (var item in RouteParameters)
 								numericRouteDictionary.Add(item.Key, item.Value);
@@ -163,7 +163,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 					// next page link
 					var nextIndex = PagerContext.PageIndex + 1;
 					builder.Append("<li class=\"page-item\">");
-					var nextRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = nextIndex });
+					var nextRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, pageNumber = nextIndex });
 					if (RouteParameters != null)
 						foreach (var item in RouteParameters)
 							nextRouteDictionary.Add(item.Key, item.Value);
@@ -173,7 +173,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				}
 				// last page link
 				builder.Append("<li class=\"page-item\">");
-				var lastRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, page = PagerContext.PageCount });
+				var lastRouteDictionary = new RouteValueDictionary(new { controller = ControllerName, action = ActionName, pageNumber = PagerContext.PageCount });
 				if (RouteParameters != null)
 					foreach (var item in RouteParameters)
 						lastRouteDictionary.Add(item.Key, item.Value);

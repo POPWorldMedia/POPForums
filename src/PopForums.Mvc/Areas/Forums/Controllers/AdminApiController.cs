@@ -583,10 +583,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		// ********** error log
 
-		[HttpGet("/Forums/AdminApi/GetErrorLog/{page}")]
-		public ActionResult<PagedList<ErrorLogEntry>> GetErrorLog(int page)
+		[HttpGet("/Forums/AdminApi/GetErrorLog/{pageNumber}")]
+		public ActionResult<PagedList<ErrorLogEntry>> GetErrorLog(int pageNumber)
 		{
-			var list = _errorLog.GetErrors(page, 20);
+			var list = _errorLog.GetErrors(pageNumber, 20);
 			return list;
 		}
 

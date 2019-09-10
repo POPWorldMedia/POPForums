@@ -29,21 +29,21 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 
 			routes.MapRoute(
 				"pfrecent",
-				"Forums/Recent/{page?}",
-				new { controller = ForumController.Name, action = "Recent", page = 1, Area = "Forums" }
+				"Forums/Recent/{pageNumber?}",
+				new { controller = ForumController.Name, action = "Recent", pageNumber = 1, Area = "Forums" }
 				);
 			var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
 			var forumConstraint = new ForumRouteConstraint(forumRepository);
 			routes.MapRoute(
 				"pfroot",
-				"Forums/{urlName}/{page?}",
-				new { controller = ForumController.Name, action = "Index", page = 1, Area = "Forums" },
+				"Forums/{urlName}/{pageNumber?}",
+				new { controller = ForumController.Name, action = "Index", pageNumber = 1, Area = "Forums" },
 				new { forum = forumConstraint }
 				);
 			routes.MapRoute(
 				"pftopic",
-				"Forums/Topic/{id}/{page?}",
-				new { controller = ForumController.Name, action = "Topic", page = 1, Area = "Forums" }
+				"Forums/Topic/{id}/{pageNumber?}",
+				new { controller = ForumController.Name, action = "Topic", pageNumber = 1, Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pflink",
@@ -52,28 +52,23 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				);
 			routes.MapRoute(
 				"pfsubtopics",
-				"Forums/Subscription/Topics/{page?}",
-				new { controller = SubscriptionController.Name, action = "Topics", page = 1, Area = "Forums" }
+				"Forums/Subscription/Topics/{pageNumber?}",
+				new { controller = SubscriptionController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pffavetopics",
-				"Forums/Favorites/Topics/{page?}",
-				new { controller = FavoritesController.Name, action = "Topics", page = 1, Area = "Forums" }
+				"Forums/Favorites/Topics/{pageNumber?}",
+				new { controller = FavoritesController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
 				);
 			routes.MapRoute(
-				"pfpagedudertopics",
-				"Forums/Account/Posts/{id}/{page?}",
-				new { controller = AccountController.Name, action = "Posts", page = 1, Area = "Forums" }
+				"pfpagedusertopics",
+				"Forums/Account/Posts/{id}/{pageNumber?}",
+				new { controller = AccountController.Name, action = "Posts", pageNumber = 1, Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pftopicunsub",
 				"Forums/Subscription/Unsubscribe/{topicID}/{authKey}",
 				new { controller = SubscriptionController.Name, action = "Unsubscribe", Area = "Forums" }
-				);
-			routes.MapRoute(
-				"pfpagedadmin",
-				"Forums/Admin/ErrorLog/{page?}",
-				new { controller = AdminController.Name, action = "ErrorLog", Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pfadmin",

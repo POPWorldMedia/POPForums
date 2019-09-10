@@ -49,7 +49,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IPostMasterService _postMasterService;
 		private readonly IForumPermissionService _forumPermissionService;
 
-		public async Task<ActionResult> Index(string urlName, int page = 1)
+		public async Task<ActionResult> Index(string urlName, int pageNumber = 1)
 		{
 			if (string.IsNullOrWhiteSpace(urlName))
 				return NotFound();
@@ -63,7 +63,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return StatusCode(403);
 			}
 
-			var (topics, pagerContext) = await _topicService.GetTopics(forum, permissionContext.UserCanModerate, page);
+			var (topics, pagerContext) = await _topicService.GetTopics(forum, permissionContext.UserCanModerate, pageNumber);
 			var container = new ForumTopicContainer { Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext };
 			await _lastReadService.GetTopicReadStatus(user, container);
 			var adapter = new ForumAdapterFactory(forum);
@@ -143,7 +143,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToActionPermanent("Topic", new { id = topic.UrlName });
 		}
 
-		public async Task<ActionResult> Topic(string id, int page = 1)
+		public async Task<ActionResult> Topic(string id, int pageNumber = 1)
 		{
 			var topic = await _topicService.Get(id);
 			if (topic == null)
@@ -192,7 +192,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum.IsQAForum)
 				posts = await _postService.GetPosts(topic, permissionContext.UserCanModerate);
 			else
-				(posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
+				(posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, pageNumber);
 			if (posts.Count == 0)
 				return NotFound();
 			var signatures = await _profileService.GetSignatures(posts);
@@ -216,7 +216,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(container);
 		}
 
-		public async Task<ActionResult> TopicPage(int id, int page, int low, int high)
+		public async Task<ActionResult> TopicPage(int id, int pageNumber, int low, int high)
 		{
 			var topic = await _topicService.Get(id);
 			if (topic == null)
@@ -238,7 +238,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
 			}
 
-			var (posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, page);
+			var (posts, pagerContext) = await _postService.GetPosts(topic, permissionContext.UserCanModerate, pageNumber);
 			if (posts.Count == 0)
 				return NotFound();
 			var signatures = await _profileService.GetSignatures(posts);
@@ -330,14 +330,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
 		}
 		
-		public async Task<ViewResult> Recent(int page = 1)
+		public async Task<ViewResult> Recent(int pageNumber = 1)
 		{
 			var includeDeleted = false;
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
-			var (topics, pagerContext) = await _forumService.GetRecentTopics(user, includeDeleted, page);
+			var (topics, pagerContext) = await _forumService.GetRecentTopics(user, includeDeleted, pageNumber);
 			var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
 			await _lastReadService.GetTopicReadStatus(user, container);
 			return View(container);

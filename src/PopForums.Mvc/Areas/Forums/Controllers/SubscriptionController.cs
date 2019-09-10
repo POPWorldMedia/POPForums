@@ -29,12 +29,12 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IForumService _forumService;
 	    private readonly IUserRetrievalShim _userRetrievalShim;
 
-	    public async Task<ViewResult> Topics(int page = 1)
+	    public async Task<ViewResult> Topics(int pageNumber = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return View();
-			var (topics, pagerContext) = await _subService.GetTopics(user, page);
+			var (topics, pagerContext) = await _subService.GetTopics(user, pageNumber);
 			var titles = _forumService.GetAllForumTitles();
 			var container = new PagedTopicContainer { PagerContext = pagerContext, Topics = topics, ForumTitles = titles };
 			await _lastReadService.GetTopicReadStatus(user, container);
