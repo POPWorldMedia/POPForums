@@ -20,14 +20,14 @@
 <div>
 	<h1>@Model.Topic.Title</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
 		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-pageNumber="">@Model.Forum.Title</a></li>
 	</ul>
 	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-page="">@PopForums.Resources.Recent</a></li>
+		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
 		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-page="">@Model.Forum.Title</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-pageNumber="">@Model.Forum.Title</a></li>
 		<li class="breadcrumb-item active">@Model.Topic.Title</li>
 	</ul>
 </div>

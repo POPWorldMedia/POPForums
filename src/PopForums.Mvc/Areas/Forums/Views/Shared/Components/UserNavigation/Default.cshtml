@@ -38,6 +38,6 @@ else
 		</div>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-page="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> @Html.Raw(Model.PMCount)</a>
+		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> @Html.Raw(Model.PMCount)</a>
 	</li>
 }
