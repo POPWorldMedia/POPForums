@@ -25,22 +25,22 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public static string Name = "PrivateMessages";
 
-		public async Task<ActionResult> Index(int page = 1)
+		public async Task<ActionResult> Index(int pageNumber = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, page);
+			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, pageNumber);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
 
-		public async Task<ActionResult> Archive(int page = 1)
+		public async Task<ActionResult> Archive(int pageNumber = 1)
 		{
 			var user = _userRetrievalShim.GetUser(HttpContext);
 			if (user == null)
 				return StatusCode(403);
-			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, page);
+			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, pageNumber);
 			ViewBag.PagerContext = pagerContext;
 			return View(privateMessages);
 		}
