@@ -9,8 +9,6 @@ namespace PopForums.Models
 		public DateTime CreationDate { get; set; }
 		public string Name { get; set; }
 		public string Email { get; set; }
-		public DateTime LastActivityDate { get; set; }
-		public DateTime LastLoginDate { get; set; }
 		public Guid AuthorizationKey { get; set; }
 		public bool IsApproved { get; set; }
 		public List<string> Roles { get; set; }

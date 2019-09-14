@@ -27,7 +27,7 @@ namespace PopForums.Sql.Repositories
 			public const string PointTotals = "PopForums.Users.Points.";
 		}
 
-		public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.LastActivityDate, pf_PopForumsUser.LastLoginDate, pf_PopForumsUser.AuthorizationKey";
+		public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey";
 
 		public async Task SetHashedPassword(User user, string hashedPassword, Guid salt)
 		{
@@ -109,20 +109,22 @@ namespace PopForums.Sql.Repositories
 		{
 			Task<int> userID = null;
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-				userID = connection.QuerySingleAsync<int>("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, LastActivityDate, LastLoginDate, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @LastActivityDate, @LastLoginDate, @AuthorizationKey, @Password, @Salt);SELECT CAST(SCOPE_IDENTITY() as int)", new { Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey, Password = hashedPassword, Salt = salt }));
-			return new User {UserID = await userID, Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, LastActivityDate = creationDate, LastLoginDate = creationDate, AuthorizationKey = authorizationKey};
+				userID = connection.QuerySingleAsync<int>("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @AuthorizationKey, @Password, @Salt);SELECT CAST(SCOPE_IDENTITY() as int)", new { Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, AuthorizationKey = authorizationKey, Password = hashedPassword, Salt = salt }));
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				connection.ExecuteAsync("INSERT INTO pf_UserActivity (UserID, LastActivityDate, LastLoginDate) VALUES (@UserID, @LastActivityDate, @LastLoginDate)", new {UserID = userID, LastActivityDate = creationDate, LastLoginDate = creationDate}));
+			return new User {UserID = await userID, Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, AuthorizationKey = authorizationKey};
 		}
 
 		public async Task UpdateLastActivityDate(User user, DateTime newDate)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET LastActivityDate = @LastActivityDate WHERE UserID = @UserID", new { LastActivityDate = newDate, user.UserID }));
+				connection.ExecuteAsync("UPDATE pf_UserActivity SET LastActivityDate = @LastActivityDate WHERE UserID = @UserID", new { LastActivityDate = newDate, user.UserID }));
 		}
 
 		public async Task UpdateLastLoginDate(User user, DateTime newDate)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET LastLoginDate = @LastLoginDate WHERE UserID = @UserID", new { LastLoginDate = newDate, user.UserID }));
+				connection.ExecuteAsync("UPDATE pf_UserActivity SET LastLoginDate = @LastLoginDate WHERE UserID = @UserID", new { LastLoginDate = newDate, user.UserID }));
 		}
 
 		public async Task ChangeName(User user, string newName)

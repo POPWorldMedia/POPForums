@@ -51,6 +51,20 @@ ON DELETE CASCADE
 ALTER TABLE [dbo].[pf_Profile] CHECK CONSTRAINT [FK_pf_Profile_pf_PopForumsUser]
 
 
+-- ******************************************************** pf_UserActivity
+
+CREATE TABLE [dbo].[pf_UserActivity](
+	[UserID] [int] NOT NULL PRIMARY KEY CLUSTERED,
+	[LastActivityDate] [datetime] NOT NULL,
+	[LastLoginDate] [datetime] NOT NULL
+)
+
+ALTER TABLE [dbo].[pf_UserActivity]  WITH CHECK ADD  CONSTRAINT [FK_pf_UserActivity_pf_PopForumsUser] FOREIGN KEY([UserID])
+REFERENCES [dbo].[pf_PopForumsUser] ([UserID])
+
+ALTER TABLE [dbo].[pf_UserActivity] CHECK CONSTRAINT [FK_pf_UserActivity_pf_PopForumsUser]
+
+
 
 
 

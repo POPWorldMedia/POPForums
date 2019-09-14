@@ -42,7 +42,7 @@ namespace PopForums.Test.Services
 
 		private static User GetUser()
 		{
-			return new User { UserID = 123, Name = "Name", Email = "Email", IsApproved = true, LastActivityDate = DateTime.MaxValue, LastLoginDate = DateTime.MaxValue, AuthorizationKey = Guid.NewGuid(), Roles = new List<string>()};
+			return new User { UserID = 123, Name = "Name", Email = "Email", IsApproved = true, AuthorizationKey = Guid.NewGuid(), Roles = new List<string>()};
 		}
 
 		[Fact]

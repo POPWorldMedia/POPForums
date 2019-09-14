@@ -248,8 +248,7 @@ namespace PopForums.Test.Services
 
 		public static User GetDummyUser(string name, string email)
 		{
-			var almostNow = DateTime.UtcNow.AddDays(-1);
-			return new User { UserID = 1, Name = name, Email = email, IsApproved = true, LastActivityDate = almostNow, LastLoginDate = almostNow, AuthorizationKey = new Guid()};
+			return new User { UserID = 1, Name = name, Email = email, IsApproved = true, AuthorizationKey = new Guid()};
 		}
 
 		[Fact]
@@ -420,10 +419,8 @@ namespace PopForums.Test.Services
 		{
 			var userManager = GetMockedUserService();
 			var user = UserTest.GetTestUser();
-			var oldActivityDate = user.LastActivityDate;
-			await userManager.UpdateLastActicityDate(user);
+			await userManager.UpdateLastActivityDate(user);
 			_mockUserRepo.Verify(r => r.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
-			Assert.NotEqual(oldActivityDate, user.LastActivityDate);
 		}
 
 		[Fact]

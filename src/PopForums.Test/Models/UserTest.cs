@@ -22,10 +22,8 @@ namespace PopForums.Test.Models
 			const string email = "a@b.com";
 			var createDate = DateTime.UtcNow;
 			const bool approved = true;
-			var lastActivity = DateTime.UtcNow.AddDays(-1);
-			var lastLogin = DateTime.UtcNow.AddDays(-2);
 			var authKey = Guid.NewGuid();
-			return new User { UserID = userID, Name = name, Email = email, CreationDate = createDate, IsApproved = approved, LastActivityDate = lastActivity, LastLoginDate = lastLogin, AuthorizationKey = authKey, Roles = new List<string>() };
+			return new User { UserID = userID, Name = name, Email = email, CreationDate = createDate, IsApproved = approved, AuthorizationKey = authKey, Roles = new List<string>() };
 		}
 	}
 }

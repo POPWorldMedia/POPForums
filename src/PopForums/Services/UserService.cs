@@ -23,7 +23,7 @@ namespace PopForums.Services
 		Task<User> CreateUser(SignupData signupData, string ip);
 		Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip);
 		Task DeleteUser(User targetUser, User user, string ip, bool ban);
-		Task UpdateLastActicityDate(User user);
+		Task UpdateLastActivityDate(User user);
 		Task ChangeEmail(User targetUser, string newEmail, User user, string ip);
 		Task ChangeEmail(User targetUser, string newEmail, User user, string ip, bool isUserApproved);
 		Task ChangeName(User targetUser, string newName, User user, string ip);
@@ -239,10 +239,9 @@ namespace PopForums.Services
 			await _securityLogService.CreateLogEntry(user, targetUser, ip, $"Name: {targetUser.Name}, E-mail: {targetUser.Email}", SecurityLogType.UserDeleted);
 		}
 
-		public async Task UpdateLastActicityDate(User user)
+		public async Task UpdateLastActivityDate(User user)
 		{
-			user.LastActivityDate = DateTime.UtcNow;
-			await _userRepository.UpdateLastActivityDate(user, user.LastActivityDate);
+			await _userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
 		}
 
 		public async Task ChangeEmail(User targetUser, string newEmail, User user, string ip)
@@ -304,8 +303,7 @@ namespace PopForums.Services
 			if (result)
 			{
 				user = await GetUserByEmail(email);
-				user.LastLoginDate = DateTime.UtcNow;
-				await _userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+				await _userRepository.UpdateLastLoginDate(user, DateTime.UtcNow);
 				await _securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 				if (!salt.HasValue)
 					await SetPassword(user, password, ip, user);
@@ -320,8 +318,7 @@ namespace PopForums.Services
 
 		public async Task Login(User user, string ip)
 		{
-			user.LastLoginDate = DateTime.UtcNow;
-			await _userRepository.UpdateLastLoginDate(user, user.LastLoginDate);
+			await _userRepository.UpdateLastLoginDate(user, DateTime.UtcNow);
 			await _securityLogService.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 		}
 
