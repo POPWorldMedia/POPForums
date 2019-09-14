@@ -57,6 +57,21 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public async Task GetProfileForEditParsesSigGuardForNull()
+		{
+			var service = GetService();
+			var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = null };
+			var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
+			_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
+
+			var result = await service.GetProfileForEdit(user);
+
+			_textParsingService.Verify(x => x.ClientHtmlToForumCode(It.IsAny<string>()), Times.Never);
+			Assert.Equal(string.Empty, result.Signature);
+			_profileRepo.Verify(p => p.GetProfile(user.UserID), Times.Once());
+		}
+
+		[Fact]
 		public async Task CreateFromProfileObject()
 		{
 			var service = GetService();

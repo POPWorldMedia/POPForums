@@ -46,7 +46,10 @@ namespace PopForums.Services
 		public async Task<Profile> GetProfileForEdit(User user)
 		{
 			var profile = await _profileRepository.GetProfile(user.UserID);
-			profile.Signature = _textParsingService.ClientHtmlToForumCode(profile.Signature);
+			if (string.IsNullOrWhiteSpace(profile.Signature))
+				profile.Signature = string.Empty;
+			else
+				profile.Signature = _textParsingService.ClientHtmlToForumCode(profile.Signature);
 			return profile;
 		}
 
