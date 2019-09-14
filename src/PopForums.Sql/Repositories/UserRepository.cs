@@ -111,7 +111,7 @@ namespace PopForums.Sql.Repositories
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 				userID = connection.QuerySingleAsync<int>("INSERT INTO pf_PopForumsUser (Name, Email, CreationDate, IsApproved, AuthorizationKey, Password, Salt) VALUES (@Name, @Email, @CreationDate, @IsApproved, @AuthorizationKey, @Password, @Salt);SELECT CAST(SCOPE_IDENTITY() as int)", new { Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, AuthorizationKey = authorizationKey, Password = hashedPassword, Salt = salt }));
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-				connection.ExecuteAsync("INSERT INTO pf_UserActivity (UserID, LastActivityDate, LastLoginDate) VALUES (@UserID, @LastActivityDate, @LastLoginDate)", new {UserID = userID, LastActivityDate = creationDate, LastLoginDate = creationDate}));
+				connection.ExecuteAsync("INSERT INTO pf_UserActivity (UserID, LastActivityDate, LastLoginDate) VALUES (@UserID, @LastActivityDate, @LastLoginDate)", new {UserID = userID.Result, LastActivityDate = creationDate, LastLoginDate = creationDate}));
 			return new User {UserID = await userID, Name = name, Email = email, CreationDate = creationDate, IsApproved = isApproved, AuthorizationKey = authorizationKey};
 		}
 
