@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -43,7 +44,7 @@ namespace PopForums.Web
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
-			});
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();

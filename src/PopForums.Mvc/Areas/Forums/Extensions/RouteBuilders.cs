@@ -28,22 +28,38 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				return routes;
 
 			routes.MapRoute(
-				"pfrecent",
-				"Forums/Recent/{pageNumber?}",
+				"pfrecent1",
+				"Forums/Recent",
 				new { controller = ForumController.Name, action = "Recent", pageNumber = 1, Area = "Forums" }
+			);
+			routes.MapRoute(
+				"pfrecent",
+				"Forums/Recent/{pageNumber}",
+				new { controller = ForumController.Name, action = "Recent", Area = "Forums" }
 				);
 			var forumRepository = app.ApplicationServices.GetService<IForumRepository>();
 			var forumConstraint = new ForumRouteConstraint(forumRepository);
 			routes.MapRoute(
-				"pfroot",
-				"Forums/{urlName}/{pageNumber?}",
+				"pfroot1",
+				"Forums/{urlName}",
 				new { controller = ForumController.Name, action = "Index", pageNumber = 1, Area = "Forums" },
+				new { forum = forumConstraint }
+			);
+			routes.MapRoute(
+				"pfroot",
+				"Forums/{urlName}/{pageNumber}",
+				new { controller = ForumController.Name, action = "Index", Area = "Forums" },
 				new { forum = forumConstraint }
 				);
 			routes.MapRoute(
-				"pftopic",
-				"Forums/Topic/{id}/{pageNumber?}",
+				"pftopic1",
+				"Forums/Topic/{id}",
 				new { controller = ForumController.Name, action = "Topic", pageNumber = 1, Area = "Forums" }
+			);
+			routes.MapRoute(
+				"pftopic",
+				"Forums/Topic/{id}/{pageNumber}",
+				new { controller = ForumController.Name, action = "Topic", Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pflink",
@@ -51,19 +67,34 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				new { controller = ForumController.Name, action = "PostLink", Area = "Forums" }
 				);
 			routes.MapRoute(
-				"pfsubtopics",
-				"Forums/Subscription/Topics/{pageNumber?}",
+				"pfsubtopics1",
+				"Forums/Subscription/Topics",
 				new { controller = SubscriptionController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
+			);
+			routes.MapRoute(
+				"pfsubtopics",
+				"Forums/Subscription/Topics/{pageNumber}",
+				new { controller = SubscriptionController.Name, action = "Topics", Area = "Forums" }
 				);
+			routes.MapRoute(
+				"pffavetopics1",
+				"Forums/Favorites/Topics",
+				new { controller = FavoritesController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
+			);
 			routes.MapRoute(
 				"pffavetopics",
-				"Forums/Favorites/Topics/{pageNumber?}",
-				new { controller = FavoritesController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
+				"Forums/Favorites/Topics/{pageNumber}",
+				new { controller = FavoritesController.Name, action = "Topics", Area = "Forums" }
 				);
 			routes.MapRoute(
-				"pfpagedusertopics",
-				"Forums/Account/Posts/{id}/{pageNumber?}",
+				"pfpagedusertopics1",
+				"Forums/Account/Posts/{id}",
 				new { controller = AccountController.Name, action = "Posts", pageNumber = 1, Area = "Forums" }
+			);
+			routes.MapRoute(
+				"pfpagedusertopics",
+				"Forums/Account/Posts/{id}/{pageNumber}",
+				new { controller = AccountController.Name, action = "Posts", Area = "Forums" }
 				);
 			routes.MapRoute(
 				"pftopicunsub",
