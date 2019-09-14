@@ -59,6 +59,7 @@ CREATE TABLE [dbo].[pf_UserActivity](
 
 ALTER TABLE [dbo].[pf_UserActivity]  WITH CHECK ADD  CONSTRAINT [FK_pf_UserActivity_pf_PopForumsUser] FOREIGN KEY([UserID])
 REFERENCES [dbo].[pf_PopForumsUser] ([UserID])
+ON DELETE CASCADE
 
 ALTER TABLE [dbo].[pf_UserActivity] CHECK CONSTRAINT [FK_pf_UserActivity_pf_PopForumsUser]
 
