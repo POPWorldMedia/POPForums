@@ -23,7 +23,7 @@ else
 			@if (Model.User.IsInRole(PermanentRoles.Admin))
 			{
 				<div class="dropdown-divider"></div>
-				<a asp-controller="@AdminController.Name" asp-action="Index" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
+				<a asp-controller="@AdminController.Name" asp-action="App" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
 			}
 			<div class="dropdown-divider"></div>
 			<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>

@@ -22,6 +22,10 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				"Forums/Setup",
 				new { controller = "Setup", action = "Index", Area = "Forums" }
 				);
+			routes.MapRoute(
+				"pfadmin",
+				"Forums/Admin/{**app}",
+				new { controller = AdminController.Name, action = "App", Area = "Forums" });
 
 			var setupService = app.ApplicationServices.GetService<ISetupService>();
 			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
@@ -101,10 +105,6 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 				"Forums/Subscription/Unsubscribe/{topicID}/{authKey}",
 				new { controller = SubscriptionController.Name, action = "Unsubscribe", Area = "Forums" }
 				);
-			routes.MapRoute(
-				"pfadmin",
-				"Forums/Admin/{**app}",
-				new { controller = AdminController.Name, action = "App", Area = "Forums" });
 			return routes;
 		}
 	}
