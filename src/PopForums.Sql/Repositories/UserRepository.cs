@@ -29,6 +29,25 @@ namespace PopForums.Sql.Repositories
 
 		public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey";
 
+		private void CacheUser(User user)
+		{
+			// We only cache users by name because it's the only consistent and repetitive get, looked up via the identity principal.
+			var key = "PopForums.User." + user.Name;
+			_cacheHelper.SetCacheObject(key, user);
+		}
+
+		private void RemoveCacheUser(string name)
+		{
+			var key = "PopForums.User." + name;
+			_cacheHelper.RemoveCacheObject(key);
+		}
+
+		private User GetCachedUserByName(string name)
+		{
+			var key = "PopForums.User." + name;
+			return _cacheHelper.GetCacheObject<User>(key);
+		}
+
 		public async Task SetHashedPassword(User user, string hashedPassword, Guid salt)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
@@ -92,7 +111,12 @@ namespace PopForums.Sql.Repositories
 
 		public async Task<User> GetUserByName(string name)
 		{
-			return await GetUser("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser WHERE Name = @Name", new { Name = name });
+			var cachedUser = GetCachedUserByName(name);
+			if (cachedUser != null)
+				return cachedUser;
+			var user = await GetUser("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser WHERE Name = @Name", new { Name = name });
+			CacheUser(user);
+			return user;
 		}
 
 		public async Task<User> GetUserByEmail(string email)
@@ -129,26 +153,31 @@ namespace PopForums.Sql.Repositories
 
 		public async Task ChangeName(User user, string newName)
 		{
+			var oldName = user.Name;
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET Name = @Name WHERE UserID = @UserID", new { Name = newName, user.UserID }));
+			RemoveCacheUser(oldName);
 		}
 
 		public async Task ChangeEmail(User user, string newEmail)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET Email = @Email WHERE UserID = @UserID", new { Email = newEmail, user.UserID }));
+			RemoveCacheUser(user.Name);
 		}
 
 		public async Task UpdateIsApproved(User user, bool isApproved)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET IsApproved = @IsApproved WHERE UserID = @UserID", new { IsApproved = isApproved, user.UserID }));
+			RemoveCacheUser(user.Name);
 		}
 
 		public async Task UpdateAuthorizationKey(User user, Guid key)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 				connection.ExecuteAsync("UPDATE pf_PopForumsUser SET AuthorizationKey = @AuthorizationKey WHERE UserID = @UserID", new { AuthorizationKey = key, user.UserID }));
+			RemoveCacheUser(user.Name);
 		}
 
 		public async Task<List<User>> SearchByEmail(string email)
@@ -213,6 +242,7 @@ namespace PopForums.Sql.Repositories
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 				connection.ExecuteAsync("DELETE FROM pf_PopForumsUser WHERE UserID = @UserID", new { user.UserID }));
+			RemoveCacheUser(user.Name);
 		}
 
 		private async Task<List<User>> GetList(string sql, object parameters)
