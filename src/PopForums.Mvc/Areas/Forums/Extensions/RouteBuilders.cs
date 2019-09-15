@@ -18,14 +18,18 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 		public static IRouteBuilder AddPopForumsRoutes(this IRouteBuilder routes, IApplicationBuilder app)
 		{
 			routes.MapRoute(
+				"pfadmin",
+				"Forums/Admin/{**vue}",
+				new { controller = AdminController.Name, action = "App", Area = "Forums" });
+			routes.MapRoute(
+				"pfadmin2",
+				"Forums/Admin/{vue}/{**admin}",
+				new { controller = AdminController.Name, action = "App", Area = "Forums" });
+			routes.MapRoute(
 				"pfsetup",
 				"Forums/Setup",
 				new { controller = "Setup", action = "Index", Area = "Forums" }
 				);
-			routes.MapRoute(
-				"pfadmin",
-				"Forums/Admin/{**app}",
-				new { controller = AdminController.Name, action = "App", Area = "Forums" });
 
 			var setupService = app.ApplicationServices.GetService<ISetupService>();
 			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())

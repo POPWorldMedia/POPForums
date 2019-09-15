@@ -11,7 +11,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	{
 		public static string Name = "Admin";
 
-		public ViewResult App()
+		public ViewResult App(string vue = "")
 		{
 			return View();
 		}
