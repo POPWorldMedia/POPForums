@@ -35,6 +35,8 @@ namespace PopForums.AwsKit.Search
 
 		public IndexResponse IndexTopic(SearchTopic searchTopic)
 		{
+			var tenantID = _tenantService.GetTenant();
+			searchTopic.TenantID = tenantID;
 			var indexResult = _client.IndexDocument(searchTopic);
 
 			return indexResult;
