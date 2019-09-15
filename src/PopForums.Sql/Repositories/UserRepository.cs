@@ -115,6 +115,8 @@ namespace PopForums.Sql.Repositories
 			if (cachedUser != null)
 				return cachedUser;
 			var user = await GetUser("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser WHERE Name = @Name", new { Name = name });
+			if (user == null)
+				return null;
 			CacheUser(user);
 			return user;
 		}

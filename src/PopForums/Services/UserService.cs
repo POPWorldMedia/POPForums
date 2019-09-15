@@ -143,6 +143,8 @@ namespace PopForums.Services
 			if (string.IsNullOrWhiteSpace(name))
 				return null;
 			var user = await _userRepository.GetUserByName(name);
+			if (user == null)
+				return null;
 			await PopulateRoles(user);
 			return user;
 		}
