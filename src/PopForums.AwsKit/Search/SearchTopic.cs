@@ -6,6 +6,7 @@ namespace PopForums.AwsKit.Search
     public class SearchTopic
     {
 		public string Id { get; set; }
+		public int TopicID { get; set; }
 		public int ForumID { get; set; }
 		public string Title { get; set; }
 		public DateTime LastPostTime { get; set; }

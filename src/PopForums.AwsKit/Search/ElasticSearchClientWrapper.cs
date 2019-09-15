@@ -87,7 +87,7 @@ namespace PopForums.AwsKit.Search
 				topicCount = 0;
 				return result;
 			}
-			var ids = searchResponse.Documents.Select(d => Convert.ToInt32(d.Id));
+			var ids = searchResponse.Documents.Select(d => d.TopicID);
 			topicCount = (int)searchResponse.Total;
 			result = new Response<IEnumerable<int>>(ids);
 			return result;

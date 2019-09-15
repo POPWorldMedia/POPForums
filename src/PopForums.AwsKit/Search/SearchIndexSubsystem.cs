@@ -45,7 +45,8 @@ namespace PopForums.AwsKit.Search
 			}).ToArray();
 			var searchTopic = new SearchTopic
 			{
-				Id = topic.TopicID.ToString(),
+				Id = $"{tenantID}-{topic.TopicID}",
+				TopicID = topic.TopicID,
 				ForumID = topic.ForumID,
 				Title = topic.Title,
 				LastPostTime = topic.LastPostTime,
