@@ -36,6 +36,8 @@ namespace PopForums.AwsKit.Search
 		public IndexResponse IndexTopic(SearchTopic searchTopic)
 		{
 			var tenantID = _tenantService.GetTenant();
+			if (string.IsNullOrWhiteSpace(tenantID))
+				tenantID = "-";
 			searchTopic.TenantID = tenantID;
 			var indexResult = _client.IndexDocument(searchTopic);
 
@@ -65,12 +67,16 @@ namespace PopForums.AwsKit.Search
 			}
 
 			var tenantID = _tenantService.GetTenant();
+			if (string.IsNullOrWhiteSpace(tenantID))
+				tenantID = "-";
 			startRow--;
+			var filters = new List<Func<QueryContainerDescriptor<SearchTopic>, QueryContainer>>();
+			filters.Add(tt => tt.Term(ff => ff.TenantID, tenantID));
 			var searchResponse = _client.Search<SearchTopic>(s => s
-				.Source(sf => sf.Includes(i => i.Fields(f => f.Id)))
+				.Source(sf => sf.Includes(i => i.Fields(f => f.TopicID)))
 				.Query(q => 
-					!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) && 
-					q.Bool(bb => bb.Must(tt => tt.Term(ff => ff.TenantID, tenantID))) && 
+					!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) &&
+					+q.Bool(bb => bb.Filter(filters)) &&
 					q.MultiMatch(m => m.Query(searchTerm)
 						.Fields(f => f
 							.Field(x => x.Title, boost: 5)
@@ -127,6 +133,7 @@ namespace PopForums.AwsKit.Search
 							.Name(n => n.StartedByName)
 							.Fielddata(true)
 						)
+						.Keyword(t => t.Name(n => n.TenantID))
 					)
 				)
 			);
