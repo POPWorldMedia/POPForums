@@ -45,7 +45,7 @@
 	</div>
 	<div class="col-11">
 		<div class="postUserData bg-primary text-light" data-userid="@Model.Post.UserID">
-			<h3 class="postNameLink bg-primary">@Model.Post.Name</h3>
+			<h3 class="postNameLink">@Model.Post.Name</h3>
 			<div class="miniProfileBox bg-secondary text-light"></div>
 			<small class="postTime text-right">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
