@@ -29,7 +29,7 @@ namespace PopForums.AwsKit.Search
 			_tenantService = tenantService;
 			var node = new Uri(config.SearchUrl);
 			var settings = new ConnectionSettings(node)
-				.DefaultIndex(IndexName);
+				.DefaultIndex(IndexName).DisableDirectStreaming();
 			_client = new ElasticClient(settings);
 		}
 
