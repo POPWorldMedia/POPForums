@@ -14,10 +14,10 @@
 
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem" data-postid="@Model.Post.PostID" data-userid="@Model.Post.UserID">
-	<div class="postUserData bg-primary text-light">
-		<h3 class="postNameLink twirl">@Model.Post.Name</h3>
-		<div class="miniProfileBox bg-secondary text-light"></div>
-		<small class="postTime text-right">
+	<div class="postUserData bg-primary">
+		<h3 class="postNameLink twirl text-light">@Model.Post.Name</h3>
+		<div class="miniProfileBox bg-light text-dark"></div>
+		<small class="postTime text-right text-light">
 			@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
 				@:IP: @Model.Post.IP -
@@ -39,7 +39,7 @@
 	@if (Model.Post.ShowSig && Model.Profile != null && !Model.Profile.HideVanity && (Model.Signatures).ContainsKey(Model.Post.UserID))
 	{
 		<hr />
-		<div class="signature">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
+		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
 	<div class="postToolContainer">
 		<div class="voteCount badge badge-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>

@@ -111,14 +111,6 @@
 #ForumContainer .QAstate span {
 	margin-top: 6px;
 }
-#ForumContainer .QAstate .glyphicon-ok-sign {
-	font-size: 150%;
-	color: green;
-}
-#ForumContainer .QAstate .glyphicon-question-sign {
-	font-size: 150%;
-	color: red;
-}
 
 #ForumContainer .newPostBlock {
 	border-left: solid 4px #d3d3d3;
@@ -141,9 +133,6 @@
 #ForumContainer .postUserData h3 {
 	margin: 0;cursor: pointer;
 }
-#ForumContainer .postUserData h3 a, #ForumContainer .postUserData h3 a:hover {
-	color: white;
-}
 #ForumContainer blockquote {
 	font-size: 100%;
 	border-left: 5px solid #aaaaaa;
@@ -152,19 +141,12 @@
 #ForumContainer .postItem hr {
 	margin: 10px 0;
 }
-#ForumContainer .postItem .signature {
-	color: #aaaaaa;
-}
 #ForumContainer .miniProfileBox {
 	padding: 8px 15px;
 	margin-bottom: 10px;
 	margin-top: 4px;
 	display: none;
 	border-radius: 4px;
-}
-#ForumContainer .miniProfile a, #ForumContainer .miniProfile a:visited {
-	text-decoration: underline;
-	color: white; /* need to get this from BS */
 }
 #ForumContainer .postItem .voteCount {
 	display: inline-block;
@@ -274,7 +256,7 @@
 }
 
 #ForumContainer .hidden {
-	display: none !important
+	display: none !important;
 }
 
 .btn-link {
