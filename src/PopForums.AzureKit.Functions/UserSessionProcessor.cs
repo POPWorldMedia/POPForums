@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace PopForums.AzureKit.Functions
     public static class UserSessionProcessor
     {
         [FunctionName("UserSessionProcessor")]
-        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public static async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -30,7 +31,7 @@ namespace PopForums.AzureKit.Functions
 
 			try
 			{
-				userSessionService.CleanUpExpiredSessions();
+				await userSessionService.CleanUpExpiredSessions();
 			}
 			catch (Exception exc)
 			{
@@ -39,7 +40,7 @@ namespace PopForums.AzureKit.Functions
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
-            serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
+            await serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
 		}
     }
 }

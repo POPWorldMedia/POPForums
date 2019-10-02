@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace PopForums.AzureKit.Functions
 	public static class SearchIndexProcessor
 	{
 		[FunctionName("SearchIndexProcessor")]
-		public static void Run([QueueTrigger(SearchIndexQueueRepository.QueueName)]
+		public static async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
 			string jsonPayload, ILogger log, ExecutionContext context)
 		{
 			var stopwatch = new Stopwatch();
@@ -67,7 +68,7 @@ namespace PopForums.AzureKit.Functions
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue SearchIndexProcessor ({searchType}) function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
+			await serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}
 }

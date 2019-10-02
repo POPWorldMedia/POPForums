@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace PopForums.AzureKit.Functions
     public static class CloseAgedTopicsProcessor
     {
         [FunctionName("CloseAgedTopicsProcessor")]
-        public static void Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        public static async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -32,7 +33,7 @@ namespace PopForums.AzureKit.Functions
 
 			try
 			{
-				topicService.CloseAgedTopics();
+				await topicService.CloseAgedTopics();
 			}
 			catch (Exception exc)
 			{
@@ -41,7 +42,7 @@ namespace PopForums.AzureKit.Functions
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Timer {nameof(CloseAgedTopicsProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
-			serviceHeartbeatService.RecordHeartbeat(typeof(CloseAgedTopicsProcessor).FullName, "AzureFunction");
+			await serviceHeartbeatService.RecordHeartbeat(typeof(CloseAgedTopicsProcessor).FullName, "AzureFunction");
 		}
     }
 }
