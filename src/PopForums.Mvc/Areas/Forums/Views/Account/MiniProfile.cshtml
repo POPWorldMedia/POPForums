@@ -11,7 +11,7 @@
 	{
 		@PopForums.Resources.Location<text>: </text>@Model.Location<br />
 	}
-	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" asp-route-pageNumber="" target="_blank" class="text-dark">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
+	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" asp-route-pageNumber="" target="_blank">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
 	@if (!String.IsNullOrWhiteSpace(Model.Facebook))
 	{
 		<a href="https://facebook.com/@Model.Facebook" target="_blank" class="icon"><span class="icon-facebook2"></span></a>
