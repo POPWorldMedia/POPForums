@@ -38,6 +38,7 @@ namespace PopForums.AzureKit.Functions
 			catch (Exception exc)
 			{
 				errorLog.Log(exc, ErrorSeverity.Error);
+				log.LogError(exc, $"Exception thrown running {nameof(CloseAgedTopicsProcessor)}");
 			}
 
 			stopwatch.Stop();

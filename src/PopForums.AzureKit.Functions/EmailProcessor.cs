@@ -47,6 +47,7 @@ namespace PopForums.AzureKit.Functions
 					errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
 				else
 					errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
+				log.LogError(exc, $"Exception thrown running {nameof(EmailProcessor)}");
 			}
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
