@@ -460,13 +460,21 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
-		public async Task HardDeleteCallsSearchRepoToDeleteSearchWords()
+		public async Task HardDeleteCallsSearchIndexRepo()
 		{
 			var user = new User { UserID = 123, Roles = new List<string> { "Admin" } };
 			var topic = new Topic { TopicID = 45 };
 			var service = GetTopicService();
+			SearchIndexPayload payload = null;
+			_searchIndexQueueRepo.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(x => payload = x);
+			_tenantService.Setup(x => x.GetTenant()).Returns("t");
+
 			await service.HardDeleteTopic(topic, user);
-			_searchRepo.Verify(x => x.DeleteAllIndexedWordsForTopic(topic.TopicID), Times.Once());
+
+			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			Assert.Equal(topic.TopicID, payload.TopicID);
+			Assert.Equal("t", payload.TenantID);
+			Assert.True(payload.IsForRemoval);
 		}
 
 		[Fact]

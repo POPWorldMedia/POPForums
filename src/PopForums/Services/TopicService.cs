@@ -168,7 +168,7 @@ namespace PopForums.Services
 			if (user.IsInRole(PermanentRoles.Admin))
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDeletePermanently, topic, null);
-				await _searchRepository.DeleteAllIndexedWordsForTopic(topic.TopicID);
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = true });
 				await _topicRepository.HardDeleteTopic(topic.TopicID);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
@@ -205,7 +205,7 @@ namespace PopForums.Services
 				var urlName = newTitle.ToUniqueUrlName(await _topicRepository.GetUrlNamesThatStartWith(newTitle.ToUrlName()));
 				topic.UrlName = urlName;
 				await _topicRepository.UpdateTitleAndForum(topic.TopicID, forum.ForumID, newTitle, urlName);
-				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = false });
 				_forumService.UpdateCounts(forum);
 				await _forumService.UpdateLast(forum);
 				var oldForum = await _forumService.Get(oldTopic.ForumID);
@@ -256,7 +256,7 @@ namespace PopForums.Services
 
 		public async Task QueueTopicForIndexing(int topicID)
 		{
-			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID });
+			await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topicID, IsForRemoval = false });
 		}
 
 		public async Task CloseAgedTopics()

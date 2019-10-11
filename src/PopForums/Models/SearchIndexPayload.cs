@@ -4,5 +4,6 @@
 	{
 		public int TopicID { get; set; }
 		public string TenantID { get; set; }
+		public bool IsForRemoval { get; set; }
 	}
 }

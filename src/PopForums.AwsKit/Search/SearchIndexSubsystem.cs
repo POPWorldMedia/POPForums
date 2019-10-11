@@ -23,8 +23,14 @@ namespace PopForums.AwsKit.Search
 			_elasticSearchClientWrapper = elasticSearchClientWrapper;
 		}
 
-		public void DoIndex(int topicID, string tenantID)
+		public void DoIndex(int topicID, string tenantID, bool isForRemoval)
 		{
+			if (isForRemoval)
+			{
+				RemoveIndex(topicID, tenantID);
+				return;
+			}
+
 			var topic = _topicService.Get(topicID).Result;
 			if (topic == null)
 				return;

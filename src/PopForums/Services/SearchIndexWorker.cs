@@ -6,7 +6,7 @@ namespace PopForums.Services
 {
 	public class SearchIndexWorker
 	{
-		private static readonly object _syncRoot = new Object();
+		private static readonly object _syncRoot = new object();
 
 		private SearchIndexWorker()
 		{
@@ -18,11 +18,10 @@ namespace PopForums.Services
 			if (!Monitor.TryEnter(_syncRoot, 5000)) return;
 			try
 			{
-				var topicID = searchService.GetNextTopicIDForIndexing().Result;
-				if (topicID == 0)
+				var payload = searchService.GetNextTopicForIndexing().Result;
+				if (payload == null)
 					return;
-				var tenantID = tenantService.GetTenant();
-				searchIndexSubsystem.DoIndex(topicID, tenantID);
+				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
 			}
 			catch (Exception exc)
 			{

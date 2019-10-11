@@ -59,7 +59,7 @@ namespace PopForums.AzureKit.Functions
 			try
 			{
 				var payload = JsonConvert.DeserializeObject<SearchIndexPayload>(jsonPayload);
-				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID);
+				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
 			}
 			catch (Exception exc)
 			{

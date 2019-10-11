@@ -7,7 +7,7 @@ namespace PopForums.Services
 {
 	public interface ISearchIndexSubsystem
 	{
-		void DoIndex(int topicID, string tenantID);
+		void DoIndex(int topicID, string tenantID, bool isForRemoval);
 		void RemoveIndex(int topicID, string tenantID);
 	}
 
@@ -27,14 +27,16 @@ namespace PopForums.Services
 			_topicService = topicService;
 		}
 
-		public void DoIndex(int topicID, string tenantID)
+		public void DoIndex(int topicID, string tenantID, bool isForRemoval)
 		{
+			_searchService.DeleteAllIndexedWordsForTopic(topicID);
+			if (isForRemoval)
+				return;
+
 			var topic = _topicService.Get(topicID).Result;
 			if (topic == null)
 				return;
 			
-			_searchService.DeleteAllIndexedWordsForTopic(topic);
-
 			var junkList = _searchService.GetJunkWords().Result;
 			var wordList = new List<SearchWord>();
 			var alphaNum = SearchService.SearchWordPattern;
@@ -76,7 +78,6 @@ namespace PopForums.Services
 
 		public void RemoveIndex(int topicID, string tenantID)
 		{
-			throw new NotImplementedException();
 		}
 
 		private void TestForIndex(Topic topic, string testWord, int increment, int multiplier, bool cap, List<SearchWord> wordList, List<String> junkList)
