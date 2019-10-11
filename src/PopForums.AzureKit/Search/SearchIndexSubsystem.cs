@@ -52,6 +52,7 @@ namespace PopForums.AzureKit.Search
 					}).ToArray();
 				var searchTopic = new SearchTopic
 				{
+					Key = $"{tenantID}-{topicID}",
 					TopicID = topic.TopicID.ToString(),
 					ForumID = topic.ForumID,
 					Title = topic.Title,
@@ -88,7 +89,22 @@ namespace PopForums.AzureKit.Search
 
 		public void RemoveIndex(int topicID, string tenantID)
 		{
-			// TODO: remove the topic
+			var key = $"{tenantID}-{topicID}";
+			try
+			{
+				var actions = new[]
+				{
+						IndexAction.Delete("key", key)
+				};
+				var serviceClient = new SearchServiceClient(_config.SearchUrl, new SearchCredentials(_config.SearchKey));
+				var serviceIndexClient = serviceClient.Indexes.GetClient(IndexName);
+				var batch = IndexBatch.New(actions);
+				serviceIndexClient.Documents.Index(batch);
+			}
+			catch (Exception exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Error);
+			}
 		}
 
 		private static void CreateIndex(SearchServiceClient serviceClient)
@@ -97,8 +113,9 @@ namespace PopForums.AzureKit.Search
 		    {
 			    Name = IndexName,
 			    Fields = new[]
-			    {
-				    new Field("topicID", DataType.String) {IsKey = true, IsSearchable = false},
+				{
+					new Field("key", DataType.String) {IsKey = true, IsSearchable = false},
+					new Field("topicID", DataType.String) {IsSearchable = false},
 				    new Field("forumID", DataType.Int32) {IsFilterable = true, IsSearchable = false},
 				    new Field("title", DataType.String) {IsSearchable = true, IsSortable = true},
 					new Field("lastPostTime", DataType.DateTimeOffset) {IsSortable = true, IsSearchable = false},
