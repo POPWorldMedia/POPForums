@@ -8,8 +8,12 @@ namespace PopForums.Services
 	public interface ISearchIndexSubsystem
 	{
 		void DoIndex(int topicID, string tenantID);
+		void RemoveIndex(int topicID, string tenantID);
 	}
 
+	/// <summary>
+	/// Implementation for in-database searching. Does not support multi-tenancy.
+	/// </summary>
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{
 		private readonly ISearchService _searchService;
@@ -68,6 +72,11 @@ namespace PopForums.Services
 			{
 				_searchService.SaveSearchWord(word);
 			}
+		}
+
+		public void RemoveIndex(int topicID, string tenantID)
+		{
+			throw new NotImplementedException();
 		}
 
 		private void TestForIndex(Topic topic, string testWord, int increment, int multiplier, bool cap, List<SearchWord> wordList, List<String> junkList)

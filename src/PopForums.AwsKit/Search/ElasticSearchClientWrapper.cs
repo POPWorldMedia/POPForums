@@ -13,6 +13,7 @@ namespace PopForums.AwsKit.Search
 		IndexResponse IndexTopic(SearchTopic searchTopic);
 		Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount);
 		void VerifyIndexCreate();
+		DeleteResponse RemoveTopic(string id);
 	}
 
 	public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
@@ -42,6 +43,13 @@ namespace PopForums.AwsKit.Search
 			var indexResult = _client.IndexDocument(searchTopic);
 
 			return indexResult;
+		}
+
+		public DeleteResponse RemoveTopic(string id)
+		{
+			var deleteRequest = new DeleteRequest(IndexName, id);
+			var response = _client.Delete(deleteRequest);
+			return response;
 		}
 
 		public Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)

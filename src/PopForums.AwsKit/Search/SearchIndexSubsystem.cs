@@ -79,5 +79,23 @@ namespace PopForums.AwsKit.Search
 				_topicService.QueueTopicForIndexing(topic.TopicID);
 			}
 		}
+
+		public void RemoveIndex(int topicID, string tenantID)
+		{
+			var id = $"{tenantID}-{topicID}";
+
+			try
+			{
+				var result = _elasticSearchClientWrapper.RemoveTopic(id);
+				if (result.Result != Result.Deleted)
+				{
+					_errorLog.Log(result.OriginalException, ErrorSeverity.Error, $"Debug information: {result.DebugInformation}");
+				}
+			}
+			catch (Exception exc)
+			{
+				_errorLog.Log(exc, ErrorSeverity.Error);
+			}
+		}
 	}
 }

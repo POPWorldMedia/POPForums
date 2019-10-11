@@ -80,7 +80,12 @@ namespace PopForums.AzureKit.Search
 		    }
 	    }
 
-	    private static void CreateIndex(SearchServiceClient serviceClient)
+		public void RemoveIndex(int topicID, string tenantID)
+		{
+			// TODO: remove the topic
+		}
+
+		private static void CreateIndex(SearchServiceClient serviceClient)
 	    {
 		    var indexDefinition = new Index
 		    {
