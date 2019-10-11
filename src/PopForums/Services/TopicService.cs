@@ -154,6 +154,7 @@ namespace PopForums.Services
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicDelete, topic, null);
 				await _topicRepository.DeleteTopic(topic.TopicID);
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = true });
 				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);
@@ -184,6 +185,7 @@ namespace PopForums.Services
 			{
 				await _moderationLogService.LogTopic(user, ModerationType.TopicUndelete, topic, null);
 				await _topicRepository.UndeleteTopic(topic.TopicID);
+				await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = false });
 				await RecalculateReplyCount(topic);
 				var forum = await _forumService.Get(topic.ForumID);
 				_forumService.UpdateCounts(forum);

@@ -233,6 +233,26 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public async Task DeleteTopicQueuesIndexRemoval()
+		{
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			var forum = new Forum { ForumID = topic.ForumID };
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			SearchIndexPayload payload = null;
+			_searchIndexQueueRepo.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(x => payload = x);
+			_tenantService.Setup(x => x.GetTenant()).Returns("t");
+
+			await topicService.DeleteTopic(topic, user);
+
+			Assert.Equal(topic.TopicID, payload.TopicID);
+			Assert.Equal("t", payload.TenantID);
+			Assert.True(payload.IsForRemoval);
+		}
+
+		[Fact]
 		public async Task DeleteTopicUpdatesLast()
 		{
 			var topic = new Topic { TopicID = 1, ForumID = 123 };
@@ -313,6 +333,26 @@ namespace PopForums.Test.Services
 			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
 			await topicService.UndeleteTopic(topic, user);
 			_forumService.Verify(f => f.UpdateLast(forum), Times.Exactly(1));
+		}
+
+		[Fact]
+		public async Task UndeleteQueuesReindex()
+		{
+			var topic = new Topic { TopicID = 1, ForumID = 123 };
+			var user = GetUser();
+			user.Roles.Add(PermanentRoles.Moderator);
+			var topicService = GetTopicService();
+			var forum = new Forum { ForumID = topic.ForumID };
+			_forumService.Setup(f => f.Get(topic.ForumID)).ReturnsAsync(forum);
+			SearchIndexPayload payload = null;
+			_searchIndexQueueRepo.Setup(x => x.Enqueue(It.IsAny<SearchIndexPayload>())).Callback<SearchIndexPayload>(x => payload = x);
+			_tenantService.Setup(x => x.GetTenant()).Returns("t");
+
+			await topicService.UndeleteTopic(topic, user);
+
+			Assert.Equal(topic.TopicID, payload.TopicID);
+			Assert.Equal("t", payload.TenantID);
+			Assert.False(payload.IsForRemoval);
 		}
 
 		[Fact]
