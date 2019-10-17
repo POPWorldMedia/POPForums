@@ -20,7 +20,11 @@ namespace PopForums.Sql.Repositories
 		public virtual async Task IssueAward(int userID, string awardDefinitionID, string title, string description, DateTime timeStamp)
 		{
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-				connection.ExecuteAsync("INSERT INTO pf_UserAward (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp)", new { UserID = userID, AwardDefinitionID = awardDefinitionID, Title = title, Description = description, TimeStamp = timeStamp }));
+				connection.ExecuteAsync(@"MERGE pf_UserAward WITH (HOLDLOCK) AS target
+USING (SELECT @UserID, @AwardDefinitionID) AS source (UserID, AwardDefinitionID)
+ON (target.UserID = source.UserID AND target.AwardDefinitionID = source.AwardDefinitionID)
+WHEN NOT MATCHED THEN
+INSERT (UserID, AwardDefinitionID, Title, Description, TimeStamp) VALUES (@UserID, @AwardDefinitionID, @Title, @Description, @TimeStamp);", new { UserID = userID, AwardDefinitionID = awardDefinitionID, Title = title, Description = description, TimeStamp = timeStamp }));
 		}
 
 		public async Task<bool> IsAwarded(int userID, string awardDefinitionID)
