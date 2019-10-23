@@ -10,7 +10,7 @@
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 	  <AssemblyVersion>15.99.0</AssemblyVersion>
 	  <FileVersion>15.99.0</FileVersion>
-	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
+	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 	  <Copyright>2019, POP World Media, LLC</Copyright>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
