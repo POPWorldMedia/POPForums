@@ -308,7 +308,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 			var result = await _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, UnsubscribeLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
 
-			return Json(new BasicJsonMessage { Result = true, Redirect = result.Redirect });
+			return Json(new BasicJsonMessage { Result = result.IsSuccessful, Redirect = result.Redirect, Message = result.Message });
 		}
 
 		public async Task<ActionResult> Post(int id)

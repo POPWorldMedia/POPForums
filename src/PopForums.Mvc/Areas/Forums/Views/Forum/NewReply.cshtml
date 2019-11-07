@@ -28,7 +28,7 @@
 	@Html.HiddenFor(p => p.ParentPostID)
 	<input type="button" value="@replyButtonText" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-primary" />
 	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
-	<span id="PostResponseMessage" class="alert alert-danger mt-3"></span>
+	<div id="PostResponseMessage" class="alert alert-danger mt-3"></div>
 </div>
 
 <div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
