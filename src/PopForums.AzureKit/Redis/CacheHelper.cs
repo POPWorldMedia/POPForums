@@ -87,7 +87,7 @@ namespace PopForums.AzureKit.Redis
 			}
 			catch (Exception exc)
 			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Information);
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace PopForums.AzureKit.Redis
 			}
 			catch (Exception exc)
 			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Information);
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace PopForums.AzureKit.Redis
 			}
 			catch (Exception exc)
 			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Information);
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace PopForums.AzureKit.Redis
 			}
 			catch (Exception exc)
 			{
-				_errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Information);
 				return default;
 			}
 		}
