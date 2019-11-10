@@ -17,7 +17,7 @@ namespace PopForums.Email
 			// only allow Instance to create a new instance
 		}
 
-		public async Task SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
+		public void SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
 		{
 			if (!Monitor.TryEnter(SyncRoot))
 			{
@@ -28,12 +28,12 @@ namespace PopForums.Email
 				var messageGroup = new List<QueuedEmailMessage>();
 				for (var i = 1; i <= settingsManager.Current.MailerQuantity; i++)
 				{
-					var payload = await emailQueueRepository.Dequeue();
+					var payload = emailQueueRepository.Dequeue().Result;
 					if (payload == null)
 						break;
 					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.DeleteMassMessage)
 						throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
-					var queuedMessage = await queuedEmailRepository.GetMessage(payload.MessageID);
+					var queuedMessage = queuedEmailRepository.GetMessage(payload.MessageID).Result;
 					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
 					{
 						queuedMessage.ToEmail = payload.ToEmail;
@@ -43,7 +43,7 @@ namespace PopForums.Email
 						break;
 					messageGroup.Add(queuedMessage);
 					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.FullMessage)
-						await queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
+						queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
 				}
 				Parallel.ForEach(messageGroup, message =>
 				{
