@@ -25,7 +25,7 @@ namespace PopForums.Email
 		public void ComposeAndQueue(User user, string subject, string body, string htmlBody, string unsubscribeLink)
 		{
 			var settings = _settingsManager.Current;
-			var ps = String.Format("{1}{1}Unsubscribe: {0}", unsubscribeLink, Environment.NewLine);
+			var ps = $"{Environment.NewLine}{Environment.NewLine}Unsubscribe: {unsubscribeLink}";
 			var message = new QueuedEmailMessage
 			{
 				Body = body + ps,
@@ -36,8 +36,8 @@ namespace PopForums.Email
 				FromName = settings.ForumTitle,
 				QueueTime = DateTime.UtcNow
 			};
-			if (!String.IsNullOrWhiteSpace(htmlBody))
-				message.HtmlBody = String.Format("{0}<p>Unsubscribe: <a href=\"{1}\">{1}</a></p>", htmlBody, unsubscribeLink);
+			if (!string.IsNullOrWhiteSpace(htmlBody))
+				message.HtmlBody = $"{htmlBody}<p>Unsubscribe: <a href=\"{unsubscribeLink}\">{unsubscribeLink}</a></p>";
 			_queuedEmailService.CreateAndQueueEmail(message);
 		}
 	}

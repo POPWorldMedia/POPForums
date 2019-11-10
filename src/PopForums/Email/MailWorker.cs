@@ -31,13 +31,19 @@ namespace PopForums.Email
 					var payload = await emailQueueRepository.Dequeue();
 					if (payload == null)
 						break;
-					if (payload.EmailQueuePayloadType != EmailQueuePayloadType.FullMessage)
+					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.DeleteMassMessage)
 						throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
 					var queuedMessage = await queuedEmailRepository.GetMessage(payload.MessageID);
+					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
+					{
+						queuedMessage.ToEmail = payload.ToEmail;
+						queuedMessage.ToName = payload.ToName;
+					}
 					if (queuedMessage == null)
 						break;
 					messageGroup.Add(queuedMessage);
-					await queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
+					if (payload.EmailQueuePayloadType == EmailQueuePayloadType.FullMessage)
+						await queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
 				}
 				Parallel.ForEach(messageGroup, message =>
 				{
