@@ -1,3 +1,5 @@
+![POP Forums logo](https://avatars2.githubusercontent.com/u/8217691?s=200&v=4)
+
 POP Forums
 =========
 
