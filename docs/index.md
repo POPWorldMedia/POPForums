@@ -1,3 +1,5 @@
+![POP Forums logo](https://avatars2.githubusercontent.com/u/8217691?s=200&v=4)
+
 POP Forums v15 is a forum app for ASP.NET Core, used as the base for several sites maintained by the author. It is not a science project, but a long-term commitment to great community.
 
 The project goals include are: 
@@ -8,14 +10,14 @@ The project goals include are:
 * Localize: Now available in English, Spanish, German, Ukrainian, Dutch and Taiwanese Mandarin.
 
 More information: 
-* [[FAQ]]
-* [[POP Forums Version History|Version-History]]
+* [FAQ](faq.md)
+* [POP Forums Version History](versionhistory.md)
 * [Live demo](https://popforumsdev.azurewebsites.net/Forums)
 * Follow more on [Jeff's blog](https://jeffputz.com/)
 
 Setup:
 
-To set it up, check the installation instructions in the [[Start Here]] section.
+To set it up, check the installation instructions in the [Start Here](starthere.md) section.
 
 POP Forums v13 for ASP.NET MVC 5 is also available as a previous release.
 
