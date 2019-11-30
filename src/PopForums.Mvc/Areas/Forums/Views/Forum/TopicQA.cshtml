@@ -78,24 +78,24 @@ else
 		<ul class="list-inline">
 			<li class="list-inline-item">
 				<form asp-action="ToggleDeleted" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="inlineModForm">
-					<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-warning" />
+					<input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-warning mt-2" />
 				</form>
 			</li>
 			<li class="list-inline-item">
 				<form asp-action="TogglePin" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="inlineModForm">
-					<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-warning" />
+					<input type="submit" value="@(Model.Topic.IsPinned ? PopForums.Resources.Unpin : PopForums.Resources.Pin)" class="btn btn-warning mt-2" />
 				</form>
 			</li>
 			<li class="list-inline-item">
 				<form asp-action="ToggleClosed" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="inlineModForm">
-					<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-warning" />
+					<input type="submit" value="@(Model.Topic.IsClosed ? PopForums.Resources.Open : PopForums.Resources.Close)" class="btn btn-warning mt-2" />
 				</form>
 			</li>
 			@if (user.IsInRole(PermanentRoles.Admin))
 			{
 				<li class="list-inline-item">
 					<form asp-action="DeleteTopicPermanently" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="inlineModForm">
-						<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-warning" />
+						<input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-warning mt-2" />
 					</form>
 				</li>
 			}
