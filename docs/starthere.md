@@ -2,7 +2,7 @@
 
 POP Forums attempts to not get in the way of your application, by designating its views inside of an MVC area.
 
-How to use [[The Scoring Game]] in your own application.
+How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
@@ -31,6 +31,7 @@ You should definitely get to know the installation information below to understa
 
 For the bleeding edge, latest build from master, the CI build packages can be obtained by a MyGet feed:
 * https://www.myget.org/F/popforums/api/v3/index.json
+* https://www.myget.org/feed/popforums/package/npm/@popworldmedia/popforums
 
 ## Installation
 
