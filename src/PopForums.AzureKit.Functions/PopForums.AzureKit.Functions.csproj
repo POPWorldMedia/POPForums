@@ -3,7 +3,7 @@
 	  <Description>PopForums AzureKit Functions</Description>
 	  <VersionPrefix>15.99.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
-	  <TargetFramework>netcoreapp2.2</TargetFramework>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 	  <PackageId>PopForums.AzureKit.Functions</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -15,10 +15,9 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.6" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PopForums.AwsKit\PopForums.AwsKit.csproj" />

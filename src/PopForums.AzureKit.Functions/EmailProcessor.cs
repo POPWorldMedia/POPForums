@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PopForums.Configuration;
 using PopForums.Email;
 using PopForums.Extensions;
@@ -37,7 +37,7 @@ namespace PopForums.AzureKit.Functions
 			QueuedEmailMessage message = null;
 			try
 			{
-				var payload = JsonConvert.DeserializeObject<EmailQueuePayload>(jsonPayload);
+				var payload = JsonSerializer.Deserialize<EmailQueuePayload>(jsonPayload);
 				message = queuedEmailRepo.GetMessage(payload.MessageID).Result;
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
 				{

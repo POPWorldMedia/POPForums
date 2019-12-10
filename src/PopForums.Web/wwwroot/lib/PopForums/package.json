@@ -1,6 +1,6 @@
 {
   "name": "@popworldmedia/popforums",
-  "version": "16.0.0-prerelease.164",
+  "version": "16.0.0-prerelease.168",
   "description": "POP Forums client side",
   "scripts": {},
   "repository": {
@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
   "dependencies": {
-    "@aspnet/signalr": "1.1.4",
+    "@microsoft/signalr": "3.1.0",
     "bootstrap": "4.3.1",
     "jquery": "3.4.1",
     "popper.js": "1.15.0",

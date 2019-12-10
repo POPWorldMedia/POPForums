@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using PopForums.Configuration;
 using PopForums.Services;
 using StackExchange.Redis;
@@ -82,7 +82,7 @@ namespace PopForums.AzureKit.Redis
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
-				var serialized = JsonConvert.SerializeObject(value);
+				var serialized = JsonSerializer.Serialize(value);
 				db.StringSet(key, serialized, timeSpan, flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
@@ -99,7 +99,7 @@ namespace PopForums.AzureKit.Redis
 			try
 			{
 				var db = _cacheConnection.GetDatabase();
-				var serialized = JsonConvert.SerializeObject(value);
+				var serialized = JsonSerializer.Serialize(value);
 				db.StringSet(key, serialized, flags: CommandFlags.FireAndForget);
 			}
 			catch (Exception exc)
@@ -151,7 +151,7 @@ namespace PopForums.AzureKit.Redis
 				var result = db.StringGet(key);
 				if (string.IsNullOrEmpty(result))
 					return default;
-				var deserialized = JsonConvert.DeserializeObject<T>(result);
+				var deserialized = JsonSerializer.Deserialize<T>(result);
 				var timeSpan = TimeSpan.FromSeconds(_config.CacheSeconds);
 				var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
 				_cache.Set(key, deserialized, options);
