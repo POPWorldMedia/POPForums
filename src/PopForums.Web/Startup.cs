@@ -44,7 +44,7 @@ namespace PopForums.Web
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
-			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();
