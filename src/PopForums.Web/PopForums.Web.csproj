@@ -37,10 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Areas\Forums\" />
     <Folder Include="wwwroot\lib\PopForums\dist\" />
   </ItemGroup>

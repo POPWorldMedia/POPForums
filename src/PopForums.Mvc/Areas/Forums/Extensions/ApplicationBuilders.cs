@@ -10,21 +10,6 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 	public static class ApplicationBuilders
 	{
 		/// <summary>
-		/// Maps the necessary SignalR hubs to enable real-time activity in POP Forums.
-		/// </summary>
-		public static IApplicationBuilder UsePopForumsSignalR(this IApplicationBuilder app)
-		{
-			app.UseSignalR(routes =>
-			{
-				routes.MapHub<TopicsHub>("/TopicsHub");
-				routes.MapHub<RecentHub>("/RecentHub");
-				routes.MapHub<ForumsHub>("/ForumsHub");
-				routes.MapHub<FeedHub>("/FeedHub");
-			});
-			return app;
-		}
-
-		/// <summary>
 		/// Enables the POP Forums middleware to identify PF users.
 		/// </summary>
 		public static IApplicationBuilder UsePopForumsAuth(this IApplicationBuilder app)
