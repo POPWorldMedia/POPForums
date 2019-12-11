@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using PopForums.Configuration;
 using PopForums.Models;
 
@@ -46,7 +47,7 @@ namespace PopForums.Services
 				}
 			}
 			var content = await httpResult.Content.ReadAsStringAsync();
-			var verifyResult = JsonConvert.DeserializeObject<ReCaptchaResponse>(content);
+			var verifyResult = JsonSerializer.Deserialize<ReCaptchaResponse>(content);
 			if (!verifyResult.IsSuccess)
 				await _securityLogService.CreateLogEntry((User) null, null, ip, string.Empty, SecurityLogType.ReCaptchaFailed);
 			return verifyResult;
@@ -55,13 +56,13 @@ namespace PopForums.Services
 
 	public class ReCaptchaResponse
 	{
-		[JsonProperty("success")]
+		[JsonPropertyName("success")]
 		public bool IsSuccess { get; set; }
-		[JsonProperty("challenge_ts")]
+		[JsonPropertyName("challenge_ts")]
 		public DateTime ChallengeTimeStamp { get; set; }
-		[JsonProperty("hostname")]
+		[JsonPropertyName("hostname")]
 		public string HostName { get; set; }
-		[JsonProperty("error-codes")]
+		[JsonPropertyName("error-codes")]
 		public string[] ErrorCodes { get; set; }
 	}
 }

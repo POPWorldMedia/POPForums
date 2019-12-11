@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
 using PopForums.Extensions;
@@ -36,7 +36,7 @@ namespace PopForums.AzureKit.Functions
 
 			try
 			{
-				var payload = JsonConvert.DeserializeObject<AwardCalculationPayload>(jsonPayload);
+				var payload = JsonSerializer.Deserialize<AwardCalculationPayload>(jsonPayload);
 				await awardCalculator.ProcessCalculation(payload.EventDefinitionID, payload.UserID);
 			}
 			catch (Exception exc)

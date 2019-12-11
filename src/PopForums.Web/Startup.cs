@@ -17,7 +17,7 @@ namespace PopForums.Web
 {
 	public class Startup
 	{
-		public Startup(IHostingEnvironment env)
+		public Startup(IWebHostEnvironment env)
 		{
 			// Setup configuration sources.
 			var builder = new ConfigurationBuilder()
@@ -44,7 +44,7 @@ namespace PopForums.Web
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
-			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();
@@ -75,7 +75,7 @@ namespace PopForums.Web
 			//services.AddPopForumsBackgroundServices();
 		}
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
 		{
 			// Records exceptions and info to the POP Forums database.
 			loggerFactory.AddPopForumsLogger(app);
@@ -91,23 +91,22 @@ namespace PopForums.Web
 			// Populate the POP Forums identity in every request.
 			app.UsePopForumsAuth();
 
-			// Wires up the SignalR hubs for real-time updates.
-			app.UsePopForumsSignalR();
-
 			app.UseDeveloperExceptionPage();
 
-			// Add MVC to the request pipeline.
-			app.UseMvc(routes =>
+			// Add MVC to the request pipeline. The order of the next three lines matters:
+			app.UseRouting();
+			app.UseAuthorization();
+			app.UseEndpoints(endpoints =>
 			{
 				// POP Forums routes
-				routes.AddPopForumsRoutes(app);
+				endpoints.AddPopForumsEndpoints(app);
 
 				// app routes
 
-				routes.MapRoute(
+				endpoints.MapControllerRoute(
 					"areaRoute",
 					"{area:exists}/{controller=Home}/{action=Index}/{id?}");
-				routes.MapRoute(
+				endpoints.MapControllerRoute(
 					"default",
 					"{controller=Home}/{action=Index}/{id?}");
 			});

@@ -5,6 +5,7 @@ using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using PopForums.Configuration;
 using PopForums.Services;
+using Index = Microsoft.Azure.Search.Models.Index;
 
 namespace PopForums.AzureKit.Search
 {
