@@ -93,8 +93,9 @@ namespace PopForums.Web
 
 			app.UseDeveloperExceptionPage();
 
-			// Add MVC to the request pipeline.
+			// Add MVC to the request pipeline. The order of the next three lines matters:
 			app.UseRouting();
+			app.UseAuthorization();
 			app.UseEndpoints(endpoints =>
 			{
 				// POP Forums routes
