@@ -23,6 +23,10 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 			endpoints.MapHub<ForumsHub>("/ForumsHub");
 			endpoints.MapHub<FeedHub>("/FeedHub");
 
+			endpoints.MapAreaControllerRoute(
+				"forumroutes", "forums",
+				"{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 			endpoints.MapControllerRoute(
 				"pfadmin",
 				"Forums/Admin/{**vue}",
