@@ -101,8 +101,12 @@ namespace PopForums.Web
 				// POP Forums routes
 				endpoints.AddPopForumsEndpoints(app);
 
-				// app routes
+				// need this if you have lots of routing and/or areas
+				endpoints.MapAreaControllerRoute(
+					"forumroutes", "forums",
+					"{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
+				// app routes
 				endpoints.MapControllerRoute(
 					"areaRoute",
 					"{area:exists}/{controller=Home}/{action=Index}/{id?}");
