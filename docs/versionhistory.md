@@ -2,6 +2,31 @@
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version 16.0.0 (xx/xx/xx)
+
+* Update to .Net Core v3.1. #151
+* Redis connection failures recorded as "information" instead of "error." #162
+* Optimize user objects and caching. #44
+* Using "page" in routes can potentially interfere with Razor pages. #150
+* Close dormant threads on a background job. #67
+* Allow topic author to edit title. #80
+* Refactor all the things to async/await. #132
+* Refactor external logins to decouple from Identity (uses [POP Identity](https://github.com/POPWorldMedia/POPIdentity)). #140
+* Cleanup startup configuration. #129
+* Refactor the posting service classes. #121
+* Cleanup unused methods and tests. #133
+* Add unique constraints for user name and email. #144
+* Add ReCAPTCHA option for login. #143
+* Update to a stronger hash algorithm for passwords. #142
+* Reintroduce profile caching. #148
+* BUG: Failed reply doesn't wire up error message and attempts to redirect. #160
+* BUG: Delete, undelete, hard delete doesn't remove from search index. #154
+* BUG: Give background job to delete indexed words in self-rolled search more time. #149
+* BUG: Creation of Redis connection not thread safe, possible race condition. #135
+* BUG: Delete/undelete does not trigger a search reindex. #136
+* BUG: Search indexer Azure function does not respect settings for provider setting. #137
+* BUG: External login list has duplicate entries for description. #139
+
 ## Version 15.0.0 (5/27/19)
 
 * General update of dependencies.
