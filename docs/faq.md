@@ -1,3 +1,8 @@
+---
+layout: default
+title: FAQ
+nav_order: 3
+---
 # Frequently Asked Questions
 
 These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issues here on GitHub for that, please.
@@ -7,6 +12,9 @@ Yeah, I know. I'd like to think that this one is a little different, because it 
 
 ## Sounds like you've been doing this a long time.
 Yes, I sometimes feel cursed to rewrite it for all eternity. The Webforms versions were really kind of a mess, and no version was a true rewrite. Once MVC came along, it gave me great incentive to start fresh. Dotnet Core and the evolving front-end frameworks give plenty of new opportunities for refactoring.
+
+## Is this project the basis for the commercial hosted product?
+Yes, it's the very same code, though obviously decorated with additional code to facilitate multi-tenancy and provisioning.
 
 ## What languages are supported?
 Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW) and German (de). If you'd like to translate, the .resx file has between 350 and 400 entries. Contact me to learn more, and we can talk about a pull request to add another language.
@@ -22,9 +30,6 @@ Look, when almost all of your methods are async what's the point? The only place
 
 ## What external frameworks are you using, and why?
 I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, it's still using jQuery (for now), along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
-
-## Since you used to work at Microsoft and all, is this supposed to be some kind of best practice example?
-Not a chance. There are people far smarter than me that do that kind of thing, and they work on the framework teams. Because this app is first and foremost a production app, there is little desire to ever "perfect" it or make it an example of The Right Thing® to do in terms of coding technique. As far as releasing frequently and iterating quickly, yes, I hope it does serve as an example of that in the long run. That, too, will largely depend on my free time.
 
 ## The unit tests suck.
 In porting to Core, much of the controller-level unit testing didn't come along, because it's likely that it will change significantly when the front-end becomes more modern. See next item...

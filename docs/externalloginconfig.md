@@ -1,3 +1,9 @@
+---
+layout: default
+title: External Login Configuration
+nav_order: 5
+---
+# External Login Configuration
 Starting in v16, POP Forums is completely decoupled from the Identity libraries that verify user identity via third party services, including Google, Facebook and Microsoft. We already don't use Identity because it's so tightly coupled to Entity Framework, with strong opinions about how to store user data. Identity also requires that you configure it at app start (or restart if you change it), and it can't be changed at request time. That prevents a multi-tenancy scenario from working. It was time to cut the cord.
 
 We spun off the [PopIdentity](https://github.com/POPWorldMedia/POPIdentity) project to be a lightweight, non-opinionated means to do the necessary round trips to identity providers and just give you the data that you want, mostly the ID, name and email of the user. It does not bake the identity into a `Principal` for general use. Check out the sample project there for more information.

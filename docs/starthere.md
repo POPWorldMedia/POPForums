@@ -1,18 +1,23 @@
+---
+layout: default
+title: Start Here
+nav_order: 2
+---
 # Start Here
 
-POP Forums attempts to not get in the way of your application, by designating its views inside of an MVC area.
+POP Forums attempts to not get in the way of your application, by working as an MVC area.
 
 How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-This release has data changes. Run the PopForums14to15.sql script against your database, which is found in the `PopForums.Sql` project.
+This release has data changes. Run the PopForums15to16.sql script against your database, which is found in the `PopForums.Sql` project.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
 ## Prerequisites
 You'll need the following locally:
-* Visual Studio 2017 or later, with the Azure workload
+* Visual Studio 2019 or later, with the Azure workload (community version is fine)
 * Node.js (comes with npm)
 * SQL Server Developer
 * Optionally, Docker if you intend to run Redis, ElasticSearch, etc.
@@ -35,12 +40,13 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 
 ## Installation
 
-* Download the latest source code from GitHub. Build it.
-* The project files require an up-to-date version of Visual Studio 2017 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
-* This project is built on ASP.NET Core v2.2.0. Make sure you have the required SDK installed.
+* Download the latest source code from GitHub, or use the production packages as described above. Build it.
+* The project files require an up-to-date version of Visual Studio 2019 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
+* This project is built on ASP.NET Core v3.1.0. Make sure you have the required SDK installed (v3.1.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.AwsKit` contains an ElasticSearch implementation.
 * The `master` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2019 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Starup` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`.
 * `PopForums.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
+> If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
 ```js
 {
 	"PopForums": {
