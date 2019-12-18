@@ -1,4 +1,9 @@
-# Using AzureKit library
+---
+layout: default
+title: Using Azure Kit Library
+nav_order: 6
+---
+# Using AzureKit Library
 The `PopForums.AzureKit` library makes it possible to wire up the following scenarios:
 * Using Redis for caching (not dependent on Azure specifically)
 * Using Azure Storage queues and Functions to queue work for search indexing, emailing and scoring game award calculation

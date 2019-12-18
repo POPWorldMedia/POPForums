@@ -1,4 +1,9 @@
-# Using AwsKit library
+---
+layout: default
+title: Using AWS Kit Library
+nav_order: 7
+---
+# Using AwsKit Library
 The `PopForums.AwsKit` library makes it possible to wire up the following scenarios:
 * Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x uses v7.x._
 

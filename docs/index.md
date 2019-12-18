@@ -1,6 +1,11 @@
+---
+layout: default
+title: Home
+nav_order: 1
+---
 ![POP Forums logo](https://avatars2.githubusercontent.com/u/8217691?s=200&v=4)
 
-POP Forums v16 is a forum app for ASP.NET Core, used as the base for several sites maintained by the author. It is not a science project, but a long-term commitment to great community. If you're looking for the commercial hosted product, go to [popforums.com](https://popforums.com/).
+POP Forums v16 is a forum app for ASP.NET Core, used as the base for several sites maintained by the author. It is not a science project, but a long-term commitment to great community. If you're looking for the commercial hosted product and support for it, go to [popforums.com](https://popforums.com/).
 
 The project goals include: 
 * Use ASP.NET Core.

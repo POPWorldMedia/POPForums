@@ -1,3 +1,8 @@
+---
+layout: default
+title: Start Here
+nav_order: 2
+---
 # Start Here
 
 POP Forums attempts to not get in the way of your application, by working as an MVC area.

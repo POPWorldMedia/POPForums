@@ -1,3 +1,8 @@
+---
+layout: default
+title: The Scoring Game
+nav_order: 8
+---
 # The Scoring Game
 
 Let me tell you a story of HR-discouraged workplace fun. Back in the day, prior to the crash-and-burn of Insurance.com, we had this thing in the development part of the company called the Scoring Game. [I wrote about it](https://jeffputz.com/blog/the-scoring-game) a couple of years ago on my personal blog. The long and short of it is that we kept a running total of +/-1’s for virtually anything you can think of, for each participant. This was back in 2006, before it became trendy to do it for everything else on the Internets.

@@ -20,7 +20,7 @@ https://github.com/POPWorldMedia/POPForums/releases/tag/v16.0.0
 Packages available on NuGet and npm.
 
 For the latest information and documentation, and how to get started, check the wiki:  
-https://github.com/POPWorldMedia/POPForums/wiki
+https://popworldmedia.github.io/POPForums/
 
 The latest CI build packages can be found with these feeds on MyGet:  
 https://www.myget.org/F/popforums/api/v3/index.json  

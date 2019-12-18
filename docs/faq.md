@@ -1,3 +1,8 @@
+---
+layout: default
+title: FAQ
+nav_order: 3
+---
 # Frequently Asked Questions
 
 These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issues here on GitHub for that, please.
