@@ -16,6 +16,7 @@ namespace PopForums.Test.Services
 		private Mock<ISearchRepository> _mockSearchRepo;
 		private Mock<IForumService> _mockForumService;
 		private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
+		private Mock<IErrorLog> _errorLog;
 
 		private SearchService GetService()
 		{
@@ -23,7 +24,8 @@ namespace PopForums.Test.Services
 			_mockSettingsManager = new Mock<ISettingsManager>();
 			_mockForumService = new Mock<IForumService>();
 			_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
-			return new SearchService(_mockSearchRepo.Object, _mockSettingsManager.Object, _mockForumService.Object, _searchIndexQueueRepo.Object);
+			_errorLog = new Mock<IErrorLog>();
+			return new SearchService(_mockSearchRepo.Object, _mockSettingsManager.Object, _mockForumService.Object, _searchIndexQueueRepo.Object, _errorLog.Object);
 		}
 
 		[Fact]
