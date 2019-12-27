@@ -1,7 +1,7 @@
 ﻿{
   "PopForums": {
     "Database": {
-      "ConnectionString": "server=localhost;Database=popforums15;Trusted_Connection=True;"
+      "ConnectionString": "server=localhost;Database=popforums16;Trusted_Connection=True;"
     },
     "Cache": {
       "Seconds": 180,
