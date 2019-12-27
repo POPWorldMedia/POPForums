@@ -21,18 +21,20 @@ namespace PopForums.Services
 
 	public class SearchService : ISearchService
 	{
-		public SearchService(ISearchRepository searchRepository, ISettingsManager settingsManager, IForumService forumService, ISearchIndexQueueRepository searchIndexQueueRepository)
+		public SearchService(ISearchRepository searchRepository, ISettingsManager settingsManager, IForumService forumService, ISearchIndexQueueRepository searchIndexQueueRepository, IErrorLog errorLog)
 		{
 			_searchRepository = searchRepository;
 			_settingsManager = settingsManager;
 			_forumService = forumService;
 			_searchIndexQueueRepository = searchIndexQueueRepository;
+			_errorLog = errorLog;
 		}
 
 		private readonly ISearchRepository _searchRepository;
 		private readonly ISettingsManager _settingsManager;
 		private readonly IForumService _forumService;
 		private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
+		private readonly IErrorLog _errorLog;
 
 		public static Regex SearchWordPattern = new Regex(@"[\w'\@\#\$\%\^\&\*]{2,}", RegexOptions.None);
 
@@ -59,6 +61,8 @@ namespace PopForums.Services
 			{
 				topics = new Response<List<Topic>>(new List<Topic>(), false);
 				pagerContext = new PagerContext {PageCount = 1, PageIndex = 1, PageSize = 1};
+				var exc = new Exception($"Search service error: {topics.Exception?.Message}");
+				_errorLog.Log(exc, ErrorSeverity.Warning, topics.DebugInfo);
 			}
 			return Tuple.Create(topics, pagerContext);
 		}
