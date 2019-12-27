@@ -46,6 +46,9 @@ namespace PopForums.Web
 				options.Filters.Add(typeof(PopForumsUserAttribute));
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
+			// It's unfortunately necessary to use the Json.NET serializer for API requests because System.Text.Json doesn't handler enums correctly
+			services.AddControllers().AddNewtonsoftJson();
+
 			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();
 			// this adds dependencies from the MVC project (and base dependencies) and sets up authentication for the forum
