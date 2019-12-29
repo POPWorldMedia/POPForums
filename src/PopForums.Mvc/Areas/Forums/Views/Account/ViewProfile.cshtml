@@ -119,7 +119,7 @@
 		<div id="ActivityFeed" class="tab-pane">
 			@foreach (var item in Model.Feed)
 			{
-				<div class="bg-light alert">
+				<div class="alert-light alert">
 					@if (item.Points > 0)
 					{
 						<div class="activityFeedPoints center-block">+@item.Points</div>
@@ -133,7 +133,7 @@
 		<div id="Awards" class="tab-pane">
 			@foreach (var item in Model.UserAwards)
 			{
-				<div class="bg-light alert" title="@item.Description">
+				<div class="alert-light alert" title="@item.Description">
 					<h2>@item.Title</h2>
 					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>
