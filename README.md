@@ -16,7 +16,7 @@ https://popforumsdev.azurewebsites.net/Forums
 [![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
 
 Latest release:  
-https://github.com/POPWorldMedia/POPForums/releases/tag/v16.0.0
+https://github.com/POPWorldMedia/POPForums/releases/tag/v16.0.1
 Packages available on NuGet and npm.
 
 For the latest information and documentation, and how to get started, check the wiki:  
