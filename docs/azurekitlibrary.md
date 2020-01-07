@@ -13,11 +13,11 @@ You don't need to use the AzureKit components to run in an Azure App Service. Th
 
 ## Configuration with Azure App Services and Azure Functions
 
-The POP Forums configuration system uses the PopForums.json file, but adhere's to the overriding system implemented via environment variables. This by extension means that you can set these values in the Application Settings section of the Azure portal for App Services and Functions. It uses the colon notation that you may be familiar with. For example, use `PopForums:Queue:ConnectionString` to correspond to the hierarchy of the PopForums.json file.
+The POP Forums configuration system uses the PopForums.json file, but adhere's to the overriding system implemented via environment variables. This by extension means that you can set these values in the Application Settings section of the Azure portal for App Services and Functions. It uses the colon notation that you may be familiar with. For example, use `PopForums:Queue:ConnectionString` to correspond to the hierarchy of the PopForums.json file. (For Linux-based App Services and Functions in Azure, use a double underscore instead of colons in the portal settings, i.e., `PopForums__Queue__ConnectionString`.)
 
 ## Irrelevant settings when using Azure Functions
 
-Once you get the background stuff out of the web app context, some of the configuration options in the admin are no longer are applicable.
+Once you get the background stuff out of the web app context, some of the configuration options in the admin are no longer applicable.
 * In email: The sending interval and mailer quantity no longer matter, because the functions only respond when there's something in the queue, and scale as necessary. You may need to limit the number of instances via host.json or the Azure portal if your email service provider throttles your email delivery.
 * In search: The search indexing interval only reacts when something is queued (like email). Furthermore, if you use Azure Search or ElasticSearch, the junk words no longer apply, as these indexing strategies are handled by the appropriate service.
 * In scoring game: The interval is again irrelevant because of the queue.
@@ -28,6 +28,7 @@ Unfortunately, you can't quite run everything in this stack locally, but it's cl
 * Azure Storage (for queues) can be simulated locally running the Azure Storage Emulator on Windows, or [Azurite](https://github.com/azure/azurite) on Mac.
 * Azure Functions CLI runs on Windows and Mac.
 * Azure Search only runs in Azure.
+* ElasticSearch can run in a Docker container.
 
 ## Using Redis for caching
 Redis is a great tool for caching data for a stand-alone instance of the app or between many nodes. The default caching provided by the `PopForms.Sql` implementation uses in-memory cache in the app instance itself, which doesn't work when you have many nodes (that is, several web heads running behind a load balancer, like a scaled-out Azure App Service). Redis helps by caching data in a "neutral" location between these nodes.
@@ -59,16 +60,16 @@ You'll also need to setup some values in the `PopForums.json` configuration file
 
 * `Seconds`: The number of seconds to persist data in the cache.
 * `ConnectionString`: The connection string to the Redis instance.
-* `ForceLocalOnly`: When set to true, the app will not use Redis, just local memory. This might be useful if you scale down to one node and no longer need Redis, but don't want to redeploy, for example.
+* `ForceLocalOnly`: When set to true, the app will not use Redis, just local memory. This might be useful if you scale down to one node and no longer need Redis, but don't want to redeploy, for example. Obviously don't set to true if you're running more than one node.
 
-This version of `ICacheHelper` is actually a two-level cache. The data is stored locally in the instance memory of the web app, as well as Redis, because it's still faster if it can avoid calling over the wire. Invalidation of data is handled over Redis' built-in communication channels. So if you update something with a particular cache key, Redis will notify all nodes to invalidate any local value they have.
+This version of `ICacheHelper` is actually a two-level cache. The data is stored locally in the instance memory of the web app, as well as Redis, because it's still faster if it can avoid calling over the wire. Invalidation of data is handled over Redis' built-in communication channels. So if you update something with a particular cache key, Redis will notify all nodes to invalidate any local value they have. Because it's a two-level cache, you might find that your Redis stats seem not to be active, and when it is being called, it's usually a miss. That's because it doesn't have to go to the Redis instance itself, since the value is already in local memory.
 
 If you want to prefix cache keys with a specific string, you can do that by using the dependency injection to replace the default `ITenantService` and implementing its `GetTenant()` method. The default implementation simply returns an empty string.
 
 To run Redis locally, consider using Docker. It only takes a few minutes to setup. Use the Google to figure that out.
 
 ## Using Azure Storage queues and Functions
-Azure Storage queues can be used instead of using SQL tables. Using SQL for this is not inherently bad, and honestly the volume of queued things in POP Forums probably never gets huge even on a busy forum, with queues you get some of the magic of triggering Azure Functions, for example. These are most logically used when you have functions.
+Azure Storage queues can be used instead of using SQL tables. Using SQL for this is not inherently bad, and honestly the volume of queued things in POP Forums probably never gets huge even on a busy forum, but with queues you get some of the magic of triggering Azure Functions, for example. These are most logically used when you have functions.
 
 To enable queue usage, use this in your start up config:
 

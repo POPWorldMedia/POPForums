@@ -7,6 +7,10 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version 16.0.1 (12/27/19)
+
+* BUG: Redis cache helper can't serialize forum view/post graphs. #168
+
 ## Version 16.0.0 (12/17/19)
 
 * Update to .Net Core v3.1. #151

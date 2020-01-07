@@ -7,8 +7,11 @@ nav_order: 3
 
 These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issues here on GitHub for that, please.
 
+## Do I have to pay for this or not?
+Not. POP Forums is an open source software project hosted on GitHub and for use under the MIT license. There is a commercially hosted version available, yes, for people who don't write code or don't want to mess with managing their own software. Everything on GitHub continues to be open source.
+
 ## Another forum app? For real?
-Yeah, I know. I'd like to think that this one is a little different, because it doesn't exist to fit some generalized needs, it exists to fit my needs. The design goal of the app, from its early days in 1999, has always been to design for users, and not as a science project. This app lives because it has been required for sites like CoasterBuzz for more than two decades, and it will continue to evolve because those sites will evolve. It just makes sense to share it with others.
+Yeah, I know. I'd like to think that this one is a little different, because it doesn't exist to fit some generalized needs, it exists to fit the needs of real communities, like [CoasterBuzz](https://coasterbuzz.com/). The design goal of the app, from its early days in 1999, has always been to design for users, and not be a science project. This app lives because it has been required for sites like CoasterBuzz for more than two decades, and it will continue to evolve because those sites will evolve. It just makes sense to share it with others.
 
 ## Sounds like you've been doing this a long time.
 Yes, I sometimes feel cursed to rewrite it for all eternity. The Webforms versions were really kind of a mess, and no version was a true rewrite. Once MVC came along, it gave me great incentive to start fresh. Dotnet Core and the evolving front-end frameworks give plenty of new opportunities for refactoring.
@@ -20,7 +23,7 @@ Yes, it's the very same code, though obviously decorated with additional code to
 Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW) and German (de). If you'd like to translate, the .resx file has between 350 and 400 entries. Contact me to learn more, and we can talk about a pull request to add another language.
 
 ## You used to work on the forums for MSDN and TechNet. Is this that forum?
-Not at all. That app served a great many different functions and was integrated with Microsoft ID's, a centralized profiling system, etc. It's huge. This app has its roots in the Web sites I've been running for fun and profit for years, to the extent that you can find old posts on those sites from the turn of the century with all kinds of formatting failures. Those were the ASP.old days.
+Not at all. That app served a great many different functions and was integrated with Microsoft ID's, a centralized profiling system, etc. It was/is huge. This app has its roots in the web sites I've been running for fun and profit for years, to the extent that you can find old posts on those sites from the turn of the century with all kinds of formatting failures. Those were the ASP.old days.
 
 ## I noticed you're not using [some ORM framework]. Why not?
 One of the requirements back in the day was to simply work with the existing data structures of v8.x, a Webforms app. In that sense, the data plumbing was already pretty well established and known to work, and it has followed all the way up through the Core version. My opinion is that ORM's tend to be a leaky abstraction that never work in the black box way that you would hope. I have adopted Dapper though, which covers the core use case that you're really after anyway: Mapping parameters to queries and results to objects. One doesn't have to write actual SQL all that often.
