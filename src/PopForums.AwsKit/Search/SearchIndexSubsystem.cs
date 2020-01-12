@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Nest;
+using Polly;
 using PopForums.Configuration;
 using PopForums.Services;
 
@@ -70,19 +71,24 @@ namespace PopForums.AwsKit.Search
 
 			try
 			{
-				var indexResult = _elasticSearchClientWrapper.IndexTopic(searchTopic);
-				if (indexResult.Result != Result.Created && indexResult.Result != Result.Updated)
+				var policy = Polly.Policy.HandleResult<IndexResponse>(x => !x.IsValid)
+					.WaitAndRetry(new[]
+					{
+						TimeSpan.FromSeconds(1),
+						TimeSpan.FromSeconds(5),
+						TimeSpan.FromSeconds(30)
+					}, (exception, timeSpan) => {
+						_errorLog.Log(exception.Result.OriginalException, ErrorSeverity.Error, $"Retry after {timeSpan.Seconds}: {exception.Result.DebugInformation}");
+					});
+				policy.Execute(() =>
 				{
-					_errorLog.Log(indexResult.OriginalException, ErrorSeverity.Error, $"Debug information: {indexResult.DebugInformation}");
-					// TODO: Replace this with some Polly or get real about queues/deadletter
-					_topicService.QueueTopicForIndexing(topic.TopicID);
-				}
+					var indexResult = _elasticSearchClientWrapper.IndexTopic(searchTopic);
+					return indexResult;
+				});
 			}
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				// TODO: Replace this with some Polly or get real about queues/deadletter
-				_topicService.QueueTopicForIndexing(topic.TopicID);
 			}
 		}
 

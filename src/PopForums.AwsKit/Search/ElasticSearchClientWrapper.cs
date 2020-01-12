@@ -31,6 +31,12 @@ namespace PopForums.AwsKit.Search
 			var node = new Uri(config.SearchUrl);
 			var settings = new ConnectionSettings(node)
 				.DefaultIndex(IndexName).DisableDirectStreaming();
+			if (!string.IsNullOrEmpty(config.SearchKey))
+			{
+				var pair = config.SearchKey.Split("|");
+				if (pair.Length == 2)
+					settings.ApiKeyAuthentication(pair[0], pair[1]);
+			}
 			_client = new ElasticClient(settings);
 		}
 
@@ -41,7 +47,6 @@ namespace PopForums.AwsKit.Search
 				tenantID = "-";
 			searchTopic.TenantID = tenantID;
 			var indexResult = _client.IndexDocument(searchTopic);
-
 			return indexResult;
 		}
 
@@ -145,6 +150,11 @@ namespace PopForums.AwsKit.Search
 					)
 				)
 			);
+			if (!createIndexResponse.IsValid)
+			{
+				_errorLog.Log(createIndexResponse.OriginalException, ErrorSeverity.Error,
+					createIndexResponse.DebugInformation);
+			}
 		}
 	}
 }

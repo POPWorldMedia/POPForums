@@ -44,7 +44,7 @@ You'll also need to setup the right configuration values if you're running web i
     },
 ```
 * `Url`: The base URL for the ElasticSearch endpoints
-* `Key`: Not used for ElasticSearch
+* `Key`: After v16.x, this will optionally set an API key, using the format `id|key` (that's a pipe separating the ID and API key). Make sure that you use the ID, not the name.
 * `Provider`: This is optional and not actually implemented anywhere other than in our Azure Functions example project, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library.
 
 Configuring ElasticSearch and setting up security rules for it are beyond the scope of this wiki.
