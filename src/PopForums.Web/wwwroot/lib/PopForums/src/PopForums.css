@@ -491,3 +491,7 @@
 #ForumContainer .topicIndicator .secondBadge {
 	left: -145%;
 }
+
+#ForumContainer #Profile div.row div {
+	padding:.5em;
+}

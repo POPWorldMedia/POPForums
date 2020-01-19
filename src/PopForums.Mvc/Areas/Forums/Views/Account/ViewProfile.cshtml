@@ -11,7 +11,13 @@
 }
 
 <div>
-	<h1>@Model.Name</h1>
+	<h1>
+		@if (Model.AvatarID.HasValue)
+		{
+			<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle mr-3 mt-3 mb-3"/>
+		}
+		@Model.Name
+	</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	</ul>
@@ -25,7 +31,7 @@
 	</ul>
 	<div class="tab-content">
 		<div id="Details" class="tab-pane active">
-			<div class="dl-horizontal">
+			<div>
 				@if (Model.ShowDetails)
 				{
 					<div class="row">
@@ -94,14 +100,6 @@
 					</div>
 				}
 
-				@if (Model.AvatarID.HasValue)
-				{
-					<div class="row">
-						<div class="col-4">@PopForums.Resources.Avatar</div>
-						<div class="col-8"><img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-responsive" /></div>
-					</div>
-				}
-
 				<div class="row">
 					<div class="col-4">@PopForums.Resources.ScoringGame</div>
 					<div class="col-8">@Model.Points.ToString("N0")</div>
@@ -111,7 +109,7 @@
 			@if (Model.ImageID.HasValue && Model.IsImageApproved)
 			{
 				<div class="row">
-					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-responsive" />
+					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-fluid" />
 				</div>
 			}
 		</div>
