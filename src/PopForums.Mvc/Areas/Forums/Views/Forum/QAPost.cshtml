@@ -110,30 +110,31 @@
 				<a name="@comment.PostID"></a>
 				<div class="@if(comment.IsDeleted){<text>bg-warning</text>}else{<text>well</text>} qaComment @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
 	{<text>newPostBlock</text>}">
-					<small class="text-right text-muted">@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new {id = comment.UserID}, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
+					<hr />
+					<p class="text-muted">
+						@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new { id = comment.UserID }, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
 						@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 						{<text> - IP: </text>@comment.IP}
-					</small>
+					</p>
 					@Html.Raw(comment.FullText)
 					@if (user.IsPostEditable(comment))
 					{
 						if (comment.IsDeleted)
 						{
 							using (Html.BeginForm("UndeletePost", "Moderator", new { id = comment.PostID }, FormMethod.Post))
-							{ <input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /> }
+							{<input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /> }
 						}
 						else
 						{
 							using (Html.BeginForm("DeletePost", "Forum", new { id = comment.PostID }, FormMethod.Post))
-							{ <input type="submit" value="@PopForums.Resources.Delete" class="btn-link" /> }
+							{ <input type="submit" value="@PopForums.Resources.Delete" class="btn-link" />							}
 						}
 					}
 				</div>
-				<hr />
 			}
 			if (user != null && Model.PostWithChildren.Children.Count > 0 && !Model.Topic.IsClosed)
 			{
-				<p><input type="button" class="commentLink btn-link" value="@PopForums.Resources.Reply" /></p>
+				<p><input type="button" class="btn btn-primary btn-sm" value="@PopForums.Resources.Reply" /></p>
 			}
 		}
 	</div>
