@@ -9,6 +9,9 @@ POP Forums v16 is a forum app for ASP.NET Core, used as the base for several sit
 
 _This documentation is for the open source POP Forums project. For documentation about the commercial hosted product, visit [support.popforums.com](https://support.popforums.com/)._
 
+Make test posts and try it out here:  
+https://meta.popforums.com/Forums
+
 The project goals include: 
 * Use ASP.NET Core and cloud resources for robust scale-out.
 * Keep the project open source.
@@ -19,7 +22,7 @@ The project goals include:
 More information: 
 * [FAQ](faq.md)
 * [POP Forums Version History](versionhistory.md)
-* [Live demo, CI build from `master`](https://popforumsdev.azurewebsites.net/Forums)
+* [CI build from `master`](https://popforumsdev.azurewebsites.net/Forums)
 * Follow more on [Jeff's blog](https://jeffputz.com/)
 
 Setup:
