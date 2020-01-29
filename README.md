@@ -12,7 +12,10 @@ The master branch is now the work-in-progress for future versions. The v16.x bra
 Roadmap:
 The v16 release concentrates on performance and optimization, along with significant refactoring and bug fixes. Forthcoming releases will focus on UI refinement and modernization.
 
-CI build of master, running on .NET Core is demo'ing here:  
+Try it out and make test posts here:  
+https://meta.popforums.com/Forums
+
+CI build of maste runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
 [![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
