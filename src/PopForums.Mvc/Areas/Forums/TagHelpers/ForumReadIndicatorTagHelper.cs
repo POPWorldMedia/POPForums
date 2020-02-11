@@ -28,11 +28,11 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 						break;
 					case ReadStatus.Closed | ReadStatus.NewPosts:
 						alt = Resources.ArchivedNewPosts;
-						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 						break;
 					case ReadStatus.NewPosts:
 						alt = Resources.NewPosts;
-						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span>");
+						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span>");
 						break;
 					default:
 						output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");

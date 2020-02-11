@@ -17,7 +17,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 			if (PrivateMessage.LastPostTime > PrivateMessage.LastViewDate)
 			{
 				output.Attributes.Add("title", Resources.NewPosts);
-				output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-primary\"></span>");
+				output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span>");
 			}
 			else
 			{
