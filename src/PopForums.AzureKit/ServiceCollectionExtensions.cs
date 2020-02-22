@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PopForums.AzureKit.Queue;
+using PopForums.AzureKit.Redis;
 using PopForums.Configuration;
 using PopForums.Repositories;
 using PopForums.Services;
@@ -11,7 +12,8 @@ namespace PopForums.AzureKit
     public static class ServiceCollectionExtensions
     {
 	    public static IServiceCollection AddPopForumsRedisCache(this IServiceCollection services)
-		{
+	    {
+		    services.AddTransient<ICacheTelemetry, CacheTelemetrySink>();
 			var serviceProvider = services.BuildServiceProvider();
 			var config = serviceProvider.GetService<IConfig>();
 			if (config.ForceLocalOnly)
