@@ -68,6 +68,51 @@ If you want to prefix cache keys with a specific string, you can do that by usin
 
 To run Redis locally, consider using Docker. It only takes a few minutes to setup. Use the Google to figure that out.
 
+## Instrumenting Redis and cache usage
+
+Most managed Redis services have ways to generally observe the behavior and health of the service, but you might be interested in going deeper. For example, the default TTL for caching on all of POP Forums is 90 seconds, but that might not be the "right" amount of time. Also, because this implementation is a two-level cache, monitoring Redis alone doesn't give you the complete picture. POP Forums has an interface called `ICacheTelemetry` in this library, with a default interface that is just an event sink. If you use an external monitoring service like Azure Insights, you may want to replace this with your own implementation. It's super easy! The interface only has two members:
+
+```
+void Start();
+void End(string eventName, string key);
+```
+
+The Redis implementation of `CacheHelper` wraps each call to the memory cache and Redis with the above methods. It includes the cache key and the type of event (`SetRedis`, `GetRedisHit`, `GetRedisMiss`, etc.) for you to persist in whatever your monitoring solution is. In the [hosted forums](https://popforums.com/), we use the following to write the events to Azure Insights. The `TelemetryClient` comes in via dependency injection:
+
+```
+public class WebCacheTelemetry : ICacheTelemetry
+{
+	private readonly TelemetryClient _telemetryClient;
+	private Stopwatch _stopwatch;
+
+	public WebCacheTelemetry(TelemetryClient telemetryClient)
+	{
+		_telemetryClient = telemetryClient;
+	}
+
+	public void Start()
+	{
+		_stopwatch = new Stopwatch();
+		_stopwatch.Start();
+	}
+
+	public void End(string eventName, string key)
+	{
+		_stopwatch.Stop();
+		var dependencyTelemetry = new DependencyTelemetry();
+		dependencyTelemetry.Name = eventName;
+		dependencyTelemetry.Properties.Add("Key", key);
+		dependencyTelemetry.Duration = new TimeSpan(_stopwatch.ElapsedTicks);
+		dependencyTelemetry.Type = "CacheOp";
+		_telemetryClient.TrackDependency(dependencyTelemetry);
+	}
+}
+```
+
+Then, to wire up this new implemenation, we swap out the event sink for our code in `Startup`:
+
+`services.Replace(ServiceDescriptor.Transient<ICacheTelemetry, WebCacheTelemetry>());`
+
 ## Using Azure Storage queues and Functions
 Azure Storage queues can be used instead of using SQL tables. Using SQL for this is not inherently bad, and honestly the volume of queued things in POP Forums probably never gets huge even on a busy forum, but with queues you get some of the magic of triggering Azure Functions, for example. These are most logically used when you have functions.
 
