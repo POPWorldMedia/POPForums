@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <VersionPrefix>16.0.0</VersionPrefix>
+	  <VersionPrefix>16.99.0</VersionPrefix>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>PopForums.Web</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>PopForums.Web</PackageId>
     <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>16.0.0</AssemblyVersion>
-	  <FileVersion>16.0.0</FileVersion>
+	  <AssemblyVersion>16.99.0</AssemblyVersion>
+	  <FileVersion>16.99.0</FileVersion>
 	  <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
   </PropertyGroup>
 
