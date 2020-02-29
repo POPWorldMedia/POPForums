@@ -25,7 +25,7 @@
 
 <pf-pagerLinks controllerName="Account" actionName="Posts" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
-<table id="TopicList" class="table grid table-hover">
+<table id="TopicList" class="table mt-3 table-hover">
 	@foreach (var topic in Model.Topics)
 	{
 		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text> 				} data-topicid="@topic.TopicID">

@@ -49,7 +49,7 @@ else
 	</form>
 }
 
-<table id="TopicList" class="table grid table-hover">
+<table id="TopicList" class="table mt-3 table-hover">
 	@foreach (var topic in Model.Topics)
 	{
 		<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>  } data-topicid="@topic.TopicID">

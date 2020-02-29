@@ -1,15 +1,4 @@
-﻿#ForumContainer dd, #ForumContainer dt {
-	margin-bottom: 5px;
-}
-
-#ForumContainer .grid {
-	margin: 20px 0;
-}
-#ForumContainer .grid h1, #ForumContainer .grid h2, #ForumContainer .grid h3 {
-	margin: 0;
-}
-
-#ForumContainer .navbar {
+﻿#ForumContainer .navbar {
 	z-index: 1025;
 }
 
