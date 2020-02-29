@@ -31,13 +31,13 @@ else
 		@foreach (var item in Model)
 		{
 			<tr class="row">
-				<td class="col-2">
+				<td class="col-3">
 					<form asp-action="RemoveExternalLogin" asp-route-id="@item.ExternalUserAssociationID" method="post">
 						<input type="submit" value="Remove" class="btn btn-primary" />
 					</form>
 				</td>
-				<td class="col-2">@item.Issuer</td>
-				<td class="col-8">@item.Name</td>
+				<td class="col-3">@item.Issuer</td>
+				<td class="col-6">@item.Name</td>
 			</tr>
 		}
 	</table>
