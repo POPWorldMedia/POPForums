@@ -17,20 +17,14 @@
 </script>
 }
 
-<div>
-	<h1>@Model.Topic.Title</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-pageNumber="1">@Model.Forum.Title</a></li>
-	</ul>
-	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-pageNumber="1">@Model.Forum.Title</a></li>
-		<li class="breadcrumb-item active">@Model.Topic.Title</li>
-	</ul>
-</div>
+<h1>@Model.Topic.Title</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Index" asp-route-urlName="@Model.Forum.UrlName" asp-route-pageNumber="1">@Model.Forum.Title</a></li>
+	<li class="breadcrumb-item active">@Model.Topic.Title</li>
+</ul>
 
 @if (user != null) {
 	<p id="AsyncResponse"></p>

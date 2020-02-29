@@ -17,18 +17,13 @@
 	</script>
 }
 
-<div>
-	<h1>@PopForums.Resources.Search</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item active">@PopForums.Resources.Search</li>
-	</ul>
-</div>
+<h1>@PopForums.Resources.Search</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
+	<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item active">@PopForums.Resources.Search</li>
+</ul>
 
 <div id="SearchForm">
 	<form asp-action="Process" method="post" role="form" class="form-inline mb-4" asp-antiforgery="false">

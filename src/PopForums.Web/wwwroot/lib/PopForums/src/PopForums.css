@@ -9,6 +9,10 @@
 	margin: 0;
 }
 
+#ForumContainer .navbar {
+	z-index: 1025;
+}
+
 #ForumContainer .newIndicator {
 	max-width: 40px;
 }
@@ -23,15 +27,6 @@
 
 #ForumContainer #TopicModerationLog {
 	display: none;
-}
-
-#ForumContainer #FixedBreadcrumb {
-	position: fixed;top: 0; display: none;
-	z-index: 1000;box-shadow: 0 3px 2px -2px #ddd;
-}
-
-#ForumContainer #FixedBreadcrumb li {
-	float: left;
 }
 
 #ForumContainer .topicListButton {

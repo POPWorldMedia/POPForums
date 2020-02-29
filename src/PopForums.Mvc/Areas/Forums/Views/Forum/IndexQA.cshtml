@@ -21,29 +21,22 @@
 	</script>
 }
 
-<div>
-	<h1>
-		@Model.Forum.Title@if (Model.PermissionContext.UserCanPost)
-	{ <input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}
-	</h1>
-	@if (Model.PermissionContext.UserCanPost)
-	{
-		<div id="NewTopic" style="display: none;"></div>
-	}
-	else
-	{
-		<p class="alert alert-warning">@Model.PermissionContext.DenialReason</p>
-	}
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item active">@Model.Forum.Title</li>
-	</ul>
-</div>
+<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}</h1>
+
+@if (Model.PermissionContext.UserCanPost)
+{
+	<div id="NewTopic" style="display: none;"></div>
+}
+else
+{
+	<p class="alert alert-warning">@Model.PermissionContext.DenialReason</p>
+}
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item active">@Model.Forum.Title</li>
+</ul>
 
 <pf-pagerLinks controllerName="Forum" actionName="Index" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 

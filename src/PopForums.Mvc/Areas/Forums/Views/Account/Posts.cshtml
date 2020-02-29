@@ -9,30 +9,26 @@
 }
 
 @section HeaderContent {
-<script type="text/javascript">
-	$(function () {
-		PopForums.startTimeUpdater();
-	});
-</script>
+	<script type="text/javascript">
+		$(function () {
+			PopForums.startTimeUpdater();
+		});
+	</script>
 }
 
-<div>
-	<h1>@ViewBag.PostUserName's @PopForums.Resources.Posts</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-	<ul id="FixedBreadcrumb" class="breadcrumb" style="display: none;">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item">@ViewBag.PostUserName's @PopForums.Resources.Posts</li>
-	</ul>
-</div>
+<h1>@ViewBag.PostUserName's @PopForums.Resources.Posts</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item">@ViewBag.PostUserName's @PopForums.Resources.Posts</li>
+</ul>
 
 <pf-pagerLinks controllerName="Account" actionName="Posts" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <table id="TopicList" class="table grid table-hover">
 	@foreach (var topic in Model.Topics)
 	{
-		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text> } data-topicid="@topic.TopicID">
+		<tr @if (topic.IsDeleted) { <text> class="bg-danger" </text> 				} data-topicid="@topic.TopicID">
 			<td class="newIndicator"><a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
 			<td>
 				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>

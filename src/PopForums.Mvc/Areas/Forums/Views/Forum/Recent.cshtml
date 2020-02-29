@@ -22,15 +22,10 @@
 
 <h1>@PopForums.Resources.Recent</h1>
 
-<div>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-	<ul id="FixedBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item active">@PopForums.Resources.Recent</li>
-	</ul>
-</div>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item active">@PopForums.Resources.Recent</li>
+</ul>
 
 <pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
