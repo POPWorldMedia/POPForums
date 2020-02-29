@@ -420,8 +420,8 @@ PopForums.qaTopicSetup = function (topicID) {
 			type: "POST",
 			data: {postID: postID, topicID: topicID},
 			success: function () {
-				$(".answerStatus").removeClass("check-icon").addClass("star-icon");
-				button.removeClass("star-icon").addClass("check-icon");
+				$(".answerStatus").removeClass("icon-checkmark text-success").addClass("icon-checkmark2 text-muted");
+				button.removeClass("icon-checkmark2 text-muted").addClass("icon-checkmark text-success");
 			}
 		});
 	});
