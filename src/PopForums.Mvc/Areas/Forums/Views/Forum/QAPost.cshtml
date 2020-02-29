@@ -44,9 +44,9 @@
 		}
 	</div>
 	<div class="col-11">
-		<div class="postUserData bg-primary" data-userid="@Model.Post.UserID">
+		<div class="postUserData bg-primary rounded mb-2 px-3 py-1" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink text-light">@Model.Post.Name</h3>
-			<div class="miniProfileBox bg-light text-dark"></div>
+			<div class="miniProfileBox bg-light text-dark rounded px-3 py-1 mb-2"></div>
 			<small class="postTime text-right text-light">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				{
@@ -57,7 +57,7 @@
 		</div>
 		@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
 		{
-			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right" />
+			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3" />
 		}
 
 		<div class="@if (Model.PostWithChildren.LastReadTime.HasValue && Model.PostWithChildren.Post.PostTime > Model.PostWithChildren.LastReadTime)
@@ -100,7 +100,7 @@
 					<li class="list-inline-item"><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
 				}
 			</ul>
-			<div class="moderationLog"></div>
+			<div class="moderationLog rounded my-3 px-3 py-1"></div>
 		</div>
 		<div class="commentHolder"></div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
@@ -108,7 +108,7 @@
 			foreach (var comment in Model.PostWithChildren.Children)
 			{
 				<a name="@comment.PostID"></a>
-				<div class="@if(comment.IsDeleted){<text>bg-warning</text>}else{<text>well</text>} qaComment @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
+				<div class="@if(comment.IsDeleted){<text>bg-warning</text>}else{<text>well</text>} qaComment ml-3 p-2 @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
 	{<text>newPostBlock</text>}">
 					<hr />
 					<p class="text-muted">

@@ -34,12 +34,12 @@
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{
 			<input id="TopicModLogButton" class="btn btn-primary" type="button" value="@PopForums.Resources.ModerationLog" />
-			<div id="TopicModerationLog"></div>
+			<div id="TopicModerationLog" class="mt-3"></div>
 		}
 	</div>
 }
 
-<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
+<pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks mt-3" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <div id="PostStream">
 @if (Model.PagerContext.PageIndex > 1)

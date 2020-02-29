@@ -23,7 +23,7 @@
 @foreach (var post in Model.Posts)
 {
 	<div class="postItem">
-		<div class="postUserData bg-primary text-light">
+		<div class="postUserData bg-primary text-light rounded mb-2 px-3 py-1">
 			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID" class="text-light">@post.Name</a></h3>
 			<small class="postTime text-right fTime" data-utc="@post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(post.PostTime, profile)</small>
 		</div>

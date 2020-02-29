@@ -6,29 +6,8 @@
 	max-width: 40px;
 }
 
-#ForumContainer .alert {
-	border-radius: 4px;
-}
-
-#ForumContainer #PostResponseMessage {
+#ForumContainer #PostResponseMessage, #ForumContainer #TopicModerationLog {
 	display: none;
-}
-
-#ForumContainer #TopicModerationLog {
-	display: none;
-}
-
-#ForumContainer .topicListButton {
-	width: 100px;
-	text-align: center;
-}
-
-#ForumContainer #FeedList > div, #ForumContainer #ActivityFeed > div, #ForumContainer #Awards > div {
-	margin-bottom: 10px;
-}
-
-#ForumContainer #Profile > div {
-	padding-top: 20px;
 }
 
 #ForumContainer .activityFeedPoints {
@@ -37,7 +16,7 @@
 	text-align: center;
 	min-width: 60px;
 	float: left;
-	margin-right: 10px;
+	margin-right: 1em;
 }
 
 #ForumContainer .toLabelX {
@@ -68,11 +47,6 @@
 	font-size: 150%;
 }
 
-#ForumContainer .qaComment {
-	margin-left: 20px;
-	padding: 10px;
-}
-
 #ForumContainer .answerButton, #ForumContainer .answerCheck {
 	font-size: 150%;
 	text-align: center;
@@ -86,9 +60,6 @@
 	white-space: nowrap;
 }
 
-#ForumContainer #TopicTools .btn {
-	margin-bottom: 10px;
-}
 #ForumContainer .QAstate {
 	width: 40px;
 }
@@ -106,16 +77,8 @@
 #ForumContainer .postItem {
 	margin: 20px 0;
 }
-#ForumContainer .avatar {
-	margin: 0 0 20px 20px;
-}
-#ForumContainer .postUserData {
-	border-radius: 4px;
-	padding: 8px 15px;
-	margin-bottom: 10px;
-}
 #ForumContainer .postUserData h3 {
-	margin: 0;cursor: pointer;
+	cursor: pointer;
 }
 #ForumContainer blockquote {
 	font-size: 100%;
@@ -126,11 +89,7 @@
 	margin: 10px 0;
 }
 #ForumContainer .miniProfileBox {
-	padding: 8px 15px;
-	margin-bottom: 10px;
-	margin-top: 4px;
 	display: none;
-	border-radius: 4px;
 }
 #ForumContainer .postItem .voteCount {
 	display: inline-block;
@@ -161,10 +120,7 @@
 	padding: 0;
 }
 #ForumContainer .postItem .moderationLog {
-	padding: 8px 15px;
-	margin-bottom: 10px;
 	display: none;
-	border-radius: 4px;
 }
 #ForumContainer .postItem .postImage {
 	max-width: 100%;height: auto;

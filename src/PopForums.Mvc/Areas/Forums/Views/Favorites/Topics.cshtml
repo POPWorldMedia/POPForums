@@ -42,7 +42,7 @@ else
 		{
 			<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>    }>
 				<td class="newIndicator"><a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a></td>
-				<td class="topicListButton">
+				<td class="text-center">
 					<form asp-action="RemoveFavorite" asp-controller="Favorites" asp-antiforgery="false">
 						<input name="id" id="id" type="hidden" value="@topic.TopicID" />
 						<input type="submit" value="@PopForums.Resources.FavoriteRemove" class="btn btn-primary" />
