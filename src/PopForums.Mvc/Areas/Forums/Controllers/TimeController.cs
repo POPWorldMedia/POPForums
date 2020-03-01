@@ -29,7 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var list = new List<TimePairs>();
 			if (times == null || times.Length == 0)
 				return Json(list);
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var profile = await _profileService.GetProfile(user);
 			foreach (var item in times)
 			{

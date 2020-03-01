@@ -32,7 +32,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			ViewBag.PostCount = _forumService.GetAggregatePostCount().Result.ToString("N0");
 			var registeredUsers = await _userService.GetTotalUsers();
 			ViewBag.RegisteredUsers = registeredUsers.ToString("N0");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			return View(await _forumService.GetCategorizedForumContainerFilteredForUser(user));
 		}
 	}

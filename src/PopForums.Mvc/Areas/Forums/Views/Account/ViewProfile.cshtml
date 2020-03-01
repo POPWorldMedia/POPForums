@@ -5,7 +5,7 @@
 @{
 	ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var profile = UserRetrievalShim.GetProfile(Context);
+	var profile = UserRetrievalShim.GetProfile();
 }
 @section HeaderContent {
 }

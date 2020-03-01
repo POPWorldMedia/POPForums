@@ -2,8 +2,8 @@
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @{
-	var user = UserRetrievalShim.GetUser(Context);
-	var profile = UserRetrievalShim.GetProfile(Context);
+	var user = UserRetrievalShim.GetUser();
+	var profile = UserRetrievalShim.GetProfile();
 	var routeParameters = new Dictionary<string, object> {{"id", Model.Topic.UrlName}};
 }
 <div>

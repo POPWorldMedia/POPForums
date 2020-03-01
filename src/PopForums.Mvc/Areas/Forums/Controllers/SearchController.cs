@@ -49,7 +49,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			ViewBag.Query = query;
 			ViewBag.SearchType = searchType;
 			var includeDeleted = false;
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();

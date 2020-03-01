@@ -5,8 +5,8 @@
 	ViewBag.Title = PopForums.Resources.Search;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var routeParameters = new Dictionary<string, object> { { "query", ViewBag.Query }, { "searchType", ViewBag.SearchType } };
-	var user = UserRetrievalShim.GetUser(Context);
-	var profile = UserRetrievalShim.GetProfile(Context);
+	var user = UserRetrievalShim.GetUser();
+	var profile = UserRetrievalShim.GetProfile();
 }
 
 @section HeaderContent {

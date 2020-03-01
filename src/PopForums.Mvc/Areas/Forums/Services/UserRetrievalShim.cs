@@ -5,21 +5,28 @@ namespace PopForums.Mvc.Areas.Forums.Services
 {
 	public interface IUserRetrievalShim
 	{
-		User GetUser(HttpContext context);
-		Profile GetProfile(HttpContext context);
+		User GetUser();
+		Profile GetProfile();
 	}
 
 	public class UserRetrievalShim : IUserRetrievalShim
 	{
-	    public User GetUser(HttpContext context)
+		private readonly IHttpContextAccessor _httpContextAccessor;
+
+		public UserRetrievalShim(IHttpContextAccessor httpContextAccessor)
+		{
+			_httpContextAccessor = httpContextAccessor;
+		}
+
+		public User GetUser()
 	    {
-			var user = context.Items["PopForumsUser"] as User;
+			var user = _httpContextAccessor.HttpContext.Items["PopForumsUser"] as User;
 			return user;
 		}
 
-		public Profile GetProfile(HttpContext context)
+		public Profile GetProfile()
 		{
-			var profile = context.Items["PopForumsProfile"] as Profile;
+			var profile = _httpContextAccessor.HttpContext.Items["PopForumsProfile"] as Profile;
 			return profile;
 		}
     }

@@ -260,7 +260,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public ActionResult ResetPasswordSuccess()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return RedirectToAction("Login");
 			return View();
@@ -268,7 +268,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> EditProfile()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			var profile = await _profileService.GetProfileForEdit(user);
@@ -279,7 +279,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ViewResult> EditProfile(UserEditProfile userEdit)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			await _userService.EditUserProfile(user, userEdit);
@@ -289,7 +289,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public ViewResult Security()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			var isNewUserApproved = _settingsManager.Current.IsNewUserApproved;
@@ -300,7 +300,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			var (isPasswordPassed, _) = await _userService.CheckPassword(user.Email, userEdit.OldPassword);
@@ -321,7 +321,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			if (string.IsNullOrWhiteSpace(userEdit.NewEmail) || !userEdit.NewEmail.IsEmailAddress())
@@ -349,7 +349,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> ManagePhotos()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			var profile = await _profileService.GetProfile(user);
@@ -362,7 +362,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> ManagePhotos(UserEditPhoto userEdit)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			byte[] avatarFile = null;
@@ -386,7 +386,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				userImage = await _imageService.GetUserImage(profile.ImageID.Value);
 			var model = new DisplayProfile(user, profile, userImage);
 			model.PostCount = await _postService.GetPostCount(user);
-			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
+			var viewingUser = _userRetrievalShim.GetUser();
 			if (viewingUser == null)
 				model.ShowDetails = false;
 			return View(model);
@@ -405,7 +405,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			model.PostCount = await _postService.GetPostCount(user);
 			model.Feed = await _feedService.GetFeed(user);
 			model.UserAwards = await _userAwardService.GetAwards(user);
-			var viewingUser = _userRetrievalShim.GetUser(HttpContext);
+			var viewingUser = _userRetrievalShim.GetUser();
 			if (viewingUser == null)
 				model.ShowDetails = false;
 			return View(model);
@@ -417,7 +417,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (postUser == null)
 				return NotFound();
 			var includeDeleted = false;
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
@@ -430,7 +430,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<JsonResult> ClientSettings()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Json(_clientSettingsMapper.GetDefault());
 			var profile = await _profileService.GetProfile(user);
@@ -457,7 +457,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> EmailUser(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var toUser = await _userService.GetUser(id);
@@ -472,7 +472,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> EmailUser(int id, string subject, string text)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var toUser = await _userService.GetUser(id);
@@ -500,7 +500,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> ExternalLogins()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			var externalAssociations = await _externalUserAssociationManager.GetExternalUserAssociations(user);
@@ -510,7 +510,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> RemoveExternalLogin(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View("EditAccountNoUser");
 			await _externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());

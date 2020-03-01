@@ -34,7 +34,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't pin/unpin.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (topic.IsPinned)
 				await _topicService.UnpinTopic(topic, user);
 			else
@@ -48,7 +48,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't open/close.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (topic.IsClosed)
 				await _topicService.OpenTopic(topic, user);
 			else
@@ -62,7 +62,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't delete/undelete.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (topic.IsDeleted)
 				await _topicService.UndeleteTopic(topic, user);
 			else
@@ -79,7 +79,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(topicID);
 			if (topic == null)
 				throw new Exception($"Topic with ID {topicID} not found. Can't update.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var newTitle = collection["NewTitle"];
 			int forumID;
 			if (!int.TryParse(collection["NewForum"], out forumID))
@@ -97,7 +97,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(id);
 			if (post == null)
 				throw new Exception($"Post with ID {id} not found. Can't undelete.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			await _postService.Undelete(post, user);
 			return RedirectToAction("PostLink", "Forum", new { id = post.PostID });
 		}
@@ -126,7 +126,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(id);
 			if (topic == null)
 				throw new Exception($"Topic with ID {id} not found. Can't undelete.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var forum = await _forumService.Get(topic.ForumID);
 			await _topicService.HardDeleteTopic(topic, user);
 			return RedirectToAction("Index", "Forum", new { urlName = forum.UrlName });

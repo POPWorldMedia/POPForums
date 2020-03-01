@@ -2,7 +2,7 @@
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
 @{
-	var profile = UserRetrievalShim.GetProfile(Context);
+	var profile = UserRetrievalShim.GetProfile();
 }
 <div class="alert alert-secondary">
 	<h3>@PopForums.Resources.ModerationLog</h3>

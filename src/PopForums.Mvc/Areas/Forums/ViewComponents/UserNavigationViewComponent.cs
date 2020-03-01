@@ -21,12 +21,12 @@ namespace PopForums.Mvc.Areas.Forums.ViewComponents
 	    public async Task<IViewComponentResult> InvokeAsync()
 	    {
 		    var container = new UserNavigationContainer();
-            container.User = _userRetrievalShim.GetUser(HttpContext);
+            container.User = _userRetrievalShim.GetUser();
 		    if (container.User != null)
 		    {
 			    var count = await _privateMessageService.GetUnreadCount(container.User);
 			    if (count > 0)
-				    container.PMCount = String.Format("<span class=\"badge\">{0}</span>", count);
+				    container.PMCount = $"<span class=\"badge\">{count}</span>";
 		    }
 		    return View(container);
 	    }

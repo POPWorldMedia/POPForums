@@ -4,8 +4,8 @@
 @{
 	ViewBag.Title = Model.Forum.Title;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var user = UserRetrievalShim.GetUser(Context);
-	var profile = UserRetrievalShim.GetProfile(Context);
+	var user = UserRetrievalShim.GetUser();
+	var profile = UserRetrievalShim.GetProfile();
 }
 
 @section HeaderContent{

@@ -29,7 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ViewResult> Topics(int pageNumber = 1)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return View();
 			var (topics, pagerContext) = await _favoriteTopicService.GetTopics(user, pageNumber);
@@ -42,7 +42,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> RemoveFavorite(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var topic = await _topicService.Get(id);
 			await _favoriteTopicService.RemoveFavoriteTopic(user, topic);
 			return RedirectToAction("Topics");
@@ -51,7 +51,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<JsonResult> ToggleFavorite(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Json(new BasicJsonMessage { Message = Resources.NotLoggedIn, Result = false });
 			var topic = await _topicService.Get(id);

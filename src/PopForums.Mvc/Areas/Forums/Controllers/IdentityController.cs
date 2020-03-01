@@ -80,7 +80,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				if (!link.Contains(Request.Host.Value))
 					link = Url.Action("Index", HomeController.Name);
 			}
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Redirect(link);
@@ -89,7 +89,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<JsonResult> LogoutAsync()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });

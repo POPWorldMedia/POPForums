@@ -2,7 +2,7 @@
 @inject IUserRetrievalShim UserRetrievalShim
 @model PostItemContainer
 @{
-	var user = UserRetrievalShim.GetUser(Context);
+	var user = UserRetrievalShim.GetUser();
 	string deleteLink;
 	if (Model.Post.IsDeleted)
 	{ deleteLink = PopForums.Resources.Undelete; }

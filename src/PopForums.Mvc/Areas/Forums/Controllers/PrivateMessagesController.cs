@@ -27,7 +27,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Index(int pageNumber = 1)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Inbox, pageNumber);
@@ -37,7 +37,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Archive(int pageNumber = 1)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var (privateMessages, pagerContext) = await _privateMessageService.GetPrivateMessages(user, PrivateMessageBoxType.Archive, pageNumber);
@@ -47,7 +47,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> View(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
@@ -65,7 +65,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> Create(int? id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			ViewBag.UserIDs = " ";
@@ -89,7 +89,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Create(string subject, string fullText, string userIDs)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			if (string.IsNullOrWhiteSpace(userIDs) || string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(fullText))
@@ -106,7 +106,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Reply(int id, string fullText)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
@@ -128,7 +128,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> ArchivePM(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
@@ -141,7 +141,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> UnarchivePM(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var pm = await _privateMessageService.Get(id);
@@ -153,7 +153,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ContentResult> NewPMCount()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Content(String.Empty);
 			var count = await _privateMessageService.GetUnreadCount(user);

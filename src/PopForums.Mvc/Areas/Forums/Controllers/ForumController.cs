@@ -56,7 +56,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(urlName);
 			if (forum == null)
 				return NotFound();
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			if (!permissionContext.UserCanView)
 			{
@@ -81,7 +81,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> PostTopic(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Content(Resources.LoginToPost);
 			var (forum, permissionContext) = await GetForumByIdWithPermissionContext(id, user);
@@ -98,7 +98,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<IActionResult> PostTopic(NewPost newPost)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Forbid();
 			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
@@ -130,7 +130,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception($"Forum {topic.ForumID} not found");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user);
 			return Tuple.Create(permissionContext, topic);
 		}
@@ -152,7 +152,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (forum == null)
 				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
 
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var adapter = new ForumAdapterFactory(forum);
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
@@ -224,7 +224,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
@@ -253,7 +253,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public async Task<ActionResult> PostReply(int id, int quotePostID = 0, int replyID = 0)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return Content(Resources.LoginToPost);
 			var topic = await _topicService.Get(id);
@@ -298,7 +298,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<JsonResult> PostReply(NewPost newPost)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
 			string TopicLinkGenerator(Topic t) => this.FullUrlHelper("GoToNewestPost", Name, new { id = t.TopicID });
 			string UnsubscribeLinkGenerator(User u, Topic t) => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new {topicID = t.TopicID, authKey = u.AuthorizationKey});
@@ -319,7 +319,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var (permissionContext, topic) = await GetPermissionContextByTopicID(post.TopicID);
 			if (!permissionContext.UserCanView)
 				return StatusCode(403);
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var postList = new List<Post> { post };
 			var signatures = await _profileService.GetSignatures(postList);
 			var avatars = await _profileService.GetAvatars(postList);
@@ -333,7 +333,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ViewResult> Recent(int pageNumber = 1)
 		{
 			var includeDeleted = false;
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var titles = _forumService.GetAllForumTitles();
@@ -346,7 +346,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> MarkForumRead(int id)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				throw new Exception("There is no logged in user. Can't mark forum read.");
 			var forum = await _forumService.Get(id);
@@ -359,7 +359,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<RedirectToActionResult> MarkAllForumsRead()
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				throw new Exception("There is no logged in user. Can't mark forum read.");
 			await _lastReadService.MarkAllForumsRead(user);
@@ -369,7 +369,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ActionResult> PostLink(int id)
 		{
 			var includeDeleted = false;
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			var post = await _postService.Get(id);
@@ -394,7 +394,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			if (topic == null)
 				return NotFound();
 			var includeDeleted = false;
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				includeDeleted = true;
 			if (user == null)
@@ -410,7 +410,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var post = await _postService.Get(id);
 			if (post == null)
 				return NotFound();
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
 			var postEdit = await _postService.GetPostForEdit(post, user);
@@ -420,7 +420,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Edit(int id, PostEdit postEdit)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new { controller = "Forum", action = "PostLink", id = p.PostID });
 			var result = await _postMasterService.EditPost(id, postEdit, user, RedirectLinkGenerator);
 			if (result.IsSuccessful)
@@ -433,7 +433,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<ActionResult> DeletePost(int id)
 		{
 			var post = await _postService.Get(id);
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (!user.IsPostEditable(post))
 				return StatusCode(403);
 			await _postService.Delete(post, user);
@@ -461,7 +461,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
 				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);
 			if (!permissionContext.UserCanView)
@@ -503,7 +503,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(post.TopicID);
 			if (topic == null)
 				throw new Exception($"Post {post.PostID} appears to be orphaned from a topic.");
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			var helper = Url;
@@ -536,7 +536,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var topic = await _topicService.Get(topicID);
 			if (topic == null)
 				return NotFound();
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			if (user == null)
 				return StatusCode(403);
 			try

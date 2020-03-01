@@ -292,7 +292,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/SaveUser")]
 		public async Task<ActionResult> SaveUser([FromBody] UserEdit userEdit)
 		{
-			var adminUser = _userRetrievalShim.GetUser(HttpContext);
+			var adminUser = _userRetrievalShim.GetUser();
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var user = await _userService.GetUser(userEdit.UserID);
 			await _userService.EditUser(user, userEdit, false, false, null, null, ip, adminUser);
@@ -315,7 +315,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		private async Task DeleteUser(int userID, bool isBanned)
 		{
-			var adminUser = _userRetrievalShim.GetUser(HttpContext);
+			var adminUser = _userRetrievalShim.GetUser();
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var user = await _userService.GetUser(userID);
 			await _userService.DeleteUser(user, adminUser, ip, isBanned);
@@ -333,7 +333,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[HttpPost("/Forums/AdminApi/CreateRole/{role}")]
 		public async Task<ActionResult> CreateRole(string role)
 		{
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			await _userService.CreateRole(role, user, ip);
 			return NoContent();
@@ -344,7 +344,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		{
 			if (role == PermanentRoles.Admin || role == PermanentRoles.Moderator)
 				return NoContent();
-			var user = _userRetrievalShim.GetUser(HttpContext);
+			var user = _userRetrievalShim.GetUser();
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			await _userService.DeleteRole(role, user, ip);
 			return NoContent();
