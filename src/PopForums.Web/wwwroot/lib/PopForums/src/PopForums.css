@@ -6,6 +6,10 @@
 	max-width: 40px;
 }
 
+#ForumContainer #TopicTools input {
+	margin-bottom: 10px;
+}
+
 #ForumContainer #PostResponseMessage, #ForumContainer #TopicModerationLog {
 	display: none;
 }
