@@ -29,14 +29,8 @@ else
 			<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>
 		</div>
 	</li>
-	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@PopForums.Resources.Forum</a>
-		<div class="dropdown-menu" role="menu">
-			<a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Recent</a>
-			<a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ActivityFeed</a>
-			<a asp-controller="@HomeController.Name" asp-action="Index" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ForumHome</a>
-		</div>
-	</li>
+	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 	<li class="nav-item">
 		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> @Html.Raw(Model.PMCount)</a>
 	</li>
