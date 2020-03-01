@@ -27,7 +27,7 @@
 	</div>
 	@if (Model.Profile != null && !Model.Profile.HideVanity && (Model.Avatars).ContainsKey(Model.Post.UserID))
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3" />
+		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3 d-none d-sm-block" />
 	}
 
 	@Html.Raw(Model.Post.FullText)

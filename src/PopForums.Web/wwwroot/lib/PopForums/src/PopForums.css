@@ -171,18 +171,6 @@
 
 /* queries */
 
-@media(max-width:479px) {
-	#ForumContainer .avatar {
-		display: none;
-	}
-}
-
-@media(max-width:639px) {
-	#ForumContainer .forumDetails {
-		display: none;
-	}
-}
-
 @media(min-width:1px) {
 	#ForumContainer #PreviewModal .modal-dialog {
 		width: 90%!important;

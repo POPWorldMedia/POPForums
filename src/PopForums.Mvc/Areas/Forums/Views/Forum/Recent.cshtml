@@ -45,7 +45,7 @@
 			</td>
 			<td>
 				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>
-				<small class="float-right forumDetails">
+				<small class="float-right d-none d-sm-block">
 					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 				</small>
 			</td>
@@ -57,7 +57,7 @@
 		</td>
 		<td>
 			<h2><a class="titleLink" href=""></a></h2>
-			<small class="float-right forumDetails">
+			<small class="float-right d-none d-sm-block">
 				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
 			</small>
 		</td>
