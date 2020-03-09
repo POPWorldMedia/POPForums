@@ -8,6 +8,7 @@ using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Feeds;
 using PopForums.Models;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.ScoringGame;
@@ -67,6 +68,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IConfig _config;
 		private readonly IReCaptchaService _reCaptchaService;
 
+		[PopForumsAuthorizationIgnore]
 		public ViewResult Create()
 		{
 			SetupCreateData();
@@ -91,7 +93,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			ViewData[TosKey] = _settingsManager.Current.TermsOfService;
 			ViewData[ServerTimeZoneKey] = _settingsManager.Current.ServerTimeZone;
 		}
-		
+
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public async Task<ViewResult> Create(SignupData signupData)
 		{
@@ -164,6 +167,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				modelState.AddModelError("Email", Resources.IPBanned);
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<ViewResult> Verify(string id)
 		{
 			var authKey = Guid.Empty;
@@ -179,12 +183,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public RedirectToActionResult VerifyCode(string authorizationCode)
 		{
 			return RedirectToAction("Verify", new { id = authorizationCode });
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<ViewResult> RequestCode(string email)
 		{
 			var user = await _userService.GetUserByEmail(email);
@@ -202,11 +208,13 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("Verify", new { id = String.Empty });
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public ViewResult Forgot()
 		{
 			return View();
 		}
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public async Task<ViewResult> Forgot(string email)
 		{
@@ -224,6 +232,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<ActionResult> ResetPassword(string id)
 		{
 			var authKey = Guid.Empty;
@@ -238,6 +247,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(container);
 		}
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 		{
@@ -258,6 +268,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return RedirectToAction("ResetPasswordSuccess");
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public ActionResult ResetPasswordSuccess()
 		{
 			var user = _userRetrievalShim.GetUser();
@@ -437,6 +448,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Json(_clientSettingsMapper.GetClientSettings(profile));
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public ViewResult Login()
 		{
 			string link;
@@ -490,6 +502,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("EmailSent");
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<ViewResult> Unsubscribe(int id, string key)
 		{
 			var user = await _userService.GetUser(id);

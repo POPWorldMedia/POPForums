@@ -55,6 +55,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public static string Name = "Identity";
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public async Task<IActionResult> Login(string email, string password)
 		{
@@ -95,6 +96,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Json(new BasicJsonMessage { Result = true });
 		}
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public IActionResult ExternalLogin(string provider, string returnUrl)
 		{
@@ -133,6 +135,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return Redirect(redirect);
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
@@ -155,6 +158,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
+		[PopForumsAuthorizationIgnore]
 		[HttpPost]
 		public async Task<JsonResult> LoginAndAssociate(string email, string password)
 		{
@@ -197,6 +201,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			await httpContext.SignInAsync(PopForumsAuthorizationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
 		}
 
+		[PopForumsAuthorizationIgnore]
 		public async Task<IActionResult> CallbackHandler()
 		{
 			var loginState = _externalLoginTempService.Read();
