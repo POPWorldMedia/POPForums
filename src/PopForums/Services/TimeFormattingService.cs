@@ -4,11 +4,12 @@ using PopForums.Models;
 
 namespace PopForums.Services
 {
+	[Obsolete]
 	public interface ITimeFormattingService
 	{
 		string GetFormattedTime(DateTime utcDateTime, Profile profile);
 	}
-
+	[Obsolete]
 	public class TimeFormattingService : ITimeFormattingService
 	{
 		public TimeFormattingService(ISettingsManager settingsManager)

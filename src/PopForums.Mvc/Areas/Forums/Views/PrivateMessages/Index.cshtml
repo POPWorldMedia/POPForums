@@ -37,7 +37,7 @@
 			</td>
 			<td><a asp-action="View" asp-route-id="@pm.PMID">@pm.Subject</a></td>
 			<td>@pm.UserNames</td>
-			<td><small class="fTime" data-utc="@pm.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(pm.LastPostTime, profile)</small></td>
+			<td><small class="fTime">@pm.LastPostTime.AsUtc8601()</small></td>
 		</tr>
 	}
 </table>

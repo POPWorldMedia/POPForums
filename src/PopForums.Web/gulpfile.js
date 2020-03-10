@@ -7,7 +7,10 @@ var gulp = require("gulp"),
 	uglify = require("gulp-uglify"),
 	sourcemaps = require("gulp-sourcemaps"),
 	rename = require("gulp-rename"),
-	bump = require("gulp-bump");
+	bump = require("gulp-bump"),
+	resx_out = require("gulp-resx-out"),
+	path = require("path"),
+	concat = require('gulp-concat');
 
 var nodeRoot = "./node_modules/";
 var targetPath = "./wwwroot/lib/";
@@ -53,3 +56,41 @@ gulp.task("bump", function () {
 gulp.task("min", gulp.series(["copies","js","css", "bump"]));
 
 gulp.task("default", gulp.series("min"));
+
+gulp.task("resx2js", function () {
+	//return string that should be written to file
+	let firstFile = true;
+	function onwrite(result, file) {
+		const fileName = path.parse(file.path).name;
+		const langMatch = /\.([\w-]+)$/.exec(fileName);
+		const lang = langMatch === null
+			? "en"
+			: langMatch[1];
+		let start = '';
+		if (firstFile) {
+			start = 'timeStrs = {};\r\n';
+			firstFile = false;
+		}
+		return start + `timeStrs["${lang}"] = ${JSON.stringify(result)};`;
+	}
+
+	const timeStrs = ["LessThanMinute", "MinutesAgo", "TodayTime", "YesterdayTime"];
+	//return null to skip, or object { name: '', value: '' }
+	function onparse(item, element, result, file) {
+		if (timeStrs.includes(item.name)) {
+			return {
+				name: item.name,
+				value: item.value
+			};
+		}
+		return null;
+	}
+	return gulp.src("./../PopForums/Resources/*.resx")
+		.pipe(resx_out({
+			delimiter: '.',
+			onwrite,
+			onparse
+		}))
+		.pipe(concat("langTime.js"))
+		.pipe(gulp.dest(targetPath + "/PopForums/src"));
+});

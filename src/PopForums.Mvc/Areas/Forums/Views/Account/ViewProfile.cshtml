@@ -49,7 +49,7 @@
 
 				<div class="row">
 					<div class="col-4">@PopForums.Resources.Joined</div>
-					<div class="col-8">@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</div>
+					<div class="col-8 unformatted-time">@Model.Joined.AsUtc8601()</div>
 				</div>
 
 				@if (Model.Dob.HasValue)
@@ -123,7 +123,7 @@
 						<div class="activityFeedPoints">+@item.Points</div>
 					}
 					<div>@Html.Raw(item.Message)</div>
-					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-right small unformatted-time">@item.TimeStamp.AsUtc8601()</div>
 				</div>
 			}
 		</div>
@@ -133,7 +133,7 @@
 			{
 				<div class="alert-light alert mt-2" title="@item.Description">
 					<h2>@item.Title</h2>
-					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-right small unformatted-time">@item.TimeStamp.AsUtc8601()</div>
 				</div>
 			}
 			@if (Model.UserAwards.Count == 0)

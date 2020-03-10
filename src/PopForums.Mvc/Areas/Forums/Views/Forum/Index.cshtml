@@ -66,7 +66,7 @@ else
 			<td>
 				<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-pageNumber="">@topic.Title</a></h2>
 				<small class="float-right d-none d-sm-block">
-					@PopForums.Resources.StartedBy: @topic.StartedByName | @PopForums.Resources.Views: @topic.ViewCount.ToString("N0") | @PopForums.Resources.Replies: @topic.ReplyCount.ToString("N0") | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+					@PopForums.Resources.StartedBy: @topic.StartedByName | @PopForums.Resources.Views: @topic.ViewCount.ToString("N0") | @PopForums.Resources.Replies: @topic.ReplyCount.ToString("N0") | @PopForums.Resources.Last: <span class="lastPostTime fTime">@topic.LastPostTime.AsUtc8601()</span> @PopForums.Resources.By @topic.LastPostName
 				</small>
 			</td>
 		</tr>

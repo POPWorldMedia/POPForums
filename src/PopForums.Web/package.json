@@ -20,9 +20,11 @@
     "gulp-babel": "8.0.0",
     "@babel/core": "7.8.4",
     "@babel/preset-env": "7.8.4",
+    "gulp-concat": "2.6.1",
     "gulp-sourcemaps": "2.6.5",
     "gulp-rename": "2.0.0",
-    "gulp-bump": "3.1.3" 
+    "gulp-resx-out": "1.0.1",
+    "gulp-bump": "3.1.3"
   },
   "babel": {
     "presets": [

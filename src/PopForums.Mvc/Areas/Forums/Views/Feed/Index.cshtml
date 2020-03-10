@@ -29,7 +29,7 @@
 {
 	<div class="alert alert-light mt-2">
 		<div class="feedItemText">@Html.Raw(item.Message)</div>
-		<div class="text-right small fTime" data-utc="@item.TimeStamp.ToString("o")">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+		<div class="text-right small fTime">@item.TimeStamp.AsUtc8601()</div>
 	</div>
 }
 	<div id="ActivityFeedTemplate" class="alert alert-light mt-2" style="display: none;">

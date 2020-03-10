@@ -1,4 +1,5 @@
 ﻿$(function () {
+	"use strict";
 	if (window.location.hash) {
 		var hash = window.location.hash;
 		while (hash.charAt(0) == '#') hash = hash.substr(1);
@@ -23,6 +24,87 @@ PopForums.areaPath = "/Forums";
 PopForums.currentTopicState = null;
 PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
+PopForums.dateTimeFormatter = (function() {
+	const nav = window.navigator;
+	const lang = nav.languages
+		? nav.languages[0]
+		: (nav.language || nav.browserLanguage || nav.userLanguage || 'default');
+	// Intl.DateTimeFormat is OK back to IE11
+	const dateTimeFormatter = new Intl.DateTimeFormat(lang, {
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+	});
+	const timeFormatter = new Intl.DateTimeFormat(lang, {
+		hour: 'numeric',
+		minute: 'numeric',
+	});
+	const availLang = Object.getOwnPropertyNames(timeStrs);
+	let langLookupKey = 'en';
+	for (let l of (nav.languages || [lang])){
+		if (availLang.includes(l)) {
+			langLookupKey = l;
+			break;
+		}
+		if (l.length > 2) {
+			l = l.substring(0, 2);
+			if (availLang.includes(l)) {
+				langLookupKey = l;
+				break;
+			}
+		}
+	}
+	const langLookups = timeStrs[langLookupKey];
+	return {
+		getLocaleFeedTime: function (dt) {
+			if (typeof dt === 'string') {
+				dt = new Date(dt); //note IE <= 8 do not parse iso dates, everthing else fine
+			}
+			if (!dt instanceof Date) {
+				// this will not work across iframes, but that should be irrelevant here
+				// potentially future iterations will be typescript?
+				throw new TypeError("dt argument of DateCultureHandler.getTime must be iso 8610 string or a Date");
+			}
+			if (isNaN(dt.getTime())) {
+				return {
+					disp: ''
+				};
+			}
+			const now = new Date();
+			const dateDiff = now.getDate() - dt.getDate();
+			if (dateDiff <= 1) {
+				const msPerMin = 60000;
+				const minsAgo = (now.getTime() - dt.getTime()) / msPerMin;
+				if (minsAgo < 1) {
+					return {
+						disp: langLookups.LessThanMinute,
+						recalc: Math.max(0, (1 - minsAgo) * msPerMin)
+					};
+				}
+				if (minsAgo < 60) {
+					return {
+						disp: langLookups.MinutesAgo.replace("{0}", minsAgo.toFixed()),
+						recalc: Math.max(0, (1 - minsAgo % 1) * msPerMin)
+					};
+				}
+				const formattedTime = timeFormatter.format(dt);
+				const nextMidnight = new Date(now);
+				nextMidnight.setHours(0, 0, 0, 0);
+				nextMidnight.setDate(now.getDate() + 1);
+				return {
+					recalc: nextMidnight.getTime() - now.getTime(),
+					disp: dateDiff === 1
+						? langLookups.YesterdayTime.replace("{0}", formattedTime)
+						: langLookups.TodayTime.replace("{0}", formattedTime)
+				};
+			}
+			return { disp: dateTimeFormatter.format(dt) };
+		},
+		getLocaleTime: dateTimeFormatter.format
+	}
+})();
 
 PopForums.editorSettings = {
 	theme: "silver",
@@ -80,7 +162,7 @@ PopForums.processLoginBase = function (path) {
 };
 
 PopForums.topicListSetup = function (forumID) {
-	PopForums.startTimeUpdater();
+	PopForums.updateTimes();
 	var b = $("#NewTopicButton");
 	b.click(function () {
 		var n = $("#NewTopic");
@@ -217,15 +299,13 @@ PopForums.loadFeed = function () {
 		.then(function () {
 			return connection.invoke("listenToAll");
 		});
-	PopForums.startTimeUpdater();
+	PopForums.updateTimes();
 };
 
 PopForums.populateFeedRow = function (data) {
 	var row = $("#ActivityFeedTemplate").clone();
 	row.removeAttr("id");
 	row.find(".feedItemText").html(data.message);
-	row.find(".fTime").attr("data-utc", data.utc);
-	row.find(".fTime").text(data.timeStamp);
 	return row;
 };
 
@@ -238,7 +318,7 @@ PopForums.setReplyMorePosts = function (lastPostID) {
 };
 
 PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
-	PopForums.startTimeUpdater();
+	PopForums.updateTimes();
 	var lastPostID = $("#LastPostID").val();
 	PopForums.currentTopicState = new PopForums.TopicState(pageIndex, lastPostID, pageCount, topicID);
 
@@ -345,8 +425,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 };
 
 PopForums.qaTopicSetup = function (topicID) {
-	PopForums.startTimeUpdater();
-
+	PopForums.updateTimes();
 	$(".postItem img:not('.avatar')").addClass("postImage");
 	$(document).on("click", ".commentLink", function () {
 		var replyID = $(this).parents(".postItem").attr("data-postid");
@@ -612,7 +691,7 @@ PopForums.homeSetup = function () {
 		.then(function () {
 			return connection.invoke("listenToAll");
 		});
-	PopForums.startTimeUpdater();
+	PopForums.updateTimes();
 };
 
 PopForums.recentListen = function (pageSize) {
@@ -674,7 +753,6 @@ PopForums.populateTopicRow = function (data) {
 	row.find(".replyCount").text(data.replyCount);
 	row.find(".lastPostTime").text(data.lastPostTime);
 	row.find(".lastPostName").text(data.lastPostName);
-	row.find(".fTime").attr("data-utc", data.utc);
 	return row;
 };
 
@@ -684,38 +762,37 @@ PopForums.updateForumStats = function (data) {
 	row.find(".postCount").text(data.postCount);
 	row.find(".lastPostTime").text(data.lastPostTime);
 	row.find(".lastPostName").text(data.lastPostName);
-	row.find(".fTime").attr("data-utc", data.utc);
 	row.find(".newIndicator .icon-file-text2").removeClass("text-muted").addClass("text-warning");
 };
 
-PopForums.startTimeUpdater = function () {
-	setTimeout(function () {
-		PopForums.startTimeUpdater();
-		PopForums.updateTimes();
-	}, 60000);
-};
-
 PopForums.updateTimes = function () {
-	var a = [];
-	var times = $(".fTime");
-	$.each(times, function () {
-		var t = $(this).attr("data-utc");
-		if (((new Date() - new Date(t + "Z")) / 3600000) < 48)
-			a.push(t);
+	// change UTC to locale times (non updating)
+	$(".unformatted-time").each(function (_indx, el) {
+		if (!el.hasAttribute('data-localized')) {
+			var dateUtcStr = el.innerText.trim();
+			el.innerText = PopForums.dateTimeFormatter.getLocaleTime(dateUtcStr);
+			el.setAttribute('data-localized','');
+		}
 	});
-	if (a.length > 0)
-		$.ajax({
-			url: PopForums.areaPath + "/Time/GetTimes",
-			type: "POST",
-			data: { times: a },
-			dataType: "json",
-			traditional: true,
-			success: function (result) {
-				$.each(result, function () {
-					$(".fTime[data-utc='" + this.key + "']").text(this.value);
-				});
-			},
-			error: function () {
-			}
-		});
+	// change feed times to locale + update as required
+	// by not removing the timeout function as each element is removed, there is a potential for a memory leak
+	// however given this is not an SPA and therefore it will only be a few handlers at max with before a navigation event
+	// I am leaving for now
+	$(".fTime").each(function (_indx, el) {
+		if (!el.hasAttribute('data-localized')) {
+			var dateUtcStr = el.innerText.trim();
+			var updateFn;
+			updateFn = function () {
+				if (el.parentElement) { // if no parent, element has been removed from the DOM
+					var fTime = PopForums.dateTimeFormatter.getLocaleFeedTime(dateUtcStr);
+					el.innerText = fTime.disp;
+					if (typeof fTime.recalc === 'number') {
+						window.setTimeout(updateFn, fTime.recalc);
+					}
+				}
+			};
+			updateFn();
+			el.setAttribute('data-localized', '');
+		}
+	});
 };
