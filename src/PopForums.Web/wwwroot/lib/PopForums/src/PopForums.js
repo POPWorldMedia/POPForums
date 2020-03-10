@@ -783,7 +783,7 @@ PopForums.updateTimes = function () {
 			var dateUtcStr = el.innerText.trim();
 			var updateFn;
 			updateFn = function () {
-				if (el.parentElement) { // if no parent, element has been removed from the DOM
+				if ($(el).closest(document.body).length === 1) { // if no body ancestor, element has been removed from the DOM
 					var fTime = PopForums.dateTimeFormatter.getLocaleFeedTime(dateUtcStr);
 					el.innerText = fTime.disp;
 					if (typeof fTime.recalc === 'number') {
