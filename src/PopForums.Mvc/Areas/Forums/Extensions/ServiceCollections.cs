@@ -45,14 +45,20 @@ namespace PopForums.Mvc.Areas.Forums.Extensions
 			services.AddTransient<IBroker, Broker>();
 			// this is required for error logging:
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			
+
 			var serviceProvider = services.BuildServiceProvider();
 			var setupService = serviceProvider.GetService<ISetupService>();
 			if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
 				return services;
 
 			services.AddAuthentication()
-				.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option => option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0));
+				.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme,
+					option =>
+						{
+							option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0);
+							option.LoginPath = "/Forums/Account/Login";//This should login page path
+							option.LogoutPath = "/Forums/Identity/Logout";//This should logout page path
+						});
 
 			return services;
 		}

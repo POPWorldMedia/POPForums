@@ -9,12 +9,17 @@
 <head>
 	<meta name="viewport" content="width=device-width" />
 	<title>@PopForums.Resources.PopForumsAdmin</title>
-	<script src="~/lib/vue/dist/vue.js"></script>
+	<environment include="Development">
+		<script src="~/lib/vue/dist/vue.js"></script>
+	</environment>
+	<environment exclude="Development">
+		@*this is a different version of vue with performance enhancements + console warnings off*@
+		<script src="~/lib/vue/dist/vue.min.js"></script>
+	</environment>
 	<script src="~/lib/vue-router/dist/vue-router.min.js"></script>
-	<script src="~/lib/popper.js/dist/popper.min.js"></script>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/axios/dist/axios.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 	<style>
 		.fade-enter-active, .fade-leave-active {
