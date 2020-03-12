@@ -6,13 +6,13 @@
     @RenderSection("HeaderContent", required: false)
 	<environment include="Development">
 		<script src="~/lib/signalr/dist/signalr.js"></script>
-		<script src="~/lib/PopForums/src/langTime.js"></script>
+		<script src="~/lib/PopForums/src/timesTranslated.js"></script>
+		<script src="~/lib/PopForums/src/BrowserDateTimeCulture.js"></script>
 		<script src="~/lib/PopForums/src/PopForums.js"></script>
 		<link href="~/lib/PopForums/src/PopForums.css" rel="stylesheet" />
 	</environment>
 	<environment exclude="Development">
 		<script src="~/lib/signalr/dist/signalr.min.js"></script>
-		<script src="~/lib/PopForums/dist/langTime.min.js"></script>
 		<script src="~/lib/PopForums/dist/PopForums.min.js"></script>
 		<link href="~/lib/PopForums/dist/PopForums.min.css" rel="stylesheet" />
 	</environment>

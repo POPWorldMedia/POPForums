@@ -46,6 +46,7 @@ namespace PopForums.Mvc.Areas.Forums.TagHelpers
 				output.Attributes.Add("class", $"topicIndicator {Class}");
 			else
 				output.Attributes.Add("class", "topicIndicator");
+			output.TagMode = TagMode.StartTagAndEndTag;
 		}
     }
 }
