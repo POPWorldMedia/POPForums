@@ -1,4 +1,4 @@
-﻿/// <binding AfterBuild="default" />
+/// <binding AfterBuild="default" />
 const babel = require('gulp-babel');
 const bump = require('gulp-bump');
 const concat = require('gulp-concat');
@@ -56,10 +56,6 @@ gulp.task("bump", function () {
 		.pipe(gulp.dest("./wwwroot/lib/PopForums/"));
 });
 
-gulp.task("min", gulp.series(["resx2js","copies","js","css", "bump"]));
-
-gulp.task("default", gulp.series("min"));
-
 gulp.task("resx2js", function () {
 	//return string that should be written to file
 	function onwrite(result, file) {
@@ -92,3 +88,7 @@ gulp.task("resx2js", function () {
 		.pipe(injectStr.prepend('const timesTranslated = {};'))
 		.pipe(gulp.dest(targetPath + "/PopForums/src"));
 });
+
+gulp.task("min", gulp.series(["resx2js", "copies", "js", "css", "bump"]));
+
+gulp.task("default", gulp.series("min"));
