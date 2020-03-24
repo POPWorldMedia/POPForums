@@ -10,6 +10,9 @@
 	{ deleteLink = PopForums.Resources.DeleteTopic; }
 	else
 	{ deleteLink = PopForums.Resources.Delete; }
+	var hideVanity = false;
+	if (Model.Profile != null)
+	{ hideVanity = Model.Profile.HideVanity; }
 }
 
 <a name="@Model.Post.PostID"></a>
@@ -25,7 +28,7 @@
 			<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, Model.Profile)</span>
 		</small>
 	</div>
-	@if ((Model.Profile != null && !Model.Profile.HideVanity && (Model.Avatars).ContainsKey(Model.Post.UserID)) || (Model.Profile == null && Model.Avatars.ContainsKey(Model.Post.UserID)))
+	@if ((!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID)) || (Model.Profile == null && Model.Avatars.ContainsKey(Model.Post.UserID)))
 	{
 		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3 d-none d-sm-block" />
 	}
@@ -36,7 +39,7 @@
 		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@Model.Post.LastEditTime.Value.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.LastEditTime.Value, Model.Profile)</span></small>
 	}
 
-	@if ((Model.Post.ShowSig && Model.Profile != null && !Model.Profile.HideVanity && (Model.Signatures).ContainsKey(Model.Post.UserID)) || (Model.Profile == null && Model.Avatars.ContainsKey(Model.Post.UserID)))
+	@if ((Model.Post.ShowSig && !hideVanity && (Model.Signatures).ContainsKey(Model.Post.UserID)) || Model.Post.ShowSig && (Model.Profile == null && Model.Avatars.ContainsKey(Model.Post.UserID)))
 	{
 		<hr />
 		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
