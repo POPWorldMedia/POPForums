@@ -213,7 +213,15 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var result = service.ClientHtmlToForumCode("<p>test <script>alert('blah');</script> test</p>");
-			Assert.Equal("test  test", result);
+			Assert.Equal("test alert('blah'); test", result);
+		}
+
+		[Fact]
+		public void NukeInvalidHtml2()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p>[quote]<em>WolfBobs said:</em><br><span style=\"font-size: 1rem;\">People need to learn to not blindly follow people based on red and blue. That's why our country has been stagnant with no real change for the good of the people for decades. Good for corporations? Sure. But the people? Not so much.</span><br></p><p>[/quote]It's reassuring to see that some people feel that way.</p>");
+			Assert.Equal("[quote]\r\n[i]WolfBobs said:[/i]\r\nPeople need to learn to not blindly follow people based on red and blue. That's why our country has been stagnant with no real change for the good of the people for decades. Good for corporations? Sure. But the people? Not so much.\r\n\r\n\r\n[/quote]It's reassuring to see that some people feel that way.", result);
 		}
 
 		[Fact]

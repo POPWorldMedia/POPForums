@@ -202,7 +202,7 @@ namespace PopForums.Services
 			text = Regex.Replace(text, @"(<iframe )(\S+ )*(src=""https?://www.youtube.com/embed/)(\S+)("")( *\S+)*( */iframe>)", "[youtube=https://www.youtube.com/watch?v=$4]", RegexOptions.IgnoreCase);
 
 			// catch remaining HTML as invalid
-			text = Regex.Replace(text, @"<.*>", String.Empty, RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"<.*?>", String.Empty, RegexOptions.IgnoreCase);
 
 			// convert HTML escapes
 			text = Regex.Replace(text, "&nbsp;", " ", RegexOptions.IgnoreCase);
