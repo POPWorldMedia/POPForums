@@ -301,7 +301,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var user = _userRetrievalShim.GetUser();
 			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
 			string TopicLinkGenerator(Topic t) => this.FullUrlHelper("GoToNewestPost", Name, new { id = t.TopicID });
-			string UnsubscribeLinkGenerator(User u, Topic t) => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new {topicID = t.TopicID, authKey = u.AuthorizationKey});
+			string UnsubscribeLinkGenerator(User u, Topic t) => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new {topicID = t.TopicID, userID = user.UserID, hash = _profileService.GetUnsubscribeHash(user)});
 			string PostLinkGenerator(Post p) => Url.Action("PostLink", "Forum", new {id = p.PostID});
 			string RedirectLinkGenerator(Post p) => Url.RouteUrl(new {controller = "Forum", action = "PostLink", id = p.PostID});
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();

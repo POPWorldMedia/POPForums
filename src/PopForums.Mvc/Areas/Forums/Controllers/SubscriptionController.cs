@@ -10,7 +10,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 	[Area("Forums")]
 	public class SubscriptionController : Controller
     {
-		public SubscriptionController(ISubscribedTopicsService subService, ITopicService topicService, IUserService userService, ILastReadService lastReadService, IForumService forumService, IUserRetrievalShim userRetrievalShim)
+		public SubscriptionController(ISubscribedTopicsService subService, ITopicService topicService, IUserService userService, ILastReadService lastReadService, IForumService forumService, IUserRetrievalShim userRetrievalShim, IProfileService profileService)
 		{
 			_subService = subService;
 			_topicService = topicService;
@@ -18,6 +18,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_lastReadService = lastReadService;
 			_forumService = forumService;
 			_userRetrievalShim = userRetrievalShim;
+			_profileService = profileService;
 		}
 
 		public static string Name = "Subscription";
@@ -28,6 +29,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly ILastReadService _lastReadService;
 		private readonly IForumService _forumService;
 	    private readonly IUserRetrievalShim _userRetrievalShim;
+	    private readonly IProfileService _profileService;
 
 	    public async Task<ViewResult> Topics(int pageNumber = 1)
 		{
@@ -41,14 +43,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(container);
 		}
 
-		public async Task<ViewResult> Unsubscribe(int topicID, string authKey)
+		public async Task<ViewResult> Unsubscribe(int topicID, int userID, string hash)
 		{
 			var container = new TopicUnsubscribeContainer { User = null, Topic = null };
-			Guid parsedKey;
-			if (!Guid.TryParse(authKey, out parsedKey))
-				return View(container);
-			container.User = await _userService.GetUserByAuhtorizationKey(parsedKey);
+			container.User = await _userService.GetUser(userID);
 			container.Topic = await _topicService.Get(topicID);
+			var unsubscribeHash = _profileService.GetUnsubscribeHash(container.User);
+			if (unsubscribeHash != hash)
+				return View(container);
 			await _subService.TryRemoveSubscribedTopic(container.User, container.Topic);
 			return View(container);
 		}
