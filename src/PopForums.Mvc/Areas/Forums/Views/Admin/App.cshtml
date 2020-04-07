@@ -606,24 +606,26 @@
 	<main>
 		<h2>@PopForums.Resources.EditUser</h2>
 
-		<div class="form-group row">
-			<div class="col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
-			<div class="col-sm-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
-		</div>
-		<div class="form-check form-check-inline mb-3">
-			<input class="form-check-input" type="radio" value="name" id="SearchName" v-model="searchType">
-			<label class="form-check-label" for="SearchName">Name</label>
-		</div>
-		<div class="form-check form-check-inline">
-			<input class="form-check-input" type="radio" value="email" id="SearchEmail" v-model="searchType">
-			<label class="form-check-label" for="SearchEmail">Email</label>
-		</div>
-		<div class="form-check form-check-inline">
-			<input class="form-check-input" type="radio" value="role" id="SearchRole" v-model="searchType">
-			<label class="form-check-label" for="SearchRole">Role</label>
-		</div>
-		<transition name="fade"><span v-show="searchAlert" class="alert alert-warning">@PopForums.Resources.NoResults</span></transition>
-		<div v-for="u in searchResults"><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
+		<form v-on:submit.prevent="search">
+			<div class="form-group row">
+				<div class="col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
+				<div class="col-sm-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
+			</div>
+			<div class="form-check form-check-inline mb-3">
+				<input class="form-check-input" type="radio" value="name" id="SearchName" v-model="searchType">
+				<label class="form-check-label" for="SearchName">Name</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" value="email" id="SearchEmail" v-model="searchType">
+				<label class="form-check-label" for="SearchEmail">Email</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" value="role" id="SearchRole" v-model="searchType">
+				<label class="form-check-label" for="SearchRole">Role</label>
+			</div>
+		</form>
+			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning">@PopForums.Resources.NoResults</span></transition>
+			<div v-for="u in searchResults"><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
 	</main>
 </script>
 
