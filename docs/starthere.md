@@ -46,6 +46,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.AwsKit` contains an ElasticSearch implementation.
 * The `master` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2019 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Starup` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`.
 * `PopForums.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
+
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
 ```js
 {
@@ -81,9 +82,9 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 * Building requires that you have Node.js (and therefore npm) installed to get the client side references and run Gulp tasks to copy them to the wwwroot folder. If you run the app and the scripts and CSS are broken, it's because you don't have this. To troubleshoot Gulp action, right-click `gulpfile.js` in the web project and choose "Task Runner Explorer."
 * If you're using Azure functions in the background, instead of embedding the background work in the web app (see "Using AzureKit"), you'll want to run multiple startup projects, specifically the `PopForums.Web` and `PopForums.AzureKit.Functions`.
 
-Here’s what each field does: 
+Here’s what each field on the setup page does: 
 * **Forum title:** This is what your forum will be called at the root, in an h1 tag. You can edit this (and everything else) later.
-* **SMTP Server:** The host name of the server you’ll connect to for sending e-mail. Enabling this functionality on your server is beyond the scope of this document.
+* **SMTP Server:** The host name of the server you’ll connect to for sending e-mail. Enabling this functionality on your server is beyond the scope of this document, but we usually use SendGrid to send email.
 * **Port:** Typically 25, though some services (like Gmail) use others.
 * **From e-mail address:** When a user receives e-mail from the forum, it will be “from” this address.
 * **Use SSL:** Check if your server uses or requires SSL.
