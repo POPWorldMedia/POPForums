@@ -9,11 +9,12 @@
 }
 
 @section HeaderContent{
-<script type="text/javascript">
-	$(function () {
-		PopForums.homeSetup();
-	});
-</script>
+	<link rel="sitemap" href="@ViewBag.SitemapUrl" type="application/xml" />
+	<script type="text/javascript">
+		$(function () {
+			PopForums.homeSetup();
+		});
+	</script>
 }
 
 <h1>@Model.ForumTitle</h1>
@@ -64,7 +65,8 @@
 
 <div>
 	<h3>@PopForums.Resources.UsersOnline</h3>
-	<p>@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var u in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
+	<p>
+		@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var u in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
 		{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@u.UserID">@u.Name</a>}
 	</p>
 	<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>

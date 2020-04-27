@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
@@ -33,6 +34,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var registeredUsers = await _userService.GetTotalUsers();
 			ViewBag.RegisteredUsers = registeredUsers.ToString("N0");
 			var user = _userRetrievalShim.GetUser();
+			ViewBag.SitemapUrl = this.FullUrlHelper("Index", SitemapController.Name);
 			return View(await _forumService.GetCategorizedForumContainerFilteredForUser(user));
 		}
 	}

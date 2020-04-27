@@ -372,5 +372,32 @@ SELECT id FROM @ids";
 				list = connection.QueryAsync<int>(sql, new { CutoffDate = cutoffDate }));
 			return await list;
 		}
+
+		public async Task<List<Tuple<string, DateTime>>> GetUrlNames(bool includeDeleted, List<int> excludedForums, int startRow, int pageSize)
+		{
+			var sql = @"
+DECLARE @Counter int
+SET @Counter = (@StartRow + @PageSize - 1)
+
+SET ROWCOUNT @Counter;
+
+WITH Entries AS ( 
+SELECT ROW_NUMBER() OVER (ORDER BY LastPostTime DESC)
+AS Row, pf_Topic.UrlName, pf_Topic.LastPostTime 
+FROM pf_Topic WHERE ((@IncludeDeleted = 1) OR (@IncludeDeleted = 0 AND IsDeleted = 0))";
+			sql = GenerateExcludedForumSql(sql, excludedForums);
+			sql += @")
+SELECT UrlName AS Item1, LastPostTime AS Item2
+FROM Entries 
+WHERE Row between 
+@StartRow and @StartRow + @PageSize - 1
+
+SET ROWCOUNT 0";
+			Task<IEnumerable<Tuple<string, DateTime>>> topics = null;
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				topics = connection.QueryAsync<Tuple<string, DateTime>>(sql, new { IncludeDeleted = includeDeleted, StartRow = startRow, PageSize = pageSize }));
+			return topics.Result.ToList();
+		}
+
 	}
 }

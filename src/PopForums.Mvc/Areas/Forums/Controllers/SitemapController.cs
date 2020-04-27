@@ -30,7 +30,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[ResponseCache(Duration = 900)]
 		public async Task<IActionResult> Page(int page)
 		{
-			return Content("", "text/xml");
+			string TopicLinkGenerator(string id) => this.FullUrlHelper("Topic", ForumController.Name, new { id });
+			var sitemap = await _sitemapService.GeneratePage(TopicLinkGenerator, page);
+			return Content(sitemap, "text/xml");
 		}
 	}
 }

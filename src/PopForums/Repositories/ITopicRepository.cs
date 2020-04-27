@@ -36,5 +36,6 @@ namespace PopForums.Repositories
 		Task UpdateAnswerPostID(int topicID, int? postID);
 		Task<List<Topic>> Get(IEnumerable<int> topicIDs);
 		Task<IEnumerable<int>> CloseTopicsOlderThan(DateTime cutoffDate);
+		Task<List<Tuple<string, DateTime>>> GetUrlNames(bool includeDeleted, List<int> excludedForums, int startRow, int pageSize);
 	}
 }
