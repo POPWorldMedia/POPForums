@@ -70,6 +70,7 @@ namespace PopForums.Extensions
 		    services.AddTransient<IPostMasterService, PostMasterService>();
 		    services.AddTransient<IForumPermissionService, ForumPermissionService>();
 		    services.AddTransient<IReCaptchaService, ReCaptchaService>();
+		    services.AddTransient<ISitemapService, SitemapService>();
 	    }
 
 	    public static void AddPopForumsBackgroundServices(this IServiceCollection services)
