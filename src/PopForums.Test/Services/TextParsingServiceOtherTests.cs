@@ -22,9 +22,10 @@ namespace PopForums.Test.Services
 		[Fact]
 		public void ConvertHtmlQuoteToForumCodeQuote()
 		{
+			// yes, this is a test to avoid old branches that treated quotes as BB code relics
 			var service = GetService();
 			var result = service.HtmlToClientHtml("<p>some text</p><blockquote><p>quote text</p></blockquote>");
-			Assert.Equal("<p>some text</p>[quote]<p>quote text</p>[/quote]", result);
+			Assert.Equal("<p>some text</p><blockquote><p>quote text</p></blockquote>", result);
 		}
 
 		[Fact]

@@ -261,7 +261,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				return Content(Resources.TopicNotExist);
 			var forum = await _forumService.Get(topic.ForumID);
 			if (forum == null)
-				throw new Exception(String.Format("TopicID {0} references ForumID {1}, which does not exist.", topic.TopicID, topic.ForumID));
+				throw new Exception($"TopicID {topic.TopicID} references ForumID {topic.ForumID}, which does not exist.");
 			if (topic.IsClosed)
 				return Content(Resources.Closed);
 			var permissionContext = await _forumPermissionService.GetPermissionContext(forum, user, topic);

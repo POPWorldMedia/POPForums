@@ -113,8 +113,6 @@ namespace PopForums.Services
 
 		public string HtmlToClientHtml(string text)
 		{
-			text = text.Replace("<blockquote>", "[quote]");
-			text = text.Replace("</blockquote>", "[/quote]");
 			text = Regex.Replace(text, @" *target=""[_\w]*""", String.Empty, RegexOptions.IgnoreCase);
 			text = Regex.Replace(text, @"(<iframe )(.)*?(src=""https?://www.youtube.com/embed/)(\S+)("")(.)*?( */iframe>)", "https://www.youtube.com/watch?v=$4", RegexOptions.IgnoreCase);
 			return text;

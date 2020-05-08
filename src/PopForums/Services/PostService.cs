@@ -116,9 +116,9 @@ namespace PopForums.Services
 		public async Task<PostEdit> GetPostForEdit(Post post, User user)
 		{
 			if (post == null)
-				throw new ArgumentNullException("post");
+				throw new ArgumentNullException(nameof(post));
 			if (user == null)
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			var profile = await _profileRepository.GetProfile(user.UserID);
 			var postEdit = new PostEdit(post) { IsPlainText = profile.IsPlainText, IsFirstInTopic = post.IsFirstInTopic };
 			if (profile.IsPlainText)
@@ -134,17 +134,17 @@ namespace PopForums.Services
 		public async Task<string> GetPostForQuote(Post post, User user, bool forcePlainText)
 		{
 			if (post == null)
-				throw new ArgumentNullException("post");
+				throw new ArgumentNullException(nameof(post));
 			if (post.IsDeleted)
 				return "Post not found";
 			if (user == null)
-				throw new ArgumentNullException("user");
+				throw new ArgumentNullException(nameof(user));
 			var profile = await _profileRepository.GetProfile(user.UserID);
 			string quote;
 			if (profile.IsPlainText || forcePlainText)
-				quote = String.Format("[quote]\r\n[i]{0} said:[/i]\r\n{1}[/quote]", post.Name, _textParsingService.HtmlToForumCode(post.FullText));
+				quote = $"[quote][i]{post.Name} said:[/i]\r\n{_textParsingService.HtmlToForumCode(post.FullText)}[/quote]\r\n\r\n";
 			else
-				quote = String.Format("[quote]<i>{0} said:</i><br />{1}[/quote]", post.Name, _textParsingService.HtmlToClientHtml(post.FullText));
+				quote = $"<blockquote><i>{post.Name} said:</i><br />{_textParsingService.HtmlToClientHtml(post.FullText)}</blockquote><p> </p>";
 			return quote;
 		}
 
