@@ -97,7 +97,7 @@ namespace PopForums.Sql.Repositories
 		{
 			Task<DateTime?> time = null;
 			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-				time = connection.QuerySingleOrDefaultAsync<DateTime?>("SELECT LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
+				time = connection.QueryFirstOrDefaultAsync<DateTime?>("SELECT LastTopicViewDate FROM pf_LastTopicView WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
 			return time.Result;
 		}
 	}
