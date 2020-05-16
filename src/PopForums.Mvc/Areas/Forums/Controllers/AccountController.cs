@@ -79,7 +79,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				TimeZone = _settingsManager.Current.ServerTimeZone
 			};
 			var loginState = _externalLoginTempService.Read();
-			if (loginState != null)
+			if (loginState?.ResultData != null)
 			{
 				signupData.Email = loginState.ResultData.Email;
 				signupData.Name = loginState.ResultData.Name;
