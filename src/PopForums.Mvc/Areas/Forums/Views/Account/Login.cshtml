@@ -1,4 +1,6 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
+@inject ISettingsManager SettingsManager
+@using PopForums.Configuration
 @model Dictionary<PopIdentity.ProviderType, string>
 @{
     ViewBag.Title = PopForums.Resources.Login;
@@ -18,9 +20,12 @@
 
 <div>
 	<h1>@PopForums.Resources.Login</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
+	@if (!SettingsManager.Current.IsPrivateForumInstance)
+	{
+		<ul id="TopBreadcrumb" class="breadcrumb">
+			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		</ul>
+	}
 </div>
 
 <div id="LoginResult" class="alert alert-danger @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>

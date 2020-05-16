@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class PrivateMessagesController : Controller
 	{
 		public PrivateMessagesController(IPrivateMessageService privateMessageService, IUserService userService, IUserRetrievalShim userRetrievalShim)

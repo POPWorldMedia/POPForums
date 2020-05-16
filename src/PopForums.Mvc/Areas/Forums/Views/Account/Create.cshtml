@@ -2,6 +2,7 @@
 @model SignupData
 @inject IUserRetrievalShim UserRetrievalShim
 @inject IConfig Config
+@inject ISettingsManager SettingsManager
 @{
 	ViewBag.Title = PopForums.Resources.CreateAnAccount;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -25,9 +26,12 @@
 
 <div>
 	<h1>@PopForums.Resources.CreateAnAccount</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
+	@if (!SettingsManager.Current.IsPrivateForumInstance)
+	{
+		<ul id="TopBreadcrumb" class="breadcrumb">
+			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		</ul>
+	}
 </div>
 
 <p><a asp-action="Verify">@PopForums.Resources.NeedToVerifyExistingAccount</a></p>

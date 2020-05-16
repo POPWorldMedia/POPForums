@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
@@ -11,6 +12,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Authorize(Policy = PermanentRoles.Moderator)]
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class ModeratorController : Controller
 	{
 		public ModeratorController(ITopicService topicService, IForumService forumService, IPostService postService, IModerationLogService moderationLogService, IUserRetrievalShim userRetrievalShim)

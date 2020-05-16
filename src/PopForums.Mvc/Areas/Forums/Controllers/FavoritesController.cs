@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Services;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class FavoritesController : Controller
 	{
 		public FavoritesController(IFavoriteTopicService favoriteTopicService, IForumService forumService, ILastReadService lastReadService, ITopicService topicService, IUserRetrievalShim userRetrievalShim)

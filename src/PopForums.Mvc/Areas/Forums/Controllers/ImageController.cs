@@ -9,6 +9,7 @@ using PopForums.Services;
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class ImageController : Controller
 	{
 		public ImageController(IImageService imageService)

@@ -1,13 +1,18 @@
-﻿@{
+﻿@using PopForums.Configuration
+@inject ISettingsManager SettingsManager
+@{
     ViewBag.Title = PopForums.Resources.ForgotPassword;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
 	<h1>@PopForums.Resources.ForgotPassword</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li><a class="breadcrumb-item" asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
+	@if (!SettingsManager.Current.IsPrivateForumInstance)
+	{
+		<ul id="TopBreadcrumb" class="breadcrumb">
+			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		</ul>
+	}
 </div>
 
 <p>@PopForums.Resources.ForgotInstructions</p>

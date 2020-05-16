@@ -62,6 +62,7 @@ namespace PopForums.Configuration
 			OAuth2Scope = "email";
 			IsClosingAgedTopics = false;
 			CloseAgedTopicsDays = 365;
+			IsPrivateForumInstance = false;
 		}
 
 		public virtual string TermsOfService { get; set; }
@@ -120,5 +121,6 @@ namespace PopForums.Configuration
 		public virtual string OAuth2Scope { get; set; }
 		public virtual bool IsClosingAgedTopics { get; set; }
 		public virtual int CloseAgedTopicsDays { get; set; }
+		public virtual bool IsPrivateForumInstance { get; set; }
 	}
 }

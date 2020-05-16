@@ -2,12 +2,14 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Models;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Services;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class SubscriptionController : Controller
     {
 		public SubscriptionController(ISubscribedTopicsService subService, ITopicService topicService, IUserService userService, ILastReadService lastReadService, IForumService forumService, IUserRetrievalShim userRetrievalShim, IProfileService profileService)

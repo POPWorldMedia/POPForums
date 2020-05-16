@@ -1,14 +1,19 @@
-﻿@{
+﻿@using PopForums.Configuration
+@inject ISettingsManager SettingsManager
+@{
 	ViewBag.Title = PopForums.Resources.VerifyAccount;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.VerifyAccount</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-</div>
+	<div>
+		<h1>@PopForums.Resources.VerifyAccount</h1>
+		@if (!SettingsManager.Current.IsPrivateForumInstance)
+		{
+			<ul id="TopBreadcrumb" class="breadcrumb">
+				<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+			</ul>
+		}
+	</div>
 
 @if (ViewData["EmailProblem"] != null || ViewData["Result"] != null)
 {

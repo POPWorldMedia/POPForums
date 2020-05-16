@@ -8,12 +8,14 @@ using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
 using PopForums.Extensions;
+using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Services;
 using PopForums.Mvc.Areas.Forums.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class ForumController : Controller
 	{
 		public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService)

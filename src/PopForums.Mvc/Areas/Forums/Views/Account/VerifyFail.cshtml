@@ -1,13 +1,18 @@
-﻿@{
+﻿@using PopForums.Configuration
+@inject ISettingsManager SettingsManager
+@{
 	ViewBag.Title = PopForums.Resources.VerificationFailure;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.VerificationFailure</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-</div>
+	<div>
+		<h1>@PopForums.Resources.VerificationFailure</h1>
+		@if (!SettingsManager.Current.IsPrivateForumInstance)
+		{
+			<ul id="TopBreadcrumb" class="breadcrumb">
+				<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+			</ul>
+		}
+	</div>
 
 <p>@PopForums.Resources.VerificationLinkBad <a asp-action="Verify" asp-route-id="">@PopForums.Resources.NeedToVerifyExistingAccount</a></p>

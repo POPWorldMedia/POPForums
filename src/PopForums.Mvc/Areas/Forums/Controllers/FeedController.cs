@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Feeds;
+using PopForums.Mvc.Areas.Forums.Authorization;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers
 {
 	[Area("Forums")]
+	[TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 	public class FeedController : Controller
     {
 	    private readonly IFeedService _feedService;

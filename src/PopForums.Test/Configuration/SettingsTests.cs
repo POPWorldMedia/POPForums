@@ -165,6 +165,7 @@ namespace PopForums.Test.Configuration
 			const string oAuth2Scope = "email";
 			const bool isClosingAgedTopics = true;
 			const int closeAgedTopicsDays = 757;
+			const bool isPrivateForumInstance = true;
 			var dictionary = new Dictionary<string, object>
 			                 	{
 			                 		{"TermsOfService", tos},
@@ -222,7 +223,8 @@ namespace PopForums.Test.Configuration
 									{"OAuth2DisplayName", oAuth2DisplayName },
 									{"OAuth2Scope", oAuth2Scope },
 									{"IsClosingAgedTopics", isClosingAgedTopics},
-									{"CloseAgedTopicsDays", closeAgedTopicsDays}
+									{"CloseAgedTopicsDays", closeAgedTopicsDays},
+									{"IsPrivateForumInstance", isPrivateForumInstance}
 								 };
 
 			var settingsRepo = new Mock<ISettingsRepository>();
@@ -287,6 +289,7 @@ namespace PopForums.Test.Configuration
 			settings.OAuth2Scope = oAuth2Scope;
 			settings.IsClosingAgedTopics = isClosingAgedTopics;
 			settings.CloseAgedTopicsDays = closeAgedTopicsDays;
+			settings.IsPrivateForumInstance = isPrivateForumInstance;
 			settingsManager.SaveCurrent();
 
 			settingsRepo.Verify(s => s.Save(dictionary), Times.Once());
