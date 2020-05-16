@@ -1255,4 +1255,7 @@
   <data name="Days" xml:space="preserve">
     <value>dias</value>
   </data>
+  <data name="PrivateForum" xml:space="preserve">
+    <value>Foro privado</value>
+  </data>
 </root>

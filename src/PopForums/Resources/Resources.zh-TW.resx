@@ -1231,4 +1231,7 @@
   <data name="Days" xml:space="preserve">
     <value>天</value>
   </data>
+  <data name="PrivateForum" xml:space="preserve">
+    <value>私人論壇</value>
+  </data>
 </root>

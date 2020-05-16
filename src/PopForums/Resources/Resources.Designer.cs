@@ -2302,6 +2302,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Private forum.
+        /// </summary>
+        public static string PrivateForum {
+            get {
+                return ResourceManager.GetString("PrivateForum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Private Messages.
         /// </summary>
         public static string PrivateMessages {
