@@ -35,4 +35,4 @@ https://www.myget.org/F/popforums/npm/
 * .NET Core v3.1.
 * npm and Node.js to build the front-end.
 * AzureKit optionally requires Redis for two-level cache, Azure Search for Search.
-* AwsKit optionally requires ElasticSearch for search.
+* ElasticKit optionally requires ElasticSearch for search.

@@ -20,8 +20,8 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PopForums.AwsKit\PopForums.AwsKit.csproj" />
     <ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
+    <ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
     <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
   </ItemGroup>

@@ -5,7 +5,7 @@ using Polly;
 using PopForums.Configuration;
 using PopForums.Services;
 
-namespace PopForums.AwsKit.Search
+namespace PopForums.ElasticKit.Search
 {
 	public class SearchIndexSubsystem : ISearchIndexSubsystem
 	{

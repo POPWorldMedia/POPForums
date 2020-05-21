@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PopForums.AwsKit\PopForums.AwsKit.csproj" />
+    <ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
     <ProjectReference Include="..\PopForums.Mvc\PopForums.Mvc.csproj" />
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
     <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />

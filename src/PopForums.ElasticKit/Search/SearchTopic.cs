@@ -1,7 +1,7 @@
 ﻿using System;
 using Nest;
 
-namespace PopForums.AwsKit.Search
+namespace PopForums.ElasticKit.Search
 {
     public class SearchTopic
     {

@@ -6,7 +6,7 @@ using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
 
-namespace PopForums.AwsKit.Search
+namespace PopForums.ElasticKit.Search
 {
 	public interface IElasticSearchClientWrapper
 	{

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <Description>PopForums AwsKit Class Library</Description>
+	  <Description>PopForums ElasticKit Class Library</Description>
 	  <VersionPrefix>16.99.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
 	  <TargetFramework>netcoreapp3.1</TargetFramework>
-	  <AssemblyName>PopForums.AwsKit</AssemblyName>
-	  <PackageId>PopForums.AwsKit</PackageId>
+	  <AssemblyName>PopForums.ElasticKit</AssemblyName>
+	  <PackageId>PopForums.ElasticKit</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 	  <AssemblyVersion>16.99.0</AssemblyVersion>
 	  <FileVersion>16.99.0</FileVersion>

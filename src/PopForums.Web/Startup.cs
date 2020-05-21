@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PopForums.AwsKit;
+using PopForums.ElasticKit;
 using PopForums.AzureKit;
 using PopForums.Configuration;
 using PopForums.Extensions;
@@ -66,7 +66,7 @@ namespace PopForums.Web
 			// use Azure Search for POP Forums using AzureKit
 			//services.AddPopForumsAzureSearch();
 
-			// use ElasticSearch for POP Forums using AwsKit
+			// use ElasticSearch for POP Forums using ElasticKit
 			//services.AddPopForumsElasticSearch();
 
 			// use Azure Functions queues for POP Forums using AzureKit for background tasks...

@@ -6,7 +6,7 @@ using PopForums.Repositories;
 using PopForums.Sql;
 #pragma warning disable 1998
 
-namespace PopForums.AwsKit.Search
+namespace PopForums.ElasticKit.Search
 {
 	public class SearchRepository : Sql.Repositories.SearchRepository
 	{

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PopForums.AwsKit;
+using PopForums.ElasticKit;
 using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
 using PopForums.Extensions;
@@ -38,7 +38,7 @@ namespace PopForums.AzureKit.Functions
 			switch (config.SearchProvider.ToLower())
 			{
 				case "elasticsearch":
-					searchType = "ElasticSearch (PopForums.AwsKit)";
+					searchType = "ElasticSearch (PopForums.ElasticKit)";
 					services.AddPopForumsElasticSearch();
 					break;
 				case "azuresearch":

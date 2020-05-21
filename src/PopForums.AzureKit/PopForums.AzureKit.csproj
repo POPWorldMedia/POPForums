@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
     <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
+    <ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>
