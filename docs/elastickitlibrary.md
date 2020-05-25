@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Using AWS Kit Library
+title: Using ElasticKit Library
 nav_order: 7
 ---
-# Using AwsKit Library
-The `PopForums.AwsKit` library makes it possible to wire up the following scenarios:
-* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x uses v7.x of ElasticSearch._
+# Using ElasticKit Library
+The `PopForums.ElasticKit` library makes it possible to wire up the following scenarios:
+* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x and v17.x uses v7.x of ElasticSearch._
 
-You don't need to use the AwsKit components to run in AWS. You also don't need to run in AWS to use ElasticSearch. ElasticSearch can run quite literally anywhere in a docker container. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed.
+ElasticSearch can run quite literally anywhere in a docker container or straight up in a VM, if that's your thing. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed. In the commercial hosted version of POP Forums, we use Elastic's managed service running in Azure.
 
 ## Configuration with Azure App Services and Azure Functions
 
@@ -17,7 +17,7 @@ The POP Forums configuration system uses the PopForums.json file, but adhere's t
 ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, you'll need to configure this line in your Startup.cs if you're using web in-process search processing:
 
 ```
-using PopForums.AwsKit;
+using PopForums.ElasticKit;
 ...
 namespace YourWebApp
 {
