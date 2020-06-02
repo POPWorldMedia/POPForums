@@ -14,6 +14,7 @@
 		bool UseReCaptcha { get; }
 		string ReCaptchaSiteKey { get; }
 		string ReCaptchaSecretKey { get; }
+		bool ExternalLoginOnly { get; }
 	}
 
 	public class Config : IConfig
@@ -49,5 +50,6 @@
 		public bool UseReCaptcha => _configContainer.UseReCaptcha;
 		public string ReCaptchaSiteKey => _configContainer.ReCaptchaSiteKey;
 		public string ReCaptchaSecretKey => _configContainer.ReCaptchaSecretKey;
+		public bool ExternalLoginOnly => _configContainer.ExternalLoginOnly;
 	}
 }

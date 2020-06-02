@@ -1,10 +1,11 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ISettingsManager SettingsManager
+@inject IConfig Configuration
 @using PopForums.Configuration
 @model Dictionary<PopIdentity.ProviderType, string>
 @{
-    ViewBag.Title = PopForums.Resources.Login;
-    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	ViewBag.Title = PopForums.Resources.Login;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 }
 
@@ -32,17 +33,20 @@
 
 @if (user == null)
 {
-	<div role="form">
-		<div class="form-group">
-			<label for="EmailLogin">@PopForums.Resources.Email</label>
-			<input type="text" name="EmailLogin" id="EmailLogin" class="form-control"/>
+	if (!Configuration.ExternalLoginOnly || Model.Count == 0)
+	{
+		<div role="form">
+			<div class="form-group">
+				<label for="EmailLogin">@PopForums.Resources.Email</label>
+				<input type="text" name="EmailLogin" id="EmailLogin" class="form-control" />
+			</div>
+			<div class="form-group">
+				<label for="PasswordLogin">@PopForums.Resources.Password</label>
+				<input type="password" name="PasswordLogin" id="PasswordLogin" class="form-control" />
+			</div>
+			<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
 		</div>
-		<div class="form-group">
-			<label for="PasswordLogin">@PopForums.Resources.Password</label>
-			<input type="password" name="PasswordLogin" id="PasswordLogin" class="form-control"/>
-		</div>
-		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
-	</div>
+	}
 
 	if (Model.Count > 0)
 	{
@@ -58,9 +62,12 @@
 		</form>
 	}
 
-	<p>@PopForums.Resources.NotRegisteredQuestion <a asp-action="Create">@PopForums.Resources.CreateAnAccount</a>. <a asp-action="Forgot">@PopForums.Resources.ForgotPasswordQuestion</a></p>
+	if (!Configuration.ExternalLoginOnly)
+	{
+		<p>@PopForums.Resources.NotRegisteredQuestion <a asp-action="Create">@PopForums.Resources.CreateAnAccount</a>. <a asp-action="Forgot">@PopForums.Resources.ForgotPasswordQuestion</a></p>
+	}
 
-	<input type="hidden" id="Referrer" value="@((object)ViewBag.Referrer)"/>
+	<input type="hidden" id="Referrer" value="@((object)ViewBag.Referrer)" />
 }
 else
 {

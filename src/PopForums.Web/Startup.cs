@@ -12,6 +12,7 @@ using PopForums.Extensions;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Sql;
+using PopForums.Mvc.Areas.Forums.Services;
 
 namespace PopForums.Web
 {
@@ -53,6 +54,9 @@ namespace PopForums.Web
 			services.AddPopForumsSql();
 			// this adds dependencies from the MVC project (and base dependencies) and sets up authentication for the forum
 			services.AddPopForumsMvc();
+
+			// Add the service to auto provision accounts from external logins when ExternalLoginOnly is enabled
+			services.AddTransient<IAutoProvisionAccountService, AutoProvisionAccountService>();
 
 			// use Redis cache for POP Forums using AzureKit
 			//services.AddPopForumsRedisCache();

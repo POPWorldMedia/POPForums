@@ -1,9 +1,13 @@
 ﻿@using PopForums.Configuration
 @model UserNavigationContainer
 @inject ISettingsManager SettingsManager
+@inject IConfig Configuration
 @if (Model.User == null)
 {
-	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
+	if (!Configuration.ExternalLoginOnly)
+	{
+		<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
+	}
 	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
 	if (!SettingsManager.Current.IsPrivateForumInstance)
 	{
@@ -21,9 +25,16 @@ else
 			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
 			<div class="dropdown-divider"></div>
 			<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
-			<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+			@if (!Configuration.ExternalLoginOnly)
+			{
+				<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+			}
 			<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
-			<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+
+			@if (!Configuration.ExternalLoginOnly)
+			{
+				<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+			}
 			@if (Model.User.IsInRole(PermanentRoles.Admin))
 			{
 				<div class="dropdown-divider"></div>

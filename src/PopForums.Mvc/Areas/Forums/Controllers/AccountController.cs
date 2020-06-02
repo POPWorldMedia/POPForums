@@ -69,7 +69,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IReCaptchaService _reCaptchaService;
 
 		[PopForumsAuthorizationIgnore]
-		public ViewResult Create()
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public IActionResult Create()
 		{
 			SetupCreateData();
 			var signupData = new SignupData
@@ -95,8 +96,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public async Task<ViewResult> Create(SignupData signupData)
+		public async Task<IActionResult> Create(SignupData signupData)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			if (_config.UseReCaptcha)
@@ -168,7 +170,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
-		public async Task<ViewResult> Verify(string id)
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public async Task<IActionResult> Verify(string id)
 		{
 			var authKey = Guid.Empty;
 			if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
@@ -184,14 +187,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public RedirectToActionResult VerifyCode(string authorizationCode)
+		public IActionResult VerifyCode(string authorizationCode)
 		{
 			return RedirectToAction("Verify", new { id = authorizationCode });
 		}
 
 		[PopForumsAuthorizationIgnore]
-		public async Task<ViewResult> RequestCode(string email)
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public async Task<IActionResult> RequestCode(string email)
 		{
 			var user = await _userService.GetUserByEmail(email);
 			if (user == null)
@@ -209,14 +214,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
-		public ViewResult Forgot()
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public IActionResult Forgot()
 		{
 			return View();
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public async Task<ViewResult> Forgot(string email)
+		public async Task<IActionResult> Forgot(string email)
 		{
 			var user = await _userService.GetUserByEmail(email);
 			if (user == null)
@@ -233,6 +240,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		public async Task<ActionResult> ResetPassword(string id)
 		{
 			var authKey = Guid.Empty;
@@ -248,6 +256,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
 		public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 		{
@@ -269,6 +278,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		public ActionResult ResetPasswordSuccess()
 		{
 			var user = _userRetrievalShim.GetUser();
@@ -298,7 +308,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(userEdit);
 		}
 
-		public ViewResult Security()
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public IActionResult Security()
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)
@@ -308,8 +319,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(userEdit);
 		}
 
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
+		public async Task<IActionResult> ChangePassword(UserEditSecurity userEdit)
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)
@@ -329,8 +341,9 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 		}
 
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
+		public async Task<IActionResult> ChangeEmail(UserEditSecurity userEdit)
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)
@@ -511,7 +524,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View();
 		}
 
-		public async Task<ViewResult> ExternalLogins()
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public async Task<IActionResult> ExternalLogins()
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)
@@ -521,7 +535,8 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View(externalAssociations);
 		}
 
-		public async Task<ActionResult> RemoveExternalLogin(int id)
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
+		public async Task<IActionResult> RemoveExternalLogin(int id)
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)

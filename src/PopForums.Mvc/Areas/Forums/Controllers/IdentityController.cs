@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PopForums.Configuration;
+using PopForums.Extensions;
 using PopForums.ExternalLogin;
 using PopForums.Models;
 using PopForums.Mvc.Areas.Forums.Authorization;
@@ -33,11 +34,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 		private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 		private readonly IUserService _userService;
+		private readonly IProfileService _profileService;
 		private readonly IExternalLoginTempService _externalLoginTempService;
 		private readonly IUserRetrievalShim _userRetrievalShim;
 		private readonly ISecurityLogService _securityLogService;
+		private readonly IConfig _config;
+		private readonly IAutoProvisionAccountService _autoProvisionAccountService;
 
-		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService)
+		public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IProfileService profileService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService, IConfig config, IAutoProvisionAccountService autoProvisionAccountService = null)
 		{
 			_loginLinkFactory = loginLinkFactory;
 			_stateHashingService = stateHashingService;
@@ -48,14 +52,18 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			_oAuth2JwtCallbackProcessor = oAuth2JwtCallbackProcessor;
 			_externalUserAssociationManager = externalUserAssociationManager;
 			_userService = userService;
+			_profileService = profileService;
 			_externalLoginTempService = externalLoginTempService;
 			_userRetrievalShim = userRetrievalShim;
 			_securityLogService = securityLogService;
+			_config = config;
+			_autoProvisionAccountService = autoProvisionAccountService;
 		}
 
 		public static string Name = "Identity";
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
 		public async Task<IActionResult> Login(string email, string password)
 		{
@@ -123,14 +131,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				case "oauth2":
 					var oauthRedirect = this.FullUrlHelper(nameof(CallbackHandler), Name);
 					var linkGenerator = new OAuth2LoginUrlGenerator();
-					var oauthClaims = new List<string>(new[] { "openid", "email" });
+					var oauthClaims = new List<string>(new[] { "openid", "profile", "email" });
 					redirect = linkGenerator.GetUrl(_settingsManager.Current.OAuth2LoginUrl, _settingsManager.Current.OAuth2ClientID, oauthRedirect, state, oauthClaims);
 					providerType = ProviderType.OAuth2;
 					break;
 				default: throw new NotImplementedException($"The external login \"{provider}\" is not configured.");
 			}
 
-			var loginState = new ExternalLoginState {ProviderType = providerType, ReturnUrl = returnUrl };
+			var loginState = new ExternalLoginState { ProviderType = providerType, ReturnUrl = returnUrl };
 			_externalLoginTempService.Persist(loginState);
 			return Redirect(redirect);
 		}
@@ -154,13 +162,30 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 				await PerformSignInAsync(matchResult.User, HttpContext);
 				return Redirect(returnUrl);
 			}
+
+			if (_config.ExternalLoginOnly)
+			{
+				if (_autoProvisionAccountService == null)
+					throw new Exception("AutoProvisionAccountService must be registered.");
+
+				var user = await _autoProvisionAccountService.AutoProvisionAccountAsync(loginState.ResultData.Name, loginState.ResultData.Email, ip);
+
+				await _userService.Login(user, ip);
+				externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, user.Name);
+				await _externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+				_externalLoginTempService.Remove();
+				await PerformSignInAsync(user, HttpContext);
+				return Redirect(returnUrl);
+			}
+
 			ViewBag.Referrer = returnUrl;
 			return View();
 		}
 
 		[PopForumsAuthorizationIgnore]
+		[TypeFilter(typeof(PopForumsExternalLoginOnlyFilter))]
 		[HttpPost]
-		public async Task<JsonResult> LoginAndAssociate(string email, string password)
+		public async Task<IActionResult> LoginAndAssociate(string email, string password)
 		{
 			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 			var (result, user) = await _userService.Login(email, password, ip);

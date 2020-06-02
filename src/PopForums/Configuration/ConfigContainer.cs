@@ -1,7 +1,7 @@
 ﻿namespace PopForums.Configuration
 {
-    public class ConfigContainer
-    {
+	public class ConfigContainer
+	{
 		public string DatabaseConnectionString { get; set; }
 		public int CacheSeconds { get; set; }
 		public string CacheConnectionString { get; set; }
@@ -14,5 +14,6 @@
 		public bool UseReCaptcha { get; set; }
 		public string ReCaptchaSiteKey { get; set; }
 		public string ReCaptchaSecretKey { get; set; }
+		public bool ExternalLoginOnly { get; set; }
 	}
 }

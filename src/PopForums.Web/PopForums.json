@@ -1,7 +1,7 @@
 ﻿{
   "PopForums": {
     "Database": {
-      "ConnectionString": "server=localhost;Database=popforums16;Trusted_Connection=True;"
+      "ConnectionString": "server=localhost;Database=popforums16;Trusted_Connection=True;",
     },
     "Cache": {
       "Seconds": 180,
@@ -20,6 +20,7 @@
       "UseReCaptcha": true,
       "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
       "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
-    }
+    },
+    "ExternalLoginOnly": false
   }
 }

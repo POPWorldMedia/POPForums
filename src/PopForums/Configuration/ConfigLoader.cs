@@ -29,7 +29,9 @@ namespace PopForums.Configuration
 			container.UseReCaptcha = useReCaptcha != null && bool.Parse(useReCaptcha);
 			container.ReCaptchaSiteKey = config["PopForums:ReCaptcha:SiteKey"];
 			container.ReCaptchaSecretKey = config["PopForums:ReCaptcha:SecretKey"];
+			var externalLoginOnly = config["PopForums:ExternalLoginOnly"];
+			container.ExternalLoginOnly = externalLoginOnly != null && bool.Parse(externalLoginOnly);
 			return container;
-		} 
+		}
 	}
 }
