@@ -1,5 +1,6 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ITimeFormattingService TimeFormattingService
+@inject IConfig Config
 @model CategorizedForumContainer
 @{
 	ViewBag.Title = Model.ForumTitle;
@@ -63,11 +64,14 @@
 	</tbody>
 </table>
 
-<div>
-	<h3>@PopForums.Resources.UsersOnline</h3>
-	<p>
-		@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var u in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
-		{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@u.UserID">@u.Name</a>}
-	</p>
-	<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
-</div>
+@if (Config.ShowUsersOnline)
+{
+	<div>
+		<h3>@PopForums.Resources.UsersOnline</h3>
+		<p>
+			@PopForums.Resources.Total: @ViewBag.TotalUsers@foreach (var u in (List<PopForums.Models.User>)ViewBag.OnlineUsers)
+			{<text>, </text><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@u.UserID">@u.Name</a>}
+		</p>
+		<p>@PopForums.Resources.TotalTopics: @ViewBag.TopicCount, @PopForums.Resources.TotalPosts: @ViewBag.PostCount, @PopForums.Resources.RegisteredUsers: @ViewBag.RegisteredUsers</p>
+	</div>
+}

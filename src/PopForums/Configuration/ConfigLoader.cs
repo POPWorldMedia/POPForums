@@ -29,7 +29,9 @@ namespace PopForums.Configuration
 			container.UseReCaptcha = useReCaptcha != null && bool.Parse(useReCaptcha);
 			container.ReCaptchaSiteKey = config["PopForums:ReCaptcha:SiteKey"];
 			container.ReCaptchaSecretKey = config["PopForums:ReCaptcha:SecretKey"];
+			var showUsersOnline = config["PopForums:ShowUsersOnline"];
+			container.ShowUsersOnline = showUsersOnline != null && bool.Parse(showUsersOnline);
 			return container;
-		} 
+		}
 	}
 }
