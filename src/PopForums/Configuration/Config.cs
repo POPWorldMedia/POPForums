@@ -1,4 +1,6 @@
-﻿namespace PopForums.Configuration
+﻿using System.Collections.Generic;
+
+namespace PopForums.Configuration
 {
 	public interface IConfig
 	{
@@ -23,18 +25,23 @@
 			if (_configContainer == null)
 			{
 				var loader = new ConfigLoader();
-				_configContainer = loader.GetConfig(_basePath, _configFileName);
+				_configContainer = loader.GetConfig(_basePath, _configFileNames);
 			}
 		}
 
 		public static void SetPopForumsAppEnvironment(string basePath, string configFileName = "PopForums.json")
 		{
+			SetPopForumsAppEnvironment(basePath,new[] { configFileName});
+		}
+
+		public static void SetPopForumsAppEnvironment(string basePath, IEnumerable<string> configFileNames)
+		{
 			_basePath = basePath;
-			_configFileName = configFileName;
+			_configFileNames = configFileNames;
 		}
 
 		private static string _basePath;
-		private static string _configFileName;
+		private static IEnumerable<string> _configFileNames;
 		private static ConfigContainer _configContainer;
 
 		public string DatabaseConnectionString => _configContainer.DatabaseConnectionString;

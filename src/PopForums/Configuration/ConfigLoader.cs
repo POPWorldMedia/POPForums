@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 
 namespace PopForums.Configuration
 {
 	public class ConfigLoader
 	{
-		public ConfigContainer GetConfig(string basePath, string configFileName)
+		public ConfigContainer GetConfig(string basePath, IEnumerable<string> configFileNames)
 		{
 			var builder = new ConfigurationBuilder();
 			builder.SetBasePath(basePath);
-			builder.AddJsonFile(configFileName, optional: true);
+
+			foreach (var configFileName in configFileNames)
+				builder.AddJsonFile(configFileName, optional: true);
+
 			builder.AddEnvironmentVariables("APPSETTING_");
 			var config = builder.Build();
 			var container = new ConfigContainer();
@@ -30,6 +34,6 @@ namespace PopForums.Configuration
 			container.ReCaptchaSiteKey = config["PopForums:ReCaptcha:SiteKey"];
 			container.ReCaptchaSecretKey = config["PopForums:ReCaptcha:SecretKey"];
 			return container;
-		} 
+		}
 	}
 }
