@@ -1,6 +1,6 @@
 ﻿@{
-    ViewBag.Title = PopForums.Resources.AccountCreated;
-    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	ViewBag.Title = PopForums.Resources.AccountCreated;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
 <div>
@@ -10,6 +10,13 @@
 	</ul>
 </div>
 
-<p class="alert alert-danger">@ViewData["EmailProblem"] @ViewData["Result"]</p>
+@if (ViewData["EmailProblem"] == null)
+{
+	<p class="alert alert-success">@ViewData["Result"]</p>
+}
+else
+{
+	<p class="alert alert-danger">@ViewData["EmailProblem"] @ViewData["Result"]</p>
+}
 
 <p><a asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a></p>

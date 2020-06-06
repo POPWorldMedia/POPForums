@@ -15,9 +15,13 @@
 		}
 	</div>
 
-@if (ViewData["EmailProblem"] != null || ViewData["Result"] != null)
+@if (ViewData["EmailProblem"] != null)
 {
 	<div class="alert alert-danger">@ViewData["EmailProblem"] @ViewData["Result"]</div>
+}
+else if (ViewData["Result"] != null)
+{
+	<div class="alert alert-success">@ViewData["Result"]</div>
 }
 
 <div class="row">
