@@ -7,7 +7,7 @@ A forum application with real-time updating and multiple languages.
 
 The commercially hosted version appears at [popforums.com](https://popforums.com/). This is the open source version.
 
-The main branch is now the work-in-progress for future versions. The v16.x branch is v16.x, for ASP.NET Core v3.1. v15 targeted Core v2.2. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
+The master branch is now the work-in-progress for future versions. The v16.x branch is v16.x, for ASP.NET Core v3.1. v15 targeted Core v2.2. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
 
 Roadmap:
 The v16 release concentrates on performance and optimization, along with significant refactoring and bug fixes. Forthcoming releases will focus on UI refinement and modernization.
