@@ -12,10 +12,13 @@ The master branch is now the work-in-progress for future versions. The v16.x bra
 Roadmap:
 The v16 release concentrates on performance and optimization, along with significant refactoring and bug fixes. Forthcoming releases will focus on UI refinement and modernization.
 
+For the latest information and documentation, and how to get started, check the pages (also in markdown in /docs of source):  
+http://popworldmedia.github.io/POPForums/
+
 Try it out and make test posts here:  
 https://meta.popforums.com/Forums
 
-CI build of maste runs here:  
+CI build of master runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
 [![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
@@ -23,9 +26,6 @@ https://popforumsdev.azurewebsites.net/Forums
 Latest release:  
 https://github.com/POPWorldMedia/POPForums/releases/tag/v16.0.1
 Packages available on NuGet and npm.
-
-For the latest information and documentation, and how to get started, check the wiki:  
-https://popworldmedia.github.io/POPForums/
 
 The latest CI build packages can be found with these feeds on MyGet:  
 https://www.myget.org/F/popforums/api/v3/index.json  
