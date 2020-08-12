@@ -22,7 +22,7 @@ The project goals include:
 More information: 
 * [FAQ](faq.md)
 * [POP Forums Version History](versionhistory.md)
-* [CI build from `master`](https://popforumsdev.azurewebsites.net/Forums)
+* [CI build from `main`](https://popforumsdev.azurewebsites.net/Forums)
 * Follow more on [Jeff's blog](https://jeffputz.com/)
 
 Setup:
