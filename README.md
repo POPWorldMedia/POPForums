@@ -13,7 +13,7 @@ Roadmap:
 The v16 release concentrates on performance and optimization, along with significant refactoring and bug fixes. Forthcoming releases will focus on UI refinement and modernization.
 
 For the latest information and documentation, and how to get started, check the pages (also in markdown in /docs of source):  
-http://popworldmedia.github.io/POPForums/
+https://popworldmedia.github.io/POPForums/
 
 Try it out and make test posts here:  
 https://meta.popforums.com/Forums
