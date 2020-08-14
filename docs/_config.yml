@@ -1,4 +1,4 @@
-remote_theme: pmarsceill/just-the-docs
+remote_theme: pmarsceill/just-the-docs@v0.3.2
 aux_links:
   "POP Forums on GitHub":
     - "https://github.com/POPWorldMedia/POPForums"
