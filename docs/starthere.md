@@ -11,7 +11,7 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-This release has data changes. Run the PopForums15to16.sql script against your database, which is found in the `PopForums.Sql` project.
+The v17 release has no data changes. If you need to upgrade from v15, run the PopForums15to16.sql script against your database, which is found in the `PopForums.Sql` project.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
@@ -35,16 +35,16 @@ You should definitely get to know the installation information below to understa
 * POP Forums uses ASP.NET Core Data Protection. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your startup, in the `ConfigureServices()` method, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things.
 
 For the bleeding edge, latest build from master, the CI build packages can be obtained by a MyGet feed:
-* https://www.myget.org/F/popforums/api/v3/index.json
-* https://www.myget.org/feed/popforums/package/npm/@popworldmedia/popforums
+* https://www.myget.org/F/popforums/api/v3/index.json (Nuget for the backend)
+* https://www.myget.org/feed/popforums/package/npm/@popworldmedia/popforums (npm for the front end)
 
 ## Installation
 
 * Download the latest source code from GitHub, or use the production packages as described above. Build it.
 * The project files require an up-to-date version of Visual Studio 2019 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
-* This project is built on ASP.NET Core v3.1.0. Make sure you have the required SDK installed (v3.1.100).
+* This project is built on ASP.NET Core v3.1.7. Make sure you have the required SDK installed (v3.1.401).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation.
-* The `master` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2019 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Starup` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`.
+* The `main` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2019 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Starup` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`.
 * `PopForums.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
 
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
@@ -76,7 +76,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 	}
 }
 ```
-* Attempt to run the app either locally, or in IIS, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string.
+* Attempt to run the app either locally, or in IIS, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums17`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to /Forums/Setup now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 * Building requires that you have Node.js (and therefore npm) installed to get the client side references and run Gulp tasks to copy them to the wwwroot folder. If you run the app and the scripts and CSS are broken, it's because you don't have this. To troubleshoot Gulp action, right-click `gulpfile.js` in the web project and choose "Task Runner Explorer."
@@ -106,4 +106,4 @@ Here’s what each field on the setup page does:
 
 The `PopForums.Web` project is the template you can use as the basis for your own POP Forums apps. If you want to build via the most recent stable builds, the [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project is an example of how to do that (see above). The app uses the standard claims-based authentication, but it does not use Identity or Entity Framework. When you're logged in, you'll find the identity of the user on the User property of the controller as expected. The `PopForumsAuthorizationMiddleware` loads user and profile data into the request pipeline, so it can be loaded once and used throughout the request lifecycle.
 
-Accessing the user data can be achieved via an instance of `IUserRetrievalShim`, which you can inject into your dependency chain. From a controller, simply call `_userRetrievalShim.GetUser(HttpContext)` to get the fully hydrated POP Forums `User`, or `_userRetrievalShim.GetProfile(HttpContext)` to get the profile. Under the hood, these are stored in the `Items` collection of the current `HttpContext`.
+Accessing the user data can be achieved via an instance of `IUserRetrievalShim`, which you can inject into your dependency chain. From a controller, simply call `_userRetrievalShim.GetUser()` to get the fully hydrated POP Forums `User`, or `_userRetrievalShim.GetProfile()` to get the profile. Under the hood, these are stored in the `Items` collection of the current `HttpContext`.

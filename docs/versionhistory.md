@@ -7,6 +7,32 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version 17.0.0 (8/xx/20)
+
+* Rename AwsKit project to ElasticKit. #184
+* Add alerts for admin errors. #152
+* Use the right Bootstrap color context on email verification. #195
+* Add configuration for entirely private forum. #86
+* Use the HTML quoting in post edit box instead of forum tags. #201
+* Generate site maps for all topics. #199
+* Audit CSS and use Bootstrap when possible. #186
+* Search for user on enter on admin user edit page. #194
+* Use hashing mechanism for topic unsubscribes, the way mailing list works. #189
+* Migrate to `Microsoft.Azure.Storage` pacakges from `Microsoft.WindowsAzure.Storage`. #182
+* Use Bootstrap hidden utilities to hide elements on mobile. #181
+* Move recent and feed links to navigation bar. #187
+* Embrace `IHttpContextAccessor` in user shim. #176
+* Add a telemetry interface for Redis cache, but don't implement it. #185
+* Use contrasting colors for new post indicators. #179
+* Refresh user profiles. #174
+* Improve ElasticSearch for proper resiliency, add API key ability. #173
+* Log search service errors. #171
+* BUG: User profile tabs have wrong background for activity and awards. #172
+* BUG: Avatars and signatures not appearing for anonymous user. #197
+* BUG: Pasted URL's paste as links, parser can't shorten the text. #163
+* BUG: Formatting in quoted posts sometimes causes portions of post to get parsed out. #198
+* BUG: LastTopicView could have duplicate entries. #202
+
 ## Version 16.0.1 (12/27/19)
 
 * BUG: Redis cache helper can't serialize forum view/post graphs. #168

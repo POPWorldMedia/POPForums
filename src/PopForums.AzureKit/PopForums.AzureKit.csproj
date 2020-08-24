@@ -2,14 +2,14 @@
 
   <PropertyGroup>
 	  <Description>PopForums AzureKit Class Library</Description>
-	  <VersionPrefix>16.99.0</VersionPrefix>
+	  <VersionPrefix>17.0.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
 	  <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <AssemblyName>PopForums.AzureKit</AssemblyName>
 	  <PackageId>PopForums.AzureKit</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>16.99.0</AssemblyVersion>
-	  <FileVersion>16.99.0</FileVersion>
+	  <AssemblyVersion>17.0.0</AssemblyVersion>
+	  <FileVersion>17.0.0</FileVersion>
 	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 	  <Copyright>2020, POP World Media, LLC</Copyright>
@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="3.1.7" />
     <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
-    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.6" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
   </ItemGroup>

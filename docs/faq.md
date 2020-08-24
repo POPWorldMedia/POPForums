@@ -5,10 +5,10 @@ nav_order: 3
 ---
 # Frequently Asked Questions
 
-These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issues here on GitHub for that, please.
+These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issue tracker on GitHub for that, please.
 
 ## Do I have to pay for this or not?
-Not. POP Forums is an open source software project hosted on GitHub and for use under the MIT license. There is a commercially hosted version available, yes, for people who don't write code or don't want to mess with managing their own software. Everything on GitHub continues to be open source.
+Not. POP Forums is an open source software project hosted on GitHub and for use under the MIT license. There is a commercially hosted version available at [PopForums.com](https://popforums.com/), yes, for people who don't write code or don't want to mess with managing their own software. Everything on GitHub continues to be open source.
 
 ## Another forum app? For real?
 Yeah, I know. I'd like to think that this one is a little different, because it doesn't exist to fit some generalized needs, it exists to fit the needs of real communities, like [CoasterBuzz](https://coasterbuzz.com/). The design goal of the app, from its early days in 1999, has always been to design for users, and not be a science project. This app lives because it has been required for sites like CoasterBuzz for more than two decades, and it will continue to evolve because those sites will evolve. It just makes sense to share it with others.

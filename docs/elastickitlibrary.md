@@ -13,6 +13,10 @@ ElasticSearch can run quite literally anywhere in a docker container or straight
 
 The POP Forums configuration system uses the PopForums.json file, but adhere's to the overriding system implemented via environment variables. This by extension means that you can set these values in the Application Settings section of the Azure portal for App Services and Functions. It uses the colon notation that you may be familiar with. For example, use `PopForums:Queue:ConnectionString` to correspond to the hierarchy of the PopForums.json file. (For Linux-based App Services and Functions in Azure, use a double underscore instead of colons in the portal settings, i.e., `PopForums__Queue__ConnectionString`.)
 
+## Irrelevant admin settings when using ElasticKit
+
+* In search: The search indexing interval only reacts when something is queued for in-Web processing, not Azure Functions. Furthermore, if you use ElasticSearch, the junk words no longer apply, as these indexing strategies are handled by ES.
+
 ## Using ElasticSearch for search
 ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, you'll need to configure this line in your Startup.cs if you're using web in-process search processing:
 
