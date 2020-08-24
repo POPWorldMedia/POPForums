@@ -112,52 +112,6 @@ namespace PopForums.Test.Services
 			_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(user.UserID, topic.TopicID), Times.Once());
 		}
 		
-		[Fact(Skip = "Barrier doesn't block the async sends in core.")] // TODO: make this test work
-		public async Task NotifyCallQueueOnEveryUser()
-		{
-			var service = GetService();
-			var topic = new Topic { TopicID = 123 };
-			var list = new List<User> {new User { UserID = 1 }, new User { UserID = 2 } };
-			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).ReturnsAsync(list);
-			var topicLink = "foo";
-			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
-			var barrier = new Barrier(1);
-
-			async Task ActionAsync()
-			{
-				await service.NotifySubscribers(topic, new User {UserID = 45643}, topicLink, gen);
-				barrier.SignalAndWait();
-			}
-
-			await ActionAsync();
-			barrier.Dispose();
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Once());
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[1], topicLink, "x" + list[1].UserID), Times.Once());
-		}
-
-        [Fact(Skip = "Barrier doesn't block the async sends in core.")] // TODO: make this test work
-		public async Task NotifyCallQueueOnEveryUserButPostingUser()
-		{
-			var service = GetService();
-			var topic = new Topic { TopicID = 123 };
-			var user = new User { UserID = 768 };
-			var list = new List<User> { user, new User { UserID = 2 } };
-			_mockSubRepo.Setup(s => s.GetSubscribedUsersThatHaveViewed(topic.TopicID)).ReturnsAsync(list);
-			var topicLink = "foo";
-			Func<User, Topic, string> gen = (u,t) => "x" + u.UserID;
-			var barrier = new Barrier(1);
-			async Task ActionAsync()
-			{
-				await service.NotifySubscribers(topic, user, topicLink, gen);
-				barrier.SignalAndWait();
-			}
-			await ActionAsync();
-			barrier.Dispose();
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, It.IsAny<User>(), topicLink, It.IsAny<string>()), Times.Exactly(1));
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[0], topicLink, "x" + list[0].UserID), Times.Exactly(0));
-			_mockSubTopicEmail.Verify(s => s.ComposeAndQueue(topic, list[1], topicLink, "x" + list[1].UserID), Times.Exactly(1));
-		}
-
 		[Fact]
 		public async Task GetTopicsFromRepo()
 		{
