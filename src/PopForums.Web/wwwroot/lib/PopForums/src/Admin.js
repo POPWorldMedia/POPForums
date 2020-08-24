@@ -39,6 +39,9 @@ var loadingMixin = {
 				var c = this;
 				setTimeout(function () { c.alert = false; }, 5000);
 			}
+		},
+		errorAlert: function() {
+			alert("There was an error. Please reload admin.");
 		}
 	}
 }
@@ -53,7 +56,8 @@ var settingsMixin = {
 		axios.get(basePath + "GetSettings").then(response => {
 			this.settings = response.data;
 			this.endLoad();
-		});
+		})
+			.catch(error => this.errorAlert());
 	},
 	methods: {
 		save: function (message) {
@@ -61,7 +65,8 @@ var settingsMixin = {
 			axios.post(basePath + "SaveSettings", this.settings).then(response => {
 				this.settings = response.data;
 				this.endLoad(message);
-			});
+			})
+				.catch(error => this.errorAlert());
 		}
 	}
 
@@ -88,7 +93,8 @@ const Categories = {
 		axios.get(basePath + "GetCategories").then(response => {
 			this.categories = response.data;
 			this.endLoad();
-		});
+		})
+			.catch(error => this.errorAlert());
 	},
 	methods: {
 		saveNew: function () {
@@ -96,7 +102,8 @@ const Categories = {
 			axios.post(basePath + "AddCategory", { title: this.newCategory }).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 			this.newCategory = "";
 		},
 		deleteCat: function (item) {
@@ -104,21 +111,24 @@ const Categories = {
 			axios.post(basePath + "DeleteCategory/" + item.categoryID).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		up: function (item) {
 			this.startLoad();
 			axios.post(basePath + "MoveCategoryUp/" + item.categoryID).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		down: function (item) {
 			this.startLoad();
 			axios.post(basePath + "MoveCategoryDown/" + item.categoryID).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		editCat: function (item) {
 			this.editCategory = item.title;
@@ -134,7 +144,8 @@ const Categories = {
 					const e = this.$refs.modal;
 					$(e).modal("hide");
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -153,7 +164,8 @@ const Forums = {
 		axios.get(basePath + "GetForums").then(response => {
 			this.categories = response.data;
 			this.endLoad();
-		});
+		})
+			.catch(error => this.errorAlert());
 		this.resetForum();
 	},
 	methods: {
@@ -162,14 +174,16 @@ const Forums = {
 			axios.post(basePath + "MoveForumUp/" + forum.forumID).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		down: function (forum) {
 			this.startLoad();
 			axios.post(basePath + "MoveForumDown/" + forum.forumID).then(response => {
 				this.categories = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		editForum: function (forum) {
 			this.editingForum = forum;
@@ -194,7 +208,8 @@ const Forums = {
 					const e = this.$refs.modal;
 					$(e).modal("hide");
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -219,7 +234,8 @@ const ForumPermissions = {
 		axios.get(basePath + "GetForums").then(response => {
 			this.categories = response.data;
 			this.endLoad();
-		});
+		})
+			.catch(error => this.errorAlert());
 		this.updatePerm();
 	},
 	methods: {
@@ -234,7 +250,8 @@ const ForumPermissions = {
 					this.viewRoles = response.data.viewRoles;
 					this.postRoles = response.data.postRoles;
 					this.endLoad();
-				});
+				})
+					.catch(error => this.errorAlert());
 			}
 		},
 		modify: function (modifyType, role) {
@@ -242,7 +259,8 @@ const ForumPermissions = {
 			axios.post(basePath + "ModifyForumRoles", { forumID: this.selectedForum, modifyType: modifyType, role: role }).then(response => {
 				this.endLoad();
 				this.updatePerm();
-			});
+			})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -271,7 +289,8 @@ const Search = {
 			axios.get(basePath + "GetJunkWords").then(response => {
 				this.junkWords = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		createWord: function () {
 			this.startLoad();
@@ -279,14 +298,16 @@ const Search = {
 				this.endLoad();
 				this.newWord = "";
 				this.updateJunk();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		deleteWord: function () {
 			this.startLoad();
 			axios.post(basePath + "DeleteJunkWord/" + this.selectedWord).then(response => {
 				this.endLoad();
 				this.updateJunk();
-			});
+			})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -318,7 +339,8 @@ const EditUser = {
 						this.searchAlert = true;
 					else
 						this.searchAlert = false;
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -336,12 +358,14 @@ const EditUserDetail = {
 		var u = basePath + "GetUser/" + this.$route.params.id;
 		axios.get(u).then(response => {
 			this.user = response.data;
-		});
+		})
+			.catch(error => this.errorAlert());
 		this.startLoad();
 		axios.get(basePath + "GetAllRoles").then(response => {
 			this.roles = response.data;
 			this.endLoad();
-		});
+		})
+			.catch(error => this.errorAlert());
 	},
 	methods: {
 		saveUser: function (message) {
@@ -359,12 +383,14 @@ const EditUserDetail = {
 			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, formData).then(response => {
 				this.user.avatarID = response.data.avatarID;
 				target.value = "";
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		removeAvatar: function () {
 			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, null).then(response => {
 				this.user.avatarID = response.data.avatarID;
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		uploadImage: function (target) {
 			const formData = new FormData();
@@ -373,22 +399,26 @@ const EditUserDetail = {
 			axios.post(basePath + "UpdateUserImage/" + this.user.userID, formData).then(response => {
 				this.user.imageID = response.data.imageID;
 				target.value = "";
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		removeImage: function () {
 			axios.post(basePath + "UpdateUserImage/" + this.user.userID, null).then(response => {
 				this.user.imageID = response.data.imageID;
-			});
+			})
+				.catch(error => this.errorAlert());
         },
         deleteUser: function () {
             axios.post(basePath + "DeleteUser/" + this.user.userID, null).then(response => {
                 this.$router.push("/edituser");
-            });
+			})
+				.catch(error => this.errorAlert());
         },
         deleteAndBanUser: function () {
             axios.post(basePath + "DeleteAndBanUser/" + this.user.userID, null).then(response => {
                 this.$router.push("/edituser");
-            });
+			})
+				.catch(error => this.errorAlert());
         }
 	}
 }
@@ -412,7 +442,8 @@ const UserRoles = {
 			axios.get(basePath + "GetAllRoles").then(response => {
 				this.roles = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		createRole: function () {
 			if (this.newRole && this.newRole != "") {
@@ -421,7 +452,8 @@ const UserRoles = {
 					this.endLoad();
 					this.refreshRoles();
 					this.newRole = "";
-				});
+				})
+					.catch(error => this.errorAlert());
 			}
 		},
 		deleteRole: function () {
@@ -430,7 +462,8 @@ const UserRoles = {
 				axios.post(basePath + "DeleteRole/" + this.selectedAll).then(response => {
 					this.endLoad();
 					this.refreshRoles();
-				});
+				})
+					.catch(error => this.errorAlert());
 			}
 		}
 	}
@@ -455,21 +488,24 @@ const UserImageApproval = {
 				this.isNewUserImageApproved = response.data.isNewUserImageApproved;
 				this.unapproved = response.data.unapproved;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		approveImage: function (id) {
 			this.startLoad();
 			axios.post(basePath + "ApproveUserImage/" + id).then(response => {
 				this.refreshData();
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		deleteImage: function (id) {
 			this.startLoad();
 			axios.post(basePath + "DeleteUserImage/" + id).then(response => {
 				this.refreshData();
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -497,7 +533,8 @@ const EmailIpBan = {
 				this.emails = response.data.emails;
 				this.ips = response.data.ips;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		banEmail: function () {
 			this.startLoad();
@@ -505,14 +542,16 @@ const EmailIpBan = {
 				this.endLoad();
 				this.newEmail = "";
 				this.refreshData();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		removeEmail: function () {
 			this.startLoad();
 			axios.post(basePath + "RemoveEmail", { string: this.selectedEmail }).then(response => {
 				this.endLoad();
 				this.refreshData();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		banIP: function () {
 			this.startLoad();
@@ -520,14 +559,16 @@ const EmailIpBan = {
 				this.endLoad();
 				this.newIP = "";
 				this.refreshData();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		removeIP: function () {
 			this.startLoad();
 			axios.post(basePath + "RemoveIP", { string: this.selectedIP }).then(response => {
 				this.endLoad();
 				this.refreshData();
-			});
+			})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -596,7 +637,8 @@ const EventDefinitions = {
 				this.allEvents = response.data.allEvents;
 				this.staticIDs = response.data.staticIDs;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		deleteEvent: function (event) {
 			this.startLoad();
@@ -604,7 +646,8 @@ const EventDefinitions = {
 				.then(response => {
 					this.refreshData();
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		resetEvent: function () {
 			this.newEvent.eventDefinitionID = "";
@@ -625,7 +668,8 @@ const EventDefinitions = {
 					const e = this.$refs.modal;
 					$(e).modal("hide");
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -653,7 +697,8 @@ const AwardDefinitions = {
 			axios.get(basePath + "GetAllAwardDefinitions").then(response => {
 				this.allAwards = response.data;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		deleteAward: function (award) {
 			this.startLoad();
@@ -661,7 +706,8 @@ const AwardDefinitions = {
 				.then(response => {
 					this.refreshData();
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		resetAward: function () {
 			this.newAward.awardDefinitionID = "";
@@ -682,7 +728,8 @@ const AwardDefinitions = {
 					const e = this.$refs.modal;
 					$(e).modal("hide");
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -714,7 +761,8 @@ const AwardDefinitionDetail = {
 				this.conditions = response.data.conditions;
 				this.allEvents = response.data.allEvents;
 				this.endLoad();
-			});
+			})
+				.catch(error => this.errorAlert());
 		},
 		deleteCondition: function (c) {
 			this.startLoad();
@@ -722,7 +770,8 @@ const AwardDefinitionDetail = {
 				.then(response => {
 					this.refreshData();
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		createCondition: function () {
 			this.newCondition.awardDefinitionID = this.award.awardDefinitionID;
@@ -733,7 +782,8 @@ const AwardDefinitionDetail = {
 					const e = this.$refs.modal;
 					$(e).modal("hide");
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		openNewCondition: function () {
 			this.newCondition.eventCount = "";
@@ -763,7 +813,8 @@ const ManualEvent = {
 			.then(response => {
 				this.allEvents = response.data;
 				this.endLoad();
-			});
+			})
+			.catch(error => this.errorAlert());
 	},
 	methods: {
 		openSearch: function () {
@@ -777,7 +828,8 @@ const ManualEvent = {
 				.then(response => {
 					this.searchResults = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		chooseUser: function () {
 			const e = this.$refs.modal;
@@ -827,7 +879,8 @@ const IPHistory = {
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -848,7 +901,8 @@ const SecurityLog = {
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -869,7 +923,8 @@ const ModerationLog = {
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -896,7 +951,8 @@ const ErrorLog = {
 				.then(response => {
 					this.errorList = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		deleteAll() {
 			this.startLoad();
@@ -905,7 +961,8 @@ const ErrorLog = {
 					this.errorList.pageIndex = 1;
 					this.endLoad();
 					this.getErrors();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
@@ -928,7 +985,8 @@ const Services = {
 				.then(response => {
 					this.list = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		},
 		clearAll: function () {
 			this.startLoad();
@@ -936,7 +994,8 @@ const Services = {
 				.then(response => {
 					this.list = response.data;
 					this.endLoad();
-				});
+				})
+				.catch(error => this.errorAlert());
 		}
 	}
 }
