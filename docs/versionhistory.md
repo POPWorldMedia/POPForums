@@ -7,7 +7,7 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version 17.0.0 (8/xx/20)
+## Version 17.0.0 (8/24/20)
 
 * Rename AwsKit project to ElasticKit. #184
 * Add alerts for admin errors. #152
