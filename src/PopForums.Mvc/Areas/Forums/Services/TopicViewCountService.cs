@@ -21,7 +21,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		public async Task ProcessView(Topic topic)
 		{
 			var context = _httpContextAccessor.HttpContext;
-			if (context.Request.Cookies.ContainsKey(CookieKey))
+			if (context.Request.Cookies != null && context.Request.Cookies.ContainsKey(CookieKey))
 			{
 				if (int.TryParse(context.Request.Cookies[CookieKey], out var topicID))
 				{
