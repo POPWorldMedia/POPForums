@@ -15,11 +15,11 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 			_next = next;
 		}
 
-		public Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService)
+		public async Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService)
 		{
 			if (!setupService.IsRuntimeConnectionAndSetupGood())
-				return _next.Invoke(context);
-			var authResult = context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme).Result;
+				await _next.Invoke(context);
+			var authResult = await context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			var identity = authResult?.Principal?.Identity as ClaimsIdentity;
 			if (identity != null)
 			{
@@ -29,12 +29,12 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 					foreach (var role in user.Roles)
 						identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
 					context.Items["PopForumsUser"] = user;
-					var profile = profileService.GetProfile(user).Result;
+					var profile = await profileService.GetProfile(user);
 					context.Items["PopForumsProfile"] = profile;
 					context.User = new ClaimsPrincipal(identity);
 				}
 			}
-			return _next.Invoke(context);
+			await _next.Invoke(context);
 		}
 	}
 }
