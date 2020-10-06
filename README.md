@@ -3,7 +3,7 @@
 POP Forums
 =========
 
-A forum application with real-time updating and multiple languages.
+A forum and Q&A application with real-time updating in multiple languages.
 
 The commercially hosted version appears at [popforums.com](https://popforums.com/). This is the open source version.
 
@@ -36,3 +36,4 @@ https://www.myget.org/F/popforums/npm/
 * npm and Node.js to build the front-end.
 * AzureKit optionally requires Redis for two-level cache, Azure Search for Search.
 * ElasticKit optionally requires ElasticSearch for search.
+* Works great on Windows and Linux.
