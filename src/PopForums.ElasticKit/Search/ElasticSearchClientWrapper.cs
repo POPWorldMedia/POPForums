@@ -92,9 +92,10 @@ namespace PopForums.ElasticKit.Search
 					+q.Bool(bb => bb.Filter(filters)) &&
 					q.MultiMatch(m => m.Query(searchTerm)
 						.Fields(f => f
-							.Field(x => x.Title, boost: 5)
-							.Field(x => x.FirstPost, boost: 2)
-							.Field(x => x.Posts))))
+							.Field(x => x.Title, boost: 10)
+							.Field(x => x.FirstPost, boost: 5)
+							.Field(x => x.Posts))
+						.Fuzziness(Fuzziness.Auto)))
 				.Sort(sortSelector)
 				.Take(pageSize)
 				.Skip(startRow));
