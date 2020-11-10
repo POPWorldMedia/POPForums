@@ -1,23 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <Description>PopForums AzureKit Functions</Description>
-	  <VersionPrefix>17.0.0</VersionPrefix>
+	  <VersionPrefix>17.99.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
-	  <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <TargetFramework>net5.0</TargetFramework>
 	  <AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 	  <PackageId>PopForums.AzureKit.Functions</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>17.0.0</AssemblyVersion>
-	  <FileVersion>17.0.0</FileVersion>
 	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-	  <Copyright>2020, POP World Media, LLC</Copyright>
+	  <Copyright>2021, POP World Media, LLC</Copyright>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.11" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
+    <PackageReference Include="Microsoft.Spatial" Version="7.5.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
