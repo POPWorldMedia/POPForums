@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using PopForums.Mvc.Areas.Forums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Services
@@ -27,7 +27,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		public void Persist(ExternalLoginState externalLoginState)
 		{
 			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
-			var serializedResult = JsonConvert.SerializeObject(externalLoginState);
+			var serializedResult = JsonSerializer.Serialize(externalLoginState);
 			var encryptedResult = protector.Protect(serializedResult);
 			_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult);
 		}
@@ -41,7 +41,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 				return null;
 			}
 			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
-			var result = JsonConvert.DeserializeObject<ExternalLoginState>(decryptedSerialized);
+			var result = JsonSerializer.Deserialize<ExternalLoginState>(decryptedSerialized);
 			return result;
 		}
 

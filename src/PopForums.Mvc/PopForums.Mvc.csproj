@@ -17,7 +17,7 @@
 
   <ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	  <PackageReference Include="PopIdentity" Version="2.0.0" />
+	  <PackageReference Include="PopIdentity" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
