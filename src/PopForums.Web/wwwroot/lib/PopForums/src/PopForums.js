@@ -273,8 +273,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	$(document).on("click", ".postNameLink", function () {
 		var box = $(this).parents(".postItem").find(".miniProfileBox");
 		var userID = $(this).parents(".postItem").attr("data-userID");
-		var chev = $(this).find(".twirl");
-		PopForums.loadMiniProfile(userID, box, chev);
+		PopForums.loadMiniProfile(userID, box);
 	});
 	$(document).on("click", ".voteCount", function () {
 		var parent = $(this).parents(".postItem");
@@ -360,8 +359,7 @@ PopForums.qaTopicSetup = function (topicID) {
 	$(document).on("click", ".postNameLink", function () {
 		var box = $(this).parents(".postUserData").find(".miniProfileBox");
 		var userID = $(this).parents(".postUserData").attr("data-userID");
-		var chev = $(this).find(".twirl");
-		PopForums.loadMiniProfile(userID, box, chev);
+		PopForums.loadMiniProfile(userID, box);
 	});
 	$(document).on("click", ".voteUp", function () {
 		var parent = $(this).parents(".postItem");
@@ -576,7 +574,7 @@ PopForums.postReply = function () {
 	});
 };
 
-PopForums.loadMiniProfile = function (userID, d, chev) {
+PopForums.loadMiniProfile = function (userID, d) {
 	if (d.is(":hidden"))
 		d.load(PopForums.areaPath + "/Account/MiniProfile/" + userID, function () {
 			d.slideDown();
@@ -584,7 +582,6 @@ PopForums.loadMiniProfile = function (userID, d, chev) {
 	else {
 		d.slideUp();
 	}
-	chev.toggleClass("glyphicon-chevron-right glyphicon-chevron-down");
 };
 
 PopForums.scrollToElement = function (id) {
