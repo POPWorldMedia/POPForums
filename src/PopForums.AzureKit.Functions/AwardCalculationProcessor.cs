@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.AzureKit.Queue;
@@ -17,22 +18,12 @@ namespace PopForums.AzureKit.Functions
 {
 	public static class AwardCalculationProcessor
 	{
-		[FunctionName("AwardCalculationProcessor")]
+		[Function("AwardCalculationProcessor")]
 		public static async Task Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)]
-			string jsonPayload, ILogger log, ExecutionContext context)
+			string jsonPayload, ILogger log, IAwardCalculator awardCalculator, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-			services.AddPopForumsBase();
-			services.AddPopForumsSql();
-			services.AddPopForumsAzureFunctionsAndQueues();
-
-			var serviceProvider = services.BuildServiceProvider();
-			var awardCalculator = serviceProvider.GetService<IAwardCalculator>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			try
 			{

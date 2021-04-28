@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
@@ -17,22 +18,11 @@ namespace PopForums.AzureKit.Functions
 {
     public static class EmailProcessor
     {
-        [FunctionName("EmailProcessor")]
-        public static async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log, ExecutionContext context)
+        [Function("EmailProcessor")]
+        public static async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log, IQueuedEmailMessageRepository queuedEmailRepo, ISmtpWrapper smtpWrapper, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-	        services.AddPopForumsBase();
-	        services.AddPopForumsSql();
-	        services.AddPopForumsAzureFunctionsAndQueues();
-
-	        var serviceProvider = services.BuildServiceProvider();
-			var queuedEmailRepo = serviceProvider.GetService<IQueuedEmailMessageRepository>();
-			var smtpWrapper = serviceProvider.GetService<ISmtpWrapper>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			QueuedEmailMessage message = null;
 			try

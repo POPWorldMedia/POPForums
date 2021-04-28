@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.ElasticKit;
@@ -18,44 +19,13 @@ namespace PopForums.AzureKit.Functions
 {
 	public static class SearchIndexProcessor
 	{
-		[FunctionName("SearchIndexProcessor")]
+		[Function("SearchIndexProcessor")]
 		public static async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
-			string jsonPayload, ILogger log, ExecutionContext context)
+			string jsonPayload, ILogger log, ISearchIndexSubsystem searchIndexSubsystem, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-			services.AddPopForumsBase();
-			services.AddPopForumsSql();
-			services.AddPopForumsAzureFunctionsAndQueues();
-			services.AddTransient<IBroker, BrokerSink>();
-
-			var serviceProvider = services.BuildServiceProvider();
-
-			string searchType;
-			var config = serviceProvider.GetService<IConfig>();
-			switch (config.SearchProvider.ToLower())
-			{
-				case "elasticsearch":
-					searchType = "ElasticSearch (PopForums.ElasticKit)";
-					services.AddPopForumsElasticSearch();
-					break;
-				case "azuresearch":
-					searchType = "Azure Search (PopForums.AzureKit)";
-					services.AddPopForumsAzureSearch();
-					break;
-				default:
-					searchType = "Default (PopForums.Sql)";
-					break;
-			}
-
-			serviceProvider = services.BuildServiceProvider();
-
-			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
-
+			
 			try
 			{
 				var payload = JsonSerializer.Deserialize<SearchIndexPayload>(jsonPayload);
@@ -68,7 +38,7 @@ namespace PopForums.AzureKit.Functions
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue SearchIndexProcessor ({searchType}) function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			log.LogInformation($"C# Queue SearchIndexProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			await serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}

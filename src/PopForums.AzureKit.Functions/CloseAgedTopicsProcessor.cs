@@ -1,7 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
@@ -14,22 +15,11 @@ namespace PopForums.AzureKit.Functions
 {
     public static class CloseAgedTopicsProcessor
     {
-        [FunctionName("CloseAgedTopicsProcessor")]
-        public static async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        [Function("CloseAgedTopicsProcessor")]
+        public static async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log, ITopicService topicService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-			services.AddPopForumsBase();
-			services.AddPopForumsSql();
-			services.AddPopForumsAzureFunctionsAndQueues();
-			services.AddTransient<IBroker, BrokerSink>();
-
-			var serviceProvider = services.BuildServiceProvider();
-			var topicService = serviceProvider.GetService<ITopicService>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			try
 			{

@@ -1,7 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
@@ -13,21 +14,11 @@ namespace PopForums.AzureKit.Functions
 {
     public static class UserSessionProcessor
     {
-        [FunctionName("UserSessionProcessor")]
-        public static async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+        [Function("UserSessionProcessor")]
+        public static async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, IUserSessionService userSessionService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-			services.AddPopForumsBase();
-			services.AddPopForumsSql();
-			services.AddPopForumsAzureFunctionsAndQueues();
-
-			var serviceProvider = services.BuildServiceProvider();
-			var userSessionService = serviceProvider.GetService<IUserSessionService>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
 
 			try
 			{
