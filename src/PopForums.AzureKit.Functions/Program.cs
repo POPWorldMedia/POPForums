@@ -22,21 +22,17 @@ namespace PopForums.AzureKit.Functions
 					s.AddPopForumsSql();
 					s.AddPopForumsAzureFunctionsAndQueues();
 					s.AddSingleton<IBroker, BrokerSink>();
-
-					//string searchType;
+					
 					//var config = s.GetService<IConfig>();
 					//switch (config.SearchProvider.ToLower())
 					//{
 					//	case "elasticsearch":
-					//		searchType = "ElasticSearch (PopForums.ElasticKit)";
 					//		services.AddPopForumsElasticSearch();
 					//		break;
 					//	case "azuresearch":
-					//		searchType = "Azure Search (PopForums.AzureKit)";
 					//		services.AddPopForumsAzureSearch();
 					//		break;
 					//	default:
-					//		searchType = "Default (PopForums.Sql)";
 					//		break;
 					//}
 				})

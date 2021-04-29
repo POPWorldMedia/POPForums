@@ -5,30 +5,25 @@ namespace PopForums.Configuration
 {
 	public class ConfigLoader
 	{
-		public ConfigContainer GetConfig(string basePath, string configFileName)
+		public ConfigContainer GetConfig(IConfiguration configuration)
 		{
-			var builder = new ConfigurationBuilder();
-			builder.SetBasePath(basePath);
-			builder.AddJsonFile(configFileName, optional: true);
-			builder.AddEnvironmentVariables("APPSETTING_");
-			var config = builder.Build();
 			var container = new ConfigContainer();
-			container.DatabaseConnectionString = config["PopForums:Database:ConnectionString"];
-			var cacheSeconds = config["PopForums:Cache:Seconds"];
+			container.DatabaseConnectionString = configuration["PopForums:Database:ConnectionString"];
+			var cacheSeconds = configuration["PopForums:Cache:Seconds"];
 			container.CacheSeconds = cacheSeconds == null ? 90 : Convert.ToInt32(cacheSeconds);
-			container.CacheConnectionString = config["PopForums:Cache:ConnectionString"];
-			container.CacheForceLocalOnly = Convert.ToBoolean(config["PopForums:Cache:ForceLocalOnly"]);
-			container.SearchUrl = config["PopForums:Search:Url"];
-			container.SearchKey = config["PopForums:Search:Key"];
-			var searchProvider = config["PopForums:Search:Provider"];
+			container.CacheConnectionString = configuration["PopForums:Cache:ConnectionString"];
+			container.CacheForceLocalOnly = Convert.ToBoolean(configuration["PopForums:Cache:ForceLocalOnly"]);
+			container.SearchUrl = configuration["PopForums:Search:Url"];
+			container.SearchKey = configuration["PopForums:Search:Key"];
+			var searchProvider = configuration["PopForums:Search:Provider"];
 			container.SearchProvider = searchProvider ?? string.Empty;
-			container.QueueConnectionString = config["PopForums:Queue:ConnectionString"];
-			var logTopicViews = config["PopForums:LogTopicViews"];
+			container.QueueConnectionString = configuration["PopForums:Queue:ConnectionString"];
+			var logTopicViews = configuration["PopForums:LogTopicViews"];
 			container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);
-			var useReCaptcha = config["PopForums:ReCaptcha:UseReCaptcha"];
+			var useReCaptcha = configuration["PopForums:ReCaptcha:UseReCaptcha"];
 			container.UseReCaptcha = useReCaptcha != null && bool.Parse(useReCaptcha);
-			container.ReCaptchaSiteKey = config["PopForums:ReCaptcha:SiteKey"];
-			container.ReCaptchaSecretKey = config["PopForums:ReCaptcha:SecretKey"];
+			container.ReCaptchaSiteKey = configuration["PopForums:ReCaptcha:SiteKey"];
+			container.ReCaptchaSecretKey = configuration["PopForums:ReCaptcha:SecretKey"];
 			return container;
 		} 
 	}
