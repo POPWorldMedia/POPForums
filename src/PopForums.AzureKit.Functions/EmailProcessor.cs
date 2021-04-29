@@ -32,8 +32,9 @@ namespace PopForums.AzureKit.Functions
 	    }
 
 	    [Function("EmailProcessor")]
-        public async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log)
+        public async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, FunctionContext executionContext)
 		{
+			var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
@@ -55,10 +56,10 @@ namespace PopForums.AzureKit.Functions
 					_errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
 				else
 					_errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
-				log.LogError(exc, $"Exception thrown running {nameof(EmailProcessor)}");
+				logger.LogError(exc, $"Exception thrown running {nameof(EmailProcessor)}");
 			}
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			logger.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			try
 			{
 				await _serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
@@ -66,7 +67,7 @@ namespace PopForums.AzureKit.Functions
 			catch(Exception exc)
 			{
 				// we don't want to risk spamming anyone because of a database failure
-				log.LogError(exc, $"Logging the service heartbeat for {nameof(EmailProcessor)} failed.");
+				logger.LogError(exc, $"Logging the service heartbeat for {nameof(EmailProcessor)} failed.");
 			}
 		}
     }

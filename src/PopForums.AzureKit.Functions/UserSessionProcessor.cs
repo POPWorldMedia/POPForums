@@ -26,8 +26,9 @@ namespace PopForums.AzureKit.Functions
 	    }
 
 	    [Function("UserSessionProcessor")]
-        public async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
-		{
+        public async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, FunctionContext executionContext)
+        {
+	        var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
@@ -38,11 +39,11 @@ namespace PopForums.AzureKit.Functions
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				log.LogError(exc, $"Exception thrown running {nameof(UserSessionProcessor)}");
+				logger.LogError(exc, $"Exception thrown running {nameof(UserSessionProcessor)}");
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
+			logger.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
             await _serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
 		}
     }

@@ -30,9 +30,9 @@ namespace PopForums.AzureKit.Functions
 		}
 
 		[Function("AwardCalculationProcessor")]
-		public async Task Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)]
-			string jsonPayload, ILogger log)
+		public async Task Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)] string jsonPayload, FunctionContext executionContext)
 		{
+			var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
@@ -44,11 +44,11 @@ namespace PopForums.AzureKit.Functions
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				log.LogError(exc, $"Exception thrown running {nameof(AwardCalculationProcessor)}");
+				logger.LogError(exc, $"Exception thrown running {nameof(AwardCalculationProcessor)}");
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue AwardCalculationProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			logger.LogInformation($"C# Queue AwardCalculationProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			await _serviceHeartbeatService.RecordHeartbeat(typeof(AwardCalculationProcessor).FullName, "AzureFunction");
 		}
 	}

@@ -31,9 +31,9 @@ namespace PopForums.AzureKit.Functions
 		}
 
 		[Function("SearchIndexProcessor")]
-		public async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
-			string jsonPayload, ILogger log)
+		public async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)] string jsonPayload, FunctionContext executionContext)
 		{
+			var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 			
@@ -45,11 +45,11 @@ namespace PopForums.AzureKit.Functions
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				log.LogError(exc, $"Exception thrown running {nameof(SearchIndexProcessor)}");
+				logger.LogError(exc, $"Exception thrown running {nameof(SearchIndexProcessor)}");
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue SearchIndexProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			logger.LogInformation($"C# Queue SearchIndexProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			await _serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}

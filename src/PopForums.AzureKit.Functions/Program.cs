@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Extensions;
 using PopForums.Sql;
@@ -6,6 +7,7 @@ using PopForums.Messaging;
 using PopForums.Configuration;
 using Microsoft.Extensions.Configuration;
 using PopForums.ElasticKit;
+using System.Diagnostics;
 
 namespace PopForums.AzureKit.Functions
 {
@@ -13,11 +15,19 @@ namespace PopForums.AzureKit.Functions
 	{
 		public static void Main()
 		{
-			var configuration = new ConfigurationBuilder().Build();
+			var configuration = new ConfigurationBuilder()
+				.SetBasePath(Environment.CurrentDirectory)
+				.AddJsonFile("local.settings.json")
+				.AddEnvironmentVariables()
+				.Build();
 			var config = new Config(configuration);
 
 			var host = new HostBuilder()
 				.ConfigureFunctionsWorkerDefaults()
+				.ConfigureAppConfiguration(c =>
+				{
+					c.AddConfiguration(configuration);
+				})
 				.ConfigureServices(s =>
 				{
 					s.AddPopForumsBase();

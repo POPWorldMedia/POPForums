@@ -27,8 +27,9 @@ namespace PopForums.AzureKit.Functions
 	    }
 
 	    [Function("CloseAgedTopicsProcessor")]
-        public async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, FunctionContext executionContext)
 		{
+			var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
@@ -39,11 +40,11 @@ namespace PopForums.AzureKit.Functions
 			catch (Exception exc)
 			{
 				_errorLog.Log(exc, ErrorSeverity.Error);
-				log.LogError(exc, $"Exception thrown running {nameof(CloseAgedTopicsProcessor)}");
+				logger.LogError(exc, $"Exception thrown running {nameof(CloseAgedTopicsProcessor)}");
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Timer {nameof(CloseAgedTopicsProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
+			logger.LogInformation($"C# Timer {nameof(CloseAgedTopicsProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
 			await _serviceHeartbeatService.RecordHeartbeat(typeof(CloseAgedTopicsProcessor).FullName, "AzureFunction");
 		}
     }
