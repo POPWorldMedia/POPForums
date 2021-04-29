@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.Extensions;
@@ -12,7 +13,7 @@ namespace PopForums.AzureKit.Functions
 {
 	public class Program
 	{
-		public static void Main()
+		public static async Task Main()
 		{
 			var configuration = new ConfigurationBuilder()
 				.SetBasePath(Environment.CurrentDirectory)
@@ -48,7 +49,7 @@ namespace PopForums.AzureKit.Functions
 				})
 				.Build();
 
-			host.Run();
+			await host.RunAsync();
 		}
 	}
 }
