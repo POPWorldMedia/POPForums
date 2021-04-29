@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.ElasticKit;
 using PopForums.AzureKit;
-using PopForums.Configuration;
-using PopForums.Extensions;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Sql;
@@ -17,21 +13,6 @@ namespace PopForums.Web
 {
 	public class Startup
 	{
-		public Startup(IWebHostEnvironment env)
-		{
-			// Setup configuration sources.
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(env.ContentRootPath)
-				.AddJsonFile("appsettings.json")
-				.AddEnvironmentVariables();
-			Configuration = builder.Build();
-
-			// setup PopForums.json config file
-			Config.SetPopForumsAppEnvironment(env.ContentRootPath);
-		}
-
-		public IConfigurationRoot Configuration { get; set; }
-
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.Configure<AuthorizationOptions>(options =>

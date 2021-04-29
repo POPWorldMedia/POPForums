@@ -11,6 +11,8 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
+v18 ditches the use of a separate configuration file, `PopForums.json`, and uses the default file in the web project, so you'll have to move your config settings there.
+
 The v17 release has no data changes. If you need to upgrade from v15, run the PopForums15to16.sql script against your database, which is found in the `PopForums.Sql` project.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.

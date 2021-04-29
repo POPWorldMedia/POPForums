@@ -2,74 +2,49 @@ using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using PopForums.ElasticKit;
 using PopForums.AzureKit.Queue;
 using PopForums.Configuration;
-using PopForums.Extensions;
-using PopForums.Messaging;
 using PopForums.Models;
 using PopForums.Services;
-using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-	public static class SearchIndexProcessor
+	public class SearchIndexProcessor
 	{
-		[FunctionName("SearchIndexProcessor")]
-		public static async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
-			string jsonPayload, ILogger log, ExecutionContext context)
+		private readonly ISearchIndexSubsystem _searchIndexSubsystem;
+		private readonly IServiceHeartbeatService _serviceHeartbeatService;
+		private readonly IErrorLog _errorLog;
+
+		public SearchIndexProcessor(ISearchIndexSubsystem searchIndexSubsystem, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
 		{
+			_searchIndexSubsystem = searchIndexSubsystem;
+			_serviceHeartbeatService = serviceHeartbeatService;
+			_errorLog = errorLog;
+		}
+
+		[Function("SearchIndexProcessor")]
+		public async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)] string jsonPayload, FunctionContext executionContext)
+		{
+			var logger = executionContext.GetLogger("AzureFunction");
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			Config.SetPopForumsAppEnvironment(context.FunctionAppDirectory, "local.settings.json");
-			var services = new ServiceCollection();
-			services.AddPopForumsBase();
-			services.AddPopForumsSql();
-			services.AddPopForumsAzureFunctionsAndQueues();
-			services.AddTransient<IBroker, BrokerSink>();
-
-			var serviceProvider = services.BuildServiceProvider();
-
-			string searchType;
-			var config = serviceProvider.GetService<IConfig>();
-			switch (config.SearchProvider.ToLower())
-			{
-				case "elasticsearch":
-					searchType = "ElasticSearch (PopForums.ElasticKit)";
-					services.AddPopForumsElasticSearch();
-					break;
-				case "azuresearch":
-					searchType = "Azure Search (PopForums.AzureKit)";
-					services.AddPopForumsAzureSearch();
-					break;
-				default:
-					searchType = "Default (PopForums.Sql)";
-					break;
-			}
-
-			serviceProvider = services.BuildServiceProvider();
-
-			var searchIndexSubsystem = serviceProvider.GetService<ISearchIndexSubsystem>();
-			var serviceHeartbeatService = serviceProvider.GetService<IServiceHeartbeatService>();
-			var errorLog = serviceProvider.GetService<IErrorLog>();
-
+			
 			try
 			{
 				var payload = JsonSerializer.Deserialize<SearchIndexPayload>(jsonPayload);
-				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
+				_searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
 			}
 			catch (Exception exc)
 			{
-				errorLog.Log(exc, ErrorSeverity.Error);
-				log.LogError(exc, $"Exception thrown running {nameof(SearchIndexProcessor)}");
+				_errorLog.Log(exc, ErrorSeverity.Error);
+				logger.LogError(exc, $"Exception thrown running {nameof(SearchIndexProcessor)}");
 			}
 
 			stopwatch.Stop();
-			log.LogInformation($"C# Queue SearchIndexProcessor ({searchType}) function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			await serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
+			logger.LogInformation($"C# Queue SearchIndexProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
+			await _serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}
 }

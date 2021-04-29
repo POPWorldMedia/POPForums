@@ -2,23 +2,21 @@
 
   <PropertyGroup>
 	  <Description>PopForums ElasticKit Class Library</Description>
-	  <VersionPrefix>17.1.0</VersionPrefix>
+	  <VersionPrefix>17.99.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
-	  <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <TargetFramework>net5.0</TargetFramework>
 	  <AssemblyName>PopForums.ElasticKit</AssemblyName>
 	  <PackageId>PopForums.ElasticKit</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>17.1.0</AssemblyVersion>
-	  <FileVersion>17.1.0</FileVersion>
 	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-	  <Copyright>2020, POP World Media, LLC</Copyright>
+	  <Copyright>2021, POP World Media, LLC</Copyright>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NEST" Version="7.9.0" />
-    <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="NEST" Version="7.12.1" />
+    <PackageReference Include="Polly" Version="7.2.2" />
   </ItemGroup>
 
   <ItemGroup>
