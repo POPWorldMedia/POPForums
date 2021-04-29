@@ -20,7 +20,6 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.2" OutputItemType="Analyzer" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Spatial" Version="7.5.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
