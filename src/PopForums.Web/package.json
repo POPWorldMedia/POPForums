@@ -7,10 +7,10 @@
     "bootstrap": "4.5.2",
     "jquery": "3.5.1",
     "popper.js": "1.16.1-lts",
-    "tinymce": "5.4.2",
+    "tinymce": "5.7.1",
     "vue": "2.6.12",
     "vue-router": "3.4.3",
-    "axios": "0.20.0"
+    "axios": "0.21.1"
   },
   "devDependencies": {
     "gulp": "4.0.2",
