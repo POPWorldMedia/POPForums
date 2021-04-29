@@ -13,27 +13,38 @@ using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-    public static class CloseAgedTopicsProcessor
+    public class CloseAgedTopicsProcessor
     {
-        [Function("CloseAgedTopicsProcessor")]
-        public static async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log, ITopicService topicService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    private readonly ITopicService _topicService;
+	    private readonly IServiceHeartbeatService _serviceHeartbeatService;
+	    private readonly IErrorLog _errorLog;
+
+	    public CloseAgedTopicsProcessor(ITopicService topicService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    {
+		    _topicService = topicService;
+		    _serviceHeartbeatService = serviceHeartbeatService;
+		    _errorLog = errorLog;
+	    }
+
+	    [Function("CloseAgedTopicsProcessor")]
+        public async Task Run([TimerTrigger("0 0 */12 * * *")]TimerInfo myTimer, ILogger log)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
 			try
 			{
-				await topicService.CloseAgedTopics();
+				await _topicService.CloseAgedTopics();
 			}
 			catch (Exception exc)
 			{
-				errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Error);
 				log.LogError(exc, $"Exception thrown running {nameof(CloseAgedTopicsProcessor)}");
 			}
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Timer {nameof(CloseAgedTopicsProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
-			await serviceHeartbeatService.RecordHeartbeat(typeof(CloseAgedTopicsProcessor).FullName, "AzureFunction");
+			await _serviceHeartbeatService.RecordHeartbeat(typeof(CloseAgedTopicsProcessor).FullName, "AzureFunction");
 		}
     }
 }

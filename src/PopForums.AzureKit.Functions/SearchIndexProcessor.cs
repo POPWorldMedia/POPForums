@@ -17,11 +17,22 @@ using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-	public static class SearchIndexProcessor
+	public class SearchIndexProcessor
 	{
+		private readonly ISearchIndexSubsystem _searchIndexSubsystem;
+		private readonly IServiceHeartbeatService _serviceHeartbeatService;
+		private readonly IErrorLog _errorLog;
+
+		public SearchIndexProcessor(ISearchIndexSubsystem searchIndexSubsystem, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+		{
+			_searchIndexSubsystem = searchIndexSubsystem;
+			_serviceHeartbeatService = serviceHeartbeatService;
+			_errorLog = errorLog;
+		}
+
 		[Function("SearchIndexProcessor")]
-		public static async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
-			string jsonPayload, ILogger log, ISearchIndexSubsystem searchIndexSubsystem, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+		public async Task RunAsync([QueueTrigger(SearchIndexQueueRepository.QueueName)]
+			string jsonPayload, ILogger log)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -29,17 +40,17 @@ namespace PopForums.AzureKit.Functions
 			try
 			{
 				var payload = JsonSerializer.Deserialize<SearchIndexPayload>(jsonPayload);
-				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
+				_searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
 			}
 			catch (Exception exc)
 			{
-				errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Error);
 				log.LogError(exc, $"Exception thrown running {nameof(SearchIndexProcessor)}");
 			}
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue SearchIndexProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			await serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
+			await _serviceHeartbeatService.RecordHeartbeat(typeof(SearchIndexProcessor).FullName, "AzureFunction");
 		}
 	}
 }

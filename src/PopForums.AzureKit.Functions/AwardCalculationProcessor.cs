@@ -16,11 +16,22 @@ using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-	public static class AwardCalculationProcessor
+	public class AwardCalculationProcessor
 	{
+		private readonly IAwardCalculator _awardCalculator;
+		private readonly IServiceHeartbeatService _serviceHeartbeatService;
+		private readonly IErrorLog _errorLog;
+
+		public AwardCalculationProcessor(IAwardCalculator awardCalculator, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+		{
+			_awardCalculator = awardCalculator;
+			_serviceHeartbeatService = serviceHeartbeatService;
+			_errorLog = errorLog;
+		}
+
 		[Function("AwardCalculationProcessor")]
-		public static async Task Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)]
-			string jsonPayload, ILogger log, IAwardCalculator awardCalculator, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+		public async Task Run([QueueTrigger(AwardCalculationQueueRepository.QueueName)]
+			string jsonPayload, ILogger log)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -28,17 +39,17 @@ namespace PopForums.AzureKit.Functions
 			try
 			{
 				var payload = JsonSerializer.Deserialize<AwardCalculationPayload>(jsonPayload);
-				await awardCalculator.ProcessCalculation(payload.EventDefinitionID, payload.UserID);
+				await _awardCalculator.ProcessCalculation(payload.EventDefinitionID, payload.UserID);
 			}
 			catch (Exception exc)
 			{
-				errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Error);
 				log.LogError(exc, $"Exception thrown running {nameof(AwardCalculationProcessor)}");
 			}
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue AwardCalculationProcessor function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
-			await serviceHeartbeatService.RecordHeartbeat(typeof(AwardCalculationProcessor).FullName, "AzureFunction");
+			await _serviceHeartbeatService.RecordHeartbeat(typeof(AwardCalculationProcessor).FullName, "AzureFunction");
 		}
 	}
 }

@@ -16,10 +16,23 @@ using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-    public static class EmailProcessor
+    public class EmailProcessor
     {
-        [Function("EmailProcessor")]
-        public static async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log, IQueuedEmailMessageRepository queuedEmailRepo, ISmtpWrapper smtpWrapper, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    private readonly IQueuedEmailMessageRepository _queuedEmailRepo;
+	    private readonly ISmtpWrapper _smtpWrapper;
+	    private readonly IServiceHeartbeatService _serviceHeartbeatService;
+	    private readonly IErrorLog _errorLog;
+
+	    public EmailProcessor(IQueuedEmailMessageRepository queuedEmailRepo, ISmtpWrapper smtpWrapper, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    {
+		    _queuedEmailRepo = queuedEmailRepo;
+		    _smtpWrapper = smtpWrapper;
+		    _serviceHeartbeatService = serviceHeartbeatService;
+		    _errorLog = errorLog;
+	    }
+
+	    [Function("EmailProcessor")]
+        public async Task RunAsync([QueueTrigger(PopForums.AzureKit.Queue.EmailQueueRepository.QueueName)]string jsonPayload, ILogger log)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -28,27 +41,27 @@ namespace PopForums.AzureKit.Functions
 			try
 			{
 				var payload = JsonSerializer.Deserialize<EmailQueuePayload>(jsonPayload);
-				message = queuedEmailRepo.GetMessage(payload.MessageID).Result;
+				message = _queuedEmailRepo.GetMessage(payload.MessageID).Result;
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
 				{
 					message.ToEmail = payload.ToEmail;
 					message.ToName = payload.ToName;
 				}
-				smtpWrapper.Send(message);
+				_smtpWrapper.Send(message);
 			}
 			catch (Exception exc)
 			{
 				if (message == null)
-					errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
+					_errorLog.Log(exc, ErrorSeverity.Email, "There was no message for the MailWorker to send.");
 				else
-					errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
+					_errorLog.Log(exc, ErrorSeverity.Email, $"MessageID: {message.MessageID}, To: <{message.ToEmail}> {message.ToName}, Subject: {message.Subject}");
 				log.LogError(exc, $"Exception thrown running {nameof(EmailProcessor)}");
 			}
 			stopwatch.Stop();
 			log.LogInformation($"C# Queue {nameof(EmailProcessor)} function processed ({stopwatch.ElapsedMilliseconds}ms): {jsonPayload}");
 			try
 			{
-				await serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
+				await _serviceHeartbeatService.RecordHeartbeat(typeof(EmailProcessor).FullName, "AzureFunction");
 			}
 			catch(Exception exc)
 			{

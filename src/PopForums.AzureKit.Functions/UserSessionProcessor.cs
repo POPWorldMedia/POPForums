@@ -12,27 +12,38 @@ using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
-    public static class UserSessionProcessor
+    public class UserSessionProcessor
     {
-        [Function("UserSessionProcessor")]
-        public static async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, IUserSessionService userSessionService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    private readonly IUserSessionService _userSessionService;
+	    private readonly IServiceHeartbeatService _serviceHeartbeatService;
+	    private readonly IErrorLog _errorLog;
+
+	    public UserSessionProcessor(IUserSessionService userSessionService, IServiceHeartbeatService serviceHeartbeatService, IErrorLog errorLog)
+	    {
+		    _userSessionService = userSessionService;
+		    _serviceHeartbeatService = serviceHeartbeatService;
+		    _errorLog = errorLog;
+	    }
+
+	    [Function("UserSessionProcessor")]
+        public async Task RunAsync([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
 			try
 			{
-				await userSessionService.CleanUpExpiredSessions();
+				await _userSessionService.CleanUpExpiredSessions();
 			}
 			catch (Exception exc)
 			{
-				errorLog.Log(exc, ErrorSeverity.Error);
+				_errorLog.Log(exc, ErrorSeverity.Error);
 				log.LogError(exc, $"Exception thrown running {nameof(UserSessionProcessor)}");
 			}
 
 			stopwatch.Stop();
 			log.LogInformation($"C# Timer {nameof(UserSessionProcessor)} function executed ({stopwatch.ElapsedMilliseconds}ms) at: {DateTime.UtcNow}");
-            await serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
+            await _serviceHeartbeatService.RecordHeartbeat(typeof(UserSessionProcessor).FullName, "AzureFunction");
 		}
     }
 }
