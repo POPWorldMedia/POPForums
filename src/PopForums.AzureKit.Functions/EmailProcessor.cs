@@ -1,18 +1,14 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
 using PopForums.Email;
-using PopForums.Extensions;
 using PopForums.Models;
 using PopForums.Repositories;
 using PopForums.Services;
-using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {

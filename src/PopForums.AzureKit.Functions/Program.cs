@@ -7,7 +7,6 @@ using PopForums.Messaging;
 using PopForums.Configuration;
 using Microsoft.Extensions.Configuration;
 using PopForums.ElasticKit;
-using System.Diagnostics;
 
 namespace PopForums.AzureKit.Functions
 {

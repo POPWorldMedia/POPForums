@@ -1,14 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PopForums.Configuration;
-using PopForums.Extensions;
 using PopForums.Services;
-using PopForums.Sql;
 
 namespace PopForums.AzureKit.Functions
 {
