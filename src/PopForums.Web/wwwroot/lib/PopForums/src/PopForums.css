@@ -201,8 +201,8 @@
 
 @font-face {
 	font-family: 'pfglyphs';
-	src: url('fonts/pfglyphs.eot?enukk');
-	src: url('fonts/pfglyphs.eot?enukk#iefix') format('embedded-opentype'), url('fonts/pfglyphs.ttf?enukk') format('truetype'), url('fonts/pfglyphs.woff?enukk') format('woff'), url('fonts/pfglyphs.svg?enukk#pfglyphs') format('svg');
+	src: url('Fonts/pfglyphs.eot?enukk');
+	src: url('Fonts/pfglyphs.eot?enukk#iefix') format('embedded-opentype'), url('Fonts/pfglyphs.ttf?enukk') format('truetype'), url('Fonts/pfglyphs.woff?enukk') format('woff'), url('Fonts/pfglyphs.svg?enukk#pfglyphs') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
