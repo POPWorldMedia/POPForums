@@ -55,11 +55,17 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		public static string Name = "Identity";
 
+		public class Credentials
+		{
+			public string Email { get; set; }
+			public string Password { get; set; }
+		}
+
 		[PopForumsAuthorizationIgnore]
 		[HttpPost]
-		public async Task<IActionResult> Login(string email, string password)
+		public async Task<IActionResult> Login([FromBody] Credentials credentials)
 		{
-			var (result, user) = await _userService.Login(email, password, HttpContext.Connection.RemoteIpAddress.ToString());
+			var (result, user) = await _userService.Login(credentials.Email, credentials.Password, HttpContext.Connection.RemoteIpAddress?.ToString());
 			if (result)
 			{
 				await PerformSignInAsync(user, HttpContext);
@@ -82,7 +88,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 					link = Url.Action("Index", HomeController.Name);
 			}
 			var user = _userRetrievalShim.GetUser();
-			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress?.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Redirect(link);
 		}
@@ -91,7 +97,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		public async Task<JsonResult> LogoutAsync()
 		{
 			var user = _userRetrievalShim.GetUser();
-			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress.ToString());
+			await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress?.ToString());
 			await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			return Json(new BasicJsonMessage { Result = true });
 		}
@@ -138,7 +144,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		[PopForumsAuthorizationIgnore]
 		public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
 		{
-			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+			var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 			var loginState = _externalLoginTempService.Read();
 			if (loginState == null)
 			{
@@ -160,10 +166,10 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 
 		[PopForumsAuthorizationIgnore]
 		[HttpPost]
-		public async Task<JsonResult> LoginAndAssociate(string email, string password)
+		public async Task<JsonResult> LoginAndAssociate([FromBody] Credentials credentials)
 		{
-			var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-			var (result, user) = await _userService.Login(email, password, ip);
+			var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+			var (result, user) = await _userService.Login(credentials.Email, credentials.Password, ip);
 			if (result)
 			{
 				var loginState = _externalLoginTempService.Read();
@@ -207,7 +213,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			var loginState = _externalLoginTempService.Read();
 			if (loginState == null)
 			{
-				var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+				var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 				await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 				return View("ExternalError", Resources.Error + ": " + Resources.LoginBad);
 			}

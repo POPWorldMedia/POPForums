@@ -55,28 +55,34 @@ PopForums.processLoginExternal = function () {
 };
 
 PopForums.processLoginBase = function (path) {
-	$.ajax({
-		url: PopForums.areaPath + path,
-		type: "POST",
-		data: { email: $("#EmailLogin").val(), password: $("#PasswordLogin").val(), persistCookie: $("#PersistCookie").is(":checked") },
-		dataType: "json",
-		success: function (result) {
-			var loginResult = $("#LoginResult");
-			switch (result.result) {
-				case true:
-					var destination = $("#Referrer").val();
-					location = destination;
-					break;
-				default:
-					loginResult.html(result.message);
-					loginResult.removeClass("d-none");
-			}
+	var email = document.querySelector("#EmailLogin").value;
+	var password = document.querySelector("#PasswordLogin").value;
+	fetch(PopForums.areaPath + path, {
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json'
 		},
-		error: function () {
-			var loginResult = $("#LoginResult");
-			loginResult.html("There was an unknown error while attempting login");
-			loginResult.removeClass("d-none");
-		}
+		body: JSON.stringify({ email: email, password: password })
+	})
+		.then(function(response) {
+			return response.json();
+	})
+		.then(function (result) {
+			var loginResult = document.querySelector("#LoginResult");
+			switch (result.result) {
+			case true:
+				var destination = document.querySelector("#Referrer").value;
+				location = destination;
+				break;
+			default:
+				loginResult.innerHTML = result.message;
+				loginResult.classList.remove("d-none");
+			}
+	})
+		.catch(function (error) {
+			var loginResult = document.querySelector("#LoginResult");
+			loginResult.innerHTML = "There was an unknown error while attempting login";
+			loginResult.classList.remove("d-none");
 	});
 };
 
