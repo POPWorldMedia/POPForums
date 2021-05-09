@@ -1,18 +1,22 @@
-﻿$(function () {
+﻿var ready = (callback) => {
+	if (document.readyState != "loading") callback();
+	else document.addEventListener("DOMContentLoaded", callback);
+}
+
+ready(() => {
 	if (window.location.hash) {
 		var hash = window.location.hash;
-		while (hash.charAt(0) == '#') hash = hash.substr(1);
-		var tag = $("div[data-postID='" + hash + "']");
-		if ($("#PostStream").has(tag).length > 0) {
-			var offset = tag.offset();
-			if (offset) {
-				var crumb = $("#ForumContainer #TopBreadcrumb");
-				var height = crumb.outerHeight();
-				var margin = parseInt($(".postItem").css("margin-top"), 10);
-				var tagTop = offset.top;
-				var newPosition = tagTop - height - margin;
-				$("html,body").animate({ scrollTop: newPosition }, "fast");
-			}
+		while (hash.charAt(0) === '#') hash = hash.substr(1);
+		var tag = document.querySelector("div[data-postID='" + hash + "']");
+		if (tag) {
+			var offset = window.pageYOffset;
+			var tagPosition = tag.getBoundingClientRect().top;
+			var crumb = document.querySelector("#ForumContainer #TopBreadcrumb");
+			var crumbHeight = crumb.getBoundingClientRect().height;
+			var e = getComputedStyle(document.querySelector(".postItem"));
+			var margin = parseFloat(e.marginTop, 10);
+			var newPosition = tagPosition - crumbHeight - margin;
+			window.scrollTo({top: newPosition, behavior: 'smooth'});
 		}
 	}
 });
