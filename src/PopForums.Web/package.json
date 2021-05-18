@@ -3,11 +3,11 @@
   "version": "17.99.0",
   "scripts": {},
   "dependencies": {
-    "@microsoft/signalr": "3.1.7",
+    "@microsoft/signalr": "5.0.6",
     "bootstrap": "4.5.2",
     "jquery": "3.5.1",
     "popper.js": "1.16.1-lts",
-    "tinymce": "5.7.1",
+    "tinymce": "5.8.0",
     "vue": "2.6.12",
     "vue-router": "3.4.3",
     "axios": "0.21.1"
@@ -18,9 +18,9 @@
     "gulp-cssmin": "0.2.0",
     "gulp-uglify": "3.0.2",
     "gulp-babel": "8.0.0",
-    "@babel/core": "7.11.0",
-    "@babel/preset-env": "7.11.0",
-    "gulp-sourcemaps": "2.6.5",
+    "@babel/core": "7.14.3",
+    "@babel/preset-env": "7.14.2",
+    "gulp-sourcemaps": "3.0.0",
     "gulp-rename": "2.0.0",
     "gulp-bump": "3.2.0"
   },
