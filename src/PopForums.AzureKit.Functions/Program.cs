@@ -7,6 +7,7 @@ using PopForums.Sql;
 using PopForums.Messaging;
 using PopForums.Configuration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PopForums.ElasticKit;
 
 namespace PopForums.AzureKit.Functions
@@ -34,6 +35,8 @@ namespace PopForums.AzureKit.Functions
 					s.AddPopForumsSql();
 					s.AddPopForumsAzureFunctionsAndQueues();
 					s.AddSingleton<IBroker, BrokerSink>();
+					s.RemoveAll<ICacheHelper>();
+					s.AddSingleton<ICacheHelper, CacheHelper>();
 					
 					switch (config.SearchProvider.ToLower())
 					{
