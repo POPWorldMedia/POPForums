@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Queue;
-using Newtonsoft.Json;
+using Azure.Storage.Queues;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Repositories;
@@ -21,10 +20,9 @@ namespace PopForums.AzureKit.Queue
 
 		public async Task Enqueue(AwardCalculationPayload payload)
 		{
-			var serializedPayload = JsonConvert.SerializeObject(payload);
-			var message = new CloudQueueMessage(serializedPayload);
-			var queue = await GetQueue();
-			await queue.AddMessageAsync(message);
+			var serializedPayload = JsonSerializer.Serialize(payload);
+			var client = await GetQueueClient();
+			await client.SendMessageAsync(serializedPayload);
 		}
 
 #pragma warning disable 1998
@@ -34,13 +32,14 @@ namespace PopForums.AzureKit.Queue
 			throw new System.NotImplementedException($"{nameof(Dequeue)} should never be called because it's automatically bound to an Azure function.");
 		}
 
-		private async Task<CloudQueue> GetQueue()
+		private async Task<QueueClient> GetQueueClient()
 		{
-			var storageAccount = CloudStorageAccount.Parse(_config.QueueConnectionString);
-			var client = storageAccount.CreateCloudQueueClient();
-			var queue = client.GetQueueReference(QueueName);
-			await queue.CreateIfNotExistsAsync();
-			return queue;
+			var client = new QueueClient(_config.QueueConnectionString, QueueName, new QueueClientOptions
+			{
+				MessageEncoding = QueueMessageEncoding.Base64
+			});
+			await client.CreateIfNotExistsAsync();
+			return client;
 		}
 	}
 }
