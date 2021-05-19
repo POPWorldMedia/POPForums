@@ -32,7 +32,7 @@ You should definitely get to know the installation information below to understa
 * Use gulp or some other package to copy or pack the various scripts and CSS. The sample project uses gulp and you can see how it's done in the gulpfile.js.
 * You'll need a layout view for the forum to live in.
 * Set up the various options in `Startup` as described in its comments and this documentation.
-* `PopForums.json` will have your forum configuration.
+* `appsettings.json` will have your forum configuration.
 * There is no package for the Azure Functions, because the SDK references are kind of whacked and it's currently hard to make them work from a shared library. However, you can deploy the project from this repo with ease given the tooling in VS or Azure DevOps Pipelines. Just be sure to set the right values up in the application configuration in the Azure portal.
 * POP Forums uses ASP.NET Core Data Protection. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your startup, in the `ConfigureServices()` method, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things.
 
@@ -47,7 +47,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 * This project is built on ASP.NET Core v3.1.7. Make sure you have the required SDK installed (v3.1.401).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation.
 * The `main` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2019 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Starup` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`.
-* `PopForums.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
+* `appsettings.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
 
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
 ```js

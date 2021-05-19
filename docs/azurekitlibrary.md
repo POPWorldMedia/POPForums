@@ -13,7 +13,7 @@ You don't need to use the AzureKit components to run in an Azure App Service. Th
 
 ## Configuration with Azure App Services and Azure Functions
 
-The POP Forums configuration system uses the typical configuration files, but adhere's to the overriding system implemented via environment variables. This by extension means that you can set these values in the Application Settings section of the Azure portal for App Services and Functions. It uses the colon notation that you may be familiar with. For example, use `PopForums:Queue:ConnectionString` to correspond to the hierarchy of the PopForums.json file. (For Linux-based App Services and Functions in Azure, use a double underscore instead of colons in the portal settings, i.e., `PopForums__Queue__ConnectionString`.)
+The POP Forums configuration system uses the typical configuration files, but adhere's to the overriding system implemented via environment variables. This by extension means that you can set these values in the Application Settings section of the Azure portal for App Services and Functions. It uses the colon notation that you may be familiar with. For example, use `PopForums:Queue:ConnectionString` to correspond to the hierarchy of the `appsettings.json file`. (For Linux-based App Services and Functions in Azure, use a double underscore instead of colons in the portal settings, i.e., `PopForums__Queue__ConnectionString`.)
 
 ## Irrelevant settings when using Azure Functions
 
@@ -45,7 +45,7 @@ public void ConfigureServices(IServiceCollection services)
 
 The first line configures the app to use the Redis caching mechanism. Under the hood, this replaces the `PopForums.Sql` implementation of `ICacheHelper` with the one found in `PopForums.AzureKit`. The second line adds `AddRedisBackplaneForPopForums()` to the configuration of SignalR, so that websocket messages back to the browser are funneled to clients regardless of which web node they're connected to. For example, a user can make a post connected to one node, and the message to update the recent topics page will be signaled to update for users on every node.
 
-You'll also need to setup some values in the `PopForums.json` configuration file:
+You'll also need to setup some values in the `appsettings.json` configuration file:
 
 ```
 {
@@ -63,6 +63,8 @@ You'll also need to setup some values in the `PopForums.json` configuration file
 * `ForceLocalOnly`: When set to true, the app will not use Redis, just local memory. This might be useful if you scale down to one node and no longer need Redis, but don't want to redeploy, for example. Obviously don't set to true if you're running more than one node.
 
 This version of `ICacheHelper` is actually a two-level cache. The data is stored locally in the instance memory of the web app, as well as Redis, because it's still faster if it can avoid calling over the wire. Invalidation of data is handled over Redis' built-in communication channels. So if you update something with a particular cache key, Redis will notify all nodes to invalidate any local value they have. Because it's a two-level cache, you might find that your Redis stats seem not to be active, and when it is being called, it's usually a miss. That's because it doesn't have to go to the Redis instance itself, since the value is already in local memory.
+
+The Azure functions do _not_ use caching. The data that is fetched by the functions is typically transient, not cached or not likely to be.
 
 If you want to prefix cache keys with a specific string, you can do that by using the dependency injection to replace the default `ITenantService` and implementing its `GetTenant()` method. The default implementation simply returns an empty string.
 
