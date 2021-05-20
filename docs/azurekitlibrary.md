@@ -144,6 +144,8 @@ The connection string for using the local Azure storage emulator is `UseDevelopm
 
 ## Using Azure Search
 
+_Note: v18 breaks compatibility with previous indexes using Azure Search._
+
 Use this in your startup configuration if you're using web in-process search indexing:
 
 ```
