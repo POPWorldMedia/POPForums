@@ -61,16 +61,16 @@ namespace PopForums.AzureKit.Search
 				switch (searchType)
 				{
 					case SearchType.Date:
-						options.OrderBy.Add("lastPostTime desc");
+						options.OrderBy.Add("LastPostTime desc");
 						break;
 					case SearchType.Name:
-						options.OrderBy.Add("startedByName");
+						options.OrderBy.Add("StartedByName");
 						break;
 					case SearchType.Replies:
-						options.OrderBy.Add("replies desc");
+						options.OrderBy.Add("Replies desc");
 						break;
 					case SearchType.Title:
-						options.OrderBy.Add("title");
+						options.OrderBy.Add("Title");
 						break;
 					default:
 						break;
@@ -80,11 +80,11 @@ namespace PopForums.AzureKit.Search
 				options.Size = pageSize;
 				if (hiddenForums != null && hiddenForums.Any())
 				{
-					var neConditions = hiddenForums.Select(x => "forumID ne " + x);
+					var neConditions = hiddenForums.Select(x => "ForumID ne " + x);
 					options.Filter = string.Join(" and ", neConditions);
 				}
 				options.IncludeTotalCount = true;
-				options.Select.Add("topicID");
+				options.Select.Add("TopicID");
 				var result = searchClient.Search<SearchTopic>(searchTerm, options);
 				var resultModels = result.Value.GetResults();
 				var topicIDs = resultModels.Select(x => Convert.ToInt32(x.Document.TopicID));

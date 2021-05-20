@@ -47,6 +47,7 @@ namespace PopForums.AzureKit.Search
 						parsedText = _textParsingService.RemoveForumCode(parsedText); 
 						return parsedText;
 					}).ToArray();
+				var joinedPosts = string.Join(" ", parsedPosts);
 				var searchTopic = new SearchTopic
 				{
 					Key = $"{tenantID}-{topicID}",
@@ -61,7 +62,7 @@ namespace PopForums.AzureKit.Search
 					IsPinned = topic.IsPinned,
 					UrlName = topic.UrlName,
 					LastPostName = topic.LastPostName,
-					Posts = parsedPosts,
+					Posts = joinedPosts,
 					TenantID = tenantID
 				};
 
@@ -105,23 +106,23 @@ namespace PopForums.AzureKit.Search
 		    {
 			    Fields =
 				{
-					new SimpleField("key", SearchFieldDataType.String) {IsKey = true},
-					new SimpleField("topicID", SearchFieldDataType.String),
-				    new SimpleField("forumID", SearchFieldDataType.Int32) {IsFilterable = true},
-				    new SearchableField("title") {IsSortable = true},
-					new SimpleField("lastPostTime", SearchFieldDataType.DateTimeOffset) {IsSortable = true},
-					new SearchableField("startedByName") {IsSortable = true},
-					new SimpleField("replies", SearchFieldDataType.Int32) {IsSortable = true},
-					new SimpleField("views", SearchFieldDataType.Int32) {IsSortable = true},
-					new SimpleField("isClosed", SearchFieldDataType.Boolean) {IsSortable = false},
-					new SimpleField("isPinned", SearchFieldDataType.Boolean) {IsSortable = false},
-					new SimpleField("urlName", SearchFieldDataType.String) {IsSortable = false},
-					new SimpleField("lastPostName", SearchFieldDataType.String) {IsSortable = false},
-					new SearchableField("posts") {IsSortable = false},
-					new SearchableField("tenantID")
+					new SimpleField("Key", SearchFieldDataType.String) {IsKey = true},
+					new SimpleField("TopicID", SearchFieldDataType.String),
+				    new SimpleField("ForumID", SearchFieldDataType.Int32) {IsFilterable = true},
+				    new SearchableField("Title") {IsSortable = true},
+					new SimpleField("LastPostTime", SearchFieldDataType.DateTimeOffset) {IsSortable = true},
+					new SearchableField("StartedByName") {IsSortable = true},
+					new SimpleField("Replies", SearchFieldDataType.Int32) {IsSortable = true},
+					new SimpleField("Views", SearchFieldDataType.Int32) {IsSortable = true},
+					new SimpleField("IsClosed", SearchFieldDataType.Boolean) {IsSortable = false},
+					new SimpleField("IsPinned", SearchFieldDataType.Boolean) {IsSortable = false},
+					new SimpleField("UrlName", SearchFieldDataType.String) {IsSortable = false},
+					new SimpleField("LastPostName", SearchFieldDataType.String) {IsSortable = false},
+					new SearchableField("Posts") {IsSortable = false},
+					new SearchableField("TenantID")
 			    }
 		    };
-		    var weights = new TextWeights(new Dictionary<string, double> {{"title", 10}, {"startedByName", 5}, {"posts", 1}});
+		    var weights = new TextWeights(new Dictionary<string, double> {{"Title", 10}, {"StartedByName", 5}, {"Posts", 1}});
 		    indexDefinition.ScoringProfiles.Add(
 			    new ScoringProfile("TopicWeight") {TextWeights = weights});
 			searchIndexClient.CreateIndex(indexDefinition);
