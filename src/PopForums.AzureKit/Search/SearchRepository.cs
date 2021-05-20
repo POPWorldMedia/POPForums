@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
-using Microsoft.Rest.Azure;
+using Azure.Search.Documents;
 using PopForums.Configuration;
 using PopForums.Sql;
 using PopForums.Models;
 using PopForums.Repositories;
+using Azure;
+
 #pragma warning disable 1998
 
 namespace PopForums.AzureKit.Search
@@ -51,51 +51,52 @@ namespace PopForums.AzureKit.Search
 		    throw new NotImplementedException();
 	    }
 
-		public override async Task<Tuple<Response<List<Topic>>, int>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize)
+		public override async Task<Tuple<PopForums.Models.Response<List<Topic>>, int>> SearchTopics(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize)
 		{
 			int topicCount;
-			var serviceIndexClient = new SearchIndexClient(_config.SearchUrl, SearchIndexSubsystem.IndexName, new SearchCredentials(_config.SearchKey));
+			var searchClient = new SearchClient(new Uri(_config.SearchUrl), SearchIndexSubsystem.IndexName, new AzureKeyCredential(_config.SearchKey));
 			try
 			{
-				var parameters = new SearchParameters();
+				var options = new SearchOptions();
 				switch (searchType)
 				{
 					case SearchType.Date:
-						parameters.OrderBy = new List<string> { "lastPostTime desc" };
+						options.OrderBy.Add("lastPostTime desc");
 						break;
 					case SearchType.Name:
-						parameters.OrderBy = new List<string> { "startedByName" };
+						options.OrderBy.Add("startedByName");
 						break;
 					case SearchType.Replies:
-						parameters.OrderBy = new List<string> { "replies desc" };
+						options.OrderBy.Add("replies desc");
 						break;
 					case SearchType.Title:
-						parameters.OrderBy = new List<string> { "title" };
+						options.OrderBy.Add("title");
 						break;
 					default:
 						break;
 				}
 				if (startRow > 1)
-					parameters.Skip = startRow - 1;
-				parameters.Top = pageSize;
+					options.Skip = startRow - 1;
+				options.Size = pageSize;
 				if (hiddenForums != null && hiddenForums.Any())
 				{
 					var neConditions = hiddenForums.Select(x => "forumID ne " + x);
-					parameters.Filter = string.Join(" and ", neConditions);
+					options.Filter = string.Join(" and ", neConditions);
 				}
-				parameters.IncludeTotalResultCount = true;
-				parameters.Select = new [] {"topicID"};
-				var result = serviceIndexClient.Documents.Search<SearchTopic>(searchTerm, parameters);
-				var topicIDs = result.Results.Select(x => Convert.ToInt32(x.Document.TopicID));
+				options.IncludeTotalCount = true;
+				options.Select.Add("topicID");
+				var result = searchClient.Search<SearchTopic>(searchTerm, options);
+				var resultModels = result.Value.GetResults();
+				var topicIDs = resultModels.Select(x => Convert.ToInt32(x.Document.TopicID));
 				var topics = await _topicRepository.Get(topicIDs);
-				topicCount = Convert.ToInt32(result.Count);
-				return Tuple.Create(new Response<List<Topic>>(topics), topicCount);
+				topicCount = Convert.ToInt32(result.Value.TotalCount);
+				return Tuple.Create(new PopForums.Models.Response<List<Topic>>(topics), topicCount);
 			}
-			catch (CloudException cloudException)
+			catch (Exception exception)
 			{
-				_errorLog.Log(cloudException, ErrorSeverity.Error);
+				_errorLog.Log(exception, ErrorSeverity.Error);
 				topicCount = 0;
-				return Tuple.Create(new Response<List<Topic>>(null, false, cloudException), topicCount);
+				return Tuple.Create(new PopForums.Models.Response<List<Topic>>(null, false, exception), topicCount);
 			}
 		}
 	}

@@ -1,9 +1,7 @@
 ﻿using System;
-using Microsoft.Azure.Search.Models;
 
 namespace PopForums.AzureKit.Search
 {
-	[SerializePropertyNamesAsCamelCase]
     public class SearchTopic
     {
 		public string Key { get; set; }

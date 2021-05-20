@@ -5,7 +5,7 @@ nav_order: 6
 ---
 # Using AzureKit Library
 The `PopForums.AzureKit` library makes it possible to wire up the following scenarios:
-* Using Redis for caching (not dependent on Azure specifically)
+* Using Redis for caching (not dependent on Azure specifically... Redis runs everywhere!)
 * Using Azure Storage queues and Functions to queue work for search indexing, emailing and scoring game award calculation
 * Using Azure Search
 
@@ -154,7 +154,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 Under the hood, this replaces the `PopForums.Sql` implementation of the search interfaces with those used for Azure Search.
 
-For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` setting in the portal blade for the functions to `azuresearch`.
+For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` (or `PopForums__Search__Provider` if it's Linux-based) setting in the portal blade for the functions to `azuresearch`.
 
 You'll also need to setup the right configuration values:
 
@@ -162,11 +162,11 @@ You'll also need to setup the right configuration values:
 {
   "PopForums": {
     "Search": {
-      "Url": "mysearch",
+      "Url": "https://somesearchservice.search.windows.net",
       "Key": "99011A70D3D50D251B0A6141A97B40E7",
       "Provider": ""
     },
 ```
-* `Url`: The subdomain for Azure Search
+* `Url`: The URL for Azure Search, typically `https://{nameOfSearchService}.search.windows.net` with the name set in the Azure portal
 * `Key`: A key provisioned by the portal to connect to Azure Search
-* `Provider`: This is optional and not actually implemented anywhere other than in our Azure Functions example project, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library.
+* `Provider`: This is only used in `PopForums.AzureKit.Functions`, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library
