@@ -21,7 +21,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		public async Task ProcessView(Topic topic)
 		{
 			var context = _httpContextAccessor.HttpContext;
-			if (context.Request.Cookies != null && context.Request.Cookies.ContainsKey(CookieKey))
+			if (context != null && context.Request.Cookies != null && context.Request.Cookies.ContainsKey(CookieKey))
 			{
 				if (int.TryParse(context.Request.Cookies[CookieKey], out var topicID))
 				{
@@ -37,7 +37,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 		public void SetViewedTopic(Topic topic)
 		{
 			var context = _httpContextAccessor.HttpContext;
-			context.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString());
+			context?.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString());
 		}
 	}
 }
