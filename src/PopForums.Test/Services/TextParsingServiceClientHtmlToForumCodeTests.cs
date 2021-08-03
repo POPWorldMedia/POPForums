@@ -263,5 +263,21 @@ namespace PopForums.Test.Services
 			var result = service.ClientHtmlToForumCode("<p>test</p>\r\n<p><img src=\"https://scontent.ftpa1-2.fna.fbcdn.net/v/t31.0-8/12119905_10153331542212955_4087525267669435874_o.jpg?_nc_cat=104&amp;_nc_ht=scontent.ftpa1-2.fna&amp;oh=bde1d73b39027f410a9506c19dfb4428&amp;oe=5D95ACD5\" alt=\"\" /></p><p>test</p>");
 			Assert.Equal("test\r\n\r\n[image=https://scontent.ftpa1-2.fna.fbcdn.net/v/t31.0-8/12119905_10153331542212955_4087525267669435874_o.jpg?_nc_cat=104&_nc_ht=scontent.ftpa1-2.fna&oh=bde1d73b39027f410a9506c19dfb4428&oe=5D95ACD5]\r\n\r\ntest", result);
 		}
+
+		[Fact]
+		public void ParseSequentialImages()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p><img src=\"test1.jpg\" /><img src=\"test2.jpg\" /></p>");
+			Assert.Equal("[image=test1.jpg][image=test2.jpg]", result);
+		}
+
+		[Fact]
+		public void ParseNonSequentialImages()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p><img src=\"test1.jpg\" /></p><p><img src=\"test2.jpg\" /></p>");
+			Assert.Equal("[image=test1.jpg]\r\n\r\n[image=test2.jpg]", result);
+		}
 	}
 }
