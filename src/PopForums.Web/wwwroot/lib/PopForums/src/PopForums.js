@@ -714,25 +714,25 @@ PopForums.startTimeUpdater = function () {
 
 PopForums.updateTimes = function () {
 	var a = [];
-	var times = $(".fTime");
-	$.each(times, function () {
-		var t = $(this).attr("data-utc");
+	var times = document.querySelectorAll(".fTime");
+	times.forEach(time => {
+		var t = time.getAttribute("data-utc");
 		if (((new Date() - new Date(t + "Z")) / 3600000) < 48)
 			a.push(t);
 	});
-	if (a.length > 0)
-		$.ajax({
-			url: PopForums.areaPath + "/Time/GetTimes",
-			type: "POST",
-			data: { times: a },
-			dataType: "json",
-			traditional: true,
-			success: function (result) {
-				$.each(result, function () {
-					$(".fTime[data-utc='" + this.key + "']").text(this.value);
+	if (a.length > 0) {
+		var formData = new FormData();
+		a.forEach(t => formData.append("times", t));
+		fetch(PopForums.areaPath + "/Time/GetTimes", {
+			method: "POST",
+			body: formData
+		})
+			.then(response => response.json())
+			.then(data => {
+				data.forEach(t => {
+					document.querySelector(".fTime[data-utc='" + t.key + "']").innerHTML = t.value;
 				});
-			},
-			error: function () {
-			}
-		});
+			})
+			.catch(error => { console.log("Time update failure: " + error); });
+	}
 };
