@@ -93,7 +93,11 @@
 	margin: 10px 0;
 }
 #ForumContainer .miniProfileBox {
-	display: none;
+	height: 0;
+	overflow: hidden;
+	transition: all .5s ease-in-out;
+}
+#ForumContainer .miniProfileBox.open div {
 }
 #ForumContainer .postItem .voteCount {
 	display: inline-block;

@@ -283,10 +283,12 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		var postID = $(this).parents(".postItem").attr("data-postID");
 		PopForums.loadReply(topicID, postID, replyID, true);
 	});
-	$(document).on("click", ".postNameLink", function () {
-		var box = $(this).parents(".postItem").find(".miniProfileBox");
-		var userID = $(this).parents(".postItem").attr("data-userID");
-		PopForums.loadMiniProfile(userID, box);
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("postNameLink")) {
+			var box = event.target.closest(".postItem").querySelector(".miniProfileBox");
+			var userID = event.target.closest(".postItem").getAttribute("data-userID");
+			PopForums.loadMiniProfile(userID, box);
+		}
 	});
 	$(document).on("click", ".voteCount", function () {
 		var parent = $(this).parents(".postItem");
@@ -370,10 +372,12 @@ PopForums.qaTopicSetup = function (topicID) {
 		var replyID = $(this).parents(".postContainer").attr("data-postid");
 		PopForums.loadReply(topicID, null, replyID);
 	});
-	$(document).on("click", ".postNameLink", function () {
-		var box = $(this).parents(".postUserData").find(".miniProfileBox");
-		var userID = $(this).parents(".postUserData").attr("data-userID");
-		PopForums.loadMiniProfile(userID, box);
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("postNameLink")) {
+			var box = event.target.closest(".postUserData").querySelector(".miniProfileBox");
+			var userID = event.target.closest(".postUserData").getAttribute("data-userID");
+			PopForums.loadMiniProfile(userID, box);
+		}
 	});
 	$(document).on("click", ".voteUp", function () {
 		var parent = $(this).parents(".postItem");
@@ -594,12 +598,20 @@ PopForums.postReply = function () {
 };
 
 PopForums.loadMiniProfile = function (userID, d) {
-	if (d.is(":hidden"))
-		d.load(PopForums.areaPath + "/Account/MiniProfile/" + userID, function () {
-			d.slideDown();
-		});
+	if (!d.classList.contains("open")) {
+		fetch(PopForums.areaPath + "/Account/MiniProfile/" + userID)
+			.then(response => response.text()
+				.then(text => {
+					var sub = d.querySelector("div");
+					sub.innerHTML = text;
+					const height = sub.getBoundingClientRect().height;
+					d.style.height = `${height}px`;
+					d.classList.add("open");
+				}));
+	}
 	else {
-		d.slideUp();
+		d.classList.remove("open");
+		d.style.height = 0;
 	}
 };
 

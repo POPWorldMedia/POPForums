@@ -46,7 +46,9 @@
 	<div class="col-11">
 		<div class="postUserData bg-primary rounded mb-2 px-3 py-1" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink text-light">@Model.Post.Name</h3>
-			<div class="miniProfileBox bg-light text-dark rounded px-3 py-1 mb-2"></div>
+			<div class="miniProfileBox bg-light text-dark rounded">
+				<div class="py-1 px-3 mb-2"></div>
+			</div>
 			<small class="postTime text-right text-light">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				{

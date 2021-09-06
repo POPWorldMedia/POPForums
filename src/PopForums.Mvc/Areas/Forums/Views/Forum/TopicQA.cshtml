@@ -39,25 +39,30 @@
 	</div>
 }
 
-@{
-	@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
-}
+<div id="PostStream">
 
-@if (Model.PermissionContext.UserCanPost)
-{
-	<div id="NewReply" style="display: none;"></div>
-	<div class="postContainer" data-postid="0"><input type="button" value="@PopForums.Resources.PostAnswer" id="ReplyButton" class="btn btn-primary" /></div>
-}
-else
-{
-	<p class="alert alert-danger">@Model.PermissionContext.DenialReason</p>
-}
+	@{
+		@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
+	}
 
-<h2>@PopForums.Resources.Answers</h2>
+	@if (Model.PermissionContext.UserCanPost)
+	{
+		<div id="NewReply" style="display: none;"></div>
+		<div class="postContainer" data-postid="0"><input type="button" value="@PopForums.Resources.PostAnswer" id="ReplyButton" class="btn btn-primary" /></div>
+	}
+	else
+	{
+		<p class="alert alert-danger">@Model.PermissionContext.DenialReason</p>
+	}
 
-@foreach(var answer in Model.AnswersWithComments) {
-	@await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = answer, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = answer.Post });
-}
+	<h2>@PopForums.Resources.Answers</h2>
+
+	@foreach (var answer in Model.AnswersWithComments)
+	{
+		@await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = answer, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = answer.Post });
+	}
+
+</div>
 
 @if (user != null && user.IsInRole(PermanentRoles.Moderator))
 {
