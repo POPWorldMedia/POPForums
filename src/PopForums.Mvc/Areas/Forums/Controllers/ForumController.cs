@@ -98,7 +98,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> PostTopic(NewPost newPost)
+		public async Task<IActionResult> PostTopic([FromBody]NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser();
 			if (user == null)
@@ -298,7 +298,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		public async Task<JsonResult> PostReply(NewPost newPost)
+		public async Task<JsonResult> PostReply([FromBody]NewPost newPost)
 		{
 			var user = _userRetrievalShim.GetUser();
 			var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });

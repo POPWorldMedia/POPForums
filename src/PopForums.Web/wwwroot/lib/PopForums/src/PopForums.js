@@ -276,12 +276,20 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		});
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
-	$(document).on("click", "#ReplyButton,.replyLink", function () {
+
+	document.querySelector("#ReplyButton").addEventListener("click", event => {
 		PopForums.loadReply(topicID, null, replyID, true);
 	});
-	$(document).on("click", ".quoteLink", function () {
-		var postID = $(this).parents(".postItem").attr("data-postID");
-		PopForums.loadReply(topicID, postID, replyID, true);
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("replyLink")) {
+			PopForums.loadReply(topicID, null, replyID, true);
+		}
+	});
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("quoteLink")) {
+			var postID = event.target.closest(".postItem").getAttribute("data-postID");
+			PopForums.loadReply(topicID, postID, replyID, true);
+		}
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("postNameLink")) {
@@ -364,12 +372,15 @@ PopForums.qaTopicSetup = function (topicID) {
 	PopForums.startTimeUpdater();
 
 	$(".postItem img:not('.avatar')").addClass("postImage");
-	$(document).on("click", ".commentLink", function () {
-		var replyID = $(this).parents(".postItem").attr("data-postid");
-		PopForums.loadComment(topicID, replyID);
+
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("commentLink")) {
+			var replyID = event.target.closest(".postItem").getAttribute("data-postid");
+			PopForums.loadComment(topicID, replyID);
+		}
 	});
-	$(document).on("click", "#ReplyButton", function () {
-		var replyID = $(this).parents(".postContainer").attr("data-postid");
+	document.querySelector("#ReplyButton").addEventListener("click", event => {
+		var replyID = event.target.closest(".postContainer").getAttribute("data-postid");
 		PopForums.loadReply(topicID, null, replyID);
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
@@ -540,61 +551,83 @@ PopForums.TopicState.prototype.addEndPage = function () { this.highPage++; };
 PopForums.TopicState.prototype.addStartPage = function () { this.lowPage--; };
 
 PopForums.postNewTopic = function () {
-	$("SubmitNewTopic").attr("disabled", "disabled");
 	tinyMCE.triggerSave();
-	$.ajax({
-		url: PopForums.areaPath + "/Forum/PostTopic",
-		type: "POST",
-		data: { Title: $("#NewTopic #Title").val(), FullText: $("#NewTopic #FullText").val(), IncludeSignature: $("#NewTopic #IncludeSignature").is(":checked"), ItemID: $("#NewTopic #ItemID").val(), IsPlainText: $("#NewTopic #IsPlainText").val() },
-		dataType: "json",
-		success: function (result) {
-			var r = $("#PostResponseMessage");
+	const d = document;
+	d.querySelector("#SubmitNewTopic").setAttribute("disabled", "disabled");
+	var model = {
+		Title: d.querySelector("#NewTopic #Title").value,
+		FullText: d.querySelector("#NewTopic #FullText").value,
+		IncludeSignature: d.querySelector("#NewTopic #IncludeSignature").checked,
+		ItemID: d.querySelector("#NewTopic #ItemID").value,
+		IsPlainText: d.querySelector("#NewTopic #IsPlainText").value
+	};
+	fetch(PopForums.areaPath + "/Forum/PostTopic", {
+		method: "POST",
+		body: JSON.stringify(model),
+		headers: {
+			"Content-Type": "application/json"
+		},
+	})
+		.then(response => response.json())
+		.then(result => {
 			switch (result.result) {
 				case true:
 					window.location = result.redirect;
 					break;
 				default:
-					r.html(result.message);
-					$("#SubmitNewTopic").removeAttr("disabled");
-					r.show();
+					var r = d.querySelector("#PostResponseMessage");
+					r.innerHTML = result.message;
+					d.querySelector("#SubmitNewTopic").removeAttribute("disabled");
+					r.style.display = "block";
 			}
-		},
-		error: function () {
-			var r = $("#PostResponseMessage");
-			r.html("There was an unknown error while trying to post");
-			$("#SubmitNewTopic").removeAttr("disabled");
-			r.show();
-		}
-	});
+		})
+		.catch(error => {
+			var r = d.querySelector("#PostResponseMessage");
+			r.innerHTML = "There was an unknown error while trying to post";
+			d.querySelector("#SubmitNewTopic").removeAttribute("disabled");
+			r.style.display = "block";
+		});
 };
 
 PopForums.postReply = function () {
-	$("#SubmitReply").attr("disabled", "disabled");
 	tinyMCE.triggerSave();
-	$.ajax({
-		url: PopForums.areaPath + "/Forum/PostReply",
-		type: "POST",
-		data: { Title: $("#NewReply #Title").val(), FullText: $("#NewReply #FullText").val(), IncludeSignature: $("#NewReply #IncludeSignature").is(":checked"), ItemID: $("#NewReply #ItemID").val(), CloseOnReply: $("#CloseOnReply").is(":checked"), IsPlainText: $("#NewReply #IsPlainText").val(), ParentPostID: $("#NewReply #ParentPostID").val() },
-		dataType: "json",
-		success: function (result) {
-			var r = $("#PostResponseMessage");
+	const d = document;
+	d.querySelector("#SubmitReply").setAttribute("disabled", "disabled");
+	var model = {
+		Title: d.querySelector("#NewReply #Title").value,
+		FullText: d.querySelector("#NewReply #FullText").value,
+		IncludeSignature: d.querySelector("#NewReply #IncludeSignature").checked,
+		ItemID: d.querySelector("#NewReply #ItemID").value,
+		CloseOnReply: d.querySelector("#CloseOnReply").checked,
+		IsPlainText: d.querySelector("#NewReply #IsPlainText").value,
+		ParentPostID: d.querySelector("#NewReply #ParentPostID").value
+	};
+	fetch(PopForums.areaPath + "/Forum/PostReply", {
+		method: "POST",
+		body: JSON.stringify(model),
+		headers: {
+			"Content-Type": "application/json"
+		},
+	})
+		.then(response => response.json())
+		.then(result => {
 			switch (result.result) {
 				case true:
 					window.location = result.redirect;
 					break;
 				default:
-					r.html(result.message);
-					$("#SubmitReply").removeAttr("disabled");
-					r.show();
+					var r = d.querySelector("#PostResponseMessage");
+					r.innerHTML = result.message;
+					d.querySelector("#SubmitReply").removeAttribute("disabled");
+					r.style.display = "block";
 			}
-		},
-		error: function () {
-			var r = $("#PostResponseMessage");
-			r.html("There was an unknown error while trying to post");
-			$("#SubmitReply").removeAttr("disabled");
-			r.show();
-		}
-	});
+		})
+		.catch(error => {
+			var r = d.querySelector("#PostResponseMessage");
+			r.innerHTML = "There was an unknown error while trying to post";
+			d.querySelector("#SubmitReply").removeAttribute("disabled");
+			r.style.display = "block";
+		});
 };
 
 PopForums.loadMiniProfile = function (userID, d) {
