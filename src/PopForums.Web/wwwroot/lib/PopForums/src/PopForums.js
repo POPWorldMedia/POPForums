@@ -274,17 +274,20 @@ PopForums.setReplyMorePosts = function (lastPostID) {
 
 PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	PopForums.startTimeUpdater();
-	var lastPostID = $("#LastPostID").val();
+	var lastPostID = document.querySelector("#LastPostID").value;
 	PopForums.currentTopicState = new PopForums.TopicState(pageIndex, lastPostID, pageCount, topicID);
 
 	var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
 	connection.on("fetchNewPost", function (postID) {
 		if (!PopForums.TopicState.replyLoaded && PopForums.currentTopicState.highPage == PopForums.currentTopicState.pageCount) {
-			$.get(PopForums.areaPath + "/Forum/Post/" + postID, function (data) {
-				var post = $(data);
-				post.appendTo("#PostStream");
-			});
-			$("#LastPostID").val(postID);
+			fetch(PopForums.areaPath + "/Forum/Post/" + postID)
+				.then(response => response.text()
+					.then(text => {
+						var t = document.createElement("template");
+						t.innerHTML = text.trim();
+						document.querySelector("#PostStream").appendChild(t.content.firstChild);
+					}));
+			document.querySelector("#LastPostID").value = postID;
 			PopForums.currentTopicState.lastVisiblePost = postID;
 		}
 	});
@@ -296,7 +299,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			return connection.invoke("listenTo", topicID);
 		});
 
-	$(".postItem img:not('.avatar')").addClass("postImage");
+	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 
 	document.querySelector("#ReplyButton").addEventListener("click", event => {
 		PopForums.loadReply(topicID, null, replyID, true);
@@ -319,30 +322,42 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			PopForums.loadMiniProfile(userID, box);
 		}
 	});
-	$(document).on("click", ".voteCount", function () {
-		var parent = $(this).parents(".postItem");
-		var postID = parent.attr("data-postID");
-		parent.find(".voters").slideDown(function () {
-			$(this).load(PopForums.areaPath + "/Forum/Voters/" + postID);
-			$(this).mouseleave(function () {
-				$(this).hide();
-			});
-			$(this).css("display", "block");
-		}).css("display", "block");
-	});
-	$(document).on("click", ".voteUp", function () {
-		var parent = $(this).parents(".postItem");
-		var postID = parent.attr("data-postID");
-		var countBox = $(this).closest(".postToolContainer").children(".voteCount");
-		$.ajax({
-			url: PopForums.areaPath + "/Forum/VotePost/" + postID,
-			type: "POST",
-			success: function (result) {
-				countBox.html(result);
-				var voted = parent.find(".voteUp");
-				voted.replaceWith('<li class="list-inline-item">Voted</li>');
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("voteCount")) {
+			var parent = event.target.closest(".postItem");
+			var postID = parent.getAttribute("data-postID");
+			var voters = parent.querySelector(".voters");
+			if (voters) {
+				if (voters.style.display === "block")
+					voters.style.display = "none";
+				else {
+					fetch(PopForums.areaPath + "/Forum/Voters/" + postID)
+						.then(response => response.text()
+							.then(text => {
+								var t = document.createElement("template");
+								t.innerHTML = text.trim();
+								voters.innerHTML = "";
+								voters.appendChild(t.content.firstChild);
+								voters.style.display = "block";
+							}));
+				}
 			}
-		});
+		}
+	});
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("voteUp")) {
+			var parent = event.target.closest(".postItem");
+			var postID = parent.getAttribute("data-postID");
+			var countBox = parent.querySelector(".voteCount");
+			fetch(PopForums.areaPath + "/Forum/VotePost/" + postID, {
+				method: "POST"
+			})
+				.then(response => response.text()
+					.then(text => {
+						countBox.innerHTML = text;
+						parent.querySelector(".voteUp").outerHTML = '<li class="list-inline-item">Voted</li>';
+					}));
+		}
 	});
 	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
@@ -366,30 +381,32 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	$(document).on("click", ".morePostsButton", function () {
 		PopForums.LoadMorePosts(topicID, this);
 	});
-	document.querySelector(".previousPostsButton").addEventListener("click", (e) => {
-		PopForums.currentTopicState.addStartPage();
-		var nextPage = PopForums.currentTopicState.lowPage;
-		var id = topicID;
-		e.target.remove();
-		var topicPartialPath = PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage;
-		fetch(topicPartialPath)
-			.then(response => response.text()
-				.then(text => {
-					var t = document.createElement("template");
-					t.innerHTML = text.trim();
-					var stuff = t.content.firstChild;
-					var links = stuff.querySelector(".pagerLinks");
-					stuff.removeChild(links);
-					var postStream = document.querySelector("#PostStream");
-					postStream.prepend(stuff);
-					if (PopForums.currentTopicState.lowPage > 1)
-						postStream.prepend(e.target);
-					document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
-					document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-					if (PopForums.currentTopicState.highPage == PopForums.currentTopicState.pageCount && PopForums.currentTopicState.lowPage == 1) {
-						document.querySelectorAll(".pagerLinks").forEach(x => x.remove());
-					}
-				}));
+	document.querySelector("#PostStream").addEventListener("click", e => {
+		if (event.target.classList.contains("previousPostsButton")) {
+			PopForums.currentTopicState.addStartPage();
+			var nextPage = PopForums.currentTopicState.lowPage;
+			var id = topicID;
+			e.target.remove();
+			var topicPartialPath = PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.currentTopicState.lowPage + "&high=" + PopForums.currentTopicState.highPage;
+			fetch(topicPartialPath)
+				.then(response => response.text()
+					.then(text => {
+						var t = document.createElement("template");
+						t.innerHTML = text.trim();
+						var stuff = t.content.firstChild;
+						var links = stuff.querySelector(".pagerLinks");
+						stuff.removeChild(links);
+						var postStream = document.querySelector("#PostStream");
+						postStream.prepend(stuff);
+						if (PopForums.currentTopicState.lowPage > 1)
+							postStream.prepend(e.target);
+						document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
+						document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
+						if (PopForums.currentTopicState.highPage == PopForums.currentTopicState.pageCount && PopForums.currentTopicState.lowPage == 1) {
+							document.querySelectorAll(".pagerLinks").forEach(x => x.remove());
+						}
+					}));
+		}
 	});
 	PopForums.scrollToPostFromHash();
 	window.addEventListener("scroll", PopForums.ScrollLoad);
