@@ -162,7 +162,7 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 								PopForums.currentTopicState.lastVisiblePost = lastPostID.value;
 								var postStream = document.querySelector("#PostStream");
 								postStream.append(stuff);
-								document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links));
+								document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
 								document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 								document.querySelector(".morePostsButton").remove();
 								PopForums.setReplyMorePosts(PopForums.currentTopicState.lastVisiblePost);
