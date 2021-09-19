@@ -463,56 +463,54 @@ PopForums.qaTopicSetup = function (topicID) {
 };
 
 PopForums.SetupSubscribeButton = function (topicID) {
-	var s = $("#SubscribeButton");
-	s.click(function () {
-		var asyncResult = $("#AsyncResponse");
-		$.ajax({
-			url: PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID,
-			type: "POST",
-			dataType: "json",
-			success: function (result) {
+	var s = document.querySelector("#SubscribeButton");
+	s.addEventListener("click", () => {
+		var asyncResult = document.querySelector("#AsyncResponse");
+		fetch(PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID, {
+			method: "POST"
+		})
+			.then(response => response.json())
+			.then(result => {
 				switch (result.data.isSubscribed) {
 					case true:
-						s.val("Unsubscribe");
+						s.value = "Unsubscribe";
 						break;
 					case false:
-						s.val("Subscribe");
+						s.value = "Subscribe";
 						break;
 					default:
-						asyncResult.html(result.Message);
+						asyncResult.innerHTML = result.Message;
 				}
-			},
-			error: function () {
-				asyncResult.html("There was an unknown error while attempting to use subscription");
-			}
-		});
+			})
+			.catch(() => {
+				asyncResult.innerHTML = "There was an unknown error while attempting to use subscription";
+			});
 	});
-};
+}
 
 PopForums.SetupFavoriteButton = function(topicID) {
-	var f = $("#FavoriteButton");
-	f.click(function () {
-		var asyncResult = $("#AsyncResponse");
-		$.ajax({
-			url: PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID,
-			type: "POST",
-			dataType: "json",
-			success: function (result) {
+	var f = document.querySelector("#FavoriteButton");
+	f.addEventListener("click", () => {
+		var asyncResult = document.querySelector("#AsyncResponse");
+		fetch(PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID, {
+			method: "POST"
+		})
+			.then(response => response.json())
+			.then(result => {
 				switch (result.data.isFavorite) {
 					case true:
-						f.val("Remove From Favorites");
+						f.value = "Remove From Favorites";
 						break;
 					case false:
-						f.val("Make Favorite");
+						f.value = "Make Favorite";
 						break;
 					default:
-						asyncResult.html(result.Message);
+						asyncResult.innerHTML = result.Message;
 				}
-			},
-			error: function () {
-				asyncResult.html("There was an unknown error while attempting to use favorites");
-			}
-		});
+			})
+			.catch(() => {
+				asyncResult.innerHTML = "There was an unknown error while attempting to use favorites";
+			});
 	});
 };
 
