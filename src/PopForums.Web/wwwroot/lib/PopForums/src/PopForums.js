@@ -216,22 +216,24 @@ PopForums.loadComment = function (topicID, replyID) {
 			}));
 };
 
-PopForums.previewPost = function () { // TODO: refactor for BS5
+PopForums.previewPost = function () {
 	tinyMCE.triggerSave();
-	var r = $("#ParsedFullText");
-	$.ajax({
-		url: PopForums.areaPath + "/Forum/PreviewText",
-		type: "POST",
-		data: { FullText: $(".postForm #FullText").val(), IsPlainText: $(".postForm #IsPlainText").val() },
-		dataType: "json",
-		converters: { "text json": true },
-		success: function (result) {
-			r.html(result);
-		},
-		error: function () {
-			r.html("There was a problem getting the preview.");
+	var r = document.querySelector("#ParsedFullText");
+	var model = {
+		FullText: document.querySelector(".postForm #FullText").value,
+		IsPlainText: document.querySelector(".postForm #IsPlainText").value
+	};
+	fetch(PopForums.areaPath + "/Forum/PreviewText", {
+		method: "POST",
+		body: JSON.stringify(model),
+		headers: {
+			"Content-Type": "application/json"
 		}
-	});
+	})
+		.then(response => response.text()
+			.then(text => {
+				r.innerHTML = text;
+			}));
 };
 
 PopForums.loadFeed = function () {

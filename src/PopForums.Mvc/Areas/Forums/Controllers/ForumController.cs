@@ -516,11 +516,17 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return View("Votes", count);
 		}
 
+		public class PreviewModel
+		{
+			public string FullText { get; set; }
+			public bool IsPlainText { get; set; }
+		}
+
 		[HttpPost]
 		// TODO: test validate [ValidateInput(false)]
-		public ContentResult PreviewText(string fullText, bool isPlainText)
+		public ContentResult PreviewText([FromBody] PreviewModel model)
 		{
-			var result = _postService.GenerateParsedTextPreview(fullText, isPlainText);
+			var result = _postService.GenerateParsedTextPreview(model.FullText, model.IsPlainText);
 			return Content(result, "text/html");
 		}
 
