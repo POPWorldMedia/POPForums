@@ -239,10 +239,10 @@ PopForums.previewPost = function () {
 PopForums.loadFeed = function () {
 	var connection = new signalR.HubConnectionBuilder().withUrl("/FeedHub").build();
 	connection.on("notifyFeed", function (data) {
-		var list = $("#FeedList");
+		var list = document.querySelector("#FeedList");
 		var row = PopForums.populateFeedRow(data);
 		list.prepend(row);
-		row.fadeIn();
+		row.classList.remove("hidden");
 	});
 	connection.start()
 		.then(function () {
@@ -252,11 +252,11 @@ PopForums.loadFeed = function () {
 };
 
 PopForums.populateFeedRow = function (data) {
-	var row = $("#ActivityFeedTemplate").clone();
-	row.removeAttr("id");
-	row.find(".feedItemText").html(data.message);
-	row.find(".fTime").attr("data-utc", data.utc);
-	row.find(".fTime").text(data.timeStamp);
+	var row = document.querySelector("#ActivityFeedTemplate").cloneNode(true);
+	row.removeAttribute("id");
+	row.querySelector(".feedItemText").innerHTML = data.message;
+	row.querySelector(".fTime").setAttribute("data-utc", data.utc);
+	row.querySelector(".fTime").innerHTML = data.timeStamp;
 	return row;
 };
 
