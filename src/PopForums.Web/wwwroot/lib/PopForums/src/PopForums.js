@@ -164,7 +164,10 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 								postStream.append(stuff);
 								document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
 								document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-								document.querySelector(".morePostsButton").remove();
+								document.querySelector("#MorePostsBeforeReplyButton").style.visibility = "hidden";
+								var moreButton = document.querySelector(".morePostsButton");
+								if (moreButton)
+									moreButton.remove();
 								PopForums.setReplyMorePosts(PopForums.currentTopicState.lastVisiblePost);
 							}));
 				});
@@ -262,10 +265,11 @@ PopForums.populateFeedRow = function (data) {
 
 PopForums.setReplyMorePosts = function (lastPostID) {
 	var lastPostLoaded = lastPostID == PopForums.currentTopicState.lastVisiblePost;
+	var button = document.querySelector("#MorePostsBeforeReplyButton");
 	if (lastPostLoaded)
-		$("#MorePostsBeforeReplyButton").css("visibility", "hidden");
+		button.style.visibility = "hidden";
 	else
-		$("#MorePostsBeforeReplyButton").css("visibility", "visible");
+		button.style.visibility = "visible";
 };
 
 PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
