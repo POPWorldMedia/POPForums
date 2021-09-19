@@ -690,9 +690,9 @@ PopForums.scrollToElement = function (id) {
 	} else if (e.y) {
 		t += e.y;
 	}
-	var crumb = $("#TopBreadcrumb");
+	var crumb = document.querySelector("#TopBreadcrumb");
 	if (crumb)
-		t -= crumb.outerHeight();
+		t -= crumb.offsetHeight;
 	scrollTo(0, t);
 };
 
