@@ -92,7 +92,7 @@ PopForums.scrollToPostFromHash = () => {
 PopForums.topicListSetup = function (forumID) {
 	PopForums.startTimeUpdater();
 	var b = document.querySelector("#NewTopicButton");
-	b.addEventListener("click", () => {
+	b?.addEventListener("click", () => {
 		var n = document.querySelector("#NewTopic");
 		fetch(PopForums.areaPath + "/Forum/PostTopic/" + forumID)
 			.then((response) => {
@@ -301,7 +301,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 
 	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 
-	document.querySelector("#ReplyButton").addEventListener("click", event => {
+	document.querySelector("#ReplyButton")?.addEventListener("click", event => {
 		PopForums.loadReply(topicID, null, replyID, true);
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
@@ -361,25 +361,35 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 	});
 	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
-	$("#TopicModLogButton").click(function () {
-		var l = $("#TopicModerationLog");
-		if (l.is(":hidden"))
-			l.load(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID, function () {
-				l.slideDown();
-			});
-		else l.slideUp();
+	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
+		var l = document.querySelector("#TopicModerationLog");
+		if (l.style.display != "block")
+			fetch(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID)
+				.then(response => response.text()
+					.then(text => {
+						l.innerHTML = text;
+						l.style.display = "block";
+					}));
+		else l.style.display = "none";
 	});
-	$(document).on("click", ".postModLogButton", function () {
-		var id = $(this).attr("data-postID");
-		var l = $(this).closest(".postToolContainer").find(".moderationLog");
-		if (l.is(":hidden"))
-			l.load(PopForums.areaPath + "/Moderator/PostModerationLog/" + id, function () {
-				l.slideDown();
-			});
-		else l.slideUp();
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("postModLogButton")) {
+			var id = event.target.getAttribute("data-postid");
+			var l = event.target.closest(".postToolContainer").querySelector(".moderationLog");
+			if (l.style.display != "block")
+				fetch(PopForums.areaPath + "/Moderator/PostModerationLog/" + id)
+					.then(response => response.text()
+						.then(text => {
+							l.innerHTML = text;
+							l.style.display = "block";
+						}));
+			else l.style.display = "none";
+		}
 	});
-	$(document).on("click", ".morePostsButton", function () {
-		PopForums.LoadMorePosts(topicID, this);
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("morePostsButton")) {
+			PopForums.LoadMorePosts(topicID, event.target);
+		}
 	});
 	document.querySelector("#PostStream").addEventListener("click", e => {
 		if (event.target.classList.contains("previousPostsButton")) {
@@ -423,7 +433,7 @@ PopForums.qaTopicSetup = function (topicID) {
 			PopForums.loadComment(topicID, replyID);
 		}
 	});
-	document.querySelector("#ReplyButton").addEventListener("click", event => {
+	document.querySelector("#ReplyButton")?.addEventListener("click", event => {
 		var replyID = event.target.closest(".postContainer").getAttribute("data-postid");
 		PopForums.loadReply(topicID, null, replyID);
 	});
@@ -487,7 +497,7 @@ PopForums.qaTopicSetup = function (topicID) {
 
 PopForums.SetupSubscribeButton = function (topicID) {
 	var s = document.querySelector("#SubscribeButton");
-	s.addEventListener("click", () => {
+	s?.addEventListener("click", () => {
 		var asyncResult = document.querySelector("#AsyncResponse");
 		fetch(PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID, {
 			method: "POST"
@@ -513,7 +523,7 @@ PopForums.SetupSubscribeButton = function (topicID) {
 
 PopForums.SetupFavoriteButton = function(topicID) {
 	var f = document.querySelector("#FavoriteButton");
-	f.addEventListener("click", () => {
+	f?.addEventListener("click", () => {
 		var asyncResult = document.querySelector("#AsyncResponse");
 		fetch(PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID, {
 			method: "POST"
