@@ -4,9 +4,7 @@
   "scripts": {},
   "dependencies": {
     "@microsoft/signalr": "5.0.6",
-    "bootstrap": "4.5.2",
-    "jquery": "3.5.1",
-    "popper.js": "1.16.1-lts",
+    "bootstrap": "5.1.1",
     "tinymce": "5.8.0",
     "vue": "2.6.12",
     "vue-router": "3.4.3",

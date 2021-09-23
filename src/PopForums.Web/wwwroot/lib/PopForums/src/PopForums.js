@@ -111,9 +111,8 @@ PopForums.topicListSetup = function (forumID) {
 					PopForums.editorSettings.selector = "#NewTopic #FullText";
 					tinyMCE.init(PopForums.editorSettings);
 				}
-				$("#PreviewModal").on("shown.bs.modal", function () { // TODO: refactor for BS5
-					PopForums.previewPost();
-				});
+				var modal = document.querySelector("#PreviewModal");
+				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
 			});
 	});
 };
@@ -184,9 +183,8 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 						});
 				}
 
-				$("#PreviewModal").on("shown.bs.modal", function () { // TODO: Refactor for BS5
-					PopForums.previewPost();
-				});
+				var modal = document.querySelector("#PreviewModal");
+				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
 
 				PopForums.TopicState.replyLoaded = true;
 			}));
@@ -214,9 +212,8 @@ PopForums.loadComment = function (topicID, replyID) {
 					tinyMCE.init(PopForums.editorSettings);
 				}
 
-				$("#PreviewModal").on("shown.bs.modal", function () { // TODO: refactor for BS5
-					PopForums.previewPost();
-				});
+				var modal = document.querySelector("#PreviewModal");
+				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
 			}));
 };
 
