@@ -651,12 +651,15 @@ PopForums.postReply = function () {
 	tinyMCE.triggerSave();
 	const d = document;
 	d.querySelector("#SubmitReply").setAttribute("disabled", "disabled");
+	var closeCheck = d.querySelector("#CloseOnReply");
+	var closeOnReply = false;
+	if (closeCheck && closeCheck.checked) closeOnReply = true;
 	var model = {
 		Title: d.querySelector("#NewReply #Title").value,
 		FullText: d.querySelector("#NewReply #FullText").value,
 		IncludeSignature: d.querySelector("#NewReply #IncludeSignature").checked,
 		ItemID: d.querySelector("#NewReply #ItemID").value,
-		CloseOnReply: d.querySelector("#CloseOnReply").checked,
+		CloseOnReply: closeOnReply,
 		IsPlainText: d.querySelector("#NewReply #IsPlainText").value,
 		ParentPostID: d.querySelector("#NewReply #ParentPostID").value
 	};
