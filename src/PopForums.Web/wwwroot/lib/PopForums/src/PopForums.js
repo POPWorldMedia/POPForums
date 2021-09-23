@@ -135,6 +135,7 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 			.then(text => {
 				var n = document.querySelector("#NewReply");
 				n.innerHTML = text;
+				n.style.display = "block";
 				var allowImage = (document.querySelector("#IsImageEnabled").value.toLowerCase() === "true");
 				if (!allowImage) {
 					PopForums.editorSettings.toolbar = PopForums.postNoImageToolbar;
@@ -425,7 +426,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 PopForums.qaTopicSetup = function (topicID) {
 	PopForums.startTimeUpdater();
 
-	$(".postItem img:not('.avatar')").addClass("postImage");
+	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 
 	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("commentLink")) {
@@ -444,54 +445,75 @@ PopForums.qaTopicSetup = function (topicID) {
 			PopForums.loadMiniProfile(userID, box);
 		}
 	});
-	$(document).on("click", ".voteUp", function () {
-		var parent = $(this).parents(".postItem");
-		var postID = parent.attr("data-postid");
-		var countBox = $(this).parents(".answerData").find(".badge");
-		$.ajax({
-			url: PopForums.areaPath + "/Forum/VotePost/" + postID,
-			type: "POST",
-			success: function (result) {
-				countBox.html(result);
-				var voted = parent.find(".voteUp");
-				voted.html("Voted");
-				voted.removeClass("btn-link");
-			}
-		});
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("voteUp")) {
+			var parent = event.target.closest(".postItem");
+			var postID = parent.getAttribute("data-postID");
+			var countBox = parent.querySelector(".answerData").querySelector(".badge");
+			fetch(PopForums.areaPath + "/Forum/VotePost/" + postID, {
+				method: "POST"
+			})
+				.then(response => response.text()
+					.then(text => {
+						countBox.innerHTML = text;
+						parent.querySelector(".voteUp").outerHTML = '<li class="list-inline-item">Voted</li>';
+					}));
+		}
 	});
-	$(document).on("click", ".answerButton", function () {
-		var button = $(this);
-		var parent = button.parents(".postItem");
-		var postID = parent.attr("data-postid");
-		var topicID = parent.attr("data-topicid");
-		$.ajax({
-			url: PopForums.areaPath + "/Forum/SetAnswer/",
-			type: "POST",
-			data: {postID: postID, topicID: topicID},
-			success: function () {
-				$(".answerStatus").removeClass("icon-checkmark text-success").addClass("icon-checkmark2 text-muted");
-				button.removeClass("icon-checkmark2 text-muted").addClass("icon-checkmark text-success");
-			}
-		});
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("answerButton")) {
+			var button = event.target;
+			var parent = button.closest(".postItem");
+			var postID = parent.getAttribute("data-postid");
+			var topicID = parent.getAttribute("data-topicid");
+			var model = { postID: postID, topicID: topicID };
+			fetch(PopForums.areaPath + "/Forum/SetAnswer/", {
+				method: "POST",
+				body: JSON.stringify(model),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+				.then(response => {
+					document.querySelectorAll(".answerStatus").forEach(x => {
+						x.classList.remove("icon-checkmark");
+						x.classList.remove("text-success");
+						x.classList.add("icon-checkmark2");
+						x.classList.add("text-muted");
+					});
+					button.classList.remove("icon-checkmark2");
+					button.classList.remove("text-muted");
+					button.classList.add("icon-checkmark");
+					button.classList.add("text-success");
+				});
+		}
 	});
 	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
-	$("#TopicModLogButton").click(function () {
-		var l = $("#TopicModerationLog");
-		if (l.is(":none"))
-			l.load(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID, function () {
-				l.slideDown();
-			});
-		else l.slideUp();
+	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
+		var l = document.querySelector("#TopicModerationLog");
+		if (l.style.display != "block")
+			fetch(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID)
+				.then(response => response.text()
+					.then(text => {
+						l.innerHTML = text;
+						l.style.display = "block";
+					}));
+		else l.style.display = "none";
 	});
-	$(document).on("click", ".postModLogButton", function () {
-		var id = $(this).attr("data-postID");
-		var l = $(this).closest(".postToolContainer").find(".moderationLog");
-		if (l.is(":hidden"))
-			l.load(PopForums.areaPath + "/Moderator/PostModerationLog/" + id, function () {
-				l.slideDown();
-			});
-		else l.slideUp();
+	document.querySelector("#PostStream").addEventListener("click", event => {
+		if (event.target.classList.contains("postModLogButton")) {
+			var id = event.target.getAttribute("data-postid");
+			var l = event.target.closest(".postToolContainer").querySelector(".moderationLog");
+			if (l.style.display != "block")
+				fetch(PopForums.areaPath + "/Moderator/PostModerationLog/" + id)
+					.then(response => response.text()
+						.then(text => {
+							l.innerHTML = text;
+							l.style.display = "block";
+						}));
+			else l.style.display = "none";
+		}
 	});
 };
 

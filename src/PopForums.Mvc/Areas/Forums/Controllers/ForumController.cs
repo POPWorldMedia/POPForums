@@ -535,13 +535,19 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 			return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime };
 		}
 
-		[HttpPost]
-		public async Task<ActionResult> SetAnswer(int topicID, int postID)
+		public class SetAnswerModel
 		{
-			var post = await _postService.Get(postID);
+			public int TopicID { get; set; }
+			public int PostID { get; set; }
+		}
+
+		[HttpPost]
+		public async Task<ActionResult> SetAnswer([FromBody] SetAnswerModel model)
+		{
+			var post = await _postService.Get(model.PostID);
 			if (post == null)
 				return NotFound();
-			var topic = await _topicService.Get(topicID);
+			var topic = await _topicService.Get(model.TopicID);
 			if (topic == null)
 				return NotFound();
 			var user = _userRetrievalShim.GetUser();
