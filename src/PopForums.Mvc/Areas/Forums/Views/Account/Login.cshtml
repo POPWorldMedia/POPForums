@@ -11,9 +11,12 @@
 @section HeaderContent
 {
 	<script language="javascript" type="text/javascript">
-		$(function () {
-			$("#LoginButton").click(PopForums.processLogin);
-			$("#EmailLogin,#PasswordLogin").keydown(function (e) { if (e.keyCode == 13) PopForums.processLogin(); });
+		ready(() => {
+			document.querySelector("#LoginButton")?.addEventListener("click", () => PopForums.processLogin());
+			document.querySelectorAll("#EmailLogin,#PasswordLogin").forEach(x =>
+				x.addEventListener("keydown", e => {
+					if (e.keyCode === 13) PopForums.processLogin();
+				}));
 		});
 	</script>
 }

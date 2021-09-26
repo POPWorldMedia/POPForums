@@ -134,15 +134,14 @@ const Categories = {
 			this.editCategory = item.title;
 			this.editID = item.categoryID;
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		saveCat: function () {
 			this.startLoad();
 			axios.post(basePath + "EditCategory", { categoryID: this.editID, title: this.editCategory })
 				.then(response => {
 					this.categories = response.data;
-					const e = this.$refs.modal;
-					$(e).modal("hide");
 					this.endLoad();
 				})
 				.catch(error => this.errorAlert());
@@ -190,7 +189,8 @@ const Forums = {
 			if (!this.editingForum.categoryID)
 				this.editingForum.categoryID = 0;
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		resetForum: function () {
 			this.editingForum = { forumID: 0, title: "", description: "", categoryID: 0, isVisible: true, isArchived: false, isQAForum: false, forumAdapterName: null };
@@ -198,15 +198,14 @@ const Forums = {
 		newForum: function () {
 			this.resetForum();
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		saveForum: function () {
 			this.startLoad();
 			axios.post(basePath + "SaveForum", this.editingForum)
 				.then(response => {
 					this.categories = response.data;
-					const e = this.$refs.modal;
-					$(e).modal("hide");
 					this.endLoad();
 				})
 				.catch(error => this.errorAlert());
@@ -658,15 +657,14 @@ const EventDefinitions = {
 		openNewEvent: function () {
 			this.resetEvent();
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		createEvent: function () {
 			this.startLoad();
 			axios.post(basePath + "CreateEvent", this.newEvent)
 				.then(response => {
 					this.refreshData();
-					const e = this.$refs.modal;
-					$(e).modal("hide");
 					this.endLoad();
 				})
 				.catch(error => this.errorAlert());
@@ -718,15 +716,14 @@ const AwardDefinitions = {
 		openNewAward: function () {
 			this.resetAward();
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		createAward: function () {
 			this.startLoad();
 			axios.post(basePath + "CreateAward", this.newAward)
 				.then(response => {
 					this.refreshData();
-					const e = this.$refs.modal;
-					$(e).modal("hide");
 					this.endLoad();
 				})
 				.catch(error => this.errorAlert());
@@ -779,8 +776,6 @@ const AwardDefinitionDetail = {
 			axios.post(basePath + "CreateCondition", this.newCondition)
 				.then(response => {
 					this.refreshData();
-					const e = this.$refs.modal;
-					$(e).modal("hide");
 					this.endLoad();
 				})
 				.catch(error => this.errorAlert());
@@ -788,7 +783,8 @@ const AwardDefinitionDetail = {
 		openNewCondition: function () {
 			this.newCondition.eventCount = "";
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		}
 	}
 }
@@ -819,7 +815,8 @@ const ManualEvent = {
 	methods: {
 		openSearch: function () {
 			const e = this.$refs.modal;
-			$(e).modal("show");
+			var modal = new bootstrap.Modal(e);
+			modal.show();
 		},
 		updateList: function () {
 			if (this.searchName.length < 2) return;
@@ -832,8 +829,6 @@ const ManualEvent = {
 				.catch(error => this.errorAlert());
 		},
 		chooseUser: function () {
-			const e = this.$refs.modal;
-			$(e).modal("hide");
 		},
 		createManualEvent: function () {
 			this.startLoad();

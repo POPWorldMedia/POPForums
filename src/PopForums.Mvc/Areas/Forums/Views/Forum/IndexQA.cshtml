@@ -15,9 +15,9 @@
 	}
 
 	<script type="text/javascript">
-	$(function () {
-		PopForums.topicListSetup(@Model.Forum.ForumID);
-	});
+		ready(() => {
+			PopForums.topicListSetup(@Model.Forum.ForumID);
+		});
 	</script>
 }
 

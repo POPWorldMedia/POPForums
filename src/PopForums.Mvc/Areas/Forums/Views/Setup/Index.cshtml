@@ -8,21 +8,20 @@
 <head>
 	<title>@PopForums.Resources.PopForumsSetup</title>
 	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-	<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		$(function () {
-			$("table.stripe tr:even").addClass("stripe");
-			var useEsmtp = $("#UseEsmtp:checkbox");
+		ready(() => {
+			document.querySelectorAll("table.stripe tr:even").forEach(x => x.classList.add("stripe"));
+			var useEsmtp = document.querySelector("#UseEsmtp:checkbox");
 			SetEsmtpBoxes();
-			useEsmtp.click(function () { SetEsmtpBoxes(); });
+			useEsmtp.addEventListener("click", () => { SetEsmtpBoxes(); });
 		});
 
 		function SetEsmtpBoxes() {
-			var enabled = $("#UseEsmtp:checkbox").is(":checked");
+			var enabled = document.querySelector("#UseEsmtp:checkbox").checked;
 			if (enabled)
-				$("#SmtpUser, #SmtpPassword").removeAttr("disabled");
+				document.querySelectorAll("#SmtpUser, #SmtpPassword").forEach(x => x.removeAttribute("disabled"));
 			else
-				$("#SmtpUser, #SmtpPassword").attr("disabled", "disabled");
+				document.querySelectorAll("#SmtpUser, #SmtpPassword").forEach(x => x.setAttribute("disabled", "disabled"));
 		}
 	</script>
 </head>

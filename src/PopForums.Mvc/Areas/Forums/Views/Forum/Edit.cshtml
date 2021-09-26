@@ -10,14 +10,14 @@
 {
 	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/tinymce.min.js")"></script>
 	<script language="javascript" type="text/javascript">
-		$(function () {
-			var usePlainText = ($("#IsPlainText").val().toLowerCase() == "true");
+		ready(() => {
+			var usePlainText = (document.querySelector("#IsPlainText").value.toLowerCase() === "true");
 			if (!usePlainText) {
 				PopForums.editorSettings.selector = "#FullText";
 				tinyMCE.init(PopForums.editorSettings);
 			}
 
-			$("#PreviewModal").on("shown.bs.modal", function () {
+			document.querySelector("#PreviewModal").addEventListener("shown.bs.modal", () => {
 				PopForums.previewPost();
 			});
 		});
@@ -49,7 +49,7 @@
 		<input type="hidden" asp-for="IsPlainText"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
-	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-toggle="modal" data-target="#PreviewModal" />
+	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#PreviewModal" />
 	@if (message != null) {<span class="alert alert-danger mt-3">@message</span>}
 </form>
 
@@ -58,13 +58,13 @@
 		<div class="modal-content" id="PreviewModalContent">
 			<div class="modal-header">
 				<h4 class="modal-title">@PopForums.Resources.Preview</h4>
-				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<div id="ParsedFullText" class="postItem"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

@@ -11,10 +11,8 @@
 	<title>@PopForums.Resources.PopForumsAdmin</title>
 	<script src="~/lib/vue/dist/vue.js"></script>
 	<script src="~/lib/vue-router/dist/vue-router.min.js"></script>
-	<script src="~/lib/popper.js/dist/popper.min.js"></script>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/axios/dist/axios.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 	<style>
 		.fade-enter-active, .fade-leave-active {
@@ -33,13 +31,13 @@
 	</div>
 	<div class="container mb-3 small">&copy;@DateTime.Now.Year, POP World Media, LLC</div>
 
-<script type="x-templates" id="Top">
+	<script type="x-templates" id="Top">
 	<main>
-		<div v-show="loading" class="spinner-border text-primary float-right ml-3 mt-1" role="status">
-			<span class="sr-only">Loading...</span>
+		<div v-show="loading" class="spinner-border text-primary float-end ml-3 mt-1" role="status">
+			<span class="visually-hidden">Loading...</span>
 		</div>
 		<div class="dropdown mb-3">
-			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				@PopForums.Resources.PopForumsAdmin
 			</a>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -74,7 +72,7 @@
 
 		<router-view v-on:setLoading="setLoading($event)" v-bind:loading="loading"></router-view>
 	</main>
-</script>
+	</script>
 
 <script type="x-templates" id="General">
 	<main>
@@ -301,15 +299,13 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<input type="text" v-model="editCategory" class="form-control" />
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="saveCat">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="saveCat" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -354,9 +350,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div class="form-group row">
@@ -400,7 +394,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="saveForum">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="saveForum" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -946,9 +940,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Add Event</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div class="form-group row">
@@ -970,7 +962,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createEvent" :disabled="loading">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createEvent" :disabled="loading" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -1007,9 +999,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Add Award</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div class="form-group row">
@@ -1031,7 +1021,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createAward" :disabled="loading">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createAward" :disabled="loading" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -1081,9 +1071,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Add Award</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div class="form-group row">
@@ -1100,7 +1088,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" v-on:click="createCondition" :disabled="loading">@PopForums.Resources.Save</button>
+						<button type="button" class="btn btn-primary" v-on:click="createCondition" :disabled="loading" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>
@@ -1140,15 +1128,13 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">@PopForums.Resources.To</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
 						<div><input type="text" class="form-control" v-model="searchName" v-on:keyup="updateList" placeholder="@PopForums.Resources.Search" /></div>
 						<div class="mt-3">
 							<select size="6" v-model="selectedUser" class="form-control" v-on:change="chooseUser">
-								<option v-for="u in searchResults" v-bind:value="u">{{u.name}}</option>
+								<option v-for="u in searchResults" v-bind:value="u" data-bs-dismiss="modal">{{u.name}}</option>
 							</select>
 						</div>
 					</div>

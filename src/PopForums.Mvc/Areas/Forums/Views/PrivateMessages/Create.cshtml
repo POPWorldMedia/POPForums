@@ -5,55 +5,65 @@
 
 @section HeaderContent
 {
-	<script type="text/javascript" language="javascript">
-		$(function () {
-			var toText = $("#ToText");
-			var toList = $("#ToList");
-			toText.on("keyup", function() {
-				var q = $(this).val();
-				if (q.length > 1) {
-					$.getJSON(PopForums.areaPath + "/PrivateMessages/GetNames", { id: q })
-						.done(function (data) {
-						toList.empty();
-						$.each(data, function(i, item) {
-							toList.append('<li><a href="#" data-userID="' + item.userID + '" class="alert toItem">' + item.value + '</a></li>');
+<script type="text/javascript" language="javascript">
+	ready(() => {
+		var toText = document.querySelector("#ToText");
+		var toList = document.querySelector("#ToList");
+		toText.addEventListener("keyup", () => {
+			var q = toText.value;
+			if (q.length > 1) {
+				fetch(PopForums.areaPath + "/PrivateMessages/GetNames?id=" + q)
+					.then(response => response.json())
+					.then(result => {
+						toList.innerHTML = "";
+						result.forEach(item => {
+							var t = document.createElement("template");
+							t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
+							toList.append(t.content.firstChild);
 						});
 					});
-				} else {
-					toList.empty();
-				}
-			});
-
-			$(document).on("click", ".toItem", function () {
-				var item = $(this);
-				var userID = item.attr("data-userID");
-				var label = '<div data-userID="' + userID + '" class="badge badge-primary toLabel">' + item[0].innerHTML + ' <span class="icon-cancel-circle toLabelX"></span></div>';
-				$("#PMToBox").append(label);
-				toList.empty();
-				toText.val("");
-				$("#ToModal").modal("hide");
-				serializeIDs();
-			});
-
-			$(document).on("click", ".toLabelX", function () {
-				$(this).parent().remove();
-				serializeIDs();
-			});
-
-			$("#ToModal").on("shown.bs.modal", function() {
-				$("#ToText").focus();
-			});
-
-			serializeIDs();
+			} else
+				toList.innerHTML = "";
 		});
 
-		function serializeIDs() {
-			var items = $("#PMToBox div");
-			var ids = [];
-			items.each(function () { ids.push($(this).attr("data-userID")); });
-			$("#UserIDs").val(ids);
-		}
-	</script>
+		document.addEventListener("click", e => {
+			if (event.target.classList.contains("toItem")) {
+				var item = e.target;
+				var userID = item.getAttribute("data-userID");
+				var label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon-cancel-circle toLabelX"></span></div>';
+				var t = document.createElement("template");
+				t.innerHTML = label;
+				document.querySelector("#PMToBox").append(t.content.firstChild);
+				toList.innerHTML = "";
+				toText.value = "";
+				var modal = bootstrap.Modal.getInstance(document.getElementById("ToModal"));
+				modal.hide();
+				serializeIDs();
+			}
+		});
+
+		document.addEventListener("click", e => {
+			if (event.target.classList.contains("toLabelX")) {
+				event.target.parentElement.remove();
+				serializeIDs();
+			}
+		});
+
+		var modal = document.getElementById('ToModal');
+		modal.addEventListener("shown.bs.modal", () => {
+			document.querySelector("#ToText").focus();
+		});
+		
+		serializeIDs();
+	});
+
+	function serializeIDs() {
+		var items = document.querySelectorAll("#PMToBox div");
+		var ids = [];
+		items.forEach(item => { ids.push(item.getAttribute("data-userID")); });
+		document.querySelector("#UserIDs").value = ids;
+	}
+</script>
 }
 
 <div>
@@ -72,7 +82,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title">@PopForums.Resources.To</h4>
-				<button type="button" class="close" data-dismiss="modal"><span>&times;</span><span class="sr-only">Close</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
 				<input id="ToText" type="text" class="form-control" placeholder="@PopForums.Resources.Search" />
@@ -81,7 +91,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
@@ -91,11 +101,11 @@
 	<input type="hidden" id="UserIDs" name="UserIDs"/>
 	<div role="form">
 		<div class="form-group">
-			<label><input type="button" class="btn btn-primary" data-toggle="modal" data-target="#ToModal" value="@PopForums.Resources.To"/></label>
-			<div id="PMToBox" class="form-control">
+			<label><input type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ToModal" value="@PopForums.Resources.To"/></label>
+			<div id="PMToBox">
 				@if (ViewBag.TargetUserID != null)
 				{
-					<div data-userid="@ViewBag.TargetUserID" class="badge badge-primary toLabel">@ViewBag.TargetUserName <span class="icon-cancel-circle toLabelX"></span></div>
+					<div data-userid="@ViewBag.TargetUserID" class="badge bg-primary toLabel">@ViewBag.TargetUserName <span class="icon-cancel-circle toLabelX"></span></div>
 				}
 			</div>
 		</div>
