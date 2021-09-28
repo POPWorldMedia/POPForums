@@ -27,23 +27,21 @@
 <h1>@PopForums.Resources.EditPost</h1>
 
 <form method="post">
-	<div class="postForm" role="form">
+	<div class="postForm" role="form" class="mb-3">
 		@if (Model.IsFirstInTopic)
 		{
-			<div class="form-group">
-				<label for="Comment">@PopForums.Resources.Title</label>
+			<div class="mb-3">
+				<label for="Comment" class="form-label">@PopForums.Resources.Title</label>
 				<input asp-for="Title" type="text" class="form-control" />
 			</div>
 		}
 		<textarea asp-for="FullText" class="form-control"></textarea>
-		<div class="checkbox">
-			<label for="IncludeSignature">
-				<input type="checkbox" asp-for="ShowSig"/>
-				@PopForums.Resources.IncludeSignature
-			</label>
+		<div class="form-check my-3">
+			<label for="IncludeSignature" class="form-check-label">@PopForums.Resources.IncludeSignature</label>
+			<input type="checkbox" asp-for="ShowSig" class="form-check-input" />
 		</div>
-		<div class="form-group">
-			<label for="Comment">@PopForums.Resources.CommentsOptional</label>
+		<div class="mb-3">
+			<label for="Comment" class="form-label">@PopForums.Resources.CommentsOptional</label>
 			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
 		</div>
 		<input type="hidden" asp-for="IsPlainText"/>

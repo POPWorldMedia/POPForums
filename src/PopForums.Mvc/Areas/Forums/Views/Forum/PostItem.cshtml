@@ -21,7 +21,7 @@
 		<div class="miniProfileBox bg-light text-dark rounded">
 			<div class="py-1 px-3 mb-2"></div>
 		</div>
-		<small class="postTime text-right text-light">
+		<small class="postTime text-end text-light text-secondary">
 			@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
 				@:IP: @Model.Post.IP -
@@ -31,7 +31,7 @@
 	</div>
 	@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3 d-none d-sm-block" />
+		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-end ms-3 mb-3 d-none d-sm-block" />
 	}
 
 	@Html.Raw(Model.Post.FullText)
@@ -46,7 +46,7 @@
 		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
 	<div class="postToolContainer">
-		<div class="voteCount badge badge-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>
+		<div class="voteCount badge bg-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>
 		<ul class="postTools list-inline">
 			@if (Model.User != null && Model.User.UserID != Model.Post.UserID)
 			{

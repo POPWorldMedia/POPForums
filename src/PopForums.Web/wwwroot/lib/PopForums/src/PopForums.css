@@ -186,13 +186,19 @@
 /* Bootstrap overrides */
 
 #ForumContainer #AccountBox .badge {
-	background-color: #ff0000;color: white;
+	background-color: var(--bs-danger);
+	color: var(--bs-white);
 	position: relative;
 	top: -2px;
 }
 
 #ForumContainer .hidden {
 	display: none !important;
+}
+
+#ForumContainer .breadcrumb {
+	padding: .75em;
+	background-color: var(--bs-light);
 }
 
 .btn-link {
@@ -223,7 +229,6 @@
 	font-weight: normal;
 	font-variant: normal;
 	text-transform: none;
-	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }

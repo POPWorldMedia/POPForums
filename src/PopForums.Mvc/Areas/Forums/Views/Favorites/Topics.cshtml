@@ -20,7 +20,7 @@
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
-	<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	<li class="breadcrumb-item active">@PopForums.Resources.FavoriteTopics</li>
 </ul>
 
@@ -50,7 +50,7 @@ else
 				</td>
 				<td>
 					<h2><a asp-controller="@ForumController.Name" asp-action="Topic" asp-route-id="@topic.UrlName" asp-route-pageNumber="">@topic.Title</a></h2>
-					<small class="float-right d-none d-sm-block">
+					<small class="float-end d-none d-sm-block text-secondary">
 						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 					</small>
 				</td>

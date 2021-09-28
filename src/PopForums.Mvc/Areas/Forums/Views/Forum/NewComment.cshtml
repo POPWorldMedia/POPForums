@@ -3,16 +3,19 @@
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
 <div id="NewReply" class="postForm" role="form">
-	@Html.TextAreaFor(p => p.FullText, new { @class = "form-control" })
+	@Html.TextAreaFor(p => p.FullText, new { @class = "form-control mb-3" })
 	@Html.HiddenFor(p => p.Title)
 	@Html.HiddenFor(p => p.IncludeSignature)
 	@Html.HiddenFor(p => p.ItemID)
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	@Html.HiddenFor(p => p.ParentPostID)
-	<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-primary" />
-	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PreviewModal" />
-	<span id="PostResponseMessage" class="alert alert-danger mt-3"></span>
+	<div class="my-3">
+		<input type="button" value="@PopForums.Resources.SubmitReply" id="SubmitReply" onclick="PopForums.postReply()" class="btn btn-primary" />
+		<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PreviewModal" />
+		<span id="PostResponseMessage" class="alert alert-danger mt-3"></span>
+	</div>
+	
 </div>
 
 <div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">

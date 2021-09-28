@@ -100,8 +100,8 @@
 <form method="post">
 	<input type="hidden" id="UserIDs" name="UserIDs"/>
 	<div role="form">
-		<div class="form-group">
-			<label><input type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ToModal" value="@PopForums.Resources.To"/></label>
+		<div class="mb-3">
+			<label class="form-label"><input type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ToModal" value="@PopForums.Resources.To"/></label>
 			<div id="PMToBox">
 				@if (ViewBag.TargetUserID != null)
 				{
@@ -109,12 +109,12 @@
 				}
 			</div>
 		</div>
-		<div class="form-group">
-			<label for="Subject">@PopForums.Resources.Subject</label>
+		<div class="mb-3">
+			<label for="Subject" class="form-label">@PopForums.Resources.Subject</label>
 			<input type="text" id="Subject" name="Subject" class="form-control"/>
 		</div>
-		<div class="form-group">
-			<label for="FullText">@PopForums.Resources.Message</label>
+		<div class="mb-3">
+			<label for="FullText" class="form-label">@PopForums.Resources.Message</label>
 			<textarea id="FullText" name="FullText" class="form-control"></textarea>
 		</div>
 		<input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="btn btn-primary"/>

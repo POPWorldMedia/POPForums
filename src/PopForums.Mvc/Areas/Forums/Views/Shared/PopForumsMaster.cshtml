@@ -22,7 +22,7 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div id="AccountBox" class="collapse navbar-collapse">
-			<ul class="navbar-nav me-auto">
+			<ul class="navbar-nav ms-auto">
 				@await Component.InvokeAsync("UserNavigation")
 			</ul>
 			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "form-inline" }, { "role", "search" } }))
