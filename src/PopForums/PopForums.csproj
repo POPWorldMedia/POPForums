@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <Description>PopForums Class Library</Description>
-    <VersionPrefix>17.0.1</VersionPrefix>
+    <VersionPrefix>17.0.2</VersionPrefix>
     <Authors>Jeff Putz</Authors>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>PopForums</AssemblyName>
     <PackageId>PopForums</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AssemblyVersion>17.0.1</AssemblyVersion>
-	  <FileVersion>17.0.1</FileVersion>
+	  <AssemblyVersion>17.0.2</AssemblyVersion>
+	  <FileVersion>17.0.2</FileVersion>
 	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 	  <Copyright>2021, POP World Media, LLC</Copyright>

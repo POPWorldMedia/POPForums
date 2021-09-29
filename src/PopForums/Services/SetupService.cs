@@ -32,7 +32,7 @@ namespace PopForums.Services
 
 		private static bool _isConnectionSetupGood;
 
-		private static readonly object _locker = new();
+		private static readonly object _locker = new object();
 
 		public bool IsRuntimeConnectionAndSetupGood()
 		{
