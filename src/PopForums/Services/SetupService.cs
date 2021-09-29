@@ -30,17 +30,21 @@ namespace PopForums.Services
 		private readonly ISettingsManager _settingsManager;
 		private readonly IProfileService _profileService;
 
-		private static bool? _isConnectionSetupGood;
+		private static bool _isConnectionSetupGood;
+
+		private static readonly object _locker = new();
 
 		public bool IsRuntimeConnectionAndSetupGood()
 		{
-			if (_isConnectionSetupGood.HasValue && _isConnectionSetupGood.Value)
+			if (_isConnectionSetupGood)
 				return true;
-			_isConnectionSetupGood = _setupRepository.IsConnectionPossible();
-			if (!_isConnectionSetupGood.Value)
-				return false;
-			_isConnectionSetupGood = _setupRepository.IsDatabaseSetup();
-			return _isConnectionSetupGood.Value;
+			lock (_locker)
+			{
+				var canConnect = _setupRepository.IsConnectionPossible();
+				var isSetup = _setupRepository.IsDatabaseSetup();
+				_isConnectionSetupGood = canConnect && isSetup;
+			}
+			return _isConnectionSetupGood;
 		}
 
 		public bool IsConnectionPossible()
