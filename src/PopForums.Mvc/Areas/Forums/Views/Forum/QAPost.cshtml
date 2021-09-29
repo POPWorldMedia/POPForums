@@ -19,7 +19,7 @@
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
 	<div class="answerData col-1">
-		<p class="badge badge-primary">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</p>
+		<p class="badge bg-primary">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</p>
 		@if (user != null && user.UserID != Model.Post.UserID)
 		{
 			if (Model.VotedPostIDs.Contains(Model.Post.PostID))
