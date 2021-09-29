@@ -17,8 +17,12 @@ namespace PopForums.Mvc.Areas.Forums.Authorization
 
 		public async Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService)
 		{
-			if (!setupService.IsRuntimeConnectionAndSetupGood())
+			var isSetupAndConnectionGood = setupService.IsRuntimeConnectionAndSetupGood();
+			if (!isSetupAndConnectionGood)
+			{
 				await _next.Invoke(context);
+				return;
+			}
 			var authResult = await context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 			var identity = authResult?.Principal?.Identity as ClaimsIdentity;
 			if (identity != null)
