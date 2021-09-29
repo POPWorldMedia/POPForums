@@ -31,23 +31,23 @@
 		<p>@PopForums.Resources.SetupConnSuccess:</p>
 		@using (Html.BeginForm("Index", "Setup", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 		{
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="ForumTitle">@PopForums.Resources.ForumTitle</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="ForumTitle">@PopForums.Resources.ForumTitle</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.ForumTitle, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="SmtpServer">@PopForums.Resources.SmtpServer</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="SmtpServer">@PopForums.Resources.SmtpServer</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.SmtpServer, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="SmtpPort">@PopForums.Resources.SmtpPort</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="SmtpPort">@PopForums.Resources.SmtpPort</label>
 				<div class="col-2">@Html.TextBoxFor(s => s.SmtpPort, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="MailerAddress">@PopForums.Resources.FromEmailAddress</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="MailerAddress">@PopForums.Resources.FromEmailAddress</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.MailerAddress, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
+			<div class="mb-3 row">
 				<div class="offset-2 col-10">
 					<div class="form-check">
 						@Html.CheckBoxFor(s => s.UseSslSmtp, new { @class = "form-check-input" })
@@ -55,7 +55,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group row">
+			<div class="mb-3 row">
 				<div class="offset-2 col-10">
 					<div class="form-check">
 						@Html.CheckBoxFor(s => s.UseEsmtp, new { @class = "form-check-input" })
@@ -63,19 +63,19 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="SmtpUser">@PopForums.Resources.SmtpUser</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="SmtpUser">@PopForums.Resources.SmtpUser</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.SmtpUser, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="SmtpPassword">@PopForums.Resources.SmtpPassword</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="SmtpPassword">@PopForums.Resources.SmtpPassword</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.SmtpPassword, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="ServerTimeZone">@PopForums.Resources.TimeZone</label>
-				<div class="col-10"><select asp-for="ServerTimeZone" asp-items="@timeZones" class="form-control"></select></div>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="ServerTimeZone">@PopForums.Resources.TimeZone</label>
+				<div class="col-10"><select asp-for="ServerTimeZone" asp-items="@timeZones" class="form-select"></select></div>
 			</div>
-			<div class="form-group row">
+			<div class="mb-3 row">
 				<div class="offset-2 col-10">
 					<div class="form-check">
 						@Html.CheckBoxFor(s => s.ServerDaylightSaving, new { @class = "form-check-input" })
@@ -84,19 +84,19 @@
 				</div>
 			</div>
 			<h3>@PopForums.Resources.SetupFirstUser</h3>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="Name">@PopForums.Resources.DisplayName</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="Name">@PopForums.Resources.DisplayName</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.Name, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="Email">@PopForums.Resources.Email</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="Email">@PopForums.Resources.Email</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.Email, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label" for="Password">@PopForums.Resources.Password</label>
+			<div class="mb-3 row">
+				<label class="col-2 form-label" for="Password">@PopForums.Resources.Password</label>
 				<div class="col-10">@Html.PasswordFor(s => s.Password, new { @class = "form-control" })</div>
 			</div>
-			<div class="form-group row">
+			<div class="mb-3 row">
 				<input type="submit" value="@PopForums.Resources.SetupDatabase" class="btn btn-primary offset-2" />
 			</div>
 		}
