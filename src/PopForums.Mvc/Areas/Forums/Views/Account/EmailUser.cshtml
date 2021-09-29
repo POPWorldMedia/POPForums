@@ -4,28 +4,26 @@
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.EmailUser - @Model.Name</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-</div>
+<h1>@PopForums.Resources.EmailUser - @Model.Name</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+</ul>
 
 <form asp-action="EmailUser" method="post" role="form">
-	<div class="form-group">
-		<label>@PopForums.Resources.To</label>
+	<div class="mb-3">
+		<label class="form-label">@PopForums.Resources.To</label>
 		<p class="form-control-static">@Model.Name</p>
 	</div>
-	<div class="form-group">
-		<label>@PopForums.Resources.YourIP</label>
+	<div class="mb-3">
+		<label class="form-label">@PopForums.Resources.YourIP</label>
 		<p class="form-control-static">@ViewBag.IP</p>
 	</div>
-	<div class="form-group">
-		<label for="subject">@PopForums.Resources.Subject</label>
+	<div class="mb-3">
+		<label for="subject" class="form-label">@PopForums.Resources.Subject</label>
 		<input type="text" name="subject" class="form-control"/>
 	</div>
-	<div class="form-group">
-		<label for="text">@PopForums.Resources.Text</label>
+	<div class="mb-3">
+		<label for="text" class="form-label">@PopForums.Resources.Text</label>
 		<textarea name="text" class="form-control" rows="6"></textarea>
 	</div>
 	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />

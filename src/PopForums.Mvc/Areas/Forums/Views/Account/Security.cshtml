@@ -5,67 +5,65 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.Account - @PopForums.Resources.ChangeYourEmailPassword</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
-		<div class="breadcrumb-item dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ChangeYourEmailPassword</a>
-			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-				<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
-				<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
-				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
-			</div>
+<h1>@PopForums.Resources.Account - @PopForums.Resources.ChangeYourEmailPassword</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+	<li class="breadcrumb-item dropdown">
+		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ChangeYourEmailPassword</a>
+		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
+			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+			<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
 		</div>
+	</li>
 
-	</ul>
-</div>
+</ul>
 
 <h2>@PopForums.Resources.ChangePassword</h2>
 
 <form asp-action="ChangePassword" method="post" role="form">
-	<div class="form-group">
-		<label for="OldPassword">@PopForums.Resources.PasswordOld</label>
+	<div class="mb-3">
+		<label for="OldPassword" class="form-label">@PopForums.Resources.PasswordOld</label>
 		<input type="password" name="OldPassword" class="form-control" />
 	</div>
-	<div class="form-group">
-		<label for="NewPassword">@PopForums.Resources.PasswordNew</label>
+	<div class="mb-3">
+		<label for="NewPassword" class="form-label">@PopForums.Resources.PasswordNew</label>
 		<input type="password" name="NewPassword" class="form-control" />
 	</div>
-	<div class="form-group">
-		<label for="NewPasswordRetype">@PopForums.Resources.PasswordNewRetype</label>
+	<div class="mb-3">
+		<label for="NewPasswordRetype" class="form-label">@PopForums.Resources.PasswordNewRetype</label>
 		<input type="password" name="NewPasswordRetype" class="form-control" />
 	</div>
-	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary" />
+	<input type="submit" value="@PopForums.Resources.ChangePassword" class="btn btn-primary mb-3" />
 	@if (ViewBag.PasswordResult != null)
 	{<span class="alert alert-danger">@ViewBag.PasswordResult</span>}
 </form>
 
-<p> </p>
+<hr class="my-5"/>
 
 <h2>@PopForums.Resources.ChangeEmail</h2>
 
 <form asp-action="ChangeEmail" method="post" role="form">
-	<div class="form-group">
+	<div class="mb-3">
 		@if (!Model.IsNewUserApproved)
 		{
 			<p>@PopForums.Resources.ChangeEmailConsequence</p>
 		}
 	</div>
-	<div class="form-group">
-		<label>@PopForums.Resources.Email</label>
+	<div class="mb-3">
+		<label class="form-label">@PopForums.Resources.Email</label>
 		<p>@Model.OldEmail</p>
 	</div>
-	<div class="form-group">
-		<label for="NewEmail">@PopForums.Resources.EmailNew</label>
+	<div class="mb-3">
+		<label for="NewEmail" class="form-label">@PopForums.Resources.EmailNew</label>
 		<input type="text" name="NewEmail" class="form-control" />
 	</div>
-	<div class="form-group">
-		<label for="NewEmailRetype">@PopForums.Resources.EmailNewRetype</label>
+	<div class="mb-3">
+		<label for="NewEmailRetype" class="form-label">@PopForums.Resources.EmailNewRetype</label>
 		<input type="text" name="NewEmailRetype" class="form-control" />
 	</div>
-	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary" />
+	<input type="submit" value="@(Model.IsNewUserApproved ? PopForums.Resources.ChangeEmail : PopForums.Resources.ChangeEmailButton)" class="btn btn-primary mb-3" />
 	@if (ViewBag.EmailResult != null)
 	{<span class="alert alert-danger">@ViewBag.EmailResult</span>}
 </form>

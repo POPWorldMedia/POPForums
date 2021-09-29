@@ -7,45 +7,46 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
-		<div class="breadcrumb-item dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ManagePhotos</a>
-			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-				<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
-				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
-				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
-			</div>
-		</div>
 
-	</ul>
-</div>
+<h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+	<li class="breadcrumb-item dropdown">
+		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ManagePhotos</a>
+		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
+			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+			<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+		</div>
+	</li>
+
+</ul>
 
 <form asp-action="ManagePhotos" method="post" enctype="multipart/form-data" role="form">
 	<h2>@PopForums.Resources.Avatar</h2>
-	<div class="form-group">
-		<input type="file" class="form-control-file" id="avatarFile" name="avatarFile">
+	<div class="mb-3">
+		<input type="file" class="form-control" id="avatarFile" name="avatarFile">
 	</div>
 	@if (Model.AvatarID.HasValue)
 	{
 		<p><img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" /></p>
-		<div class="checkbox">
-			<label for="DeleteAvatar"><input type="checkbox" asp-for="DeleteAvatar" /> @PopForums.Resources.AvatarDelete</label>
+		<div class="mb-3">
+			<input type="checkbox" asp-for="DeleteAvatar" class="form-check-input" />
+			<label for="DeleteAvatar" class="form-check-label">@PopForums.Resources.AvatarDelete</label>
 		</div>
 	}
 
 	<h2>@PopForums.Resources.Photo</h2>
-	<div class="form-group">
-		<input type="file" class="form-control-file" id="photoFile" name="photoFile">
+	<div class="mb-3">
+		<input type="file" class="form-control" id="photoFile" name="photoFile">
 	</div>
 	@if (Model.ImageID.HasValue)
 	{
 		<p><img src="@Url.Action("UserImage", "Image", new {id = Model.ImageID})" alt="User image" /></p>
-		<div class="checkbox">
-			<label for="DeleteImage"><input type="checkbox" asp-for="DeleteImage" /> @PopForums.Resources.PhotoDelete</label>
+		<div class="mb-3">
+			<input type="checkbox" asp-for="DeleteImage" class="form-check-input" />
+			<label for="DeleteImage" class="form-check-label"> @PopForums.Resources.PhotoDelete</label>
 		</div>
 		if (Model.IsImageApproved.HasValue && !Model.IsImageApproved.Value)
 		{
@@ -53,5 +54,5 @@
 		}
 	}
 
-	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
+	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary my-3" />
 </form>

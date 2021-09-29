@@ -5,22 +5,20 @@
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.ForgotPassword</h1>
-	@if (!SettingsManager.Current.IsPrivateForumInstance)
-	{
-		<ul id="TopBreadcrumb" class="breadcrumb">
-			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		</ul>
-	}
-</div>
+<h1>@PopForums.Resources.ForgotPassword</h1>
+@if (!SettingsManager.Current.IsPrivateForumInstance)
+{
+	<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+}
 
 <p>@PopForums.Resources.ForgotInstructions</p>
 
 <form asp-action="Forgot" method="post" role="form">
-	<div class="form-group">
+	<div class="mb-3">
 		<input name="Email" class="form-control"/>
 	</div>
-	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary" />
+	<input type="submit" value="@PopForums.Resources.SendEmailButton" class="btn btn-primary mb-3" />
 	@if (ViewBag.Result != null) { <span class="alert alert-warning ml-3">@ViewBag.Result</span> }
 </form>

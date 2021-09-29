@@ -21,30 +21,28 @@
 	</script>
 }
 
-<div>
-	<h1>@PopForums.Resources.Login</h1>
-	@if (!SettingsManager.Current.IsPrivateForumInstance)
-	{
-		<ul id="TopBreadcrumb" class="breadcrumb">
-			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		</ul>
-	}
-</div>
+<h1>@PopForums.Resources.Login</h1>
+@if (!SettingsManager.Current.IsPrivateForumInstance)
+{
+	<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+}
 
-<div id="LoginResult" class="alert alert-danger @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>
+<div id="LoginResult" class="my-3 alert alert-danger @if (String.IsNullOrWhiteSpace(Context.Request.Query["error"])){<text> d-none</text>}">@Context.Request.Query["error"]</div>
 
 @if (user == null)
 {
 	<div role="form">
-		<div class="form-group">
-			<label for="EmailLogin">@PopForums.Resources.Email</label>
+		<div class="mb-3">
+			<label for="EmailLogin" class="form-label">@PopForums.Resources.Email</label>
 			<input type="text" name="EmailLogin" id="EmailLogin" class="form-control"/>
 		</div>
-		<div class="form-group">
-			<label for="PasswordLogin">@PopForums.Resources.Password</label>
+		<div class="mb-3">
+			<label for="PasswordLogin" class="form-label">@PopForums.Resources.Password</label>
 			<input type="password" name="PasswordLogin" id="PasswordLogin" class="form-control"/>
 		</div>
-		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary" />
+		<input id="LoginButton" type="button" value="@PopForums.Resources.Login" class="btn btn-primary mb-3" />
 	</div>
 
 	if (Model.Count > 0)

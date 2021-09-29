@@ -6,62 +6,58 @@
 	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
 }
 
-<div>
-	<h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
-		<div class="breadcrumb-item dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.EditProfile</a>
-			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
-				<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
-				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
-			</div>
+<h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+	<li class="breadcrumb-item dropdown">
+		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.EditProfile</a>
+		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+			<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
 		</div>
-
-	</ul>
-</div>
+	</li>
+</ul>
 
 @if (ViewData["Result"] != null)
 { <p class="alert alert-danger">@ViewData["Result"]</p> }
 
   <form asp-action="EditProfile" role="form" method="post">
+	  
+<h2>@PopForums.Resources.Options</h2>
 
-  	<div class="row">
-  		<h2>@PopForums.Resources.Options</h2>
-  </div>
-  <div class="form-group">
+  <div class="mb-3 row">
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="IsSubscribed" />
   		<label class="form-check-label" for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
   </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3 row">
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="ShowDetails" />
   		<label class="form-check-label" for="ShowDetails">@PopForums.Resources.ShowProfileDetails</label>
   </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3 row">
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="IsPlainText" />
   		<label class="form-check-label" for="IsPlainText">@PopForums.Resources.ForcePlainTextBox</label>
   </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3 row">
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="HideVanity" />
   		<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
   </div>
   </div>
-  <div class="form-group row">
+  <div class="mb-3 row">
   	<label for="TimeZone" class="col-2 col-form-label">@PopForums.Resources.TimeZone</label>
   <div class="col-10">
   	<select asp-for="TimeZone" asp-items="@timeZones" class="form-control"></select>
   </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3 row">
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="IsDaylightSaving" />
   		<label class="form-check-label" for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label>
@@ -71,53 +67,55 @@
   <div class="row">
   	<h2>@PopForums.Resources.Details</h2>
   </div>
-  <div class="form-group row">
-  	<label for="Signature" class="col-2 control-label">@PopForums.Resources.Signature</label>
+  <div class="mb-3 row">
+  	<label for="Signature" class="col-2 form-label">@PopForums.Resources.Signature</label>
   <div class="col-10"><textarea asp-for="Signature" class="form-control" rows="3"></textarea></div>
   </div>
-  <div class="form-group row">
-  	<label for="Location" class="col-2 control-label">@PopForums.Resources.Location</label>
+  <div class="mb-3 row">
+  	<label for="Location" class="col-2 form-label">@PopForums.Resources.Location</label>
   <div class="col-10">
   	<input type="text" asp-for="Location" class="form-control" />
   </div>
   </div>
-  <div class="form-group row">
-  	<label for="Dob" class="col-2 control-label">@PopForums.Resources.DateOfBirth</label>
+  <div class="mb-3 row">
+  	<label for="Dob" class="col-2 form-label">@PopForums.Resources.DateOfBirth</label>
   <div class="col-10">
   	<input type="text" asp-for="Dob" class="form-control" />
   </div>
   </div>
-  <div class="form-group row">
-  	<label for="Facebook" class="col-2 control-label">Facebook</label>
+  <div class="mb-3 row">
+  	<label for="Facebook" class="col-2 form-label">Facebook</label>
   	<div class="col-10">
   		<div class="input-group">
-  			<div class="input-group-prepend"><div class="input-group-text">https://facebook.com/</div></div>
+  			<div class="input-group-text">https://facebook.com/</div>
   			<input type="text" asp-for="Facebook" class="form-control" />
   		</div>
   	</div>
   </div>
-  <div class="form-group row">
-  	<label for="Twitter" class="col-2 control-label">Twitter</label>
+  <div class="mb-3 row">
+  	<label for="Twitter" class="col-2 form-label">Twitter</label>
   	<div class="col-10">
   		<div class="input-group">
-  			<div class="input-group-prepend"><div class="input-group-text">&#64;</div></div>
+  			<div class="input-group-text">&#64;</div>
   			<input type="text" asp-for="Twitter" class="form-control" />
   		</div>
   	</div>
   </div>
-  <div class="form-group row">
-  	<label for="Instagram" class="col-2 control-label">Instagram</label>
-  	<div class="col-10">
-  		<input type="text" asp-for="Instagram" class="form-control" />
-  	</div>
-  </div>
-  <div class="form-group row">
-  	<label for="Web" class="col-2 control-label">@PopForums.Resources.Web</label>
+	  <div class="mb-3 row">
+		  <label for="Instagram" class="col-2 form-label">Instagram</label>
+		  <div class="col-10">
+			  <div class="input-group">
+				  <div class="input-group-text">&#64;</div>
+				  <input type="text" asp-for="Instagram" class="form-control" /></div>
+		  </div>
+	  </div>
+	  <div class="mb-3 row">
+  	<label for="Web" class="col-2 form-label">@PopForums.Resources.Web</label>
   <div class="col-10">
   	<input type="text" asp-for="Web" class="form-control" />
   </div>
   </div>
-  <div class="form-group offset-2 col-10">
+  <div class="mb-3 offset-2 col-10">
   	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
   </div>
   </form>

@@ -728,7 +728,10 @@
 		<div class="mb-3 row">
 			<label for="Instagram" class="col-2 control-label">Instagram</label>
 			<div class="col-10">
-				<input type="text" id="Instagram" class="form-control" v-model="user.instagram" />
+				<div class="input-group">
+					<div class="input-group-text">&#64;</div>
+					<input type="text" id="Instagram" class="form-control" v-model="user.instagram" />
+				</div>
 			</div>
 		</div>
 		<div class="mb-3 row">
@@ -756,13 +759,13 @@
 
 		<hr />
 		<h3>@PopForums.Resources.Avatar</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" class="form-control-file mb-3">
+		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" class="form-control mb-3">
 		<div><img v-if="user.avatarID" v-bind:src="'/Forums/Image/Avatar/' + user.avatarID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeAvatar" v-show="user.avatarID" value="@PopForums.Resources.AvatarDelete" /></p>
 
 		<hr />
 		<h3>@PopForums.Resources.Photo</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control-file mb-3">
+		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control mb-3">
 		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
 

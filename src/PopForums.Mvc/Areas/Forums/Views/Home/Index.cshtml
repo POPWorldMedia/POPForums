@@ -49,7 +49,7 @@
 			foreach (var forum in category.Value)
 			{
 				<tr data-forumid="@forum.ForumID">
-					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
+					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" /></a></td>
 					<td>
 						<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 						<p>@forum.Description</p>
