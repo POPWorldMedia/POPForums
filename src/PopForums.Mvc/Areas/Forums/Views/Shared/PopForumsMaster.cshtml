@@ -3,31 +3,31 @@
 }
 
 @section HeaderContent {
-    @RenderSection("HeaderContent", required: false)
-    <environment include="Development">
-	    <script src="~/lib/signalr/dist/signalr.js"></script>
-	    <script src="~/lib/PopForums/src/PopForums.js"></script>
-	    <link href="~/lib/PopForums/src/PopForums.css" rel="stylesheet" />
-    </environment>
-    <environment exclude="Development">
-	    <script src="~/lib/signalr/dist/signalr.min.js"></script>
-	    <script src="~/lib/PopForums/dist/PopForums.min.js"></script>
-	    <link href="~/lib/PopForums/dist/PopForums.min.css" rel="stylesheet" />    
-    </environment>
+	<environment include="Development">
+		<script src="~/lib/signalr/dist/signalr.js"></script>
+		<script src="~/lib/PopForums/src/PopForums.js"></script>
+		<link href="~/lib/PopForums/src/PopForums.css" rel="stylesheet" />
+	</environment>
+	<environment exclude="Development">
+		<script src="~/lib/signalr/dist/signalr.min.js"></script>
+		<script src="~/lib/PopForums/dist/PopForums.min.js"></script>
+		<link href="~/lib/PopForums/dist/PopForums.min.css" rel="stylesheet" />
+	</environment>
+	@RenderSection("HeaderContent", required: false)
 }
 
 <div id="ForumContainer" class="container-fluid">
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#AccountBox" aria-controls="AccountBox" aria-expanded="false">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#AccountBox" aria-controls="AccountBox" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div id="AccountBox" class="collapse navbar-collapse">
-			<ul class="navbar-nav ml-auto">
+			<ul class="navbar-nav ms-auto">
 				@await Component.InvokeAsync("UserNavigation")
 			</ul>
 			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "form-inline" }, { "role", "search" } }))
 			{
-				<div class="form-group">
+				<div>
 					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
 				</div>
 			}

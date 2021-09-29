@@ -17,22 +17,20 @@
 		<script language="javascript" type="text/javascript">
 			grecaptcha.ready(function() {
 				grecaptcha.execute("@Config.ReCaptchaSiteKey", { action: "createaccount" }).then(function(token) {
-					$("#Token").val(token);
+					document.querySelector("#Token").value = token;
 				});
 			});
 		</script>
 	}
 }
 
-<div>
-	<h1>@PopForums.Resources.CreateAnAccount</h1>
-	@if (!SettingsManager.Current.IsPrivateForumInstance)
-	{
-		<ul id="TopBreadcrumb" class="breadcrumb">
-			<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		</ul>
-	}
-</div>
+<h1>@PopForums.Resources.CreateAnAccount</h1>
+@if (!SettingsManager.Current.IsPrivateForumInstance)
+{
+	<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+}
 
 <p><a asp-action="Verify">@PopForums.Resources.NeedToVerifyExistingAccount</a></p>
 
@@ -40,8 +38,8 @@
 {
 	<form asp-controller="@AccountController.Name" asp-action="Create" method="post" role="form">
 		<div>
-			<div class="form-group row" pf-validation-for="Name" pf-validationerror-class="has-error">
-				<label for="Name" class="col-2 col-form-label">
+			<div class="mb-3 row" pf-validation-for="Name" pf-validationerror-class="has-error">
+				<label for="Name" class="col-2 form-label">
 					@PopForums.Resources.Name<br />
 					@PopForums.Resources.AsYouWouldLikeItToAppear
 				</label>
@@ -50,8 +48,8 @@
 					<span asp-validation-for="Name" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row" pf-validation-for="Email" pf-validationerror-class="has-error">
-				<label for="Email" class="col-2 col-form-label">
+			<div class="mb-3 row" pf-validation-for="Email" pf-validationerror-class="has-error">
+				<label for="Email" class="col-2 form-label">
 					@PopForums.Resources.Email
 				</label>
 				<div class="col-10">
@@ -59,8 +57,8 @@
 					<span asp-validation-for="Email" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row" pf-validation-for="Password" pf-validationerror-class="has-error">
-				<label for="Password" class="col-2 col-form-label">
+			<div class="mb-3 row" pf-validation-for="Password" pf-validationerror-class="has-error">
+				<label for="Password" class="col-2 form-label">
 					@PopForums.Resources.Password<br />
 					@PopForums.Resources.AtLeastSixChar
 				</label>
@@ -69,8 +67,8 @@
 					<span asp-validation-for="Password" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row" pf-validation-for="PasswordRetype" pf-validationerror-class="has-error">
-				<label for="PasswordRetype" class="col-2 col-form-label">
+			<div class="mb-3 row" pf-validation-for="PasswordRetype" pf-validationerror-class="has-error">
+				<label for="PasswordRetype" class="col-2 form-label">
 					@PopForums.Resources.RetypePassword
 				</label>
 				<div class="col-10">
@@ -78,12 +76,12 @@
 					<span asp-validation-for="PasswordRetype" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row">
-				<label for="TimeZone" class="col-2 col-form-label">
+			<div class="mb-3 row">
+				<label for="TimeZone" class="col-2 form-label">
 					@PopForums.Resources.TimeZone
 				</label>
 				<div class="col-10">
-					<select asp-items="@(new SelectList(DataCollections.TimeZones(), "Key", "Value", ViewData[AccountController.ServerTimeZoneKey]))" class="form-control" asp-for="TimeZone"></select>
+					<select asp-items="@(new SelectList(DataCollections.TimeZones(), "Key", "Value", ViewData[AccountController.ServerTimeZoneKey]))" class="form-select" asp-for="TimeZone"></select>
 				</div>
 			</div>
 			<div class="form-check">
@@ -105,8 +103,8 @@
 					<span asp-validation-for="IsCoppa" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row">
-				<label class="col-2 col-form-label">
+			<div class="mb-3 row">
+				<label class="col-2 form-label">
 					@PopForums.Resources.TermsOfService
 				</label>
 				<div class="col-10">
@@ -120,9 +118,9 @@
 					<span asp-validation-for="IsTos" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="form-group row">
+			<div class="mb-3 row">
 				<div class="offset-2 col-sm-10">
-					<input type="submit" value="@PopForums.Resources.CreateAccountButton" class="btn btn-primary" />
+					<input type="submit" value="@PopForums.Resources.CreateAccountButton" class="btn btn-primary my-3" />
 				</div>
 			</div>
 		</div>

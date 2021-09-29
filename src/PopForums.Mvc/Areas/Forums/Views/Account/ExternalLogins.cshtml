@@ -4,22 +4,21 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
-	<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-		<li class="breadcrumb-item">@PopForums.Resources.Account</li>
-		<div class="breadcrumb-item dropdown">
-			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ExternalLogins</a>
-			<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-				<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
-				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
-				<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
-			</div>
-		</div>
 
-	</ul>
-</div>
+<h1>@PopForums.Resources.Account - @PopForums.Resources.ExternalLogins</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item">@PopForums.Resources.Account</li>
+	<li class="breadcrumb-item dropdown">
+		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ExternalLogins</a>
+		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
+			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+		</div>
+	</li>
+
+</ul>
 
 @if (Model.Count == 0)
 {

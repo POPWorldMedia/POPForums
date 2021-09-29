@@ -1,6 +1,6 @@
 {
   "name": "@popworldmedia/popforums",
-  "version": "17.99.1-prerelease.271",
+  "version": "17.99.1-prerelease.406",
   "description": "POP Forums client side",
   "scripts": {},
   "repository": {
@@ -16,9 +16,7 @@
   "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
   "dependencies": {
     "@microsoft/signalr": "5.0.6",
-    "bootstrap": "4.5.2",
-    "jquery": "3.5.1",
-    "popper.js": "1.16.1-lts",
+    "bootstrap": "5.1.1",
     "tinymce": "5.8.0",
     "vue": "2.6.12",
     "vue-router": "3.4.3",

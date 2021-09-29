@@ -11,7 +11,7 @@
 @section HeaderContent {
 <script src="~/lib/tinymce/tinymce.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	$(function () {
+	ready(() => {
 		PopForums.qaTopicSetup(@Model.Topic.TopicID);
 	});
 </script>
@@ -68,11 +68,9 @@
 {
 	<div id="ModeratorPanel" class="bg-light mt-3 p-3">
 		<h3>@PopForums.Resources.Moderator</h3>
-		<div class="checkbox">
-			<label for="CloseOnReply">
-				@Html.CheckBox("CloseOnReply", new { @class = "checkbox" })
-				@PopForums.Resources.CloseOnReply
-			</label>
+		<div class="form-check">
+			<label for="CloseOnReply" class="form-check-label">@PopForums.Resources.CloseOnReply</label>
+			@Html.CheckBox("CloseOnReply", new { @class = "form-check-input" })
 		</div>
 		<ul class="list-inline">
 			<li class="list-inline-item">
@@ -101,20 +99,20 @@
 		</ul>
 		<form asp-action="UpdateTopic" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="form-horizontal" role="form">
 			@Html.Hidden("TopicID", Model.Topic.TopicID)
-			<div class="form-group">
-				<label for="NewTitle" class="col-sm-2 control-label">@PopForums.Resources.Title</label>
+			<div class="mb-3">
+				<label for="NewTitle" class="col-sm-2 form-label">@PopForums.Resources.Title</label>
 				<div class="col-sm-6">
 					@Html.TextBox("NewTitle", Model.Topic.Title, new { @class = "form-control" })
 				</div>
 			</div>
-			<div class="form-group">
-				<label for="NewForum" class="col-sm-2 control-label">@PopForums.Resources.Forum</label>
+			<div class="mb-3">
+				<label for="NewForum" class="col-sm-2 form-label">@PopForums.Resources.Forum</label>
 				<div class="col-sm-6">
 					<select id="NewForum" name="NewForum" class="form-control" asp-items="ViewBag.CategorizedForums"></select>
 				</div>
 			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-6">
+			<div class="mb-3">
+				<div class="col-sm-6">
 					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-warning" />
 				</div>
 			</div>

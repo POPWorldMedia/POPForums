@@ -9,7 +9,7 @@
 
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
-		$(function () {
+		ready(() => {
 			PopForums.startTimeUpdater();
 		});
 	</script>
@@ -18,7 +18,7 @@
 <div>
 	<h1>@PopForums.Resources.Archived</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
+		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
 	</ul>
 </div>

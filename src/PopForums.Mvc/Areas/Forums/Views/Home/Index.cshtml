@@ -11,7 +11,7 @@
 @section HeaderContent{
 	<link rel="sitemap" href="@ViewBag.SitemapUrl" type="application/xml" />
 	<script type="text/javascript">
-		$(function () {
+		ready(() => {
 			PopForums.homeSetup();
 		});
 	</script>
@@ -35,7 +35,7 @@
 				<td>
 					<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 					<p>@forum.Description</p>
-					<small class="float-right text-secondary d-none d-sm-block">
+					<small class="float-end text-secondary d-none d-sm-block">
 						@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 					</small>
 				</td>
@@ -49,11 +49,11 @@
 			foreach (var forum in category.Value)
 			{
 				<tr data-forumid="@forum.ForumID">
-					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" imagePath="/lib/PopForums/" /></a></td>
+					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" /></a></td>
 					<td>
 						<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
 						<p>@forum.Description</p>
-						<small class="float-right text-secondary d-none d-sm-block">
+						<small class="float-end text-secondary d-none d-sm-block">
 							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
 						</small>
 					</td>

@@ -10,27 +10,25 @@
 @section HeaderContent {
 }
 
-<div>
-	<h1>
-		@if (Model.AvatarID.HasValue)
-		{
-			<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle mr-3 mt-3 mb-3"/>
-		}
-		@Model.Name
-	</h1>
-	<ul id="TopBreadcrumb" class="breadcrumb">
-		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	</ul>
-</div>
+<h1>
+	@if (Model.AvatarID.HasValue)
+	{
+		<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle mr-3 mt-3 mb-3"/>
+	}
+	@Model.Name
+</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+</ul>
 
 <div id="Profile">
 	<ul class="nav nav-tabs" role="tablist" id="ProfileTabs">
-		<li class="nav-item"><a class="nav-link active" href="#Details" role="tab" data-toggle="tab">@PopForums.Resources.Profile</a></li>
-		<li class="nav-item"><a class="nav-link" href="#ActivityFeed" role="tab" data-toggle="tab">@PopForums.Resources.ActivityFeed</a></li>
-		<li class="nav-item"><a class="nav-link" href="#Awards" role="tab" data-toggle="tab">@PopForums.Resources.Awards</a></li>
+		<li class="nav-item"><a class="nav-link active" href="#Details" role="tab" data-bs-toggle="tab">@PopForums.Resources.Profile</a></li>
+		<li class="nav-item"><a class="nav-link" href="#ActivityFeed" role="tab" data-bs-toggle="tab">@PopForums.Resources.ActivityFeed</a></li>
+		<li class="nav-item"><a class="nav-link" href="#Awards" role="tab" data-bs-toggle="tab">@PopForums.Resources.Awards</a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="Details" class="tab-pane active pl-3">
+		<div id="Details" class="tab-pane active ps-3">
 			<div>
 				@if (Model.ShowDetails)
 				{
@@ -88,7 +86,7 @@
 				{
 					<div class="row">
 						<div class="col-4 text-nowrap"><span class="icon-instagram"></span> Instagram</div>
-						<div class="col-8"><a href="https://www.instagram.com/@Model.Instagram" target="_blank">@Model.Instagram</a></div>
+						<div class="col-8"><a href="https://www.instagram.com/@Model.Instagram" target="_blank">&#64;@Model.Instagram</a></div>
 					</div>
 				}
 
@@ -108,7 +106,7 @@
 
 			@if (Model.ImageID.HasValue && Model.IsImageApproved)
 			{
-				<div class="row">
+				<div class="my-3">
 					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-fluid" />
 				</div>
 			}
@@ -123,7 +121,7 @@
 						<div class="activityFeedPoints">+@item.Points</div>
 					}
 					<div>@Html.Raw(item.Message)</div>
-					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-end small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>
 			}
 		</div>
@@ -133,7 +131,7 @@
 			{
 				<div class="alert-light alert mt-2" title="@item.Description">
 					<h2>@item.Title</h2>
-					<div class="text-right small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-end small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
 				</div>
 			}
 			@if (Model.UserAwards.Count == 0)

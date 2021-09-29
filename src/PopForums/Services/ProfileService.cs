@@ -101,12 +101,13 @@ namespace PopForums.Services
 		public string GetUnsubscribeHash(User user)
 		{
 			var source = user.Name + user.Email;
-			return source.GetSHA256Hash();
+			return source.GetSHA256Hash().Replace("+", string.Empty).Replace("=", string.Empty);
 		}
 
 		public async Task<bool> Unsubscribe(User user, string hash)
 		{
-			if (GetUnsubscribeHash(user) != hash)
+			var calculatedHash = GetUnsubscribeHash(user);
+			if (calculatedHash != hash)
 				return false;
 			var profile = await GetProfile(user);
 			profile.IsSubscribed = false;

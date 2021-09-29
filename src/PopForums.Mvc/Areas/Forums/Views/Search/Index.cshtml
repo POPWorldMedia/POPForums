@@ -11,7 +11,7 @@
 
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
-		$(function () {
+		ready(() => {
 			PopForums.startTimeUpdater();
 		});
 	</script>
@@ -21,19 +21,23 @@
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
-	<li class="breadcrumb-item"><span class="glyphicon glyphicon-chevron-up"></span> <a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
 	<li class="breadcrumb-item active">@PopForums.Resources.Search</li>
 </ul>
 
 <div id="SearchForm">
-	<form asp-action="Process" method="post" role="form" class="form-inline mb-4" asp-antiforgery="false">
-		<div class="form-group">
-			<input type="text" name="Query" id="Query" class="form-control mr-1" value="@(ViewBag.Query)"/>
+	<form asp-action="Process" method="post" role="form" class="mb-4" asp-antiforgery="false">
+		<div class="row mb-3">
+			<div class="col-7">
+				<input type="text" name="Query" id="Query" class="form-control me-1" value="@(ViewBag.Query)" />
+			</div>
+			<div class="col-3">
+				@Html.DropDownList("SearchType", (SelectList)ViewBag.SearchTypes, new { @class = "form-select me-1 " })
+			</div>
+			<div class="col-2">
+				<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" />
+			</div>
 		</div>
-		<div class="form-group">
-			@Html.DropDownList("SearchType", (SelectList)ViewBag.SearchTypes, new { @class = "form-control mr-1 " })
-		</div>
-		<input type="submit" value="@PopForums.Resources.Search" class="btn btn-primary" />
 	</form>
 </div>
 
@@ -66,7 +70,7 @@ else
 				</td>
 				<td>
 					<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>
-					<small class="float-right d-none d-sm-block">
+					<small class="float-end d-none d-sm-block text-secondary">
 						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 					</small>
 				</td>

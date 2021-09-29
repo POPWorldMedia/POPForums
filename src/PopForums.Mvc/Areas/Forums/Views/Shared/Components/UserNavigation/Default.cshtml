@@ -14,7 +14,7 @@
 else
 {
 	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.User.Name</a>
+		<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@Model.User.Name</a>
 		<div class="dropdown-menu" role="menu">
 			<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@Model.User.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
 			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
