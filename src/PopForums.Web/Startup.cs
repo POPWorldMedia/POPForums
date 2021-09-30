@@ -8,6 +8,7 @@ using PopForums.AzureKit;
 using PopForums.Mvc.Areas.Forums.Authorization;
 using PopForums.Mvc.Areas.Forums.Extensions;
 using PopForums.Sql;
+using System.Text.Json.Serialization;
 
 namespace PopForums.Web
 {
@@ -27,8 +28,11 @@ namespace PopForums.Web
 				options.Filters.Add(typeof(PopForumsUserAttribute));
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-			// It's unfortunately necessary to use the Json.NET serializer for API requests because System.Text.Json doesn't handler enums correctly
-			services.AddControllers().AddNewtonsoftJson();
+			services.AddControllers().AddJsonOptions(options =>
+			{
+				// Use this to make sure enums are serialized correctly
+				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+			});
 
 			// set up the dependencies for the SQL library in POP Forums
 			services.AddPopForumsSql();
