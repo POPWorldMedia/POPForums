@@ -1,6 +1,6 @@
 {
   "name": "@popworldmedia/popforums",
-  "version": "17.99.1-prerelease.410",
+  "version": "17.99.1-prerelease.427",
   "description": "POP Forums client side",
   "scripts": {},
   "repository": {
@@ -15,11 +15,11 @@
   },
   "homepage": "https://github.com/POPWorldMedia/POPForums#readme",
   "dependencies": {
-    "@microsoft/signalr": "5.0.6",
+    "@microsoft/signalr": "5.0.10",
     "bootstrap": "5.1.1",
-    "tinymce": "5.8.0",
-    "vue": "2.6.12",
-    "vue-router": "3.4.3",
-    "axios": "0.21.1"
+    "tinymce": "5.9.2",
+    "vue": "3.2.19",
+    "vue-router": "4.0.11",
+    "axios": "0.22.0"
   }
 }

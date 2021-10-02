@@ -870,7 +870,10 @@ const IPHistory = {
 	methods: {
 		getHistory: function () {
 			this.startLoad();
-			axios.post(basePath + "QueryIPHistory", this.query)
+			var copy = Object.assign({}, this.query);
+			copy.start = new Date(this.query.start).toISOString();
+			copy.end = new Date(this.query.end).toISOString();
+			axios.post(basePath + "QueryIPHistory", copy)
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
@@ -892,7 +895,10 @@ const SecurityLog = {
 	methods: {
 		getHistory: function () {
 			this.startLoad();
-			axios.post(basePath + "QuerySecurityLog", this.query)
+			var copy = Object.assign({}, this.query);
+			copy.start = new Date(this.query.start).toISOString();
+			copy.end = new Date(this.query.end).toISOString();
+			axios.post(basePath + "QuerySecurityLog", copy)
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
@@ -914,7 +920,10 @@ const ModerationLog = {
 	methods: {
 		getHistory: function () {
 			this.startLoad();
-			axios.post(basePath + "QueryModerationLog", this.query)
+			var copy = Object.assign({}, this.query);
+			copy.start = new Date(this.query.start).toISOString();
+			copy.end = new Date(this.query.end).toISOString();
+			axios.post(basePath + "QueryModerationLog", copy)
 				.then(response => {
 					this.history = response.data;
 					this.endLoad();
@@ -1024,16 +1033,15 @@ const routes = [
 			{ path: "/services", component: Services }
 		]
 	},
-	{ path: "*", redirect: "/general" }
+	{ path: "/:pathMatch(.*)*", redirect: "/general" }
 ];
 
-const router = new VueRouter({
+const router = VueRouter.createRouter({
 	caseSensitive: false,
 	routes: routes,
-	mode: "history",
-	base: "/forums/admin"
+	history: VueRouter.createWebHistory("/forums/admin")
 });
 
-const app = new Vue({
-	router
-}).$mount("#app");
+const app = Vue.createApp({})
+app.use(router);
+app.mount("#app");
