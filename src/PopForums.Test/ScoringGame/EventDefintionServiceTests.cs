@@ -54,7 +54,7 @@ namespace PopForums.Test.ScoringGame
 		}
 
 		// TODO: This test fails on Linux build agent
-		[Fact(Skip = "This test fails on a Linux build agent, but the production code works as expected.")]
+		[Fact]
 		public async Task GetAllMergesAndOrders()
 		{
 			var service = GetService();
