@@ -222,7 +222,7 @@ PopForums.previewPost = function () {
 	var r = document.querySelector("#ParsedFullText");
 	var model = {
 		FullText: document.querySelector(".postForm #FullText").value,
-		IsPlainText: document.querySelector(".postForm #IsPlainText").value
+		IsPlainText: document.querySelector(".postForm #IsPlainText").checked
 	};
 	fetch(PopForums.areaPath + "/Forum/PreviewText", {
 		method: "POST",
@@ -636,7 +636,7 @@ PopForums.postNewTopic = function () {
 		FullText: d.querySelector("#NewTopic #FullText").value,
 		IncludeSignature: d.querySelector("#NewTopic #IncludeSignature").checked,
 		ItemID: d.querySelector("#NewTopic #ItemID").value,
-		IsPlainText: d.querySelector("#NewTopic #IsPlainText").value
+		IsPlainText: d.querySelector("#NewTopic #IsPlainText").value.toLowerCase() === "true"
 	};
 	fetch(PopForums.areaPath + "/Forum/PostTopic", {
 		method: "POST",
@@ -679,7 +679,7 @@ PopForums.postReply = function () {
 		IncludeSignature: d.querySelector("#NewReply #IncludeSignature").checked,
 		ItemID: d.querySelector("#NewReply #ItemID").value,
 		CloseOnReply: closeOnReply,
-		IsPlainText: d.querySelector("#NewReply #IsPlainText").value,
+		IsPlainText: d.querySelector("#NewReply #IsPlainText").value.toLowerCase() === "true",
 		ParentPostID: d.querySelector("#NewReply #ParentPostID").value
 	};
 	fetch(PopForums.areaPath + "/Forum/PostReply", {

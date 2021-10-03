@@ -26,12 +26,13 @@ namespace PopForums.Web
 			{
 				// identifies users on POP Forums actions
 				options.Filters.Add(typeof(PopForumsUserAttribute));
-			}).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+			});
 
 			services.AddControllers().AddJsonOptions(options =>
 			{
 				// Use this to make sure enums are serialized correctly
 				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 			});
 
 			// set up the dependencies for the SQL library in POP Forums

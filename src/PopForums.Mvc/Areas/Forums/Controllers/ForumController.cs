@@ -523,7 +523,6 @@ namespace PopForums.Mvc.Areas.Forums.Controllers
 		}
 
 		[HttpPost]
-		// TODO: test validate [ValidateInput(false)]
 		public ContentResult PreviewText([FromBody] PreviewModel model)
 		{
 			var result = _postService.GenerateParsedTextPreview(model.FullText, model.IsPlainText);
