@@ -25,7 +25,7 @@ namespace PopForums.Services
 
 		public async Task BanIP(string ip)
 		{
-			await _banRepository.BanIP(ip);
+			await _banRepository.BanIP(ip.Trim());
 		}
 
 		public async Task RemoveIPBan(string ip)
@@ -40,7 +40,7 @@ namespace PopForums.Services
 
 		public async Task BanEmail(string email)
 		{
-			await _banRepository.BanEmail(email);
+			await _banRepository.BanEmail(email.Trim());
 		}
 
 		public async Task RemoveEmailBan(string email)
