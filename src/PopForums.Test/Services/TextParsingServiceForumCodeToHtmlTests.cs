@@ -321,6 +321,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void HttpsAndHttpArchiveUrlWithTextLink()
+		{
+			var service = GetService();
+			var result = service.CleanForumCodeToHtml("[url=https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820]sucks[/url]");
+			Assert.Equal("<p><a href=\"https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820\" target=\"_blank\">sucks</a></p>", result);
+		}
+
+		[Fact]
 		public void YouTubeTagMainDomainConvertedToIframe()
 		{
 			var service = GetService();

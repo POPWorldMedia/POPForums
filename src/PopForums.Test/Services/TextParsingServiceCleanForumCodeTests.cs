@@ -198,6 +198,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void DoubleHttpArchiveUrl2()
+		{
+			var service = GetService();
+			var result = service.CleanForumCode("[url=https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820]suck[/url]");
+			Assert.Equal("[url=https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820]suck[/url]", result);
+		}
+
+		[Fact]
 		public void YouTubeHttpOnYouTubeDomain()
 		{
 			var service = GetService();

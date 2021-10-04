@@ -72,7 +72,7 @@ namespace PopForums.Services
 		public static string[] AllowedCloseableTags = { "b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img" };
 		private static readonly Regex TagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex TagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		private static readonly Regex ProtocolPattern = new Regex(@"(?<![\]""\>=])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		private static readonly Regex ProtocolPattern = new Regex(@"(?<![\]""\>=/\w])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex WwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex EmailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		private static readonly Regex YouTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -138,11 +138,11 @@ namespace PopForums.Services
 			// convert any stand alone words (with * before of after them) to spaces
 			for (var i = 0; i < list.Length; i++) { list[i] = list[i].Replace("*", " "); }
 			// now you've got your list of naughty words, clean them out of the text
-			var newWord = String.Empty;
-			for (var i = 0; i < list.Length; i++)
+			var newWord = string.Empty;
+			foreach (var badWord in list)
 			{
-				for (var j = 1; j <= list[i].Length; j++) newWord += _settingsManager.Current.CensorCharacter;
-				text = Regex.Replace(text, list[i], newWord, RegexOptions.IgnoreCase);
+				for (var j = 1; j <= badWord.Length; j++) newWord += _settingsManager.Current.CensorCharacter;
+				text = Regex.Replace(text, badWord, newWord, RegexOptions.IgnoreCase);
 				newWord = String.Empty;
 			}
 			return text;
@@ -283,7 +283,7 @@ namespace PopForums.Services
 						while (tagID != stack.Peek())
 						{
 							miniStack.Push(stack.Peek());
-							var closer = String.Format("[/{0}]", miniStack.Peek());
+							var closer = $"[/{miniStack.Peek()}]";
 							text = text.Insert(tagIndex + indexAdjustment, closer);
 							indexAdjustment += closer.Length;
 							stack.Pop();
@@ -291,7 +291,7 @@ namespace PopForums.Services
 						stack.Pop();
 						while (miniStack.Count > 0)
 						{
-							var opener = String.Format("[{0}]", miniStack.Peek());
+							var opener = $"[{miniStack.Peek()}]";
 							text = text.Insert(tagIndex + indexAdjustment + tag.Length, opener);
 							stack.Push(miniStack.Pop());
 							indexAdjustment += opener.Length;
@@ -303,17 +303,17 @@ namespace PopForums.Services
 			while (stack.Count != 0)
 			{
 				// add closers
-				var closer = String.Format("[/{0}]", stack.Peek());
+				var closer = $"[/{stack.Peek()}]";
 				text += closer;
 				stack.Pop();
 			}
 
 			// put URL's in url tags (plus youtube)
 			if (_settingsManager.Current.AllowImages)
-				text = YouTubePattern.Replace(text, match => String.Format("[youtube={0}]", match.Value));
-			text = ProtocolPattern.Replace(text, match => String.Format("[url={0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
-			text = WwwPattern.Replace(text, match => String.Format("[url=http://{0}]{1}[/url]", match.Value, match.Value.Trimmer(80)));
-			text = EmailPattern.Replace(text, match => String.Format("[url=mailto:{0}]{0}[/url]", match.Value));
+				text = YouTubePattern.Replace(text, match => $"[youtube={match.Value}]");
+			text = ProtocolPattern.Replace(text, match => $"[url={match.Value}]{match.Value.Trimmer(80)}[/url]");
+			text = WwwPattern.Replace(text, match => $"[url=http://{match.Value}]{match.Value.Trimmer(80)}[/url]");
+			text = EmailPattern.Replace(text, match => $"[url=mailto:{match.Value}]{match.Value}[/url]");
 
 			// escape out rogue HTML tags
 			text = EscapeHtmlTags(text);

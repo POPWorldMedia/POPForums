@@ -147,6 +147,14 @@ namespace PopForums.Test.Services
 		}
 
 		[Fact]
+		public void AnchorWithDoubleProtocol()
+		{
+			var service = GetService();
+			var result = service.ClientHtmlToForumCode("<p><a href=\"https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820\">suck</a></p>");
+			Assert.Equal("[url=https://web.archive.org/web/20120703090507/http://coasterbuzz.com/Forums/ForumPhoto/PhotoDetail/kings-dominion-2012?p=864820]suck[/url]", result);
+		}
+
+		[Fact]
 		public void AnchorToUrlWithTargetNoQuotes()
 		{
 			var service = GetService();
