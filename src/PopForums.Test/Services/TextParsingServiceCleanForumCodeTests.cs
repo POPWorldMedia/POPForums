@@ -154,7 +154,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var result = service.CleanForumCode("ohf i oih hgoehi www.popw.com owahfaowhfwohf");
-			Assert.Equal("ohf i oih hgoehi [url=http://www.popw.com]www.popw.com[/url] owahfaowhfwohf", result);
+			Assert.Equal("ohf i oih hgoehi [url=https://www.popw.com]www.popw.com[/url] owahfaowhfwohf", result);
 		}
 
 		[Fact]
@@ -162,7 +162,7 @@ namespace PopForums.Test.Services
 		{
 			var service = GetService();
 			var result = service.CleanForumCode("ohf i oih hgoehi www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890 owahfaowhfwohf");
-			Assert.Equal("ohf i oih hgoehi [url=http://www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]www.popw.com/123456789012345678901234567890123456789012345678901234...1234567890[/url] owahfaowhfwohf", result);
+			Assert.Equal("ohf i oih hgoehi [url=https://www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]www.popw.com/123456789012345678901234567890123456789012345678901234...1234567890[/url] owahfaowhfwohf", result);
 		}
 
 		[Fact]
