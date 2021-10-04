@@ -26,36 +26,39 @@ namespace PopForums.Email
 		public SmtpStatusCode? Send(EmailMessage message)
 		{
 			if (message == null)
-				throw new ArgumentNullException("message");
+				throw new ArgumentNullException(nameof(message));
 			var parsedMessage = ConvertEmailMessage(message);
 			var settings = _settingsManager.Current;
 			SmtpStatusCode? result = SmtpStatusCode.Ok;
-			using (var client = new SmtpClient())
+			using var client = new SmtpClient();
+			try
 			{
-
 				client.Connect(settings.SmtpServer, settings.SmtpPort, settings.UseSslSmtp ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
 				if (settings.UseEsmtp)
 					client.Authenticate(settings.SmtpUser, settings.SmtpPassword);
-				try
-				{
-					client.Send(parsedMessage);
-				}
-				catch (SmtpCommandException exc)
-				{
-					var statusCode = (int) exc.StatusCode;
-					result = (SmtpStatusCode) statusCode;
-					_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.ToEmail, message.Subject));
-				}
-				catch (Exception exc)
-				{
-					result = null;
-					_errorLog.Log(exc, ErrorSeverity.Email, String.Format("To: {0}, Subject: {1}", message.ToEmail, message.Subject));
-				}
-				finally
-				{
-					client.Disconnect(true);
-				}
+				client.Send(parsedMessage);
 			}
+			catch (SmtpCommandException exc)
+			{
+				var statusCode = (int)exc.StatusCode;
+				result = (SmtpStatusCode)statusCode;
+				_errorLog.Log(exc, ErrorSeverity.Email, $"To: {message.ToEmail}, Subject: {message.Subject}, SmtpCommandException: {statusCode}");
+			}
+			catch (SmtpProtocolException exc)
+			{
+				result = null;
+				_errorLog.Log(exc, ErrorSeverity.Email, $"To: {message.ToEmail}, Subject: {message.Subject}, SmtpProtocolException: {exc.Message}");
+			}
+			catch (Exception exc)
+			{
+				result = null;
+				_errorLog.Log(exc, ErrorSeverity.Email, $"To: {message.ToEmail}, Subject: {message.Subject}, Exception: {exc.Message}");
+			}
+			finally
+			{
+				client.Disconnect(true);
+			}
+
 			return result;
 		}
 
