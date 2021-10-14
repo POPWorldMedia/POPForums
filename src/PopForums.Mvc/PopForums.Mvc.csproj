@@ -4,7 +4,7 @@
     <Description>PopForums Mvc Class Library</Description>
     <VersionPrefix>17.99.0</VersionPrefix>
     <Authors>Jeff Putz</Authors>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>PopForums.Mvc</AssemblyName>
     <PackageId>PopForums.Mvc</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
