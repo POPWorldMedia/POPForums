@@ -200,6 +200,9 @@
 	padding: .75em;
 	background-color: var(--bs-light);
 }
+#ForumContainer .breadcrumb a {
+	text-decoration: none;
+}
 
 .btn-link {
 	border: none;
