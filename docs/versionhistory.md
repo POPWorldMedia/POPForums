@@ -7,6 +7,36 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version 18.0.0 (xx/xx/xx)
+
+* Update to .NET 6. #211
+* Migrate to Bootstrap v5. #215
+* Eliminate dependencies on jQuery. #216
+* Migrate admin to Vue.js v3. #232
+* Use crop mode for avatars when they're uploaded. #239
+* Update text parser to default to https on www URL's. #248
+* Trim IP and email ban entries before saving. #222
+* Remove dependency on Newtonsoft serializer for controllers with enums. #247
+* Add a security policy. #238
+* Update `AzureKit` to use modern libraries. #226
+* Put a cache sink in Redis `CacheHelper` in `AzureKit`. #231
+* Update Redis `CacheHelper` to use `System.Text.Json` when it's compatible. #169
+* Discontinue use of `PopForums.json` for config, use default instead. #225
+* BUG: Mailing list unsubscribe doesn't decode spaces from URL's. #237
+* BUG: CSS needs case sensitive path for Linux environments. #228
+* BUG: `SmtpWrapper` doesn't catch connections or auth exceptions. #237
+* BUG: Bots causing null ref exception in `TopicViewCountService` when trying to fetch cookies. #210
+* BUG: Setup stopped working in a previous version. #244
+* BUG: Text parser fails on URL's with multiples protocol instances (like those from web archive). #233
+
+## Version 17.0.2 (9/29/21)
+
+* Fix for broken setup bug. #244
+
+## Version 17.0.1 (4/4/21)
+
+* Fix for multiple image bug. #234
+
 ## Version 17.0.0 (8/24/20)
 
 * Rename AwsKit project to ElasticKit. #184
