@@ -10,7 +10,7 @@
 	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 	  <Copyright>2021, POP World Media, LLC</Copyright>
-    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
 	  <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
