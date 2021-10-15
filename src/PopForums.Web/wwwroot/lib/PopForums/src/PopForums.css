@@ -124,6 +124,9 @@
 	display: inline-block;
 	margin-left: 40px;
 }
+#ForumContainer .postTools a, #ForumContainer .postTools input, #ForumContainer h2 a {
+	text-decoration: none;
+}
 #ForumContainer .postItem .postTools input {
 	padding: 0;
 }
