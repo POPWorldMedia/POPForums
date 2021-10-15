@@ -449,7 +449,7 @@ namespace PopForums.Services
 			if (avatarFile != null && avatarFile.Length > 0)
 			{
 				await _userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
-				var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70);
+				var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70, true);
 				var avatarID = await _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
 				profile.AvatarID = avatarID;
 				await _profileRepository.Update(profile);
@@ -458,7 +458,7 @@ namespace PopForums.Services
 			if (photoFile != null && photoFile.Length > 0)
 			{
 				await _userImageRepository.DeleteImagesByUserID(user.UserID);
-				var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70);
+				var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70, false);
 				var imageID = await _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
 				profile.ImageID = imageID;
 				await _profileRepository.Update(profile);

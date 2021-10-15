@@ -805,11 +805,11 @@
 		
 		<div v-for="i in unapproved">
 			<p>
-				{{i.user.name}} - <a v-bind:href="'mailto:' + i.user.email">{{i.user.email}}</a>
+				{{i.user.name}} - <a v-bind:href="'mailto:' + i.user.email" class="me-3">{{i.user.email}}</a>
 				<img v-bind:src="'/Forums/Image/UserImage/' + i.userImage.userImageID" />
 			</p>
 			<p>
-				<input type="button" value="Approve" class="btn btn-primary mr-3" v-on:click="approveImage(i.userImage.userImageID)" />
+				<input type="button" value="Approve" class="btn btn-primary me-3" v-on:click="approveImage(i.userImage.userImageID)" />
 				<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary" v-on:click="deleteImage(i.userImage.userImageID)" />
 			</p>
 			<hr />

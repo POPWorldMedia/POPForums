@@ -20,7 +20,7 @@ namespace PopForums.Services
 		Task<byte[]> GetUserImageData(int userImageID);
 		Task<DateTime?> GetAvatarImageLastModification(int userAvatarID);
 		Task<DateTime?> GetUserImageLastModifcation(int userImageID);
-		byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel);
+		byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel, bool cropInsteadOfConstrain);
 		Task<List<UserImage>> GetUnapprovedUserImages();
 		Task ApproveUserImage(int userImageID);
 		Task DeleteUserImage(int userImageID);
@@ -93,7 +93,7 @@ namespace PopForums.Services
 			return await _userImageRepository.GetLastModificationDate(userImageID);
 		}
 
-		public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel)
+		public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel, bool cropInsteadOfConstrain)
 		{
 			if (bytes == null)
 				throw new Exception("Bytes parameter is null.");
@@ -104,7 +104,7 @@ namespace PopForums.Services
 				var options = new ResizeOptions
 				{
 					Size = new Size(maxWidth, maxHeight),
-					Mode = ResizeMode.Max
+					Mode = cropInsteadOfConstrain ? ResizeMode.Crop : ResizeMode.Max
 				};
 				image.Mutate(x => x
 					.Resize(options)
