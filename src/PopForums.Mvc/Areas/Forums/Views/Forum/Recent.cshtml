@@ -30,21 +30,25 @@
 <pf-pagerLinks controllerName="Forum" actionName="Recent" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <table id="TopicList" class="table mt-3 table-hover">
+	<tbody>
 	@foreach (var topic in Model.Topics)
 	{
-		<tr @if (topic.IsDeleted) { <text> class="bg-warning" </text>  } data-topicid="@topic.TopicID">
+		<tr @if (topic.IsDeleted) {<text> class="bg-warning" </text>}data-topicid="@topic.TopicID">
 			<td class="newIndicator">
 				@if (user == null)
 				{
-					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
+					<a asp-controller="Forum" asp-action="Topic" asp-route-id="@topic.UrlName"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model"/></a>
 				}
 				else
 				{
-					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
+					<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model"/></a>
 				}
 			</td>
 			<td>
-				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>
+				<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new
+				    {
+					    id = topic.UrlName, pageNumber = 1
+				    }, null)</h2>
 				<small class="float-end d-none d-sm-block text-secondary">
 					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
 				</small>
@@ -62,4 +66,5 @@
 			</small>
 		</td>
 	</tr>
+    </tbody>
 </table>

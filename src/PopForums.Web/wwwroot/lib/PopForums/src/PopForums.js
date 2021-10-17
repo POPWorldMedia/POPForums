@@ -770,7 +770,7 @@ PopForums.recentListen = function (pageSize) {
 		}
 		var row = PopForums.populateTopicRow(data);
 		row.classList.remove("hidden");
-		document.querySelector("#TopicList").prepend(row);
+		document.querySelector("#TopicList tbody").prepend(row);
 	});
 	connection.start()
 		.then(function () {
@@ -791,7 +791,7 @@ PopForums.forumListen = function (pageSize, forumID) {
 		}
 		var row = PopForums.populateTopicRow(data);
 		row.classList.remove("hidden");
-		document.querySelector("#TopicList").prepend(row);
+		document.querySelector("#TopicList tbody").prepend(row);
 	});
 	connection.start()
 		.then(function () {
