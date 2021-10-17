@@ -18,7 +18,7 @@ namespace PopForums.AzureKit.Functions
 		{
 			var configuration = new ConfigurationBuilder()
 				.SetBasePath(Environment.CurrentDirectory)
-				.AddJsonFile("local.settings.json")
+				.AddJsonFile("local.settings.json", true)
 				.AddEnvironmentVariables()
 				.Build();
 			var config = new Config(configuration);
