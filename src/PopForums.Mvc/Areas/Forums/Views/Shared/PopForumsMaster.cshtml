@@ -27,8 +27,8 @@
 			</ul>
 			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "form-inline" }, { "role", "search" } }))
 			{
-				<div>
-					<input type="search" class="form-control mx-2" placeholder="Search" id="query" name="query">
+				<div class="mx-2">
+					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
 				</div>
 			}
 		</div>
