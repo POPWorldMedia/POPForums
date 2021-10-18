@@ -33,7 +33,7 @@
 
 	<script type="x-templates" id="Top">
 	<main>
-		<div v-show="loading" class="spinner-border text-primary float-end ml-3 mt-1" role="status">
+		<div v-show="loading" class="spinner-border text-primary float-end ms-3 mt-1" role="status">
 			<span class="visually-hidden">Loading...</span>
 		</div>
 		<div class="dropdown mb-3">
@@ -237,7 +237,7 @@
 			</div>
 
 			<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-			<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+			<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 
 		</div>
 	</main>
@@ -248,7 +248,7 @@
 		<h2>@PopForums.Resources.Categories</h2>
 		<div class="form-inline">
 			<input type="text" v-model="newCategory" class="form-control mb-3" />
-			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ml-3 mb-3" />
+			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ms-3 mb-3" />
 		</div>
 		<table class="table table-sm mt-3">
 			<thead>
@@ -260,12 +260,12 @@
 			</thead>
 			<tbody>
 				<tr v-for="(category, index) in categories">
-					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
-					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
+					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ms-3" v-on:click="up(category)" v-if="index != 0" style="width:5em;" /></td>
+					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ms-3" v-on:click="down(category)" v-if="index != categories.length-1" style="width:5em;" /></td>
 					<td>{{category.title}}</td>
 					<td class="text-nowrap text-right">
-						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editCat(category)" />
-						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ml-3" v-on:click="deleteCat(category)" />
+						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ms-3" v-on:click="editCat(category)" />
+						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-primary ms-3" v-on:click="deleteCat(category)" />
 					</td>
 				</tr>
 			</tbody>
@@ -310,13 +310,13 @@
 				<template v-for="category in categories">
 					<tr class="bg-primary text-white"><td colspan="7">{{category.category.title}}</td></tr>
 					<tr v-for="(forum, index) in category.forums">
-						<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ml-3" v-on:click="up(forum)" v-if="index != 0" style="width:5em;" /></td>
-						<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ml-3" v-on:click="down(forum)" v-if="index != category.forums.length-1" style="width:5em;" /></td>
+						<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ms-3" v-on:click="up(forum)" v-if="index != 0" style="width:5em;" /></td>
+						<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ms-3" v-on:click="down(forum)" v-if="index != category.forums.length-1" style="width:5em;" /></td>
 						<td>{{forum.title}}</td>
 						<td><input type="checkbox" v-model="forum.isVisible" disabled class="form-check-input" /></td>
 						<td><input type="checkbox" v-model="forum.isArchived" disabled class="form-check-input" /></td>
 						<td><input type="checkbox" v-model="forum.isQAForum" disabled class="form-check-input" /></td>
-						<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ml-3" v-on:click="editForum(forum)" /></td>
+						<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ms-3" v-on:click="editForum(forum)" /></td>
 					</tr>
 				</template>
 			</tbody>
@@ -469,7 +469,7 @@
 		</div>
 
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success"> @PopForums.Resources.SettingsSaved </span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3"> @PopForums.Resources.SettingsSaved </span></transition>
 
 	</main>
 </script>
@@ -483,7 +483,7 @@
 			<div class="col-sm-8"><input type="text" v-model="settings.searchIndexingInterval" id="SearchIndexingInterval" class="form-control" /></div>
 		</div>
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">@PopForums.Resources.SettingsSaved</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">@PopForums.Resources.SettingsSaved</span></transition>
 
 		<h3 class="mt-3">@PopForums.Resources.JunkWords</h3>
 		<div class="mb-3 row">
@@ -504,76 +504,76 @@
 		<h2>@PopForums.Resources.ExternalLogins</h2>
 		<p>(registered redirect URI is https://yourdomain/Forums/Identity/CallbackHandler)</p>
 
-		<table class="table">
-			<tr>
-				<th>Google</th>
-				<td><input type="checkbox" v-model="settings.useGoogleLogin" class="form-check-input" /></td>
+		<div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label"><b>Google</b></label>
+				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useGoogleLogin" class="form-check-input" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">ClientId:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.googleClientId" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">ClientSecret:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.googleClientSecret" class="form-control" /></div>
 			</tr>
-			<tr>
-				<td>ClientId:</td>
-				<td><input type="text" v-model="settings.googleClientId" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>ClientSecret:</td>
-				<td><input type="text" v-model="settings.googleClientSecret" class="form-control" /></td>
-			</tr>
-			<tr>
-				<th>Facebook</th>
-				<td><input type="checkbox" v-model="settings.useFacebookLogin" class="form-check-input" /></td>
-			</tr>
-			<tr>
-				<td>AppID:</td>
-				<td><input type="text" v-model="settings.facebookAppID" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>AppSecret:</td>
-				<td><input type="text" v-model="settings.facebookAppSecret" class="form-control" /></td>
-			</tr>
-			<tr>
-				<th>Microsoft</th>
-				<td><input type="checkbox" v-model="settings.useMicrosoftLogin" class="form-check-input" /></td>
-			</tr>
-			<tr>
-				<td>ClientID:</td>
-				<td><input type="text" v-model="settings.microsoftClientID" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>ClientSecret:</td>
-				<td><input type="text" v-model="settings.microsoftClientSecret" class="form-control" /></td>
-			</tr>
-			<tr>
-				<th>OAuth2 returning JWT</th>
-				<td><input type="checkbox" v-model="settings.useOAuth2Login" class="form-check-input" /></td>
-			</tr>
-			<tr>
-				<td>Client ID:</td>
-				<td><input type="text" v-model="settings.oAuth2ClientID" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>Client Secret:</td>
-				<td><input type="text" v-model="settings.oAuth2ClientSecret" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>Base login URL:</td>
-				<td><input type="text" v-model="settings.oAuth2LoginUrl" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>Token URL:</td>
-				<td><input type="text" v-model="settings.oAuth2TokenUrl" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>Display name:</td>
-				<td><input type="text" v-model="settings.oAuth2DisplayName" class="form-control" /></td>
-			</tr>
-			<tr>
-				<td>Scope (separate by space):</td>
-				<td><input type="text" v-model="settings.oAuth2Scope" class="form-control" /></td>
-			</tr>
-		</table>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label"><b>Facebook</b></label>
+				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useFacebookLogin" class="form-check-input" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">AppID:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.facebookAppID" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">AppSecret:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.facebookAppSecret" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label"><b>Microsoft</b></label>
+				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useMicrosoftLogin" class="form-check-input" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">ClientID:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.microsoftClientID" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">ClientSecret:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.microsoftClientSecret" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label"><b>OAuth2 returning JWT</b></label>
+				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useOAuth2Login" class="form-check-input" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Client ID:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2ClientID" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Client Secret:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2ClientSecret" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Base login URL:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2LoginUrl" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Token URL:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2TokenUrl" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Display name:</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2DisplayName" class="form-control" /></div>
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 col-form-label">Scope (separate by space):</label>
+				<div class="col-sm-10"><input type="text" v-model="settings.oAuth2Scope" class="form-control" /></div>
+			</div>
+		</div>
 
 
 		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 	</main>
 </script>
 
@@ -599,7 +599,7 @@
 				<label class="form-check-label" for="SearchRole">Role</label>
 			</div>
 		</form>
-			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning">@PopForums.Resources.NoResults</span></transition>
+			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning ms-3">@PopForums.Resources.NoResults</span></transition>
 			<div v-for="u in searchResults"><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
 	</main>
 </script>
@@ -755,7 +755,7 @@
 		</div>
 
 		<input type="button" class="btn btn-primary" value="@PopForums.Resources.Save" :disabled="loading" v-on:click="saveUser('@PopForums.Resources.SettingsSaved')" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 
 		<hr />
 		<h3>@PopForums.Resources.Avatar</h3>
@@ -870,8 +870,8 @@
 			<textarea class="form-control" rows="10" v-model="htmlBody"></textarea>
 		</div>
 		<input type="button" value="@PopForums.Resources.Send" v-on:click="sendMail" class="btn btn-primary mr-3" />
-		<span v-if="isErrorVisible" class="alert alert-warning">{{errorMessage}}</span>
-		<transition name="fade"><span v-if="isSuccess" class="alert alert-success">@PopForums.Resources.EmailUsersQueued</span></transition>
+		<span v-if="isErrorVisible" class="alert alert-warning ms-3">{{errorMessage}}</span>
+		<transition name="fade"><span v-if="isSuccess" class="alert alert-success ms-3">@PopForums.Resources.EmailUsersQueued</span></transition>
 </main>
 </script>
 
@@ -884,7 +884,7 @@
 			<input type="text" v-model="settings.scoringGameCalculatorInterval" class="form-control" />
 		</div>
 		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
-		<transition name="fade"><span v-show="alert" class="alert alert-success">{{message}}</span></transition>
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 	</main>
 </script>
 
@@ -1265,7 +1265,7 @@
 					<tr v-show="item.comment || item.oldText">
 						<td colspan="5">
 							<p v-show="item.comment">@PopForums.Resources.Comment: {{item.comment}}</p>
-							<div v-show="item.oldText" class="alert alert-primary" v-html="item.oldText"></div>
+							<div v-show="item.oldText" class="alert alert-primary ms-3" v-html="item.oldText"></div>
 						</td>
 					</tr>
 				</template>

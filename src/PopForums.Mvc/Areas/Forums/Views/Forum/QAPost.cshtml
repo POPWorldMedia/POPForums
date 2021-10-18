@@ -49,7 +49,7 @@
 			<div class="miniProfileBox bg-light text-dark rounded">
 				<div class="py-1 px-3 mb-2"></div>
 			</div>
-			<small class="postTime text-right text-light">
+			<small class="postTime text-end text-light">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				{
 					@:IP: @Model.Post.IP -
@@ -59,7 +59,7 @@
 		</div>
 		@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
 		{
-			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-right ml-3 mb-3 d-none d-sm-block" />
+			<img src="@Url.Action("Avatar", "Image", new { id = (Model.Avatars)[Model.Post.UserID] })" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-end ms-3 mb-3 d-none d-sm-block" />
 		}
 
 		<div class="@if (Model.PostWithChildren.LastReadTime.HasValue && Model.PostWithChildren.Post.PostTime > Model.PostWithChildren.LastReadTime)
@@ -75,7 +75,7 @@
 			<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 		}
 		<div class="postToolContainer">
-			<ul class="postTools list-inline">
+			<ul class="postTools list-inline ms-0">
 				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
 				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
@@ -110,13 +110,12 @@
 			foreach (var comment in Model.PostWithChildren.Children)
 			{
 				<a name="@comment.PostID"></a>
-				<div class="@if(comment.IsDeleted){<text>bg-warning</text>}else{<text>well</text>} qaComment ml-3 p-2 @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
+				<div class="@if(comment.IsDeleted){<text>bg-warning</text>} card border-secondary mb-3 qaComment ms-3 p-3 @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
 	{<text>newPostBlock</text>}">
-					<hr />
 					<p class="text-muted">
-						@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new { id = comment.UserID }, null) - <span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
+						@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new { id = comment.UserID }, null) - <small><span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
 						@if (user != null && user.IsInRole(PermanentRoles.Moderator))
-						{<text> - IP: </text>@comment.IP}
+						{<text> - IP: </text>@comment.IP}</small>
 					</p>
 					@Html.Raw(comment.FullText)
 					@if (user.IsPostEditable(comment))
@@ -124,12 +123,12 @@
 						if (comment.IsDeleted)
 						{
 							using (Html.BeginForm("UndeletePost", "Moderator", new { id = comment.PostID }, FormMethod.Post))
-							{<input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /> }
+							{<input type="submit" value="@PopForums.Resources.Undelete" class="btn-link text-decoration-none" /> }
 						}
 						else
 						{
 							using (Html.BeginForm("DeletePost", "Forum", new { id = comment.PostID }, FormMethod.Post))
-							{ <input type="submit" value="@PopForums.Resources.Delete" class="btn-link" />							}
+							{ <input type="submit" value="@PopForums.Resources.Delete" class="btn-link text-decoration-none" />							}
 						}
 					}
 				</div>
