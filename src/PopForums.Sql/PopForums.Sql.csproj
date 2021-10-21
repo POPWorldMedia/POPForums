@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.90" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0-preview2.21264.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0-preview3.21293.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0-rc.2.21480.5" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
