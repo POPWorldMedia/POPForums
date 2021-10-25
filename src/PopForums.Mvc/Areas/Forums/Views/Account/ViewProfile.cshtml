@@ -13,7 +13,7 @@
 <h1>
 	@if (Model.AvatarID.HasValue)
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle mr-3 mt-3 mb-3"/>
+		<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle me-3 mt-3 mb-3"/>
 	}
 	@Model.Name
 </h1>
