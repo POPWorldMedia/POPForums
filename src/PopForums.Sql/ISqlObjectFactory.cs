@@ -1,13 +1,10 @@
-﻿using System.Data.Common;
+﻿namespace PopForums.Sql;
 
-namespace PopForums.Sql
+public interface ISqlObjectFactory
 {
-	public interface ISqlObjectFactory
-	{
-		DbConnection GetConnection();
-		DbCommand GetCommand();
-		DbCommand GetCommand(string sql);
-		DbCommand GetCommand(string sql, DbConnection connection);
-		DbParameter GetParameter(string parameterName, object value);
-	}
+	DbConnection GetConnection();
+	DbCommand GetCommand();
+	DbCommand GetCommand(string sql);
+	DbCommand GetCommand(string sql, DbConnection connection);
+	DbParameter GetParameter(string parameterName, object value);
 }
