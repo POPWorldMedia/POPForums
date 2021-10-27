@@ -1,46 +1,41 @@
-﻿using System;
-using System.Threading;
-using PopForums.Configuration;
+﻿namespace PopForums.Services;
 
-namespace PopForums.Services
+public class UserSessionWorker
 {
-	public class UserSessionWorker
+	private static readonly object _syncRoot = new Object();
+
+	private UserSessionWorker()
 	{
-		private static readonly object _syncRoot = new Object();
+		// only allow Instance to create a new instance
+	}
 
-		private UserSessionWorker()
+	public void CleanUpExpiredSessions(IUserSessionService sessionService, IErrorLog errorLog)
+	{
+		if (!Monitor.TryEnter(_syncRoot)) return;
+		try
 		{
-			// only allow Instance to create a new instance
+			sessionService.CleanUpExpiredSessions();
 		}
-
-		public void CleanUpExpiredSessions(IUserSessionService sessionService, IErrorLog errorLog)
+		catch (Exception exc)
 		{
-			if (!Monitor.TryEnter(_syncRoot)) return;
-			try
-			{
-				sessionService.CleanUpExpiredSessions();
-			}
-			catch (Exception exc)
-			{
-				errorLog.Log(exc, ErrorSeverity.Error);
-			}
-			finally
-			{
-				Monitor.Exit(_syncRoot);
-			}
+			errorLog.Log(exc, ErrorSeverity.Error);
 		}
-
-		private static UserSessionWorker _instance;
-		public static UserSessionWorker Instance
+		finally
 		{
-			get
+			Monitor.Exit(_syncRoot);
+		}
+	}
+
+	private static UserSessionWorker _instance;
+	public static UserSessionWorker Instance
+	{
+		get
+		{
+			if (_instance == null)
 			{
-				if (_instance == null)
-				{
-					_instance = new UserSessionWorker();
-				}
-				return _instance;
+				_instance = new UserSessionWorker();
 			}
+			return _instance;
 		}
 	}
 }

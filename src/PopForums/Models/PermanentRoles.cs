@@ -1,8 +1,7 @@
-namespace PopForums.Models
+namespace PopForums.Models;
+
+public static class PermanentRoles
 {
-	public static class PermanentRoles
-	{
-		public const string Admin = "Admin";
-		public const string Moderator = "Moderator";
-	}
+	public const string Admin = "Admin";
+	public const string Moderator = "Moderator";
 }

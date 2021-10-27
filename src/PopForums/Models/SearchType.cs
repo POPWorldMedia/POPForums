@@ -1,11 +1,10 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public enum SearchType
 {
-	public enum SearchType
-	{
-		Rank,
-		Date,
-		Title,
-		Name,
-		Replies
-	}
+	Rank,
+	Date,
+	Title,
+	Name,
+	Replies
 }

@@ -1,20 +1,17 @@
-using System;
+namespace PopForums.Configuration;
 
-namespace PopForums.Configuration
+public class ErrorLogException : Exception
 {
-	public class ErrorLogException : Exception
+	public ErrorLogException(string message) : base(message)
 	{
-		public ErrorLogException(string message) : base(message)
-		{
-			
-		}
+		
+	}
 
-		public override string Message
+	public override string Message
+	{
+		get
 		{
-			get
-			{
-				return "Can't log exception: " + base.Message;
-			}
+			return "Can't log exception: " + base.Message;
 		}
 	}
 }

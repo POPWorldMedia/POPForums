@@ -1,12 +1,11 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public enum ModifyForumRolesType
 {
-	public enum ModifyForumRolesType
-	{
-		AddView,
-		RemoveView,
-		AddPost,
-		RemovePost,
-		RemoveAllView,
-		RemoveAllPost
-	}
+	AddView,
+	RemoveView,
+	AddPost,
+	RemovePost,
+	RemoveAllView,
+	RemoveAllPost
 }

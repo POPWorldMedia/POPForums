@@ -1,12 +1,11 @@
-namespace PopForums.Configuration
+namespace PopForums.Configuration;
+
+public enum ErrorSeverity
 {
-	public enum ErrorSeverity
-	{
-		Critical = 1,
-		Warning = 2,
-		Information = 3,
-		Debug = 4,
-		Error = 5,
-		Email = 6
-	}
+	Critical = 1,
+	Warning = 2,
+	Information = 3,
+	Debug = 4,
+	Error = 5,
+	Email = 6
 }

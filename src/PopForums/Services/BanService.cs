@@ -1,56 +1,51 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PopForums.Repositories;
+namespace PopForums.Services;
 
-namespace PopForums.Services
+public interface IBanService
 {
-	public interface IBanService
+	Task BanIP(string ip);
+	Task RemoveIPBan(string ip);
+	Task<List<string>> GetIPBans();
+	Task BanEmail(string email);
+	Task RemoveEmailBan(string email);
+	Task<List<string>> GetEmailBans();
+}
+
+public class BanService : IBanService
+{
+	public BanService(IBanRepository banRepsoitory)
 	{
-		Task BanIP(string ip);
-		Task RemoveIPBan(string ip);
-		Task<List<string>> GetIPBans();
-		Task BanEmail(string email);
-		Task RemoveEmailBan(string email);
-		Task<List<string>> GetEmailBans();
+		_banRepository = banRepsoitory;
 	}
 
-	public class BanService : IBanService
+	private readonly IBanRepository _banRepository;
+
+	public async Task BanIP(string ip)
 	{
-		public BanService(IBanRepository banRepsoitory)
-		{
-			_banRepository = banRepsoitory;
-		}
+		await _banRepository.BanIP(ip.Trim());
+	}
 
-		private readonly IBanRepository _banRepository;
+	public async Task RemoveIPBan(string ip)
+	{
+		await _banRepository.RemoveIPBan(ip);
+	}
 
-		public async Task BanIP(string ip)
-		{
-			await _banRepository.BanIP(ip.Trim());
-		}
+	public async Task<List<string>> GetIPBans()
+	{
+		return await _banRepository.GetIPBans();
+	}
 
-		public async Task RemoveIPBan(string ip)
-		{
-			await _banRepository.RemoveIPBan(ip);
-		}
+	public async Task BanEmail(string email)
+	{
+		await _banRepository.BanEmail(email.Trim());
+	}
 
-		public async Task<List<string>> GetIPBans()
-		{
-			return await _banRepository.GetIPBans();
-		}
+	public async Task RemoveEmailBan(string email)
+	{
+		await _banRepository.RemoveEmailBan(email);
+	}
 
-		public async Task BanEmail(string email)
-		{
-			await _banRepository.BanEmail(email.Trim());
-		}
-
-		public async Task RemoveEmailBan(string email)
-		{
-			await _banRepository.RemoveEmailBan(email);
-		}
-
-		public async Task<List<string>> GetEmailBans()
-		{
-			return await _banRepository.GetEmailBans();
-		}
+	public async Task<List<string>> GetEmailBans()
+	{
+		return await _banRepository.GetEmailBans();
 	}
 }

@@ -1,8 +1,7 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public class Friend
 {
-	public class Friend
-	{
-		public User User { get; set; }
-		public bool IsApproved { get; set; }
-	}
+	public User User { get; set; }
+	public bool IsApproved { get; set; }
 }

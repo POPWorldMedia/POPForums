@@ -1,9 +1,8 @@
-﻿namespace PopForums.Email
+﻿namespace PopForums.Email;
+
+public enum EmailQueuePayloadType
 {
-	public enum EmailQueuePayloadType
-	{
-		FullMessage = 1,
-		MassMessage = 2,
-		DeleteMassMessage = 3
-	}
+	FullMessage = 1,
+	MassMessage = 2,
+	DeleteMassMessage = 3
 }

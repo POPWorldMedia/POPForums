@@ -1,49 +1,44 @@
-﻿using System;
-using System.Threading;
-using PopForums.Configuration;
+﻿namespace PopForums.Services;
 
-namespace PopForums.Services
+public class SearchIndexWorker
 {
-	public class SearchIndexWorker
+	private static readonly object _syncRoot = new object();
+
+	private SearchIndexWorker()
 	{
-		private static readonly object _syncRoot = new object();
+		// only allow Instance to create a new instance
+	}
 
-		private SearchIndexWorker()
+	public void IndexNextTopic(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem, ISearchService searchService, ITenantService tenantService)
+	{
+		if (!Monitor.TryEnter(_syncRoot, 5000)) return;
+		try
 		{
-			// only allow Instance to create a new instance
+			var payload = searchService.GetNextTopicForIndexing().Result;
+			if (payload == null)
+				return;
+			searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
 		}
-
-		public void IndexNextTopic(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem, ISearchService searchService, ITenantService tenantService)
+		catch (Exception exc)
 		{
-			if (!Monitor.TryEnter(_syncRoot, 5000)) return;
-			try
-			{
-				var payload = searchService.GetNextTopicForIndexing().Result;
-				if (payload == null)
-					return;
-				searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
-			}
-			catch (Exception exc)
-			{
-				errorLog.Log(exc, ErrorSeverity.Error);
-			}
-			finally
-			{
-				Monitor.Exit(_syncRoot);
-			}
+			errorLog.Log(exc, ErrorSeverity.Error);
 		}
-
-		private static SearchIndexWorker _instance;
-		public static SearchIndexWorker Instance
+		finally
 		{
-			get
+			Monitor.Exit(_syncRoot);
+		}
+	}
+
+	private static SearchIndexWorker _instance;
+	public static SearchIndexWorker Instance
+	{
+		get
+		{
+			if (_instance == null)
 			{
-				if (_instance == null)
-				{
-					_instance = new SearchIndexWorker();
-				}
-				return _instance;
+				_instance = new SearchIndexWorker();
 			}
+			return _instance;
 		}
 	}
 }

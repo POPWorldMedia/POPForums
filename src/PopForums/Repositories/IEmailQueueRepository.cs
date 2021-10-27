@@ -1,11 +1,7 @@
-﻿using System.Threading.Tasks;
-using PopForums.Email;
+﻿namespace PopForums.Repositories;
 
-namespace PopForums.Repositories
+public interface IEmailQueueRepository
 {
-	public interface IEmailQueueRepository
-	{
-		Task Enqueue(EmailQueuePayload payload);
-		Task<EmailQueuePayload> Dequeue();
-	}
+	Task Enqueue(EmailQueuePayload payload);
+	Task<EmailQueuePayload> Dequeue();
 }

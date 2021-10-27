@@ -1,45 +1,40 @@
-﻿using System;
-using System.Threading;
-using PopForums.Configuration;
+﻿namespace PopForums.Services;
 
-namespace PopForums.Services
+public class CloseAgedTopicsWorker
 {
-	public class CloseAgedTopicsWorker
+	private static readonly object _syncRoot = new object();
+
+	private CloseAgedTopicsWorker()
 	{
-		private static readonly object _syncRoot = new object();
+	}
 
-		private CloseAgedTopicsWorker()
+	public void CloseOldTopics(ITopicService topicService, IErrorLog errorLog)
+	{
+		if (!Monitor.TryEnter(_syncRoot)) return;
+		try
 		{
+			topicService.CloseAgedTopics();
 		}
-
-		public void CloseOldTopics(ITopicService topicService, IErrorLog errorLog)
+		catch (Exception exc)
 		{
-			if (!Monitor.TryEnter(_syncRoot)) return;
-			try
-			{
-				topicService.CloseAgedTopics();
-			}
-			catch (Exception exc)
-			{
-				errorLog.Log(exc, ErrorSeverity.Error);
-			}
-			finally
-			{
-				Monitor.Exit(_syncRoot);
-			}
+			errorLog.Log(exc, ErrorSeverity.Error);
 		}
-
-		private static CloseAgedTopicsWorker _instance;
-		public static CloseAgedTopicsWorker Instance
+		finally
 		{
-			get
+			Monitor.Exit(_syncRoot);
+		}
+	}
+
+	private static CloseAgedTopicsWorker _instance;
+	public static CloseAgedTopicsWorker Instance
+	{
+		get
+		{
+			if (_instance == null)
 			{
-				if (_instance == null)
-				{
-					_instance = new CloseAgedTopicsWorker();
-				}
-				return _instance;
+				_instance = new CloseAgedTopicsWorker();
 			}
+			return _instance;
 		}
 	}
 }

@@ -1,11 +1,8 @@
-﻿using PopForums.Models;
+﻿namespace PopForums.Repositories;
 
-namespace PopForums.Repositories
+public interface ISetupRepository
 {
-	public interface ISetupRepository
-	{
-		bool IsConnectionPossible();
-		bool IsDatabaseSetup();
-		void SetupDatabase();
-	}
+	bool IsConnectionPossible();
+	bool IsDatabaseSetup();
+	void SetupDatabase();
 }

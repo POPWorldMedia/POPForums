@@ -1,26 +1,22 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿namespace PopForums.Services;
 
-namespace PopForums.Services
+public class UserSessionApplicationService : ApplicationServiceBase
 {
-	public class UserSessionApplicationService : ApplicationServiceBase
+	public override void Start(IServiceProvider serviceProvider)
 	{
-		public override void Start(IServiceProvider serviceProvider)
-		{
-			_userSessionService = serviceProvider.GetService<IUserSessionService>();
-			base.Start(serviceProvider);
-		}
+		_userSessionService = serviceProvider.GetService<IUserSessionService>();
+		base.Start(serviceProvider);
+	}
 
-		private IUserSessionService _userSessionService;
+	private IUserSessionService _userSessionService;
 
-		protected override void ServiceAction()
-		{
-			UserSessionWorker.Instance.CleanUpExpiredSessions(_userSessionService, ErrorLog);
-		}
+	protected override void ServiceAction()
+	{
+		UserSessionWorker.Instance.CleanUpExpiredSessions(_userSessionService, ErrorLog);
+	}
 
-		protected override int GetInterval()
-		{
-			return 10000;
-		}
+	protected override int GetInterval()
+	{
+		return 10000;
 	}
 }

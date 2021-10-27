@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using PopForums.Models;
+﻿namespace PopForums.Repositories;
 
-namespace PopForums.Repositories
+public interface IAwardCalculationQueueRepository
 {
-	public interface IAwardCalculationQueueRepository
-	{
-		Task Enqueue(AwardCalculationPayload payload);
-		Task<KeyValuePair<string, int>> Dequeue();
-	}
+	Task Enqueue(AwardCalculationPayload payload);
+	Task<KeyValuePair<string, int>> Dequeue();
 }

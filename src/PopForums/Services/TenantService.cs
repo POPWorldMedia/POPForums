@@ -1,23 +1,20 @@
-﻿using System;
+﻿namespace PopForums.Services;
 
-namespace PopForums.Services
+public interface ITenantService
 {
-	public interface ITenantService
+	void SetTenant(string tenantID);
+	string GetTenant();
+}
+
+public class TenantService : ITenantService
+{
+	public void SetTenant(string tenantID)
 	{
-		void SetTenant(string tenantID);
-		string GetTenant();
+		throw new NotImplementedException();
 	}
 
-	public class TenantService : ITenantService
+	public string GetTenant()
 	{
-		public void SetTenant(string tenantID)
-		{
-			throw new NotImplementedException();
-		}
-
-		public string GetTenant()
-		{
-			return string.Empty;
-		}
+		return string.Empty;
 	}
 }

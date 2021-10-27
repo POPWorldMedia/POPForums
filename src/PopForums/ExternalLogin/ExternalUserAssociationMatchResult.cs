@@ -1,11 +1,8 @@
-﻿using PopForums.Models;
+﻿namespace PopForums.ExternalLogin;
 
-namespace PopForums.ExternalLogin
+public class ExternalUserAssociationMatchResult
 {
-	public class ExternalUserAssociationMatchResult
-	{
-		public bool Successful { get; set; }
-		public ExternalUserAssociation ExternalUserAssociation { get; set; }
-		public User User { get; set; }
-	}
+	public bool Successful { get; set; }
+	public ExternalUserAssociation ExternalUserAssociation { get; set; }
+	public User User { get; set; }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace PopForums.Repositories;
 
-namespace PopForums.Repositories
+public interface ITopicViewLogRepository
 {
-	public interface ITopicViewLogRepository
-	{
-		Task Log(int? userID, int topicID, DateTime timeStamp);
-	}
+	Task Log(int? userID, int topicID, DateTime timeStamp);
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace PopForums.Models;
 
-namespace PopForums.Models
+public class PostWithChildren
 {
-	public class PostWithChildren
-	{
-		public Post Post { get; set; }
-		public List<Post> Children { get; set; } 
-		public DateTime? LastReadTime { get; set; }
-	}
+	public Post Post { get; set; }
+	public List<Post> Children { get; set; } 
+	public DateTime? LastReadTime { get; set; }
 }

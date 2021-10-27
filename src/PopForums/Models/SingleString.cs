@@ -1,7 +1,6 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public class SingleString
 {
-	public class SingleString
-	{
-		public string String { get; set; }
-	}
+	public string String { get; set; }
 }

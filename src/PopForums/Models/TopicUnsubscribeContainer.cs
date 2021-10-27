@@ -1,8 +1,7 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public class TopicUnsubscribeContainer
 {
-	public class TopicUnsubscribeContainer
-	{
-		public User User { get; set; }
-		public Topic Topic { get; set; }
-	}
+	public User User { get; set; }
+	public Topic Topic { get; set; }
 }

@@ -1,8 +1,7 @@
-﻿namespace PopForums.Models
+﻿namespace PopForums.Models;
+
+public enum PrivateMessageBoxType
 {
-	public enum PrivateMessageBoxType
-	{
-		Inbox = 1,
-		Archive = 2
-	}
+	Inbox = 1,
+	Archive = 2
 }
