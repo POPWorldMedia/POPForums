@@ -1,8 +1,7 @@
-﻿namespace PopForums.AzureKit.Redis
+﻿namespace PopForums.AzureKit.Redis;
+
+public interface ICacheTelemetry
 {
-	public interface ICacheTelemetry
-	{
-		void Start();
-		void End(string eventName, string key);
-	}
+	void Start();
+	void End(string eventName, string key);
 }

@@ -1,13 +1,12 @@
-﻿namespace PopForums.AzureKit.Redis
-{
-	public class CacheTelemetrySink : ICacheTelemetry
-	{
-		public void Start()
-		{
-		}
+﻿namespace PopForums.AzureKit.Redis;
 
-		public void End(string eventName, string key)
-		{
-		}
+public class CacheTelemetrySink : ICacheTelemetry
+{
+	public void Start()
+	{
+	}
+
+	public void End(string eventName, string key)
+	{
 	}
 }
