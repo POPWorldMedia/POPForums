@@ -1,10 +1,7 @@
-﻿using PopForums.Models;
+﻿namespace PopForums.Mvc.Areas.Forums.Models;
 
-namespace PopForums.Mvc.Areas.Forums.Models
+public class UserNavigationContainer
 {
-    public class UserNavigationContainer
-    {
-		public User User { get; set; }
-		public string PMCount { get; set; }
-    }
+	public User User { get; set; }
+	public string PMCount { get; set; }
 }

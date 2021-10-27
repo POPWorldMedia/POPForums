@@ -1,8 +1,5 @@
-﻿using System;
+﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
 
-namespace PopForums.Mvc.Areas.Forums.Authorization
+public class PopForumsAuthorizationIgnoreAttribute : Attribute
 {
-    public class PopForumsAuthorizationIgnoreAttribute : Attribute
-    {
-    }
 }

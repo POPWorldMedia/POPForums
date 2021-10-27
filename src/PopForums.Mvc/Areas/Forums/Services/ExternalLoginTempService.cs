@@ -1,53 +1,47 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
-using PopForums.Mvc.Areas.Forums.Models;
+﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
-namespace PopForums.Mvc.Areas.Forums.Services
+public interface IExternalLoginTempService
 {
-	public interface IExternalLoginTempService
+	void Persist(ExternalLoginState externalLoginState);
+	ExternalLoginState Read();
+	void Remove();
+}
+
+public class ExternalLoginTempService : IExternalLoginTempService
+{
+	private readonly IDataProtectionProvider _dataProtectionProvider;
+	private readonly IHttpContextAccessor _httpContextAccessor;
+	private const string CookieKey = "pf_temploginstate";
+
+	public ExternalLoginTempService(IDataProtectionProvider dataProtectionProvider, IHttpContextAccessor httpContextAccessor)
 	{
-		void Persist(ExternalLoginState externalLoginState);
-		ExternalLoginState Read();
-		void Remove();
+		_dataProtectionProvider = dataProtectionProvider;
+		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public class ExternalLoginTempService : IExternalLoginTempService
+	public void Persist(ExternalLoginState externalLoginState)
 	{
-		private readonly IDataProtectionProvider _dataProtectionProvider;
-		private readonly IHttpContextAccessor _httpContextAccessor;
-		private const string CookieKey = "pf_temploginstate";
+		var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
+		var serializedResult = JsonSerializer.Serialize(externalLoginState);
+		var encryptedResult = protector.Protect(serializedResult);
+		_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult);
+	}
 
-		public ExternalLoginTempService(IDataProtectionProvider dataProtectionProvider, IHttpContextAccessor httpContextAccessor)
+	public ExternalLoginState Read()
+	{
+		var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
+		var encryptedTempAuth = _httpContextAccessor.HttpContext.Request.Cookies[CookieKey];
+		if (string.IsNullOrEmpty(encryptedTempAuth))
 		{
-			_dataProtectionProvider = dataProtectionProvider;
-			_httpContextAccessor = httpContextAccessor;
+			return null;
 		}
+		var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
+		var result = JsonSerializer.Deserialize<ExternalLoginState>(decryptedSerialized);
+		return result;
+	}
 
-		public void Persist(ExternalLoginState externalLoginState)
-		{
-			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
-			var serializedResult = JsonSerializer.Serialize(externalLoginState);
-			var encryptedResult = protector.Protect(serializedResult);
-			_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult);
-		}
-
-		public ExternalLoginState Read()
-		{
-			var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
-			var encryptedTempAuth = _httpContextAccessor.HttpContext.Request.Cookies[CookieKey];
-			if (string.IsNullOrEmpty(encryptedTempAuth))
-			{
-				return null;
-			}
-			var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
-			var result = JsonSerializer.Deserialize<ExternalLoginState>(decryptedSerialized);
-			return result;
-		}
-
-		public void Remove()
-		{
-			_httpContextAccessor.HttpContext.Response.Cookies.Delete(CookieKey);
-		}
+	public void Remove()
+	{
+		_httpContextAccessor.HttpContext.Response.Cookies.Delete(CookieKey);
 	}
 }

@@ -1,8 +1,7 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Models
+﻿namespace PopForums.Mvc.Areas.Forums.Models;
+
+public class AwardConditionDeleteContainer
 {
-	public class AwardConditionDeleteContainer
-	{
-		public string AwardDefinitionID { get; set; }
-		public string EventDefinitionID { get; set; }
-	}
+	public string AwardDefinitionID { get; set; }
+	public string EventDefinitionID { get; set; }
 }

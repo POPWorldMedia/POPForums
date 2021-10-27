@@ -1,33 +1,29 @@
-﻿using Microsoft.AspNetCore.Http;
-using PopForums.Models;
+﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
-namespace PopForums.Mvc.Areas.Forums.Services
+public interface IUserRetrievalShim
 {
-	public interface IUserRetrievalShim
+	User GetUser();
+	Profile GetProfile();
+}
+
+public class UserRetrievalShim : IUserRetrievalShim
+{
+	private readonly IHttpContextAccessor _httpContextAccessor;
+
+	public UserRetrievalShim(IHttpContextAccessor httpContextAccessor)
 	{
-		User GetUser();
-		Profile GetProfile();
+		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public class UserRetrievalShim : IUserRetrievalShim
+	public User GetUser()
 	{
-		private readonly IHttpContextAccessor _httpContextAccessor;
+		var user = _httpContextAccessor.HttpContext?.Items["PopForumsUser"] as User;
+		return user;
+	}
 
-		public UserRetrievalShim(IHttpContextAccessor httpContextAccessor)
-		{
-			_httpContextAccessor = httpContextAccessor;
-		}
-
-		public User GetUser()
-	    {
-			var user = _httpContextAccessor.HttpContext?.Items["PopForumsUser"] as User;
-			return user;
-		}
-
-		public Profile GetProfile()
-		{
-			var profile = _httpContextAccessor.HttpContext?.Items["PopForumsProfile"] as Profile;
-			return profile;
-		}
-    }
+	public Profile GetProfile()
+	{
+		var profile = _httpContextAccessor.HttpContext?.Items["PopForumsProfile"] as Profile;
+		return profile;
+	}
 }
