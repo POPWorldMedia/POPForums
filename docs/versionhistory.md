@@ -13,6 +13,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Migrate to Bootstrap v5. #215
 * Eliminate dependencies on jQuery. #216
 * Migrate admin to Vue.js v3. #232
+* Embrace C# concepts. #249
 * Use crop mode for avatars when they're uploaded. #239
 * Update text parser to default to https on www URL's. #248
 * Trim IP and email ban entries before saving. #222
