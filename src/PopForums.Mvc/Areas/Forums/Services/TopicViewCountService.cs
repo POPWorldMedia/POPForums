@@ -36,8 +36,7 @@ namespace PopForums.Mvc.Areas.Forums.Services
 
 		public void SetViewedTopic(Topic topic)
 		{
-			var context = _httpContextAccessor.HttpContext;
-			context?.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString());
+			_httpContextAccessor?.HttpContext?.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString());
 		}
 	}
 }
