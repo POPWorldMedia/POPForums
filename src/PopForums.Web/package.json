@@ -1,6 +1,6 @@
 {
   "name": "popforums",
-  "version": "17.99.0",
+  "version": "18.0.0",
   "scripts": {},
   "dependencies": {
     "@microsoft/signalr": "6.0.0-rc.2.21480.10",
@@ -8,7 +8,7 @@
     "tinymce": "5.10.0",
     "vue": "3.2.20",
     "vue-router": "4.0.12",
-    "axios": "0.23.0"
+    "axios": "0.24.0"
   },
   "devDependencies": {
     "gulp": "4.0.2",
