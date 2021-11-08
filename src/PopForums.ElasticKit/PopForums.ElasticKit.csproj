@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 	  <Description>PopForums ElasticKit Class Library</Description>
-	  <VersionPrefix>18.0.0</VersionPrefix>
+	  <VersionPrefix>18.0.99</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
 	  <TargetFramework>net6.0</TargetFramework>
 	  <AssemblyName>PopForums.ElasticKit</AssemblyName>
