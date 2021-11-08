@@ -23,7 +23,7 @@ Once you get the background stuff out of the web app context, some of the config
 * In scoring game: The interval is again irrelevant because of the queue.
 
 ## Running locally
-Unfortunately, you can't quite run everything in this stack locally, but it's close. Here's the breakdown:
+You can almost run everything in this stack locally. Here's the breakdown:
 * Redis is easy to run locally using a Docker container.
 * Azure Storage (for queues) can be simulated locally running the Azure Storage Emulator on Windows, or [Azurite](https://github.com/azure/azurite) on Mac.
 * Azure Functions CLI runs on Windows and Mac.
@@ -33,19 +33,20 @@ Unfortunately, you can't quite run everything in this stack locally, but it's cl
 ## Using Redis for caching
 Redis is a great tool for caching data for a stand-alone instance of the app or between many nodes. The default caching provided by the `PopForms.Sql` implementation uses in-memory cache in the app instance itself, which doesn't work when you have many nodes (that is, several web heads running behind a load balancer, like a scaled-out Azure App Service). Redis helps by caching data in a "neutral" location between these nodes.
 
-To use Redis (which is available all over the place, and _not_ just in Azure), use the following configuration lines in your ASP.NET Core startup:
+To use Redis (which is available all over the place, and _not_ just in Azure), use the following configuration lines in your ASP.NET `Program.cs`:
 
 ```
-public void ConfigureServices(IServiceCollection services)
-{
-	services.AddPopForumsRedisCache();
-	services.AddSignalR().AddRedisBackplaneForPopForums();
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+...
+services.AddPopForumsRedisCache();
+services.AddSignalR().AddRedisBackplaneForPopForums();
 ...
 ```
 
 The first line configures the app to use the Redis caching mechanism. Under the hood, this replaces the `PopForums.Sql` implementation of `ICacheHelper` with the one found in `PopForums.AzureKit`. The second line adds `AddRedisBackplaneForPopForums()` to the configuration of SignalR, so that websocket messages back to the browser are funneled to clients regardless of which web node they're connected to. For example, a user can make a post connected to one node, and the message to update the recent topics page will be signaled to update for users on every node.
 
-You'll also need to setup some values in the `appsettings.json` configuration file:
+You'll also need to setup some values in the `appsettings.json` configuration file (or equivalents in your Azure App Service configuration):
 
 ```
 {
@@ -111,23 +112,24 @@ public class WebCacheTelemetry : ICacheTelemetry
 }
 ```
 
-Then, to wire up this new implemenation, we swap out the event sink for our code in `Startup`:
+Then, to wire up this new implemenation, we swap out the event sink for our code in `Program.cs`:
 
 `services.Replace(ServiceDescriptor.Transient<ICacheTelemetry, WebCacheTelemetry>());`
 
 ## Using Azure Storage queues and Functions
 Azure Storage queues can be used instead of using SQL tables. Using SQL for this is not inherently bad, and honestly the volume of queued things in POP Forums probably never gets huge even on a busy forum, but with queues you get some of the magic of triggering Azure Functions, for example. These are most logically used when you have functions.
 
-To enable queue usage, use this in your start up config:
+To enable queue usage, use this in your `Program.cs` config:
 
 ```
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddPopForumsAzureFunctionsAndQueues();
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+...
+services.AddPopForumsAzureFunctionsAndQueues();
 ...
 ```
 
-It's important to _not_ have `services.AddPopForumsBackgroundServices();` in your startup, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
+It's important to _not_ have `services.AddPopForumsBackgroundServices();` in your `Program.cs`, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
 
 You'll also need to add a connection string to your Azure Storage account:
 
@@ -138,20 +140,21 @@ You'll also need to add a connection string to your Azure Storage account:
       "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=youraccountname;AccountKey=xxxYourAccountKeyxxx=="
 ...
 ```
-Look at the documentation to see how to provision and deploy Azure Functions, and apply that new knowledge to deploy the `PopForums.AzureKit.Functions` project. (Defining what Azure Functions are is beyond the scope of this documentation.) You should avoid committing any connection secrets to configuration in source control. See the section above about configuration, and make sure that your Functions have the same settings as your web app.
+Look at the Azure documentation to see how to provision and deploy Azure Functions, and apply that new knowledge to deploy the `PopForums.AzureKit.Functions` project. (Defining Azure Functions is beyond the scope of this documentation.) You should avoid committing any connection secrets to configuration in source control. See the section above about configuration, and make sure that your Functions have the same settings as your web app.
 
 The connection string for using the local Azure storage emulator is `UseDevelopmentStorage=true`.
 
 ## Using Azure Search
 
-_Note: v18 breaks compatibility with previous indexes using Azure Search._
+_Note: v18+ breaks compatibility with previous indexes using Azure Search._
 
-Use this in your startup configuration if you're using web in-process search indexing:
+Use this in your `Program.cs` configuration if you're using web in-process search indexing:
 
 ```
-public void ConfigureServices(IServiceCollection services)
-{
-	services.AddPopForumsAzureSearch();
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+...
+services.AddPopForumsAzureSearch();
 ...
 ```
 Under the hood, this replaces the `PopForums.Sql` implementation of the search interfaces with those used for Azure Search.

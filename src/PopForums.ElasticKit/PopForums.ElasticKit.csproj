@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 	  <Description>PopForums ElasticKit Class Library</Description>
-	  <VersionPrefix>17.99.0</VersionPrefix>
+	  <VersionPrefix>18.0.0</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
 	  <TargetFramework>net6.0</TargetFramework>
 	  <AssemblyName>PopForums.ElasticKit</AssemblyName>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NEST" Version="7.15.1" />
+    <PackageReference Include="NEST" Version="7.15.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
   </ItemGroup>
 

@@ -5,9 +5,9 @@ nav_order: 7
 ---
 # Using ElasticKit Library
 The `PopForums.ElasticKit` library makes it possible to wire up the following scenarios:
-* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x and v17.x uses v7.x of ElasticSearch._
+* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x,v17.x and v18.x uses v7.x of ElasticSearch._
 
-ElasticSearch can run quite literally anywhere in a docker container or straight up in a VM, if that's your thing. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed. In the commercial hosted version of POP Forums, we use Elastic's managed service running in Azure.
+ElasticSearch can run quite literally anywhere in a docker container or straight up in a VM, if that's your thing. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed. In the commercial hosted version of POP Forums, we use Elastic's managed service running in Azure. Elastic runs in all of the major clouds and is generally reasonably priced.
 
 ## Configuration with Azure App Services and Azure Functions
 
@@ -18,23 +18,18 @@ The POP Forums configuration system uses the `appsettings.json` file, but adhere
 * In search: The search indexing interval only reacts when something is queued for in-Web processing, not Azure Functions. Furthermore, if you use ElasticSearch, the junk words no longer apply, as these indexing strategies are handled by ES.
 
 ## Using ElasticSearch for search
-ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, you'll need to configure this line in your Startup.cs if you're using web in-process search processing:
+ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, you'll need to configure this line in your `Program.cs` if you're using web in-process search processing:
 
 ```
 using PopForums.ElasticKit;
 ...
-namespace YourWebApp
-{
-	public class Startup
-	{
-	...
-		public void ConfigureServices(IServiceCollection services)
-		{
-			...
-			services.AddPopForumsElasticSearch();
+namespace YourWebApp;
+
+...
+services.AddPopForumsElasticSearch();
 ```
 
-For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` setting in the portal blade for the functions to `elasticsearch`.
+For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` (or `PopForums__Search__Provider` on a Linux instance) setting in the portal blade for the functions to `elasticsearch`.
 
 You'll also need to setup the right configuration values if you're running web in-process:
 

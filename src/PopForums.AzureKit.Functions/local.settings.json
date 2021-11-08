@@ -6,7 +6,7 @@
   },
   "PopForums": {
     "Database": {
-      "ConnectionString": "server=localhost;Database=popforums17;Trusted_Connection=True;TrustServerCertificate=True;"
+      "ConnectionString": "server=localhost;Database=popforums18;Trusted_Connection=True;TrustServerCertificate=True;"
     },
     "Search": {
       "Url": "http://localhost:9200",

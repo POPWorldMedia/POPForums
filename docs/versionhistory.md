@@ -7,7 +7,7 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version 18.0.0 (xx/xx/xx)
+## Version 18.0.0 (11/8/21)
 
 * Update to .NET 6. #211
 * Migrate to Bootstrap v5. #215
