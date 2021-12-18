@@ -4,24 +4,25 @@ public class Settings
 {
 	public Settings()
 	{
-		TermsOfService = String.Empty;
+		TermsOfService = string.Empty;
 		ServerTimeZone = -5;
 		ServerDaylightSaving = true;
 		IsNewUserApproved = true;
 		TopicsPerPage = 20;
 		PostsPerPage = 20;
-		ForumTitle = String.Empty;
+		ForumTitle = string.Empty;
 		MinimumSecondsBetweenPosts = 30;
 		SmtpServer = "localhost";
 		SmtpPort = 25;
-		MailerAddress = String.Empty;
+		MailerAddress = string.Empty;
+		ReplyToAddress = string.Empty;
 		UseEsmtp = false;
-		SmtpUser = String.Empty;
-		SmtpPassword = String.Empty;
+		SmtpUser = string.Empty;
+		SmtpPassword = string.Empty;
 		MailSendingInverval = 1500;
 		UseSslSmtp = false;
 		SessionLength = 20;
-		CensorWords = String.Empty;
+		CensorWords = string.Empty;
 		CensorCharacter = "*";
 		AllowImages = false;
 		LogSecurity = true;
@@ -37,20 +38,20 @@ public class Settings
 		UserAvatarMaxHeight = 90;
 		UserAvatarMaxWidth = 90;
 		UserAvatarMaxkBytes = 10;
-		MailSignature = String.Empty;
+		MailSignature = string.Empty;
 		ScoringGameCalculatorInterval = 1000;
 		MailerQuantity = 4;
 		UseGoogleLogin = false;
 		UseFacebookLogin = false;
-		FacebookAppID = String.Empty;
-		FacebookAppSecret = String.Empty;
+		FacebookAppID = string.Empty;
+		FacebookAppSecret = string.Empty;
 		UseMicrosoftLogin = false;
-		MicrosoftClientID = String.Empty;
-		MicrosoftClientSecret = String.Empty;
+		MicrosoftClientID = string.Empty;
+		MicrosoftClientSecret = string.Empty;
 		YouTubeHeight = 360;
 		YouTubeWidth = 640;
-		GoogleClientId = String.Empty;
-		GoogleClientSecret = String.Empty;
+		GoogleClientId = string.Empty;
+		GoogleClientSecret = string.Empty;
 		UseOAuth2Login = false;
 		OAuth2ClientID = string.Empty;
 		OAuth2ClientSecret = string.Empty;
@@ -74,6 +75,7 @@ public class Settings
 	public virtual string SmtpServer { get; set; }
 	public virtual int SmtpPort { get; set; }
 	public virtual string MailerAddress { get; set; }
+	public virtual string ReplyToAddress { get; set; }
 	public virtual bool UseEsmtp { get; set; }
 	public virtual string SmtpUser { get; set; }
 	public virtual string SmtpPassword { get; set; }

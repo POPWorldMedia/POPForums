@@ -65,6 +65,8 @@ public class SmtpWrapper : ISmtpWrapper
 		message.Headers.Add("X-Mailer", "POP Forums");
 		message.To.Add(new MailboxAddress(forumMessage.ToName, forumMessage.ToEmail));
 		message.From.Add(new MailboxAddress(forumMessage.FromName, forumMessage.FromEmail));
+		if (!string.IsNullOrWhiteSpace(_settingsManager.Current.ReplyToAddress))
+			message.ReplyTo.Add(new MailboxAddress(forumMessage.FromName, _settingsManager.Current.ReplyToAddress));
 		message.Subject = forumMessage.Subject;
 		var builder = new BodyBuilder();
 		builder.TextBody = forumMessage.Body;

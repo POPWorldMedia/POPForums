@@ -436,6 +436,10 @@
 			<div class="col-sm-8"><input type="text" v-model="settings.mailerAddress" id="MailerAddress" class="form-control" /></div>
 		</div>
 		<div class="mb-3 row">
+			<label for="ReplyToAddress" class="col-sm-4 col-form-label">Reply To</label>
+			<div class="col-sm-8"><input type="text" v-model="settings.replyToAddress" id="ReplyToAddress" class="form-control" /></div>
+		</div>
+		<div class="mb-3 row">
 			<div class="col-sm-8 offset-sm-4">
 				<label for="UseSslSmtp"><input type="checkbox" v-model="settings.useSslSmtp" id="UseSslSmtp" class="form-check-input" /> @PopForums.Resources.UseSsl</label>
 			</div>
