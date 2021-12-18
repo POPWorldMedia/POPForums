@@ -159,6 +159,7 @@ public class SettingsTests
 		const bool isClosingAgedTopics = true;
 		const int closeAgedTopicsDays = 757;
 		const bool isPrivateForumInstance = true;
+		const string replyToAddress = "D@e.com";
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -172,6 +173,7 @@ public class SettingsTests
 			{"SmtpServer", smtpServer},
 			{"SmtpPort", smtpPort},
 			{"MailerAddress", mailerAddress},
+			{"ReplyToAddress", replyToAddress},
 			{"UseEsmtp", useEsmtp},
 			{"SmtpUser", smtpUser},
 			{"SmtpPassword", smtpPassword},
@@ -236,6 +238,7 @@ public class SettingsTests
 		settings.SmtpServer = smtpServer;
 		settings.SmtpPort = smtpPort;
 		settings.MailerAddress = mailerAddress;
+		settings.ReplyToAddress = replyToAddress;
 		settings.UseEsmtp = useEsmtp;
 		settings.SmtpUser = smtpUser;
 		settings.SmtpPassword = smtpPassword;
