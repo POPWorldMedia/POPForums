@@ -24,8 +24,8 @@ Once you get the background stuff out of the web app context, some of the config
 
 ## Running locally
 You can almost run everything in this stack locally. Here's the breakdown:
-* Redis is easy to run locally using a Docker container.
-* Azure Storage (for queues) can be simulated locally running the Azure Storage Emulator on Windows, or [Azurite](https://github.com/azure/azurite) on Mac.
+* Redis is easy to run locally using a Docker container: `docker run -p 6379:6379 -d redis`
+* Azure Storage (for queues) can be simulated locally running [Azurite](https://github.com/azure/azurite) on Windows or Mac (the Azure Storage Emulator has been deprecated). Run this in a Docker container with `docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite`
 * Azure Functions CLI runs on Windows and Mac.
 * Azure Search only runs in Azure.
 * ElasticSearch can run in a Docker container.
