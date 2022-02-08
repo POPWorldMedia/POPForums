@@ -86,6 +86,7 @@ PopForums.scrollToPostFromHash = () => {
 			var newPosition = tagPosition - crumbHeight - margin;
 			window.scrollBy({ top: newPosition, behavior: 'auto' });
 		}
+		PopForums.currentTopicState.isScrollAdjusted = true;
 	}
 };
 
