@@ -51,6 +51,7 @@
 				<router-link to="/search" class="dropdown-item">@PopForums.Resources.Search</router-link>
 				<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
 				<div class="dropdown-divider"></div>
+				<router-link to="/recentusers" class="dropdown-item">Recent Users</router-link>
 				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
 				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
 				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
@@ -581,6 +582,24 @@
 	</main>
 </script>
 
+
+<script type="x-templates" id="RecentUsers">
+	<main>
+        <h2>Recent Users</h2>
+        
+        <table class="table table-striped mt-3">
+            <tbody>
+	            <tr v-for="u in results">
+	                <td><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link></td>
+	                <td>{{u.email}}</td>
+	                <td>{{u.creationDate}}</td>
+	            </tr>
+            </tbody>
+        </table>
+    </main>
+</scipt>
+
+
 <script type="x-templates" id="EditUser">
 	<main>
 		<h2>@PopForums.Resources.EditUser</h2>
@@ -606,6 +625,8 @@
 			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning ms-3">@PopForums.Resources.NoResults</span></transition>
 			<div v-for="u in searchResults"><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
 	</main>
+
+
 </script>
 
 <script type="x-templates" id="EditUserDetail">

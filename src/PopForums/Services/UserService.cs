@@ -44,6 +44,7 @@ public interface IUserService
 	Task<int> GetTotalUsers();
 	Task<List<User>> GetSubscribedUsers();
 	Dictionary<User, int> GetUsersByPointTotals(int top);
+	Task<List<UserResult>> GetRecentUsers();
 }
 
 public class UserService : IUserService
@@ -524,5 +525,13 @@ public class UserService : IUserService
 	public Dictionary<User, int> GetUsersByPointTotals(int top)
 	{
 		return _userRepository.GetUsersByPointTotals(top);
+	}
+
+	public async Task<List<UserResult>> GetRecentUsers()
+	{
+		var users = await _userRepository.GetRecentUsers();
+		var userResults = users.Select(x => new UserResult
+			{UserID = x.UserID, Name = x.Name, Email = x.Email, CreationDate = x.CreationDate}).ToList();
+		return userResults;
 	}
 }
