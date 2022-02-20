@@ -204,6 +204,15 @@ public class AdminApiController : Controller
 		return NoContent();
 	}
 
+	// ********** recent users
+
+	[HttpGet("/Forums/AdminApi/GetRecentUsers")]
+	public async Task<ActionResult<List<UserResult>>> GetRecentUsers()
+	{
+		var userResults = await _userService.GetRecentUsers();
+		return userResults;
+	}
+
 	// ********** edit user
 
 	[HttpPost("/Forums/AdminApi/EditUserSearch")]

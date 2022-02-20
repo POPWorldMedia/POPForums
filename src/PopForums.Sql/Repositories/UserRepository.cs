@@ -247,4 +247,12 @@ public class UserRepository : IUserRepository
 			list = connection.QueryAsync<User>(sql, parameters));
 		return list.Result.ToList();
 	}
+
+	public async Task<List<User>> GetRecentUsers()
+	{
+		Task<IEnumerable<User>> list = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			list = connection.QueryAsync<User>("SELECT TOP 100 " + PopForumsUserColumns + " FROM pf_PopForumsUser ORDER BY CreationDate DESC"));
+		return list.Result.ToList();
+	}
 }

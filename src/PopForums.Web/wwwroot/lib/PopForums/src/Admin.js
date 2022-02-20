@@ -316,6 +316,24 @@ const ExternalLogins = {
 	template: "#ExternalLogins"
 }
 
+const RecentUsers = {
+	mixins: [loadingMixin],
+	template: "#RecentUsers",
+	data() {
+		return {
+			results: []
+		}
+	},
+	created: function () {
+		this.startLoad();
+		axios.get(basePath + "GetRecentUsers").then(response => {
+			this.results = response.data;
+			this.endLoad();
+		})
+			.catch(error => this.errorAlert());
+	},
+}
+
 const EditUser = {
 	mixins: [loadingMixin],
 	template: "#EditUser",
@@ -1015,6 +1033,7 @@ const routes = [
 			{ path: "/email", component: Email },
 			{ path: "/search", component: Search },
 			{ path: "/externallogins", component: ExternalLogins },
+			{ path: "/recentusers", component: RecentUsers },
 			{ path: "/edituser", component: EditUser },
 			{ path: "/edituser/:id", component: EditUserDetail },
 			{ path: "/userroles", component: UserRoles },
