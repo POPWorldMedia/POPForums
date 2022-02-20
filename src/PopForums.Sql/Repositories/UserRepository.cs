@@ -248,11 +248,13 @@ public class UserRepository : IUserRepository
 		return list.Result.ToList();
 	}
 
-	public async Task<List<User>> GetRecentUsers()
+	public async Task<List<UserResult>> GetRecentUsers()
 	{
-		Task<IEnumerable<User>> list = null;
+		Task<IEnumerable<UserResult>> list = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			list = connection.QueryAsync<User>("SELECT TOP 100 " + PopForumsUserColumns + " FROM pf_PopForumsUser ORDER BY CreationDate DESC"));
+			list = connection.QueryAsync<UserResult>(@"SELECT TOP 100 U.UserID, [Name], Email, CreationDate, [IP] 
+FROM pf_PopForumsUser U JOIN pf_SecurityLog S ON U.UserID = S.TargetUserID 
+WHERE SecurityLogType = 6 ORDER BY CreationDate DESC"));
 		return list.Result.ToList();
 	}
 }
