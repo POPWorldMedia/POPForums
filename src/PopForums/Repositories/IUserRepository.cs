@@ -92,5 +92,5 @@ public interface IUserRepository
 	Task<List<User>> GetUsersFromIDs(IList<int> ids);
 	Task<int> GetTotalUsers();
 	Dictionary<User, int> GetUsersByPointTotals(int top);
-	Task<List<User>> GetRecentUsers();
+	Task<List<UserResult>> GetRecentUsers();
 }

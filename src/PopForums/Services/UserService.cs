@@ -529,9 +529,7 @@ public class UserService : IUserService
 
 	public async Task<List<UserResult>> GetRecentUsers()
 	{
-		var users = await _userRepository.GetRecentUsers();
-		var userResults = users.Select(x => new UserResult
-			{UserID = x.UserID, Name = x.Name, Email = x.Email, CreationDate = x.CreationDate}).ToList();
+		var userResults = await _userRepository.GetRecentUsers();
 		return userResults;
 	}
 }
