@@ -150,6 +150,12 @@ CREATE NONCLUSTERED INDEX [IX_pf_SecurityLog_TargetUserID_ActivityDate] ON [dbo]
 (
 	[TargetUserID] ASC, [ActivityDate] DESC
 )
+CREATE NONCLUSTERED INDEX IX_pf_SecurityLog_TargetUserID_SecurityLogType ON pf_SecurityLog
+(
+	TargetUserID DESC, SecurityLogType
+)
+GO
+
 
 
 -- ******************************************************** pf_Category
