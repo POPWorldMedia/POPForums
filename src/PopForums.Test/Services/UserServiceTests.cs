@@ -13,6 +13,7 @@ public class UserServiceTests
 	private Mock<IBanRepository> _mockBanRepo;
 	private Mock<IForgotPasswordMailer> _mockForgotMailer;
 	private Mock<IImageService> _mockImageService;
+	private Mock<IConfig> _config;
 
 	private UserService GetMockedUserService()
 	{
@@ -27,8 +28,9 @@ public class UserServiceTests
 		_mockBanRepo = new Mock<IBanRepository>();
 		_mockForgotMailer = new Mock<IForgotPasswordMailer>();
 		_mockImageService = new Mock<IImageService>();
+		_config = new Mock<IConfig>();
 		_mockRoleRepo.Setup(r => r.GetUserRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-		return new UserService(_mockUserRepo.Object, _mockRoleRepo.Object, _mockProfileRepo.Object, _mockSettingsManager.Object, _mockUserAvatarRepo.Object, _mockUserImageRepo.Object, _mockSecurityLogService.Object, _mockTextParser.Object, _mockBanRepo.Object, _mockForgotMailer.Object, _mockImageService.Object);
+		return new UserService(_mockUserRepo.Object, _mockRoleRepo.Object, _mockProfileRepo.Object, _mockSettingsManager.Object, _mockUserAvatarRepo.Object, _mockUserImageRepo.Object, _mockSecurityLogService.Object, _mockTextParser.Object, _mockBanRepo.Object, _mockForgotMailer.Object, _mockImageService.Object, _config.Object);
 	}
 
 	[Fact]
