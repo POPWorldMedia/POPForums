@@ -53,6 +53,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 ```js
 {
 	"PopForums": {
+		"IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}", // used on Recent Users screen of admin to lookup IP addresses
 		"Database": {
 			"ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;TrustServerCertificate=True;"
 		},
@@ -78,7 +79,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 	}
 }
 ```
-* Attempt to run the app either locally, or in IIS, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums17`.
+* Attempt to run the app either locally, or in IIS, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums18`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to /Forums/Setup now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 * Building requires that you have Node.js (and therefore npm) installed to get the client side references and run Gulp tasks to copy them to the wwwroot folder. If you run the app and the scripts and CSS are broken, it's because you don't have this. To troubleshoot Gulp action, right-click `gulpfile.js` in the web project and choose "Task Runner Explorer."
