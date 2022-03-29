@@ -593,7 +593,7 @@
 	                <td><router-link :to="{path:'/edituser/'+u.userID}">{{u.name}}</router-link></td>
 	                <td>{{u.email}}</td>
 	                <td>{{u.creationDate}}</td>
-                    <td>{{u.ip}}</td>
+                    <td v-html="u.ip">{{u.ip}}</td>
 	            </tr>
             </tbody>
         </table>

@@ -14,4 +14,5 @@ public class ConfigContainer
 	public bool UseReCaptcha { get; set; }
 	public string ReCaptchaSiteKey { get; set; }
 	public string ReCaptchaSecretKey { get; set; }
+	public string IpLookupUrlFormat { get; set; }
 }

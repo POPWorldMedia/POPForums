@@ -60,10 +60,10 @@ public class UserService : IUserService
 	private readonly IBanRepository _banRepository;
 	private readonly IForgotPasswordMailer _forgotPasswordMailer;
 	private readonly IImageService _imageService;
+	private readonly IConfig _config;
 
 	// TODO: Dependencies on imageservice
-	public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IImageService imageService
-	)
+	public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IImageService imageService, IConfig config)
 	{
 		_userRepository = userRepository;
 		_roleRepository = roleRepository;
@@ -76,6 +76,7 @@ public class UserService : IUserService
 		_banRepository = banRepository;
 		_forgotPasswordMailer = forgotPasswordMailer;
 		_imageService = imageService;
+		_config = config;
 	}
 
 	public async Task SetPassword(User targetUser, string password, string ip, User user)
@@ -530,6 +531,14 @@ public class UserService : IUserService
 	public async Task<List<UserResult>> GetRecentUsers()
 	{
 		var userResults = await _userRepository.GetRecentUsers();
+		if (!string.IsNullOrEmpty(_config.IpLookupUrlFormat))
+		{
+			foreach (var item in userResults)
+			{
+				var url = string.Format(_config.IpLookupUrlFormat, item.IP);
+				item.IP = $"<a href=\"{url}\" target=\"_blank\">{item.IP}</a>";
+			}
+		}
 		return userResults;
 	}
 }
