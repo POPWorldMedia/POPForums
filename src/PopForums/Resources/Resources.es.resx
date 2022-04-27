@@ -1258,4 +1258,7 @@
   <data name="PrivateForum" xml:space="preserve">
     <value>Foro privado</value>
   </data>
+  <data name="AccountNotVerified" xml:space="preserve">
+    <value>Cuenta no verificada</value>
+  </data>
 </root>

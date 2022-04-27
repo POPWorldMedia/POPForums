@@ -1261,4 +1261,7 @@
   <data name="PrivateForum" xml:space="preserve">
     <value>Private forum</value>
   </data>
+  <data name="AccountNotVerified" xml:space="preserve">
+    <value>Account is not verified</value>
+  </data>
 </root>

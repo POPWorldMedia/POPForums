@@ -10,10 +10,13 @@
 @section HeaderContent {
 }
 
+@if (Model.IsApproved)
+{
+
 <h1>
 	@if (Model.AvatarID.HasValue)
 	{
-		<img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" class="img-fluid align-middle me-3 mt-3 mb-3"/>
+		<img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-fluid align-middle me-3 mt-3 mb-3"/>
 	}
 	@Model.Name
 </h1>
@@ -35,7 +38,7 @@
 					<div class="row">
 						<div class="col-4">@PopForums.Resources.Contact</div>
 						<div class="col-8">
-							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br />
+							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br/>
 							<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
 						</div>
 					</div>
@@ -107,7 +110,7 @@
 			@if (Model.ImageID.HasValue && Model.IsImageApproved)
 			{
 				<div class="my-3">
-					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-fluid" />
+					<img src="@Url.Action("UserImage", "Image", new { id = Model.ImageID })" alt="User image" class="img-fluid"/>
 				</div>
 			}
 		</div>
@@ -141,3 +144,15 @@
 		</div>
 	</div>
 </div>
+
+}
+else
+{
+	<h1>@PopForums.Resources.Profile</h1>
+
+	<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+		<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	</ul>
+
+	<p>@PopForums.Resources.AccountNotVerified</p>
+}

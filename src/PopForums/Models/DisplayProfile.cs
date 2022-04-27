@@ -19,6 +19,7 @@ public class DisplayProfile
 		if (userImage != null && userImage.IsApproved)
 			IsImageApproved = true;
 		Points = profile.Points;
+		IsApproved = user.IsApproved;
 	}
 
 	public int UserID { get; set; }
@@ -38,4 +39,5 @@ public class DisplayProfile
 	public int Points { get; set; }
 	public List<FeedEvent> Feed { get; set; }
 	public List<UserAward> UserAwards { get; set; }
+	public bool IsApproved { get; set; }
 }

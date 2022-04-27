@@ -1258,4 +1258,7 @@
   <data name="PrivateForum" xml:space="preserve">
     <value>Приватний форум</value>
   </data>
+  <data name="AccountNotVerified" xml:space="preserve">
+    <value>Обліковий запис не підтверджено</value>
+  </data>
 </root>

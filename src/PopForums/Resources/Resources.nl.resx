@@ -1247,4 +1247,7 @@
   <data name="PrivateForum" xml:space="preserve">
     <value>Privé forum</value>
   </data>
+  <data name="AccountNotVerified" xml:space="preserve">
+    <value>Kontoen er ikke bekreftet</value>
+  </data>
 </root>
