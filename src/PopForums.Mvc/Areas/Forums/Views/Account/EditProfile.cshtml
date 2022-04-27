@@ -1,9 +1,11 @@
 ﻿@model UserEditProfile
+@inject IUserRetrievalShim UserRetrievalShim
 @using System.Linq;
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
+	var user = UserRetrievalShim.GetUser();
 }
 
 <h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
@@ -21,9 +23,12 @@
 </ul>
 
 @if (ViewData["Result"] != null)
-{ <p class="alert alert-danger">@ViewData["Result"]</p> }
+{ <p class="alert alert-success">@ViewData["Result"]</p> }
 
-  <form asp-action="EditProfile" role="form" method="post">
+@if (!user.IsApproved)
+{ <p class="alert alert-warning"><a asp-action="Verify">@PopForums.Resources.VerifyAccount</a></p> }
+
+<form asp-action="EditProfile" role="form" method="post">
 	  
 <h2>@PopForums.Resources.Options</h2>
 

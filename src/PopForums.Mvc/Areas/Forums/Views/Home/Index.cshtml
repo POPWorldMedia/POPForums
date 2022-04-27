@@ -21,6 +21,9 @@
 
 @if (user != null)
 {
+	@if (!user.IsApproved)
+	{ <p class="alert alert-warning"><a asp-action="Verify">@PopForums.Resources.VerifyAccount</a></p> }
+
 	<form asp-action="MarkAllForumsRead" asp-controller="Forum" asp-antiforgery="false">
 		<input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="btn btn-primary" />
 	</form>
