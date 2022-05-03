@@ -1,5 +1,5 @@
 POP Forums
-Copyright (c)2019, POP World Media, LLC and Jeffrey M. Putz
+Copyright (c)1999-2022, POP World Media, LLC and Jeffrey M. Putz
 http://popw.com/
 https://jeffputz.com/
 
@@ -32,7 +32,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 OTHER LICENSES:
-.NET Core, Bootstrap, jQuery, popper.js, Json.NET, MailKit: MIT
-ASP.NET Core, SignalR, xunit, ImageSharp: Apache 2.0
+.NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit: MIT
+SignalR, xunit, ImageSharp: Apache 2.0
 TinyMCE: GNU GPL v2.1
 MOQ: BSD 3-Clause
