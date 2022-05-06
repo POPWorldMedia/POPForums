@@ -7,9 +7,9 @@
 	  <AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 	  <PackageId>PopForums.AzureKit.Functions</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <PackageProjectUrl>http://popforums.com/</PackageProjectUrl>
+	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-	  <Copyright>2021, POP World Media, LLC</Copyright>
+	  <Copyright>2022, POP World Media, LLC</Copyright>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
 	  <OutputType>Exe</OutputType>
   </PropertyGroup>

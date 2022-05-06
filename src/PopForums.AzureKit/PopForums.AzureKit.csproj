@@ -10,7 +10,7 @@
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-	  <Copyright>2021, POP World Media, LLC</Copyright>
+	  <Copyright>2022, POP World Media, LLC</Copyright>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
