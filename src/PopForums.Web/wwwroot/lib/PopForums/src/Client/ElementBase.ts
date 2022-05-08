@@ -1,7 +1,9 @@
 ﻿abstract class ElementBase extends HTMLElement {
-    // Derived class constructor must call super("IDofTemplateHTML") first.
+    // Derived class constructor must call super("IDofTemplateHTML") first, or super(null) if markup is generated internally.
     constructor(templateID: string) {
         super();
+        if (templateID == null)
+            return;
         this.attachShadow({ mode: 'open' });
         var el = document.getElementById(templateID) as HTMLTemplateElement;
         if (!el)
@@ -36,6 +38,6 @@
         return [segments[0], segments[1]];
     }
 
-    // Use this.shadowRoot in the implementation to manipulate the DOM as needed in response to the new data.
+    // Use this.shadowRoot in the implementation to manipulate the template DOM or straight markup as needed in response to the new data.
     abstract updateUI(data: any): void;
 }

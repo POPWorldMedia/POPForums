@@ -1,0 +1,7 @@
+﻿@model PopForums.Mvc.Models.UIState
+@{
+	var serialized = JsonSerializer.Serialize(Model, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+}
+<script>
+	var pfState = Object.assign(new PfState(), @Html.Raw(serialized));
+</script>

@@ -11,6 +11,7 @@ class StateBase {
             this._subs.set(propertyName, new Array<Function>());
         const callbacks = this._subs.get(propertyName);
         callbacks.push(eventHandler);
+        eventHandler();
     }
 
     notify(propertyName: string) {

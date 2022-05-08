@@ -29,7 +29,7 @@
   <ItemGroup>
     <Folder Include="Areas\Forums\" />
     <Folder Include="wwwroot\lib\PopForums\dist\" />
-    <Folder Include="wwwroot\lib\PopForums\src\" />
+    <Folder Include="wwwroot\lib\PopForums\src\Client\Components\" />
   </ItemGroup>
 
   <ItemGroup>
