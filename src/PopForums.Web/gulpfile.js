@@ -35,6 +35,16 @@ gulp.task("js", function() {
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
+gulp.task("ts", function () {
+    return gulp.src("./wwwroot/lib/PopForums/dist/PfClient.js")
+        .pipe(sourcemaps.init())
+        .pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
+        .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write("./"))
+		.pipe(gulp.dest("./wwwroot/lib/PopForums/dist"));
+});
+
 gulp.task("css", function () {
 	return gulp.src("./wwwroot/lib/PopForums/src/*.css")
 		.pipe(cssmin())
@@ -48,6 +58,4 @@ gulp.task("bump", function () {
 		.pipe(gulp.dest("./wwwroot/lib/PopForums/"));
 });
 
-gulp.task("min", gulp.series(["copies","js","css", "bump"]));
-
-gulp.task("default", gulp.series("min"));
+gulp.task("default", gulp.series(["copies","js","ts","css", "bump"]));

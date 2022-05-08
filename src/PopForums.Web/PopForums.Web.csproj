@@ -13,14 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="gulpfile.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="gulpfile.js" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views\*.cshtml;Areas\**\Views\**\*.cshtml">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
@@ -37,6 +29,14 @@
   <ItemGroup>
     <Folder Include="Areas\Forums\" />
     <Folder Include="wwwroot\lib\PopForums\dist\" />
+    <Folder Include="wwwroot\lib\PopForums\src\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.6.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

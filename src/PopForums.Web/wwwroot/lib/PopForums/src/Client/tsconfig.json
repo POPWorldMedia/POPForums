@@ -1,0 +1,12 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "outFile": "../../dist/PfClient.js",
+    "experimentalDecorators": true,
+    "watch": true,
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true
+  }
+}
