@@ -14,8 +14,6 @@ src/PopForums.Web/wwwroot/lib/*
 src/PopForums.Web/wwwroot/lib/PopForums/dist/*
 !src/PopForums.Web/wwwroot/lib/PopForums
 /src/PopForums.Web/node_modules
-/package-lock.json
-src/PopForums.Web/package-lock.json
 /src/PopForums.Web/Areas/Forums
 *.pubxml
 node_modules
