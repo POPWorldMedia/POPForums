@@ -17,7 +17,7 @@ PopForums.editorSettings = {
 	menubar: false,
 	toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
 	statusbar: false,
-	target_list: false,
+	link_target_list: false,
 	link_title: false,
 	image_description: false,
 	image_dimensions: false,
