@@ -12,7 +12,7 @@ PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist b
 
 PopForums.editorSettings = {
 	theme: "silver",
-	plugins: "paste lists image link",
+	plugins: "lists image link",
 	content_css: PopForums.editorCSS,
 	menubar: false,
 	toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
@@ -21,15 +21,17 @@ PopForums.editorSettings = {
 	link_title: false,
 	image_description: false,
 	image_dimensions: false,
+	image_title: false,
+	image_uploadtab: false,
+	images_file_types: 'jpeg,jpg,png,gif',
+	automatic_uploads: false,
 	browser_spellcheck : true,
 	object_resizing: false,
 	relative_urls: false,
 	remove_script_host: false,
 	contextmenu: "",
-	mobile: {
-		theme: "silver"
-	},
-	paste_as_text: true
+	paste_as_text: true,
+	paste_data_images: false
 };
 
 PopForums.processLogin = function () {

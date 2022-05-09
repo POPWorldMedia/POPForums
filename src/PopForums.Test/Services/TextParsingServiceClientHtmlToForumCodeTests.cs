@@ -1,3 +1,5 @@
+using SixLabors.ImageSharp;
+
 namespace PopForums.Test.Services;
 
 public class TextParsingServiceClientHtmlToForumCodeTests
@@ -157,22 +159,21 @@ public class TextParsingServiceClientHtmlToForumCodeTests
 		Assert.Equal("test [url=http://popw.com/]test[/url] test", result);
 	}
 
-	// These are unlikely to happen, and an updated regex isn't looking for them.
-	//[Fact]
-	//public void ImageNoClose()
-	//{
-	//	var service = GetService();
-	//	var result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\"> test</p>");
-	//	Assert.Equal("test [image=blah.jpg] test", result);
-	//}
+	[Fact]
+	public void ImageNoClose()
+	{
+		var service = GetService();
+		var result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\" alt=\"\"> test</p>");
+		Assert.Equal("test [image=blah.jpg] test", result);
+	}
 
-	//[Fact]
-	//public void ImageNoCloseNoSpace()
-	//{
-	//	var service = GetService();
-	//	var result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\"/> test</p>");
-	//	Assert.Equal("test [image=blah.jpg] test", result);
-	//}
+	[Fact]
+	public void ImageNoCloseNoSpace()
+	{
+		var service = GetService();
+		var result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\"/> test</p>");
+		Assert.Equal("test [image=blah.jpg] test", result);
+	}
 
 	[Fact]
 	public void ImageNoCloseSpace()
@@ -191,25 +192,25 @@ public class TextParsingServiceClientHtmlToForumCodeTests
 		result = service.ClientHtmlToForumCode("<p>test <img randomatter=\"swegf\" omg=\"wef\" src=\"blah.jpg\" /> test</p>");
 		Assert.Equal("test [image=blah.jpg] test", result);
 	}
+	
+	[Fact]
+	public void ImageOtherAttributeAfterSrc()
+	{
+		var service = GetService();
+		var result = service.ClientHtmlToForumCode(@"<p>image:</p>
+<p><img src=""https://popforums.com/img/hugcloud.png"" alt=""""></p>");
+		Assert.Equal(@"image:
 
-	// these are unlikely to be ever saved in this state
-	//[Fact]
-	//public void ImageOtherAttributeAfterSrc()
-	//{
-	//	var service = GetService();
-	//	var result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\" randomatter=\"swegf\" /> test</p>");
-	//	Assert.Equal("test [image=blah.jpg] test", result);
-	//	result = service.ClientHtmlToForumCode("<p>test <img src=\"blah.jpg\" randomatter=\"swegf\" omg=\"wef\" /> test</p>");
-	//	Assert.Equal("test [image=blah.jpg] test", result);
-	//}
+[image=https://popforums.com/img/hugcloud.png]", result);
+	}
 
-	//[Fact]
-	//public void ImageOtherAttributeBeforeAndAfterSrc()
-	//{
-	//	var service = GetService();
-	//	var result = service.ClientHtmlToForumCode("<p>test <img randomatter=\"swegf\" omg=\"wef\" src=\"blah.jpg\" randomatter=\"swegf\" omg=\"wef\" /> test</p>");
-	//	Assert.Equal("test [image=blah.jpg] test", result);
-	//}
+	[Fact]
+	public void ImageOtherAttributeBeforeAndAfterSrc()
+	{
+		var service = GetService();
+		var result = service.ClientHtmlToForumCode("<p>test <img randomatter=\"swegf\" omg=\"wef\" src=\"blah.jpg\" randomatter=\"swegf\" omg=\"wef\" /> test</p>");
+		Assert.Equal("test [image=blah.jpg] test", result);
+	}
 
 	[Fact]
 	public void NukeInvalidHtml()
