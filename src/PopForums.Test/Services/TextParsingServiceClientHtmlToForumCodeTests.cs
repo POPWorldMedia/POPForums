@@ -199,9 +199,7 @@ public class TextParsingServiceClientHtmlToForumCodeTests
 		var service = GetService();
 		var result = service.ClientHtmlToForumCode(@"<p>image:</p>
 <p><img src=""https://popforums.com/img/hugcloud.png"" alt=""""></p>");
-		Assert.Equal(@"image:
-
-[image=https://popforums.com/img/hugcloud.png]", result);
+		Assert.Equal("image:\r\n\r\n[image=https://popforums.com/img/hugcloud.png]", result);
 	}
 
 	[Fact]
