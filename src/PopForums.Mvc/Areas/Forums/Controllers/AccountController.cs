@@ -435,11 +435,11 @@ public class AccountController : Controller
 	public ViewResult Login()
 	{
 		string link;
-		if (Request == null || string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
+		if (string.IsNullOrWhiteSpace(Request.Headers.Referer))
 			link = Url.Action("Index", HomeController.Name);
 		else
 		{
-			link = Request.Headers["Referer"];
+			link = Request.Headers.Referer;
 			if (!link.Contains(Request.Host.Value))
 				link = Url.Action("Index", HomeController.Name);
 		}
@@ -511,5 +511,13 @@ public class AccountController : Controller
 			return View("EditAccountNoUser");
 		await _externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
 		return RedirectToAction("ExternalLogins");
+	}
+
+	public RedirectToActionResult MyProfile()
+	{
+		var user = _userRetrievalShim.GetUser();
+		if (user == null)
+			return RedirectToAction("Create");
+		return RedirectToAction("ViewProfile", new {id = user.UserID});
 	}
 }

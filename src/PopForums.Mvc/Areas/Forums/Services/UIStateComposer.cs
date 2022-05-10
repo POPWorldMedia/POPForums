@@ -25,7 +25,10 @@ public class UIStateComposer : IUIStateComposer
 		if (user != null)
 		{
 			state.Name = user.Name;
+			state.UserID = user.UserID;
 			state.NewPmCount = await _privateMessageService.GetUnreadCount(user);
+			state.IsLoggedIn = true;
+			state.IsAdmin = user.IsInRole(PermanentRoles.Admin);
 		}
 		return state;
 	}

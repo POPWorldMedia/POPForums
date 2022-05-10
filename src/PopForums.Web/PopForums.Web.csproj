@@ -30,7 +30,6 @@
     <Folder Include="Areas\Forums\" />
     <Folder Include="wwwroot\lib\PopForums\dist\" />
     <Folder Include="wwwroot\lib\PopForums\node_modules\" />
-    <Folder Include="wwwroot\lib\PopForums\src\Client\Components\" />
   </ItemGroup>
 
   <ItemGroup>

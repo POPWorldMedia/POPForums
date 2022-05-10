@@ -1,26 +1,10 @@
-﻿namespace PopForums.Mvc.Areas.Forums.ViewComponents;
+﻿#pragma warning disable CS1998
+namespace PopForums.Mvc.Areas.Forums.ViewComponents;
 
 public class UserNavigationViewComponent : ViewComponent
 {
-	private readonly IUserRetrievalShim _userRetrievalShim;
-	private readonly IPrivateMessageService _privateMessageService;
-
-	public UserNavigationViewComponent(IUserRetrievalShim userRetrievalShim, IPrivateMessageService privateMessageService)
-	{
-		_userRetrievalShim = userRetrievalShim;
-		_privateMessageService = privateMessageService;
-	}
-
 	public async Task<IViewComponentResult> InvokeAsync()
 	{
-		var container = new UserNavigationContainer();
-		container.User = _userRetrievalShim.GetUser();
-		if (container.User != null)
-		{
-			var count = await _privateMessageService.GetUnreadCount(container.User);
-			if (count > 0)
-				container.PMCount = $"<span class=\"badge\">{count}</span>";
-		}
-		return View(container);
+		return View();
 	}
 }

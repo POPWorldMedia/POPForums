@@ -25,9 +25,7 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div id="AccountBox" class="collapse navbar-collapse">
-			<ul class="navbar-nav ms-auto">
-				@await Component.InvokeAsync("UserNavigation")
-			</ul>
+			@await Component.InvokeAsync("UserNavigation")
 			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> { { "class", "form-inline" }, { "role", "search" } }))
 			{
 				<div class="mx-2">
@@ -43,7 +41,7 @@
 	</div>
 	<div class="row">
 		<div id="ForumFooter" class="col-12 mt-3">
-			<small><a href="http://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
+			<small><a href="https://popforums.com/">POP Forums</a> - &copy;@DateTime.Now.Year, POP World Media, LLC</small>
 		</div>
 	</div>
 </div>

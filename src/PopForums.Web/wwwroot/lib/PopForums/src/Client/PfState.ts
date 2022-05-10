@@ -6,6 +6,8 @@ class PfState extends StateBase {
         super();
         this.isLoggedIn = false;
         this.newPmCount = 0;
+        this.name = "";
+        this.userID = 0;
     }
 
     @WatchProperty
@@ -13,4 +15,11 @@ class PfState extends StateBase {
 
     @WatchProperty
     newPmCount: number;
+
+    @WatchProperty
+    name: string;
+    @WatchProperty
+    userID: number;
+    @WatchProperty
+    isAdmin: boolean;
 }

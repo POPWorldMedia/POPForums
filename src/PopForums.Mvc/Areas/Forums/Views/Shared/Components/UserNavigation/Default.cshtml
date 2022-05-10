@@ -1,41 +1,42 @@
 ﻿@using PopForums.Configuration
-@model UserNavigationContainer
 @inject ISettingsManager SettingsManager
-@if (Model.User == null)
-{
-	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
-	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
-	if (!SettingsManager.Current.IsPrivateForumInstance)
-	{
+
+<pf-isloggedin caller="pfState.isLoggedIn" class="ms-auto">
+	<ul class="navbar-nav" slot="in">
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"><pf-anytext caller="pfState.name"></pf-anytext></a>
+			<div class="dropdown-menu" role="menu">
+				<a asp-controller="@AccountController.Name" asp-action="MyProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
+				<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
+				<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
+				<div class="dropdown-divider"></div>
+				<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
+				<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+				<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
+				<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+				<pf-anybool caller="pfState.isAdmin">
+					<div slot="markup">
+						<div class="dropdown-divider"></div>
+						<a asp-controller="@AdminController.Name" asp-action="App" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
+					</div>
+				</pf-anybool>
+				<div class="dropdown-divider"></div>
+				<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>
+			</div>
+		</li>
 		<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
 		<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
-	}
-}
-else
-{
-	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@Model.User.Name</a>
-		<div class="dropdown-menu" role="menu">
-			<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@Model.User.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
-			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
-			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
-			<div class="dropdown-divider"></div>
-			<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
-			<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
-			<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
-			<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
-			@if (Model.User.IsInRole(PermanentRoles.Admin))
-			{
-				<div class="dropdown-divider"></div>
-				<a asp-controller="@AdminController.Name" asp-action="App" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
-			}
-			<div class="dropdown-divider"></div>
-			<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>
-		</div>
-	</li>
-	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
-	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
-	<li class="nav-item">
-		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount caller="pfState.newPmCount"></pf-pmcount></a>
-	</li>
-}
+		<li class="nav-item">
+			<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount caller="pfState.newPmCount"></pf-pmcount></a>
+		</li>
+	</ul>
+	<ul class="navbar-nav" slot="out">
+		<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
+		<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
+		@if (!SettingsManager.Current.IsPrivateForumInstance)
+		{
+		<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+		<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
+		}
+	</ul>
+</pf-isloggedin>
