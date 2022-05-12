@@ -5,8 +5,6 @@ POP Forums
 
 A forum and Q&A application with real-time updating in multiple languages.
 
-The commercially hosted version appears at [popforums.com](https://popforums.com/). This is the open source version.
-
 The main branch is now the work-in-progress for future versions running on .NET 6+. The v18.x branch is v18.x, running on .NET 6. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
 
 Roadmap:
@@ -35,5 +33,6 @@ https://www.myget.org/F/popforums/npm/
 * .NET v6.
 * npm and Node.js to build the front-end.
 * AzureKit optionally requires Redis for two-level cache, Azure Search for Search.
+* AzureKit optionally requires an Azure Storage account for queues and Azure Functions.
 * ElasticKit optionally requires ElasticSearch for search.
 * Works great on Windows and Linux.
