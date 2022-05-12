@@ -18,7 +18,22 @@
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
         this.onclick = (e: MouseEvent) => {
-            console.log(`${this.name} + ${this.containerid}`);
+            let selection = document.getSelection();
+            if (selection.rangeCount === 0) {
+                // prompt to select
+                return;
+            }
+            let fragment = selection.getRangeAt(0).cloneContents();
+            let div = document.createElement("div");
+            div.appendChild(fragment);
+            console.log(div.innerHTML);
+            let container = div.querySelector("#" + this.containerid);
+            if (container !== null && container !== undefined) {
+                div.innerHTML = container.innerHTML;
+            }
+            selection.removeAllRanges();
+            console.log(`${this.name} + ${this.containerid}
+${div.innerHTML}`);
         };
     }
 

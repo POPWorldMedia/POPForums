@@ -37,8 +37,6 @@
 	<div id="text@(Model.Post.PostID)">
 		@Html.Raw(Model.Post.FullText)
 	</div>
-    
-	<pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" value="@PopForums.Resources.Quote"></pf-quotebutton>
 	
 	@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
 	{
@@ -68,6 +66,7 @@
 			{
 				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply" /></li>
 				<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>
+				@*<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" value="@PopForums.Resources.Quote"></pf-quotebutton></li>*@
 			}
 			@if (Model.User.IsPostEditable(Model.Post))
 			{
