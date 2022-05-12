@@ -6,6 +6,7 @@
     "outFile": "../../dist/PfClient.js",
     "experimentalDecorators": true,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "moduleResolution": "Node"
   }
 }

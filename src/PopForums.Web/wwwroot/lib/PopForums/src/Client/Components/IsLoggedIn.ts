@@ -6,8 +6,8 @@
 <slot name="out"></slot>`;
         this.attachShadow({ mode: "open" });
         this.shadowRoot.append(this.template.content.cloneNode(true));
-        this.inSlot = this.shadowRoot.querySelector("slot[name='in']");
-        this.outSlot = this.shadowRoot.querySelector("slot[name='out']");
+        this.inSlot = this.shadowRoot.querySelector("slot[name='in']") as HTMLElement;
+        this.outSlot = this.shadowRoot.querySelector("slot[name='out']") as HTMLElement;
     }
 
     private inSlot: HTMLElement;
@@ -16,7 +16,7 @@
     private template: HTMLTemplateElement;
 
     updateUI(data: any): void {
-        if (data as boolean === true) {
+        if (data as boolean) {
             this.inSlot.style.display = this.style.display;
             this.outSlot.style.display = "none";
         }

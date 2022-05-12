@@ -33,8 +33,13 @@
 	{
 		<img src="@Url.Action("Avatar", "Image", new {id = (Model.Avatars)[Model.Post.UserID]})" alt="@String.Format(PopForums.Resources.NameAvatar, Model.Post.Name)" class="avatar float-end ms-3 mb-3 d-none d-sm-block" />
 	}
-
-	@Html.Raw(Model.Post.FullText)
+    
+	<div id="text@(Model.Post.PostID)">
+		@Html.Raw(Model.Post.FullText)
+	</div>
+    
+	<pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" value="@PopForums.Resources.Quote"></pf-quotebutton>
+	
 	@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
 	{
 		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@Model.Post.LastEditTime.Value.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.LastEditTime.Value, Model.Profile)</span></small>

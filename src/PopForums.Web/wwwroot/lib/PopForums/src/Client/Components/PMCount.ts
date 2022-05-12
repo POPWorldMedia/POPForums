@@ -3,7 +3,7 @@
         super(null);
     }
     updateUI(data: any): void {
-        if (data == 0)
+        if (data === 0)
             this.innerHTML = "";
         else
             this.innerHTML = `<span class="badge">${data}</span>`;
