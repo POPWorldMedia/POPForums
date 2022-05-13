@@ -23,17 +23,32 @@
                 // prompt to select
                 return;
             }
-            let fragment = selection.getRangeAt(0).cloneContents();
+            let range = selection.getRangeAt(0);
+            let fragment = range.cloneContents();
             let div = document.createElement("div");
             div.appendChild(fragment);
-            console.log(div.innerHTML);
-            let container = div.querySelector("#" + this.containerid);
-            if (container !== null && container !== undefined) {
-                div.innerHTML = container.innerHTML;
+            // is selection in the container?
+            let ancestor = range.commonAncestorContainer;
+            while (ancestor['id'] !== this.containerid && ancestor.parentElement !== null) {
+                ancestor = ancestor.parentElement;
+            }
+            let isInText = ancestor['id'] === this.containerid;
+            // if not, is it partially in the container?
+            if (!isInText) {
+                let container = div.querySelector("#" + this.containerid);
+                if (container !== null && container !== undefined) {
+                    // it's partially in the container, so just get that part
+                    div.innerHTML = container.innerHTML;
+                    isInText = true;
+                }
             }
             selection.removeAllRanges();
+            console.log("isChildOfText: " + isInText);
             console.log(`${this.name} + ${this.containerid}
 ${div.innerHTML}`);
+            if (isInText) {
+                // activate or add to quote
+            }
         };
     }
 
