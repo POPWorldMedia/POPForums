@@ -32,7 +32,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 OTHER LICENSES:
-.NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit: MIT
+.NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit, TinyMCE: MIT
 SignalR, xunit, ImageSharp: Apache 2.0
-TinyMCE: GNU GPL v2.1
 MOQ: BSD 3-Clause
