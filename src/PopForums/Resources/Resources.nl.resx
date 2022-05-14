@@ -1250,4 +1250,7 @@
   <data name="AccountNotVerified" xml:space="preserve">
     <value>Kontoen er ikke bekreftet</value>
   </data>
+  <data name="SelectText" xml:space="preserve">
+	  <value>Selecteer tekst</value>
+  </data>
 </root>

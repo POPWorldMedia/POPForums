@@ -14,15 +14,25 @@ class QuoteButton extends ElementBase {
     get containerid(): string {
         return this.getAttribute("containerid");
     }
+    get buttonclass(): string {
+        return this.getAttribute("buttonclass");
+    }
+    get buttontext(): string {
+        return this.getAttribute("buttontext");
+    }
+    get tip(): string {
+        return this.getAttribute("tip");
+    }
 
     connectedCallback() {
         let targetText = document.getElementById(this.containerid);
         this.innerHTML = QuoteButton.template;
         let button = this.querySelector("input");
         let tip = this.querySelector('#tooltip') as HTMLElement;
+        tip.innerHTML = this.tip + `<div id="arrow" data-popper-arrow></div>`;
         ["mousedown","touchstart"].forEach((e:string) => targetText.addEventListener(e, () => tip.removeAttribute("data-show")));
-        button.value = this.getAttribute("value");
-        let classes = this.getAttribute("buttonclass");
+        button.value = this.buttontext;
+        let classes = this.buttonclass;
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
         this.onclick = (e: MouseEvent) => {
@@ -126,7 +136,7 @@ class QuoteButton extends ElementBase {
       left: -4px;
     }
     </style>
-    <div id="tooltip" role="tooltip">Select text to quote<div id="arrow" data-popper-arrow></div></div>
+    <div id="tooltip" role="tooltip"></div>
     <input type="button" />`;
 }
 

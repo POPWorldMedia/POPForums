@@ -2563,6 +2563,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string SelectText {
+            get {
+                return ResourceManager.GetString("SelectText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Send.
         /// </summary>
         public static string Send {

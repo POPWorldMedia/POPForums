@@ -1264,4 +1264,7 @@
   <data name="AccountNotVerified" xml:space="preserve">
     <value>Account is not verified</value>
   </data>
+  <data name="SelectText" xml:space="preserve">
+	  <value>Select Text</value>
+  </data>
 </root>

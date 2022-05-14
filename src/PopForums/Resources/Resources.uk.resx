@@ -1261,4 +1261,7 @@
   <data name="AccountNotVerified" xml:space="preserve">
     <value>Обліковий запис не підтверджено</value>
   </data>
+  <data name="SelectText" xml:space="preserve">
+	  <value>Виберіть Текст</value>
+  </data>
 </root>

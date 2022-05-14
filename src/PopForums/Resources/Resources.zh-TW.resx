@@ -1237,4 +1237,7 @@
   <data name="AccountNotVerified" xml:space="preserve">
     <value>帐号未验证</value>
   </data>
+  <data name="SelectText" xml:space="preserve">
+	  <value>选择文本</value>
+  </data>
 </root>
