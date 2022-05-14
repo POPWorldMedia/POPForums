@@ -29,7 +29,6 @@
   <ItemGroup>
     <Folder Include="Areas\Forums\" />
     <Folder Include="wwwroot\lib\PopForums\dist\" />
-    <Folder Include="wwwroot\lib\PopForums\node_modules\" />
   </ItemGroup>
 
   <ItemGroup>

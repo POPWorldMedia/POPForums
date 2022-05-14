@@ -9,4 +9,6 @@ class PfState extends StateBase {
 
     @WatchProperty
     newPmCount: number;
+
+    isPlainText: boolean;
 }

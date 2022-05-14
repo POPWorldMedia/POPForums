@@ -1,4 +1,9 @@
-﻿class QuoteButton extends ElementBase {
+﻿declare namespace Popper {
+    function createPopper(el: Element, popper:HTMLElement, options:any): void;
+}
+declare var pfState: PfState;
+
+class QuoteButton extends ElementBase {
     constructor() {
         super(null);
     }
@@ -11,16 +16,29 @@
     }
 
     connectedCallback() {
-        this.innerHTML = `<input type="button" />`;
+        let targetText = document.getElementById(this.containerid);
+        this.innerHTML = QuoteButton.template;
         let button = this.querySelector("input");
+        let tip = this.querySelector('#tooltip') as HTMLElement;
+        ["mousedown","touchstart"].forEach((e:string) => targetText.addEventListener(e, () => tip.removeAttribute("data-show")));
         button.value = this.getAttribute("value");
         let classes = this.getAttribute("buttonclass");
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
         this.onclick = (e: MouseEvent) => {
             let selection = document.getSelection();
-            if (selection.rangeCount === 0) {
+            if (selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
                 // prompt to select
+                const popperInstance = Popper.createPopper(button, tip, {
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {offset: [0, 8]}
+                      }
+                    ],
+                  });
+                tip.setAttribute('data-show', '');
+                selection.removeAllRanges();
                 return;
             }
             let range = selection.getRangeAt(0);
@@ -43,11 +61,14 @@
                 }
             }
             selection.removeAllRanges();
-            console.log("isChildOfText: " + isInText);
-            console.log(`${this.name} + ${this.containerid}
-${div.innerHTML}`);
             if (isInText) {
                 // activate or add to quote
+                let result: string;
+                if (pfState.isPlainText)
+                    result = `[quote][i]${this.name}:\r\n${div.innerText}[/quote]`;
+                else
+                    result = `<blockquote><p>${this.name}:</p>${div.innerHTML}</blockquote><p></p>`;
+                console.log(result);
             }
         };
     }
@@ -55,6 +76,58 @@ ${div.innerHTML}`);
     updateUI(data: any): void {
 
     }
+
+    static template: string = `<style>
+    #tooltip {
+      background: #333;
+      color: white;
+      font-weight: bold;
+      padding: 4px 8px;
+      font-size: 13px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    #tooltip[data-show] {
+      display: block;
+    }
+
+    #arrow,
+    #arrow::before {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: inherit;
+    }
+
+    #arrow {
+      visibility: hidden;
+    }
+
+    #arrow::before {
+      visibility: visible;
+      content: '';
+      transform: rotate(45deg);
+    }
+
+    #tooltip[data-popper-placement^='top'] > #arrow {
+      bottom: -4px;
+    }
+
+    #tooltip[data-popper-placement^='bottom'] > #arrow {
+      top: -4px;
+    }
+
+    #tooltip[data-popper-placement^='left'] > #arrow {
+      right: -4px;
+    }
+
+    #tooltip[data-popper-placement^='right'] > #arrow {
+      left: -4px;
+    }
+    </style>
+    <div id="tooltip" role="tooltip">Select text to quote<div id="arrow" data-popper-arrow></div></div>
+    <input type="button" />`;
 }
 
 customElements.define('pf-quotebutton', QuoteButton);

@@ -24,7 +24,9 @@ public class UIStateComposer : IUIStateComposer
 		var user = _userRetrievalShim.GetUser();
 		if (user != null)
 		{
+			var profile = _userRetrievalShim.GetProfile();
 			state.NewPmCount = await _privateMessageService.GetUnreadCount(user);
+			state.IsPlainText = profile.IsPlainText;
 		}
 		return state;
 	}
