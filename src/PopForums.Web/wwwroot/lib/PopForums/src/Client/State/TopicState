@@ -1,0 +1,10 @@
+/// <reference path="../WatchPropertyAttribute.ts" />
+/// <reference path="../StateBase.ts" />
+
+class TopicState extends StateBase {
+    constructor() {
+        super();
+    }
+
+    isPlainText: boolean;
+}

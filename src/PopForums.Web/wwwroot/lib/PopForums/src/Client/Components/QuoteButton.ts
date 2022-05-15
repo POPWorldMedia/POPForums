@@ -1,7 +1,7 @@
 ﻿declare namespace Popper {
     function createPopper(el: Element, popper:HTMLElement, options:any): void;
 }
-declare var pfState: PfState;
+declare var pmState: PMState;
 
 class QuoteButton extends ElementBase {
     constructor() {
@@ -74,7 +74,7 @@ class QuoteButton extends ElementBase {
             if (isInText) {
                 // activate or add to quote
                 let result: string;
-                if (pfState.isPlainText)
+                if (pmState.isPlainText)
                     result = `[quote][i]${this.name}:\r\n${div.innerText}[/quote]`;
                 else
                     result = `<blockquote><p>${this.name}:</p>${div.innerHTML}</blockquote><p></p>`;
