@@ -36,11 +36,19 @@ public class PagerLinksTagHelper : TagHelper
 	public override void Process(TagHelperContext context, TagHelperOutput output)
 	{
 		if (PagerContext == null)
+		{
+			output.TagName = "div";
+			output.TagMode = TagMode.StartTagAndEndTag;
 			return;
+		}
 		if (String.IsNullOrEmpty(ControllerName) || String.IsNullOrEmpty(ActionName))
 			throw new Exception("controllerName and actionName must be specified for PageLinks.");
 		if (PagerContext.PageCount <= 1)
+		{
+			output.TagName = "div";
+			output.TagMode = TagMode.StartTagAndEndTag;
 			return;
+		}
 			
 		var builder = new StringBuilder();
 		if (String.IsNullOrEmpty(MoreTextClass)) builder.Append($"<li><span class=\"page-link\">{Resources.More}:</span></li>");
