@@ -7,12 +7,13 @@ declare namespace tinymce {
 class FullText extends ElementBase {
     constructor() {
         super(null);
-        this.internals = this.attachInternals();
         let template = document.createElement("template");
         template.innerHTML = FullText.template;
         this.attachShadow({ mode: "open" });
         this.shadowRoot.append(template.content.cloneNode(true));
         this.textBox = this.shadowRoot.getElementById(FullText.id);
+        if (topicState.isPlainText)
+            return;
         this.editorSettings.target = this.textBox;
         if (!topicState.isImageEnabled)
             this.editorSettings.toolbar = FullText.postNoImageToolbar;
@@ -36,20 +37,24 @@ class FullText extends ElementBase {
 
     static formAssociated = true;
 
-    private internals: ElementInternals;
     private textBox: HTMLElement;
     private hiddenInput: HTMLInputElement;
 
     updateUI(data: any): void {
         if (data !== null && data !== undefined)
         {
-           let editor = tinymce.get(FullText.id);
-           var content = editor.getContent();
-           content += data;
-           editor.setContent(content);
-           (this.textBox as HTMLInputElement).value += content;
-           editor.save();
-           this.value = (this.textBox as HTMLInputElement).value;
+            if (topicState.isPlainText) {
+                
+            }
+            else {
+                let editor = tinymce.get(FullText.id);
+                var content = editor.getContent();
+                content += data;
+                editor.setContent(content);
+                (this.textBox as HTMLInputElement).value += content;
+                editor.save();
+                this.value = (this.textBox as HTMLInputElement).value;
+            }
         }
     }
 
@@ -78,12 +83,7 @@ class FullText extends ElementBase {
         remove_script_host: false,
         contextmenu: "",
         paste_as_text: true,
-        paste_data_images: false,
-        // setup: function(editor: any) {
-        //     editor.on("blur", function(e: any) {
-        //         editor.save();
-        //     });
-        // }
+        paste_data_images: false
     };
 
     static id: string = "FullText";

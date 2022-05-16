@@ -44,7 +44,9 @@ class QuoteButton extends HTMLElement {
         this.innerHTML = QuoteButton.template;
         let button = this.querySelector("input");
         button.title = this.tip;
-        ["mousedown","touchstart"].forEach((e:string) => targetText.addEventListener(e, () => this._tip.hide()));
+        ["mousedown","touchstart"].forEach((e:string) => 
+            targetText.addEventListener(e, () => 
+                { if (this._tip) this._tip.hide() }));
         button.value = this.buttontext;
         let classes = this.buttonclass;
         if (classes?.length > 0)
