@@ -42,12 +42,15 @@ class FullText extends ElementBase {
 
     updateUI(data: any): void {
         if (data !== null && data !== undefined)
-       {
+        {
            let editor = tinymce.get(FullText.id);
            var content = editor.getContent();
            content += data;
            editor.setContent(content);
-           (this.textBox as HTMLInputElement).value += content;}
+           (this.textBox as HTMLInputElement).value += content;
+           editor.save();
+           this.value = (this.textBox as HTMLInputElement).value;
+        }
     }
 
     

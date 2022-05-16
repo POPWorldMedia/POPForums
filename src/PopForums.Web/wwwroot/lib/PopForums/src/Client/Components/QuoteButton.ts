@@ -86,10 +86,9 @@ class QuoteButton extends HTMLElement {
                 // activate or add to quote
                 let result: string;
                 if (topicState.isPlainText)
-                    result = `[quote][i]${this.name}:\r\n${div.innerText}[/quote]`;
+                    result = `[quote][i]${this.name}:[/i]\r\n ${div.innerText}[/quote]`;
                 else
                     result = `<blockquote><p><i>${this.name}:</i></p>${div.innerHTML}</blockquote><p></p>`;
-                console.log("Quote: " + result);
                 topicState.nextQuote = result;
                 if (!topicState.isReplyLoaded)
                     PopForums.loadReply(topicState.topicID, null, Number(this.postID), true);
