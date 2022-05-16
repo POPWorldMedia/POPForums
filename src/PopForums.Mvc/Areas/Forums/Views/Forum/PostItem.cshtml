@@ -65,8 +65,8 @@
 			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
 				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply" /></li>
-				<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>
-				@*<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" buttontext="@PopForums.Resources.Quote" tip="@PopForums.Resources.SelectText"></pf-quotebutton></li>*@
+				@*<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>*@
+				<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" buttontext="@PopForums.Resources.Quote" tip="@PopForums.Resources.SelectText" postid="@Model.Post.PostID" callback="topicState.nextQuote"></pf-quotebutton></li>
 			}
 			@if (Model.User.IsPostEditable(Model.Post))
 			{
