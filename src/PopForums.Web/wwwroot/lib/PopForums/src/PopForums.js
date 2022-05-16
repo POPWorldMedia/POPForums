@@ -190,6 +190,7 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
 
 				PopForums.TopicState.replyLoaded = true;
+				topicState.isReplyLoaded = true; // TODO: temporary
 			}));
 };
 
@@ -223,8 +224,9 @@ PopForums.loadComment = function (topicID, replyID) {
 PopForums.previewPost = function () {
 	tinyMCE.triggerSave();
 	var r = document.querySelector("#ParsedFullText");
+	let fullText = document.querySelector(".postForm #FullText");
 	var model = {
-		FullText: document.querySelector(".postForm #FullText").value,
+		FullText: fullText.value,
 		IsPlainText: document.querySelector(".postForm #IsPlainText").checked
 	};
 	fetch(PopForums.areaPath + "/Forum/PreviewText", {

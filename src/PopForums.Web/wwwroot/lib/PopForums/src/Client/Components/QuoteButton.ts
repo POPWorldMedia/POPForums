@@ -1,11 +1,19 @@
-﻿declare namespace Popper {
+﻿/// <reference path="../State/TopicState.ts" />
+
+declare namespace Popper {
     function createPopper(el: Element, popper:HTMLElement, options:any): void;
 }
-declare var pmState: PMState;
+declare var topicState: TopicState;
+declare namespace PopForums {
+    function loadReply(topicID: number, postID: number, replyID: number, setupMorePosts: boolean): void;
+    export interface TopicState{
+        replyLoaded: boolean;
+    }
+}
 
-class QuoteButton extends ElementBase {
+class QuoteButton extends HTMLElement {
     constructor() {
-        super(null);
+        super();
     }
 
     get name(): string {
@@ -22,6 +30,9 @@ class QuoteButton extends ElementBase {
     }
     get tip(): string {
         return this.getAttribute("tip");
+    }
+    get postID(): string {
+        return this.getAttribute("postid");
     }
 
     connectedCallback() {
@@ -74,17 +85,16 @@ class QuoteButton extends ElementBase {
             if (isInText) {
                 // activate or add to quote
                 let result: string;
-                if (pmState.isPlainText)
+                if (topicState.isPlainText)
                     result = `[quote][i]${this.name}:\r\n${div.innerText}[/quote]`;
                 else
-                    result = `<blockquote><p>${this.name}:</p>${div.innerHTML}</blockquote><p></p>`;
-                console.log(result);
+                    result = `<blockquote><p><i>${this.name}:</i></p>${div.innerHTML}</blockquote><p></p>`;
+                console.log("Quote: " + result);
+                topicState.nextQuote = result;
+                if (!topicState.isReplyLoaded)
+                    PopForums.loadReply(topicState.topicID, null, Number(this.postID), true);
             }
         };
-    }
-
-    updateUI(data: any): void {
-
     }
 
     static template: string = `<style>

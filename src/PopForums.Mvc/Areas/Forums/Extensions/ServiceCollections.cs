@@ -34,6 +34,7 @@ public static class ServiceCollections
 		services.AddTransient<IExternalLoginRoutingService, ExternalLoginRoutingService>();
 		services.AddTransient<IExternalLoginTempService, ExternalLoginTempService>();
 		services.AddTransient<IPMStateComposer, PMStateComposer>();
+		services.AddTransient<ITopicStateComposer, TopicStateComposer>();
 		services.AddTransient<IBroker, Broker>();
 		// this is required for error logging:
 		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

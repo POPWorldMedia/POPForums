@@ -1,4 +1,6 @@
-﻿namespace PopForums.Test.Services;
+﻿using PopForums.Mvc.Areas.Forums.Models;
+
+namespace PopForums.Test.Services;
 
 public class ForumServiceTests
 {

@@ -6,6 +6,7 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 	var profile = UserRetrievalShim.GetProfile();
+	var topicStateSerialized = JsonSerializer.Serialize((TopicState) ViewBag.TopicState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
 @section HeaderContent {
@@ -14,6 +15,7 @@
 	ready(() => {
 		PopForums.qaTopicSetup(@Model.Topic.TopicID);
 	});
+	var topicState = Object.assign(new TopicState(), @Html.Raw(topicStateSerialized));
 </script>
 }
 

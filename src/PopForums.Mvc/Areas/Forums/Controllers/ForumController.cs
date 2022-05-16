@@ -4,7 +4,7 @@
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ForumController : Controller
 {
-	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService)
+	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer)
 	{
 		_settingsManager = settingsManager;
 		_forumService = forumService;
@@ -19,6 +19,7 @@ public class ForumController : Controller
 		_topicViewLogService = topicViewLogService;
 		_postMasterService = postMasterService;
 		_forumPermissionService = forumPermissionService;
+		_topicStateComposer = topicStateComposer;
 	}
 
 	public static string Name = "Forum";
@@ -36,6 +37,7 @@ public class ForumController : Controller
 	private readonly ITopicViewLogService _topicViewLogService;
 	private readonly IPostMasterService _postMasterService;
 	private readonly IForumPermissionService _forumPermissionService;
+	private readonly ITopicStateComposer _topicStateComposer;
 
 	public async Task<ActionResult> Index(string urlName, int pageNumber = 1)
 	{
@@ -196,6 +198,8 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
+		var topicState = _topicStateComposer.GetState(topic.TopicID);
+		ViewBag.TopicState = topicState; // TODO: Refactor this... container is in core project, while TopicState is not because it depends on IUserRetrievalShim.
 		if (forum.IsQAForum)
 		{
 			var containerForQA = _forumService.MapTopicContainerForQA(container);
