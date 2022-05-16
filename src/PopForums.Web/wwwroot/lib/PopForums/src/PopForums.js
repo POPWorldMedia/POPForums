@@ -138,15 +138,7 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 				var n = document.querySelector("#NewReply");
 				n.innerHTML = text;
 				n.style.display = "block";
-				var allowImage = (document.querySelector("#IsImageEnabled").value.toLowerCase() === "true");
-				if (!allowImage) {
-					PopForums.editorSettings.toolbar = PopForums.postNoImageToolbar;
-				}
-				var usePlainText = (document.querySelector("#IsPlainText").value.toLowerCase() === "true");
-				if (!usePlainText) {
-					PopForums.editorSettings.selector = "#NewReply #FullText";
-					tinyMCE.init(PopForums.editorSettings);
-				}
+				// legacy tiny was init here
 				document.querySelector("#ReplyButton").style.display = "none";
 				PopForums.scrollToElement("NewReply");
 
@@ -227,7 +219,7 @@ PopForums.previewPost = function () {
 	let fullText = document.querySelector(".postForm #FullText");
 	var model = {
 		FullText: fullText.value,
-		IsPlainText: document.querySelector(".postForm #IsPlainText").checked
+		IsPlainText: document.querySelector(".postForm #IsPlainText").value.toLowerCase() === "true"
 	};
 	fetch(PopForums.areaPath + "/Forum/PreviewText", {
 		method: "POST",

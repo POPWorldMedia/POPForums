@@ -7,21 +7,31 @@ declare namespace tinymce {
 class FullText extends ElementBase {
     constructor() {
         super(null);
+        if (topicState.isPlainText) {
+            this.externalFormElement = document.createElement("textarea");
+            this.externalFormElement.id = this.id;
+            (this.externalFormElement as HTMLTextAreaElement).name = this.id;
+            this.externalFormElement.classList.add("form-control");
+            let self = this;
+            this.externalFormElement.addEventListener("change", () => {
+                self.value = (this.externalFormElement as HTMLTextAreaElement).value;
+            });
+            this.appendChild(this.externalFormElement);
+            return;
+        }
         let template = document.createElement("template");
         template.innerHTML = FullText.template;
         this.attachShadow({ mode: "open" });
         this.shadowRoot.append(template.content.cloneNode(true));
         this.textBox = this.shadowRoot.getElementById(FullText.id);
-        if (topicState.isPlainText)
-            return;
         this.editorSettings.target = this.textBox;
         if (!topicState.isImageEnabled)
             this.editorSettings.toolbar = FullText.postNoImageToolbar;
         tinymce.init(this.editorSettings);
-        this.hiddenInput = document.createElement("input") as HTMLInputElement;
-        this.hiddenInput.id = this.id;
-        this.hiddenInput.type = "hidden";
-        this.appendChild(this.hiddenInput);
+        this.externalFormElement = document.createElement("input") as HTMLInputElement;
+        this.externalFormElement.id = this.id;
+        (this.externalFormElement as HTMLInputElement).type = "hidden";
+        this.appendChild(this.externalFormElement);
         let editor = tinymce.get(FullText.id);
         var self = this;
         editor.on("blur", function(e: any) {
@@ -38,13 +48,14 @@ class FullText extends ElementBase {
     static formAssociated = true;
 
     private textBox: HTMLElement;
-    private hiddenInput: HTMLInputElement;
+    private externalFormElement: HTMLElement;
 
     updateUI(data: any): void {
         if (data !== null && data !== undefined)
         {
             if (topicState.isPlainText) {
-                
+                (this.externalFormElement as HTMLTextAreaElement).value += data;
+                this.value = (this.externalFormElement as HTMLTextAreaElement).value;
             }
             else {
                 let editor = tinymce.get(FullText.id);
@@ -87,7 +98,7 @@ class FullText extends ElementBase {
     };
 
     static id: string = "FullText";
-    static template: string = `<textarea class="form-control" id="${FullText.id}" name="${FullText.id}"></textarea>
+    static template: string = `<textarea id="${FullText.id}" name="${FullText.id}"></textarea>
     `;
 }
 
