@@ -1,7 +1,9 @@
 ﻿/// <reference path="../State/TopicState.ts" />
 
-declare namespace Popper {
-    function createPopper(el: Element, popper:HTMLElement, options:any): void;
+declare namespace bootstrap {
+    class Tooltip{
+        constructor(el: Element, options:any)
+    }
 }
 declare var topicState: TopicState;
 declare namespace PopForums {
@@ -35,13 +37,14 @@ class QuoteButton extends HTMLElement {
         return this.getAttribute("postid");
     }
 
+    private _tip: any;
+
     connectedCallback() {
         let targetText = document.getElementById(this.containerid);
         this.innerHTML = QuoteButton.template;
         let button = this.querySelector("input");
-        let tip = this.querySelector('#tooltip') as HTMLElement;
-        tip.innerHTML = this.tip + `<div id="arrow" data-popper-arrow></div>`;
-        ["mousedown","touchstart"].forEach((e:string) => targetText.addEventListener(e, () => tip.removeAttribute("data-show")));
+        button.title = this.tip;
+        ["mousedown","touchstart"].forEach((e:string) => targetText.addEventListener(e, () => this._tip.hide()));
         button.value = this.buttontext;
         let classes = this.buttonclass;
         if (classes?.length > 0)
@@ -50,15 +53,8 @@ class QuoteButton extends HTMLElement {
             let selection = document.getSelection();
             if (selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
                 // prompt to select
-                const popperInstance = Popper.createPopper(button, tip, {
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {offset: [0, 8]}
-                      }
-                    ],
-                  });
-                tip.setAttribute('data-show', '');
+                this._tip = new bootstrap.Tooltip(button, {trigger: "manual"});
+                this._tip.show();
                 selection.removeAllRanges();
                 return;
             }
@@ -96,57 +92,7 @@ class QuoteButton extends HTMLElement {
         };
     }
 
-    static template: string = `<style>
-    #tooltip {
-      background: #333;
-      color: white;
-      font-weight: bold;
-      padding: 4px 8px;
-      font-size: 13px;
-      border-radius: 4px;
-      display: none;
-    }
-
-    #tooltip[data-show] {
-      display: block;
-    }
-
-    #arrow,
-    #arrow::before {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: inherit;
-    }
-
-    #arrow {
-      visibility: hidden;
-    }
-
-    #arrow::before {
-      visibility: visible;
-      content: '';
-      transform: rotate(45deg);
-    }
-
-    #tooltip[data-popper-placement^='top'] > #arrow {
-      bottom: -4px;
-    }
-
-    #tooltip[data-popper-placement^='bottom'] > #arrow {
-      top: -4px;
-    }
-
-    #tooltip[data-popper-placement^='left'] > #arrow {
-      right: -4px;
-    }
-
-    #tooltip[data-popper-placement^='right'] > #arrow {
-      left: -4px;
-    }
-    </style>
-    <div id="tooltip" role="tooltip"></div>
-    <input type="button" />`;
+    static template: string = `<input type="button" data-bs-toggle="tooltip" title="" />`;
 }
 
 customElements.define('pf-quotebutton', QuoteButton);
