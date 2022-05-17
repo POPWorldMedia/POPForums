@@ -16,7 +16,7 @@ https://popworldmedia.github.io/POPForums/
 Try it out and make test posts here:  
 https://meta.popforums.com/Forums
 
-CI build of master runs here:  
+CI build of main runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
 [![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
