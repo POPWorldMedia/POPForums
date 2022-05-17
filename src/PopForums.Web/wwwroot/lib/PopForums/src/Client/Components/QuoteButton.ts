@@ -1,18 +1,5 @@
 ﻿/// <reference path="../State/TopicState.ts" />
 
-declare namespace bootstrap {
-    class Tooltip{
-        constructor(el: Element, options:any)
-    }
-}
-declare var topicState: TopicState;
-declare namespace PopForums {
-    function loadReply(topicID: number, postID: number, replyID: number, setupMorePosts: boolean): void;
-    export interface TopicState{
-        replyLoaded: boolean;
-    }
-}
-
 class QuoteButton extends HTMLElement {
     constructor() {
         super();

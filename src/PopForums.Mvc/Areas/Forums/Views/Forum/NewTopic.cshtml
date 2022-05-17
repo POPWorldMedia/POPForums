@@ -17,24 +17,7 @@
 	@Html.HiddenFor(p => p.IsPlainText)
 	@Html.HiddenFor(p => p.IsImageEnabled)
 	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn btn-primary" />
-	<input type="button" value="@PopForums.Resources.Preview" id="PreviewButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#PreviewModal" />
+	<pf-previewbutton textSourceSelector=".postForm #FullText" isplaintextselector=".postForm #IsPlainText" labelText="@PopForums.Resources.Preview"></pf-previewbutton>
 	<p id="PostResponseMessage" class="alert alert-danger my-3"></p>
 	<hr class="mb-3"/>
-</div>
-
-<div class="modal fade" id="PreviewModal" tabindex="-1" role="dialog">
-	<div class="modal-dialog">
-		<div class="modal-content" id="PreviewModalContent">
-			<div class="modal-header">
-				<h4 class="modal-title">@PopForums.Resources.Preview</h4>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div id="ParsedFullText" class="postItem"></div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
 </div>

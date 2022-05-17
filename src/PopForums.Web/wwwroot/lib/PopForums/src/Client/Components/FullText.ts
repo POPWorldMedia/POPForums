@@ -1,9 +1,3 @@
-declare var topicState: TopicState;
-declare namespace tinymce {
-    function init(options:any): any;
-    function get(id:string): any;
-}
-
 class FullText extends ElementBase {
     constructor() {
         super(null);

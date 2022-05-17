@@ -5,7 +5,7 @@
 
 var PopForums = {};
 
-PopForums.areaPath = "/Forums";
+PopForums.areaPath = "/Forums"; // TODO: migrate this
 PopForums.currentTopicState = null;
 PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
 PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
@@ -114,8 +114,6 @@ PopForums.topicListSetup = function (forumID) {
 					PopForums.editorSettings.selector = "#NewTopic #FullText";
 					tinyMCE.init(PopForums.editorSettings);
 				}
-				var modal = document.querySelector("#PreviewModal");
-				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
 			});
 	});
 };
@@ -178,9 +176,6 @@ PopForums.loadReply = function (topicID, postID, replyID, setupMorePosts) {
 						});
 				}
 
-				var modal = document.querySelector("#PreviewModal");
-				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
-
 				PopForums.TopicState.replyLoaded = true;
 				topicState.isReplyLoaded = true; // TODO: temporary
 			}));
@@ -207,30 +202,6 @@ PopForums.loadComment = function (topicID, replyID) {
 					PopForums.editorSettings.selector = ".postForm #FullText";
 					tinyMCE.init(PopForums.editorSettings);
 				}
-
-				var modal = document.querySelector("#PreviewModal");
-				modal.addEventListener("shown.bs.modal", () => PopForums.previewPost());
-			}));
-};
-
-PopForums.previewPost = function () {
-	tinyMCE.triggerSave();
-	var r = document.querySelector("#ParsedFullText");
-	let fullText = document.querySelector(".postForm #FullText");
-	var model = {
-		FullText: fullText.value,
-		IsPlainText: document.querySelector(".postForm #IsPlainText").value.toLowerCase() === "true"
-	};
-	fetch(PopForums.areaPath + "/Forum/PreviewText", {
-		method: "POST",
-		body: JSON.stringify(model),
-		headers: {
-			"Content-Type": "application/json"
-		}
-	})
-		.then(response => response.text()
-			.then(text => {
-				r.innerHTML = text;
 			}));
 };
 
