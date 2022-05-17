@@ -9,9 +9,8 @@ class FullText extends ElementBase {
         super(null);
         if (topicState.isPlainText) {
             this.externalFormElement = document.createElement("textarea");
-            this.externalFormElement.id = this.id;
-            (this.externalFormElement as HTMLTextAreaElement).name = this.id;
             this.externalFormElement.classList.add("form-control");
+            (this.externalFormElement as HTMLTextAreaElement).rows = 12;
             let self = this;
             this.externalFormElement.addEventListener("change", () => {
                 self.value = (this.externalFormElement as HTMLTextAreaElement).value;
@@ -23,7 +22,7 @@ class FullText extends ElementBase {
         template.innerHTML = FullText.template;
         this.attachShadow({ mode: "open" });
         this.shadowRoot.append(template.content.cloneNode(true));
-        this.textBox = this.shadowRoot.getElementById(FullText.id);
+        this.textBox = this.shadowRoot.querySelector("#editor");
         this.editorSettings.target = this.textBox;
         if (!topicState.isImageEnabled)
             this.editorSettings.toolbar = FullText.postNoImageToolbar;
@@ -32,7 +31,7 @@ class FullText extends ElementBase {
         this.externalFormElement.id = this.id;
         (this.externalFormElement as HTMLInputElement).type = "hidden";
         this.appendChild(this.externalFormElement);
-        let editor = tinymce.get(FullText.id);
+        let editor = tinymce.get("editor");
         var self = this;
         editor.on("blur", function(e: any) {
             editor.save();
@@ -58,7 +57,7 @@ class FullText extends ElementBase {
                 this.value = (this.externalFormElement as HTMLTextAreaElement).value;
             }
             else {
-                let editor = tinymce.get(FullText.id);
+                let editor = tinymce.get("editor");
                 var content = editor.getContent();
                 content += data;
                 editor.setContent(content);
@@ -74,7 +73,6 @@ class FullText extends ElementBase {
     private static postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
     editorSettings = {
         target: null as HTMLElement,
-        theme: "silver",
         plugins: "lists image link",
         content_css: FullText.editorCSS,
         menubar: false,
@@ -98,7 +96,7 @@ class FullText extends ElementBase {
     };
 
     static id: string = "FullText";
-    static template: string = `<textarea id="${FullText.id}" name="${FullText.id}"></textarea>
+    static template: string = `<textarea id="editor"></textarea>
     `;
 }
 
