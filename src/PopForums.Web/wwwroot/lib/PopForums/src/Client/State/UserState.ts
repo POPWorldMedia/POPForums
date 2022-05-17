@@ -1,11 +1,14 @@
 ﻿/// <reference path="../WatchPropertyAttribute.ts" />
 /// <reference path="../StateBase.ts" />
 
-class PMState extends StateBase {
+class UserState extends StateBase {
     constructor() {
         super();
+        this.isPlainText = false;
         this.newPmCount = 0;
     }
+    
+    isPlainText: boolean;
 
     @WatchProperty
     newPmCount: number;

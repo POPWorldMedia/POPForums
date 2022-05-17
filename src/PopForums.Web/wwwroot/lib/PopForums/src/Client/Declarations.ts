@@ -1,4 +1,5 @@
 declare var topicState: TopicState;
+declare var userState: UserState;
 
 declare namespace tinymce {
     function init(options:any): any;

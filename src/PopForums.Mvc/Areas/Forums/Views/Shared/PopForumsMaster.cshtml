@@ -16,7 +16,7 @@
 		<script src="~/lib/PopForums/dist/PfClient.min.js"></script>
 	</environment>
 	@RenderSection("HeaderContent", required: false)
-	@await Component.InvokeAsync("PMState")
+	@await Component.InvokeAsync("UserState")
 }
 
 <div id="ForumContainer" class="container-fluid">

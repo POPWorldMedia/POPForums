@@ -70,7 +70,7 @@ class QuoteButton extends HTMLElement {
             if (isInText) {
                 // activate or add to quote
                 let result: string;
-                if (topicState.isPlainText)
+                if (userState.isPlainText)
                     result = `[quote][i]${this.name}:[/i]\r\n ${div.innerText}[/quote]`;
                 else
                     result = `<blockquote><p><i>${this.name}:</i></p>${div.innerHTML}</blockquote><p></p>`;

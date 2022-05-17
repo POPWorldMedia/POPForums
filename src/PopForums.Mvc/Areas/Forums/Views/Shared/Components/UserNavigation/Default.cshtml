@@ -40,7 +40,7 @@ else
 	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
 	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 	<li class="nav-item">
-		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount caller="pmState.newPmCount"></pf-pmcount></a>
+		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount caller="userState.newPmCount"></pf-pmcount></a>
 	</li>
 }
 </ul>

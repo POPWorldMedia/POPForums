@@ -1,27 +1,29 @@
 ﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
-public interface IPMStateComposer
+public interface IUserStateComposer
 {
-	Task<PMState> GetState();
+	Task<UserState> GetState();
 }
 
-public class PMStateComposer : IPMStateComposer
+public class UserStateComposer : IUserStateComposer
 {
 	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly IPrivateMessageService _privateMessageService;
 
-	public PMStateComposer(IUserRetrievalShim userRetrievalShim, IPrivateMessageService privateMessageService)
+	public UserStateComposer(IUserRetrievalShim userRetrievalShim, IPrivateMessageService privateMessageService)
 	{
 		_userRetrievalShim = userRetrievalShim;
 		_privateMessageService = privateMessageService;
 	}
 
-	public async Task<PMState> GetState()
+	public async Task<UserState> GetState()
 	{
-		var state = new PMState();
+		var state = new UserState();
 		var user = _userRetrievalShim.GetUser();
 		if (user != null)
 		{
+			var profile = _userRetrievalShim.GetProfile();
+			state.IsPlainText = profile.IsPlainText;
 			state.NewPmCount = await _privateMessageService.GetUnreadCount(user);
 		}
 		return state;

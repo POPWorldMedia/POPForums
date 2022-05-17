@@ -1,7 +1,7 @@
 class FullText extends ElementBase {
     constructor() {
         super(null);
-        if (topicState.isPlainText) {
+        if (userState.isPlainText) {
             this.externalFormElement = document.createElement("textarea");
             this.externalFormElement.classList.add("form-control");
             (this.externalFormElement as HTMLTextAreaElement).rows = 12;
@@ -46,7 +46,7 @@ class FullText extends ElementBase {
     updateUI(data: any): void {
         if (data !== null && data !== undefined)
         {
-            if (topicState.isPlainText) {
+            if (userState.isPlainText) {
                 (this.externalFormElement as HTMLTextAreaElement).value += data;
                 this.value = (this.externalFormElement as HTMLTextAreaElement).value;
             }

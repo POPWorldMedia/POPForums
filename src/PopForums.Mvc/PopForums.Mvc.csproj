@@ -25,11 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Areas\Forums\Views\Shared\Components\PMState\Default.cshtml" />
+    <UpToDateCheckInput Remove="Areas\Forums\Views\Shared\Components\UserState\Default.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Forums\Views\Shared\Components\PMState\Default.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Forums\Views\Shared\Components\UserState\Default.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
-﻿@model PMState
+﻿@model UserState
 @{
 	var serialized = JsonSerializer.Serialize(Model, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 <script>
-	var pmState = Object.assign(new PMState(), @Html.Raw(serialized));
+	var userState = Object.assign(new UserState(), @Html.Raw(serialized));
 </script>

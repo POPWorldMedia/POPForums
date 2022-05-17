@@ -33,7 +33,7 @@ public static class ServiceCollections
 		services.AddTransient<ITopicViewCountService, TopicViewCountService>();
 		services.AddTransient<IExternalLoginRoutingService, ExternalLoginRoutingService>();
 		services.AddTransient<IExternalLoginTempService, ExternalLoginTempService>();
-		services.AddTransient<IPMStateComposer, PMStateComposer>();
+		services.AddTransient<IUserStateComposer, UserStateComposer>();
 		services.AddTransient<ITopicStateComposer, TopicStateComposer>();
 		services.AddTransient<IBroker, Broker>();
 		// this is required for error logging:
