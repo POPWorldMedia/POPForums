@@ -1,16 +1,20 @@
 ﻿class AnyBool extends ElementBase {
     constructor() {
         super(null);
+    }
+
+    private markup: HTMLElement;
+
+    private template: HTMLTemplateElement;
+
+    connectedCallback(): void {
+        super.connectedCallback();
         this.template = document.createElement("template");
         this.template.innerHTML = `<slot name="markup">`;
         this.attachShadow({ mode: "open" });
         this.shadowRoot.append(this.template.content.cloneNode(true));
         this.markup = this.shadowRoot.querySelector("slot[name='markup']");
     }
-
-    private markup: HTMLElement;
-
-    private template: HTMLTemplateElement;
 
     updateUI(data: any): void {
         if (data as boolean !== true)

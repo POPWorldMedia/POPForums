@@ -1,37 +1,9 @@
 class FullText extends ElementBase {
     constructor() {
         super(null);
-        if (userState.isPlainText) {
-            this.externalFormElement = document.createElement("textarea");
-            this.externalFormElement.classList.add("form-control");
-            (this.externalFormElement as HTMLTextAreaElement).rows = 12;
-            let self = this;
-            this.externalFormElement.addEventListener("change", () => {
-                self.value = (this.externalFormElement as HTMLTextAreaElement).value;
-            });
-            this.appendChild(this.externalFormElement);
-            return;
-        }
-        let template = document.createElement("template");
-        template.innerHTML = FullText.template;
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot.append(template.content.cloneNode(true));
-        this.textBox = this.shadowRoot.querySelector("#editor");
-        this.editorSettings.target = this.textBox;
-        if (!topicState.isImageEnabled)
-            this.editorSettings.toolbar = FullText.postNoImageToolbar;
-        tinymce.init(this.editorSettings);
-        this.externalFormElement = document.createElement("input") as HTMLInputElement;
-        this.externalFormElement.id = this.id;
-        (this.externalFormElement as HTMLInputElement).type = "hidden";
-        this.appendChild(this.externalFormElement);
-        let editor = tinymce.get("editor");
-        var self = this;
-        editor.on("blur", function(e: any) {
-            editor.save();
-            self.value = (self.textBox as HTMLInputElement).value;
-        });
     }
+
+    get formID() { return this.getAttribute("formid") };
 
     get value() { return this._value;}
     set value(v: string) { this._value = v; }
@@ -42,6 +14,55 @@ class FullText extends ElementBase {
 
     private textBox: HTMLElement;
     private externalFormElement: HTMLElement;
+
+    connectedCallback() {
+        var initialValue = this.getAttribute("value");
+        if (initialValue)
+            this.value = initialValue;
+        if (userState.isPlainText) {
+            this.externalFormElement = document.createElement("textarea");
+            this.externalFormElement.id = this.formID;
+            this.externalFormElement.setAttribute("name", this.formID);
+            this.externalFormElement.classList.add("form-control");
+            if (this.value)
+            (this.externalFormElement as HTMLTextAreaElement).value = this.value;
+            (this.externalFormElement as HTMLTextAreaElement).rows = 12;
+            let self = this;
+            this.externalFormElement.addEventListener("change", () => {
+                self.value = (this.externalFormElement as HTMLTextAreaElement).value;
+            });
+            this.appendChild(this.externalFormElement);
+            super.connectedCallback();
+            return;
+        }
+        let template = document.createElement("template");
+        template.innerHTML = FullText.template;
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.append(template.content.cloneNode(true));
+        this.textBox = this.shadowRoot.querySelector("#editor");
+        if (this.value)
+            (this.textBox as HTMLTextAreaElement).innerText = this.value;
+        this.editorSettings.target = this.textBox;
+        if (!userState.isImageEnabled)
+            this.editorSettings.toolbar = FullText.postNoImageToolbar;
+        var self = this;
+        this.editorSettings.setup = function (editor: any) {
+            editor.on("init", function () {
+              this.on("blur", function(e: any) {
+                editor.save();
+                self.value = (self.textBox as HTMLInputElement).value;
+                (self.externalFormElement as any).value = self.value;
+              })
+            })
+        };
+        tinymce.init(this.editorSettings);
+        this.externalFormElement = document.createElement("input") as HTMLInputElement;
+        this.externalFormElement.id = this.formID;
+        this.externalFormElement.setAttribute("name", this.formID);
+        (this.externalFormElement as HTMLInputElement).type = "hidden";
+        this.appendChild(this.externalFormElement);
+        super.connectedCallback();
+    }
 
     updateUI(data: any): void {
         if (data !== null && data !== undefined)
@@ -86,7 +107,8 @@ class FullText extends ElementBase {
         remove_script_host: false,
         contextmenu: "",
         paste_as_text: true,
-        paste_data_images: false
+        paste_data_images: false,
+        setup: null as Function
     };
 
     static id: string = "FullText";

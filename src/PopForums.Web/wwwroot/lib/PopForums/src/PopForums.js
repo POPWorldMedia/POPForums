@@ -105,15 +105,6 @@ PopForums.topicListSetup = function (forumID) {
 				n.innerHTML = body;
 				n.style.display = "block"; // TODO: animate?
 				b.style.display = "none";
-				var allowImage = (document.querySelector("#IsImageEnabled").value.toLowerCase() == "true");
-				if (!allowImage) {
-					PopForums.editorSettings.toolbar = PopForums.postNoImageToolbar;
-				}
-				var usePlainText = (document.querySelector("#IsPlainText").value.toLowerCase() == "true");
-				if (!usePlainText) {
-					PopForums.editorSettings.selector = "#NewTopic #FullText";
-					tinyMCE.init(PopForums.editorSettings);
-				}
 			});
 	});
 };

@@ -9,15 +9,6 @@
 @section HeaderContent
 {
 	<script type="text/javascript" src="@Url.Content("~/lib/tinymce/tinymce.min.js")"></script>
-	<script language="javascript" type="text/javascript">
-		ready(() => {
-			var usePlainText = (document.querySelector("#IsPlainText").value.toLowerCase() === "true");
-			if (!usePlainText) {
-				PopForums.editorSettings.selector = "#FullText";
-				tinyMCE.init(PopForums.editorSettings);
-			}
-		});
-	</script>
 }
 
 <h1>@PopForums.Resources.EditPost</h1>
@@ -31,7 +22,7 @@
 				<input asp-for="Title" type="text" class="form-control" />
 			</div>
 		}
-		<textarea asp-for="FullText" class="form-control"></textarea>
+		<pf-fulltext formid="FullText" caller="none" value="@Model.FullText"></pf-fulltext>
 		<div class="form-check my-3">
 			<label for="IncludeSignature" class="form-check-label">@PopForums.Resources.IncludeSignature</label>
 			<input type="checkbox" asp-for="ShowSig" class="form-check-input" />

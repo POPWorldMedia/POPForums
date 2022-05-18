@@ -1,7 +1,12 @@
 ﻿@model UserState
+@inject IUserRetrievalShim UserRetrievalShim
 @{
 	var serialized = JsonSerializer.Serialize(Model, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+	var user = UserRetrievalShim.GetUser();
 }
-<script>
-	var userState = Object.assign(new UserState(), @Html.Raw(serialized));
-</script>
+@if (user != null)
+{
+	<script>
+		var userState = Object.assign(new UserState(), @Html.Raw(serialized));
+	</script>
+}

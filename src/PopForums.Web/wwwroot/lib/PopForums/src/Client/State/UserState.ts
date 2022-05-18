@@ -9,6 +9,7 @@ class UserState extends StateBase {
     }
     
     isPlainText: boolean;
+    isImageEnabled: boolean;
 
     @WatchProperty
     newPmCount: number;

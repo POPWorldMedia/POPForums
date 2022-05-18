@@ -16,6 +16,8 @@
         const attr = this.getAttribute('caller');
         if (!attr)
             throw Error("There is no 'caller' attribute on the component.");
+        if (attr.toLowerCase() === "none")
+            return;
         const varAndProp = this.parseCallerString(attr);
         const state = window[varAndProp[0]];
         const delegate = this.update.bind(this);
