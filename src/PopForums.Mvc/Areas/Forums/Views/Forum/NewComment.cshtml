@@ -3,7 +3,7 @@
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
 <div id="NewReply" class="postForm" role="form">
-	@Html.TextAreaFor(p => p.FullText, new { @class = "form-control mb-3" })
+	<pf-fulltext formid="FullText" caller="none"></pf-fulltext>
 	@Html.HiddenFor(p => p.Title)
 	@Html.HiddenFor(p => p.IncludeSignature)
 	@Html.HiddenFor(p => p.ItemID)

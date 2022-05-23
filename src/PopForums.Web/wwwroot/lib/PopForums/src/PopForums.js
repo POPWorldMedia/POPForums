@@ -7,32 +7,6 @@ var PopForums = {};
 
 PopForums.areaPath = "/Forums"; // TODO: migrate this
 PopForums.currentTopicState = null;
-PopForums.editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
-PopForums.postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
-
-PopForums.editorSettings = {
-	theme: "silver",
-	plugins: "lists image link",
-	content_css: PopForums.editorCSS,
-	menubar: false,
-	toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
-	statusbar: false,
-	link_target_list: false,
-	link_title: false,
-	image_description: false,
-	image_dimensions: false,
-	image_title: false,
-	image_uploadtab: false,
-	images_file_types: 'jpeg,jpg,png,gif',
-	automatic_uploads: false,
-	browser_spellcheck : true,
-	object_resizing: false,
-	relative_urls: false,
-	remove_script_host: false,
-	contextmenu: "",
-	paste_as_text: true,
-	paste_data_images: false
-};
 
 PopForums.processLogin = function () {
 	PopForums.processLoginBase("/Identity/Login");
@@ -184,15 +158,7 @@ PopForums.loadComment = function (topicID, replyID) {
 		.then(response => response.text()
 			.then(text => {
 				n.innerHTML = text;
-				var allowImage = (n.querySelector("#IsImageEnabled").value.toLowerCase() === "true");
-				if (!allowImage) {
-					PopForums.editorSettings.toolbar = PopForums.postNoImageToolbar;
-				}
-				var usePlainText = (n.querySelector("#IsPlainText").value.toLowerCase() === "true");
-				if (!usePlainText) {
-					PopForums.editorSettings.selector = ".postForm #FullText";
-					tinyMCE.init(PopForums.editorSettings);
-				}
+				// legacy tiny init here
 			}));
 };
 
@@ -587,7 +553,6 @@ PopForums.TopicState.prototype.addEndPage = function () { this.highPage++; };
 PopForums.TopicState.prototype.addStartPage = function () { this.lowPage--; };
 
 PopForums.postNewTopic = function () {
-	tinyMCE.triggerSave();
 	const d = document;
 	d.querySelector("#SubmitNewTopic").setAttribute("disabled", "disabled");
 	var model = {
@@ -626,7 +591,6 @@ PopForums.postNewTopic = function () {
 };
 
 PopForums.postReply = function () {
-	tinyMCE.triggerSave();
 	const d = document;
 	d.querySelector("#SubmitReply").setAttribute("disabled", "disabled");
 	var closeCheck = d.querySelector("#CloseOnReply");
