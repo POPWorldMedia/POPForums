@@ -1,6 +1,8 @@
 ﻿/// <reference path="../State/TopicState.ts" />
 
-class QuoteButton extends HTMLElement {
+namespace PopForums {
+
+    export class QuoteButton extends HTMLElement {
     constructor() {
         super();
     }
@@ -85,3 +87,5 @@ class QuoteButton extends HTMLElement {
 }
 
 customElements.define('pf-quotebutton', QuoteButton);
+
+}

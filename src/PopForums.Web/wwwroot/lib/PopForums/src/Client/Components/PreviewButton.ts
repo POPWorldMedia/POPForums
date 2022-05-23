@@ -1,4 +1,6 @@
-class PreviewButton extends HTMLElement {
+namespace PopForums {
+
+    export class PreviewButton extends HTMLElement {
     constructor() {
         super();
     }
@@ -66,3 +68,5 @@ class PreviewButton extends HTMLElement {
 }
 
 customElements.define('pf-previewbutton', PreviewButton);
+
+}

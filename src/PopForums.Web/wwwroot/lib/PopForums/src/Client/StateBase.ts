@@ -1,5 +1,7 @@
-﻿// Declare implementations of this globally so instances of ElementBase can find it by name. Properties to watch require the @WatchProperty attribute.
-class StateBase {
+﻿namespace PopForums {
+
+// Declare implementations of this globally so instances of ElementBase can find it by name. Properties to watch require the @WatchProperty attribute.
+export class StateBase {
     constructor() {
         this._subs = new Map<string, Array<Function>>();
     }
@@ -21,4 +23,6 @@ class StateBase {
                 i();
             }
     }
+}
+
 }

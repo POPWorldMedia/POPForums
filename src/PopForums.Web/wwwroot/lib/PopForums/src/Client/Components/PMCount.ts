@@ -1,4 +1,6 @@
-﻿class PMCount extends ElementBase {
+﻿namespace PopForums {
+
+    export class PMCount extends ElementBase {
     constructor() {
         super(null);
     }
@@ -11,3 +13,5 @@
 }
 
 customElements.define('pf-pmcount', PMCount);
+
+}

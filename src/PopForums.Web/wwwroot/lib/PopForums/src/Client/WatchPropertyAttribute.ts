@@ -1,4 +1,6 @@
-﻿const WatchProperty = (target: any, memberName: string) => {
+﻿namespace PopForums {
+
+export const WatchProperty = (target: any, memberName: string) => {
     let currentValue: any = target[memberName];  
     Object.defineProperty(target, memberName, {
         set(this: any, newValue: any) {
@@ -8,3 +10,5 @@
         get() {return currentValue;}
     });
 };
+
+}

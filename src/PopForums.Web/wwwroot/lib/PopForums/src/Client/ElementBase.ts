@@ -1,4 +1,6 @@
-﻿abstract class ElementBase extends HTMLElement {
+﻿namespace PopForums {
+
+export abstract class ElementBase extends HTMLElement {
     // Derived class constructor must call super("IDofTemplateHTML") first, or super(null) if markup is generated internally.
     constructor(templateID: string) {
         super();
@@ -42,4 +44,6 @@
 
     // Use this.shadowRoot in the implementation to manipulate the template DOM or straight markup as needed in response to the new data.
     abstract updateUI(data: any): void;
+}
+
 }

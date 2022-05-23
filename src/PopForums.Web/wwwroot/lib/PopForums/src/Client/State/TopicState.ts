@@ -1,7 +1,9 @@
 /// <reference path="../WatchPropertyAttribute.ts" />
 /// <reference path="../StateBase.ts" />
 
-class TopicState extends StateBase {
+namespace PopForums {
+
+export class TopicState extends StateBase {
     constructor() {
         super();
         this.isImageEnabled = false;
@@ -14,4 +16,6 @@ class TopicState extends StateBase {
 
     @WatchProperty
     nextQuote: string;
+}
+
 }

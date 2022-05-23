@@ -1,4 +1,6 @@
-﻿class IsLoggedIn extends ElementBase {
+﻿namespace PopForums {
+
+    export class IsLoggedIn extends ElementBase {
     constructor() {
         super(null);
     }
@@ -32,3 +34,5 @@
 }
 
 customElements.define('pf-isloggedin', IsLoggedIn);
+
+}

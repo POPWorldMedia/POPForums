@@ -1,4 +1,6 @@
-class FullText extends ElementBase {
+namespace PopForums {
+
+    export class FullText extends ElementBase {
     constructor() {
         super(null);
     }
@@ -117,3 +119,5 @@ class FullText extends ElementBase {
 }
 
 customElements.define('pf-fulltext', FullText);
+
+}

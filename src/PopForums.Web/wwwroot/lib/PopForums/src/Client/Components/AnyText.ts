@@ -1,4 +1,6 @@
-﻿class AnyText extends ElementBase {
+﻿namespace PopForums {
+
+    export class AnyText extends ElementBase {
     constructor() {
         super(null);
     }
@@ -8,3 +10,5 @@
 }
 
 customElements.define('pf-anytext', AnyText);
+
+}

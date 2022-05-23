@@ -1,4 +1,6 @@
-﻿class AnyBool extends ElementBase {
+﻿namespace PopForums {
+
+export class AnyBool extends ElementBase {
     constructor() {
         super(null);
     }
@@ -25,3 +27,5 @@
 }
 
 customElements.define('pf-anybool', AnyBool);
+
+}
