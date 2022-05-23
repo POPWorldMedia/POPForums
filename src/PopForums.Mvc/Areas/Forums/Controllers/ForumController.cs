@@ -243,7 +243,7 @@ public class ForumController : Controller
 		return View(container);
 	}
 
-	public async Task<ActionResult> PostReply(int id, int quotePostID = 0, int replyID = 0)
+	public async Task<ActionResult> PostReply(int id, int replyID = 0)
 	{
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
@@ -267,12 +267,6 @@ public class ForumController : Controller
 			title = "Re: " + title;
 		var profile = await _profileService.GetProfile(user);
 		var newPost = new NewPost { ItemID = topic.TopicID, Title = title, IncludeSignature = profile.Signature.Length > 0, IsPlainText = profile.IsPlainText, IsImageEnabled = _settingsManager.Current.AllowImages, ParentPostID = replyID };
-
-		if (quotePostID != 0)
-		{
-			var post = await _postService.Get(quotePostID);
-			newPost.FullText = await _postService.GetPostForQuote(post, user, profile.IsPlainText);
-		}
 
 		if (forum.IsQAForum)
 		{
