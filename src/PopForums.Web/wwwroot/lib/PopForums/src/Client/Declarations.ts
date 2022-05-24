@@ -1,5 +1,9 @@
-declare var topicState: PopForums.TopicState;
-declare var userState: PopForums.UserState;
+namespace PopForums {
+    export const AreaPath = "/Forums";
+    export var currentTopicState: PopForums.TopicState;
+    export var userState: PopForums.UserState;
+}
+
 
 declare namespace tinymce {
     function init(options:any): any;

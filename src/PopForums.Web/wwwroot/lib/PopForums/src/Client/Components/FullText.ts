@@ -81,6 +81,7 @@ namespace PopForums {
                 (this.textBox as HTMLInputElement).value += content;
                 editor.save();
                 this.value = (this.textBox as HTMLInputElement).value;
+                (this.externalFormElement as HTMLInputElement).value = this.value;
             }
         }
     }

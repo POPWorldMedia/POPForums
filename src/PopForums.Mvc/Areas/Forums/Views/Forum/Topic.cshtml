@@ -15,7 +15,7 @@
 		ready(() => {
 			PopForums.topicSetup(@Model.Topic.TopicID, @Model.PagerContext.PageIndex, @Model.PagerContext.PageCount);
 		});
-		var topicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
+		PopForums.currentTopicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
 	</script>
 }
 

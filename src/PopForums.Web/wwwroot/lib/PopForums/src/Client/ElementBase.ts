@@ -21,9 +21,9 @@ export abstract class ElementBase extends HTMLElement {
         if (attr.toLowerCase() === "none")
             return;
         const varAndProp = this.parseCallerString(attr);
-        const state = window[varAndProp[0]];
+        const state: StateBase = PopForums[varAndProp[1]];
         const delegate = this.update.bind(this);
-        state.subscribe(varAndProp[1], delegate);
+        state.subscribe(varAndProp[2], delegate);
     }
 
     update() {
@@ -31,18 +31,18 @@ export abstract class ElementBase extends HTMLElement {
         if (!attr)
             throw Error("There is no 'caller' attribute on the component.");
         const varAndProp = this.parseCallerString(attr);
-        const externalValue = window[varAndProp[0]][varAndProp[1]];
+        const externalValue = PopForums[varAndProp[1]][varAndProp[2]];
         this.updateUI(externalValue);
     }
 
-    private parseCallerString(caller: string): [string, string] {
+    private parseCallerString(caller: string): string[] {
         const segments = caller.split(".");
-        if (segments.length != 2)
-            throw Error("caller attribute must follow 'globalVariable.property' format.");
-        return [segments[0], segments[1]];
+        if (segments.length !== 3 || segments[0] !== "PopForums")
+            throw Error("caller attribute must follow 'PopForums.state.property' format.");
+        return segments;
     }
 
-    // Use this.shadowRoot in the implementation to manipulate the template DOM or straight markup as needed in response to the new data.
+    // Use in the implementation to manipulate the shadow or light DOM or straight markup as needed in response to the new data.
     abstract updateUI(data: any): void;
 }
 

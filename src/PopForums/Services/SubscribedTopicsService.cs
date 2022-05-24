@@ -8,7 +8,7 @@ public interface ISubscribedTopicsService
 	Task MarkSubscribedTopicViewed(User user, Topic topic);
 	Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator);
 	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
-	Task<bool> IsTopicSubscribed(User user, Topic topic);
+	Task<bool> IsTopicSubscribed(int userID, int topicID);
 }
 
 public class SubscribedTopicsService : ISubscribedTopicsService
@@ -76,8 +76,8 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 		return Tuple.Create(topics, pagerContext);
 	}
 
-	public async Task<bool> IsTopicSubscribed(User user, Topic topic)
+	public async Task<bool> IsTopicSubscribed(int userID, int topicID)
 	{
-		return await _subscribedTopicsRepository.IsTopicSubscribed(user.UserID, topic.TopicID);
+		return await _subscribedTopicsRepository.IsTopicSubscribed(userID, topicID);
 	}
 }

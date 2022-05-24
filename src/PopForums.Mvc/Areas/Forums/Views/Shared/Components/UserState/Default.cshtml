@@ -7,6 +7,6 @@
 @if (user != null)
 {
 	<script>
-		var userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));
+		PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));
 	</script>
 }

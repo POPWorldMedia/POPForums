@@ -76,9 +76,9 @@ namespace PopForums {
                     result = `[quote][i]${this.name}:[/i]\r\n ${div.innerText}[/quote]`;
                 else
                     result = `<blockquote><p><i>${this.name}:</i></p>${div.innerHTML}</blockquote><p></p>`;
-                topicState.nextQuote = result;
-                if (!topicState.isReplyLoaded)
-                    PopForums.loadReply(topicState.topicID, null, Number(this.postID), true);
+                PopForums.currentTopicState.nextQuote = result;
+                if (!PopForums.currentTopicState.isReplyLoaded)
+                    PopForums.loadReply(PopForums.currentTopicState.topicID, null, Number(this.postID), true);
             }
         };
     }

@@ -3,7 +3,7 @@
 public interface IFavoriteTopicService
 {
 	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
-	Task<bool> IsTopicFavorite(User user, Topic topic);
+	Task<bool> IsTopicFavorite(int userID, int topicID);
 	Task AddFavoriteTopic(User user, Topic topic);
 	Task RemoveFavoriteTopic(User user, Topic topic);
 }
@@ -30,9 +30,9 @@ public class FavoriteTopicService : IFavoriteTopicService
 		return Tuple.Create(topics, pagerContext);
 	}
 
-	public async Task<bool> IsTopicFavorite(User user, Topic topic)
+	public async Task<bool> IsTopicFavorite(int userID, int topicID)
 	{
-		return await _favoriteTopicRepository.IsTopicFavorite(user.UserID, topic.TopicID);
+		return await _favoriteTopicRepository.IsTopicFavorite(userID, topicID);
 	}
 
 	public async Task AddFavoriteTopic(User user, Topic topic)
