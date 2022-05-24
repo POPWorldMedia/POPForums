@@ -10,6 +10,13 @@ namespace PopForums {
     get buttonclass(): string {
         return this.getAttribute("buttonclass");
     }
+    
+    get subscribetext(): string {
+        return this.getAttribute("subscribetext");
+    }
+    get unsubscribetext(): string {
+        return this.getAttribute("unsubscribetext");
+    }
 
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
@@ -42,9 +49,9 @@ namespace PopForums {
     updateUI(data: boolean): void {
         let button = this.querySelector("input");
         if (data)
-            button.value = "Unsubscribe";
+            button.value = this.unsubscribetext;
         else
-            button.value = "Subscribe";
+            button.value = this.subscribetext;
     }
 
     static template: string = `<input type="button" />`;

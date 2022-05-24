@@ -31,8 +31,8 @@
 @if (user != null) {
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
-		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed"></pf-subscribebutton>
-		<pf-favoritebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isFavorite"></pf-favoritebutton>
+		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
+		<pf-favoritebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isFavorite" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{
 			<input id="TopicModLogButton" class="btn btn-primary" type="button" value="@PopForums.Resources.ModerationLog" />

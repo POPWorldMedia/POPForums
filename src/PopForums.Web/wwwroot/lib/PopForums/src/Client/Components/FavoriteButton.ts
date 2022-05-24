@@ -11,6 +11,13 @@ namespace PopForums {
         return this.getAttribute("buttonclass");
     }
 
+    get makefavoritetext(): string {
+        return this.getAttribute("makefavoritetext");
+    }
+    get removefavoritetext(): string {
+        return this.getAttribute("removefavoritetext");
+    }
+
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
         let button: HTMLInputElement = this.querySelector("input");
@@ -42,9 +49,9 @@ namespace PopForums {
     updateUI(data: boolean): void {
         let button = this.querySelector("input");
         if (data)
-            button.value = "Remove From Favorites";
+            button.value = this.removefavoritetext;
         else
-            button.value = "Make Favorite";
+            button.value = this.makefavoritetext;
     }
 
     static template: string = `<input type="button" />`;
