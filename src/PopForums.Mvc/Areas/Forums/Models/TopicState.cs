@@ -3,7 +3,7 @@
 public class TopicState
 {
 	public int TopicID { get; set; }
-	public bool IsPlainText { get; set; }
 	public bool IsImageEnabled { get; set; }
-	public string NextQuote { get; set; }
+	public bool IsSubscribed { get; set; }
+	public bool IsFavorite { get; set; }
 }

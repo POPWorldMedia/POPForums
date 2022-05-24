@@ -271,7 +271,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 					}));
 		}
 	});
-	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
 	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
 		var l = document.querySelector("#TopicModerationLog");
@@ -398,7 +397,6 @@ PopForums.qaTopicSetup = function (topicID) {
 				});
 		}
 	});
-	PopForums.SetupSubscribeButton(topicID);
 	PopForums.SetupFavoriteButton(topicID);
 	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
 		var l = document.querySelector("#TopicModerationLog");
@@ -426,32 +424,6 @@ PopForums.qaTopicSetup = function (topicID) {
 		}
 	});
 };
-
-PopForums.SetupSubscribeButton = function (topicID) {
-	var s = document.querySelector("#SubscribeButton");
-	s?.addEventListener("click", () => {
-		var asyncResult = document.querySelector("#AsyncResponse");
-		fetch(PopForums.areaPath + "/Subscription/ToggleSubscription/" + topicID, {
-			method: "POST"
-		})
-			.then(response => response.json())
-			.then(result => {
-				switch (result.data.isSubscribed) {
-					case true:
-						s.value = "Unsubscribe";
-						break;
-					case false:
-						s.value = "Subscribe";
-						break;
-					default:
-						asyncResult.innerHTML = result.Message;
-				}
-			})
-			.catch(() => {
-				asyncResult.innerHTML = "There was an unknown error while attempting to use subscription";
-			});
-	});
-}
 
 PopForums.SetupFavoriteButton = function(topicID) {
 	var f = document.querySelector("#FavoriteButton");

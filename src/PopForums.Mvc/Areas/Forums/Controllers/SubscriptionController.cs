@@ -67,7 +67,7 @@ public class SubscriptionController : Controller
 		var topic = await _topicService.Get(id);
 		if (topic == null)
 			return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-		if (await _subService.IsTopicSubscribed(user, topic))
+		if (await _subService.IsTopicSubscribed(user.UserID, topic.TopicID))
 		{
 			await _subService.RemoveSubscribedTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isSubscribed = false }, Result = true });

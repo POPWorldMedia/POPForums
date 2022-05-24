@@ -51,7 +51,7 @@ public class FavoritesController : Controller
 		var topic = await _topicService.Get(id);
 		if (topic == null)
 			return Json(new BasicJsonMessage { Message = Resources.TopicNotExist, Result = false });
-		if (await _favoriteTopicService.IsTopicFavorite(user, topic))
+		if (await _favoriteTopicService.IsTopicFavorite(user.UserID, topic.TopicID))
 		{
 			await _favoriteTopicService.RemoveFavoriteTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isFavorite = false }, Result = true });

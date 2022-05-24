@@ -6,7 +6,6 @@ namespace PopForums {
 export class TopicState extends StateBase {
     constructor() {
         super();
-        this.isImageEnabled = false;
         this.isReplyLoaded = false;
     }
 
@@ -16,6 +15,12 @@ export class TopicState extends StateBase {
 
     @WatchProperty
     nextQuote: string;
+
+    @WatchProperty
+    isSubscribed: boolean;
+
+    @WatchProperty
+    isFavorite: boolean;
 }
 
 }

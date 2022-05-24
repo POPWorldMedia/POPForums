@@ -15,7 +15,7 @@
 	ready(() => {
 		PopForums.qaTopicSetup(@Model.Topic.TopicID);
 	});
-	var topicState = Object.assign(new TopicState(), @Html.Raw(topicStateSerialized));
+	PopForums.currentTopicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
 </script>
 }
 
@@ -31,7 +31,7 @@
 @if (user != null) {
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
-		<input type="button" value="@(Model.IsSubscribed ? PopForums.Resources.Unsubscribe : PopForums.Resources.Subscribe)" id="SubscribeButton" class="btn btn-primary" />
+		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed"></pf-subscribebutton>
 		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn btn-primary" />
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{

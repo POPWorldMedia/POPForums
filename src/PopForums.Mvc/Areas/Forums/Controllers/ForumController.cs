@@ -157,8 +157,7 @@ public class ForumController : Controller
 		if (user != null)
 		{
 			lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
-			isFavorite = await _favoriteTopicService.IsTopicFavorite(user, topic);
-			isSubscribed = await _subService.IsTopicSubscribed(user, topic);
+			isSubscribed = await _subService.IsTopicSubscribed(user.UserID, topic.TopicID);
 			if (isSubscribed)
 				await _subService.MarkSubscribedTopicViewed(user, topic);
 			if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
@@ -198,7 +197,7 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		var topicState = _topicStateComposer.GetState(topic.TopicID);
+		var topicState = await _topicStateComposer.GetState(topic.TopicID);
 		ViewBag.TopicState = topicState; // TODO: Refactor this... container is in core project, while TopicState is not because it depends on IUserRetrievalShim.
 		if (forum.IsQAForum)
 		{
