@@ -32,7 +32,7 @@
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
 		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed"></pf-subscribebutton>
-		<input type="button" value="@(Model.IsFavorite ? PopForums.Resources.FavoriteRemove : PopForums.Resources.FavoriteMake)" id="FavoriteButton" class="btn btn-primary" />
+		<pf-favoritebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isFavorite"></pf-favoritebutton>
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{
 			<input id="TopicModLogButton" class="btn btn-primary" type="button" value="@PopForums.Resources.ModerationLog" />

@@ -271,7 +271,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 					}));
 		}
 	});
-	PopForums.SetupFavoriteButton(topicID);
 	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
 		var l = document.querySelector("#TopicModerationLog");
 		if (l.style.display != "block")
@@ -397,7 +396,6 @@ PopForums.qaTopicSetup = function (topicID) {
 				});
 		}
 	});
-	PopForums.SetupFavoriteButton(topicID);
 	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
 		var l = document.querySelector("#TopicModerationLog");
 		if (l.style.display != "block")
@@ -422,32 +420,6 @@ PopForums.qaTopicSetup = function (topicID) {
 						}));
 			else l.style.display = "none";
 		}
-	});
-};
-
-PopForums.SetupFavoriteButton = function(topicID) {
-	var f = document.querySelector("#FavoriteButton");
-	f?.addEventListener("click", () => {
-		var asyncResult = document.querySelector("#AsyncResponse");
-		fetch(PopForums.areaPath + "/Favorites/ToggleFavorite/" + topicID, {
-			method: "POST"
-		})
-			.then(response => response.json())
-			.then(result => {
-				switch (result.data.isFavorite) {
-					case true:
-						f.value = "Remove From Favorites";
-						break;
-					case false:
-						f.value = "Make Favorite";
-						break;
-					default:
-						asyncResult.innerHTML = result.Message;
-				}
-			})
-			.catch(() => {
-				asyncResult.innerHTML = "There was an unknown error while attempting to use favorites";
-			});
 	});
 };
 
