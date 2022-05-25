@@ -67,7 +67,6 @@ PopForums.scrollToPostFromHash = () => {
 };
 
 PopForums.topicListSetup = function (forumID) {
-	PopForums.startTimeUpdater();
 	var b = document.querySelector("#NewTopicButton");
 	b?.addEventListener("click", () => {
 		var n = document.querySelector("#NewTopic");
@@ -169,7 +168,6 @@ PopForums.loadFeed = function () {
 		.then(function () {
 			return connection.invoke("listenToAll");
 		});
-	PopForums.startTimeUpdater();
 };
 
 PopForums.populateFeedRow = function (data) {
@@ -191,7 +189,6 @@ PopForums.setReplyMorePosts = function (lastPostID) {
 };
 
 PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
-	PopForums.startTimeUpdater();
 	var lastPostID = document.querySelector("#LastPostID").value;
 	PopForums.theTopicState = new PopForums.oldTopicState(pageIndex, lastPostID, pageCount, topicID);
 
@@ -333,8 +330,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 };
 
 PopForums.qaTopicSetup = function (topicID) {
-	PopForums.startTimeUpdater();
-
 	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 
 	document.querySelector("#PostStream").addEventListener("click", event => {
@@ -609,7 +604,6 @@ PopForums.homeSetup = function () {
 		.then(function () {
 			return connection.invoke("listenToAll");
 		});
-	PopForums.startTimeUpdater();
 };
 
 PopForums.recentListen = function (pageSize) {
@@ -681,36 +675,4 @@ PopForums.updateForumStats = function (data) {
 	row.querySelector(".fTime").setAttribute("data-utc", data.utc);
 	row.querySelector(".newIndicator .icon-file-text2").classList.remove("text-muted");
 	row.querySelector(".newIndicator .icon-file-text2").classList.add("text-warning");
-};
-
-PopForums.startTimeUpdater = function () {
-	setTimeout(function () {
-		PopForums.startTimeUpdater();
-		PopForums.updateTimes();
-	}, 60000);
-};
-
-PopForums.updateTimes = function () {
-	var a = [];
-	var times = document.querySelectorAll(".fTime");
-	times.forEach(time => {
-		var t = time.getAttribute("data-utc");
-		if (((new Date() - new Date(t + "Z")) / 3600000) < 48)
-			a.push(t);
-	});
-	if (a.length > 0) {
-		var formData = new FormData();
-		a.forEach(t => formData.append("times", t));
-		fetch(PopForums.areaPath + "/Time/GetTimes", {
-			method: "POST",
-			body: formData
-		})
-			.then(response => response.json())
-			.then(data => {
-				data.forEach(t => {
-					document.querySelector(".fTime[data-utc='" + t.key + "']").innerHTML = t.value;
-				});
-			})
-			.catch(error => { console.log("Time update failure: " + error); });
-	}
 };
