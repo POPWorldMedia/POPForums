@@ -33,6 +33,10 @@ namespace PopForums {
         button.addEventListener("click", () => {
             if (!container) {
                 let parentContainer = self.closest(this.parentSelectorToAppendTo);
+                if (!parentContainer) {
+                    console.error(`Can't find a parent selector "${this.parentSelectorToAppendTo}" to append post moderation log to.`);
+                    return;
+                }
                 container = document.createElement("div");
                 parentContainer.appendChild(container);
             }
