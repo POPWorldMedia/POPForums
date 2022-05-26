@@ -269,20 +269,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		}
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("postModLogButton")) {
-			var id = event.target.getAttribute("data-postid");
-			var l = event.target.closest(".postToolContainer").querySelector(".moderationLog");
-			if (l.style.display != "block")
-				fetch(PopForums.areaPath + "/Moderator/PostModerationLog/" + id)
-					.then(response => response.text()
-						.then(text => {
-							l.innerHTML = text;
-							l.style.display = "block";
-						}));
-			else l.style.display = "none";
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("morePostsButton")) {
 			PopForums.LoadMorePosts(topicID, event.target);
 		}
@@ -378,20 +364,6 @@ PopForums.qaTopicSetup = function (topicID) {
 					button.classList.add("icon-checkmark");
 					button.classList.add("text-success");
 				});
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("postModLogButton")) {
-			var id = event.target.getAttribute("data-postid");
-			var l = event.target.closest(".postToolContainer").querySelector(".moderationLog");
-			if (l.style.display != "block")
-				fetch(PopForums.areaPath + "/Moderator/PostModerationLog/" + id)
-					.then(response => response.text()
-						.then(text => {
-							l.innerHTML = text;
-							l.style.display = "block";
-						}));
-			else l.style.display = "none";
 		}
 	});
 };

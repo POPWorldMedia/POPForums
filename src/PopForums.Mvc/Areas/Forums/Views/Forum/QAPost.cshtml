@@ -99,10 +99,11 @@
 				}
 				@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
 				{
-					<li class="list-inline-item"><input data-postid="@Model.Post.PostID" class="btn-link postModLogButton" type="button" value="@PopForums.Resources.ModerationLog" /></li>
+					<li class="list-inline-item">
+						<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".postToolContainer"></pf-postmoderationlogbutton>
+					</li>
 				}
 			</ul>
-			<div class="moderationLog rounded my-3 px-3 py-1"></div>
 		</div>
 		<div class="commentHolder"></div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)

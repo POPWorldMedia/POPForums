@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class TopicModerationLogButton extends HTMLElement {
+    export class PostModerationLogButton extends HTMLElement {
     constructor() {
         super();
     }
@@ -13,8 +13,12 @@ namespace PopForums {
         return this.getAttribute("buttontext");
     }
 
-    get topicid(): string {
-        return this.getAttribute("topicid");
+    get postid(): string {
+        return this.getAttribute("postid");
+    }
+
+    get parentSelectorToAppendTo(): string {
+        return this.getAttribute("parentselectortoappendto");
     }
 
     connectedCallback() {
@@ -24,10 +28,16 @@ namespace PopForums {
         let classes = this.buttonclass;
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
+        let self = this;
+        let container: HTMLDivElement;
         button.addEventListener("click", () => {
-            let container = this.querySelector("div");
+            if (!container) {
+                let parentContainer = self.closest(this.parentSelectorToAppendTo);
+                container = document.createElement("div");
+                parentContainer.appendChild(container);
+            }
             if (container.style.display !== "block")
-                fetch(PopForums.AreaPath + "/Moderator/TopicModerationLog/" + this.topicid)
+                fetch(PopForums.AreaPath + "/Moderator/PostModerationLog/" + this.postid)
                     .then(response => response.text()
                         .then(text => {
                             container.innerHTML = text;
@@ -37,10 +47,9 @@ namespace PopForums {
         });
     }
 
-    static template: string = `<input type="button" />
-    <div></div>`;
+    static template: string = `<input type="button" />`;
 }
 
-customElements.define("pf-topicmoderationlogbutton", TopicModerationLogButton);
+customElements.define("pf-postmoderationlogbutton", PostModerationLogButton);
 
 }
