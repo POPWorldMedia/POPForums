@@ -268,17 +268,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 					}));
 		}
 	});
-	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
-		var l = document.querySelector("#TopicModerationLog");
-		if (l.style.display != "block")
-			fetch(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID)
-				.then(response => response.text()
-					.then(text => {
-						l.innerHTML = text;
-						l.style.display = "block";
-					}));
-		else l.style.display = "none";
-	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("postModLogButton")) {
 			var id = event.target.getAttribute("data-postid");
@@ -390,17 +379,6 @@ PopForums.qaTopicSetup = function (topicID) {
 					button.classList.add("text-success");
 				});
 		}
-	});
-	document.querySelector("#TopicModLogButton")?.addEventListener("click", () => {
-		var l = document.querySelector("#TopicModerationLog");
-		if (l.style.display != "block")
-			fetch(PopForums.areaPath + "/Moderator/TopicModerationLog/" + topicID)
-				.then(response => response.text()
-					.then(text => {
-						l.innerHTML = text;
-						l.style.display = "block";
-					}));
-		else l.style.display = "none";
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("postModLogButton")) {
