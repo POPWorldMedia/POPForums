@@ -287,21 +287,6 @@ PopForums.qaTopicSetup = function (topicID) {
 		}
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("voteUp")) {
-			var parent = event.target.closest(".postItem");
-			var postID = parent.getAttribute("data-postID");
-			var countBox = parent.querySelector(".answerData").querySelector(".badge");
-			fetch(PopForums.areaPath + "/Forum/VotePost/" + postID, {
-				method: "POST"
-			})
-				.then(response => response.text()
-					.then(text => {
-						countBox.innerHTML = text;
-						parent.querySelector(".voteUp").outerHTML = '<li class="list-inline-item">Voted</li>';
-					}));
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("answerButton")) {
 			var button = event.target;
 			var parent = button.closest(".postItem");

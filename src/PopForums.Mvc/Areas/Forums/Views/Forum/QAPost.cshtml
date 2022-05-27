@@ -23,7 +23,7 @@
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
 	<div class="answerData col-2">
-		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary"></pf-votecount>
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary m-auto d-block" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary m-auto"></pf-votecount>
 		@if (user != null && user.UserID == Model.Topic.StartedByUserID && !Model.Post.IsFirstInTopic)
 		{
 			<p class="answerButton answerStatus @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>icon-checkmark text-success</text>}else{<text>icon-checkmark2 text-muted</text>}" title="@PopForums.Resources.ChooseAnswer"> </p>
