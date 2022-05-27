@@ -1,10 +1,8 @@
-﻿using Org.BouncyCastle.Bcpg;
-
-namespace PopForums.Mvc.Areas.Forums.Services;
+﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
 public interface ITopicStateComposer
 {
-	Task<TopicState> GetState(int topicID);
+	Task<TopicState> GetState(int topicID, int pageIndex, int pageCount, int lastVisiblePostID);
 }
 
 public class TopicStateComposer : ITopicStateComposer
@@ -22,9 +20,9 @@ public class TopicStateComposer : ITopicStateComposer
 		_favoriteTopicService = favoriteTopicService;
 	}
 
-	public async Task<TopicState> GetState(int topicID)
+	public async Task<TopicState> GetState(int topicID, int pageIndex, int pageCount, int lastVisiblePostID)
 	{
-		var topicState = new TopicState { TopicID = topicID };
+		var topicState = new TopicState { TopicID = topicID, PageIndex = pageIndex, PageCount = pageCount, LastVisiblePostID = lastVisiblePostID };
 		var user = _userRetrievalShim.GetUser();
 		if (user != null)
 		{

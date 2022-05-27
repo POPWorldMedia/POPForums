@@ -197,7 +197,7 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		var topicState = await _topicStateComposer.GetState(topic.TopicID);
+		var topicState = await _topicStateComposer.GetState(topic.TopicID, pagerContext.PageIndex, pagerContext.PageCount, posts.Last().PostID);
 		ViewBag.TopicState = topicState; // TODO: Refactor this... container is in core project, while TopicState is not because it depends on IUserRetrievalShim.
 		if (forum.IsQAForum)
 		{

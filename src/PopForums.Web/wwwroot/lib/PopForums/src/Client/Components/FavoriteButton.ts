@@ -1,5 +1,3 @@
-/// <reference path="../State/TopicState.ts" />
-
 namespace PopForums {
 
     export class FavoriteButton extends ElementBase {

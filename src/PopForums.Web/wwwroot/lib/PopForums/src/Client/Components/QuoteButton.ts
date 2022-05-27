@@ -1,6 +1,4 @@
-﻿/// <reference path="../State/TopicState.ts" />
-
-namespace PopForums {
+﻿namespace PopForums {
 
     export class QuoteButton extends HTMLElement {
     constructor() {

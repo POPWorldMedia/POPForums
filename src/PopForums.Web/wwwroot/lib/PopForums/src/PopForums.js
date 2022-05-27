@@ -86,7 +86,7 @@ PopForums.loadReply = function (topicID, replyID, setupMorePosts) {
 	window.removeEventListener("scroll", PopForums.ScrollLoad);
 	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
 	if (replyID != null) {
-		path += "&replyID=" + replyID;
+		path += "?replyID=" + replyID;
 	}
 
 	fetch(path)
@@ -189,8 +189,8 @@ PopForums.setReplyMorePosts = function (lastPostID) {
 };
 
 PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
-	var lastPostID = document.querySelector("#LastPostID").value;
-	PopForums.theTopicState = new PopForums.oldTopicState(pageIndex, lastPostID, pageCount, topicID);
+	//var lastPostID = document.querySelector("#LastPostID").value;
+	PopForums.theTopicState = new PopForums.oldTopicState(pageIndex, PopForums.currentTopicState.lastVisiblePostID, pageCount, topicID);
 
 	var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
 	connection.on("fetchNewPost", function (postID) {
@@ -213,17 +213,7 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		.then(function () {
 			return connection.invoke("listenTo", topicID);
 		});
-
-	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-
-	document.querySelector("#ReplyButton")?.addEventListener("click", event => {
-		PopForums.loadReply(topicID, replyID, true);
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("replyLink")) {
-			PopForums.loadReply(topicID, replyID, true);
-		}
-	});
+	
 	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("postNameLink")) {
 			var box = event.target.closest(".postItem").querySelector(".miniProfileBox");

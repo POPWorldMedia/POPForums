@@ -15,6 +15,9 @@
 			PopForums.topicSetup(@Model.Topic.TopicID, @Model.PagerContext.PageIndex, @Model.PagerContext.PageCount);
 		});
 		PopForums.currentTopicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
+		PopForums.Ready(() => {
+			PopForums.currentTopicState.setupTopic();
+		});
 	</script>
 }
 
@@ -57,8 +60,6 @@
 }
 </div>
 
-<input type="hidden" id="LastPostID" name="LastPostID" value="@Model.Posts.Last().PostID" class="lastPostID" />
-
 <pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
 <div id="StreamBottom"></div>
@@ -66,7 +67,7 @@
 @if (Model.PermissionContext.UserCanPost)
 {
 	<div id="NewReply"></div>
-	<input type="button" value="@PopForums.Resources.PostReply" id="ReplyButton" class="btn btn-primary" />
+	<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostReply" topicid="@Model.Topic.TopicID" postid="" caller="PopForums.currentTopicState.isReplyLoaded"></pf-replybutton>
 }
 else
 {
