@@ -480,7 +480,7 @@ public class ForumController : Controller
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> VotePost(int id)
+	public async Task<ActionResult> ToggleVote(int id)
 	{
 		var post = await _postService.Get(id);
 		if (post == null)
@@ -494,9 +494,9 @@ public class ForumController : Controller
 		var helper = Url;
 		var userProfileUrl = helper.Action("ViewProfile", "Account", new { id = user.UserID });
 		var topicUrl = helper.Action("PostLink", "Forum", new { id = post.PostID });
-		await _postService.VotePost(post, user, userProfileUrl, topicUrl, topic.Title);
-		var count = await _postService.GetVoteCount(post);
-		return View("Votes", count);
+		var result = await _postService.ToggleVoteReturnCountAndIsVoted(post, user, userProfileUrl, topicUrl, topic.Title);
+		var model = new {votes = result.Item1, isVoted = result.Item2};
+		return Json(model);
 	}
 
 	public class PreviewModel

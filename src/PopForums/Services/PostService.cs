@@ -14,11 +14,11 @@ public interface IPostService
 	Task<string> GetPostForQuote(Post post, User user, bool forcePlainText);
 	Task<List<IPHistoryEvent>> GetIPHistory(string ip, DateTime start, DateTime end);
 	Task<int> GetLastPostID(int topicID);
-	Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle);
 	Task<VotePostContainer> GetVoters(Post post);
 	Task<int> GetVoteCount(Post post);
 	Task<List<int>> GetVotedPostIDs(User user, List<Post> posts);
 	string GenerateParsedTextPreview(string text, bool isPlainText);
+	Task<Tuple<int, bool>> ToggleVoteReturnCountAndIsVoted(Post post, User user, string userUrl, string topicUrl, string topicTitle);
 }
 
 public class PostService : IPostService
@@ -198,25 +198,6 @@ public class PostService : IPostService
 		return await _postRepository.GetLastPostID(topicID);
 	}
 
-	public async Task VotePost(Post post, User user, string userUrl, string topicUrl, string topicTitle)
-	{
-		if (post.UserID == user.UserID)
-			return;
-		var voters = await _postRepository.GetVotes(post.PostID);
-		if (voters.ContainsKey(user.UserID))
-			return;
-		await _postRepository.VotePost(post.PostID, user.UserID);
-		var votes = await _postRepository.CalculateVoteCount(post.PostID);
-		await _postRepository.SetVoteCount(post.PostID, votes);
-		var votedUpUser = await _userService.GetUser(post.UserID);
-		if (votedUpUser != null)
-		{
-			// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
-			var message = String.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
-			await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
-		}
-	}
-
 	public async Task<VotePostContainer> GetVoters(Post post)
 	{
 		var results = await _postRepository.GetVotes(post.PostID);
@@ -247,5 +228,40 @@ public class PostService : IPostService
 	{
 		var result = isPlainText ? _textParsingService.ForumCodeToHtml(text) : _textParsingService.ClientHtmlToHtml(text);
 		return result;
+	}
+
+	public async Task<Tuple<int, bool>> ToggleVoteReturnCountAndIsVoted(Post post, User user, string userUrl, string topicUrl, string topicTitle)
+	{
+		if (user == null || post == null || post.UserID == user.UserID)
+			return null;
+		var voters = await _postRepository.GetVotes(post.PostID);
+		var isVoted = false;
+		if (voters.ContainsKey(user.UserID))
+		{
+			await _postRepository.DeleteVote(post.PostID, user.UserID);
+		}
+		else
+		{
+			await _postRepository.VotePost(post.PostID, user.UserID);
+			isVoted = true;
+		}
+		var votes = await _postRepository.CalculateVoteCount(post.PostID);
+		await _postRepository.SetVoteCount(post.PostID, votes);
+		var votedUpUser = await _userService.GetUser(post.UserID);
+		if (votedUpUser != null)
+		{
+			if (isVoted)
+			{
+				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
+				var message = string.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
+				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
+			}
+			else
+			{
+				var message = $"<a href=\"{userUrl}\">{user.Name}</a> -1: <a href=\"{topicUrl}\">{topicTitle}</a>";
+				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVoteUndo, false);
+			}
+		}
+		return new Tuple<int, bool>(votes, isVoted);
 	}
 }

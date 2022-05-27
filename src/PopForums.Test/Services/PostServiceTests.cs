@@ -340,18 +340,18 @@ public class PostServiceTests
 	}
 
 	[Fact]
-	public async Task VotePostCallsRepoWithPostIDAndUserID()
+	public async Task ToggleVoteCallsRepoWithPostIDAndUserID()
 	{
 		var service = GetService();
 		var post = new Post { PostID = 1 };
 		var user = new User { UserID = 2 };
 		_postRepo.Setup(x => x.GetVotes(post.PostID)).ReturnsAsync(new Dictionary<int, string>());
-		await service.VotePost(post, user, "abc", "def", "ghi");
+		await service.ToggleVoteReturnCountAndIsVoted(post, user, "abc", "def", "ghi");
 		_postRepo.Verify(x => x.VotePost(post.PostID, user.UserID), Times.Once());
 	}
 
 	[Fact]
-	public async Task VotePostCalcsAndSetsCount()
+	public async Task ToggleVoteCalcsAndSetsCount()
 	{
 		var service = GetService();
 		var post = new Post { PostID = 1 };
@@ -359,20 +359,8 @@ public class PostServiceTests
 		const int votes = 32;
 		_postRepo.Setup(x => x.GetVotes(post.PostID)).ReturnsAsync(new Dictionary<int, string>());
 		_postRepo.Setup(x => x.CalculateVoteCount(post.PostID)).ReturnsAsync(votes);
-		await service.VotePost(post, user, "abc", "def", "ghi");
+		await service.ToggleVoteReturnCountAndIsVoted(post, user, "abc", "def", "ghi");
 		_postRepo.Verify(x => x.SetVoteCount(post.PostID, votes), Times.Once());
-	}
-
-	[Fact]
-	public async Task VotePostDoesntAllowDupeVote()
-	{
-		var service = GetService();
-		var post = new Post { PostID = 1 };
-		var user = new User { UserID = 2 };
-		var voters = new Dictionary<int, string> { { 1, "Foo" }, { user.UserID, "Dude" }, { 3, null }, { 4, "Chica" } };
-		_postRepo.Setup(x => x.GetVotes(post.PostID)).ReturnsAsync(voters);
-		await service.VotePost(post, user, "abc", "def", "ghi");
-		_postRepo.Verify(x => x.VotePost(post.PostID, user.UserID), Times.Never());
 	}
 
 	[Fact]
@@ -462,39 +450,39 @@ public class PostServiceTests
 	}
 
 	[Fact]
-	public async Task VoteUpDoesntCallPublisherWhenUserFromPostDoesNotExist()
+	public async Task ToggleVoteDoesntCallPublisherWhenUserFromPostDoesNotExist()
 	{
 		var service = GetService();
 		_userService.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync((User) null);
 		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
-		await service.VotePost(new Post { PostID = 123 }, new User { UserID = 456 }, "", "", "");
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123 }, new User { UserID = 456 }, "", "", "");
 		_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>(), false), Times.Never());
 	}
 
 	[Fact]
-	public async Task VoteUpCallsEventPub()
+	public async Task ToggleVoteCallsEventPub()
 	{
 		var service = GetService();
 		var voteUpUser = new User { UserID = 777 };
 		_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
 		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
-		await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 		_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), voteUpUser, EventDefinitionService.StaticEventIDs.PostVote, false), Times.Once());
 	}
 
 	[Fact]
-	public async Task VoteUpDoesNotCallWhenUserIsPoster()
+	public async Task ToggleVoteDoesNotCallWhenUserIsPoster()
 	{
 		var service = GetService();
 		var voteUpUser = new User { UserID = 456 };
 		_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
 		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
-		await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 		_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false), Times.Never());
 	}
 
 	[Fact]
-	public async Task VoteUpPassesPubStringWithFormattedStuff()
+	public async Task ToggleVotePassesPubStringWithFormattedStuff()
 	{
 		var service = GetService();
 		var voteUpUser = new User { UserID = 777 };
@@ -505,7 +493,7 @@ public class PostServiceTests
 		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 		var message = String.Empty;
 		_eventPub.Setup(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.PostVote, false)).Callback<string, User, string, bool>((x, y, z, a) => message = x);
-		await service.VotePost(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, userUrl, topicUrl, title);
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, userUrl, topicUrl, title);
 		Assert.Contains(userUrl, message);
 		Assert.Contains(topicUrl, message);
 		Assert.Contains(title, message);

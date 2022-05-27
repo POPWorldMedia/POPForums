@@ -17,8 +17,13 @@ declare namespace tinymce {
 }
 
 declare namespace bootstrap {
-    class Tooltip{
-        constructor(el: Element, options:any)
+    class Tooltip {
+        constructor(el: Element, options:any);
+    }
+    class Popover {
+        constructor(el: Element, options:any);
+        enable(): void;
+        disable(): void;
     }
 }
 

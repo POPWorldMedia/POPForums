@@ -101,29 +101,23 @@
 #ForumContainer .miniProfileBox.open div {
 }
 #ForumContainer .postItem .voteCount {
-	display: inline-block;
-	cursor: pointer;
-	position: absolute;
-	margin-top: 5px;
+    margin-right: 1em;
 }
-#ForumContainer .voters {
-	max-height: 120px;
-	width: 150px;
-	overflow: auto;
-	position: relative;
-	display: none;
-	padding: 4px;
-	text-align: left;
-	border-radius: 2px;
-	z-index: 1000;
+.voters {
+    max-height: 10em;
+    overflow: auto;
 }
-#ForumContainer .postItem .voters ul {
-	margin: 4px;padding: 0;
+.voters ul { padding: 0; margin: 0; }
+.voters li { list-style: none;font-size: 100%; }
+pf-votecount span {
+    font-size: 1.2em;
+    vertical-align: middle;
+    margin-right: 1em;
+    cursor: pointer;
 }
-#ForumContainer .voters li { list-style: none;font-size: 100%; }
+
 #ForumContainer .postItem .postTools {
 	display: inline-block;
-	margin-left: 40px;
 }
 #ForumContainer .postTools a, #ForumContainer .postTools input, #ForumContainer li.voteUp.btn-link.list-inline-item, #ForumContainer h2 a {
 	text-decoration: none;

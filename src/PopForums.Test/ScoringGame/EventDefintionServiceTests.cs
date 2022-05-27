@@ -34,31 +34,31 @@ public class EventDefintionServiceTests
 	public async Task GetAllMergesStaticWithRepo()
 	{
 		var service = GetService();
-		var list = new List<EventDefinition> {new EventDefinition {EventDefinitionID = "aaa"}, new EventDefinition {EventDefinitionID = "zzz"}};
+		var list = new List<EventDefinition> {new() {EventDefinitionID = "AAA"}, new() {EventDefinitionID = "ZZZ"}};
 		_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
 		var result = await service.GetAll();
-		Assert.Equal(6, result.Count);
-		Assert.True(result.Count(x => x.EventDefinitionID == "aaa") == 1);
-		Assert.True(result.Where(x => x.EventDefinitionID == "zzz").Count() == 1);
-		Assert.True(result.Where(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.NewPost).Count() == 1);
-		Assert.True(result.Where(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.NewTopic).Count() == 1);
-		Assert.True(result.Where(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.PostVote).Count() == 1);
+		Assert.Equal(7, result.Count);
+		Assert.True(result.Count(x => x.EventDefinitionID == "AAA") == 1);
+		Assert.True(result.Count(x => x.EventDefinitionID == "ZZZ") == 1);
+		Assert.True(result.Count(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.NewPost) == 1);
+		Assert.True(result.Count(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.NewTopic) == 1);
+		Assert.True(result.Count(x => x.EventDefinitionID == EventDefinitionService.StaticEventIDs.PostVote) == 1);
 	}
-
-	// TODO: This test fails on Linux build agent
+	
 	[Fact]
 	public async Task GetAllMergesAndOrders()
 	{
 		var service = GetService();
-		var list = new List<EventDefinition> { new EventDefinition { EventDefinitionID = "aaa" }, new EventDefinition { EventDefinitionID = "zzz" } };
+		var list = new List<EventDefinition> { new() { EventDefinitionID = "AAA" }, new() { EventDefinitionID = "ZZZ" } };
 		_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
 		var result = await service.GetAll();
-		Assert.Equal(6, result.Count);
-		Assert.Equal("aaa", result[0].EventDefinitionID);
+		Assert.Equal(7, result.Count);
+		Assert.Equal("AAA", result[0].EventDefinitionID);
 		Assert.Equal(EventDefinitionService.StaticEventIDs.NewPost, result[1].EventDefinitionID);
 		Assert.Equal(EventDefinitionService.StaticEventIDs.NewTopic, result[2].EventDefinitionID);
 		Assert.Equal(EventDefinitionService.StaticEventIDs.PostVote, result[3].EventDefinitionID);
-		Assert.Equal("zzz", result[5].EventDefinitionID);
+		Assert.Equal(EventDefinitionService.StaticEventIDs.PostVoteUndo, result[4].EventDefinitionID);
+		Assert.Equal("ZZZ", result[6].EventDefinitionID);
 	}
 
 	[Fact]

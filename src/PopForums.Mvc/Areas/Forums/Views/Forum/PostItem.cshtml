@@ -13,6 +13,10 @@
 	var hideVanity = false;
 	if (Model.Profile != null)
 	{ hideVanity = Model.Profile.HideVanity; }
+
+	var isLoggedIn = user != null;
+	var isAuthor = user?.UserID == Model.Post.UserID;
+	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 
 <div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem" data-postid="@Model.Post.PostID" data-userid="@Model.Post.UserID">
@@ -49,38 +53,28 @@
 		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
 	<div class="postToolContainer">
-		<div class="voteCount badge bg-primary">@await Html.PartialAsync("Votes.cshtml", Model.Post.Votes)</div>
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary"></pf-votecount>
 		<ul class="postTools list-inline">
-			@if (Model.User != null && Model.User.UserID != Model.Post.UserID)
-			{
-				if (Model.VotedPostIDs.Contains(Model.Post.PostID))
-				{
-					<li class="list-inline-item">@PopForums.Resources.Voted</li>
-				}
-				else
-				{
-					<li class="voteUp btn-link list-inline-item">Vote up</li>}
-			}
-			<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
+			<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new {id = Model.Post.PostID}, null)</li>
 			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
-				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply" /></li>
+				<li class="list-inline-item"><input type="button" class="replyLink btn-link list-inline-item" value="@PopForums.Resources.Reply"/></li>
 				@*<li class="list-inline-item"><input type="button" class="quoteLink btn-link list-inline-item" value="@PopForums.Resources.Quote" /></li>*@
 				<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" buttontext="@PopForums.Resources.Quote" tip="@PopForums.Resources.SelectText" postid="@Model.Post.PostID" callback="PopForums.currentTopicState.nextQuote"></pf-quotebutton></li>
 			}
 			@if (Model.User.IsPostEditable(Model.Post))
 			{
-				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new { id = Model.Post.PostID }, null)</li>
+				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new {id = Model.Post.PostID}, null)</li>
 				if (Model.Post.IsDeleted)
 				{
 					<li class="list-inline-item">
-						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link" /></form>
+						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link"/></form>
 					</li>
 				}
 				else
 				{
 					<li class="list-inline-item">
-						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@deleteLink" class="btn-link" /></form>
+						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@deleteLink" class="btn-link"/></form>
 					</li>
 				}
 			}

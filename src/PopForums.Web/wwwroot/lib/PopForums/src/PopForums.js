@@ -232,43 +232,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 		}
 	});
 	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("voteCount")) {
-			var parent = event.target.closest(".postItem");
-			var postID = parent.getAttribute("data-postID");
-			var voters = parent.querySelector(".voters");
-			if (voters) {
-				if (voters.style.display === "block")
-					voters.style.display = "none";
-				else {
-					fetch(PopForums.areaPath + "/Forum/Voters/" + postID)
-						.then(response => response.text()
-							.then(text => {
-								var t = document.createElement("template");
-								t.innerHTML = text.trim();
-								voters.innerHTML = "";
-								voters.appendChild(t.content.firstChild);
-								voters.style.display = "block";
-							}));
-				}
-			}
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("voteUp")) {
-			var parent = event.target.closest(".postItem");
-			var postID = parent.getAttribute("data-postID");
-			var countBox = parent.querySelector(".voteCount");
-			fetch(PopForums.areaPath + "/Forum/VotePost/" + postID, {
-				method: "POST"
-			})
-				.then(response => response.text()
-					.then(text => {
-						countBox.innerHTML = text;
-						parent.querySelector(".voteUp").outerHTML = '<li class="list-inline-item">Voted</li>';
-					}));
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
 		if (event.target.classList.contains("morePostsButton")) {
 			PopForums.LoadMorePosts(topicID, event.target);
 		}

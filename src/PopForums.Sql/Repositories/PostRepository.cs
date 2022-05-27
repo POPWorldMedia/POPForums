@@ -211,4 +211,11 @@ SET ROWCOUNT 0";
 		var list = result.Result.ToList();
 		return list;
 	}
+
+	public async Task DeleteVote(int postID, int userID)
+	{
+		const string sql = "DELETE FROM pf_PostVote WHERE PostID = postID AND UserID = @userID";
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync(sql, new { postID, userID }));
+	}
 }

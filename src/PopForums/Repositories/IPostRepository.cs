@@ -19,4 +19,5 @@ public interface IPostRepository
 	Task<Dictionary<int, string>> GetVotes(int postID);
 	Task<List<int>> GetVotedPostIDs(int userID, List<int> postIDs);
 	Task<Post> GetLastInTopic(int topicID);
+	Task DeleteVote(int postID, int userID);
 }

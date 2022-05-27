@@ -15,22 +15,15 @@
 	{ deleteLink = PopForums.Resources.DeleteTopic; }
 	else
 	{ deleteLink = PopForums.Resources.Delete; }
+    
+	var isLoggedIn = user != null;
+	var isAuthor = user?.UserID == Model.Post.UserID;
+	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 <a name="@Model.Post.PostID"></a>
 <div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
-	<div class="answerData col-1">
-		<p class="badge bg-primary">@await Html.PartialAsync("~/Areas/Forums/Views/Forum/Votes.cshtml", Model.Post.Votes)</p>
-		@if (user != null && user.UserID != Model.Post.UserID)
-		{
-			if (Model.VotedPostIDs.Contains(Model.Post.PostID))
-			{
-				<p class="answerVote">@PopForums.Resources.Voted</p>
-			}
-			else
-			{
-				<p class="voteUp answerVote btn-link">Vote up</p>
-			}
-		}
+	<div class="answerData col-2">
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary"></pf-votecount>
 		@if (user != null && user.UserID == Model.Topic.StartedByUserID && !Model.Post.IsFirstInTopic)
 		{
 			<p class="answerButton answerStatus @if(Model.Topic.AnswerPostID.HasValue && Model.Topic.AnswerPostID.Value == Model.Post.PostID){<text>icon-checkmark text-success</text>}else{<text>icon-checkmark2 text-muted</text>}" title="@PopForums.Resources.ChooseAnswer"> </p>
@@ -43,7 +36,7 @@
 			}
 		}
 	</div>
-	<div class="col-11">
+	<div class="col-10">
 		<div class="postUserData bg-primary rounded mb-2 px-3 py-1" data-userid="@Model.Post.UserID">
 			<h3 class="postNameLink text-light">@Model.Post.Name</h3>
 			<div class="miniProfileBox bg-light text-dark rounded">
