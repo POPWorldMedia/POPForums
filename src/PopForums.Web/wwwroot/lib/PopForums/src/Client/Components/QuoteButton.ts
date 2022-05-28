@@ -76,7 +76,7 @@
                     result = `<blockquote><p><i>${this.name}:</i></p>${div.innerHTML}</blockquote><p></p>`;
                 PopForums.currentTopicState.nextQuote = result;
                 if (!PopForums.currentTopicState.isReplyLoaded)
-                    PopForums.loadReply(PopForums.currentTopicState.topicID, null, Number(this.postID), true);
+                    PopForums.currentTopicState.loadReply(PopForums.currentTopicState.topicID, Number(this.postID), true);
             }
         };
     }

@@ -99,31 +99,6 @@ PopForums.loadReply = function (topicID, replyID, setupMorePosts) {
 				document.querySelector("#ReplyButton").style.display = "none";
 				PopForums.scrollToElement("NewReply");
 
-				document.querySelector("#MorePostsBeforeReplyButton")?.addEventListener("click", (e) => {
-					var topicPartialPath = PopForums.areaPath + "/Forum/TopicPartial/" + topicID + "?lastPost=" + PopForums.theTopicState.lastVisiblePost + "&lowpage=" + PopForums.theTopicState.lowPage;
-					fetch(topicPartialPath)
-						.then(response => response.text()
-							.then(text => {
-								var t = document.createElement("template");
-								t.innerHTML = text.trim();
-								var stuff = t.content.firstChild;
-								var links = stuff.querySelector(".pagerLinks");
-								stuff.removeChild(links);
-								var lastPostID = stuff.querySelector(".lastPostID");
-								stuff.removeChild(lastPostID);
-								PopForums.theTopicState.lastVisiblePost = lastPostID.value;
-								var postStream = document.querySelector("#PostStream");
-								postStream.append(stuff);
-								document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
-								document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-								document.querySelector("#MorePostsBeforeReplyButton").style.visibility = "hidden";
-								var moreButton = document.querySelector(".morePostsButton");
-								if (moreButton)
-									moreButton.remove();
-								PopForums.setReplyMorePosts(PopForums.theTopicState.lastVisiblePost);
-							}));
-				});
-
 				if (setupMorePosts) {
 					var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
 					connection.start()
@@ -221,38 +196,6 @@ PopForums.topicSetup = function (topicID, pageIndex, pageCount, replyID) {
 			PopForums.loadMiniProfile(userID, box);
 		}
 	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("morePostsButton")) {
-			PopForums.LoadMorePosts(topicID, event.target);
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", e => {
-		if (event.target.classList.contains("previousPostsButton")) {
-			PopForums.theTopicState.addStartPage();
-			var nextPage = PopForums.theTopicState.lowPage;
-			var id = topicID;
-			e.target.remove();
-			var topicPartialPath = PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.theTopicState.lowPage + "&high=" + PopForums.theTopicState.highPage;
-			fetch(topicPartialPath)
-				.then(response => response.text()
-					.then(text => {
-						var t = document.createElement("template");
-						t.innerHTML = text.trim();
-						var stuff = t.content.firstChild;
-						var links = stuff.querySelector(".pagerLinks");
-						stuff.removeChild(links);
-						var postStream = document.querySelector("#PostStream");
-						postStream.prepend(stuff);
-						if (PopForums.theTopicState.lowPage > 1)
-							postStream.prepend(e.target);
-						document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
-						document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-						if (PopForums.theTopicState.highPage == PopForums.theTopicState.pageCount && PopForums.theTopicState.lowPage == 1) {
-							document.querySelectorAll(".pagerLinks").forEach(x => x.remove());
-						}
-					}));
-		}
-	});
 	PopForums.scrollToPostFromHash();
 	window.addEventListener("scroll", PopForums.ScrollLoad);
 };
@@ -306,53 +249,6 @@ PopForums.qaTopicSetup = function (topicID) {
 	});
 };
 
-PopForums.ScrollLoad = function () {
-	var streamEnd = document.querySelector("#StreamBottom").offsetTop;
-	var viewEnd = window.scrollY + window.outerHeight;
-	var distance = streamEnd - viewEnd;
-	if (!PopForums.theTopicState.loadingPosts && distance < 250 && PopForums.theTopicState.highPage < PopForums.theTopicState.pageCount) {
-		PopForums.theTopicState.loadingPosts = true;
-		var button = document.querySelector(".morePostsButton");
-		PopForums.LoadMorePosts(PopForums.theTopicState.topicID, button);
-	}
-};
-
-PopForums.LoadMorePosts = function (topicID, clickedButton) {
-	PopForums.theTopicState.addEndPage();
-	var nextPage = PopForums.theTopicState.highPage;
-	var id = topicID;
-	var topicPartialPath = PopForums.areaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + PopForums.theTopicState.lowPage + "&high=" + PopForums.theTopicState.highPage;
-	fetch(topicPartialPath)
-		.then(response => response.text()
-			.then(text => {
-				var t = document.createElement("template");
-				t.innerHTML = text.trim();
-				var stuff = t.content.firstChild;
-				var links = stuff.querySelector(".pagerLinks");
-				stuff.removeChild(links);
-				var lastPostID = stuff.querySelector(".lastPostID");
-				stuff.removeChild(lastPostID);
-				var newPageCount = stuff.querySelector(".pageCount");
-				stuff.removeChild(newPageCount);
-				PopForums.theTopicState.lastVisiblePost = lastPostID.value;
-				PopForums.theTopicState.pageCount = newPageCount.value;
-				var postStream = document.querySelector("#PostStream");
-				postStream.append(stuff);
-				document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
-				document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-				clickedButton.remove();
-				if (PopForums.theTopicState.highPage != PopForums.theTopicState.pageCount)
-					postStream.append(clickedButton);
-				if (PopForums.theTopicState.highPage == PopForums.theTopicState.pageCount && PopForums.theTopicState.lowPage == 1) {
-					document.querySelectorAll(".pagerLinks").forEach(x => x.remove());
-				}
-				PopForums.theTopicState.loadingPosts = false;
-				if (!PopForums.theTopicState.isScrollAdjusted) {
-					PopForums.scrollToPostFromHash();
-					PopForums.theTopicState.isScrollAdjusted = true;
-				}
-			}));
-};
 
 PopForums.oldTopicState = function (startPageIndex, lastVisiblePost, pageCount, topicID) {
 	this.lowPage = startPageIndex;

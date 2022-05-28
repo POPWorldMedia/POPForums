@@ -44,21 +44,20 @@
 
 <pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks mt-3" moreTextClass="morePager" currentTextClass="currentPager active" />
 
-<div id="PostStream">
 @if (Model.PagerContext.PageIndex > 1)
 {
-	<input type="button" class="btn btn-primary previousPostsButton" value="@PopForums.Resources.ShowPreviousPosts" />
+	<pf-previouspostsbutton buttontext="@PopForums.Resources.ShowPreviousPosts" buttonclass="btn btn-primary" caller="PopForums.currentTopicState.lowPage"></pf-previouspostsbutton>
 }
 
-@foreach(var post in Model.Posts) {
-	@await Html.PartialAsync("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
-}
+<div id="PostStream">
 
-@if (Model.PagerContext.PageIndex < Model.PagerContext.PageCount)
-{
-	<input type="button" class=" btn btn-primary morePostsButton" value="@PopForums.Resources.ShowMorePosts" />
-}
+	@foreach(var post in Model.Posts) {
+		@await Html.PartialAsync("~/Areas/Forums/Views/Forum/PostItem.cshtml", new PostItemContainer { Post = post, VotedPostIDs = Model.VotedPostIDs, Signatures = Model.Signatures, Avatars = Model.Avatars, User = user, Profile = profile, Topic = Model.Topic });
+	}
+
 </div>
+
+<p><pf-morepostsbutton buttontext="@PopForums.Resources.ShowMorePosts" buttonclass="btn btn-primary my-3" caller="PopForums.currentTopicState.highPage"></pf-morepostsbutton></p>
 
 <pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 

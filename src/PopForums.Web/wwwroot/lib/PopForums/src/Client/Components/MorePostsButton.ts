@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class ReplyButton extends ElementBase {
+    export class MorePostsButton extends ElementBase {
     constructor() {
         super(null);
     }
@@ -8,42 +8,33 @@ namespace PopForums {
     get buttonclass(): string {
         return this.getAttribute("buttonclass");
     }
-
     get buttontext(): string {
         return this.getAttribute("buttontext");
     }
-    
-    get topicid(): string {
-        return this.getAttribute("topicid");
-    }
-    
-    get postid(): string {
-        return this.getAttribute("postid");
-    }
 
     connectedCallback() {
-        this.innerHTML = ReplyButton.template;
+        this.innerHTML = MorePostsButton.template;
         let button = this.querySelector("input") as HTMLInputElement;
         button.value = this.buttontext;
         if (this.buttonclass?.length > 0)
             this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", (e: MouseEvent) => {
-            PopForums.currentTopicState.loadReply(Number(this.topicid), Number(this.postid), true);
+            PopForums.currentTopicState.loadMorePosts();
         });
         super.connectedCallback();
     }
     
-    updateUI(data: boolean): void {
+    updateUI(data: number): void {
         let button = this.querySelector("input");
-        if (data)
-            button.style.display = "none";
+        if (PopForums.currentTopicState.pageCount === 1 || data === PopForums.currentTopicState.pageCount)
+            button.style.visibility = "hidden";
         else
-            button.style.display = "initial";
+            button.style.visibility = "visible";
     }
 
     static template: string = `<input type="button" />`;
 }
 
-customElements.define('pf-replybutton', ReplyButton);
+customElements.define('pf-morepostsbutton', MorePostsButton);
 
 }

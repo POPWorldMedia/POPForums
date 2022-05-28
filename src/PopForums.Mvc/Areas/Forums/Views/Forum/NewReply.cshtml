@@ -11,7 +11,7 @@
 
 <h2>@subhead</h2>
 
-<p><input type="button" value="@PopForums.Resources.ClickToLoadMorePosts" id="MorePostsBeforeReplyButton" style="visibility: hidden;" class="btn btn-primary" /></p>
+<p><pf-morepostsbutton buttontext="@PopForums.Resources.ClickToLoadMorePosts" buttonclass="btn btn-primary" caller="PopForums.currentTopicState.highPage"></pf-morepostsbutton></p>
 
 <div class="postForm" role="form">
 	@Html.HiddenFor(p => p.Title)
