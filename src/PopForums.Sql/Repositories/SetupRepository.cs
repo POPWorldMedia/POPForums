@@ -46,7 +46,10 @@ END";
 		var stream = assembly.GetManifestResourceStream("PopForums.Sql.PopForums.sql");
 		var reader = new StreamReader(stream);
 		var sql = reader.ReadToEnd();
-		_sqlObjectFactory.GetConnection().Using(connection => 
-			connection.Execute(sql));
+		using var connection = _sqlObjectFactory.GetConnection() as SqlConnection;
+		using var command = new SqlCommand(sql, connection);
+		connection.Open();
+		command.ExecuteNonQuery();
+		connection.Close();
 	}
 }
