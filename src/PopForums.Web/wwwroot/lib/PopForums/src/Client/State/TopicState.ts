@@ -57,11 +57,14 @@ export class TopicState extends StateBase {
             });
             // for reply already open
             connection.on("notifyNewPosts", function (theLastPostID: number) {
-                this.setMorePostsAvailable(theLastPostID);
+                self.setMorePostsAvailable(theLastPostID);
             });
             connection.start()
                 .then(function () {
                     return connection.invoke("listenTo", self.topicID);
+                })
+                .then(function () {
+                    self.connection = connection
                 });
 
             document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
@@ -93,21 +96,19 @@ export class TopicState extends StateBase {
     
                     if (setupMorePosts) {
                         let self = this;
-                        let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
-                        connection.start()
-                            .then(function () {
-                                let r = connection.invoke("getLastPostID", topicID)
-                                    .then(function (result: number) {
-                                        self.setMorePostsAvailable(result);
-                                    });
-                            });
+                        this.connection.invoke("getLastPostID", this.topicID)
+                        .then(function (result: number) {
+                            self.setMorePostsAvailable(result);
+                        });
                     }
                     this.isReplyLoaded = true;
                 }));
     }
 
+    private connection: any;
+
     // this is intended to be called when the reply box is open
-    setMorePostsAvailable = (newestPostIDonServer: number) => {
+    private setMorePostsAvailable = (newestPostIDonServer: number) => {
         this.isNewerPostsAvailable = newestPostIDonServer !== this.lastVisiblePostID;
     }
 
@@ -146,9 +147,11 @@ export class TopicState extends StateBase {
                         this.scrollToPostFromHash();
                     }
                     if (this.isReplyLoaded) {
-                        //
-                        // get last postID on server and call setMorePostsAvailable()
-                        //
+                        let self = this;
+                        this.connection.invoke("getLastPostID", this.topicID)
+                        .then(function (result: number) {
+                            self.setMorePostsAvailable(result);
+                        });
                     }
                 }));
     };
