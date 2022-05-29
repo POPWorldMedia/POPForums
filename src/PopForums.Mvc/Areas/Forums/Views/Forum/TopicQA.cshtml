@@ -12,10 +12,8 @@
 @section HeaderContent {
 <script src="~/lib/tinymce/tinymce.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	ready(() => {
-		PopForums.qaTopicSetup(@Model.Topic.TopicID);
-	});
 	PopForums.currentTopicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
+	PopForums.currentTopicState.setupTopic();
 </script>
 }
 
@@ -49,7 +47,7 @@
 	@if (Model.PermissionContext.UserCanPost)
 	{
 		<div id="NewReply" style="display: none;"></div>
-		<div class="postContainer"><input type="button" value="@PopForums.Resources.PostAnswer" id="ReplyButton" class="btn btn-primary" /></div>
+		<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostAnswer" topicid="@Model.Topic.TopicID" postid="" caller="PopForums.currentTopicState.isReplyLoaded"></pf-replybutton>
 	}
 	else
 	{

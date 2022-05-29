@@ -12,7 +12,8 @@ export class TopicState extends StateBase {
     isImageEnabled: boolean;
     @WatchProperty
     isReplyLoaded: boolean;
-    
+    @WatchProperty
+    answerPostID: number;
     @WatchProperty
 	lowPage:number;
     @WatchProperty
@@ -24,7 +25,8 @@ export class TopicState extends StateBase {
 	pageCount: number;
 	loadingPosts: boolean = false;
 	isScrollAdjusted: boolean = false;
-
+    @WatchProperty
+    commentReplyID: number;
     @WatchProperty
     nextQuote: string;
     @WatchProperty
@@ -112,6 +114,20 @@ export class TopicState extends StateBase {
         this.isNewerPostsAvailable = newestPostIDonServer !== this.lastVisiblePostID;
     }
 
+    loadComment(topicID: number, replyID: number): void {
+        const d = document;
+        var p = d.querySelector("[data-postid*='" + replyID + "']");
+        var n = d.querySelector("[data-postid*='" + replyID + "'] .commentHolder");
+        var path = PopForums.AreaPath + "/Forum/PostReply/" + topicID + "?replyID=" + replyID;
+        this.commentReplyID = replyID;
+        this.isReplyLoaded = true;
+        fetch(path)
+            .then(response => response.text()
+                .then(text => {
+                    n.innerHTML = text;
+                }));
+    };
+
     loadMorePosts = () => {
         let topicPagePath: string;
         if (this.highPage === this.pageCount) {
@@ -178,9 +194,12 @@ export class TopicState extends StateBase {
     }
 
     scrollLoad = () => {
-        let streamEnd = (document.querySelector("#StreamBottom") as HTMLElement).offsetTop;
+        let streamEnd = (document.querySelector("#StreamBottom") as HTMLElement);
+        if (!streamEnd)
+            return; // this is a QA topic, no continuous post stream
+        let top = streamEnd.offsetTop;
         let viewEnd = window.scrollY + window.outerHeight;
-        let distance = streamEnd - viewEnd;
+        let distance = top - viewEnd;
         if (!this.loadingPosts && distance < 250 && this.highPage < this.pageCount) {
             this.loadingPosts = true;
             this.loadMorePosts();
@@ -221,6 +240,20 @@ export class TopicState extends StateBase {
             this.isScrollAdjusted = true;
         }
     };
+
+    setAnswer(postID: number, topicID: number) {
+        var model = { postID: postID, topicID: topicID };
+        fetch(PopForums.AreaPath + "/Forum/SetAnswer/", {
+            method: "POST",
+            body: JSON.stringify(model),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                this.answerPostID = postID;
+            });
+    }
 }
 
 }

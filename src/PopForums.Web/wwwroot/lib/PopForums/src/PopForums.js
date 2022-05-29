@@ -63,55 +63,6 @@ PopForums.topicListSetup = function (forumID) {
 	});
 };
 
-PopForums.loadReply = function (topicID, replyID, setupMorePosts) {
-	window.removeEventListener("scroll", PopForums.ScrollLoad);
-	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
-	if (replyID != null) {
-		path += "?replyID=" + replyID;
-	}
-
-	fetch(path)
-		.then(response => response.text()
-			.then(text => {
-				var n = document.querySelector("#NewReply");
-				n.innerHTML = text;
-				n.style.display = "block";
-				// legacy tiny was init here
-				document.querySelector("#ReplyButton").style.display = "none";
-				PopForums.scrollToElement("NewReply");
-
-				if (setupMorePosts) {
-					var connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
-					connection.start()
-						.then(function () {
-							var result = connection.invoke("getLastPostID", topicID)
-								.then(function (result) {
-									PopForums.setReplyMorePosts(result);
-								});
-						});
-				}
-
-				PopForums.theTopicState.replyLoaded = true;
-				PopForums.currentTopicState.isReplyLoaded = true; // TODO: temporary for new library
-			}));
-};
-
-PopForums.loadComment = function (topicID, replyID) {
-	const d = document;
-	var p = d.querySelector("[data-postid*='" + replyID + "']");
-	var n = p.querySelector(".commentHolder");
-	var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
-	if (replyID != null)
-		path += "?replyID=" + replyID;
-
-	fetch(path)
-		.then(response => response.text()
-			.then(text => {
-				n.innerHTML = text;
-				// legacy tiny init here
-			}));
-};
-
 PopForums.loadFeed = function () {
 	var connection = new signalR.HubConnectionBuilder().withUrl("/FeedHub").build();
 	connection.on("notifyFeed", function (data) {
@@ -133,55 +84,6 @@ PopForums.populateFeedRow = function (data) {
 	row.querySelector(".fTime").setAttribute("data-utc", data.utc);
 	row.querySelector(".fTime").innerHTML = data.timeStamp;
 	return row;
-};
-
-PopForums.qaTopicSetup = function (topicID) {
-	document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
-
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("commentLink")) {
-			var replyID = event.target.closest(".postItem").getAttribute("data-postid");
-			PopForums.loadComment(topicID, replyID);
-		}
-	});
-	document.querySelector("#ReplyButton")?.addEventListener("click", event => {
-		PopForums.loadReply(topicID, null);
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("postNameLink")) {
-			var box = event.target.closest(".postUserData").querySelector(".miniProfileBox");
-			var userID = event.target.closest(".postUserData").getAttribute("data-userID");
-			PopForums.loadMiniProfile(userID, box);
-		}
-	});
-	document.querySelector("#PostStream").addEventListener("click", event => {
-		if (event.target.classList.contains("answerButton")) {
-			var button = event.target;
-			var parent = button.closest(".postItem");
-			var postID = parent.getAttribute("data-postid");
-			var topicID = parent.getAttribute("data-topicid");
-			var model = { postID: postID, topicID: topicID };
-			fetch(PopForums.areaPath + "/Forum/SetAnswer/", {
-				method: "POST",
-				body: JSON.stringify(model),
-				headers: {
-					"Content-Type": "application/json"
-				}
-			})
-				.then(response => {
-					document.querySelectorAll(".answerStatus").forEach(x => {
-						x.classList.remove("icon-checkmark");
-						x.classList.remove("text-success");
-						x.classList.add("icon-checkmark2");
-						x.classList.add("text-muted");
-					});
-					button.classList.remove("icon-checkmark2");
-					button.classList.remove("text-muted");
-					button.classList.add("icon-checkmark");
-					button.classList.add("text-success");
-				});
-		}
-	});
 };
 
 PopForums.postNewTopic = function () {
