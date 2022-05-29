@@ -104,6 +104,7 @@ export class TopicState extends StateBase {
                         });
                     }
                     this.isReplyLoaded = true;
+                    this.commentReplyID = 0;
                 }));
     }
 
@@ -115,9 +116,9 @@ export class TopicState extends StateBase {
     }
 
     loadComment(topicID: number, replyID: number): void {
-        const d = document;
-        var p = d.querySelector("[data-postid*='" + replyID + "']");
-        var n = d.querySelector("[data-postid*='" + replyID + "'] .commentHolder");
+        var n = document.querySelector("[data-postid*='" + replyID + "'] .commentHolder");
+        const boxid = "commentbox";
+        n.id = boxid;
         var path = PopForums.AreaPath + "/Forum/PostReply/" + topicID + "?replyID=" + replyID;
         this.commentReplyID = replyID;
         this.isReplyLoaded = true;
@@ -125,6 +126,7 @@ export class TopicState extends StateBase {
             .then(response => response.text()
                 .then(text => {
                     n.innerHTML = text;
+                    this.scrollToElement(boxid);
                 }));
     };
 
