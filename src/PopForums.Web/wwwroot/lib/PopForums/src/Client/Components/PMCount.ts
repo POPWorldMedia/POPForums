@@ -4,7 +4,7 @@
     constructor() {
         super(null);
     }
-    updateUI(data: any): void {
+    updateUI(data: number): void {
         if (data === 0)
             this.innerHTML = "";
         else

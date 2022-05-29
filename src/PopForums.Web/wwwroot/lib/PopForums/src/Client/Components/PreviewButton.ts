@@ -34,7 +34,7 @@ namespace PopForums {
             FullText: fullText.value,
             IsPlainText: (document.querySelector(this.isPlainTextSelector) as HTMLInputElement).value.toLowerCase() === "true"
         };
-        fetch(PopForums.areaPath + "/Forum/PreviewText", {
+        fetch(PopForums.AreaPath + "/Forum/PreviewText", {
             method: "POST",
             body: JSON.stringify(model),
             headers: {

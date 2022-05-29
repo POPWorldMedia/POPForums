@@ -1,10 +1,8 @@
-﻿using Org.BouncyCastle.Bcpg;
-
-namespace PopForums.Mvc.Areas.Forums.Services;
+﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
 public interface ITopicStateComposer
 {
-	Task<TopicState> GetState(int topicID);
+	Task<TopicState> GetState(Topic topic, int? pageIndex, int? pageCount, int lastVisiblePostID);
 }
 
 public class TopicStateComposer : ITopicStateComposer
@@ -22,15 +20,15 @@ public class TopicStateComposer : ITopicStateComposer
 		_favoriteTopicService = favoriteTopicService;
 	}
 
-	public async Task<TopicState> GetState(int topicID)
+	public async Task<TopicState> GetState(Topic topic, int? pageIndex, int? pageCount, int lastVisiblePostID)
 	{
-		var topicState = new TopicState { TopicID = topicID };
+		var topicState = new TopicState { TopicID = topic.TopicID, PageIndex = pageIndex, PageCount = pageCount, LastVisiblePostID = lastVisiblePostID, AnswerPostID = topic.AnswerPostID };
 		var user = _userRetrievalShim.GetUser();
 		if (user != null)
 		{
 			topicState.IsImageEnabled = _settingsManager.Current.AllowImages;
-			topicState.IsFavorite = await _favoriteTopicService.IsTopicFavorite(user.UserID, topicID);
-			topicState.IsSubscribed = await _subscribedTopicsService.IsTopicSubscribed(user.UserID, topicID);
+			topicState.IsFavorite = await _favoriteTopicService.IsTopicFavorite(user.UserID, topic.TopicID);
+			topicState.IsSubscribed = await _subscribedTopicsService.IsTopicSubscribed(user.UserID, topic.TopicID);
 		}
 		return topicState;
 	}

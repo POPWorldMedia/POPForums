@@ -197,7 +197,7 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		var topicState = await _topicStateComposer.GetState(topic.TopicID);
+		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
 		ViewBag.TopicState = topicState; // TODO: Refactor this... container is in core project, while TopicState is not because it depends on IUserRetrievalShim.
 		if (forum.IsQAForum)
 		{
@@ -438,6 +438,7 @@ public class ForumController : Controller
 		return Content(result.ToString());
 	}
 
+	// use this only to load an unknown number of new posts when reply is open
 	public async Task<ActionResult> TopicPartial(int id, int lastPost, int lowPage)
 	{
 		var topic = await _topicService.Get(id);
