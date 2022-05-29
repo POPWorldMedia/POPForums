@@ -11,13 +11,8 @@
 @section HeaderContent {
 	<script src="~/lib/tinymce/tinymce.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		ready(() => {
-			PopForums.topicSetup(@Model.Topic.TopicID, @Model.PagerContext.PageIndex, @Model.PagerContext.PageCount);
-		});
 		PopForums.currentTopicState = Object.assign(new PopForums.TopicState(), @Html.Raw(topicStateSerialized));
-		PopForums.Ready(() => {
-			PopForums.currentTopicState.setupTopic();
-		});
+		PopForums.currentTopicState.setupTopic();
 	</script>
 }
 

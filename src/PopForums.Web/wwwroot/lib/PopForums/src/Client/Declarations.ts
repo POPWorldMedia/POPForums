@@ -32,12 +32,3 @@ declare namespace signalR {
         withUrl(url: string): any;
     }
 }
-
-declare namespace PopForums { // TODO: remove when migration is done
-    function loadReply(topicID: number, postID: number, replyID: number, setupMorePosts: boolean): void;
-    export interface TopicState{
-        replyLoaded: boolean;
-    }
-    function areaPath(): string;
-}
-

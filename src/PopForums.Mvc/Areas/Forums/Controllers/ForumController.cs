@@ -438,6 +438,7 @@ public class ForumController : Controller
 		return Content(result.ToString());
 	}
 
+	// use this only to load an unknown number of new posts when reply is open
 	public async Task<ActionResult> TopicPartial(int id, int lastPost, int lowPage)
 	{
 		var topic = await _topicService.Get(id);

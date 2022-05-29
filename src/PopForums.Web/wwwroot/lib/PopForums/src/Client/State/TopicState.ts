@@ -17,7 +17,9 @@ export class TopicState extends StateBase {
 	lowPage:number;
     @WatchProperty
 	highPage: number;
-	lastVisiblePostID:number = null;
+	lastVisiblePostID: number;
+    @WatchProperty
+    isNewerPostsAvailable: boolean;
     pageIndex: number;
 	pageCount: number;
 	loadingPosts: boolean = false;
@@ -31,17 +33,42 @@ export class TopicState extends StateBase {
     isFavorite: boolean;
 
     setupTopic() {
-        this.isReplyLoaded = false;
-        this.lowPage = this.pageIndex;
-        this.highPage = this.pageIndex;
-        // signalR connections
+        PopForums.Ready(() => {
+            this.isReplyLoaded = false;
+            this.isNewerPostsAvailable = false;
+            this.lowPage = this.pageIndex;
+            this.highPage = this.pageIndex;
 
-        // listen for mini profiles
+            // signalR connections
+            let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
+            let self = this;
+            // for all posts loaded but reply not open
+            connection.on("fetchNewPost", function (postID: number) {
+                if (!self.isReplyLoaded && self.highPage === self.pageCount) {
+                    fetch(PopForums.AreaPath + "/Forum/Post/" + postID)
+                        .then(response => response.text()
+                            .then(text => {
+                                var t = document.createElement("template");
+                                t.innerHTML = text.trim();
+                                document.querySelector("#PostStream").appendChild(t.content.firstChild);
+                            }));
+                    self.lastVisiblePostID = postID;
+                }
+            });
+            // for reply already open
+            connection.on("notifyNewPosts", function (theLastPostID: number) {
+                this.setMorePostsAvailable(theLastPostID);
+            });
+            connection.start()
+                .then(function () {
+                    return connection.invoke("listenTo", self.topicID);
+                });
 
-        document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
+            document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 
-        this.scrollToPostFromHash();
-        window.addEventListener("scroll", this.scrollLoad);
+            this.scrollToPostFromHash();
+            window.addEventListener("scroll", this.scrollLoad);
+        });
     }
 
     loadReply(topicID:number, replyID:number, setupMorePosts:boolean):void {
@@ -50,7 +77,7 @@ export class TopicState extends StateBase {
             return;
         }
         window.removeEventListener("scroll", this.scrollLoad);
-        var path = PopForums.areaPath + "/Forum/PostReply/" + topicID;
+        var path = PopForums.AreaPath + "/Forum/PostReply/" + topicID;
         if (replyID != null) {
             path += "?replyID=" + replyID;
         }
@@ -64,28 +91,36 @@ export class TopicState extends StateBase {
                     this.scrollToElement("NewReply");
                     this.isReplyLoaded = true;
     
-                    // if (setupMorePosts) {
-                    //     let self = this;
-                    //     let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
-                    //     connection.start()
-                    //         .then(function () {
-                    //             var result = connection.invoke("getLastPostID", topicID)
-                    //                 .then(function (result: any) {
-                    //                     self.setReplyMorePosts(result);
-                    //                 });
-                    //         });
-                    // }
-    
-                    PopForums.currentTopicState.isReplyLoaded = true; // TODO: temporary for new library
+                    if (setupMorePosts) {
+                        let self = this;
+                        let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
+                        connection.start()
+                            .then(function () {
+                                let r = connection.invoke("getLastPostID", topicID)
+                                    .then(function (result: number) {
+                                        self.setMorePostsAvailable(result);
+                                    });
+                            });
+                    }
+                    this.isReplyLoaded = true;
                 }));
     }
 
+    // this is intended to be called when the reply box is open
+    setMorePostsAvailable = (newestPostIDonServer: number) => {
+        this.isNewerPostsAvailable = newestPostIDonServer !== this.lastVisiblePostID;
+    }
+
     loadMorePosts = () => {
-        this.highPage++;
-        let nextPage = this.highPage;
-        let id = this.topicID;
-        let topicPartialPath = PopForums.AreaPath + "/Forum/TopicPage/" + id + "?pageNumber=" + nextPage + "&low=" + this.lowPage + "&high=" + this.highPage;
-        fetch(topicPartialPath)
+        let topicPagePath: string;
+        if (this.highPage === this.pageCount) {
+            topicPagePath = PopForums.AreaPath + "/Forum/TopicPartial/" + this.topicID + "?lastPost=" + this.lastVisiblePostID + "&lowPage=" + this.lowPage;
+        }
+        else {
+            this.highPage++;
+            topicPagePath = PopForums.AreaPath + "/Forum/TopicPage/" + this.topicID + "?pageNumber=" + this.highPage + "&low=" + this.lowPage + "&high=" + this.highPage;
+        }
+        fetch(topicPagePath)
             .then(response => response.text()
                 .then(text => {
                     let t = document.createElement("template");
@@ -110,13 +145,18 @@ export class TopicState extends StateBase {
                     if (!this.isScrollAdjusted) {
                         this.scrollToPostFromHash();
                     }
+                    if (this.isReplyLoaded) {
+                        //
+                        // get last postID on server and call setMorePostsAvailable()
+                        //
+                    }
                 }));
     };
 
     loadPreviousPosts = () => {
         this.lowPage--;
-        let topicPartialPath = PopForums.areaPath + "/Forum/TopicPage/" + this.topicID + "?pageNumber=" + this.lowPage + "&low=" + this.lowPage + "&high=" + this.highPage;
-        fetch(topicPartialPath)
+        let topicPagePath = PopForums.AreaPath + "/Forum/TopicPage/" + this.topicID + "?pageNumber=" + this.lowPage + "&low=" + this.lowPage + "&high=" + this.highPage;
+        fetch(topicPagePath)
             .then(response => response.text()
                 .then(text => {
                     let t = document.createElement("template");
