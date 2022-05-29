@@ -37,11 +37,8 @@
 		}
 	</div>
 	<div class="col-10">
-		<div class="postUserData bg-primary rounded mb-2 px-3 py-1" data-userid="@Model.Post.UserID">
-			<h3 class="postNameLink text-light">@Model.Post.Name</h3>
-			<div class="miniProfileBox bg-light text-dark rounded">
-				<div class="py-1 px-3 mb-2"></div>
-			</div>
+		<div class="postUserData bg-primary rounded mb-2 px-3 py-1">
+			<pf-postminiprofile username="@Model.Post.Name" userid="@Model.Post.UserID" miniprofileboxclass="miniProfileBox bg-light text-dark rounded" usernameclass="text-light"></pf-postminiprofile>
 			<small class="postTime text-end text-light">
 				@if (user != null && user.IsInRole(PermanentRoles.Moderator))
 				{

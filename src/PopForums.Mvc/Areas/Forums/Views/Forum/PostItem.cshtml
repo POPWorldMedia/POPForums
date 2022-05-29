@@ -19,12 +19,9 @@
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem" data-postid="@Model.Post.PostID" data-userid="@Model.Post.UserID">
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem" data-postid="@Model.Post.PostID">
 	<div class="postUserData bg-primary rounded mb-3 px-3 py-1">
-		<h3 class="postNameLink text-light">@Model.Post.Name</h3>
-		<div class="miniProfileBox bg-light text-dark rounded">
-			<div class="py-1 px-3 mb-2"></div>
-		</div>
+		<pf-postminiprofile username="@Model.Post.Name" userid="@Model.Post.UserID" miniprofileboxclass="miniProfileBox bg-light text-dark rounded" usernameclass="text-light"></pf-postminiprofile>
 		<small class="postTime text-end text-light text-secondary">
 			@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 			{
