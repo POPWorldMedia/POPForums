@@ -8,14 +8,6 @@
 	var profile = UserRetrievalShim.GetProfile();
 }
 
-@section HeaderContent {
-	<script type="text/javascript" language="javascript">
-		ready(() => {
-			PopForums.loadFeed();
-		});
-	</script>
-}
-
 <h1>@PopForums.Resources.ActivityFeed</h1>
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
@@ -24,15 +16,18 @@
 </ul>
 
 <div id="FeedList">
-@foreach (var item in Model)
-{
-	<div class="alert alert-light mt-2">
-		<div class="feedItemText">@Html.Raw(item.Message)</div>
-		<div class="text-end small fTime" data-utc="@item.TimeStamp.ToString("o")">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
-	</div>
-}
-	<div id="ActivityFeedTemplate" class="alert alert-light mt-2 hidden">
-		<div class="feedItemText"></div>
-		<div class="text-end small fTime" data-utc=""></div>
-	</div>
+	@foreach (var item in Model)
+	{
+		<div class="alert alert-light mt-2">
+			<div class="feedItemText">@Html.Raw(item.Message)</div>
+			<div class="text-end small fTime" data-utc="@item.TimeStamp.ToString("o")">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+		</div>
+	}
 </div>
+
+<div id="ActivityFeedTemplate" class="alert alert-light mt-2 hidden">
+	<div class="feedItemText"></div>
+	<div class="text-end small fTime" data-utc=""></div>
+</div>
+
+<pf-feedupdater templateid="ActivityFeedTemplate"></pf-feedupdater>
