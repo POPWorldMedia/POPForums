@@ -86,23 +86,6 @@ PopForums.populateFeedRow = function (data) {
 	return row;
 };
 
-PopForums.scrollToElement = function (id) {
-	var e = document.getElementById(id);
-	var t = 0;
-	if (e.offsetParent) {
-		while (e.offsetParent) {
-			t += e.offsetTop;
-			e = e.offsetParent;
-		}
-	} else if (e.y) {
-		t += e.y;
-	}
-	var crumb = document.querySelector("#TopBreadcrumb");
-	if (crumb)
-		t -= crumb.offsetHeight;
-	scrollTo(0, t);
-};
-
 PopForums.homeSetup = function () {
 	var connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").build();
 	connection.on("notifyForumUpdate", function (data) {
