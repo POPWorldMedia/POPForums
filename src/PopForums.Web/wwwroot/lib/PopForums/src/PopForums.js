@@ -7,46 +7,6 @@ var PopForums = {};
 
 PopForums.areaPath = "/Forums";
 
-PopForums.processLogin = function () {
-	PopForums.processLoginBase("/Identity/Login");
-};
-
-PopForums.processLoginExternal = function () {
-	PopForums.processLoginBase("/Identity/LoginAndAssociate");
-};
-
-PopForums.processLoginBase = function (path) {
-	var email = document.querySelector("#EmailLogin").value;
-	var password = document.querySelector("#PasswordLogin").value;
-	fetch(PopForums.areaPath + path, {
-		method: "POST",
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ email: email, password: password })
-	})
-		.then(function(response) {
-			return response.json();
-	})
-		.then(function (result) {
-			var loginResult = document.querySelector("#LoginResult");
-			switch (result.result) {
-			case true:
-				var destination = document.querySelector("#Referrer").value;
-				location = destination;
-				break;
-			default:
-				loginResult.innerHTML = result.message;
-				loginResult.classList.remove("d-none");
-			}
-	})
-		.catch(function (error) {
-			var loginResult = document.querySelector("#LoginResult");
-			loginResult.innerHTML = "There was an unknown error while attempting login";
-			loginResult.classList.remove("d-none");
-	});
-};
-
 PopForums.topicListSetup = function (forumID) {
 	var b = document.querySelector("#NewTopicButton");
 	b?.addEventListener("click", () => {
