@@ -3,12 +3,6 @@ namespace PopForums {
     export class ReplyForm extends HTMLElement {
         constructor() {
             super();
-            let template = document.getElementById(this.templateID) as HTMLTemplateElement;
-            if (!template) {
-                console.error(`Can't find templateID ${this.templateID} to make reply form.`);
-                return;
-            }
-            this.append(template.content.cloneNode(true));
         }
 
         get templateID() {
@@ -18,6 +12,12 @@ namespace PopForums {
         private button: HTMLInputElement;
 
         connectedCallback() {
+            let template = document.getElementById(this.templateID) as HTMLTemplateElement;
+            if (!template) {
+                console.error(`Can't find templateID ${this.templateID} to make reply form.`);
+                return;
+            }
+            this.append(template.content.cloneNode(true));
             this.button = this.querySelector("#SubmitReply");
             this.button.addEventListener("click", () => {
                 this.submitReply();
