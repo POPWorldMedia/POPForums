@@ -1,10 +1,12 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopForums.Models;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ForumController : Controller
 {
-	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer)
+	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer, IForumStateComposer forumStateComposer)
 	{
 		_settingsManager = settingsManager;
 		_forumService = forumService;
@@ -20,6 +22,7 @@ public class ForumController : Controller
 		_postMasterService = postMasterService;
 		_forumPermissionService = forumPermissionService;
 		_topicStateComposer = topicStateComposer;
+		_forumStateComposer = forumStateComposer;
 	}
 
 	public static string Name = "Forum";
@@ -38,6 +41,7 @@ public class ForumController : Controller
 	private readonly IPostMasterService _postMasterService;
 	private readonly IForumPermissionService _forumPermissionService;
 	private readonly ITopicStateComposer _topicStateComposer;
+	private readonly IForumStateComposer _forumStateComposer;
 
 	public async Task<ActionResult> Index(string urlName, int pageNumber = 1)
 	{
@@ -64,6 +68,8 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
+		var forumState = _forumStateComposer.GetState(forum, pagerContext);
+		ViewBag.ForumState = forumState; // TODO: refactor this into the container
 		if (forum.IsQAForum)
 			return View("IndexQA", container);
 		return View(container);
@@ -325,6 +331,8 @@ public class ForumController : Controller
 		var (topics, pagerContext) = await _forumService.GetRecentTopics(user, includeDeleted, pageNumber);
 		var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
 		await _lastReadService.GetTopicReadStatus(user, container);
+		var forumState = _forumStateComposer.GetState(null, pagerContext);
+		ViewBag.ForumState = forumState; // TODO: refactor this into the container
 		return View(container);
 	}
 

@@ -6,17 +6,13 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 	var profile = UserRetrievalShim.GetProfile();
+	var forumStateSerialized = JsonSerializer.Serialize((ForumState) ViewBag.ForumState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
 @section HeaderContent {
 	<script type="text/javascript" language="javascript">
-		ready(() => {
-			PopForums.startTimeUpdater();
-		@if (Model.PagerContext.PageIndex == 1)
-		{
-			<text>PopForums.recentListen(@Model.PagerContext.PageSize);</text>
-		}
-		});
+		PopForums.currentForumState = Object.assign(new PopForums.ForumState(), @Html.Raw(forumStateSerialized));
+		PopForums.currentForumState.recentListen();
 	</script>
 }
 

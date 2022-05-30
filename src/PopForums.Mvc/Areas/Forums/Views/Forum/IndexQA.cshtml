@@ -6,6 +6,7 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 	var profile = UserRetrievalShim.GetProfile();
+	var forumStateSerialized = JsonSerializer.Serialize((ForumState) ViewBag.ForumState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
 @section HeaderContent{
@@ -15,13 +16,11 @@
 	}
 
 	<script type="text/javascript">
-		ready(() => {
-			PopForums.topicListSetup(@Model.Forum.ForumID);
-		});
+		PopForums.currentForumState = Object.assign(new PopForums.ForumState(), @Html.Raw(forumStateSerialized));
 	</script>
 }
 
-<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.AskAQuestion" id="NewTopicButton" class="btn btn-primary" />}</h1>
+<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <pf-topicbutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.AskAQuestion" forumid="@Model.Forum.ForumID" caller="PopForums.currentForumState.isNewTopicLoaded"></pf-topicbutton>}</h1>
 
 @if (Model.PermissionContext.UserCanPost)
 {

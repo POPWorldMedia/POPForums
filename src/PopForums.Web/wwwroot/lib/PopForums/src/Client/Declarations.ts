@@ -1,7 +1,8 @@
 namespace PopForums {
     export const AreaPath = "/Forums";
-    export var currentTopicState: PopForums.TopicState;
-    export var userState: PopForums.UserState;
+    export var currentTopicState: TopicState;
+    export var currentForumState: ForumState;
+    export var userState: UserState;
 
     export function Ready(callback: any): void {
         if (document.readyState != "loading") callback();

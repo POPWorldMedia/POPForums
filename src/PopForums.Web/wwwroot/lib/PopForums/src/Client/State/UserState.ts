@@ -1,7 +1,4 @@
-﻿/// <reference path="../WatchPropertyAttribute.ts" />
-/// <reference path="../StateBase.ts" />
-
-namespace PopForums {
+﻿namespace PopForums {
 
 export class UserState extends StateBase {
     constructor() {

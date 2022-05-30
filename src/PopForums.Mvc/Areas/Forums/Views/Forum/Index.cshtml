@@ -6,6 +6,7 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 	var profile = UserRetrievalShim.GetProfile();
+	var forumStateSerialized = JsonSerializer.Serialize((ForumState) ViewBag.ForumState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
 @section HeaderContent{
@@ -13,17 +14,12 @@
 	<script src="~/lib/tinymce/tinymce.min.js" type="text/javascript"></script>
 }
 <script type="text/javascript">
-	ready(() => {
-		PopForums.topicListSetup(@Model.Forum.ForumID);
-		@if (Model.PagerContext.PageIndex == 1)
-		{
-			<text>PopForums.forumListen(@Model.PagerContext.PageSize, @Model.Forum.ForumID);</text>
-		}
-	});
+	PopForums.currentForumState = Object.assign(new PopForums.ForumState(), @Html.Raw(forumStateSerialized));
+	PopForums.currentForumState.setupForum();
 </script>
 }
 
-<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <input type="button" value="@PopForums.Resources.PostNewTopic" id="NewTopicButton" class="btn btn-primary" />}</h1>
+<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <pf-topicbutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostNewTopic" forumid="@Model.Forum.ForumID" caller="PopForums.currentForumState.isNewTopicLoaded"></pf-topicbutton>}</h1>
 
 @if (Model.PermissionContext.UserCanPost)
 {

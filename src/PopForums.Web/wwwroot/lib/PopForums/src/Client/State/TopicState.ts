@@ -1,6 +1,3 @@
-/// <reference path="../WatchPropertyAttribute.ts" />
-/// <reference path="../StateBase.ts" />
-
 namespace PopForums {
 
 export class TopicState extends StateBase {
