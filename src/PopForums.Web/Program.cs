@@ -67,6 +67,9 @@ services.AddPopForumsAzureFunctionsAndQueues();
 
 var app = builder.Build();
 
+// send fewer bits
+app.UseResponseCompression();
+
 // Records exceptions and info to the POP Forums database.
 var loggerFactory = app.Services.GetService<ILoggerFactory>();
 loggerFactory.AddPopForumsLogger(app);
