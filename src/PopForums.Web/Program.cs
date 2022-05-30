@@ -9,6 +9,8 @@ using System.Text.Json.Serialization;
 using PopForums.ElasticKit;
 using PopForums.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -63,6 +65,15 @@ services.AddPopForumsAzureFunctionsAndQueues();
 // but don't use if you're running these in functions
 //services.AddPopForumsBackgroundServices();
 
+// send fewer bits
+services.AddResponseCompression(options =>
+{
+	options.Providers.Add<BrotliCompressionProvider>();
+	options.Providers.Add<GzipCompressionProvider>();
+	options.EnableForHttps = true;
+});
+services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
 
 var app = builder.Build();
