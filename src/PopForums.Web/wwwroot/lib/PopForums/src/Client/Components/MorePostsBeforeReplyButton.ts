@@ -2,7 +2,7 @@ namespace PopForums {
 
     export class MorePostsBeforeReplyButton extends ElementBase {
     constructor() {
-        super(null);
+        super();
     }
 
     get buttonclass(): string {

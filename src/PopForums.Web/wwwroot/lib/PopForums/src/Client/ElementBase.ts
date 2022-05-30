@@ -1,18 +1,6 @@
 ﻿namespace PopForums {
 
 export abstract class ElementBase extends HTMLElement {
-    // Derived class constructor must call super("IDofTemplateHTML") first, or super(null) if markup is generated internally.
-    constructor(templateID: string) {
-        super();
-        if (templateID == null)
-            return;
-        this.attachShadow({ mode: 'open' });
-        var el = document.getElementById(templateID) as HTMLTemplateElement;
-        if (!el)
-            throw Error(`No template found for ID '${templateID}'. Must pass the ID of the template in constructor to base class, like super('myID');`)
-        const template = el.content;
-        this.shadowRoot.appendChild(template.cloneNode(true));
-    }
 
     connectedCallback() {
         const attr = this.getAttribute('caller');

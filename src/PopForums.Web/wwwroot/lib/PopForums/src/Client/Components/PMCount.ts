@@ -2,7 +2,7 @@
 
     export class PMCount extends ElementBase {
     constructor() {
-        super(null);
+        super();
     }
     updateUI(data: number): void {
         if (data === 0)

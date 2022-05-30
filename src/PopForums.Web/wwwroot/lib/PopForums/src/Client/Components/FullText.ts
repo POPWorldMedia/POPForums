@@ -2,7 +2,7 @@ namespace PopForums {
 
     export class FullText extends ElementBase {
     constructor() {
-        super(null);
+        super();
     }
 
     get formID() { return this.getAttribute("formid") };

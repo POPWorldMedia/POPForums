@@ -2,7 +2,7 @@ namespace PopForums {
 
     export class CommentButton extends ElementBase {
         constructor() {
-            super(null);
+            super();
         }
 
         get buttonclass(): string {
