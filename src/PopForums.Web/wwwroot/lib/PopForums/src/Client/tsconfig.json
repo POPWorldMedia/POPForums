@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es6",
     "sourceMap": true,
-    "outFile": "../../dist/PfClient.js",
+    "outFile": "../PopForums.js",
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,

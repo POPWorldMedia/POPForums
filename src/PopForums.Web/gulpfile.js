@@ -3,7 +3,7 @@
 var gulp = require("gulp"),
 	merge = require("merge-stream"),
 	babel = require("gulp-babel"),
-	cssmin = require("gulp-cssmin"),
+	cleancss = require("gulp-clean-css"),
 	uglify = require("gulp-uglify"),
 	sourcemaps = require("gulp-sourcemaps"),
 	rename = require("gulp-rename"),
@@ -28,7 +28,8 @@ gulp.task("copies", function () {
 
 gulp.task("js", function() {
 	return gulp.src("./wwwroot/lib/PopForums/src/*.js")
-		.pipe(sourcemaps.init())
+        .pipe(gulp.dest(targetPath + "/PopForums/dist"))
+		.pipe(sourcemaps.init({ loadMaps: true }))
 		.pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
 		.pipe(uglify())
 		.pipe(rename({ suffix: '.min' }))
@@ -36,20 +37,13 @@ gulp.task("js", function() {
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
-gulp.task("ts", function () {
-    return gulp.src("./wwwroot/lib/PopForums/dist/PfClient.js")
-        .pipe(sourcemaps.init())
-        .pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
-        .pipe(uglify())
-        .pipe(rename({ suffix: '.min' }))
-        .pipe(sourcemaps.write("./"))
-		.pipe(gulp.dest("./wwwroot/lib/PopForums/dist"));
-});
-
 gulp.task("css", function () {
 	return gulp.src("./wwwroot/lib/PopForums/src/*.css")
-		.pipe(cssmin())
+		.pipe(gulp.dest(targetPath + "/PopForums/dist"))
+        .pipe(sourcemaps.init())
+		.pipe(cleancss())
 		.pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write("./"))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
@@ -59,4 +53,4 @@ gulp.task("bump", function () {
 		.pipe(gulp.dest("./wwwroot/lib/PopForums/"));
 });
 
-gulp.task("default", gulp.series(["copies","js","ts","css", "bump"]));
+gulp.task("default", gulp.series(["copies","js","css","bump"]));
