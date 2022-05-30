@@ -10,11 +10,6 @@
 
 @section HeaderContent{
 	<link rel="sitemap" href="@ViewBag.SitemapUrl" type="application/xml" />
-	<script type="text/javascript">
-		ready(() => {
-			PopForums.homeSetup();
-		});
-	</script>
 }
 
 <h1>@Model.ForumTitle</h1>
@@ -22,7 +17,7 @@
 @if (user != null)
 {
 	@if (!user.IsApproved)
-	{ <p class="alert alert-warning"><a asp-action="Verify">@PopForums.Resources.VerifyAccount</a></p> }
+	{ <p class="alert alert-warning"><a asp-controller="Account" asp-action="Verify">@PopForums.Resources.VerifyAccount</a></p> }
 
 	<form asp-action="MarkAllForumsRead" asp-controller="Forum" asp-antiforgery="false">
 		<input type="submit" value="@PopForums.Resources.MarkAllForumsRead" class="btn btn-primary" />
@@ -31,7 +26,25 @@
 
 <table class="table mt-3">
 	<tbody>
-		@foreach (var forum in Model.UncategorizedForums)
+	@foreach (var forum in Model.UncategorizedForums)
+	{
+		<tr data-forumid="@forum.ForumID">
+			<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" /></a></td>
+			<td>
+				<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
+				<p>@forum.Description</p>
+				<small class="float-end text-secondary d-none d-sm-block">
+					@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
+				</small>
+			</td>
+		</tr>
+	}
+	@foreach (var category in Model.CategoryDictionary)
+	{
+		<tr class="bg-primary text-light">
+			<td colspan="2">@category.Key.Title</td>
+		</tr>
+		foreach (var forum in category.Value)
 		{
 			<tr data-forumid="@forum.ForumID">
 				<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" /></a></td>
@@ -44,27 +57,11 @@
 				</td>
 			</tr>
 		}
-		@foreach (var category in Model.CategoryDictionary)
-		{
-			<tr class="bg-primary text-light">
-				<td colspan="2">@category.Key.Title</td>
-			</tr>
-			foreach (var forum in category.Value)
-			{
-				<tr data-forumid="@forum.ForumID">
-					<td class="newIndicator"><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName"><pf-forumReadIndicator forum="@forum" categorizedForumContainer="@Model" /></a></td>
-					<td>
-						<h2><a asp-controller="Forum" asp-action="Index" asp-route-urlName="@forum.UrlName">@forum.Title</a></h2>
-						<p>@forum.Description</p>
-						<small class="float-end text-secondary d-none d-sm-block">
-							@PopForums.Resources.Topics: <span class="topicCount">@forum.TopicCount.ToString("N0")</span> | @PopForums.Resources.Posts: <span class="postCount">@forum.PostCount.ToString("N0")</span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@forum.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(forum.LastPostTime, profile)</span> @PopForums.Resources.By <span class="lastPostName">@forum.LastPostName</span>
-						</small>
-					</td>
-				</tr>
-			}
-		}
+	}
 	</tbody>
 </table>
+
+<pf-homeupdater></pf-homeupdater>
 
 <div>
 	<h3>@PopForums.Resources.UsersOnline</h3>
