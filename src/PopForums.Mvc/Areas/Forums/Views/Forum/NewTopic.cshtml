@@ -1,23 +1,27 @@
 ﻿@model NewPost
+<pf-topicform templateid="TopicForm"></pf-topicform>
 
-<h2>@PopForums.Resources.CreateNewTopic</h2>
+<template id="TopicForm">
 
-<div class="postForm" role="form">
-	<div class="mb-3">
-		@Html.TextBoxFor(p => p.Title, new { @class = "form-control", placeholder = PopForums.Resources.Title })
+	<h2>@PopForums.Resources.CreateNewTopic</h2>
+	<div class="postForm" role="form">
+		<div class="mb-3">
+			@Html.TextBoxFor(p => p.Title, new {@class = "form-control", placeholder = PopForums.Resources.Title})
+		</div>
+		<pf-fulltext formid="FullText" caller="none"></pf-fulltext>
+		<div class="form-check my-3">
+			<label for="IncludeSignature" class="form-check-label">
+				@Html.CheckBoxFor(p => p.IncludeSignature, new {@class = "form-check-input"})
+				@PopForums.Resources.IncludeSignature
+			</label>
+		</div>
+		@Html.HiddenFor(p => p.ItemID)
+		@Html.HiddenFor(p => p.IsPlainText)
+		@Html.HiddenFor(p => p.IsImageEnabled)
+		<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" class="btn btn-primary"/>
+		<pf-previewbutton textSourceSelector=".postForm #FullText" isplaintextselector=".postForm #IsPlainText" labelText="@PopForums.Resources.Preview"></pf-previewbutton>
+		<p id="PostResponseMessage" class="alert alert-danger my-3"></p>
+		<hr class="mb-3"/>
 	</div>
-	<pf-fulltext formid="FullText" caller="none"></pf-fulltext>
-	<div class="form-check my-3">
-		<label for="IncludeSignature" class="form-check-label">
-			@Html.CheckBoxFor(p => p.IncludeSignature, new {@class = "form-check-input"})
-			@PopForums.Resources.IncludeSignature
-		</label>
-	</div>
-	@Html.HiddenFor(p => p.ItemID)
-	@Html.HiddenFor(p => p.IsPlainText)
-	@Html.HiddenFor(p => p.IsImageEnabled)
-	<input type="button" value="@PopForums.Resources.SubmitNewTopic" id="SubmitNewTopic" onclick="PopForums.postNewTopic()" class="btn btn-primary" />
-	<pf-previewbutton textSourceSelector=".postForm #FullText" isplaintextselector=".postForm #IsPlainText" labelText="@PopForums.Resources.Preview"></pf-previewbutton>
-	<p id="PostResponseMessage" class="alert alert-danger my-3"></p>
-	<hr class="mb-3"/>
-</div>
+
+</template>
