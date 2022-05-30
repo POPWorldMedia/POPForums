@@ -18,7 +18,7 @@
 		<h2>@PopForums.Resources.UseExistingForumAccount</h2>
 		<div id="LoginResult" class="d-none alert alert-danger"></div>
         
-		<template templateid="LoginForm" isexternallogin="true">
+		<template id="LoginForm">
 		<div role="form">
 			<div class="form-group">
 				<label for="EmailLogin">@PopForums.Resources.Email</label>
@@ -32,7 +32,7 @@
 		</div>
 		</template>
 
-		<pf-loginform templateid="LoginForm" isexternallogin="false"></pf-loginform>
+		<pf-loginform templateid="LoginForm" isexternallogin="true"></pf-loginform>
 		<input type="hidden" name="Referrer" id="Referrer" value="@((object)ViewBag.Referrer)" />
 	</div>
 </div>
