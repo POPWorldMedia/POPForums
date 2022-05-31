@@ -7,7 +7,7 @@
 		<div class="mb-3">
 			@Html.TextBoxFor(p => p.Title, new {@class = "form-control", placeholder = PopForums.Resources.Title})
 		</div>
-		<pf-fulltext formid="FullText" caller="none"></pf-fulltext>
+		<pf-fulltext formid="FullText" overridelistener="true"></pf-fulltext>
 		<div class="form-check my-3">
 			<label for="IncludeSignature" class="form-check-label">
 				@Html.CheckBoxFor(p => p.IncludeSignature, new {@class = "form-check-input"})

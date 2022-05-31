@@ -44,6 +44,10 @@ namespace PopForums {
             this.appendChild(this.button);
             super.connectedCallback();
         }
+
+        getDependentReference(): [StateBase, string] {
+            return [PopForums.currentTopicState, "answerPostID"];
+        }
         
         updateUI(answerPostID: number): void {
             if (this.isfirstintopic.toLowerCase() === "false" && this.userid === this.startedbyuserid) {

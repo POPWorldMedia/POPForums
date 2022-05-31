@@ -4,6 +4,11 @@
     constructor() {
         super();
     }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.userState, "newPmCount"];
+    }
+
     updateUI(data: number): void {
         if (data === 0)
             this.innerHTML = "";

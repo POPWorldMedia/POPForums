@@ -5,7 +5,7 @@
 <h2>@PopForums.Resources.CreateNewReply</h2>
 
 	<div id="NewReply" class="postForm" role="form">
-		<pf-fulltext formid="FullText" caller="none"></pf-fulltext>
+		<pf-fulltext formid="FullText" overridelistener="true"></pf-fulltext>
 		@Html.HiddenFor(p => p.Title)
 		@Html.HiddenFor(p => p.IncludeSignature)
 		@Html.HiddenFor(p => p.ItemID)

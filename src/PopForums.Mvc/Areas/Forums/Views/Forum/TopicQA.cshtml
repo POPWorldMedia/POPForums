@@ -29,8 +29,8 @@
 @if (user != null) {
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
-		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
-		<pf-favoritebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isFavorite" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
+		<pf-subscribebutton buttonclass="btn btn-primary" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
+		<pf-favoritebutton buttonclass="btn btn-primary" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{
 			<pf-topicmoderationlogbutton topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.ModerationLog" buttonclass="btn btn-primary"></pf-topicmoderationlogbutton>
@@ -47,7 +47,7 @@
 	@if (Model.PermissionContext.UserCanPost)
 	{
 		<div id="NewReply" style="display: none;"></div>
-		<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostAnswer" topicid="@Model.Topic.TopicID" postid="" caller="PopForums.currentTopicState.isReplyLoaded"></pf-replybutton>
+		<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostAnswer" topicid="@Model.Topic.TopicID" postid=""></pf-replybutton>
 	}
 	else
 	{

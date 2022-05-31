@@ -9,7 +9,7 @@
     "tinymce": "6.0.2",
     "vue": "3.2.33",
     "vue-router": "4.0.15",
-    "@popperjs/core": "2.11.5" 
+    "@popperjs/core": "2.11.5"
   },
   "devDependencies": {
     "@babel/core": "7.14.3",

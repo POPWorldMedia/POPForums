@@ -32,6 +32,10 @@ namespace PopForums {
             });
             super.connectedCallback();
         }
+
+        getDependentReference(): [StateBase, string] {
+            return [PopForums.currentTopicState, "commentReplyID"];
+        }
         
         updateUI(data: number): void {
             let button = this.querySelector("input");

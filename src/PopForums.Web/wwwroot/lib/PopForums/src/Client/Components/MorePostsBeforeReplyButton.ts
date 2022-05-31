@@ -23,6 +23,10 @@ namespace PopForums {
         });
         super.connectedCallback();
     }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentTopicState, "isNewerPostsAvailable"];
+    }
     
     updateUI(data: boolean): void {
         let button = this.querySelector("input");

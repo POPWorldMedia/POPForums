@@ -28,6 +28,10 @@ namespace PopForums {
         });
         super.connectedCallback();
     }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentForumState, "isNewTopicLoaded"];
+    }
     
     updateUI(data: boolean): void {
         if (data)

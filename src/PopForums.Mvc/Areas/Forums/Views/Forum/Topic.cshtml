@@ -28,8 +28,8 @@
 @if (user != null) {
 	<p id="AsyncResponse"></p>
 	<div id="TopicTools">
-		<pf-subscribebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isSubscribed" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
-		<pf-favoritebutton buttonclass="btn btn-primary" caller="PopForums.currentTopicState.isFavorite" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
+		<pf-subscribebutton buttonclass="btn btn-primary" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
+		<pf-favoritebutton buttonclass="btn btn-primary" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
 		@if (user.IsInRole(PermanentRoles.Moderator))
 		{
 			<pf-topicmoderationlogbutton topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.ModerationLog" buttonclass="btn btn-primary"></pf-topicmoderationlogbutton>
@@ -41,7 +41,7 @@
 
 @if (Model.PagerContext.PageIndex > 1)
 {
-	<pf-previouspostsbutton buttontext="@PopForums.Resources.ShowPreviousPosts" buttonclass="btn btn-primary" caller="PopForums.currentTopicState.lowPage"></pf-previouspostsbutton>
+	<pf-previouspostsbutton buttontext="@PopForums.Resources.ShowPreviousPosts" buttonclass="btn btn-primary"></pf-previouspostsbutton>
 }
 
 <div id="PostStream">
@@ -52,7 +52,7 @@
 
 </div>
 
-<p><pf-morepostsbutton buttontext="@PopForums.Resources.ShowMorePosts" buttonclass="btn btn-primary my-3" caller="PopForums.currentTopicState.highPage"></pf-morepostsbutton></p>
+<p><pf-morepostsbutton buttontext="@PopForums.Resources.ShowMorePosts" buttonclass="btn btn-primary my-3"></pf-morepostsbutton></p>
 
 <pf-pagerLinks controllerName="Forum" actionName="Topic" pagerContext="@Model.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active" />
 
@@ -61,7 +61,7 @@
 @if (Model.PermissionContext.UserCanPost)
 {
 	<div id="NewReply"></div>
-	<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostReply" topicid="@Model.Topic.TopicID" postid="" caller="PopForums.currentTopicState.isReplyLoaded"></pf-replybutton>
+	<pf-replybutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.PostReply" topicid="@Model.Topic.TopicID" postid="" overridedisplay="false"></pf-replybutton>
 }
 else
 {

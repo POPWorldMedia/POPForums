@@ -19,29 +19,17 @@ var PopForums;
 (function (PopForums) {
     class ElementBase extends HTMLElement {
         connectedCallback() {
-            const attr = this.getAttribute('caller');
-            if (!attr)
-                throw Error("There is no 'caller' attribute on the component.");
-            if (attr.toLowerCase() === "none")
+            if (this.state && this.propertyToWatch)
                 return;
-            const varAndProp = this.parseCallerString(attr);
-            const state = PopForums[varAndProp[1]];
+            let stateAndWatchProperty = this.getDependentReference();
+            this.state = stateAndWatchProperty[0];
+            this.propertyToWatch = stateAndWatchProperty[1];
             const delegate = this.update.bind(this);
-            state.subscribe(varAndProp[2], delegate);
+            this.state.subscribe(this.propertyToWatch, delegate);
         }
         update() {
-            const attr = this.getAttribute('caller');
-            if (!attr)
-                throw Error("There is no 'caller' attribute on the component.");
-            const varAndProp = this.parseCallerString(attr);
-            const externalValue = PopForums[varAndProp[1]][varAndProp[2]];
+            const externalValue = this.state[this.propertyToWatch];
             this.updateUI(externalValue);
-        }
-        parseCallerString(caller) {
-            const segments = caller.split(".");
-            if (segments.length !== 3 || segments[0] !== "PopForums")
-                throw Error("caller attribute must follow 'PopForums.state.property' format.");
-            return segments;
         }
     }
     PopForums.ElementBase = ElementBase;
@@ -125,6 +113,9 @@ var PopForums;
             this.appendChild(this.button);
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "answerPostID"];
+        }
         updateUI(answerPostID) {
             if (this.isfirstintopic.toLowerCase() === "false" && this.userid === this.startedbyuserid) {
                 // this is question author
@@ -185,6 +176,9 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "commentReplyID"];
+        }
         updateUI(data) {
             let button = this.querySelector("input");
             if (data !== undefined) {
@@ -240,6 +234,9 @@ var PopForums;
                 });
             });
             super.connectedCallback();
+        }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "isFavorite"];
         }
         updateUI(data) {
             let button = this.querySelector("input");
@@ -324,11 +321,15 @@ var PopForums;
                 setup: null
             };
         }
+        get overridelistener() {
+            return this.getAttribute("overridelistener");
+        }
         get formID() { return this.getAttribute("formid"); }
         ;
         get value() { return this._value; }
         set value(v) { this._value = v; }
         connectedCallback() {
+            var _a, _b;
             var initialValue = this.getAttribute("value");
             if (initialValue)
                 this.value = initialValue;
@@ -345,7 +346,8 @@ var PopForums;
                     self.value = this.externalFormElement.value;
                 });
                 this.appendChild(this.externalFormElement);
-                super.connectedCallback();
+                if (((_a = this.overridelistener) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== "true")
+                    super.connectedCallback();
                 return;
             }
             let template = document.createElement("template");
@@ -374,7 +376,11 @@ var PopForums;
             this.externalFormElement.setAttribute("name", this.formID);
             this.externalFormElement.type = "hidden";
             this.appendChild(this.externalFormElement);
-            super.connectedCallback();
+            if (((_b = this.overridelistener) === null || _b === void 0 ? void 0 : _b.toLowerCase()) !== "true")
+                super.connectedCallback();
+        }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "nextQuote"];
         }
         updateUI(data) {
             if (data !== null && data !== undefined) {
@@ -527,6 +533,9 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "isNewerPostsAvailable"];
+        }
         updateUI(data) {
             let button = this.querySelector("input");
             if (!data)
@@ -563,6 +572,9 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "highPage"];
+        }
         updateUI(data) {
             let button = this.querySelector("input");
             if (PopForums.currentTopicState.pageCount === 1 || data === PopForums.currentTopicState.pageCount)
@@ -580,6 +592,9 @@ var PopForums;
     class PMCount extends PopForums.ElementBase {
         constructor() {
             super();
+        }
+        getDependentReference() {
+            return [PopForums.userState, "newPmCount"];
         }
         updateUI(data) {
             if (data === 0)
@@ -796,6 +811,9 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "lowPage"];
+        }
         updateUI(data) {
             let button = this.querySelector("input");
             if (PopForums.currentTopicState.pageCount === 1 || data === 1)
@@ -908,6 +926,9 @@ var PopForums;
         get postid() {
             return this.getAttribute("postid");
         }
+        get overridedisplay() {
+            return this.getAttribute("overridedisplay");
+        }
         connectedCallback() {
             var _a;
             this.innerHTML = ReplyButton.template;
@@ -920,7 +941,13 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "isReplyLoaded"];
+        }
         updateUI(data) {
+            var _a;
+            if (((_a = this.overridedisplay) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "true")
+                return;
             let button = this.querySelector("input");
             if (data)
                 button.style.display = "none";
@@ -1042,6 +1069,9 @@ var PopForums;
             });
             super.connectedCallback();
         }
+        getDependentReference() {
+            return [PopForums.currentTopicState, "isSubscribed"];
+        }
         updateUI(data) {
             let button = this.querySelector("input");
             if (data)
@@ -1080,6 +1110,9 @@ var PopForums;
                 PopForums.currentForumState.loadNewTopic();
             });
             super.connectedCallback();
+        }
+        getDependentReference() {
+            return [PopForums.currentForumState, "isNewTopicLoaded"];
         }
         updateUI(data) {
             if (data)
@@ -1562,7 +1595,7 @@ var PopForums;
                 if (window.location.hash) {
                     let hash = window.location.hash;
                     while (hash.charAt(0) === '#')
-                        hash = hash.substr(1);
+                        hash = hash.substring(1);
                     let tag = document.querySelector("div[data-postID='" + hash + "']");
                     if (tag) {
                         let tagPosition = tag.getBoundingClientRect().top;

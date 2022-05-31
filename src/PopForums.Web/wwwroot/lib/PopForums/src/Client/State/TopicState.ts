@@ -225,7 +225,7 @@ export class TopicState extends StateBase {
     scrollToPostFromHash = () => {
         if (window.location.hash) {
             let hash = window.location.hash;
-            while (hash.charAt(0) === '#') hash = hash.substr(1);
+            while (hash.charAt(0) === '#') hash = hash.substring(1);
             let tag = document.querySelector("div[data-postID='" + hash + "']");
             if (tag) {
                 let tagPosition = tag.getBoundingClientRect().top;

@@ -21,11 +21,11 @@
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 <a name="@Model.Post.PostID"></a>
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postid="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postID="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
 	<div class="answerData col-2">
 		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary m-auto d-block" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary m-auto"></pf-votecount>
 
-		<pf-answerbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" answerstatusclass="answerStatus" chooseanswertext="@PopForums.Resources.ChooseAnswer" answerpostid="@Model.Topic.AnswerPostID" userid="@user?.UserID" startedbyuserid="@Model.Topic.StartedByUserID" isfirstintopic="@Model.Post.IsFirstInTopic.ToString()" caller="PopForums.currentTopicState.answerPostID"></pf-answerbutton>
+		<pf-answerbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" answerstatusclass="answerStatus" chooseanswertext="@PopForums.Resources.ChooseAnswer" answerpostid="@Model.Topic.AnswerPostID" userid="@user?.UserID" startedbyuserid="@Model.Topic.StartedByUserID" isfirstintopic="@Model.Post.IsFirstInTopic.ToString()"></pf-answerbutton>
 	</div>
 	<div class="col-10">
 		<div class="postUserData bg-primary rounded mb-2 px-3 py-1">
@@ -60,7 +60,7 @@
 				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new { id = Model.Post.PostID }, null)</li>
 				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
-					<li class="list-inline-item"><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn-link" caller="PopForums.currentTopicState.commentReplyID"></pf-commentbutton></li>
+					<li class="list-inline-item"><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn-link"></pf-commentbutton></li>
 				}
 				@if (user.IsPostEditable(Model.Post))
 				{
@@ -92,7 +92,7 @@
 			{
 				<a name="@comment.PostID"></a>
 				<div class="@if(comment.IsDeleted){<text>bg-warning</text>} card border-secondary mb-3 qaComment ms-3 p-3 @if (Model.PostWithChildren.LastReadTime.HasValue && comment.PostTime > Model.PostWithChildren.LastReadTime)
-	{<text>newPostBlock</text>}">
+	{<text>newPostBlock</text>}" data-postID="@comment.PostID">
 					<p class="text-muted">
 						@Html.ActionLink(comment.Name, "ViewProfile", AccountController.Name, new { id = comment.UserID }, null) - <small><span class="fTime" data-utc="@comment.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(comment.PostTime, profile)</span>
 						@if (user != null && user.IsInRole(PermanentRoles.Moderator))
@@ -116,7 +116,7 @@
 			}
 			if (user != null && Model.PostWithChildren.Children.Count > 0 && !Model.Topic.IsClosed)
 			{
-				<p><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn btn-primary btn-sm" caller="PopForums.currentTopicState.commentReplyID"></pf-commentbutton></p>
+				<p><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn btn-primary btn-sm"></pf-commentbutton></p>
 			}
 		}
 		<div class="commentHolder"></div>

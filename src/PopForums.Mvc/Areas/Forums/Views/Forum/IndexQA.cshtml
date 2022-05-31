@@ -20,7 +20,7 @@
 	</script>
 }
 
-<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <pf-topicbutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.AskAQuestion" forumid="@Model.Forum.ForumID" caller="PopForums.currentForumState.isNewTopicLoaded"></pf-topicbutton>}</h1>
+<h1>@Model.Forum.Title@if (Model.PermissionContext.UserCanPost){ <pf-topicbutton buttonclass="btn btn-primary" buttontext="@PopForums.Resources.AskAQuestion" forumid="@Model.Forum.ForumID"></pf-topicbutton>}</h1>
 
 @if (Model.PermissionContext.UserCanPost)
 {

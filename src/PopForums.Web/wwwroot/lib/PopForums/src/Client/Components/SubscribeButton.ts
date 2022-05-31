@@ -44,6 +44,10 @@ namespace PopForums {
         super.connectedCallback();
     }
 
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentTopicState, "isSubscribed"];
+    }
+
     updateUI(data: boolean): void {
         let button = this.querySelector("input");
         if (data)

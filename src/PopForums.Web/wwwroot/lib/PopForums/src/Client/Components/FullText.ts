@@ -5,6 +5,10 @@ namespace PopForums {
         super();
     }
 
+    get overridelistener(): string {
+        return this.getAttribute("overridelistener");
+    }
+
     get formID() { return this.getAttribute("formid") };
 
     get value() { return this._value;}
@@ -34,7 +38,8 @@ namespace PopForums {
                 self.value = (this.externalFormElement as HTMLTextAreaElement).value;
             });
             this.appendChild(this.externalFormElement);
-            super.connectedCallback();
+            if (this.overridelistener?.toLowerCase() !== "true")
+                super.connectedCallback();
             return;
         }
         let template = document.createElement("template");
@@ -63,7 +68,12 @@ namespace PopForums {
         this.externalFormElement.setAttribute("name", this.formID);
         (this.externalFormElement as HTMLInputElement).type = "hidden";
         this.appendChild(this.externalFormElement);
-        super.connectedCallback();
+        if (this.overridelistener?.toLowerCase() !== "true")
+            super.connectedCallback();
+    }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentTopicState, "nextQuote"];
     }
 
     updateUI(data: any): void {

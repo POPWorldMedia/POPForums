@@ -23,6 +23,10 @@ namespace PopForums {
         });
         super.connectedCallback();
     }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentTopicState, "lowPage"];
+    }
     
     updateUI(data: number): void {
         let button = this.querySelector("input");

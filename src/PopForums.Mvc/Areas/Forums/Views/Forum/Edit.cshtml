@@ -22,7 +22,7 @@
 				<input asp-for="Title" type="text" class="form-control" />
 			</div>
 		}
-		<pf-fulltext formid="FullText" caller="none" value="@Model.FullText"></pf-fulltext>
+		<pf-fulltext formid="FullText" overridelistener="true" value="@Model.FullText"></pf-fulltext>
 		<div class="form-check my-3">
 			<label for="IncludeSignature" class="form-check-label">@PopForums.Resources.IncludeSignature</label>
 			<input type="checkbox" asp-for="ShowSig" class="form-check-input" />

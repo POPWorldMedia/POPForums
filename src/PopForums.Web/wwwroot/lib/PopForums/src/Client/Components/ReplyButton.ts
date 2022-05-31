@@ -20,6 +20,10 @@ namespace PopForums {
     get postid(): string {
         return this.getAttribute("postid");
     }
+    
+    get overridedisplay(): string {
+        return this.getAttribute("overridedisplay");
+    }
 
     connectedCallback() {
         this.innerHTML = ReplyButton.template;
@@ -32,8 +36,14 @@ namespace PopForums {
         });
         super.connectedCallback();
     }
+
+    getDependentReference(): [StateBase, string] {
+        return [PopForums.currentTopicState, "isReplyLoaded"];
+    }
     
     updateUI(data: boolean): void {
+        if (this.overridedisplay?.toLowerCase() === "true")
+            return;
         let button = this.querySelector("input");
         if (data)
             button.style.display = "none";
