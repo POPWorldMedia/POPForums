@@ -171,6 +171,10 @@ pf-votecount span {
 	white-space: nowrap;
 }
 
+#ForumContainer .modal-body img {
+	max-width: 100%;
+}
+
 /* queries */
 
 @media(min-width:1px) {

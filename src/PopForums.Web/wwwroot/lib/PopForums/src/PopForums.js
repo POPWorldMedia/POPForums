@@ -1593,20 +1593,25 @@ var PopForums;
             };
             this.scrollToPostFromHash = () => {
                 if (window.location.hash) {
-                    let hash = window.location.hash;
-                    while (hash.charAt(0) === '#')
-                        hash = hash.substring(1);
-                    let tag = document.querySelector("div[data-postID='" + hash + "']");
-                    if (tag) {
-                        let tagPosition = tag.getBoundingClientRect().top;
-                        let crumb = document.querySelector("#ForumContainer #TopBreadcrumb");
-                        let crumbHeight = crumb.getBoundingClientRect().height;
-                        let e = getComputedStyle(document.querySelector(".postItem"));
-                        let margin = parseFloat(e.marginTop);
-                        let newPosition = tagPosition - crumbHeight - margin;
-                        window.scrollBy({ top: newPosition, behavior: 'auto' });
-                    }
-                    this.isScrollAdjusted = true;
+                    Promise.all(Array.from(document.querySelectorAll("#PostStream img"))
+                        .filter(img => !img.complete)
+                        .map(img => new Promise(resolve => { img.onload = img.onerror = resolve; })))
+                        .then(() => {
+                        let hash = window.location.hash;
+                        while (hash.charAt(0) === '#')
+                            hash = hash.substring(1);
+                        let tag = document.querySelector("div[data-postID='" + hash + "']");
+                        if (tag) {
+                            let tagPosition = tag.getBoundingClientRect().top;
+                            let crumb = document.querySelector("#ForumContainer #TopBreadcrumb");
+                            let crumbHeight = crumb.getBoundingClientRect().height;
+                            let e = getComputedStyle(document.querySelector(".postItem"));
+                            let margin = parseFloat(e.marginTop);
+                            let newPosition = tagPosition - crumbHeight - margin;
+                            window.scrollBy({ top: newPosition, behavior: 'auto' });
+                        }
+                        this.isScrollAdjusted = true;
+                    });
                 }
             };
         }
