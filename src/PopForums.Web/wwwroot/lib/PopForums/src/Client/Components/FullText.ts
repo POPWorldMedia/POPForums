@@ -59,7 +59,10 @@ namespace PopForums {
                 editor.save();
                 self.value = (self.textBox as HTMLInputElement).value;
                 (self.externalFormElement as any).value = self.value;
-              })
+              });
+              editor.save();
+              self.value = (self.textBox as HTMLInputElement).value;
+              (self.externalFormElement as any).value = self.value;
             })
         };
         tinymce.init(this.editorSettings);
