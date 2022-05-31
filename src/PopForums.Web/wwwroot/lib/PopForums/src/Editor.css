@@ -6,3 +6,7 @@ blockquote {
 	border-left: 5px solid #aaaaaa;
 	padding: 0 1em;
 }
+
+img {
+	max-width: 100%;
+}
