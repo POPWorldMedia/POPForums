@@ -6,13 +6,13 @@
 @section HeaderContent
 {
 <script type="text/javascript" language="javascript">
-	ready(() => {
+	PopForums.Ready(() => {
 		var toText = document.querySelector("#ToText");
 		var toList = document.querySelector("#ToList");
 		toText.addEventListener("keyup", () => {
 			var q = toText.value;
 			if (q.length > 1) {
-				fetch(PopForums.areaPath + "/PrivateMessages/GetNames?id=" + q)
+				fetch(PopForums.AreaPath + "/PrivateMessages/GetNames?id=" + q)
 					.then(response => response.json())
 					.then(result => {
 						toList.innerHTML = "";

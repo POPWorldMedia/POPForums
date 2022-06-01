@@ -6,13 +6,7 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var profile = UserRetrievalShim.GetProfile();
 }
-@section HeaderContent {
-	<script type="text/javascript" language="javascript">
-		ready(() => {
-			PopForums.startTimeUpdater();
-		});
-	</script>
-}
+
 <div>
 	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
