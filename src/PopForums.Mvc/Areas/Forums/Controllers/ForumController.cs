@@ -62,6 +62,7 @@ public class ForumController : Controller
 		var container = new ForumTopicContainer { Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext };
 		await _lastReadService.GetTopicReadStatus(user, container);
 		var forumState = _forumStateComposer.GetState(forum, pagerContext);
+		container.ForumState = forumState;
 		var adapter = new ForumAdapterFactory(forum);
 		if (adapter.IsAdapterEnabled)
 		{
@@ -70,7 +71,6 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		container.ForumState = forumState;
 		if (forum.IsQAForum)
 			return View("IndexQA", container);
 		return View(container);
