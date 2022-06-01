@@ -61,6 +61,7 @@ public class ForumController : Controller
 		var (topics, pagerContext) = await _topicService.GetTopics(forum, permissionContext.UserCanModerate, pageNumber);
 		var container = new ForumTopicContainer { Forum = forum, Topics = topics, PagerContext = pagerContext, PermissionContext = permissionContext };
 		await _lastReadService.GetTopicReadStatus(user, container);
+		var forumState = _forumStateComposer.GetState(forum, pagerContext);
 		var adapter = new ForumAdapterFactory(forum);
 		if (adapter.IsAdapterEnabled)
 		{
@@ -69,7 +70,6 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		var forumState = _forumStateComposer.GetState(forum, pagerContext);
 		container.ForumState = forumState;
 		if (forum.IsQAForum)
 			return View("IndexQA", container);
@@ -197,6 +197,8 @@ public class ForumController : Controller
 		var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
 		await _topicViewCountService.ProcessView(topic);
 		await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
+		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
+		container.TopicState = topicState;
 		if (adapter.IsAdapterEnabled)
 		{
 			adapter.ForumAdapter.AdaptTopic(this, container);
@@ -204,8 +206,6 @@ public class ForumController : Controller
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
-		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
-		container.TopicState = topicState;
 		if (forum.IsQAForum)
 		{
 			var containerForQA = _forumService.MapTopicContainerForQA(container);
