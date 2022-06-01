@@ -242,7 +242,8 @@ public class ForumService : IForumService
 			IsFavorite = topicContainer.IsFavorite,
 			Signatures = topicContainer.Signatures,
 			Avatars = topicContainer.Avatars,
-			VotedPostIDs = topicContainer.VotedPostIDs
+			VotedPostIDs = topicContainer.VotedPostIDs,
+			TopicState = topicContainer.TopicState
 		};
 		try
 		{

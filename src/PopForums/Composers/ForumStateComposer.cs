@@ -1,4 +1,4 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Services;
+﻿namespace PopForums.Composers;
 
 public interface IForumStateComposer
 {

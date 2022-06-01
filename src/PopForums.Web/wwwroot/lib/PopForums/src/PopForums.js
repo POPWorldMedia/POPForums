@@ -1349,6 +1349,12 @@ var PopForums;
     PopForums.VoteCount = VoteCount;
     customElements.define("pf-votecount", VoteCount);
 })(PopForums || (PopForums = {}));
+var PopForums;
+(function (PopForums) {
+    class NotificationService {
+    }
+    PopForums.NotificationService = NotificationService;
+})(PopForums || (PopForums = {}));
 // TODO: Move this to an open websockets connection
 var PopForums;
 (function (PopForums) {

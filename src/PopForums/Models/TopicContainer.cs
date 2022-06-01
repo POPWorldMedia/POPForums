@@ -13,4 +13,5 @@ public class TopicContainer
 	public Dictionary<int, int> Avatars { get; set; }
 	public List<int> VotedPostIDs { get; set; }
 	public DateTime? LastReadTime { get; set; }
+	public TopicState TopicState { get; set; }
 }

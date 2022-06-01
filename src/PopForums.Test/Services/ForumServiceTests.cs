@@ -502,7 +502,8 @@ public class ForumServiceTests
 			IsFavorite = true,
 			Signatures = new Dictionary<int, string>(),
 			Avatars = new Dictionary<int, int>(),
-			VotedPostIDs = new List<int>()
+			VotedPostIDs = new List<int>(),
+			TopicState = new TopicState()
 		};
 		var service = GetService();
 		var result = service.MapTopicContainerForQA(topicContainer);
@@ -516,6 +517,7 @@ public class ForumServiceTests
 		Assert.Same(topicContainer.Signatures, result.Signatures);
 		Assert.Same(topicContainer.Avatars, result.Avatars);
 		Assert.Same(topicContainer.VotedPostIDs, result.VotedPostIDs);
+		Assert.Same(topicContainer.TopicState, result.TopicState);
 	}
 
 	[Fact]

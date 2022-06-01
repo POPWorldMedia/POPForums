@@ -16,6 +16,7 @@ global using System.Threading.Tasks;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 
+global using PopForums.Composers;
 global using PopForums.Configuration;
 global using PopForums.Email;
 global using PopForums.Extensions;

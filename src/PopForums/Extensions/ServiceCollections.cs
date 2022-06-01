@@ -10,6 +10,10 @@ public static class ServiceCollections
 		services.AddTransient<ISettingsManager, SettingsManager>();
 		services.AddTransient<ITenantService, TenantService>();
 
+		// composers
+		services.AddTransient<ITopicStateComposer, TopicStateComposer>();
+		services.AddTransient<IForumStateComposer, ForumStateComposer>();
+
 		// email
 		services.AddTransient<IForgotPasswordMailer, ForgotPasswordMailer>();
 		services.AddTransient<IMailingListComposer, MailingListComposer>();

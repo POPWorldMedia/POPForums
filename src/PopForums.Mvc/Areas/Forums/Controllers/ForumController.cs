@@ -1,4 +1,5 @@
-﻿using PopForums.Models;
+﻿using PopForums.Composers;
+using PopForums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
@@ -69,7 +70,7 @@ public class ForumController : Controller
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
 		var forumState = _forumStateComposer.GetState(forum, pagerContext);
-		ViewBag.ForumState = forumState; // TODO: refactor this into the container
+		container.ForumState = forumState;
 		if (forum.IsQAForum)
 			return View("IndexQA", container);
 		return View(container);
@@ -204,7 +205,7 @@ public class ForumController : Controller
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
 		}
 		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
-		ViewBag.TopicState = topicState; // TODO: Refactor this... container is in core project, while TopicState is not because it depends on IUserRetrievalShim.
+		container.TopicState = topicState;
 		if (forum.IsQAForum)
 		{
 			var containerForQA = _forumService.MapTopicContainerForQA(container);

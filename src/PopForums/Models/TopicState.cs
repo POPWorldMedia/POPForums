@@ -1,4 +1,4 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Models;
+﻿namespace PopForums.Models;
 
 public class TopicState
 {

@@ -6,7 +6,7 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 	var profile = UserRetrievalShim.GetProfile();
-	var topicStateSerialized = JsonSerializer.Serialize((TopicState) ViewBag.TopicState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+	var topicStateSerialized = JsonSerializer.Serialize(Model.TopicState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
 @section HeaderContent {

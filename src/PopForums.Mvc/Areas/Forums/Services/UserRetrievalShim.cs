@@ -1,11 +1,5 @@
 ﻿namespace PopForums.Mvc.Areas.Forums.Services;
 
-public interface IUserRetrievalShim
-{
-	User GetUser();
-	Profile GetProfile();
-}
-
 public class UserRetrievalShim : IUserRetrievalShim
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
