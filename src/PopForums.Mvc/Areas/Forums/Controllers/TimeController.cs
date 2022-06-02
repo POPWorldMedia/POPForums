@@ -17,7 +17,7 @@ public class TimeController : Controller
 	private readonly IUserRetrievalShim _userRetrievalShim;
 
 	[HttpPost]
-	public async Task<JsonResult> GetTimes(string[] times)
+	public async Task<JsonResult> GetTimes([FromBody]string[] times)
 	{
 		var list = new List<TimePairs>();
 		if (times == null || times.Length == 0)

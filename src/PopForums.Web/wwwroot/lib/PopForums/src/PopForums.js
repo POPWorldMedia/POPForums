@@ -1364,31 +1364,32 @@ var PopForums;
                 this.StartUpdater();
             });
         }
-        PopulatePostData() {
-            let a = [];
+        PopulateArray() {
+            this.timeArray = [];
             let times = document.querySelectorAll(".fTime");
             times.forEach(time => {
                 var t = time.getAttribute("data-utc");
                 if (((new Date().getDate() - new Date(t + "Z").getDate()) / 3600000) < 48)
-                    a.push(t);
+                    this.timeArray.push(t);
             });
-            if (a.length > 0) {
-                this.subHourTimes = new FormData();
-                a.forEach(t => this.subHourTimes.append("times", t));
-            }
         }
         StartUpdater() {
             setTimeout(() => {
                 this.StartUpdater();
-                this.PopulatePostData();
-                if (this.subHourTimes)
-                    this.CallForUpdate();
+                this.PopulateArray();
+                this.CallForUpdate();
             }, 60000);
         }
         CallForUpdate() {
+            if (!this.timeArray || this.timeArray.length === 0)
+                return;
+            let serialized = JSON.stringify(this.timeArray);
             fetch(PopForums.AreaPath + "/Time/GetTimes", {
                 method: "POST",
-                body: this.subHourTimes
+                body: serialized,
+                headers: {
+                    "Content-Type": "application/json"
+                }
             })
                 .then(response => response.json())
                 .then(data => {
