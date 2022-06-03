@@ -7,6 +7,12 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v18.0.2 (5/28/22)
+* BUG: Fix bug in newer version of SqlClient when running setup script. #288
+
+## Version v18.0.1 (1/8/22)
+* BUG: Fix auto scroll when new posts load. #257
+
 ## Version 18.0.0 (11/8/21)
 
 * Update to .NET 6. #211
