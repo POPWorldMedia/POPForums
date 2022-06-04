@@ -11,6 +11,7 @@ using PopForums.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -78,8 +79,11 @@ services.Configure<BrotliCompressionProviderOptions>(options => options.Level = 
 
 var app = builder.Build();
 
-// send fewer bits
-app.UseResponseCompression();
+if (!app.Environment.IsDevelopment())
+{
+	// send fewer bits
+	app.UseResponseCompression();
+}
 
 // Records exceptions and info to the POP Forums database.
 var loggerFactory = app.Services.GetService<ILoggerFactory>();
