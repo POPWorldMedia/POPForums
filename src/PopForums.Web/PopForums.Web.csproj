@@ -1,49 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TypeScriptTarget>ES6</TypeScriptTarget>
-  </PropertyGroup>
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<TypeScriptTarget>ES6</TypeScriptTarget>
+	</PropertyGroup>
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<TypeScriptTarget>ES6</TypeScriptTarget>
+	</PropertyGroup>
 
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TypeScriptTarget>ES6</TypeScriptTarget>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<VersionPrefix>18.0.99</VersionPrefix>
+		<AssemblyName>PopForums.Web</AssemblyName>
+		<PackageId>PopForums.Web</PackageId>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-	  <VersionPrefix>18.0.99</VersionPrefix>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>PopForums.Web</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>PopForums.Web</PackageId>
-    <UserSecretsId>aspnet-WebApplication1-1f21a76a-551e-4f79-9258-14dbbf8c5759</UserSecretsId>
-	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <TypeScriptToolsVersion>3.1</TypeScriptToolsVersion>
-  </PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
+		<ProjectReference Include="..\PopForums.Mvc\PopForums.Mvc.csproj" />
+		<ProjectReference Include="..\PopForums\PopForums.csproj" />
+		<ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
+		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views\*.cshtml;Areas\**\Views\**\*.cshtml">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Areas\Forums\" />
+		<Folder Include="wwwroot\lib\PopForums\dist\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
-    <ProjectReference Include="..\PopForums.Mvc\PopForums.Mvc.csproj" />
-    <ProjectReference Include="..\PopForums\PopForums.csproj" />
-    <ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
-    <ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Forums\" />
-    <Folder Include="wwwroot\lib\PopForums\dist\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.6.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.6.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
 </Project>

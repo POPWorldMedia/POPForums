@@ -1,27 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <Description>PopForums Mvc Class Library</Description>
-    <VersionPrefix>18.0.99</VersionPrefix>
-    <Authors>Jeff Putz</Authors>
-    <TargetFramework>net6.0</TargetFramework>
-    <AssemblyName>PopForums.Mvc</AssemblyName>
-    <PackageId>PopForums.Mvc</PackageId>
-	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
-	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-	  <Copyright>2022, POP World Media, LLC</Copyright>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>PopForums Mvc Class Library</Description>
+		<VersionPrefix>18.0.99</VersionPrefix>
+		<Authors>Jeff Putz</Authors>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>PopForums.Mvc</AssemblyName>
+		<PackageId>PopForums.Mvc</PackageId>
+		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
+		<Copyright>2022, POP World Media, LLC</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	  <PackageReference Include="PopIdentity" Version="3.0.0" />
-  </ItemGroup>
+		<PackageReference Include="PopIdentity" Version="3.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PopForums\PopForums.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\PopForums\PopForums.csproj" />
+	</ItemGroup>
 
 </Project>
