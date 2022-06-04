@@ -24,12 +24,4 @@
     <ProjectReference Include="..\PopForums\PopForums.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Areas\Forums\Views\Shared\Components\UserState\Default.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Forums\Views\Shared\Components\UserState\Default.cshtml" />
-  </ItemGroup>
-
 </Project>
