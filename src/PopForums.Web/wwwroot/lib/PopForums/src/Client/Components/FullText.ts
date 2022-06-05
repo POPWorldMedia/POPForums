@@ -55,6 +55,11 @@ namespace PopForums {
         var self = this;
         this.editorSettings.setup = function (editor: any) {
             editor.on("init", function () {
+              this.on("focusout", function(e: any) {
+                editor.save();
+                self.value = (self.textBox as HTMLInputElement).value;
+                (self.externalFormElement as any).value = self.value;
+              });
               this.on("blur", function(e: any) {
                 editor.save();
                 self.value = (self.textBox as HTMLInputElement).value;
