@@ -38,7 +38,6 @@ public static class ServiceCollections
 		// services
 		services.AddTransient<IBanService, BanService>();
 		services.AddTransient<ICategoryService, CategoryService>();
-		services.AddTransient<IClientSettingsMapper, ClientSettingsMapper>();
 		services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
 		services.AddTransient<IForumService, ForumService>();
 		services.AddTransient<IFriendService, FriendService>();

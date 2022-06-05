@@ -3,7 +3,7 @@
 [Area("Forums")]
 public class AccountController : Controller
 {
-	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IClientSettingsMapper clientSettingsMapper, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
+	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
 	{
 		_userService = userService;
 		_settingsManager = settingsManager;
@@ -13,7 +13,6 @@ public class AccountController : Controller
 		_topicService = topicService;
 		_forumService = forumService;
 		_lastReadService = lastReadService;
-		_clientSettingsMapper = clientSettingsMapper;
 		_userEmailer = userEmailer;
 		_imageService = imageService;
 		_feedService = feedService;
@@ -39,7 +38,6 @@ public class AccountController : Controller
 	private readonly ITopicService _topicService;
 	private readonly IForumService _forumService;
 	private readonly ILastReadService _lastReadService;
-	private readonly IClientSettingsMapper _clientSettingsMapper;
 	private readonly IUserEmailer _userEmailer;
 	private readonly IImageService _imageService;
 	private readonly IFeedService _feedService;
@@ -420,15 +418,6 @@ public class AccountController : Controller
 		await _lastReadService.GetTopicReadStatus(user, container);
 		ViewBag.PostUserName = postUser.Name;
 		return View(container);
-	}
-
-	public async Task<JsonResult> ClientSettings()
-	{
-		var user = _userRetrievalShim.GetUser();
-		if (user == null)
-			return Json(_clientSettingsMapper.GetDefault());
-		var profile = await _profileService.GetProfile(user);
-		return Json(_clientSettingsMapper.GetClientSettings(profile));
 	}
 
 	[PopForumsAuthorizationIgnore]
