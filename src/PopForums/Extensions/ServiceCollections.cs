@@ -40,7 +40,6 @@ public static class ServiceCollections
 		services.AddTransient<ICategoryService, CategoryService>();
 		services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
 		services.AddTransient<IForumService, ForumService>();
-		services.AddTransient<IFriendService, FriendService>();
 		services.AddTransient<IImageService, ImageService>();
 		services.AddTransient<IIPHistoryService, IPHistoryService>();
 		services.AddTransient<ILastReadService, LastReadService>();

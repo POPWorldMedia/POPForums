@@ -65,7 +65,6 @@ public static class Extensions
 		services.AddTransient<IFavoriteTopicsRepository, FavoriteTopicsRepository>();
 		services.AddTransient<IFeedRepository, FeedRepository>();
 		services.AddTransient<IForumRepository, ForumRepository>();
-		services.AddTransient<IFriendRepository, FriendRepository>();
 		services.AddTransient<ILastReadRepository, LastReadRepository>();
 		services.AddTransient<IModerationLogRepository, ModerationLogRepository>();
 		services.AddTransient<IPointLedgerRepository, PointLedgerRepository>();

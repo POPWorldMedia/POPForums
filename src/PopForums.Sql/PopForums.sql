@@ -356,24 +356,6 @@ CREATE TABLE [dbo].[pf_ErrorLog] (
 
 
 
--- ******************************************************** pf_Friend
-
-CREATE TABLE [dbo].[pf_Friend] (
-	[FromUserID] [int] NOT NULL ,
-	[ToUserID] [int] NOT NULL ,
-	[IsApproved] [bit] NOT NULL
-);
-
-CREATE CLUSTERED INDEX [IX_Friend_FromUserID] ON [dbo].[pf_Friend] 
-(
-	[FromUserID] ASC
-);
-
-CREATE NONCLUSTERED INDEX [IX_Friend_ToUserID] ON [dbo].[pf_Friend] 
-(
-	[ToUserID] ASC
-);
-
 
 
 
