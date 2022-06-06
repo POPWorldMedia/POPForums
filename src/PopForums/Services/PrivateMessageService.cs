@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Extensions;
+
+namespace PopForums.Services;
 
 public interface IPrivateMessageService
 {
@@ -16,16 +18,18 @@ public interface IPrivateMessageService
 
 public class PrivateMessageService : IPrivateMessageService
 {
-	public PrivateMessageService(IPrivateMessageRepository privateMessageRepo, ISettingsManager settingsManager, ITextParsingService textParsingService)
+	public PrivateMessageService(IPrivateMessageRepository privateMessageRepo, ISettingsManager settingsManager, ITextParsingService textParsingService, IBroker broker)
 	{
 		_privateMessageRepository = privateMessageRepo;
 		_settingsManager = settingsManager;
 		_textParsingService = textParsingService;
+		_broker = broker;
 	}
 
 	private readonly IPrivateMessageRepository _privateMessageRepository;
 	private readonly ISettingsManager _settingsManager;
 	private readonly ITextParsingService _textParsingService;
+	private readonly IBroker _broker;
 
 	public async Task<PrivateMessage> Get(int pmID)
 	{
@@ -84,6 +88,11 @@ public class PrivateMessageService : IPrivateMessageService
 			PostTime = now,
 			UserID = user.UserID
 		};
+		foreach (var receiver in toUsers)
+		{
+			var receiverPMCount = await _privateMessageRepository.GetUnreadCount(receiver.UserID);
+			_broker.NotifyPMCount(receiver.UserID, receiverPMCount);
+		}
 		await _privateMessageRepository.AddPost(post);
 		return pm;
 	}
@@ -113,6 +122,11 @@ public class PrivateMessageService : IPrivateMessageService
 		var now = DateTime.UtcNow;
 		await _privateMessageRepository.UpdateLastPostTime(pm.PMID, now);
 		await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, now);
+		foreach (var receiver in users)
+		{
+			var receiverPMCount = await _privateMessageRepository.GetUnreadCount(receiver.UserID);
+			_broker.NotifyPMCount(receiver.UserID, receiverPMCount);
+		}
 	}
 
 	public async Task<bool> IsUserInPM(User user, PrivateMessage pm)
@@ -124,6 +138,8 @@ public class PrivateMessageService : IPrivateMessageService
 	public async Task MarkPMRead(User user, PrivateMessage pm)
 	{
 		await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, DateTime.UtcNow);
+		var pmCount = await _privateMessageRepository.GetUnreadCount(user.UserID);
+		_broker.NotifyPMCount(user.UserID, pmCount);
 	}
 
 	public async Task Archive(User user, PrivateMessage pm)

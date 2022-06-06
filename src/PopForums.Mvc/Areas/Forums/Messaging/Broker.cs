@@ -2,7 +2,7 @@
 
 public class Broker : IBroker
 {
-	public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, ITenantService tenantService)
+	public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, ITenantService tenantService)
 	{
 		_timeFormattingService = timeFormattingService;
 		_forumRepo = forumRepo;
@@ -10,6 +10,7 @@ public class Broker : IBroker
 		_feedHubContext = feedHubContext;
 		_forumsHubContext = forumsHubContext;
 		_recentHubContext = recentHubContext;
+		_notificationHubContext = notificationHubContext;
 		_tenantService = tenantService;
 	}
 
@@ -19,6 +20,7 @@ public class Broker : IBroker
 	private readonly IHubContext<FeedHub> _feedHubContext;
 	private readonly IHubContext<ForumsHub> _forumsHubContext;
 	private readonly IHubContext<RecentHub> _recentHubContext;
+	private readonly IHubContext<NotificationHub> _notificationHubContext;
 	private readonly ITenantService _tenantService;
 
 	public void NotifyNewPosts(Topic topic, int lasPostID)
@@ -68,5 +70,12 @@ public class Broker : IBroker
 		else
 			_recentHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyRecentUpdate", result);
 		_forumsHubContext.Clients.Group($"{tenant}:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
+	}
+
+	public async void NotifyPMCount(int userID, int pmCount)
+	{
+		var tenantID = _tenantService.GetTenant();
+		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, userID);
+		await _notificationHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
 	}
 }

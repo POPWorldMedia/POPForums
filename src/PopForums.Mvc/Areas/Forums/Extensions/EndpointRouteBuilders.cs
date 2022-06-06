@@ -14,6 +14,7 @@ public static class EndpointRouteBuilders
 		endpoints.MapHub<RecentHub>("/RecentHub");
 		endpoints.MapHub<ForumsHub>("/ForumsHub");
 		endpoints.MapHub<FeedHub>("/FeedHub");
+		endpoints.MapHub<NotificationHub>("/NotificationHub");
 
 		endpoints.MapControllerRoute(
 			"pfadmin",

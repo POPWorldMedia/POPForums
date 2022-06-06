@@ -5,7 +5,10 @@ export class UserState extends StateBase {
         super();
         this.isPlainText = false;
         this.newPmCount = 0;
+        this.notificationService = new NotificationService(this);
     }
+
+    private notificationService: NotificationService;
     
     isPlainText: boolean;
     isImageEnabled: boolean;

@@ -35,6 +35,7 @@ public static class ServiceCollections
 		services.AddTransient<IExternalLoginTempService, ExternalLoginTempService>();
 		services.AddTransient<IUserStateComposer, UserStateComposer>();
 		services.AddTransient<IBroker, Broker>();
+		services.AddTransient<IUserIdProvider, PopForumsUserIdProvider>();
 		// this is required for error logging:
 		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			

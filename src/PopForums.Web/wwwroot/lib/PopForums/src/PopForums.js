@@ -363,6 +363,11 @@ var PopForums;
             var self = this;
             this.editorSettings.setup = function (editor) {
                 editor.on("init", function () {
+                    this.on("focusout", function (e) {
+                        editor.save();
+                        self.value = self.textBox.value;
+                        self.externalFormElement.value = self.value;
+                    });
                     this.on("blur", function (e) {
                         editor.save();
                         self.value = self.textBox.value;
@@ -1352,6 +1357,15 @@ var PopForums;
 var PopForums;
 (function (PopForums) {
     class NotificationService {
+        constructor(userState) {
+            this.userState = userState;
+            let self = this;
+            this.connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
+            this.connection.on("updatePMCount", function (pmCount) {
+                self.userState.newPmCount = pmCount;
+            });
+            this.connection.start();
+        }
     }
     PopForums.NotificationService = NotificationService;
 })(PopForums || (PopForums = {}));
@@ -1757,6 +1771,7 @@ var PopForums;
             super();
             this.isPlainText = false;
             this.newPmCount = 0;
+            this.notificationService = new PopForums.NotificationService(this);
         }
     }
     __decorate([
