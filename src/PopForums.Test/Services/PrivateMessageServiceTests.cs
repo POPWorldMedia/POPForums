@@ -7,13 +7,15 @@ public class PrivateMessageServiceTests
 		_mockPMRepo = new Mock<IPrivateMessageRepository>();
 		_mockSettings = new Mock<ISettingsManager>();
 		_mockTextParse = new Mock<ITextParsingService>();
-		var service = new PrivateMessageService(_mockPMRepo.Object, _mockSettings.Object, _mockTextParse.Object);
+		_mockBroker = new Mock<IBroker>();
+		var service = new PrivateMessageService(_mockPMRepo.Object, _mockSettings.Object, _mockTextParse.Object, _mockBroker.Object);
 		return service;
 	}
 
 	private Mock<IPrivateMessageRepository> _mockPMRepo;
 	private Mock<ISettingsManager> _mockSettings;
 	private Mock<ITextParsingService> _mockTextParse;
+	private Mock<IBroker> _mockBroker;
 
 	[Fact]
 	public async Task CreateNullSubjectThrows()
@@ -70,6 +72,17 @@ public class PrivateMessageServiceTests
 		var service = GetService();
 		var pm = await service.Create("ohqefwwf", "oihefio", new User { UserID = 12, Name = "jeff"}, new List<User> {new User { UserID = 45, Name = "diana"}});
 		Assert.Equal("jeff, diana", pm.UserNames);
+	}
+
+	[Fact]
+	public async Task CreateCallsNotificationBroker()
+	{
+		var service = GetService();
+		_mockPMRepo.Setup(x => x.GetUnreadCount(45)).ReturnsAsync(3);
+
+		var pm = await service.Create("ohqefwwf", "oihefio", new User { UserID = 12, Name = "jeff" }, new List<User> { new User { UserID = 45, Name = "diana" } });
+
+		_mockBroker.Verify(x => x.NotifyPMCount(45, 3), Times.Once);
 	}
 
 	[Fact]
@@ -185,11 +198,15 @@ public class PrivateMessageServiceTests
 		var text = "mah message";
 		_mockTextParse.Setup(t => t.ForumCodeToHtml(text)).Returns(text);
 		_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> {new PrivateMessageUser {UserID = user.UserID}});
+		_mockPMRepo.Setup(x => x.GetUnreadCount(user.UserID)).ReturnsAsync(42);
+
 		await service.Reply(pm, text, user);
+
 		Assert.Equal(text, post.FullText);
 		Assert.Equal(user.Name, post.Name);
 		Assert.Equal(user.UserID, post.UserID);
 		Assert.Equal(pm.PMID, post.PMID);
+		_mockBroker.Verify(x => x.NotifyPMCount(user.UserID, 42), Times.Once);
 	}
 
 	[Fact]

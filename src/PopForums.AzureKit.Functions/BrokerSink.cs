@@ -29,4 +29,9 @@ public class BrokerSink : IBroker
 	{
 		throw new System.NotImplementedException();
 	}
+
+	public void NotifyPMCount(int userID, int pmCount)
+	{
+		throw new System.NotImplementedException();
+	}
 }
