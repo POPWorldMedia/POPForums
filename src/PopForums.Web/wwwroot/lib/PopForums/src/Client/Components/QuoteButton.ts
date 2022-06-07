@@ -40,21 +40,23 @@
             classes.split(" ").forEach((c) => button.classList.add(c));
         this.onclick = (e: MouseEvent) => {
             // get this from topic state's callback/ready method, because iOS loses selection when you touch quote button
-            let selection = PopForums.currentTopicState.selection;
-            if (!selection)
-                selection = document.getSelection();
-            if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
-                // prompt to select
-                this._tip = new bootstrap.Tooltip(button, {trigger: "manual"});
-                this._tip.show();
-                return;
+            let fragment = PopForums.currentTopicState.documentFragment;
+            let ancestor = PopForums.currentTopicState.selectionAncestor;
+            if (!fragment) {
+                let selection = document.getSelection();
+                if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
+                    // prompt to select
+                    this._tip = new bootstrap.Tooltip(button, {trigger: "manual"});
+                    this._tip.show();
+                    return;
+                }
+                let range = selection.getRangeAt(0);
+                ancestor = range.commonAncestorContainer;
+                fragment = range.cloneContents();
             }
-            let range = selection.getRangeAt(0);
-            let fragment = range.cloneContents();
             let div = document.createElement("div");
             div.appendChild(fragment);
             // is selection in the container?
-            let ancestor = range.commonAncestorContainer;
             while (ancestor['id'] !== this.containerid && ancestor.parentElement !== null) {
                 ancestor = ancestor.parentElement;
             }
@@ -68,7 +70,6 @@
                     isInText = true;
                 }
             }
-            selection.removeAllRanges();
             if (isInText) {
                 // activate or add to quote
                 let result: string;
@@ -80,6 +81,9 @@
                 if (!PopForums.currentTopicState.isReplyLoaded)
                     PopForums.currentTopicState.loadReply(PopForums.currentTopicState.topicID, Number(this.postID), true);
             }
+            let temp = document.getSelection();
+            if (temp)
+                temp.removeAllRanges();
         };
     }
 

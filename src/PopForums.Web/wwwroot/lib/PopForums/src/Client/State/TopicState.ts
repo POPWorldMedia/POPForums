@@ -30,7 +30,8 @@ export class TopicState extends StateBase {
     isSubscribed: boolean;
     @WatchProperty
     isFavorite: boolean;
-    selection: Selection;
+    documentFragment: DocumentFragment;
+    selectionAncestor: Node;
 
     setupTopic() {
         PopForums.Ready(() => {
@@ -74,7 +75,13 @@ export class TopicState extends StateBase {
 
             // compensate for iOS losing selection when you touch the quote button
             document.querySelectorAll(".postBody").forEach( x => x.addEventListener("touchend", (e) => {
-                this.selection = document.getSelection();
+                let selection = document.getSelection();
+                if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
+                    return;
+                }
+                let range = selection.getRangeAt(0);
+                this.selectionAncestor = range.commonAncestorContainer;
+                this.documentFragment = range.cloneContents();
             }));
         });
     }
