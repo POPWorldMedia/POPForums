@@ -8,19 +8,6 @@
 	var user = UserRetrievalShim.GetUser();
 }
 
-@section HeaderContent
-{
-	<script language="javascript" type="text/javascript">
-		ready(() => {
-			document.querySelector("#LoginButton")?.addEventListener("click", () => PopForums.processLogin());
-			document.querySelectorAll("#EmailLogin,#PasswordLogin").forEach(x =>
-				x.addEventListener("keydown", e => {
-					if (e.keyCode === 13) PopForums.processLogin();
-				}));
-		});
-	</script>
-}
-
 <h1>@PopForums.Resources.Login</h1>
 @if (!SettingsManager.Current.IsPrivateForumInstance)
 {

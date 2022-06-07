@@ -8,14 +8,6 @@
 	var profile = UserRetrievalShim.GetProfile();
 }
 
-@section HeaderContent {
-	<script type="text/javascript">
-		ready(() => {
-			PopForums.startTimeUpdater();
-		});
-	</script>
-}
-
 <h1>@ViewBag.PostUserName's @PopForums.Resources.Posts</h1>
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
