@@ -119,6 +119,9 @@ pf-votecount span {
 #ForumContainer .postItem .postTools {
 	display: inline-block;
 }
+#ForumContainer .postTools a, #ForumContainer .postTools input {
+	color: var(--bs-body-color);
+}
 #ForumContainer .postTools a, #ForumContainer .postTools input, #ForumContainer li.voteUp.btn-link.list-inline-item, #ForumContainer h2 a {
 	text-decoration: none;
 }
