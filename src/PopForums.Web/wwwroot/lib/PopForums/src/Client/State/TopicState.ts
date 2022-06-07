@@ -39,7 +39,7 @@ export class TopicState extends StateBase {
             this.highPage = this.pageIndex;
 
             // signalR connections
-            let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").build();
+            let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").withAutomaticReconnect().build();
             let self = this;
             // for all posts loaded but reply not open
             connection.on("fetchNewPost", function (postID: number) {

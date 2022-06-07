@@ -34,7 +34,7 @@ namespace PopForums {
         }
 
         forumListen() {
-            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").build();
+            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").withAutomaticReconnect().build();
             let self = this;
             connection.on("notifyUpdatedTopic", function (data: any) { // TODO: refactor to strong type
                 let removal = document.querySelector('#TopicList tr[data-topicID="' + data.topicID + '"]');
@@ -56,7 +56,7 @@ namespace PopForums {
         }
 
         recentListen() {
-            var connection = new signalR.HubConnectionBuilder().withUrl("/RecentHub").build();
+            var connection = new signalR.HubConnectionBuilder().withUrl("/RecentHub").withAutomaticReconnect().build();
             let self = this;
             connection.on("notifyRecentUpdate", function (data: any) {
                 var removal = document.querySelector('#TopicList tr[data-topicID="' + data.topicID + '"]');

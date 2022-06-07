@@ -6,7 +6,7 @@ namespace PopForums {
         }
 
         connectedCallback() {
-            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").build();
+            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").withAutomaticReconnect().build();
             let self = this;
             connection.on("notifyForumUpdate", function (data: any) {
                 self.updateForumStats(data);

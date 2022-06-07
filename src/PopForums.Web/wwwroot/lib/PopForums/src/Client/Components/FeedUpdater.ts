@@ -10,7 +10,7 @@ namespace PopForums {
         }
 
         connectedCallback() {
-            let connection = new signalR.HubConnectionBuilder().withUrl("/FeedHub").build();
+            let connection = new signalR.HubConnectionBuilder().withUrl("/FeedHub").withAutomaticReconnect().build();
             let self = this;
             connection.on("notifyFeed", function (data: any) {
                 let list = document.querySelector("#FeedList");
