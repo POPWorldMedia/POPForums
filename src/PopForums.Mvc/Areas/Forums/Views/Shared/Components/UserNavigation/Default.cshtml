@@ -5,11 +5,11 @@
 	var user = UserRetrievalShim.GetUser();
 }
 <div class="row mb-3">
-	<nav class="navbar navbar-expand-lg bg-light navbar-light">
+	<nav class="navbar navbar-expand-lg">
 		<div class="d-flex ms-auto order-2">
 			@if (user != null)
 			{
-				<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a>
+				<span class="p-2"><a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a></span>
 			}
 			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> {{"class", "form-inline"}, {"role", "search"}}))
 			{
