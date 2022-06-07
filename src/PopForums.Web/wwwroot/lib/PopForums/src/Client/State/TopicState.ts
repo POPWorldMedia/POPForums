@@ -73,7 +73,7 @@ export class TopicState extends StateBase {
             window.addEventListener("scroll", this.scrollLoad);
 
             // compensate for iOS losing selection when you touch the quote button
-            document.querySelectorAll(".postBody").forEach( x => x.addEventListener("mouseup", (e) => {
+            document.querySelectorAll(".postBody").forEach( x => x.addEventListener("touchend", (e) => {
                 this.selection = document.getSelection();
             }));
         });

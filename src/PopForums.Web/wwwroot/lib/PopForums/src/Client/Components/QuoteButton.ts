@@ -41,6 +41,8 @@
         this.onclick = (e: MouseEvent) => {
             // get this from topic state's callback/ready method, because iOS loses selection when you touch quote button
             let selection = PopForums.currentTopicState.selection;
+            if (!selection)
+                selection = document.getSelection();
             if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
                 // prompt to select
                 this._tip = new bootstrap.Tooltip(button, {trigger: "manual"});
