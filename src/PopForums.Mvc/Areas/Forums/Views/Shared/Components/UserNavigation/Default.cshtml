@@ -4,43 +4,61 @@
 @{
 	var user = UserRetrievalShim.GetUser();
 }
-<ul class="navbar-nav ms-auto">
-@if (user == null)
-{
-	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
-	<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
-	if (!SettingsManager.Current.IsPrivateForumInstance)
-	{
-		<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
-		<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
-	}
-}
-else
-{
-	<li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@user.Name</a>
-		<div class="dropdown-menu" role="menu">
-			<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@user.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
-			<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
-			<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
-			<div class="dropdown-divider"></div>
-			<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
-			<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
-			<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
-			<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
-			@if (user.IsInRole(PermanentRoles.Admin))
+<div class="row mb-3">
+	<nav class="navbar navbar-expand-lg bg-light navbar-light">
+		<div class="d-flex ms-auto order-2">
+			@if (user != null)
 			{
-				<div class="dropdown-divider"></div>
-				<a asp-controller="@AdminController.Name" asp-action="App" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
+				<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a>
 			}
-			<div class="dropdown-divider"></div>
-			<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>
+			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> {{"class", "form-inline"}, {"role", "search"}}))
+			{
+				<div class="mx-2">
+					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
+				</div>
+			}
 		</div>
-	</li>
-	<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
-	<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
-	<li class="nav-item">
-		<a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a>
-	</li>
-}
-</ul>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#AccountBox" aria-controls="AccountBox" aria-expanded="false">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div id="AccountBox" class="collapse navbar-collapse order-last order-lg-first">
+			<ul class="navbar-nav ms-auto">
+				@if (user == null)
+				{
+					<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Create" asp-route-area="Forums" class="nav-link">@PopForums.Resources.CreateAnAccount</a></li>
+					<li class="nav-item"><a asp-controller="@AccountController.Name" asp-action="Login" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Login</a></li>
+					if (!SettingsManager.Current.IsPrivateForumInstance)
+					{
+						<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+						<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
+					}
+				}
+				else
+				{
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">@user.Name</a>
+						<div class="dropdown-menu" role="menu">
+							<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@user.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
+							<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
+							<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
+							<div class="dropdown-divider"></div>
+							<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
+							<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+							<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
+							<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+							@if (user.IsInRole(PermanentRoles.Admin))
+							{
+								<div class="dropdown-divider"></div>
+								<a asp-controller="@AdminController.Name" asp-action="App" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.PopForumsAdmin</a>
+							}
+							<div class="dropdown-divider"></div>
+							<a asp-controller="@IdentityController.Name" asp-action="Logout" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Logout</a>
+						</div>
+					</li>
+					<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
+					<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
+				}
+			</ul>
+		</div>
+	</nav>
+</div>
