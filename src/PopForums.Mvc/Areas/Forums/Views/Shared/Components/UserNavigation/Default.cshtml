@@ -4,6 +4,18 @@
 @{
 	var user = UserRetrievalShim.GetUser();
 }
+
+<template id="SearchNavTemplate">
+	<div class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle p-2" data-bs-toggle="dropdown" href="#" id="SearchDropDown"><span class="icon-search"></span></a>
+		<div class="dropdown-menu dropdown-menu-end" role="menu">
+			<form asp-controller="Search" asp-action="Result" asp-antiforgery="false" method="post" class="" role="form">
+				<input type="search" class="form-control w-auto mx-2" placeholder="Search" id="query" name="query">
+			</form>
+		</div>
+	</div>
+</template>
+
 <div class="row mb-3">
 	<nav class="navbar navbar-expand-lg">
 		<div class="d-flex ms-auto order-2">
@@ -11,12 +23,7 @@
 			{
 				<span class="p-2"><a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a></span>
 			}
-			@using (Html.BeginForm("Result", SearchController.Name, FormMethod.Post, new Dictionary<string, object> {{"class", "form-inline"}, {"role", "search"}}))
-			{
-				<div class="mx-2">
-					<input type="search" class="form-control" placeholder="Search" id="query" name="query">
-				</div>
-			}
+			<pf-searchnavform templateid="SearchNavTemplate" textboxid="query" dropdownid="SearchDropDown"></pf-searchnavform>
 		</div>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#AccountBox" aria-controls="AccountBox" aria-expanded="false">
 			<span class="navbar-toggler-icon"></span>
