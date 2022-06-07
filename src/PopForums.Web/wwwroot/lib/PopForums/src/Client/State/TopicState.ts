@@ -30,6 +30,7 @@ export class TopicState extends StateBase {
     isSubscribed: boolean;
     @WatchProperty
     isFavorite: boolean;
+    selection: Selection;
 
     setupTopic() {
         PopForums.Ready(() => {
@@ -70,6 +71,11 @@ export class TopicState extends StateBase {
 
             this.scrollToPostFromHash();
             window.addEventListener("scroll", this.scrollLoad);
+
+            // compensate for iOS losing selection when you touch the quote button
+            document.querySelectorAll(".postBody").forEach( x => x.addEventListener("mouseup", (e) => {
+                this.selection = document.getSelection();
+            }));
         });
     }
 

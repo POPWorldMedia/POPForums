@@ -39,12 +39,12 @@
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
         this.onclick = (e: MouseEvent) => {
-            let selection = document.getSelection();
-            if (selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
+            // get this from topic state's callback/ready method, because iOS loses selection when you touch quote button
+            let selection = PopForums.currentTopicState.selection;
+            if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
                 // prompt to select
                 this._tip = new bootstrap.Tooltip(button, {trigger: "manual"});
                 this._tip.show();
-                selection.removeAllRanges();
                 return;
             }
             let range = selection.getRangeAt(0);
