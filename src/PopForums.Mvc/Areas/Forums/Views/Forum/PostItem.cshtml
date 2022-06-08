@@ -27,7 +27,7 @@
 			{
 				@:IP: @Model.Post.IP -
 			}
-			<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, Model.Profile)</span>
+			<pf-formattedtime utctime="@Model.Post.PostTime.ToString("o")"></pf-formattedtime>
 		</small>
 	</div>
 	@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))

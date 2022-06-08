@@ -24,7 +24,7 @@ public class TimeFormatStringService : ITimeFormatStringService
 	public string GetTimeFormatsAsJson()
 	{
 		var formats = GeTimeFormats();
-		var serialized = JsonSerializer.Serialize(formats);
+		var serialized = JsonSerializer.Serialize(formats, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 		return serialized;
 	}
 }
