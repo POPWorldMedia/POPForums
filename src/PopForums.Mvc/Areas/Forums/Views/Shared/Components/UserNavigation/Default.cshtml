@@ -7,7 +7,7 @@
 
 <template id="SearchNavTemplate">
 	<div class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle p-2" data-bs-toggle="dropdown" href="#" id="SearchDropDown"><span class="icon-search"></span></a>
+		<a class="nav-link p-2" data-bs-toggle="dropdown" href="#" id="SearchDropDown"><span class="icon-search"></span></a>
 		<div class="dropdown-menu dropdown-menu-end" role="menu">
 			<form asp-controller="Search" asp-action="Result" asp-antiforgery="false" method="post" class="" role="form">
 				<input type="search" class="form-control w-auto mx-2" placeholder="Search" id="query" name="query">
