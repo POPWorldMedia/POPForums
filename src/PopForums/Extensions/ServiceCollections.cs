@@ -65,6 +65,7 @@ public static class ServiceCollections
 		services.AddTransient<IForumPermissionService, ForumPermissionService>();
 		services.AddTransient<IReCaptchaService, ReCaptchaService>();
 		services.AddTransient<ISitemapService, SitemapService>();
+		services.AddTransient<ITimeFormatStringService, TimeFormatStringService>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)

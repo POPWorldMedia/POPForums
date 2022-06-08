@@ -1,12 +1,14 @@
 ﻿@model UserState
 @inject IUserRetrievalShim UserRetrievalShim
+@inject ITimeFormatStringService TimeFormatStringService
 @{
 	var serialized = JsonSerializer.Serialize(Model, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 	var user = UserRetrievalShim.GetUser();
 }
-@if (user != null)
+<script>
+	PopForums.timeFormatStrings = Object.assign(new PopForums.timeFormats(), @Html.Raw(@TimeFormatStringService.GetTimeFormatsAsJson()));
+	@if (user != null)
 {
-	<script>
-		PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));
-	</script>
+	<text>PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));</text>
 }
+</script>
