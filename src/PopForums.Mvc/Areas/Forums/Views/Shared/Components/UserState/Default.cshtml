@@ -6,7 +6,7 @@
 	var user = UserRetrievalShim.GetUser();
 }
 <script>
-	PopForums.timeFormats = Object.assign(new PopForums.TimeFormats(), @Html.Raw(@TimeFormatStringService.GetTimeFormatsAsJson()));
+	PopForums.LocalizationService.init();
 	@if (user != null)
 {
 	<text>PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));</text>

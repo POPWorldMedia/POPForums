@@ -3,7 +3,7 @@ namespace PopForums {
     export var currentTopicState: TopicState;
     export var currentForumState: ForumState;
     export var userState: UserState;
-    export var timeFormats: TimeFormats;
+    export var localizations: Localizations;
 
     export function Ready(callback: any): void {
         if (document.readyState != "loading") callback();

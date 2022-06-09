@@ -12,8 +12,16 @@ namespace PopForums {
     private utcTime: number;
     private utcTimeAsDate: Date;
     private static dayInMs = 86400000;
+    private isReady: boolean;
 
     connectedCallback() {
+        const delegate = this.ready.bind(this);
+        this.isReady = LocalizationService.subscribe(delegate);
+        if (this.isReady)
+            this.ready();
+    }
+
+    ready() {
         this.setBaseTime();
         let now = Date.now();
         let yesterdayMs = now - FormattedTime.dayInMs;
@@ -22,6 +30,7 @@ namespace PopForums {
         this.innerHTML = this.GetDisplayTime();
         if (this.utcTime > yesterday.getTime())
             this.UpdateTimer();
+        this.isReady = true;
     }
 
     private setBaseTime() {
@@ -51,22 +60,22 @@ namespace PopForums {
         if (diff > 3599000) {
           // more than an hour
             if (this.utcTimeAsDate.toLocaleDateString() === nowAsDate.toLocaleDateString())
-            return PopForums.timeFormats.todayTime.replace("{0}", this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions));
+            return PopForums.localizations.todayTime.replace("{0}", this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions));
             if (this.utcTimeAsDate.toLocaleDateString() === yesterday.toLocaleDateString())
-                return PopForums.timeFormats.yesterdayTime.replace("{0}", this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions));
+                return PopForums.localizations.yesterdayTime.replace("{0}", this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions));
             return this.utcTimeAsDate.toLocaleDateString(undefined, dateOptions) + " " + this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions);
         }
         if (diff > 120000)
-            return  PopForums.timeFormats.minutesAgo.replace("{0}", Math.round(diff / 60000).toString());
+            return  PopForums.localizations.minutesAgo.replace("{0}", Math.round(diff / 60000).toString());
         if (diff > 60000)
-            return PopForums.timeFormats.oneMinuteAgo;
-        return PopForums.timeFormats.lessThanMinute;
+            return PopForums.localizations.oneMinuteAgo;
+        return PopForums.localizations.lessThanMinute;
     }
 
     static get observedAttributes() { return ["utctime"]; }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-        if (name === "utctime") {
+        if (name === "utctime" && this.isReady) {
             this.setBaseTime();
             this.innerHTML = this.GetDisplayTime();
             this.UpdateTimer();

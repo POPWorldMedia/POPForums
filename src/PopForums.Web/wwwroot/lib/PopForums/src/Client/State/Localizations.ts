@@ -1,5 +1,5 @@
 namespace PopForums {
-    export class TimeFormats {
+    export class Localizations {
         todayTime: string;
         yesterdayTime: string;
         minutesAgo: string;
