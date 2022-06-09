@@ -33,8 +33,7 @@ namespace PopForums {
             let row = template.cloneNode(true) as HTMLElement;
             row.removeAttribute("id");
             row.querySelector(".feedItemText").innerHTML = data.message;
-            row.querySelector(".fTime").setAttribute("data-utc", data.utc);
-            row.querySelector(".fTime").innerHTML = data.timeStamp;
+            row.querySelector("pf-formattedtime").setAttribute("utctime", data.utc);
             return row;
         };
     }

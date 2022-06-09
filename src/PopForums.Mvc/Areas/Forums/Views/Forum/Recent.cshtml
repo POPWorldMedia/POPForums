@@ -1,11 +1,9 @@
 ﻿@model PagedTopicContainer
 @inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
 @{
 	ViewBag.Title = PopForums.Resources.RecentTopics;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
-	var profile = UserRetrievalShim.GetProfile();
 	var forumStateSerialized = JsonSerializer.Serialize((ForumState) ViewBag.ForumState, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
@@ -46,7 +44,7 @@
 					    id = topic.UrlName, pageNumber = 1
 				    }, null)</h2>
 				<small class="float-end d-none d-sm-block text-secondary">
-					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+					@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <pf-formattedtime utctime="@topic.LastPostTime.ToString("o")"></pf-formattedtime> @PopForums.Resources.By @topic.LastPostName
 				</small>
 			</td>
 		</tr>
@@ -58,7 +56,7 @@
 		<td>
 			<h2><a class="titleLink" href=""></a></h2>
 			<small class="float-end d-none d-sm-block text-secondary">
-				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc=""></span> @PopForums.Resources.By <span class="lastPostName"></span>
+				@PopForums.Resources.StartedBy: <span class="startedByName"></span> @PopForums.Resources.In <span class="forumTitle"></span> | @PopForums.Resources.Views: <span class="viewCount"></span> | @PopForums.Resources.Replies: <span class="replyCount"></span> | @PopForums.Resources.Last: <pf-formattedtime utctime=""></pf-formattedtime> @PopForums.Resources.By <span class="lastPostName"></span>
 			</small>
 		</td>
 	</tr>

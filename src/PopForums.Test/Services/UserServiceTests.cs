@@ -794,8 +794,6 @@ public class UserServiceTests
 			ShowDetails = userEdit.ShowDetails,
 			IsPlainText = userEdit.IsPlainText,
 			HideVanity = userEdit.HideVanity,
-			TimeZone = userEdit.TimeZone,
-			IsDaylightSaving = userEdit.IsDaylightSaving,
 			Signature = userEdit.Signature,
 			Location = userEdit.Location,
 			Dob = userEdit.Dob,
@@ -986,14 +984,13 @@ public class UserServiceTests
 		_mockTextParser.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
 		var userEdit = new UserEditProfile
 		{
-			Dob = new DateTime(2000,1,1), HideVanity = true, Instagram = "i", IsDaylightSaving = true, IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", TimeZone = -7, Web = "w"
+			Dob = new DateTime(2000,1,1), HideVanity = true, Instagram = "i", IsPlainText = true, IsSubscribed = true, Location = "l", Facebook = "fb", Twitter = "tw", ShowDetails = true, Signature = "s", Web = "w"
 		};
 		await service.EditUserProfile(user, userEdit);
 		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
 		Assert.Equal(new DateTime(2000, 1, 1), profile.Dob);
 		Assert.True(profile.HideVanity);
 		Assert.Equal("i", profile.Instagram);
-		Assert.True(profile.IsDaylightSaving);
 		Assert.True(profile.IsPlainText);
 		Assert.True(profile.IsSubscribed);
 		Assert.Equal("l", profile.Location);
@@ -1001,7 +998,6 @@ public class UserServiceTests
 		Assert.Equal("tw", profile.Twitter);
 		Assert.True(profile.ShowDetails);
 		Assert.Equal("parsed", profile.Signature);
-		Assert.Equal(-7, profile.TimeZone);
 		Assert.Equal("w", profile.Web);
 	}
 

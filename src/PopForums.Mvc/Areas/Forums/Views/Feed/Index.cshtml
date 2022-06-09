@@ -1,11 +1,8 @@
-﻿@inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
-@model List<FeedEvent>
+﻿@model List<FeedEvent>
 
 @{
 	ViewBag.Title = PopForums.Resources.ActivityFeed;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var profile = UserRetrievalShim.GetProfile();
 }
 
 <h1>@PopForums.Resources.ActivityFeed</h1>
@@ -20,14 +17,14 @@
 	{
 		<div class="alert alert-light mt-2">
 			<div class="feedItemText">@Html.Raw(item.Message)</div>
-			<div class="text-end small fTime" data-utc="@item.TimeStamp.ToString("o")">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+			<div class="text-end small"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
 		</div>
 	}
 </div>
 
 <div id="ActivityFeedTemplate" class="alert alert-light mt-2 hidden">
 	<div class="feedItemText"></div>
-	<div class="text-end small fTime" data-utc=""></div>
+	<div class="text-end small"><pf-formattedtime utctime=""></pf-formattedtime></div>
 </div>
 
 <pf-feedupdater templateid="ActivityFeedTemplate"></pf-feedupdater>

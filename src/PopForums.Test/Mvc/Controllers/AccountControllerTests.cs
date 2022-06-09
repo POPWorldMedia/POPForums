@@ -48,12 +48,10 @@ public class AccountControllerTests
 	public void CreateViewPopulatesDefaultValues()
 	{
 		var controller = GetController();
-		_settingsManager.Setup(x => x.Current.ServerTimeZone).Returns(-5);
 		_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
 
 		var result = controller.Create();
-
-		Assert.Equal(-5, result.ViewData[AccountController.ServerTimeZoneKey]);
+		
 		Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
 	}
 }

@@ -1,9 +1,5 @@
 ﻿@model List<ModerationLogEntry>
-@inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
-@{
-	var profile = UserRetrievalShim.GetProfile();
-}
+
 <div class="alert alert-secondary">
 	<h3>@PopForums.Resources.ModerationLog</h3>
 
@@ -15,7 +11,7 @@
 		@foreach (var entry in Model)
 		{
 			<tr>
-				<td>@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
+				<td><pf-formattedtime utctime="@entry.TimeStamp.ToString("o")"></pf-formattedtime></td>
 				@if (entry.UserID == 0)
 				{
 					<td>@entry.UserName</td>

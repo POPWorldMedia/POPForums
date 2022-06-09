@@ -14,8 +14,6 @@ public class Profile
 	public string Twitter { get; set; }
 	public string Instagram { get; set; }
 	public bool IsTos { get; set; }
-	public int TimeZone { get; set; }
-	public bool IsDaylightSaving { get; set; }
 	public int? AvatarID { get; set; }
 	public int? ImageID { get; set; }
 	public bool HideVanity { get; set; }

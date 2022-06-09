@@ -4,7 +4,6 @@
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
 	var user = UserRetrievalShim.GetUser();
 }
 
@@ -54,18 +53,6 @@
   	<div class="offset-2 col-10">
   		<input class="form-check-input" type="checkbox" asp-for="HideVanity" />
   		<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
-  </div>
-  </div>
-  <div class="mb-3 row">
-  	<label for="TimeZone" class="col-2 col-form-label">@PopForums.Resources.TimeZone</label>
-  <div class="col-10">
-  	<select asp-for="TimeZone" asp-items="@timeZones" class="form-control"></select>
-  </div>
-  </div>
-  <div class="mb-3 row">
-  	<div class="offset-2 col-10">
-  		<input class="form-check-input" type="checkbox" asp-for="IsDaylightSaving" />
-  		<label class="form-check-label" for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label>
   </div>
   </div>
 

@@ -1,5 +1,4 @@
-﻿@inject ITimeFormattingService TimeFormattingService
-@inject IUserRetrievalShim UserRetrievalShim
+﻿@inject IUserRetrievalShim UserRetrievalShim
 @model PostItemContainer
 @{
 	var user = UserRetrievalShim.GetUser();
@@ -27,7 +26,7 @@
 			{
 				@:IP: @Model.Post.IP -
 			}
-			<span class="fTime" data-utc="@Model.Post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.PostTime, Model.Profile)</span>
+			<pf-formattedtime utctime="@Model.Post.PostTime.ToString("o")"></pf-formattedtime>
 		</small>
 	</div>
 	@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
@@ -41,7 +40,7 @@
 	
 	@if (Model.Post.IsEdited && Model.Post.LastEditTime.HasValue)
 	{
-		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <span class="fTime" data-utc="@Model.Post.LastEditTime.Value.ToString("o")">@TimeFormattingService.GetFormattedTime(Model.Post.LastEditTime.Value, Model.Profile)</span></small>
+		<small>@String.Format(PopForums.Resources.NameLastEdit, Model.Post.LastEditName), <pf-formattedtime utctime="@Model.Post.LastEditTime.Value.ToString("o")"></pf-formattedtime></small>
 	}
 
 	@if (Model.Post.ShowSig && !hideVanity && (Model.Signatures).ContainsKey(Model.Post.UserID))

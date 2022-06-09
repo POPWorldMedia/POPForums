@@ -1,10 +1,7 @@
-﻿@inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
-@model PrivateMessageView
+﻿@model PrivateMessageView
 @{
 	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var profile = UserRetrievalShim.GetProfile();
 }
 
 <div>
@@ -19,7 +16,7 @@
 	<div class="postItem">
 		<div class="postUserData bg-primary text-light rounded mb-2 px-3 py-1">
 			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID" class="text-light">@post.Name</a></h3>
-			<small class="postTime text-right fTime" data-utc="@post.PostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(post.PostTime, profile)</small>
+			<small class="postTime text-end"><pf-formattedtime utctime="@post.PostTime.ToString("o")"></pf-formattedtime></small>
 		</div>
 		@Html.Raw(post.FullText)
 	</div>

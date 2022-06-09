@@ -54,7 +54,6 @@ public static class ServiceCollections
 		services.AddTransient<ISetupService, SetupService>();
 		services.AddTransient<ISubscribedTopicsService, SubscribedTopicsService>();
 		services.AddTransient<ITextParsingService, TextParsingService>();
-		services.AddTransient<ITimeFormattingService, TimeFormattingService>();
 		services.AddTransient<ITopicService, TopicService>();
 		services.AddTransient<ITopicViewLogService, TopicViewLogService>();
 		services.AddTransient<IUserService, UserService>();
@@ -65,6 +64,7 @@ public static class ServiceCollections
 		services.AddTransient<IForumPermissionService, ForumPermissionService>();
 		services.AddTransient<IReCaptchaService, ReCaptchaService>();
 		services.AddTransient<ISitemapService, SitemapService>();
+		services.AddTransient<ITimeFormatStringService, TimeFormatStringService>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)

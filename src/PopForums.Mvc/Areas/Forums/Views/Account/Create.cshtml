@@ -76,20 +76,6 @@
 					<span asp-validation-for="PasswordRetype" class="text-danger"></span>
 				</div>
 			</div>
-			<div class="mb-3 row">
-				<label for="TimeZone" class="col-2 form-label">
-					@PopForums.Resources.TimeZone
-				</label>
-				<div class="col-10">
-					<select asp-items="@(new SelectList(DataCollections.TimeZones(), "Key", "Value", ViewData[AccountController.ServerTimeZoneKey]))" class="form-select" asp-for="TimeZone"></select>
-				</div>
-			</div>
-			<div class="form-check">
-				<div class="offset-2 col-sm-10">
-					<input class="form-check-input" type="checkbox" asp-for="IsDaylightSaving" />
-					<label class="form-check-label">@PopForums.Resources.UseDaylight</label>
-				</div>
-			</div>
 			<div class="form-check">
 				<div class="offset-2 col-sm-10">
 					<input class="form-check-input" type="checkbox" asp-for="IsSubscribed" />

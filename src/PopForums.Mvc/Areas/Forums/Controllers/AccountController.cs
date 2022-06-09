@@ -28,7 +28,6 @@ public class AccountController : Controller
 	public static string Name = "Account";
 	public static string CoppaDateKey = "CoppaDateKey";
 	public static string TosKey = "TosKey";
-	public static string ServerTimeZoneKey = "ServerTimeZoneKey";
 
 	private readonly IUserService _userService;
 	private readonly ISettingsManager _settingsManager;
@@ -55,9 +54,7 @@ public class AccountController : Controller
 		SetupCreateData();
 		var signupData = new SignupData
 		{
-			IsDaylightSaving = true,
-			IsSubscribed = true,
-			TimeZone = _settingsManager.Current.ServerTimeZone
+			IsSubscribed = true
 		};
 		var loginState = _externalLoginTempService.Read();
 		if (loginState?.ResultData != null)
@@ -72,7 +69,6 @@ public class AccountController : Controller
 	{
 		ViewData[CoppaDateKey] = SignupData.GetCoppaDate();
 		ViewData[TosKey] = _settingsManager.Current.TermsOfService;
-		ViewData[ServerTimeZoneKey] = _settingsManager.Current.ServerTimeZone;
 	}
 
 	[PopForumsAuthorizationIgnore]

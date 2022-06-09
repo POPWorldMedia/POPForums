@@ -2,9 +2,8 @@
 
 public class Broker : IBroker
 {
-	public Broker(ITimeFormattingService timeFormattingService, IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, ITenantService tenantService)
+	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, ITenantService tenantService)
 	{
-		_timeFormattingService = timeFormattingService;
 		_forumRepo = forumRepo;
 		_topicHubContext = topicHubContext;
 		_feedHubContext = feedHubContext;
@@ -13,8 +12,7 @@ public class Broker : IBroker
 		_notificationHubContext = notificationHubContext;
 		_tenantService = tenantService;
 	}
-
-	private readonly ITimeFormattingService _timeFormattingService;
+	
 	private readonly IForumRepository _forumRepo;
 	private readonly IHubContext<TopicsHub> _topicHubContext;
 	private readonly IHubContext<FeedHub> _feedHubContext;
@@ -45,7 +43,7 @@ public class Broker : IBroker
 	public void NotifyForumUpdate(Forum forum)
 	{
 		var tenant = _tenantService.GetTenant();
-		_forumsHubContext.Clients.Group($"{tenant}:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), LastPostTime = _timeFormattingService.GetFormattedTime(forum.LastPostTime, null), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
+		_forumsHubContext.Clients.Group($"{tenant}:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
 	}
 
 	public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
@@ -61,7 +59,6 @@ public class Broker : IBroker
 			ForumTitle = forum.Title,
 			topic.ViewCount,
 			topic.ReplyCount,
-			LastPostTime = _timeFormattingService.GetFormattedTime(topic.LastPostTime, null),
 			Utc = topic.LastPostTime.ToString("o"),
 			topic.LastPostName
 		};

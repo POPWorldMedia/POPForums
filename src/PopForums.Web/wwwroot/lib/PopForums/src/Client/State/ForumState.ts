@@ -89,9 +89,8 @@ namespace PopForums {
             if (forumTitle) forumTitle.innerHTML = data.forumTitle;
             row.querySelector(".viewCount").innerHTML = data.viewCount;
             row.querySelector(".replyCount").innerHTML = data.replyCount;
-            row.querySelector(".lastPostTime").innerHTML = data.lastPostTime;
             row.querySelector(".lastPostName").innerHTML = data.lastPostName;
-            row.querySelector(".fTime").setAttribute("data-utc", data.utc);
+            row.querySelector("pf-formattedtime").setAttribute("utctime", data.utc);
             return row;
         };
     }
