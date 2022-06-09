@@ -57,7 +57,7 @@ namespace PopForums {
             return this.utcTimeAsDate.toLocaleDateString(undefined, dateOptions) + " " + this.utcTimeAsDate.toLocaleTimeString(undefined, timeOptions);
         }
         if (diff > 120000)
-            return Math.round(diff / 60000) + PopForums.timeFormats.minutesAgo;
+            return  PopForums.timeFormats.minutesAgo.replace("{0}", Math.round(diff / 60000).toString());
         if (diff > 60000)
             return PopForums.timeFormats.oneMinuteAgo;
         return PopForums.timeFormats.lessThanMinute;
