@@ -14,28 +14,32 @@ namespace PopForums {
     private static dayInMs = 86400000;
 
     connectedCallback() {
+        this.setBaseTime();
+        let now = Date.now();
+        let yesterdayMs = now - FormattedTime.dayInMs;
+        let yesterdayTemp = new Date(yesterdayMs);
+        let yesterday = new Date(yesterdayTemp.getFullYear(), yesterdayTemp.getMonth(), yesterdayTemp.getDate());
+        this.innerHTML = this.GetDisplayTime();
+        if (this.utcTime > yesterday.getTime())
+            this.UpdateTimer();
+    }
+
+    private setBaseTime() {
         let baseTime = this.utctime;
         if (!baseTime.endsWith("Z"))
             baseTime = baseTime + "Z";
         this.utcTime = Date.parse(baseTime);
         this.utcTimeAsDate = new Date(baseTime);
-        let now = Date.now();
-        let yesterdayMs = now - FormattedTime.dayInMs;
-        let yesterdayTemp = new Date(yesterdayMs);
-        let yesterday = new Date(yesterdayTemp.getFullYear(), yesterdayTemp.getMonth(), yesterdayTemp.getDate());
-        this.innerHTML = this.GetUpdate();
-        if (this.utcTime > yesterday.getTime())
-            this.UpdateTimer();
     }
     
     private UpdateTimer(): void {
         setTimeout(() => {
             this.UpdateTimer();
-            this.innerHTML = this.GetUpdate();
+            this.innerHTML = this.GetDisplayTime();
         }, 60000);
     }
 
-    private GetUpdate(): string {
+    private GetDisplayTime(): string {
         let now = Date.now();
         let nowAsDate = new Date();
         let diff = now - this.utcTime;
@@ -58,6 +62,16 @@ namespace PopForums {
             return PopForums.timeFormats.oneMinuteAgo;
         return PopForums.timeFormats.lessThanMinute;
     }
+
+    static get observedAttributes() { return ["utctime"]; }
+
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+        if (name === "utctime") {
+            this.setBaseTime();
+            this.innerHTML = this.GetDisplayTime();
+            this.UpdateTimer();
+        }
+      }
 }
 
 customElements.define('pf-formattedtime', FormattedTime);

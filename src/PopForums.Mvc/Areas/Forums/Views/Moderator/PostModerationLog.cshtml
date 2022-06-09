@@ -1,15 +1,11 @@
 ﻿@model List<ModerationLogEntry>
-@inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
-@{
-	var profile = UserRetrievalShim.GetProfile();
-}
+
 <div class="alert alert-secondary">
 	<table class="table">
 		@foreach (var entry in Model)
 		{
 			<tr>
-				<td>@TimeFormattingService.GetFormattedTime(entry.TimeStamp, profile)</td>
+				<td><pf-formattedtime utctime="@entry.TimeStamp.ToString("o")"></pf-formattedtime></td>
 				<td><a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@entry.UserID" target="_blank">@entry.UserName</a></td>
 				<td>@entry.ModerationType</td>
 			</tr>

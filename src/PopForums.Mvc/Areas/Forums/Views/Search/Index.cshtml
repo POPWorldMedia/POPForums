@@ -1,12 +1,10 @@
 ﻿@model PagedTopicContainer
 @inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
 @{
 	ViewBag.Title = PopForums.Resources.Search;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var routeParameters = new Dictionary<string, object> { { "query", ViewBag.Query }, { "searchType", ViewBag.SearchType } };
 	var user = UserRetrievalShim.GetUser();
-	var profile = UserRetrievalShim.GetProfile();
 }
 
 <h1>@PopForums.Resources.Search</h1>
@@ -63,7 +61,7 @@ else
 				<td>
 					<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>
 					<small class="float-end d-none d-sm-block text-secondary">
-						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <span class="lastPostTime fTime" data-utc="@topic.LastPostTime.ToString("o")">@TimeFormattingService.GetFormattedTime(topic.LastPostTime, profile)</span> @PopForums.Resources.By @topic.LastPostName
+						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <pf-formattedtime utctime="@topic.LastPostTime.ToString("o")"></pf-formattedtime> @PopForums.Resources.By @topic.LastPostName
 					</small>
 				</td>
 			</tr>

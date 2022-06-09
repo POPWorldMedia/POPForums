@@ -1,11 +1,8 @@
-﻿@inject IUserRetrievalShim UserRetrievalShim
-@inject ITimeFormattingService TimeFormattingService
-@model DisplayProfile
+﻿@model DisplayProfile
 
 @{
 	ViewBag.Title = PopForums.Resources.Profile + " - " + Model.Name;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
-	var profile = UserRetrievalShim.GetProfile();
 }
 @section HeaderContent {
 }
@@ -50,7 +47,7 @@
 
 				<div class="row">
 					<div class="col-4">@PopForums.Resources.Joined</div>
-					<div class="col-8">@TimeFormattingService.GetFormattedTime(Model.Joined, profile)</div>
+					<div class="col-8"><pf-formattedtime utctime="@Model.Joined.ToString("o")"></pf-formattedtime></div>
 				</div>
 
 				@if (Model.Dob.HasValue)
@@ -124,7 +121,7 @@
 						<div class="activityFeedPoints">+@item.Points</div>
 					}
 					<div>@Html.Raw(item.Message)</div>
-					<div class="text-end small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-end small"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
 				</div>
 			}
 		</div>
@@ -134,7 +131,7 @@
 			{
 				<div class="alert-light alert mt-2" title="@item.Description">
 					<h2>@item.Title</h2>
-					<div class="text-end small">@TimeFormattingService.GetFormattedTime(item.TimeStamp, profile)</div>
+					<div class="text-end small"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
 				</div>
 			}
 			@if (Model.UserAwards.Count == 0)

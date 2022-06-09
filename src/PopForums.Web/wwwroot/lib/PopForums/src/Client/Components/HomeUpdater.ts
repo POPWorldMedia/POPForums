@@ -21,9 +21,8 @@ namespace PopForums {
             let row = document.querySelector("[data-forumid='" + data.forumID + "']");
             row.querySelector(".topicCount").innerHTML = data.topicCount;
             row.querySelector(".postCount").innerHTML = data.postCount;
-            row.querySelector(".lastPostTime").innerHTML = data.lastPostTime;
             row.querySelector(".lastPostName").innerHTML = data.lastPostName;
-            row.querySelector(".fTime").setAttribute("data-utc", data.utc);
+            row.querySelector("pf-formattedtime").setAttribute("utctime", data.utc);
             row.querySelector(".newIndicator .icon-file-text2").classList.remove("text-muted");
             row.querySelector(".newIndicator .icon-file-text2").classList.add("text-warning");
         };
