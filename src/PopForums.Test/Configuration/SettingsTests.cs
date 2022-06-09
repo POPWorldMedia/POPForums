@@ -13,7 +13,6 @@ public class SettingsTests
 		var settings = settingsManager.Current;
 
 		Assert.Equal(settings.TermsOfService, String.Empty);
-		Assert.Equal(settings.ServerTimeZone, -5);
 		Assert.True(settings.IsNewUserApproved);
 		Assert.Equal(20, settings.TopicsPerPage);
 		Assert.Equal(20, settings.PostsPerPage);
@@ -24,7 +23,6 @@ public class SettingsTests
 	public void LoadFromRepo()
 	{
 		const string tos = "blah blah blah";
-		const int timeZone = -8;
 		const bool isNewUserApproved = false;
 		const int topicsPerPage = 72;
 		const int postsPerPage = 42;
@@ -32,7 +30,6 @@ public class SettingsTests
 		var dictionary = new Dictionary<string, string>
 		{
 			{"TermsOfService", tos},
-			{"ServerTimeZone", timeZone.ToString()},
 			{"IsNewUserApproved", isNewUserApproved.ToString()},
 			{"TopicsPerPage", topicsPerPage.ToString()},
 			{"PostsPerPage", postsPerPage.ToString()},
@@ -44,9 +41,7 @@ public class SettingsTests
 		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
 
 		var settings = settingsManager.Current;
-
-		Assert.Equal(settings.TermsOfService, tos);
-		Assert.Equal(settings.ServerTimeZone, timeZone);
+		
 		Assert.False(settings.IsNewUserApproved);
 		Assert.Equal(settings.TopicsPerPage, topicsPerPage);
 		Assert.Equal(settings.PostsPerPage, postsPerPage);
@@ -103,8 +98,6 @@ public class SettingsTests
 	public void SaveCurrent()
 	{
 		const string tos = "blah blah blah";
-		const int timeZone = -8;
-		const bool serverDaylightSaving = false;
 		const bool isNewUserApproved = false;
 		const int topicsPerPage = 72;
 		const int postsPerPage = 42;
@@ -163,8 +156,6 @@ public class SettingsTests
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
-			{"ServerTimeZone", timeZone},
-			{"ServerDaylightSaving", serverDaylightSaving},
 			{"IsNewUserApproved", isNewUserApproved},
 			{"TopicsPerPage", topicsPerPage},
 			{"PostsPerPage", postsPerPage},
@@ -229,7 +220,6 @@ public class SettingsTests
 
 		var settings = settingsManager.Current;
 		settings.TermsOfService = tos;
-		settings.ServerTimeZone = timeZone;
 		settings.IsNewUserApproved = isNewUserApproved;
 		settings.TopicsPerPage = topicsPerPage;
 		settings.PostsPerPage = postsPerPage;
@@ -244,7 +234,6 @@ public class SettingsTests
 		settings.SmtpPassword = smtpPassword;
 		settings.MailSendingInverval = mailSendingInverval;
 		settings.UseSslSmtp = useSslSmtp;
-		settings.ServerDaylightSaving = serverDaylightSaving;
 		settings.SessionLength = sessionLength;
 		settings.CensorWords = censorWords;
 		settings.CensorCharacter = censorCharacter;

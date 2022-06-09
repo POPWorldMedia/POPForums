@@ -1,7 +1,5 @@
 ﻿@model SetupVariables
-@{
-	var timeZones = DataCollections.TimeZones().Select(x => new SelectListItem() { Value = x.Key.ToString(), Text = x.Value });
-}
+
 <!DOCTYPE html>
 
 <html>
@@ -74,18 +72,6 @@
 			<div class="mb-3 row">
 				<label class="col-2 form-label" for="SmtpPassword">@PopForums.Resources.SmtpPassword</label>
 				<div class="col-10">@Html.TextBoxFor(s => s.SmtpPassword, new { @class = "form-control" })</div>
-			</div>
-			<div class="mb-3 row">
-				<label class="col-2 form-label" for="ServerTimeZone">@PopForums.Resources.TimeZone</label>
-				<div class="col-10"><select asp-for="ServerTimeZone" asp-items="@timeZones" class="form-select"></select></div>
-			</div>
-			<div class="mb-3 row">
-				<div class="offset-2 col-10">
-					<div class="form-check">
-						@Html.CheckBoxFor(s => s.ServerDaylightSaving, new { @class = "form-check-input" })
-						<label class="form-check-label" for="ServerDaylightSaving">@PopForums.Resources.UseDaylight</label>
-					</div>
-				</div>
 			</div>
 			<h3>@PopForums.Resources.SetupFirstUser</h3>
 			<div class="mb-3 row">

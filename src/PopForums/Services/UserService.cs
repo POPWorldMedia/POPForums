@@ -384,8 +384,6 @@ public class UserService : IUserService
 		profile.ShowDetails = userEdit.ShowDetails;
 		profile.IsPlainText = userEdit.IsPlainText;
 		profile.HideVanity = userEdit.HideVanity;
-		profile.TimeZone = userEdit.TimeZone;
-		profile.IsDaylightSaving = userEdit.IsDaylightSaving;
 		profile.Signature = _textParsingService.ForumCodeToHtml(userEdit.Signature);
 		profile.Location = userEdit.Location;
 		profile.Dob = userEdit.Dob;
@@ -467,8 +465,6 @@ public class UserService : IUserService
 		profile.ShowDetails = userEditProfile.ShowDetails;
 		profile.IsPlainText = userEditProfile.IsPlainText;
 		profile.HideVanity = userEditProfile.HideVanity;
-		profile.TimeZone = userEditProfile.TimeZone;
-		profile.IsDaylightSaving = userEditProfile.IsDaylightSaving;
 		profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
 		profile.Location = userEditProfile.Location;
 		profile.Dob = userEditProfile.Dob;

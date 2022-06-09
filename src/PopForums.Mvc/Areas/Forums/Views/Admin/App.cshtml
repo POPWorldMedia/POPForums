@@ -1,6 +1,5 @@
 ﻿@{
     Layout = null;
-	var timeZones = PopForums.Models.DataCollections.TimeZones();
 }
 
 <!DOCTYPE html>
@@ -209,25 +208,6 @@
 			<div class="mb-3 row">
 				<div class="col-sm-8 offset-sm-4">
 					<label for="LogErrors"><input type="checkbox" v-model="settings.logErrors" id="LogErrors" class="form-check-input" /> @PopForums.Resources.LogErrors</label>
-				</div>
-			</div>
-
-			<h3>@PopForums.Resources.ServerTime</h3>
-
-			<div class="mb-3 row">
-				<label for="ServerTimeZone" class="col-sm-4 col-form-label">@PopForums.Resources.TimeZone</label>
-				<div class="col-sm-8">
-					<select id="ServerTimeZone" v-model="settings.serverTimeZone" class="form-select">
-						@foreach (var i in timeZones)
-						{
-							<option value="@i.Key">@i.Value</option>
-						}
-					</select>
-				</div>
-			</div>
-			<div class="mb-3 row">
-				<div class="col-sm-8 offset-sm-4">
-					<label for="ServerDaylightSaving"><input type="checkbox" v-model="settings.serverDaylightSaving" id="ServerDaylightSaving" class="form-check-input" /> @PopForums.Resources.UseDaylight</label>
 				</div>
 			</div>
 
@@ -695,22 +675,6 @@
 			<div class="offset-2 col-10">
 				<input class="form-check-input" type="checkbox" id="HideVanity" v-model="user.hideVanity" class="form-check-input" /> 
 				<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
-			</div>
-		</div>
-		<div class="mb-3 row">
-			<label for="TimeZone" class="col-2 col-form-label">@PopForums.Resources.TimeZone</label>
-			<div class="col-10">
-				<select id="TimeZone" v-model="user.timeZone" class="form-select">
-					@foreach (var i in timeZones)
-					{
-						<option value="@i.Key">@i.Value</option>}
-				</select>
-			</div>
-		</div>
-		<div class="mb-3 row">
-			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="IsDaylightSaving" v-model="user.isDaylightSaving" class="form-check-input" /> 
-				<label class="form-check-label" for="IsDaylightSaving">@PopForums.Resources.UseDaylight</label>
 			</div>
 		</div>
 

@@ -32,8 +32,6 @@ CREATE TABLE [dbo].[pf_Profile](
 	[Twitter] [nvarchar](256) NULL,
 	[Instagram] [nvarchar](256) NULL,
 	[IsTos] [bit] NOT NULL DEFAULT ((0)),
-	[TimeZone] [int] NOT NULL,
-	[IsDaylightSaving] [bit] NOT NULL,
 	[AvatarID] [int] NULL,
 	[ImageID] [int] NULL,
 	[HideVanity] [bit] NOT NULL DEFAULT ((0)),

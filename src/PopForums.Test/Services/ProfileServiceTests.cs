@@ -86,19 +86,15 @@ public class ProfileServiceTests
 	{
 		var service = GetService();
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		var signupData = new SignupData {TimeZone = -5, IsSubscribed = true, IsTos = true, IsDaylightSaving = true};
+		var signupData = new SignupData {IsSubscribed = true, IsTos = true, };
 		_profileRepo.Setup(r => r.Create(It.Is<Profile>(p =>
 			p.UserID == user.UserID &&
-			p.TimeZone == signupData.TimeZone &&
 			p.IsSubscribed == signupData.IsSubscribed &&
-			p.IsTos == signupData.IsTos &&
-			p.IsDaylightSaving == signupData.IsDaylightSaving))).Verifiable();
+			p.IsTos == signupData.IsTos ))).Verifiable();
 		var result = await service.Create(user, signupData);
 		Assert.Equal(user.UserID, result.UserID);
-		Assert.Equal(signupData.IsDaylightSaving, result.IsDaylightSaving);
 		Assert.Equal(signupData.IsSubscribed, result.IsSubscribed);
 		Assert.Equal(signupData.IsTos, result.IsTos);
-		Assert.Equal(signupData.TimeZone, result.TimeZone);
 	}
 
 	[Fact]

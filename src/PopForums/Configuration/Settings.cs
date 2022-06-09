@@ -5,8 +5,6 @@ public class Settings
 	public Settings()
 	{
 		TermsOfService = string.Empty;
-		ServerTimeZone = -5;
-		ServerDaylightSaving = true;
 		IsNewUserApproved = true;
 		TopicsPerPage = 20;
 		PostsPerPage = 20;
@@ -65,8 +63,6 @@ public class Settings
 	}
 
 	public virtual string TermsOfService { get; set; }
-	public virtual int ServerTimeZone { get; set; }
-	public virtual bool ServerDaylightSaving { get; set; }
 	public virtual bool IsNewUserApproved { get; set; }
 	public virtual int TopicsPerPage { get; set; }
 	public virtual int PostsPerPage { get; set; }

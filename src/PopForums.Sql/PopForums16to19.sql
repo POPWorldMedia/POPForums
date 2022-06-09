@@ -16,3 +16,15 @@ IF OBJECT_ID('pf_Friend', 'U') IS NOT NULL
 BEGIN
 	DROP TABLE pf_Friend;
 END
+
+
+IF COL_LENGTH('dbo.pf_Profile', 'TimeZone') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_Profile DROP COLUMN TimeZone;
+END
+IF COL_LENGTH('dbo.pf_Profile', 'IsDaylightSaving') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_Profile DROP COLUMN IsDaylightSaving;
+END
+
+DELETE FROM pf_Setting WHERE Setting = 'ServerDaylightSaving' OR Setting = 'ServerTimeZone';

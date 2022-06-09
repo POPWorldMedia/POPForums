@@ -21,9 +21,7 @@ public class SetupController : Controller
 			return StatusCode(403);
 		var setupVariables = new SetupVariables
 		{
-			SmtpPort = 25,
-			ServerDaylightSaving = true,
-			ServerTimeZone = -5
+			SmtpPort = 25
 		};
 		return View(setupVariables);
 	}

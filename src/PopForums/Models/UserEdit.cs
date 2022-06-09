@@ -20,8 +20,6 @@ public class UserEdit
 		Instagram = profile.Instagram;
 		Facebook = profile.Facebook;
 		Twitter = profile.Twitter;
-		TimeZone = profile.TimeZone;
-		IsDaylightSaving = profile.IsDaylightSaving;
 		HideVanity = profile.HideVanity;
 		Roles = user.Roles.ToArray();
 		AvatarID = profile.AvatarID;
@@ -44,8 +42,6 @@ public class UserEdit
 	public string Instagram { get; set; }
 	public string Facebook { get; set; }
 	public string Twitter { get; set; }
-	public int TimeZone { get; set; }
-	public bool IsDaylightSaving { get; set; }
 	public bool HideVanity { get; set; }
 	public string[] Roles { get; set; }
 	public int? AvatarID { get; set; }
