@@ -1150,7 +1150,7 @@
     <value>投票</value>
   </data>
   <data name="VoteUpPublishMessage" xml:space="preserve">
-    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt; 投票給主題： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+	  <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt; 投票給主題: &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
   </data>
   <data name="ScoringGame" xml:space="preserve">
     <value>得分王</value>
@@ -1174,10 +1174,10 @@
     <value>活動資訊</value>
   </data>
   <data name="NewReplyPublishMessage" xml:space="preserve">
-    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt;的所做的主題在後： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+	  <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt;的所做的主題在後：&lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
   </data>
   <data name="NewPostPublishMessage" xml:space="preserve">
-    <value>&lt;a href="{0}"&gt; {1} &lt; / a&gt;的開始一個新的話題： &lt;a href="{2}"&gt; {3} &lt; / A &gt;</value>
+	  <value>&lt;a href="{0}"&gt;{1}&lt;/a&gt;的開始一個新的話題： &lt;a href="{2}"&gt;{3}&lt;/a&gt;</value>
   </data>
   <data name="ExternalLogins" xml:space="preserve">
     <value>外部登入</value>
