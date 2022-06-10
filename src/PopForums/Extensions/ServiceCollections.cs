@@ -66,6 +66,8 @@ public static class ServiceCollections
 		services.AddTransient<ISitemapService, SitemapService>();
 		services.AddTransient<ITimeFormatStringService, TimeFormatStringService>();
 		services.AddTransient<IResourceComposer, ResourceComposer>();
+		services.AddTransient<INotificationManager, NotificationManager>();
+		services.AddTransient<INotificationAdapter, NotificationAdapter>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)

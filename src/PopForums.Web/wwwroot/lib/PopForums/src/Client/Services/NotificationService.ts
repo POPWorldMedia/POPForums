@@ -8,6 +8,9 @@ namespace PopForums {
             this.connection.on("updatePMCount", function(pmCount: number) {
                 self.userState.newPmCount = pmCount;
             });
+            this.connection.on("notify", function(data: any) {
+                console.log(JSON.stringify(data));
+            });
             this.connection.start();
         }
 

@@ -13,16 +13,18 @@ public interface ISubscribedTopicsService
 
 public class SubscribedTopicsService : ISubscribedTopicsService
 {
-	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISubscribedTopicEmailComposer subscribedTopicEmailComposer, ISettingsManager settingsManager)
+	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISubscribedTopicEmailComposer subscribedTopicEmailComposer, ISettingsManager settingsManager, INotificationAdapter notificationAdapter)
 	{
 		_subscribedTopicsRepository = subscribedTopicsRepository;
 		_subscribedTopicEmailComposer = subscribedTopicEmailComposer;
 		_settingsManager = settingsManager;
+		_notificationAdapter = notificationAdapter;
 	}
 
 	private readonly ISubscribedTopicsRepository _subscribedTopicsRepository;
 	private readonly ISubscribedTopicEmailComposer _subscribedTopicEmailComposer;
 	private readonly ISettingsManager _settingsManager;
+	private readonly INotificationAdapter _notificationAdapter;
 
 	public async Task AddSubscribedTopic(User user, Topic topic)
 	{
@@ -58,6 +60,7 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 				{
 					var unsubScribeLink = unsubscribeLinkGenerator(user, topic);
 					await _subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
+					await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, user.UserID);
 				}
 			}
 			await _subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);
