@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Models;
+
+namespace PopForums.Services;
 
 public interface ISubscribedTopicsService
 {
@@ -53,6 +55,7 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 	public async Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
 	{
 		new Thread(async () => {
+			// old emails
 			var users = await _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
 			foreach (var user in users)
 			{
@@ -60,9 +63,12 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 				{
 					var unsubScribeLink = unsubscribeLinkGenerator(user, topic);
 					await _subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
-					await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, user.UserID);
 				}
 			}
+			// new notifications
+			var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
+			foreach (var userID in userIDs)
+				await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID);
 			await _subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);
 		}).Start();
 	}

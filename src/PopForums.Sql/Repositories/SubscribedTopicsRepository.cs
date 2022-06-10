@@ -55,6 +55,14 @@ SET ROWCOUNT 0";
 		return list.Result.ToList();
 	}
 
+	public async Task<List<int>> GetSubscribedUserIDs(int topicID)
+	{
+		Task<IEnumerable<int>> list = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			list = connection.QueryAsync<int>("SELECT pf_SubscribeTopic.UserID FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID", new { TopicID = topicID }));
+		return list.Result.ToList();
+	}
+
 	public async Task<bool> IsTopicSubscribed(int userID, int topicID)
 	{
 		Task<IEnumerable<dynamic>> result = null;
