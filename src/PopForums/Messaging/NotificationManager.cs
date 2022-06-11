@@ -3,6 +3,7 @@
 public interface INotificationManager
 {
 	Task ProcessNotification(int userID, NotificationType notificationType, int contextID, dynamic data);
+	Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID);
 }
 
 public class NotificationManager : INotificationManager
@@ -34,5 +35,10 @@ public class NotificationManager : INotificationManager
 			await _notificationRepository.CreateNotification(notification);
 
 		_broker.NotifyUser(notification);
+	}
+
+	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID)
+	{
+		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
 	}
 }

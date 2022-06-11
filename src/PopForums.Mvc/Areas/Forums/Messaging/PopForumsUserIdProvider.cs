@@ -25,4 +25,12 @@ public class PopForumsUserIdProvider : IUserIdProvider
 	{
 		return $"{tenantID}:{userID}";
 	}
+
+	public static string GetBaseUserID(string tenantID, string userID)
+	{
+		var colonIndex = userID.IndexOf(":");
+		if (colonIndex == -1)
+			throw new ArgumentException("Bummer, can't figure out the userID", nameof(userID));
+		return userID.Substring(colonIndex + 1);
+	}
 }
