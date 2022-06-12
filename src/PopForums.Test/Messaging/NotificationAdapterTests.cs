@@ -33,4 +33,26 @@ public class NotificationAdapterTests
 			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>()), Times.Once);
 		}
 	}
+
+	public class Vote : NotificationAdapterTests
+	{
+		[Fact]
+		public async Task ManagerCalledWithCorrectValues()
+		{
+			var adapter = GetAdapter();
+			var name = "Jeff";
+			var title = "The Topic";
+			var postID = 123;
+			var userID = 456;
+			VoteData voteData = null;
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.VoteUp, postID, It.IsAny<VoteData>())).Callback<int, NotificationType, int, dynamic>(((i, type, arg3, arg4) => voteData = arg4));
+
+			await adapter.Vote(name, title, postID, userID);
+
+			Assert.Equal(name, voteData.VoterName);
+			Assert.Equal(title, voteData.Title);
+			Assert.Equal(postID, voteData.PostID);
+			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.VoteUp, postID, It.IsAny<VoteData>()), Times.Once);
+		}
+	}
 }

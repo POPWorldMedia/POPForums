@@ -14,6 +14,7 @@ public class PostServiceTests
 	private Mock<IUserService> _userService;
 	private Mock<ISearchIndexQueueRepository> _searchIndexQueue;
 	private Mock<ITenantService> _tenantService;
+	private Mock<INotificationAdapter> _notificationAdapter;
 
 	private PostService GetService()
 	{
@@ -29,8 +30,9 @@ public class PostServiceTests
 		_userService = new Mock<IUserService>();
 		_searchIndexQueue = new Mock<ISearchIndexQueueRepository>();
 		_tenantService = new Mock<ITenantService>();
+		_notificationAdapter = new Mock<INotificationAdapter>();
 		_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-		return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueue.Object, _tenantService.Object);
+		return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueue.Object, _tenantService.Object, _notificationAdapter.Object);
 	}
 
 	[Fact]
