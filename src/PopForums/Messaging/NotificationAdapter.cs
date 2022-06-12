@@ -6,6 +6,7 @@ public interface INotificationAdapter
 {
 	Task Reply(string postName, string title, int topicID, int userID);
 	Task Vote(string voterName, string title, int postID, int userID);
+	Task QuestionAnswer(string askerName, string title, int postID, int userID);
 }
 
 public class NotificationAdapter : INotificationAdapter
@@ -37,6 +38,16 @@ public class NotificationAdapter : INotificationAdapter
 			PostID = postID
 		};
 		await _notificationManager.ProcessNotification(userID, NotificationType.VoteUp, postID, voteData);
+	}
 
+	public async Task QuestionAnswer(string askerName, string title, int postID, int userID)
+	{
+		var questionData = new QuestionData
+		{
+			AskerName = askerName,
+			Title = title,
+			PostID = postID
+		};
+		await _notificationManager.ProcessNotification(userID, NotificationType.QuestionAnswered, postID, questionData);
 	}
 }

@@ -473,6 +473,20 @@ public class PostServiceTests
 	}
 
 	[Fact]
+	public async Task ToggleVoteCallsNotification()
+	{
+		var service = GetService();
+		var voteUpUser = new User { UserID = 777, Name = "Diana" };
+		var title = "the title";
+		_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
+		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
+
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456, Name = "Voter" }, "", "", title);
+
+		_notificationAdapter.Verify(x => x.Vote("Voter", title, 123, voteUpUser.UserID), Times.Once);
+	}
+
+	[Fact]
 	public async Task ToggleVoteDoesNotCallWhenUserIsPoster()
 	{
 		var service = GetService();

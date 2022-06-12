@@ -25,7 +25,7 @@ public interface ITopicService
 
 public class TopicService : ITopicService
 {
-	public TopicService(ITopicRepository topicRepository, IPostRepository postRepository, ISettingsManager settingsManager, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, ISearchRepository searchRepository, IUserRepository userRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
+	public TopicService(ITopicRepository topicRepository, IPostRepository postRepository, ISettingsManager settingsManager, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, ISearchRepository searchRepository, IUserRepository userRepository, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, INotificationAdapter notificationAdapter)
 	{
 		_topicRepository = topicRepository;
 		_postRepository = postRepository;
@@ -37,6 +37,7 @@ public class TopicService : ITopicService
 		_userRepository = userRepository;
 		_searchIndexQueueRepository = searchIndexQueueRepository;
 		_tenantService = tenantService;
+		_notificationAdapter = notificationAdapter;
 	}
 
 	private readonly ITopicRepository _topicRepository;
@@ -49,6 +50,7 @@ public class TopicService : ITopicService
 	private readonly IUserRepository _userRepository;
 	private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 	private readonly ITenantService _tenantService;
+	private readonly INotificationAdapter _notificationAdapter;
 
 	public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(Forum forum, bool includeDeleted, int pageIndex)
 	{
@@ -244,6 +246,7 @@ public class TopicService : ITopicService
 			await _eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
 		}
 		await _topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
+		await _notificationAdapter.QuestionAnswer(user.Name, topic.Title, post.PostID, post.UserID);
 	}
 
 	public async Task QueueTopicForIndexing(int topicID)

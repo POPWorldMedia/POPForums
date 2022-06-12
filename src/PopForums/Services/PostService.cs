@@ -245,7 +245,6 @@ public class PostService : IPostService
 		else
 		{
 			await _postRepository.VotePost(post.PostID, user.UserID);
-			await _notificationAdapter.Vote(user.Name, topicTitle, post.PostID, post.UserID);
 			isVoted = true;
 		}
 		var votes = await _postRepository.CalculateVoteCount(post.PostID);
@@ -258,6 +257,7 @@ public class PostService : IPostService
 				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
 				var message = string.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
 				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
+				await _notificationAdapter.Vote(user.Name, topicTitle, post.PostID, votedUpUser.UserID);
 			}
 			else
 			{
