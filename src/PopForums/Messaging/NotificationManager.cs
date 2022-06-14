@@ -2,8 +2,8 @@
 
 public interface INotificationManager
 {
-	Task ProcessNotification(int userID, NotificationType notificationType, int contextID, dynamic data);
-	Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID);
+	Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID);
+	Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data);
 }
 
 public class NotificationManager : INotificationManager
@@ -17,7 +17,12 @@ public class NotificationManager : INotificationManager
 		_broker = broker;
 	}
 
-	public async Task ProcessNotification(int userID, NotificationType notificationType, int contextID, dynamic data)
+	public async Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data)
+	{
+		await ProcessNotification(userID, notificationType, contextID, data, null);
+	}
+
+	public async Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data, string tenantID)
 	{
 		var serializedData = JsonSerializer.SerializeToElement(data);
 		var notification = new Notification
@@ -34,10 +39,13 @@ public class NotificationManager : INotificationManager
 		if (recordsUpdated == 0)
 			await _notificationRepository.CreateNotification(notification);
 
-		_broker.NotifyUser(notification);
+		if (tenantID == null)
+			_broker.NotifyUser(notification);
+		else
+			_broker.NotifyUser(notification, tenantID);
 	}
 
-	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID)
+	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID)
 	{
 		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
 	}

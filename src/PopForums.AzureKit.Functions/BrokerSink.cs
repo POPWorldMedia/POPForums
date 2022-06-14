@@ -39,4 +39,9 @@ public class BrokerSink : IBroker
 	{
 		throw new System.NotImplementedException();
 	}
+
+	public void NotifyUser(Notification notification, string tenantID)
+	{
+		throw new System.NotImplementedException();
+	}
 }

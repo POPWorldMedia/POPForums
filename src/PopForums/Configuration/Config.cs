@@ -15,6 +15,7 @@ public interface IConfig
 	string ReCaptchaSiteKey { get; }
 	string ReCaptchaSecretKey { get; }
 	string IpLookupUrlFormat { get; }
+	string WebAppUrlAndArea { get; }
 }
 
 public class Config : IConfig
@@ -43,4 +44,5 @@ public class Config : IConfig
 	public string ReCaptchaSiteKey => _configContainer.ReCaptchaSiteKey;
 	public string ReCaptchaSecretKey => _configContainer.ReCaptchaSecretKey;
 	public string IpLookupUrlFormat => _configContainer.IpLookupUrlFormat;
+	public string WebAppUrlAndArea => _configContainer.WebAppUrlAndArea;
 }

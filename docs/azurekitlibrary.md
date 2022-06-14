@@ -131,16 +131,19 @@ services.AddPopForumsAzureFunctionsAndQueues();
 
 It's important to _not_ have `services.AddPopForumsBackgroundServices();` in your `Program.cs`, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
 
-You'll also need to add a connection string to your Azure Storage account:
+You'll also need to add a connection string and web app service base to your Azure Storage account:
 
 ```
 {
   "PopForums": {
+	"WebAppUrlAndArea": "https://somehost/Forums",
     "Queue": {
       "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=youraccountname;AccountKey=xxxYourAccountKeyxxx=="
 ...
 ```
 Look at the Azure documentation to see how to provision and deploy Azure Functions, and apply that new knowledge to deploy the `PopForums.AzureKit.Functions` project. (Defining Azure Functions is beyond the scope of this documentation.) You should avoid committing any connection secrets to configuration in source control. See the section above about configuration, and make sure that your Functions have the same settings as your web app.
+
+The `WebAppUrlAndArea` is used to point the functions back at your web app to notify them as necessary. The URL should end without a slash, and probably ends in `/Forums` unless you changed the name of the area throughout the code. Behind the scenes, the award calculator uses this to call an endpoint on the web app and let it know that a user has receieved an award. For security, it uses a hash of the queue connection string, which should be the same for the web app and the functions.
 
 The connection string for using the local Azure storage emulator is `UseDevelopmentStorage=true`.
 

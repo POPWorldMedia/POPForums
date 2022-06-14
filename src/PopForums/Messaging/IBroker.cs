@@ -9,4 +9,5 @@ public interface IBroker
 	void NotifyNewPost(Topic topic, int postID);
 	void NotifyPMCount(int userID, int pmCount);
 	void NotifyUser(Notification notification);
+	void NotifyUser(Notification notification, string tenantID);
 }

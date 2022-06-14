@@ -22,6 +22,7 @@ public class ConfigLoader
 		container.ReCaptchaSiteKey = configuration["PopForums:ReCaptcha:SiteKey"];
 		container.ReCaptchaSecretKey = configuration["PopForums:ReCaptcha:SecretKey"];
 		container.IpLookupUrlFormat = configuration["PopForums:IpLookupUrlFormat"];
+		container.WebAppUrlAndArea = configuration["PopForums:WebAppUrlAndArea"];
 		return container;
 	} 
 }

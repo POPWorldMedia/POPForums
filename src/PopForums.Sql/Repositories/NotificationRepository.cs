@@ -13,7 +13,7 @@ public class NotificationRepository : INotificationRepository
 	{
 	}
 
-	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID)
+	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID)
 	{
 	}
 }

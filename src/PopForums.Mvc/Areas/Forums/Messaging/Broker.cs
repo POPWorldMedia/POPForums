@@ -82,4 +82,10 @@ public class Broker : IBroker
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
 		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
+
+	public async void NotifyUser(Notification notification, string tenantID)
+	{
+		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
+		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+	}
 }

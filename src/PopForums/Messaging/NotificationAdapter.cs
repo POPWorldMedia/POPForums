@@ -7,6 +7,8 @@ public interface INotificationAdapter
 	Task Reply(string postName, string title, int topicID, int userID);
 	Task Vote(string voterName, string title, int postID, int userID);
 	Task QuestionAnswer(string askerName, string title, int postID, int userID);
+	Task Award(string title, int userID);
+	Task Award(string title, int userID, string tenantID);
 }
 
 public class NotificationAdapter : INotificationAdapter
@@ -49,5 +51,19 @@ public class NotificationAdapter : INotificationAdapter
 			PostID = postID
 		};
 		await _notificationManager.ProcessNotification(userID, NotificationType.QuestionAnswered, postID, questionData);
+	}
+
+	public async Task Award(string title, int userID)
+	{
+		await Award(title, userID, null);
+	}
+
+	public async Task Award(string title, int userID, string tenantID)
+	{
+		var awardData = new AwardData
+		{
+			Title = title
+		};
+		await _notificationManager.ProcessNotification(userID, NotificationType.Award, null, awardData);
 	}
 }
