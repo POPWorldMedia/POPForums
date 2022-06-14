@@ -64,6 +64,6 @@ public class NotificationAdapter : INotificationAdapter
 		{
 			Title = title
 		};
-		await _notificationManager.ProcessNotification(userID, NotificationType.Award, null, awardData);
+		await _notificationManager.ProcessNotification(userID, NotificationType.Award, 0, awardData, tenantID);
 	}
 }

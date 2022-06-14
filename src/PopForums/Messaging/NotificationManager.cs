@@ -4,6 +4,7 @@ public interface INotificationManager
 {
 	Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID);
 	Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data);
+	Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data, string tenantID);
 }
 
 public class NotificationManager : INotificationManager
@@ -39,7 +40,7 @@ public class NotificationManager : INotificationManager
 		if (recordsUpdated == 0)
 			await _notificationRepository.CreateNotification(notification);
 
-		if (tenantID == null)
+		if (tenantID == null || string.IsNullOrWhiteSpace(tenantID))
 			_broker.NotifyUser(notification);
 		else
 			_broker.NotifyUser(notification, tenantID);
