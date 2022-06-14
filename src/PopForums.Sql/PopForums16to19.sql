@@ -28,3 +28,36 @@ BEGIN
 END
 
 DELETE FROM pf_Setting WHERE Setting = 'ServerDaylightSaving' OR Setting = 'ServerTimeZone';
+
+
+
+
+
+
+IF OBJECT_ID('pf_Notifications', 'U') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[pf_Notifications]
+	(
+		[UserID] INT NOT NULL, 
+		[NotificationType] INT NOT NULL, 
+		[ContextID] INT NULL, 
+		[TimeStamp] DATETIME NOT NULL, 
+		[IsRead] BIT NOT NULL, 
+		[Data] NVARCHAR(MAX) NULL
+	);
+END
+
+IF INDEXPROPERTY(Object_Id('pf_Notifications'), 'IX_pf_Notifications_UserID_TimeStamp', 'IndexID') IS NULL
+BEGIN
+	CREATE CLUSTERED INDEX [IX_pf_Notifications_UserID_TimeStamp] ON [dbo].[pf_Notifications]
+	(
+		UserID, [TimeStamp] DESC
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_Notifications'), 'IX_pf_Notifications_Context', 'IndexID') IS NULL
+BEGIN
+	CREATE INDEX [IX_pf_Notifications_Context] ON [dbo].[pf_Notifications]
+	(
+		UserID, NotificationType, ContextID
+	);
+END

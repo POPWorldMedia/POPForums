@@ -49,6 +49,18 @@ public class NotificationManagerTests
 		}
 
 		[Fact]
+		public async Task UpdateNotCalledWithNullContext()
+		{
+			var manager = GetManager();
+			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1);
+
+			await manager.ProcessNotification(1, NotificationType.NewReply, null, new { });
+
+			_notificationRepository.Verify(x => x.UpdateNotification(It.IsAny<Notification>()), Times.Never);
+			_notificationRepository.Verify(x => x.CreateNotification(It.IsAny<Notification>()), Times.Once);
+		}
+
+		[Fact]
 		public async Task FieldsMapToCreate()
 		{
 			var manager = GetManager();

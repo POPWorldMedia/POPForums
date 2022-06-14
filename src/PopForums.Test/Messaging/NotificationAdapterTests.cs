@@ -85,15 +85,14 @@ public class NotificationAdapterTests
 		{
 			var adapter = GetAdapter();
 			var title = "The Award";
-			var points = 123;
 			var userID = 456;
 			AwardData awardData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.Award, null, It.IsAny<AwardData>())).Callback<int, NotificationType, int?, dynamic>(((i, type, arg3, arg4) => awardData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.Award, null, It.IsAny<AwardData>(), null)).Callback<int, NotificationType, int?, dynamic, string>(((i, type, arg3, arg4, arg5) => awardData = arg4));
 
 			await adapter.Award(title, userID);
 			
+			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.Award, null, It.IsAny<AwardData>(), null), Times.Once);
 			Assert.Equal(title, awardData.Title);
-			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.Award, null, It.IsAny<AwardData>()), Times.Once);
 		}
 	}
 }

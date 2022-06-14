@@ -36,9 +36,14 @@ public class NotificationManager : INotificationManager
 			Data = serializedData
 		};
 
-		var recordsUpdated = await _notificationRepository.UpdateNotification(notification);
-		if (recordsUpdated == 0)
+		if (!notification.ContextID.HasValue)
 			await _notificationRepository.CreateNotification(notification);
+		else
+		{
+			var recordsUpdated = await _notificationRepository.UpdateNotification(notification);
+			if (recordsUpdated == 0)
+				await _notificationRepository.CreateNotification(notification);
+		}
 
 		if (tenantID == null || string.IsNullOrWhiteSpace(tenantID))
 			_broker.NotifyUser(notification);
