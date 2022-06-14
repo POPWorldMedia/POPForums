@@ -7,6 +7,8 @@ public interface INotificationTunnel
 
 public class NotificationTunnel : INotificationTunnel
 {
+	public static string HeaderName = "PfApi";
+
 	private readonly INotificationAdapter _notificationAdapter;
 
 	public NotificationTunnel(INotificationAdapter notificationAdapter)

@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using PopForums.Configuration;
+using PopForums.Extensions;
 using PopForums.Messaging;
 using PopForums.Messaging.Models;
 
@@ -24,8 +25,10 @@ public class NotificationTunnel : INotificationTunnel
 			UserID = userID,
 			TenantID = tenantID
 		};
+		var authHash = _config.QueueConnectionString.GetSHA256Hash();
 		var url = _config.WebAppUrlAndArea + "/api/notifyaward";
-		var httpClient = new HttpClient();
+		using var httpClient = new HttpClient();
+		httpClient.DefaultRequestHeaders.Add(Messaging.NotificationTunnel.HeaderName, authHash);
 		var result = httpClient.PostAsJsonAsync(url, payload).Result;
 		if (!result.IsSuccessStatusCode)
 			throw new Exception($"Problem sending message over notification tunnel: HTTP {result.StatusCode}");
