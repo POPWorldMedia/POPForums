@@ -15,7 +15,8 @@ public class ResourceComposer : IResourceComposer
 			OneMinuteAgo = Resources.OneMinuteAgo,
 			MinutesAgo = Resources.MinutesAgo,
 			TodayTime = Resources.TodayTime,
-			YesterdayTime = Resources.YesterdayTime
+			YesterdayTime = Resources.YesterdayTime,
+			Notifications = Resources.Notifications
 		};
 		return resources;
 	}

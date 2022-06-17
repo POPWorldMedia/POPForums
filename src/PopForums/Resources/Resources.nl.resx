@@ -1253,4 +1253,7 @@
   <data name="SelectText" xml:space="preserve">
 	  <value>Selecteer tekst</value>
   </data>
+  <data name="Notifications" xml:space="preserve">
+	  <value>Meldingen</value>
+  </data>
 </root>

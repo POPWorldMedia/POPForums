@@ -1240,4 +1240,7 @@
   <data name="SelectText" xml:space="preserve">
 	  <value>选择文本</value>
   </data>
+  <data name="Notifications" xml:space="preserve">
+	  <value>通知</value>
+  </data>
 </root>

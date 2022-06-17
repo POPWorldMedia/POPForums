@@ -5,6 +5,7 @@ export class UserState extends StateBase {
         super();
         this.isPlainText = false;
         this.newPmCount = 0;
+        this.notificationCount = 0;
         this.notificationService = new NotificationService(this);
     }
 
@@ -15,6 +16,8 @@ export class UserState extends StateBase {
 
     @WatchProperty
     newPmCount: number;
+    @WatchProperty
+    notificationCount: number;
 }
 
 }

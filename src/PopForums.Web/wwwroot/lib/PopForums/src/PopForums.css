@@ -56,7 +56,7 @@
 	text-align: center;
 }
 
-#ForumContainer .answerButton {
+#ForumContainer .answerButton, pf-notificationtoggle {
 	cursor: pointer;
 }
 
