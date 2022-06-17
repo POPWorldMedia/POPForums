@@ -18,6 +18,10 @@ export class UserState extends StateBase {
     newPmCount: number;
     @WatchProperty
     notificationCount: number;
+
+    LoadNotifications(): void {
+        this.notificationService.LoadNotifications();
+    }
 }
 
 }

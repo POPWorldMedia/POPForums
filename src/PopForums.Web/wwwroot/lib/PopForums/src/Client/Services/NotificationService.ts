@@ -16,5 +16,20 @@ namespace PopForums {
 
         private userState: UserState;
         private connection: any;
+
+        LoadNotifications(): void{
+            let notifications = fetch(PopForums.AreaPath + "/Api/Notifications")
+                .then(response => {
+                    return response.json();
+                })
+                .then(json => {
+                    let a = new Array<Notification>();
+                    json.forEach((item: Notification) => {
+                        let n = Object.assign(new Notification(), item);
+                        a.push(n);
+                    });
+                    return a;
+                });
+        }
     }
 }

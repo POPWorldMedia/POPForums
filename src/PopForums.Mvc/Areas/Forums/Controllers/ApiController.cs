@@ -6,12 +6,16 @@ namespace PopForums.Mvc.Areas.Forums.Controllers;
 [ApiController]
 public class ApiController : Controller
 {
+	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly INotificationAdapter _notificationAdapter;
+	private readonly INotificationManager _notificationManager;
 	private readonly IConfig _config;
 
-	public ApiController(INotificationAdapter notificationAdapter, IConfig config)
+	public ApiController(IUserRetrievalShim userRetrievalShim, INotificationAdapter notificationAdapter, INotificationManager notificationManager, IConfig config)
 	{
+		_userRetrievalShim = userRetrievalShim;
 		_notificationAdapter = notificationAdapter;
+		_notificationManager = notificationManager;
 		_config = config;
 	}
 	
@@ -26,5 +30,15 @@ public class ApiController : Controller
 			return BadRequest();
 		await _notificationAdapter.Award(awardPayload.Title, awardPayload.UserID, awardPayload.TenantID);
 		return Ok();
+	}
+
+	[HttpGet("/Forums/Api/Notifications")]
+	public async Task<IActionResult> Notifications()
+	{
+		var user = _userRetrievalShim.GetUser();
+		if (user == null)
+			return Forbid();
+		var notifications = await _notificationManager.GetNotifications(user.UserID);
+		return Json(notifications);
 	}
 }

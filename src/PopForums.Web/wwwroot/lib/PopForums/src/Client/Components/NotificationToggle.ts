@@ -3,12 +3,14 @@ namespace PopForums {
     export class NotificationToggle extends ElementBase {
     constructor() {
         super();
+        this.userState = PopForums.userState;
     }
     
     get panelid(): string {
         return this.getAttribute("panelid");
     }
     
+    private userState: UserState;
     private isReady: boolean;
     private panel: HTMLElement;
     private offCanvas: bootstrap.Offcanvas;
@@ -30,6 +32,7 @@ namespace PopForums {
 
     private toggle() {
         this.offCanvas.show();
+        this.userState.LoadNotifications();
     }
 
     getDependentReference(): [StateBase, string] {

@@ -5,6 +5,7 @@ public interface INotificationManager
 	Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID);
 	Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data);
 	Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data, string tenantID);
+	Task<List<Notification>> GetNotifications(int userID);
 }
 
 public class NotificationManager : INotificationManager
@@ -54,5 +55,10 @@ public class NotificationManager : INotificationManager
 	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID)
 	{
 		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
+	}
+
+	public async Task<List<Notification>> GetNotifications(int userID)
+	{
+		return await _notificationRepository.GetNotifications(userID);
 	}
 }

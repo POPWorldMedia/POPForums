@@ -31,4 +31,12 @@ public class NotificationRepository : INotificationRepository
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_Notifications SET IsRead = 1 WHERE UserID = @userID AND NotificationType = @notificationType AND ContextID = @contextID", new { userID, notificationType, contextID }));
 	}
+
+	public async Task<List<Notification>> GetNotifications(int userID)
+	{
+		Task<IEnumerable<Notification>> notifications = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			notifications = connection.QueryAsync<Notification>("SELECT * FROM pf_Notifications WHERE UserID = @userID ORDER BY TimeStamp DESC", new { userID }));
+		return notifications.Result.ToList();
+	}
 }
