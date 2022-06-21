@@ -9,7 +9,9 @@ namespace PopForums {
                 self.userState.newPmCount = pmCount;
             });
             this.connection.on("notify", function(data: any) {
-                console.log(JSON.stringify(data));
+                self.userState.notificationCount++;
+                let n = Object.assign(new Notification(), data);
+                self.userState.notifications.unshift(n);
             });
             this.connection.start();
         }
@@ -17,19 +19,20 @@ namespace PopForums {
         private userState: UserState;
         private connection: any;
 
-        LoadNotifications(): void{
-            let notifications = fetch(PopForums.AreaPath + "/Api/Notifications")
-                .then(response => {
-                    return response.json();
-                })
-                .then(json => {
-                    let a = new Array<Notification>();
-                    json.forEach((item: Notification) => {
-                        let n = Object.assign(new Notification(), item);
-                        a.push(n);
-                    });
-                    return a;
-                });
+        async LoadNotifications(): Promise<void> {
+            const json = await this.getNotifications();
+            let a = new Array<Notification>();
+            json.forEach((item: Notification) => {
+                let n = Object.assign(new Notification(), item);
+                a.push(n);
+            });
+            this.userState.notifications = a;
+        }
+
+        private async getNotifications() {
+            const response = await fetch(PopForums.AreaPath + "/Api/Notifications");
+            const json = await response.json();
+            return json;
         }
     }
 }

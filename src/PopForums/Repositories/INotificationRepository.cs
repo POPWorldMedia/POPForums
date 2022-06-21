@@ -6,4 +6,5 @@ public interface INotificationRepository
 	Task CreateNotification(Notification notification);
 	Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID);
 	Task<List<Notification>> GetNotifications(int userID);
+	Task<int> GetUnreadNotificationCount(int userID);
 }

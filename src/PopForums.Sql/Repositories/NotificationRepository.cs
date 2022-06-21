@@ -39,4 +39,12 @@ public class NotificationRepository : INotificationRepository
 			notifications = connection.QueryAsync<Notification>("SELECT * FROM pf_Notifications WHERE UserID = @userID ORDER BY TimeStamp DESC", new { userID }));
 		return notifications.Result.ToList();
 	}
+
+	public async Task<int> GetUnreadNotificationCount(int userID)
+	{
+		Task<int> count = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			count = connection.QuerySingleAsync<int>("SELECT COUNT(*) FROM pf_Notifications WHERE UserID = @userID AND IsRead = 0", new { userID }));
+		return count.Result;
+	}
 }
