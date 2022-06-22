@@ -27,7 +27,7 @@ public class NotificationManager : INotificationManager
 
 	public async Task ProcessNotification(int userID, NotificationType notificationType, int? contextID, dynamic data, string tenantID)
 	{
-		var serializedData = JsonSerializer.SerializeToElement(data);
+		var serializedData = JsonSerializer.SerializeToElement(data, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 		var notification = new Notification
 		{
 			UserID = userID,

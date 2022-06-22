@@ -12,7 +12,7 @@ public class JsonElementTypeHandler : SqlMapper.TypeHandler<JsonElement>
 	public override JsonElement Parse(object value)
 	{
 		var o = JsonSerializer.Deserialize<dynamic>((string)value);
-		var element = JsonSerializer.SerializeToElement(o);
+		var element = JsonSerializer.SerializeToElement(o, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 		return element;
 	}
 }
