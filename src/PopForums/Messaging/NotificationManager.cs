@@ -2,8 +2,8 @@
 
 public interface INotificationManager
 {
-	Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID);
-	Task ProcessNotification(int userID, NotificationType notificationType, int contextID, dynamic data);
+	Task MarkNotificationRead(int userID, NotificationType notificationType, long contextID);
+	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data);
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data, string tenantID);
 	Task<List<Notification>> GetNotifications(int userID);
 	Task<int> GetUnreadNotificationCount(int userID);
@@ -20,7 +20,7 @@ public class NotificationManager : INotificationManager
 		_broker = broker;
 	}
 
-	public async Task ProcessNotification(int userID, NotificationType notificationType, int contextID, dynamic data)
+	public async Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data)
 	{
 		await ProcessNotification(userID, notificationType, contextID, data, null);
 	}
@@ -48,7 +48,7 @@ public class NotificationManager : INotificationManager
 			_broker.NotifyUser(notification, tenantID);
 	}
 
-	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int contextID)
+	public async Task MarkNotificationRead(int userID, NotificationType notificationType, long contextID)
 	{
 		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
 	}

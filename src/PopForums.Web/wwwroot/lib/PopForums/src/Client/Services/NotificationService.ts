@@ -29,6 +29,10 @@ namespace PopForums {
             this.userState.notifications = a;
         }
 
+        async MarkRead(contextID: number, notificationType: string) : Promise<void> {
+            await this.connection.invoke("MarkNotificationRead", contextID, notificationType);
+        }
+
         private async getNotifications() {
             const response = await fetch(PopForums.AreaPath + "/Api/Notifications");
             const json = await response.json();

@@ -26,7 +26,7 @@ public class NotificationRepository : INotificationRepository
 			connection.ExecuteAsync("INSERT INTO pf_Notifications (UserID, NotificationType, ContextID, TimeStamp, IsRead, Data) VALUES (@UserID, @NotificationType, @ContextID, @TimeStamp, @IsRead, @Data)", notification));
 	}
 
-	public async Task MarkNotificationRead(int userID, NotificationType notificationType, int? contextID)
+	public async Task MarkNotificationRead(int userID, NotificationType notificationType, long contextID)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_Notifications SET IsRead = 1 WHERE UserID = @userID AND NotificationType = @notificationType AND ContextID = @contextID", new { userID, notificationType, contextID }));

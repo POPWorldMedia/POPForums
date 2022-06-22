@@ -55,7 +55,7 @@ namespace PopForums {
         footer.append(timeStamp);
 
         this.querySelector("a").addEventListener("click", (e) => {
-            
+            PopForums.userState.MarkRead(this.notification.contextID, this.notification.notificationType);
         });
     }
 
