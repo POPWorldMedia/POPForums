@@ -7,5 +7,9 @@ namespace PopForums {
         lessThanMinute: string;
 
         notifications: string;
+        newReplyNotification: string;
+        award: string;
+        voteUpNotification: string;
+        questionAnsweredNotification: string;
     }
 }

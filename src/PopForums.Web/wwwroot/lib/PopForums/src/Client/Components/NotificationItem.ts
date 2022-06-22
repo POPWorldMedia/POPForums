@@ -13,20 +13,25 @@ namespace PopForums {
         let link: string;
         switch (this.notification.notificationType) {
             case "Award":
-                markup = `New award: <b>${this.notification.data.title}</b>`;
+                markup = `${PopForums.localizations.award}: <b>${this.notification.data.title}</b>`;
                 link = "/Forums/Account/ViewProfile/" + this.notification.userID + "#Awards";
                 break;
             case "QuestionAnswered":
-                markup = `<b>${this.notification.data.askerName}</b> chose an answer for the question: <b>${this.notification.data.title}</b>`;
+                markup = PopForums.localizations.questionAnsweredNotification
+                    .replace("{0}", this.notification.data.askerName)
+                    .replace("{1}", this.notification.data.title);
                 link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
             case "NewReply":
-                markup = `<b>${this.notification.data.postName}</b> made a post in the topic: <b>${this.notification.data.title}</b>`;
+                markup = PopForums.localizations.newReplyNotification
+                    .replace("{0}", this.notification.data.postName)
+                    .replace("{1}", this.notification.data.title);
                 link = "/Forums/GoToNewestPost/" + this.notification.data.topicID;
                 break;
             case "VoteUp":
-                markup = `<b>${this.notification.data.voterName}</b> voted for a post in <b>${this.notification.data.title}</b>`;
-                link = "/Forums/PostLink/" + this.notification.data.postID;
+                markup = PopForums.localizations.voteUpNotification
+                    .replace("{0}", this.notification.data.voterName)
+                    .replace("{1}", this.notification.data.title);
                 break;
             default:
                 console.log(`Unknown notification type: ${this.notification.notificationType}`);

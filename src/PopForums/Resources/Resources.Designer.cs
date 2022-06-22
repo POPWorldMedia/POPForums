@@ -268,6 +268,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Award.
+        /// </summary>
+        public static string Award {
+            get {
+                return ResourceManager.GetString("Award", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Award Definitions.
         /// </summary>
         public static string AwardDefinitions {
@@ -1870,6 +1879,16 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;{0}&lt;/b&gt; made a post in the topic: &lt;b&gt;{1}&lt;/b&gt;
+        ///.
+        /// </summary>
+        public static string NewReplyNotification {
+            get {
+                return ResourceManager.GetString("NewReplyNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;a href=&quot;{0}&quot;&gt;{1}&lt;/a&gt; made a post in the topic: &lt;a href=&quot;{2}&quot;&gt;{3}&lt;/a&gt;.
         /// </summary>
         public static string NewReplyPublishMessage {
@@ -1951,7 +1970,7 @@ namespace PopForums {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Notifications.
         /// </summary>
         public static string Notifications {
             get {
@@ -2361,6 +2380,15 @@ namespace PopForums {
         public static string QuestionAnswered {
             get {
                 return ResourceManager.GetString("QuestionAnswered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string QuestionAnsweredNotification {
+            get {
+                return ResourceManager.GetString("QuestionAnsweredNotification", resourceCulture);
             }
         }
         
@@ -3396,6 +3424,15 @@ namespace PopForums {
         public static string Voted {
             get {
                 return ResourceManager.GetString("Voted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;b&gt;{0}&lt;/b&gt; voted for a post in the topic: &lt;b&gt;{1}&lt;/b&gt;.
+        /// </summary>
+        public static string VoteUpNotification {
+            get {
+                return ResourceManager.GetString("VoteUpNotification", resourceCulture);
             }
         }
         
