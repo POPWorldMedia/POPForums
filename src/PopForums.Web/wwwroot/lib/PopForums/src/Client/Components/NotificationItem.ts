@@ -26,12 +26,13 @@ namespace PopForums {
                 markup = PopForums.localizations.newReplyNotification
                     .replace("{0}", this.notification.data.postName)
                     .replace("{1}", this.notification.data.title);
-                link = "/Forums/GoToNewestPost/" + this.notification.data.topicID;
+                link = "/Forums/Forum/GoToNewestPost/" + this.notification.data.topicID;
                 break;
             case "VoteUp":
                 markup = PopForums.localizations.voteUpNotification
                     .replace("{0}", this.notification.data.voterName)
                     .replace("{1}", this.notification.data.title);
+                link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
             default:
                 console.log(`Unknown notification type: ${this.notification.notificationType}`);
@@ -52,6 +53,10 @@ namespace PopForums {
         timeStamp.setAttribute("utctime", this.notification.timeStamp);
         let footer = this.querySelector(".card-footer");
         footer.append(timeStamp);
+
+        this.querySelector("a").addEventListener("click", (e) => {
+            
+        });
     }
 
 }
