@@ -23,7 +23,7 @@ public class NotificationManagerTests
 			var userID = 1;
 			var contextID = 2;
 			var notificationType = NotificationType.NewReply;
-			var data = new {A = 123, B = "xyz"};
+			var data = new {a = 123, b = "xyz"};
 			Notification result = null;
 			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1).Callback<Notification>(n => result = n);
 
@@ -49,25 +49,13 @@ public class NotificationManagerTests
 		}
 
 		[Fact]
-		public async Task UpdateNotCalledWithNullContext()
-		{
-			var manager = GetManager();
-			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1);
-
-			await manager.ProcessNotification(1, NotificationType.NewReply, null, new { });
-
-			_notificationRepository.Verify(x => x.UpdateNotification(It.IsAny<Notification>()), Times.Never);
-			_notificationRepository.Verify(x => x.CreateNotification(It.IsAny<Notification>()), Times.Once);
-		}
-
-		[Fact]
 		public async Task FieldsMapToCreate()
 		{
 			var manager = GetManager();
 			var userID = 1;
 			var contextID = 2;
 			var notificationType = NotificationType.NewReply;
-			var data = new { A = 123, B = "xyz" };
+			var data = new { a = 123, b = "xyz" };
 			Notification result = null;
 			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(0);
 			_notificationRepository.Setup(x => x.CreateNotification(It.IsAny<Notification>())).Callback<Notification>(n => result = n);
@@ -89,7 +77,7 @@ public class NotificationManagerTests
 			var userID = 1;
 			var contextID = 2;
 			var notificationType = NotificationType.NewReply;
-			var data = new { A = 123, B = "xyz" };
+			var data = new { a = 123, b = "xyz" };
 			Notification result = null;
 			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1);
 			_broker.Setup(x => x.NotifyUser(It.IsAny<Notification>())).Callback<Notification>(n => result = n);

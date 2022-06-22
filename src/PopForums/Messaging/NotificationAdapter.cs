@@ -64,6 +64,7 @@ public class NotificationAdapter : INotificationAdapter
 		{
 			Title = title
 		};
-		await _notificationManager.ProcessNotification(userID, NotificationType.Award, null, awardData, tenantID);
+		var sequentialContext = DateTime.UtcNow.Ticks;
+		await _notificationManager.ProcessNotification(userID, NotificationType.Award, sequentialContext, awardData, tenantID);
 	}
 }

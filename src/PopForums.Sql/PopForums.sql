@@ -915,7 +915,7 @@ CREATE TABLE [dbo].[pf_Notifications]
 (
 	[UserID] INT NOT NULL, 
     [NotificationType] INT NOT NULL, 
-    [ContextID] INT NULL, 
+    [ContextID] BIGINT NOT NULL, 
     [TimeStamp] DATETIME NOT NULL, 
     [IsRead] BIT NOT NULL, 
     [Data] NVARCHAR(MAX) NULL
