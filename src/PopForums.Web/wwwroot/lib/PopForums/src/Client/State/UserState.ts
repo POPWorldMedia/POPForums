@@ -29,6 +29,10 @@ export class UserState extends StateBase {
     async MarkRead(contextID: number, notificationType: number) : Promise<void> {
         await this.notificationService.MarkRead(contextID, notificationType);
     }
+
+    async MarkAllRead() : Promise<void> {
+        await this.notificationService.MarkAllRead();
+    }
 }
 
 }

@@ -37,9 +37,9 @@ namespace PopForums {
             default:
                 console.log(`Unknown notification type: ${this.notification.notificationType}`);
         }
-        let newness = "";
+        let newness = " border border-2";
         if (!this.notification.isRead)
-            newness = " text-bg-light border-primary";
+            newness = " text-bg-light border-primary border border-2";
         let template = `<div class="card mb-3${newness}">
     <div class="card-body">
         <p>${markup}</p>

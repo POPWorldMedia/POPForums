@@ -25,6 +25,12 @@ public class NotificationHub : Hub
 		await _notificationManager.MarkNotificationRead(userID, notificationTypeEnum, contextID);
 	}
 
+	public async void MarkAllRead()
+	{
+		var userID = GetUserID();
+		await _notificationManager.MarkAllRead(userID);
+	}
+
 	public async Task<List<Notification>> GetNotifications()
 	{
 		var userID = GetUserID();

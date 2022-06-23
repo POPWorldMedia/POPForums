@@ -33,6 +33,16 @@ namespace PopForums {
             await this.connection.invoke("MarkNotificationRead", contextID, notificationType);
         }
 
+        async MarkAllRead() : Promise<void> {
+            await this.connection.send("MarkAllRead");
+            let notifications = this.userState.notifications;
+            notifications.forEach(item => {
+                item.isRead = true;
+            });
+            this.userState.notificationCount = 0;
+            this.userState.notifications = notifications;
+        }
+
         private async getNotifications() {
             const response = await this.connection.invoke("GetNotifications");
             return response;
