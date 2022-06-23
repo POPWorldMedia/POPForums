@@ -82,6 +82,12 @@
 					<label class="form-check-label">@PopForums.Resources.SubscribeToList</label>
 				</div>
 			</div>
+			<div class="form-check">
+				<div class="offset-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" asp-for="IsAutoFollowOnReply" />
+					<label class="form-check-label">@PopForums.Resources.AutoFollow</label>
+				</div>
+			</div>
 			<div class="form-check" pf-validation-for="IsCoppa" pf-validationerror-class="has-error">
 				<div class="offset-2 col-sm-10">
 					<input class="form-check-input" type="checkbox" asp-for="IsCoppa" />

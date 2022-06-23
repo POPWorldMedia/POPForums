@@ -36,7 +36,8 @@ CREATE TABLE [dbo].[pf_Profile](
 	[ImageID] [int] NULL,
 	[HideVanity] [bit] NOT NULL DEFAULT ((0)),
 	[LastPostID] [int] NULL,
-	[Points] [int] NOT NULL DEFAULT (0)
+	[Points] [int] NOT NULL DEFAULT (0),
+	[IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1)
 );
 
 

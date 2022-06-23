@@ -76,7 +76,7 @@ public class SetupService : ISetupService
 
 		var user = await _userService.CreateUser(setupVariables.Name, setupVariables.Email, setupVariables.Password, true, "");
 		user.Roles = new List<string> {PermanentRoles.Admin, PermanentRoles.Moderator};
-		var profile = new Profile { UserID = user.UserID, IsTos = true, IsSubscribed = true, ShowDetails = true };
+		var profile = new Profile { UserID = user.UserID, IsTos = true, IsSubscribed = true, ShowDetails = true, IsAutoFollowOnReply = true };
 		await _profileService.Create(profile);
 		var edit = new UserEdit(user, profile);
 		await _userService.EditUser(user, edit, false, false, null, null, "", user);

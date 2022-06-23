@@ -10,6 +10,7 @@ public class SignupData
 	public bool IsCoppa { get; set; }
 	public bool IsTos { get; set; }
 	public string Token { get; set; }
+	public bool IsAutoFollowOnReply { get; set; }
 
 	public static string GetCoppaDate()
 	{

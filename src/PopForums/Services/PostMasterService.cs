@@ -79,6 +79,9 @@ public class PostMasterService : IPostMasterService
 		_broker.NotifyTopicUpdate(topic, forum, topicLink);
 		await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = false });
 		_topicViewCountService.SetViewedTopic(topic);
+		var profile = await  _profileRepository.GetProfile(user.UserID);
+		if (profile.IsAutoFollowOnReply)
+			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topicID);
 
 		var redirectLink = redirectLinkGenerator(topic);
 
@@ -170,6 +173,9 @@ public class PostMasterService : IPostMasterService
 			await _topicRepository.CloseTopic(topic.TopicID);
 		}
 		var redirectLink = redirectLinkGenerator(post);
+		var profile = await _profileRepository.GetProfile(user.UserID);
+		if (profile.IsAutoFollowOnReply)
+			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topic.TopicID);
 
 		return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 	}

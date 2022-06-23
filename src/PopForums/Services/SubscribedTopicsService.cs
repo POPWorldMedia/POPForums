@@ -4,7 +4,7 @@ namespace PopForums.Services;
 
 public interface ISubscribedTopicsService
 {
-	Task AddSubscribedTopic(User user, Topic topic);
+	Task AddSubscribedTopic(int userID, int topicID);
 	Task RemoveSubscribedTopic(User user, Topic topic);
 	Task TryRemoveSubscribedTopic(User user, Topic topic);
 	Task MarkSubscribedTopicViewed(User user, Topic topic);
@@ -28,9 +28,9 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 	private readonly ISettingsManager _settingsManager;
 	private readonly INotificationAdapter _notificationAdapter;
 
-	public async Task AddSubscribedTopic(User user, Topic topic)
+	public async Task AddSubscribedTopic(int userID, int topicID)
 	{
-		await _subscribedTopicsRepository.AddSubscribedTopic(user.UserID, topic.TopicID);
+		await _subscribedTopicsRepository.AddSubscribedTopic(userID, topicID);
 	}
 
 	public async Task RemoveSubscribedTopic(User user, Topic topic)

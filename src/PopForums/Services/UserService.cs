@@ -391,6 +391,7 @@ public class UserService : IUserService
 		profile.Instagram = userEdit.Instagram;
 		profile.Facebook = userEdit.Facebook;
 		profile.Twitter = userEdit.Twitter;
+		profile.IsAutoFollowOnReply = userEdit.IsAutoFollowOnReply;
 		if (removeAvatar)
 			profile.AvatarID = null;
 		if (removePhoto)
@@ -472,6 +473,7 @@ public class UserService : IUserService
 		profile.Instagram = userEditProfile.Instagram;
 		profile.Facebook = userEditProfile.Facebook;
 		profile.Twitter = userEditProfile.Twitter;
+		profile.IsAutoFollowOnReply = userEditProfile.IsAutoFollowOnReply;
 		await _profileRepository.Update(profile);
 	}
 

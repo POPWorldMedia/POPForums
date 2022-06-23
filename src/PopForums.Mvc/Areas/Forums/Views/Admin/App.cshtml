@@ -645,8 +645,8 @@
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" class="form-check-input" /> 
-				<label class="form-check-label" for="IsApproved">@PopForums.Resources.IsApproved</label>
+				<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="IsApproved"> @PopForums.Resources.IsApproved</label>
 			</div>
 		</div>
 
@@ -655,26 +655,32 @@
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="IsSubscribed" v-model="user.isSubscribed" class="form-check-input" /> 
-				<label class="form-check-label" for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
+				<input class="form-check-input" type="checkbox" id="IsSubscribed" v-model="user.isSubscribed" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="IsSubscribed"> @PopForums.Resources.SubscribeToList</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="ShowDetails" v-model="user.showDetails" class="form-check-input" /> 
-				<label class="form-check-label" for="ShowDetails">@PopForums.Resources.ShowProfileDetails</label>
+				<input class="form-check-input" type="checkbox" id="IsAutoFollowOnReply" v-model="user.isAutoFollowOnReply" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="IsAutoFollowOnReply"> @PopForums.Resources.AutoFollow</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="IsPlainText" v-model="user.isPlainText" class="form-check-input" /> 
-				<label class="form-check-label" for="IsPlainText">@PopForums.Resources.ForcePlainTextBox</label>
+				<input class="form-check-input" type="checkbox" id="ShowDetails" v-model="user.showDetails" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="ShowDetails"> @PopForums.Resources.ShowProfileDetails</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-2 col-10">
-				<input class="form-check-input" type="checkbox" id="HideVanity" v-model="user.hideVanity" class="form-check-input" /> 
-				<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
+				<input class="form-check-input" type="checkbox" id="IsPlainText" v-model="user.isPlainText" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="IsPlainText"> @PopForums.Resources.ForcePlainTextBox</label>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<div class="offset-2 col-10">
+				<input class="form-check-input" type="checkbox" id="HideVanity" v-model="user.hideVanity" class="form-check-input me-2" /> 
+				<label class="form-check-label" for="HideVanity"> @PopForums.Resources.HideVanity</label>
 			</div>
 		</div>
 
@@ -737,8 +743,8 @@
 		<div class="mb-3">
 			<div class="col-10 offset-2">
 				<template v-for="r in roles">
-					<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" class="form-check-input" /> 
-					<label :for="'rz' + r">{{r}}</label>
+					<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" class="form-check-input me-2" /> 
+					<label :for="'rz' + r"> {{r}}</label>
 					<br />
 				</template>
 			</div>

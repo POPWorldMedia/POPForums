@@ -19,4 +19,5 @@ public class Profile
 	public bool HideVanity { get; set; }
 	public int? LastPostID { get; set; }
 	public int Points { get; set; }
+	public bool IsAutoFollowOnReply { get; set; }
 }

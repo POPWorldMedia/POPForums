@@ -72,7 +72,7 @@ public class SubscriptionController : Controller
 			await _subService.RemoveSubscribedTopic(user, topic);
 			return Json(new BasicJsonMessage { Data = new { isSubscribed = false }, Result = true });
 		}
-		await _subService.AddSubscribedTopic(user, topic);
+		await _subService.AddSubscribedTopic(user.UserID, topic.TopicID);
 		return Json(new BasicJsonMessage { Data = new { isSubscribed = true }, Result = true });
 	}
 }

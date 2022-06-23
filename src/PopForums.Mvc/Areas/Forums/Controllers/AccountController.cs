@@ -54,7 +54,8 @@ public class AccountController : Controller
 		SetupCreateData();
 		var signupData = new SignupData
 		{
-			IsSubscribed = true
+			IsSubscribed = true,
+			IsAutoFollowOnReply = true
 		};
 		var loginState = _externalLoginTempService.Read();
 		if (loginState?.ResultData != null)

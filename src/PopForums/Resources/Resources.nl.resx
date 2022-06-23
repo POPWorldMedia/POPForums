@@ -1266,4 +1266,7 @@
   <data name="QuestionAnsweredNotification" xml:space="preserve">
 	  <value>&lt;b&gt;{0}&lt;/b&gt; koos voor een antwoord op de vraag: &lt;b&gt;{1}&lt;/b&gt;</value>
   </data>
+  <data name="AutoFollow" xml:space="preserve">
+	  <value>Volg automatisch onderwerpen waarop u reageert</value>
+  </data>
 </root>

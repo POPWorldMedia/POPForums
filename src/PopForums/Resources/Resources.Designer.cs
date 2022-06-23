@@ -250,6 +250,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string AutoFollow {
+            get {
+                return ResourceManager.GetString("AutoFollow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Avatar.
         /// </summary>
         public static string Avatar {
@@ -2384,7 +2393,7 @@ namespace PopForums {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;b&gt;{0}&lt;/b&gt; chose an answer for the question: &lt;b&gt;{1}&lt;/b&gt;.
         /// </summary>
         public static string QuestionAnsweredNotification {
             get {

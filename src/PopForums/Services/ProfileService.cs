@@ -58,7 +58,8 @@ public class ProfileService : IProfileService
 		{
 			UserID = user.UserID,
 			IsSubscribed = signupData.IsSubscribed,
-			IsTos = signupData.IsTos
+			IsTos = signupData.IsTos,
+			IsAutoFollowOnReply = signupData.IsAutoFollowOnReply
 		};
 		await _profileRepository.Create(profile);
 		return profile;

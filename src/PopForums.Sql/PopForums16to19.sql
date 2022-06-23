@@ -61,3 +61,10 @@ BEGIN
 		UserID, NotificationType, ContextID
 	);
 END
+
+
+
+IF COL_LENGTH('dbo.pf_Profile', 'IsAutoFollowOnReply') IS NULL
+BEGIN
+	ALTER TABLE pf_Profile ADD [IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1);
+END

@@ -22,7 +22,7 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
-		await service.AddSubscribedTopic(user, topic);
+		await service.AddSubscribedTopic(user.UserID, topic.TopicID);
 		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
 	}
 

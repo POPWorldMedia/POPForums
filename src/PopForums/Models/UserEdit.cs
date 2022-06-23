@@ -24,6 +24,7 @@ public class UserEdit
 		Roles = user.Roles.ToArray();
 		AvatarID = profile.AvatarID;
 		ImageID = profile.ImageID;
+		IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
 	}
 
 	public int UserID { get; set; }
@@ -48,4 +49,5 @@ public class UserEdit
 	public int? ImageID { get; set; }
 	public bool DeleteAvatar { get; set; }
 	public bool DeleteImage { get; set; }
+	public bool IsAutoFollowOnReply { get; set; }
 }
