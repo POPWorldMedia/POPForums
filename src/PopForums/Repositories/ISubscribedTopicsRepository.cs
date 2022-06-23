@@ -10,4 +10,5 @@ public interface ISubscribedTopicsRepository
 	Task RemoveSubscribedTopic(int userID, int topicID);
 	Task MarkSubscribedTopicViewed(int userID, int topicID);
 	Task MarkSubscribedTopicUnviewed(int topicID);
+	Task<List<int>> GetSubscribedUserIDs(int topicID);
 }

@@ -5,10 +5,14 @@ public class UserAwardServiceTests
 	public UserAwardService GetService()
 	{
 		_userAwardRepo = new Mock<IUserAwardRepository>();
-		return new UserAwardService(_userAwardRepo.Object);
+		_notificationTunnel = new Mock<INotificationTunnel>();
+		_tenantService = new Mock<ITenantService>();
+		return new UserAwardService(_userAwardRepo.Object, _notificationTunnel.Object, _tenantService.Object);
 	}
 
 	private Mock<IUserAwardRepository> _userAwardRepo;
+	private Mock<INotificationTunnel> _notificationTunnel;
+	private Mock<ITenantService> _tenantService;
 
 	[Fact]
 	public async Task IssueMapsFieldsToRepoCall()

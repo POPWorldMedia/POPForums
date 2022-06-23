@@ -14,6 +14,7 @@ public class PostServiceTests
 	private Mock<IUserService> _userService;
 	private Mock<ISearchIndexQueueRepository> _searchIndexQueue;
 	private Mock<ITenantService> _tenantService;
+	private Mock<INotificationAdapter> _notificationAdapter;
 
 	private PostService GetService()
 	{
@@ -29,8 +30,9 @@ public class PostServiceTests
 		_userService = new Mock<IUserService>();
 		_searchIndexQueue = new Mock<ISearchIndexQueueRepository>();
 		_tenantService = new Mock<ITenantService>();
+		_notificationAdapter = new Mock<INotificationAdapter>();
 		_settingsManager.Setup(s => s.Current).Returns(_settings.Object);
-		return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueue.Object, _tenantService.Object);
+		return new PostService(_postRepo.Object, _profileRepo.Object, _settingsManager.Object, _topicService.Object, _textParsingService.Object, _modLogService.Object, _forumService.Object, _eventPub.Object, _userService.Object, _searchIndexQueue.Object, _tenantService.Object, _notificationAdapter.Object);
 	}
 
 	[Fact]
@@ -468,6 +470,20 @@ public class PostServiceTests
 		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
 		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 		_eventPub.Verify(x => x.ProcessEvent(It.IsAny<string>(), voteUpUser, EventDefinitionService.StaticEventIDs.PostVote, false), Times.Once());
+	}
+
+	[Fact]
+	public async Task ToggleVoteCallsNotification()
+	{
+		var service = GetService();
+		var voteUpUser = new User { UserID = 777, Name = "Diana" };
+		var title = "the title";
+		_userService.Setup(x => x.GetUser(voteUpUser.UserID)).ReturnsAsync(voteUpUser);
+		_postRepo.Setup(x => x.GetVotes(It.IsAny<int>())).ReturnsAsync(new Dictionary<int, string>());
+
+		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456, Name = "Voter" }, "", "", title);
+
+		_notificationAdapter.Verify(x => x.Vote("Voter", title, 123, voteUpUser.UserID), Times.Once);
 	}
 
 	[Fact]

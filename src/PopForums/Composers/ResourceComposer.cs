@@ -15,7 +15,13 @@ public class ResourceComposer : IResourceComposer
 			OneMinuteAgo = Resources.OneMinuteAgo,
 			MinutesAgo = Resources.MinutesAgo,
 			TodayTime = Resources.TodayTime,
-			YesterdayTime = Resources.YesterdayTime
+			YesterdayTime = Resources.YesterdayTime,
+
+			Notifications = Resources.Notifications,
+			NewReplyNotification = Resources.NewReplyNotification,
+			Award = Resources.Award,
+			VoteUpNotification = Resources.VoteUpNotification,
+			QuestionAnsweredNotification = Resources.QuestionAnsweredNotification
 		};
 		return resources;
 	}

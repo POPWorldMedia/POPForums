@@ -22,6 +22,7 @@
 			@if (user != null)
 			{
 				<span class="p-2"><a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon-envelop"></span> <pf-pmcount></pf-pmcount></a></span>
+				<pf-notificationtoggle class="p-2" panelid="notificationBar"></pf-notificationtoggle>
 			}
 			<pf-searchnavform templateid="SearchNavTemplate" textboxid="query" dropdownid="SearchDropDown"></pf-searchnavform>
 		</div>
@@ -69,3 +70,13 @@
 		</div>
 	</nav>
 </div>
+
+@if (user != null)
+{
+	<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationBar">
+		<div class="offcanvas-body" id="NotificationList">
+			<pf-notificationmarkallbutton buttontext="Mark all read" buttonclass="btn btn-primary mb-3"></pf-notificationmarkallbutton>
+			<pf-notificationlist></pf-notificationlist>
+		</div>
+	</div>
+}

@@ -12,6 +12,7 @@ public class TopicServiceTests
 	private Mock<IUserRepository> _userRepo;
 	private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
 	private Mock<ITenantService> _tenantService;
+	private Mock<INotificationAdapter> _notificationAdapter;
 
 	private TopicService GetTopicService()
 	{
@@ -25,7 +26,8 @@ public class TopicServiceTests
 		_userRepo = new Mock<IUserRepository>();
 		_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
 		_tenantService = new Mock<ITenantService>();
-		return new TopicService(_topicRepo.Object, _postRepo.Object, _settingsManager.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _searchRepo.Object, _userRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object);
+		_notificationAdapter = new Mock<INotificationAdapter>();
+		return new TopicService(_topicRepo.Object, _postRepo.Object, _settingsManager.Object, _modService.Object, _forumService.Object, _eventPublisher.Object, _searchRepo.Object, _userRepo.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _notificationAdapter.Object);
 	}
 
 	private static User GetUser()
@@ -562,12 +564,15 @@ public class TopicServiceTests
 	public async Task SetAnswerCallsTopicRepoWithUpdatedValue()
 	{
 		var service = GetTopicService();
-		var user = new User { UserID = 123 };
-		var topic = new Topic { TopicID = 456, StartedByUserID = 123 };
-		var post = new Post { PostID = 789, TopicID = topic.TopicID };
+		var user = new User { UserID = 123, Name = "Dude" };
+		var topic = new Topic { TopicID = 456, StartedByUserID = 123, Title = "the title" };
+		var post = new Post { PostID = 789, TopicID = topic.TopicID, UserID = 777 };
 		_postRepo.Setup(x => x.Get(post.PostID)).ReturnsAsync(post);
+
 		await service.SetAnswer(user, topic, post, "", "");
+
 		_topicRepo.Verify(x => x.UpdateAnswerPostID(topic.TopicID, post.PostID), Times.Once());
+		_notificationAdapter.Verify(x => x.QuestionAnswer(user.Name, topic.Title, post.PostID, post.UserID), Times.Once);
 	}
 
 	[Fact]

@@ -51,4 +51,8 @@
 		<PackageReference Update="Microsoft.NETCore.App" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Messaging\Models\" />
+	</ItemGroup>
+
 </Project>

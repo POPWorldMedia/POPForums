@@ -14,6 +14,10 @@
 	display: none;
 }
 
+#ForumContainer #NotificationList .card-footer {
+    font-size: .8em;
+}
+
 #ForumContainer .activityFeedPoints {
 	font-size: 200%;
 	font-weight: bold;
@@ -56,7 +60,7 @@
 	text-align: center;
 }
 
-#ForumContainer .answerButton {
+#ForumContainer .answerButton, pf-notificationtoggle {
 	cursor: pointer;
 }
 

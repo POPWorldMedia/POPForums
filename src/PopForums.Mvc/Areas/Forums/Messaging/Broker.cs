@@ -75,4 +75,17 @@ public class Broker : IBroker
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, userID);
 		await _notificationHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
 	}
+
+	public async void NotifyUser(Notification notification)
+	{
+		var tenantID = _tenantService.GetTenant();
+		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
+		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+	}
+
+	public async void NotifyUser(Notification notification, string tenantID)
+	{
+		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
+		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+	}
 }

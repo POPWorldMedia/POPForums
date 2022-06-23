@@ -9,16 +9,22 @@ public interface IUserAwardService
 
 public class UserAwardService : IUserAwardService
 {
-	public UserAwardService(IUserAwardRepository userAwardRepository)
+	public UserAwardService(IUserAwardRepository userAwardRepository, INotificationTunnel notificationTunnel, ITenantService tenantService)
 	{
 		_userAwardRepository = userAwardRepository;
+		_notificationTunnel = notificationTunnel;
+		_tenantService = tenantService;
 	}
 
 	private readonly IUserAwardRepository _userAwardRepository;
+	private readonly INotificationTunnel _notificationTunnel;
+	private readonly ITenantService _tenantService;
 
 	public async Task IssueAward(User user, AwardDefinition awardDefinition)
 	{
 		await _userAwardRepository.IssueAward(user.UserID, awardDefinition.AwardDefinitionID, awardDefinition.Title, awardDefinition.Description, DateTime.UtcNow);
+		var tenantID = _tenantService.GetTenant();
+		_notificationTunnel.SendNotificationForUserAward(awardDefinition.Title, user.UserID, tenantID);
 	}
 
 	public async Task<bool> IsAwarded(User user, AwardDefinition awardDefinition)

@@ -5,13 +5,14 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
   },
   "PopForums": {
+    "WebAppUrlAndArea": "https://localhost:7090/Forums",
     "Database": {
-      "ConnectionString": "server=localhost;Database=popforums18;Trusted_Connection=True;TrustServerCertificate=True;"
+      "ConnectionString": "server=localhost;Database=popforums19;Trusted_Connection=True;TrustServerCertificate=True;"
     },
     "Search": {
       "Url": "http://localhost:9200",
       "Key": "99011A70D3D50D251B0A6141A97B40E7",
-      "Provider": "" 
+      "Provider": ""
     },
     "Queue": {
       "ConnectionString": "UseDevelopmentStorage=true"

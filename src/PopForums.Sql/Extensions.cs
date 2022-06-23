@@ -87,6 +87,7 @@ public static class Extensions
 		services.AddTransient<IUserRepository, UserRepository>();
 		services.AddTransient<IUserSessionRepository, UserSessionRepository>();
 		services.AddTransient<IServiceHeartbeatRepository, ServiceHeartbeatRepository>();
+		services.AddTransient<INotificationRepository, NotificationRepository>();
 	}
 
 	public static object GetObjectOrDbNull(this object value)

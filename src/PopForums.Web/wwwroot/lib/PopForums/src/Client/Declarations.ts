@@ -27,6 +27,10 @@ declare namespace bootstrap {
         enable(): void;
         disable(): void;
     }
+    class Offcanvas {
+        constructor(el: Element);
+        show(): void;
+    }
 }
 
 declare namespace signalR {

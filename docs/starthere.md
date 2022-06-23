@@ -75,7 +75,8 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 			"UseReCaptcha": true,
 			"SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
 			"SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
-		}
+		},
+		"WebAppUrlAndArea": "https://somehost/forums" // used only by Azure Functions to find endpoint of your web app
 	}
 }
 ```

@@ -911,6 +911,29 @@ CREATE CLUSTERED INDEX [IX_pf_TopicViewLog] ON [dbo].[pf_TopicViewLog]
 
 
 
+CREATE TABLE [dbo].[pf_Notifications]
+(
+	[UserID] INT NOT NULL, 
+    [NotificationType] INT NOT NULL, 
+    [ContextID] BIGINT NOT NULL, 
+    [TimeStamp] DATETIME NOT NULL, 
+    [IsRead] BIT NOT NULL, 
+    [Data] NVARCHAR(MAX) NULL
+);
+
+CREATE CLUSTERED INDEX [IX_pf_Notifications_UserID_TimeStamp] ON [dbo].[pf_Notifications]
+(
+	UserID, [TimeStamp] DESC
+);
+CREATE INDEX [IX_pf_Notifications_Context] ON [dbo].[pf_Notifications]
+(
+	UserID, NotificationType, ContextID
+);
+
+
+
+
+
 
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('an');
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('and');

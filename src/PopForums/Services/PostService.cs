@@ -23,7 +23,7 @@ public interface IPostService
 
 public class PostService : IPostService
 {
-	public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService)
+	public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, INotificationAdapter notificationAdapter)
 	{
 		_postRepository = postRepository;
 		_profileRepository = profileRepository;
@@ -36,6 +36,7 @@ public class PostService : IPostService
 		_userService = userService;
 		_searchIndexQueueRepository = searchIndexQueueRepository;
 		_tenantService = tenantService;
+		_notificationAdapter = notificationAdapter;
 	}
 
 	private readonly IPostRepository _postRepository;
@@ -49,6 +50,7 @@ public class PostService : IPostService
 	private readonly IUserService _userService;
 	private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 	private readonly ITenantService _tenantService;
+	private readonly INotificationAdapter _notificationAdapter;
 
 	public async Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, bool includeDeleted, int pageIndex)
 	{
@@ -255,6 +257,7 @@ public class PostService : IPostService
 				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
 				var message = string.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
 				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
+				await _notificationAdapter.Vote(user.Name, topicTitle, post.PostID, votedUpUser.UserID);
 			}
 			else
 			{

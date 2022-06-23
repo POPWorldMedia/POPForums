@@ -26,6 +26,7 @@ public class PopForumsAuthorizationMiddleware
 			{
 				foreach (var role in user.Roles)
 					identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsClaimType, role));
+				identity.AddClaim(new Claim(PopForumsAuthorizationDefaults.ForumsUserIDType, user.UserID.ToString()));
 				context.Items["PopForumsUser"] = user;
 				var profile = await profileService.GetProfile(user);
 				context.Items["PopForumsProfile"] = profile;
