@@ -4,7 +4,7 @@ namespace PopForums {
         userID: number;
         timeStamp: string;
         isRead: boolean;
-        notificationType: string;
+        notificationType: number;
         contextID: number;
         data: any;
     }

@@ -47,4 +47,10 @@ public class NotificationRepository : INotificationRepository
 			count = connection.QuerySingleAsync<int>("SELECT COUNT(*) FROM pf_Notifications WHERE UserID = @userID AND IsRead = 0", new { userID }));
 		return count.Result;
 	}
+
+	public async Task MarkAllRead(int userID)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("UPDATE pf_Notifications SET IsRead = 1 WHERE UserID = @userID", new { userID }));
+	}
 }

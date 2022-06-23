@@ -23,7 +23,7 @@ public class NotificationAdapterTests
 			var topicID = 123;
 			var userID = 456;
 			ReplyData replyData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>())).Callback<int, NotificationType, int?, dynamic>(((i, type, arg3, arg4) => replyData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>())).Callback<int, NotificationType, long, dynamic>(((i, type, arg3, arg4) => replyData = arg4));
 
 			await adapter.Reply(name, title, topicID, userID);
 
@@ -45,7 +45,7 @@ public class NotificationAdapterTests
 			var postID = 123;
 			var userID = 456;
 			VoteData voteData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.VoteUp, postID, It.IsAny<VoteData>())).Callback<int, NotificationType, int?, dynamic>(((i, type, arg3, arg4) => voteData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.VoteUp, postID, It.IsAny<VoteData>())).Callback<int, NotificationType, long, dynamic>(((i, type, arg3, arg4) => voteData = arg4));
 
 			await adapter.Vote(name, title, postID, userID);
 
@@ -67,7 +67,7 @@ public class NotificationAdapterTests
 			var postID = 123;
 			var userID = 456;
 			QuestionData questionData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.QuestionAnswered, postID, It.IsAny<QuestionData>())).Callback<int, NotificationType, int?, dynamic>(((i, type, arg3, arg4) => questionData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.QuestionAnswered, postID, It.IsAny<QuestionData>())).Callback<int, NotificationType, long, dynamic>(((i, type, arg3, arg4) => questionData = arg4));
 
 			await adapter.QuestionAnswer(askerName, title, postID, userID);
 
@@ -87,11 +87,11 @@ public class NotificationAdapterTests
 			var title = "The Award";
 			var userID = 456;
 			AwardData awardData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.Award, It.IsAny<int>(), It.IsAny<AwardData>(), null)).Callback<int, NotificationType, int, dynamic, string>(((i, type, arg3, arg4, arg5) => awardData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.Award, It.IsAny<long>(), It.IsAny<AwardData>(), null)).Callback<int, NotificationType, long, dynamic, string>(((i, type, arg3, arg4, arg5) => awardData = arg4));
 
 			await adapter.Award(title, userID);
 			
-			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.Award, It.IsAny<int>(), It.IsAny<AwardData>(), null), Times.Once);
+			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.Award, It.IsAny<long>(), It.IsAny<AwardData>(), null), Times.Once);
 			Assert.Equal(title, awardData.Title);
 		}
 	}

@@ -12,23 +12,23 @@ namespace PopForums {
         let markup: string;
         let link: string;
         switch (this.notification.notificationType) {
-            case "Award":
+            case 3: // Award
                 markup = `${PopForums.localizations.award}: <b>${this.notification.data.title}</b>`;
                 link = "/Forums/Account/ViewProfile/" + this.notification.userID + "#Awards";
                 break;
-            case "QuestionAnswered":
+            case 2: // QuestionAnswered
                 markup = PopForums.localizations.questionAnsweredNotification
                     .replace("{0}", this.notification.data.askerName)
                     .replace("{1}", this.notification.data.title);
                 link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
-            case "NewReply":
+            case 0: // NewReply
                 markup = PopForums.localizations.newReplyNotification
                     .replace("{0}", this.notification.data.postName)
                     .replace("{1}", this.notification.data.title);
                 link = "/Forums/Forum/GoToNewestPost/" + this.notification.data.topicID;
                 break;
-            case "VoteUp":
+            case 1: // VoteUp
                 markup = PopForums.localizations.voteUpNotification
                     .replace("{0}", this.notification.data.voterName)
                     .replace("{1}", this.notification.data.title);

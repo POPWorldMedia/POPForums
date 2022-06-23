@@ -7,6 +7,7 @@ public interface INotificationManager
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data, string tenantID);
 	Task<List<Notification>> GetNotifications(int userID);
 	Task<int> GetUnreadNotificationCount(int userID);
+	Task MarkAllRead(int userID);
 }
 
 public class NotificationManager : INotificationManager
@@ -61,5 +62,10 @@ public class NotificationManager : INotificationManager
 	public async Task<int> GetUnreadNotificationCount(int userID)
 	{
 		return await _notificationRepository.GetUnreadNotificationCount(userID);
+	}
+
+	public async Task MarkAllRead(int userID)
+	{
+		await _notificationRepository.MarkAllRead(userID);
 	}
 }

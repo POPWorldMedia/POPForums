@@ -9,13 +9,26 @@ public class NotificationHub : Hub
 		_notificationManager = notificationManager;
 	}
 
-	public async void MarkNotificationRead(long contextID, string notificationType)
+	private int GetUserID()
 	{
-		var notificationTypeEnum = Enum.Parse<NotificationType>(notificationType);
 		var userIDstring = Context.User?.Claims.Single(x => x.Type == PopForumsAuthorizationDefaults.ForumsUserIDType);
 		if (userIDstring == null)
 			throw new Exception("No forum user ID claim found in hub context of User");
 		var userID = Convert.ToInt32(userIDstring.Value);
+		return userID;
+	}
+
+	public async void MarkNotificationRead(long contextID, int notificationType)
+	{
+		var notificationTypeEnum = (NotificationType)notificationType;
+		var userID = GetUserID();
 		await _notificationManager.MarkNotificationRead(userID, notificationTypeEnum, contextID);
+	}
+
+	public async Task<List<Notification>> GetNotifications()
+	{
+		var userID = GetUserID();
+		var notifications = await _notificationManager.GetNotifications(userID);
+		return notifications;
 	}
 }
