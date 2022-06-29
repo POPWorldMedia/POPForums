@@ -1283,4 +1283,7 @@
   <data name="AutoFollow" xml:space="preserve">
 	  <value>Автоматично слідкуйте за темами, на які ви відповідаєте</value>
   </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>Позначити все як прочитане</value>
+  </data>
 </root>

@@ -1269,4 +1269,7 @@
   <data name="AutoFollow" xml:space="preserve">
 	  <value>Volg automatisch onderwerpen waarop u reageert</value>
   </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>Markeer alles als gelezen</value>
+  </data>
 </root>

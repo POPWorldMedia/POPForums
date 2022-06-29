@@ -1260,4 +1260,7 @@
   <data name="AutoFollow" xml:space="preserve">
 	  <value>自动关注您回复的主题</value>
   </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>标记所有已读</value>
+  </data>
 </root>

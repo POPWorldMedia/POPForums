@@ -250,7 +250,7 @@ namespace PopForums {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Automatically follow topics that you reply to.
         /// </summary>
         public static string AutoFollow {
             get {
@@ -1641,6 +1641,15 @@ namespace PopForums {
         public static string MarkAllForumsRead {
             get {
                 return ResourceManager.GetString("MarkAllForumsRead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string MarkAllRead {
+            get {
+                return ResourceManager.GetString("MarkAllRead", resourceCulture);
             }
         }
         

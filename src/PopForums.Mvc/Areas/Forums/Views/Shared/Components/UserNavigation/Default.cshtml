@@ -74,8 +74,11 @@
 @if (user != null)
 {
 	<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationBar">
+		<div class="offcanvas-header">
+			<pf-notificationmarkallbutton buttontext="@PopForums.Resources.MarkAllRead" buttonclass="btn btn-primary"></pf-notificationmarkallbutton>
+			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
 		<div class="offcanvas-body" id="NotificationList">
-			<pf-notificationmarkallbutton buttontext="Mark all read" buttonclass="btn btn-primary mb-3"></pf-notificationmarkallbutton>
 			<pf-notificationlist></pf-notificationlist>
 		</div>
 	</div>

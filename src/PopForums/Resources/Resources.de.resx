@@ -1267,4 +1267,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="AutoFollow" xml:space="preserve">
 	  <value>Folgen Sie automatisch Themen, auf die Sie antworten</value>
   </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>markiere alles Gelesene</value>
+  </data>
 </root>

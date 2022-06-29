@@ -182,7 +182,7 @@
     <value>Salida</value>
   </data>
   <data name="MarkAllForumsRead" xml:space="preserve">
-    <value>Marcar todos como leidos.</value>
+	  <value>Marcar todos como leidos</value>
   </data>
   <data name="MyBirthdayIsOnOrBefore" xml:space="preserve">
     <value>Mi cumpleaños es antes de {0}</value>
@@ -1282,5 +1282,8 @@
   </data>
   <data name="AutoFollow" xml:space="preserve">
 	  <value>Sigue automáticamente los temas a los que respondes</value>
+  </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>Marcar todo como leido</value>
   </data>
 </root>

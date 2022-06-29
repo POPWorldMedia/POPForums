@@ -1286,4 +1286,7 @@
   <data name="AutoFollow" xml:space="preserve">
 	  <value>Automatically follow topics that you reply to</value>
   </data>
+  <data name="MarkAllRead" xml:space="preserve">
+	  <value>Mark all read</value>
+  </data>
 </root>
