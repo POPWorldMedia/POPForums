@@ -9,9 +9,19 @@ namespace PopForums {
                 self.userState.newPmCount = pmCount;
             });
             this.connection.on("notify", function(data: any) {
-                self.userState.notificationCount++;
-                let n = Object.assign(new Notification(), data);
-                self.userState.notifications.unshift(n);
+                let notification = Object.assign(new Notification(), data);
+                let isExisting: boolean = false;
+                let list = self.userState.list.querySelectorAll("pf-notificationitem");
+                list.forEach(item => {
+                    let nitem = (item as NotificationItem).notification;
+                    if (nitem.contextID === notification.contextID && nitem.notificationType === notification.notificationType) {
+                        isExisting = true;
+                        item.remove();
+                    }
+                });
+                if (!isExisting)
+                    self.userState.notificationCount++;
+                self.userState.notifications.unshift(notification);
             });
             this.connection.start();
         }
@@ -40,7 +50,7 @@ namespace PopForums {
 
         async MarkAllRead() : Promise<void> {
             await this.connection.send("MarkAllRead");
-            var list = this.userState.list.querySelectorAll("pf-notificationitem");
+            let list = this.userState.list.querySelectorAll("pf-notificationitem");
             list.forEach(item => {
                 (item as NotificationItem).MarkRead();
             });

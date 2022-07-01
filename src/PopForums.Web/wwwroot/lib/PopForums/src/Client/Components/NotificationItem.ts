@@ -6,7 +6,7 @@ namespace PopForums {
         this.notification = notification;
     }
 
-    private notification: Notification;
+    notification: Notification;
 
     connectedCallback() {
         let markup: string;
@@ -64,6 +64,7 @@ namespace PopForums {
         if (box) {
             box.classList.remove("text-bg-light", "border-primary");
         }
+        this.notification.isRead = true;
     }
 
 }
