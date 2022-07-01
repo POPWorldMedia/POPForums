@@ -19,6 +19,11 @@ namespace PopForums {
         private userState: UserState;
         private connection: any;
 
+        async GetPageCount(): Promise<number> {
+            const response = await this.connection.invoke("GetPageCount");
+            return response as number;
+        }
+
         async LoadNotifications(): Promise<void> {
             const json = await this.getNotifications();
             let a = new Array<Notification>();
@@ -35,16 +40,14 @@ namespace PopForums {
 
         async MarkAllRead() : Promise<void> {
             await this.connection.send("MarkAllRead");
-            let notifications = this.userState.notifications;
-            notifications.forEach(item => {
-                item.isRead = true;
+            var list = this.userState.list.querySelectorAll("pf-notificationitem");
+            list.forEach(item => {
+                (item as NotificationItem).MarkRead();
             });
-            this.userState.notificationCount = 0;
-            this.userState.notifications = notifications;
         }
 
         private async getNotifications() {
-            const response = await this.connection.invoke("GetNotifications");
+            const response = await this.connection.invoke("GetNotifications", this.userState.currentNotificationIndex);
             return response;
         }
     }

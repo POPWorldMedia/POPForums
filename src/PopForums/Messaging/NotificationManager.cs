@@ -5,7 +5,8 @@ public interface INotificationManager
 	Task MarkNotificationRead(int userID, NotificationType notificationType, long contextID);
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data);
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data, string tenantID);
-	Task<List<Notification>> GetNotifications(int userID);
+	Task<List<Notification>> GetNotifications(int userID, int pageIndex);
+	Task<int> GetPageCount(int userID);
 	Task<int> GetUnreadNotificationCount(int userID);
 	Task MarkAllRead(int userID);
 }
@@ -14,6 +15,7 @@ public class NotificationManager : INotificationManager
 {
 	private readonly INotificationRepository _notificationRepository;
 	private readonly IBroker _broker;
+	private const int PageSize = 20;
 
 	public NotificationManager(INotificationRepository notificationRepository, IBroker broker)
 	{
@@ -54,9 +56,15 @@ public class NotificationManager : INotificationManager
 		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
 	}
 
-	public async Task<List<Notification>> GetNotifications(int userID)
+	public async Task<List<Notification>> GetNotifications(int userID, int pageIndex)
 	{
-		return await _notificationRepository.GetNotifications(userID);
+		var startRow = ((pageIndex - 1) * PageSize) + 1;
+		return await _notificationRepository.GetNotifications(userID, startRow, PageSize);
+	}
+
+	public async Task<int> GetPageCount(int userID)
+	{
+		return await _notificationRepository.GetPageCount(userID, PageSize);
 	}
 
 	public async Task<int> GetUnreadNotificationCount(int userID)

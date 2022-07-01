@@ -31,10 +31,17 @@ public class NotificationHub : Hub
 		await _notificationManager.MarkAllRead(userID);
 	}
 
-	public async Task<List<Notification>> GetNotifications()
+	public async Task<int> GetPageCount()
 	{
 		var userID = GetUserID();
-		var notifications = await _notificationManager.GetNotifications(userID);
+		var pageCount = await _notificationManager.GetPageCount(userID);
+		return pageCount;
+	}
+
+	public async Task<List<Notification>> GetNotifications(int pageIndex)
+	{
+		var userID = GetUserID();
+		var notifications = await _notificationManager.GetNotifications(userID, pageIndex);
 		return notifications;
 	}
 }

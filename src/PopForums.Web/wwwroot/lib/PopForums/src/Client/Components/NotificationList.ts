@@ -14,7 +14,10 @@ namespace PopForums {
     }
 
     updateUI(data: Array<Notification>): void {
-        this.replaceChildren();
+        if (!data || data.length === 0) {
+            this.replaceChildren();
+            return;
+        }
         data.forEach(item => {
             let n = new NotificationItem(item);
             this.append(n);

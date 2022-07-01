@@ -10,6 +10,10 @@ namespace PopForums {
         return this.getAttribute("panelid");
     }
     
+    get notificationlistid(): string {
+        return this.getAttribute("notificationlistid");
+    }
+    
     private userState: UserState;
     private isReady: boolean;
     private panel: HTMLElement;
@@ -28,6 +32,9 @@ namespace PopForums {
         this.panel = document.getElementById(this.panelid);
         this.offCanvas = new bootstrap.Offcanvas(this.panel);
         this.addEventListener("click", this.toggle);
+        let list = document.getElementById(this.notificationlistid);
+        this.userState.list = list;
+        list.addEventListener("scroll", this.userState.ScrollLoad);
     }
 
     private toggle() {

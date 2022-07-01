@@ -32,12 +32,40 @@ public class NotificationRepository : INotificationRepository
 			connection.ExecuteAsync("UPDATE pf_Notifications SET IsRead = 1 WHERE UserID = @userID AND NotificationType = @notificationType AND ContextID = @contextID", new { userID, notificationType, contextID }));
 	}
 
-	public async Task<List<Notification>> GetNotifications(int userID)
+	public async Task<List<Notification>> GetNotifications(int userID, int startRow, int pageSize)
 	{
+		var sql = @"DECLARE @Counter int
+SET @Counter = (@startRow + @pageSize - 1)
+
+SET ROWCOUNT @Counter;
+
+WITH Entries AS ( 
+SELECT ROW_NUMBER() OVER (ORDER BY [TimeStamp] DESC)
+AS Row, UserID, NotificationType, ContextID, [TimeStamp], IsRead, [Data]
+FROM pf_Notifications WHERE UserID = @userID )
+
+SELECT UserID, NotificationType, ContextID, [TimeStamp], IsRead, [Data]
+FROM Entries 
+WHERE Row between 
+@startRow and @startRow + @pageSize - 1
+
+SET ROWCOUNT 0";
 		Task<IEnumerable<Notification>> notifications = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			notifications = connection.QueryAsync<Notification>("SELECT * FROM pf_Notifications WHERE UserID = @userID ORDER BY TimeStamp DESC", new { userID }));
+			notifications = connection.QueryAsync<Notification>(sql, new { userID, startRow, pageSize }));
 		return notifications.Result.ToList();
+	}
+
+	public async Task<int> GetPageCount(int userID, int pageSize)
+	{
+		Task<double> count = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			count = connection.QuerySingleAsync<double>("SELECT COUNT(*) FROM pf_Notifications WHERE UserID = @userID", new { userID }));
+		var notificationCount = count.Result;
+		if (notificationCount <= pageSize)
+			return 1;
+		var pageCount = Math.Ceiling(notificationCount / pageSize);
+		return Convert.ToInt32(pageCount);
 	}
 
 	public async Task<int> GetUnreadNotificationCount(int userID)

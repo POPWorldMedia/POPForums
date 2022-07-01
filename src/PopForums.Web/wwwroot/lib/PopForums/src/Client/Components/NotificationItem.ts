@@ -59,6 +59,13 @@ namespace PopForums {
         });
     }
 
+    MarkRead() {
+        let box = this.querySelector(".card");
+        if (box) {
+            box.classList.remove("text-bg-light", "border-primary");
+        }
+    }
+
 }
 
 customElements.define('pf-notificationitem', NotificationItem);
