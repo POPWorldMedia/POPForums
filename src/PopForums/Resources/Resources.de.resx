@@ -1146,14 +1146,6 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="SettingsSaved" xml:space="preserve">
     <value>Einstellungen sichern</value>
   </data>
-  <data name="SubscribedEmailBody" xml:space="preserve">
-    <value>Eine oder mehre Anworten sind schon zu diesem Thema geschrieben und zwar bei  {0}:{5}{5}{1}{5}{2}{5}{5}Um weitere Anworten zu stoppen besuche den Link::{5}{3}{5}{5}{4}</value>
-    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
-  </data>
-  <data name="SubscribedEmailSubject" xml:space="preserve">
-    <value>Neue Anworten: {0}</value>
-    <comment>{0}=topic title</comment>
-  </data>
   <data name="TodayTime" xml:space="preserve">
     <value>Heute, {0}</value>
     <comment>{0} ist eine Zeit wie 1:43pm{0} is a time like 1:43pm</comment>

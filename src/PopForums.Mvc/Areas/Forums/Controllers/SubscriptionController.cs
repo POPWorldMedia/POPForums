@@ -37,18 +37,6 @@ public class SubscriptionController : Controller
 		return View(container);
 	}
 
-	public async Task<ViewResult> Unsubscribe(int topicID, int userID, string hash)
-	{
-		var container = new TopicUnsubscribeContainer { User = null, Topic = null };
-		container.User = await _userService.GetUser(userID);
-		container.Topic = await _topicService.Get(topicID);
-		var unsubscribeHash = _profileService.GetUnsubscribeHash(container.User);
-		if (unsubscribeHash != hash)
-			return View(container);
-		await _subService.TryRemoveSubscribedTopic(container.User, container.Topic);
-		return View(container);
-	}
-
 	[HttpPost]
 	public async Task<ActionResult> Unsubscribe(int id)
 	{

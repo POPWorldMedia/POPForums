@@ -1145,15 +1145,6 @@
   <data name="SettingsSaved" xml:space="preserve">
     <value>Instellingen opgeslagen</value>
   </data>
-  <data name="SubscribedEmailBody" xml:space="preserve">
-    <value>Een of meerdere reacties zijn gepost op bij de thread {0}:{5}{5}{1}{5}{2}{5}{5}
-	Als je geen notificaties meer wilt ontvangen, klik dan op de volgende link:{5}{3}{5}{5}{4}</value>
-    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
-  </data>
-  <data name="SubscribedEmailSubject" xml:space="preserve">
-    <value>Nieuwe reacties: {0}</value>
-    <comment>{0}=topic title</comment>
-  </data>
   <data name="TodayTime" xml:space="preserve">
     <value>Vandaag, {0}</value>
     <comment>{0} is a time like 1:43pm</comment>

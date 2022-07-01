@@ -1128,12 +1128,6 @@
   <data name="SettingsSaved" xml:space="preserve">
     <value>設定已儲存</value>
   </data>
-  <data name="SubscribedEmailBody" xml:space="preserve">
-    <value>一個或多個回應已發佈至下列線程{0} ： {5} {5} {1} {5} {2} {5} {5}要停止接收通知請訪問此連結： {5} {3} {5} {5} {4}</value>
-  </data>
-  <data name="SubscribedEmailSubject" xml:space="preserve">
-    <value>新回覆： {0}</value>
-  </data>
   <data name="TodayTime" xml:space="preserve">
     <value>今天， {0}</value>
   </data>

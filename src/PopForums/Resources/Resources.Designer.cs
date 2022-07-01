@@ -1645,7 +1645,7 @@ namespace PopForums {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Mark all read.
         /// </summary>
         public static string MarkAllRead {
             get {
@@ -2911,24 +2911,6 @@ namespace PopForums {
         public static string Subscribe {
             get {
                 return ResourceManager.GetString("Subscribe", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to One or more responses have been posted to the following thread on {0}:{5}{5}{1}{5}{2}{5}{5}To stop receiving notifications visit this link:{5}{3}{5}{5}{4}.
-        /// </summary>
-        public static string SubscribedEmailBody {
-            get {
-                return ResourceManager.GetString("SubscribedEmailBody", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New replies: {0}.
-        /// </summary>
-        public static string SubscribedEmailSubject {
-            get {
-                return ResourceManager.GetString("SubscribedEmailSubject", resourceCulture);
             }
         }
         

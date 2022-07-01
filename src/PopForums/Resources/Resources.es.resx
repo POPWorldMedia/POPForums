@@ -1145,14 +1145,6 @@
   <data name="SettingsSaved" xml:space="preserve">
     <value>Configuracion grabada</value>
   </data>
-  <data name="SubscribedEmailBody" xml:space="preserve">
-    <value>Una o mas respuestas han sido publicaas al siguiente hilo en {0}:{5}{5}{1}{5}{2}{5}{5} Para no recibir más notificaciones, visite este enlace:{5}{3}{5}{5}{4}</value>
-    <comment>{0}=name of forum, {1}=topic title, {2}=link, {3}=unsubscribe link, {4}=signature, {5}=new line</comment>
-  </data>
-  <data name="SubscribedEmailSubject" xml:space="preserve">
-    <value>Nuevas respuestas: {0}</value>
-    <comment>{0}=topic title</comment>
-  </data>
   <data name="TodayTime" xml:space="preserve">
     <value>Hoy, {0}</value>
     <comment>{0} is a time like 1:43pm</comment>
