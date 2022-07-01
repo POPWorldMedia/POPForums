@@ -46,7 +46,8 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 		new Thread(async () => {
 			// new notifications
 			var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
-			foreach (var userID in userIDs)
+			var filteredUserIDs = userIDs.Where(x => x != postingUser.UserID);
+			foreach (var userID in filteredUserIDs)
 				await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID);
 		}).Start();
 	}
