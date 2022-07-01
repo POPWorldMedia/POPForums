@@ -631,12 +631,15 @@ REFERENCES [dbo].[pf_Topic] ([TopicID])
 ON DELETE CASCADE;
 
 
-CREATE CLUSTERED INDEX [IX_pf_SubscribeTopic_TopicID_UserID] ON [dbo].[pf_SubscribeTopic] 
+CREATE UNIQUE CLUSTERED INDEX [IX_pf_SubscribeTopic_UserID_TopicID] ON [dbo].[pf_SubscribeTopic] 
 (
 	[TopicID] ASC,
 	[UserID] ASC
 );
-
+CREATE INDEX [IX_pf_SubscribeTopic_UserID] ON [dbo].[pf_SubscribeTopic] 
+(
+	[UserID] ASC
+);
 
 
 

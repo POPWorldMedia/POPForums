@@ -75,3 +75,26 @@ IF COL_LENGTH('dbo.pf_SubscribeTopic', 'IsViewed') IS NOT NULL
 BEGIN
 	ALTER TABLE pf_SubscribeTopic DROP COLUMN IsViewed;
 END
+
+
+
+
+IF INDEXPROPERTY(Object_Id('pf_SubscribeTopic'), 'IX_pf_SubscribeTopic_TopicID_UserID', 'IndexID') IS NOT NULL
+BEGIN
+	DROP INDEX [IX_pf_SubscribeTopic_TopicID_UserID] ON [dbo].[pf_SubscribeTopic];
+END
+IF INDEXPROPERTY(Object_Id('pf_SubscribeTopic'), 'IX_pf_SubscribeTopic_UserID_TopicID', 'IndexID') IS NULL
+BEGIN
+	CREATE UNIQUE CLUSTERED INDEX [IX_pf_SubscribeTopic_UserID_TopicID] ON [dbo].[pf_SubscribeTopic] 
+	(
+		[TopicID] ASC,
+		[UserID] ASC
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_SubscribeTopic'), 'IX_pf_SubscribeTopic_UserID', 'IndexID') IS NULL
+BEGIN
+	CREATE INDEX [IX_pf_SubscribeTopic_UserID] ON [dbo].[pf_SubscribeTopic] 
+	(
+		[UserID] ASC
+	);
+END

@@ -20,8 +20,24 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
+		_mockSubRepo.Setup(x => x.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(false);
+
 		await service.AddSubscribedTopic(user.UserID, topic.TopicID);
-		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
+
+		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once);
+	}
+
+	[Fact]
+	public async Task DoNotAddSubTopicIfAlreadySub()
+	{
+		var service = GetService();
+		var user = new User { UserID = 123 };
+		var topic = new Topic { TopicID = 456 };
+		_mockSubRepo.Setup(x => x.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(true);
+
+		await service.AddSubscribedTopic(user.UserID, topic.TopicID);
+
+		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Never);
 	}
 
 	[Fact]

@@ -25,7 +25,9 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 
 	public async Task AddSubscribedTopic(int userID, int topicID)
 	{
-		await _subscribedTopicsRepository.AddSubscribedTopic(userID, topicID);
+		var isSubscribed = await _subscribedTopicsRepository.IsTopicSubscribed(userID, topicID);
+		if (!isSubscribed)
+			await _subscribedTopicsRepository.AddSubscribedTopic(userID, topicID);
 	}
 
 	public async Task RemoveSubscribedTopic(User user, Topic topic)
