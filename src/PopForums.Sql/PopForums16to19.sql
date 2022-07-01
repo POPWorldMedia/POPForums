@@ -68,3 +68,10 @@ IF COL_LENGTH('dbo.pf_Profile', 'IsAutoFollowOnReply') IS NULL
 BEGIN
 	ALTER TABLE pf_Profile ADD [IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1);
 END
+
+
+
+IF COL_LENGTH('dbo.pf_SubscribeTopic', 'IsViewed') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_SubscribeTopic DROP COLUMN IsViewed;
+END

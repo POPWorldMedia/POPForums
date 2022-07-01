@@ -1,30 +1,25 @@
-﻿using PopForums.Models;
-
-namespace PopForums.Services;
+﻿namespace PopForums.Services;
 
 public interface ISubscribedTopicsService
 {
 	Task AddSubscribedTopic(int userID, int topicID);
 	Task RemoveSubscribedTopic(User user, Topic topic);
 	Task TryRemoveSubscribedTopic(User user, Topic topic);
-	Task MarkSubscribedTopicViewed(User user, Topic topic);
-	Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator);
+	Task NotifySubscribers(Topic topic, User postingUser);
 	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
 	Task<bool> IsTopicSubscribed(int userID, int topicID);
 }
 
 public class SubscribedTopicsService : ISubscribedTopicsService
 {
-	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISubscribedTopicEmailComposer subscribedTopicEmailComposer, ISettingsManager settingsManager, INotificationAdapter notificationAdapter)
+	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISettingsManager settingsManager, INotificationAdapter notificationAdapter)
 	{
 		_subscribedTopicsRepository = subscribedTopicsRepository;
-		_subscribedTopicEmailComposer = subscribedTopicEmailComposer;
 		_settingsManager = settingsManager;
 		_notificationAdapter = notificationAdapter;
 	}
 
 	private readonly ISubscribedTopicsRepository _subscribedTopicsRepository;
-	private readonly ISubscribedTopicEmailComposer _subscribedTopicEmailComposer;
 	private readonly ISettingsManager _settingsManager;
 	private readonly INotificationAdapter _notificationAdapter;
 
@@ -44,32 +39,15 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 			await RemoveSubscribedTopic(user, topic);
 	}
 
-	public async Task MarkSubscribedTopicViewed(User user, Topic topic)
-	{
-		if (user == null || topic == null)
-			return;
-		await _subscribedTopicsRepository.MarkSubscribedTopicViewed(user.UserID, topic.TopicID);
-	}
-
+	// TODO: there has to be a better way than this
 #pragma warning disable 1998
-	public async Task NotifySubscribers(Topic topic, User postingUser, string topicLink, Func<User, Topic, string> unsubscribeLinkGenerator)
+	public async Task NotifySubscribers(Topic topic, User postingUser)
 	{
 		new Thread(async () => {
-			// old emails
-			var users = await _subscribedTopicsRepository.GetSubscribedUsersThatHaveViewed(topic.TopicID);
-			foreach (var user in users)
-			{
-				if (user.UserID != postingUser.UserID)
-				{
-					var unsubScribeLink = unsubscribeLinkGenerator(user, topic);
-					await _subscribedTopicEmailComposer.ComposeAndQueue(topic, user, topicLink, unsubScribeLink);
-				}
-			}
 			// new notifications
 			var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
 			foreach (var userID in userIDs)
 				await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID);
-			await _subscribedTopicsRepository.MarkSubscribedTopicUnviewed(topic.TopicID);
 		}).Start();
 	}
 #pragma warning restore 1998

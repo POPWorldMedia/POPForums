@@ -3,17 +3,15 @@
 public class SubscribedTopicsServiceTests
 {
 	private Mock<ISubscribedTopicsRepository> _mockSubRepo;
-	private Mock<ISubscribedTopicEmailComposer> _mockSubTopicEmail;
 	private Mock<ISettingsManager> _mockSettingsManager;
 	private Mock<INotificationAdapter> _mockNotificationAdapter;
 
 	private SubscribedTopicsService GetService()
 	{
 		_mockSubRepo = new Mock<ISubscribedTopicsRepository>();
-		_mockSubTopicEmail = new Mock<ISubscribedTopicEmailComposer>();
 		_mockSettingsManager = new Mock<ISettingsManager>();
 		_mockNotificationAdapter = new Mock<INotificationAdapter>();
-		return new SubscribedTopicsService(_mockSubRepo.Object, _mockSubTopicEmail.Object, _mockSettingsManager.Object, _mockNotificationAdapter.Object);
+		return new SubscribedTopicsService(_mockSubRepo.Object, _mockSettingsManager.Object, _mockNotificationAdapter.Object);
 	}
 
 	[Fact]
@@ -62,44 +60,6 @@ public class SubscribedTopicsServiceTests
 		var topic = new Topic { TopicID = 456 };
 		await service.TryRemoveSubscribedTopic(null, topic);
 		_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-	}
-
-	[Fact]
-	public async Task MarkSubNullUser()
-	{
-		var service = GetService();
-		var topic = new Topic { TopicID = 456 };
-		await service.MarkSubscribedTopicViewed(null, topic);
-		_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-	}
-
-	[Fact]
-	public async Task MarkSubNullTopic()
-	{
-		var service = GetService();
-		var user = new User { UserID = 123 };
-		await service.MarkSubscribedTopicViewed(user, null);
-		_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-	}
-
-	[Fact]
-	public async Task MarkSubNotSub()
-	{
-		var service = GetService();
-		_mockSubRepo.Setup(s => s.IsTopicSubscribed(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(false);
-		await service.MarkSubscribedTopicViewed(It.IsAny<User>(), It.IsAny<Topic>());
-		_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
-	}
-
-	[Fact]
-	public async Task MarkSubIsSub()
-	{
-		var service = GetService();
-		var user = new User { UserID = 123 };
-		var topic = new Topic { TopicID = 456 };
-		_mockSubRepo.Setup(s => s.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(true);
-		await service.MarkSubscribedTopicViewed(user, topic);
-		_mockSubRepo.Verify(s => s.MarkSubscribedTopicViewed(user.UserID, topic.TopicID), Times.Once());
 	}
 		
 	[Fact]

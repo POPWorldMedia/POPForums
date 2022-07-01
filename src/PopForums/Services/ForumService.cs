@@ -238,8 +238,6 @@ public class ForumService : IForumService
 			Posts = topicContainer.Posts,
 			PagerContext = topicContainer.PagerContext,
 			PermissionContext = topicContainer.PermissionContext,
-			IsSubscribed = topicContainer.IsSubscribed,
-			IsFavorite = topicContainer.IsFavorite,
 			Signatures = topicContainer.Signatures,
 			Avatars = topicContainer.Avatars,
 			VotedPostIDs = topicContainer.VotedPostIDs,

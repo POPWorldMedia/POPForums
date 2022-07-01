@@ -19,7 +19,6 @@ public static class ServiceCollections
 		services.AddTransient<IMailingListComposer, MailingListComposer>();
 		services.AddTransient<INewAccountMailer, NewAccountMailer>();
 		services.AddTransient<ISmtpWrapper, SmtpWrapper>();
-		services.AddTransient<ISubscribedTopicEmailComposer, SubscribedTopicEmailComposer>();
 		services.AddTransient<IUserEmailer, UserEmailer>();
 
 		// external auth?

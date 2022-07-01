@@ -1,5 +1,4 @@
 ﻿using PopForums.Composers;
-using PopForums.Models;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
@@ -7,16 +6,14 @@ namespace PopForums.Mvc.Areas.Forums.Controllers;
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ForumController : Controller
 {
-	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ISubscribedTopicsService subService, ILastReadService lastReadService, IFavoriteTopicService favoriteTopicService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer, IForumStateComposer forumStateComposer)
+	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ILastReadService lastReadService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer, IForumStateComposer forumStateComposer)
 	{
 		_settingsManager = settingsManager;
 		_forumService = forumService;
 		_topicService = topicService;
 		_postService = postService;
 		_topicViewCountService = topicViewCountService;
-		_subService = subService;
 		_lastReadService = lastReadService;
-		_favoriteTopicService = favoriteTopicService;
 		_profileService = profileService;
 		_userRetrievalShim = userRetrievalShim;
 		_topicViewLogService = topicViewLogService;
@@ -33,9 +30,7 @@ public class ForumController : Controller
 	private readonly ITopicService _topicService;
 	private readonly IPostService _postService;
 	private readonly ITopicViewCountService _topicViewCountService;
-	private readonly ISubscribedTopicsService _subService;
 	private readonly ILastReadService _lastReadService;
-	private readonly IFavoriteTopicService _favoriteTopicService;
 	private readonly IProfileService _profileService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly ITopicViewLogService _topicViewLogService;
@@ -158,15 +153,10 @@ public class ForumController : Controller
 		}
 
 		PagerContext pagerContext = null;
-		var isSubscribed = false;
-		var isFavorite = false;
 		DateTime? lastReadTime = DateTime.UtcNow;
 		if (user != null)
 		{
 			lastReadTime = await _lastReadService.GetLastReadTime(user, topic);
-			isSubscribed = await _subService.IsTopicSubscribed(user.UserID, topic.TopicID);
-			if (isSubscribed)
-				await _subService.MarkSubscribedTopicViewed(user, topic);
 			if (!adapter.IsAdapterEnabled || (adapter.IsAdapterEnabled && adapter.ForumAdapter.MarkViewedTopicRead))
 				await _lastReadService.MarkTopicRead(user, topic);
 			if (user.IsInRole(PermanentRoles.Moderator))
@@ -194,7 +184,7 @@ public class ForumController : Controller
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, isSubscribed, posts, pagerContext, isFavorite, signatures, avatars, votedIDs, lastReadTime);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime);
 		await _topicViewCountService.ProcessView(topic);
 		await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
 		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
@@ -242,7 +232,7 @@ public class ForumController : Controller
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime);
 		await _topicViewCountService.ProcessView(topic);
 		ViewBag.Low = low;
 		ViewBag.High = high;
@@ -293,12 +283,11 @@ public class ForumController : Controller
 		var user = _userRetrievalShim.GetUser();
 		var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
 		string TopicLinkGenerator(Topic t) => this.FullUrlHelper("GoToNewestPost", Name, new { id = t.TopicID });
-		string UnsubscribeLinkGenerator(User u, Topic t) => this.FullUrlHelper("Unsubscribe", SubscriptionController.Name, new {topicID = t.TopicID, userID = user.UserID, hash = _profileService.GetUnsubscribeHash(user)});
 		string PostLinkGenerator(Post p) => Url.Action("PostLink", "Forum", new {id = p.PostID});
 		string RedirectLinkGenerator(Post p) => Url.RouteUrl(new {controller = "Forum", action = "PostLink", id = p.PostID});
-		var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-		var result = await _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, UnsubscribeLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
+		var result = await _postMasterService.PostReply(user, newPost.ParentPostID, ip, false, newPost, DateTime.UtcNow, TopicLinkGenerator, userProfileUrl, PostLinkGenerator, RedirectLinkGenerator);
 
 		return Json(new BasicJsonMessage { Result = result.IsSuccessful, Redirect = result.Redirect, Message = result.Message });
 	}
@@ -474,7 +463,7 @@ public class ForumController : Controller
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, false, posts, pagerContext, false, signatures, avatars, votedIDs, lastReadTime);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime);
 		ViewBag.Low = lowPage;
 		ViewBag.High = pagerContext.PageCount;
 		return View("TopicPage", container);
@@ -522,9 +511,9 @@ public class ForumController : Controller
 		return Content(result, "text/html");
 	}
 
-	private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, bool isSubscribed, List<Post> posts, PagerContext pagerContext, bool isFavorite, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs, DateTime? lastreadTime)
+	private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, List<Post> posts, PagerContext pagerContext, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs, DateTime? lastreadTime)
 	{
-		return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, IsSubscribed = isSubscribed, IsFavorite = isFavorite, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime };
+		return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime };
 	}
 
 	public class SetAnswerModel

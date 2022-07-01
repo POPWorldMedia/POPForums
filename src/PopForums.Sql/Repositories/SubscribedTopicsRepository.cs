@@ -47,14 +47,6 @@ SET ROWCOUNT 0";
 		return await count;
 	}
 
-	public async Task<List<User>> GetSubscribedUsersThatHaveViewed(int topicID)
-	{
-		Task<IEnumerable<User>> list = null;
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			list = connection.QueryAsync<User>("SELECT " + UserRepository.PopForumsUserColumns + " FROM pf_PopForumsUser JOIN pf_SubscribeTopic ON pf_PopForumsUser.UserID = pf_SubscribeTopic.UserID WHERE TopicID = @TopicID AND IsViewed = 1", new { TopicID = topicID }));
-		return list.Result.ToList();
-	}
-
 	public async Task<List<int>> GetSubscribedUserIDs(int topicID)
 	{
 		Task<IEnumerable<int>> list = null;
@@ -74,24 +66,12 @@ SET ROWCOUNT 0";
 	public async Task AddSubscribedTopic(int userID, int topicID)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("INSERT INTO pf_SubscribeTopic (UserID, TopicID, IsViewed) VALUES (@UserID, @TopicID, 1)", new { UserID = userID, TopicID = topicID }));
+			connection.ExecuteAsync("INSERT INTO pf_SubscribeTopic (UserID, TopicID) VALUES (@UserID, @TopicID)", new { UserID = userID, TopicID = topicID }));
 	}
 
 	public async Task RemoveSubscribedTopic(int userID, int topicID)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("DELETE FROM pf_SubscribeTopic WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
-	}
-
-	public async Task MarkSubscribedTopicViewed(int userID, int topicID)
-	{
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("UPDATE pf_SubscribeTopic SET IsViewed = 1 WHERE UserID = @UserID AND TopicID = @TopicID", new { UserID = userID, TopicID = topicID }));
-	}
-
-	public async Task MarkSubscribedTopicUnviewed(int topicID)
-	{
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("UPDATE pf_SubscribeTopic SET IsViewed = 0 WHERE TopicID = @TopicID", new { TopicID = topicID }));
 	}
 }

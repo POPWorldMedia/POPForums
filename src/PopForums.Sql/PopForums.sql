@@ -617,8 +617,7 @@ CREATE NONCLUSTERED INDEX [IX_pf_Favorite_TopicID] ON [dbo].[pf_Favorite]
 
 CREATE TABLE [dbo].[pf_SubscribeTopic](
 	[UserID] [int] NOT NULL,
-	[TopicID] [int] NOT NULL,
-	[IsViewed] [bit] NOT NULL
+	[TopicID] [int] NOT NULL
 );
 
 

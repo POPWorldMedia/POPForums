@@ -424,7 +424,7 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 
-			var result = await service.PostReply(null, 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+			var result = await service.PostReply(null, 0, "", false, new NewPost(), DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 		}
@@ -435,7 +435,7 @@ public class PostMasterServiceTests
 			var service = GetService();
 			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Topic) null);
 
-			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(Resources.TopicNotExist, result.Message);
@@ -448,7 +448,7 @@ public class PostMasterServiceTests
 			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(new Topic());
 			_forumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
 
-			await Assert.ThrowsAsync<Exception>(async () => await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => ""));
+			await Assert.ThrowsAsync<Exception>(async () => await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, (t) => "", "", x => "", x => ""));
 		}
 
 		[Fact]
@@ -463,7 +463,7 @@ public class PostMasterServiceTests
 			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext {UserCanView = false, UserCanPost = true});
 
-			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(Resources.ForumNoView, result.Message);
@@ -481,7 +481,7 @@ public class PostMasterServiceTests
 			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
 			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanView = true, UserCanPost = false });
 
-			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(Resources.ForumNoPost, result.Message);
@@ -493,7 +493,7 @@ public class PostMasterServiceTests
 			var service = GetService();
 			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(new Topic{IsClosed = true});
 
-			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, x => "", (u, t) => "", "", x => "", x => "");
+			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue,(t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(Resources.Closed, result.Message);
@@ -516,7 +516,7 @@ public class PostMasterServiceTests
 			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 		}
@@ -538,7 +538,7 @@ public class PostMasterServiceTests
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 		}
@@ -561,7 +561,7 @@ public class PostMasterServiceTests
 			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
@@ -585,7 +585,7 @@ public class PostMasterServiceTests
 			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(string.Format(Resources.PostWait, 9), result.Message);
@@ -608,7 +608,7 @@ public class PostMasterServiceTests
 			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
-			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal(Resources.PostEmpty, result.Message);
@@ -631,7 +631,7 @@ public class PostMasterServiceTests
 			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
 
 			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
 		}
@@ -652,9 +652,9 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, It.IsAny<string>(), It.IsAny<Func<User, Topic, string>>()), Times.Once());
+			_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user), Times.Once());
 		}
 
 		[Fact]
@@ -674,7 +674,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(profile);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_subscribedTopicsService.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once);
 		}
@@ -695,7 +695,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t,p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_topicRepo.Verify(t => t.IncrementReplyCount(1));
 		}
@@ -716,7 +716,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_forumRepo.Verify(f => f.IncrementPostCount(2));
 		}
@@ -737,7 +737,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_topicRepo.Verify(t => t.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime));
 		}
@@ -758,7 +758,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_forumRepo.Verify(f => f.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name));
 		}
@@ -780,7 +780,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,(t) => "", "", x => "", x => "");
 
 			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
 		}
@@ -803,7 +803,7 @@ public class PostMasterServiceTests
 			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_broker.Verify(x => x.NotifyForumUpdate(forum), Times.Once());
 			_broker.Verify(x => x.NotifyTopicUpdate(topic, forum, It.IsAny<string>()), Times.Once());
@@ -826,7 +826,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_profileRepo.Verify(p => p.SetLastPostID(user.UserID, result.Data.PostID), Times.Once);
 		}
@@ -847,7 +847,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
 
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false), Times.Once());
 		}
@@ -868,7 +868,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
 		}
@@ -891,7 +891,7 @@ public class PostMasterServiceTests
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
-			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, x => "", (t, p) => "", "", x => "", x => "");
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			Assert.Equal(topic.TopicID, result.Data.TopicID);
 			Assert.Equal("parsed text", result.Data.FullText);

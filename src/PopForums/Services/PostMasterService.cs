@@ -4,7 +4,7 @@ public interface IPostMasterService
 {
 	Task<BasicServiceResponse<Post>> EditPost(int postID, PostEdit postEdit, User editingUser, Func<Post, string> redirectLinkGenerator);
 	Task<BasicServiceResponse<Topic>> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator);
-	Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
+	Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator);
 }
 
 public class PostMasterService : IPostMasterService
@@ -98,7 +98,7 @@ public class PostMasterService : IPostMasterService
 		return new BasicServiceResponse<Post> { Data = null, Message = message, Redirect = null, IsSuccessful = false };
 	}
 
-	public async Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, Func<User, Topic, string> unsubscribeLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator)
+	public async Task<BasicServiceResponse<Post>> PostReply(User user, int parentPostID, string ip, bool isFirstInTopic, NewPost newPost, DateTime postTime, Func<Topic, string> topicLinkGenerator, string userUrl, Func<Post, string> postLinkGenerator, Func<Post, string> redirectLinkGenerator)
 	{
 		if (user == null)
 			return GetReplyFailMessage(Resources.LoginToPost);
@@ -154,8 +154,7 @@ public class PostMasterService : IPostMasterService
 		await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 		await _profileRepository.SetLastPostID(user.UserID, postID);
 		var topicLink = topicLinkGenerator(topic);
-		if (unsubscribeLinkGenerator != null)
-			await _subscribedTopicsService.NotifySubscribers(topic, user, topicLink, unsubscribeLinkGenerator);
+		await _subscribedTopicsService.NotifySubscribers(topic, user);
 		// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
 		var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 		var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;

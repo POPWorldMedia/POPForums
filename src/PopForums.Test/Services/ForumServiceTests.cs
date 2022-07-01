@@ -1,6 +1,4 @@
-﻿using PopForums.Mvc.Areas.Forums.Models;
-
-namespace PopForums.Test.Services;
+﻿namespace PopForums.Test.Services;
 
 public class ForumServiceTests
 {
@@ -498,8 +496,6 @@ public class ForumServiceTests
 			Posts = new List<Post> {new Post { PostID = 123, IsFirstInTopic = true }},
 			PagerContext = new PagerContext(),
 			PermissionContext = new ForumPermissionContext(),
-			IsSubscribed = true,
-			IsFavorite = true,
 			Signatures = new Dictionary<int, string>(),
 			Avatars = new Dictionary<int, int>(),
 			VotedPostIDs = new List<int>(),
@@ -512,8 +508,6 @@ public class ForumServiceTests
 		Assert.Same(topicContainer.Posts, result.Posts);
 		Assert.Same(topicContainer.PagerContext, result.PagerContext);
 		Assert.Same(topicContainer.PermissionContext, result.PermissionContext);
-		Assert.True(topicContainer.IsSubscribed);
-		Assert.True(topicContainer.IsFavorite);
 		Assert.Same(topicContainer.Signatures, result.Signatures);
 		Assert.Same(topicContainer.Avatars, result.Avatars);
 		Assert.Same(topicContainer.VotedPostIDs, result.VotedPostIDs);
