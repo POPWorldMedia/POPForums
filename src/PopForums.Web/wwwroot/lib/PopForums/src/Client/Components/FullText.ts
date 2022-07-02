@@ -68,7 +68,41 @@ namespace PopForums {
               editor.save();
               self.value = (self.textBox as HTMLInputElement).value;
               (self.externalFormElement as any).value = self.value;
-            })
+            });
+            
+            function InstantImageUpload() {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+            
+                input.addEventListener('change', (e) => {
+                const file = input.files[0];
+                let url = "/Forums/Image/UploadPostImage";
+                let form = new FormData();
+                form.append("file", file);
+                fetch(url, {
+                    method: "POST",
+                    body: form
+                })
+                    .then(response => {
+                        return response.text();
+                    })
+                    .then(url => {
+                        editor.insertContent(`<img src="${url}" />`) ;
+                    })
+                    .catch(error => {
+                        alert("Could not upload image");
+                    });
+                });
+                input.click();
+            };
+
+            editor.ui.registry.addButton('imageup', {
+                icon: 'upload',
+                tooltip: 'Upload Image',
+                onAction: () => InstantImageUpload()
+            });
+
         };
         tinymce.init(this.editorSettings);
         this.externalFormElement = document.createElement("input") as HTMLInputElement;
@@ -103,7 +137,6 @@ namespace PopForums {
             }
         }
     }
-
     
     private static editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
     private static postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
@@ -112,7 +145,7 @@ namespace PopForums {
         plugins: "lists image link",
         content_css: FullText.editorCSS,
         menubar: false,
-        toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
+        toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image imageup",
         statusbar: false,
         link_target_list: false,
         link_title: false,

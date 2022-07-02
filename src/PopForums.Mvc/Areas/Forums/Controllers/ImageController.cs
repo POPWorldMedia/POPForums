@@ -4,12 +4,14 @@
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ImageController : Controller
 {
-	public ImageController(IImageService imageService)
+	public ImageController(IImageService imageService, IUserRetrievalShim userRetrievalShim)
 	{
 		_imageService = imageService;
+		_userRetrievalShim = userRetrievalShim;
 	}
 
 	private readonly IImageService _imageService;
+	private readonly IUserRetrievalShim _userRetrievalShim;
 
 	[PopForumsAuthorizationIgnore]
 	public async Task<ActionResult> Avatar(int id)
@@ -42,5 +44,14 @@ public class ImageController : Controller
 		}
 		var stream = new MemoryStream(await imageDataFetch(id));
 		return File(stream, "image/jpeg");
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> UploadPostImage(string hash)
+	{
+		var user = _userRetrievalShim.GetUser();
+		if (user == null)
+			return Unauthorized();
+		return Ok("https://coasterbuzz-i.azurewebsites.net/images/tease/cb20tease.png");
 	}
 }
