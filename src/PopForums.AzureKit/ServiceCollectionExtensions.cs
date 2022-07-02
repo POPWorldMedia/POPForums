@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using PopForums.AzureKit.PostImage;
 using PopForums.AzureKit.Queue;
 using PopForums.AzureKit.Redis;
 using PopForums.Configuration;
@@ -42,6 +43,12 @@ public static class ServiceCollectionExtensions
 		services.Replace(ServiceDescriptor.Transient<IEmailQueueRepository, PopForums.AzureKit.Queue.EmailQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<IAwardCalculationQueueRepository, PopForums.AzureKit.Queue.AwardCalculationQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<ISearchIndexQueueRepository, PopForums.AzureKit.Queue.SearchIndexQueueRepository>());
+		return services;
+	}
+
+	public static IServiceCollection AddPopForumsAzureBlobStorageForPostImages(this IServiceCollection services)
+	{
+		services.AddTransient<IPostImageRepository, PostImageRepository>();
 		return services;
 	}
 }

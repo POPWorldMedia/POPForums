@@ -71,11 +71,10 @@ namespace PopForums {
             });
             
             function InstantImageUpload() {
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/*');
-            
-                input.addEventListener('change', (e) => {
+                const input = document.createElement("input");
+                input.setAttribute("type", "file");
+                input.setAttribute("accept", "image/jpeg,image/gif");
+                input.addEventListener("change", (e) => {
                 const file = input.files[0];
                 let url = "/Forums/Image/UploadPostImage";
                 let form = new FormData();
@@ -85,7 +84,9 @@ namespace PopForums {
                     body: form
                 })
                     .then(response => {
-                        return response.text();
+                        if (response.ok)
+                            return response.text();
+                        throw "Could not upload image";
                     })
                     .then(url => {
                         editor.insertContent(`<img src="${url}" />`) ;

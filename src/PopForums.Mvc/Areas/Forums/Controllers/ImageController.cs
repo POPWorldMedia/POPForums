@@ -1,17 +1,21 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using System.Net.Mime;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ImageController : Controller
 {
-	public ImageController(IImageService imageService, IUserRetrievalShim userRetrievalShim)
+	public ImageController(IImageService imageService, IUserRetrievalShim userRetrievalShim, IPostImageService postImageService)
 	{
 		_imageService = imageService;
 		_userRetrievalShim = userRetrievalShim;
+		_postImageService = postImageService;
 	}
 
 	private readonly IImageService _imageService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
+	private readonly IPostImageService _postImageService;
 
 	[PopForumsAuthorizationIgnore]
 	public async Task<ActionResult> Avatar(int id)
@@ -52,6 +56,15 @@ public class ImageController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return Unauthorized();
-		return Ok("https://coasterbuzz-i.azurewebsites.net/images/tease/cb20tease.png");
+		var file = Request.Form.Files[0];
+		if (file.ContentType != MediaTypeNames.Image.Jpeg && file.ContentType != MediaTypeNames.Image.Gif)
+			return BadRequest();
+		var stream = file.OpenReadStream();
+		var bytes = stream.ToBytes();
+		var isOk = _postImageService.ProcessImageIsOk(bytes, file.ContentType);
+		if (!isOk)
+			return BadRequest();
+		var url = await _postImageService.PersistAndGetFileName();
+		return Ok(url);
 	}
 }
