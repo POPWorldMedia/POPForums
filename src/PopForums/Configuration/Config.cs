@@ -16,6 +16,8 @@ public interface IConfig
 	string ReCaptchaSecretKey { get; }
 	string IpLookupUrlFormat { get; }
 	string WebAppUrlAndArea { get; }
+	string BaseImageBlobUrl { get; }
+	string StorageConnectionString { get; }
 }
 
 public class Config : IConfig
@@ -45,4 +47,6 @@ public class Config : IConfig
 	public string ReCaptchaSecretKey => _configContainer.ReCaptchaSecretKey;
 	public string IpLookupUrlFormat => _configContainer.IpLookupUrlFormat;
 	public string WebAppUrlAndArea => _configContainer.WebAppUrlAndArea;
+	public string BaseImageBlobUrl => _configContainer.BaseImageBlobUrl;
+	public string StorageConnectionString => _configContainer.StorageConnectionString;
 }

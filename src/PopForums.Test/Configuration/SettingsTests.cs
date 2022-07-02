@@ -153,6 +153,9 @@ public class SettingsTests
 		const int closeAgedTopicsDays = 757;
 		const bool isPrivateForumInstance = true;
 		const string replyToAddress = "D@e.com";
+		const int postImageMaxHeight = 654;
+		const int postImageMaxWidth = 980;
+		const int postImageMaxkBytes = 631;
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -210,7 +213,10 @@ public class SettingsTests
 			{"OAuth2Scope", oAuth2Scope },
 			{"IsClosingAgedTopics", isClosingAgedTopics},
 			{"CloseAgedTopicsDays", closeAgedTopicsDays},
-			{"IsPrivateForumInstance", isPrivateForumInstance}
+			{"IsPrivateForumInstance", isPrivateForumInstance},
+			{"PostImageMaxHeight", postImageMaxHeight},
+			{"PostImageMaxWidth", postImageMaxWidth},
+			{"PostImageMaxkBytes", postImageMaxkBytes}
 		};
 
 		var settingsRepo = new Mock<ISettingsRepository>();
@@ -275,6 +281,9 @@ public class SettingsTests
 		settings.IsClosingAgedTopics = isClosingAgedTopics;
 		settings.CloseAgedTopicsDays = closeAgedTopicsDays;
 		settings.IsPrivateForumInstance = isPrivateForumInstance;
+		settings.PostImageMaxHeight = postImageMaxHeight;
+		settings.PostImageMaxWidth = postImageMaxWidth;
+		settings.PostImageMaxkBytes = postImageMaxkBytes;
 		settingsManager.SaveCurrent();
 
 		settingsRepo.Verify(s => s.Save(dictionary), Times.Once());

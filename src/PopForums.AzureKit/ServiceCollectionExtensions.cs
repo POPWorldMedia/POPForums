@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
 
 	public static IServiceCollection AddPopForumsAzureBlobStorageForPostImages(this IServiceCollection services)
 	{
-		services.AddTransient<IPostImageRepository, PostImageRepository>();
+		services.Replace(ServiceDescriptor.Transient<IPostImageRepository, PopForums.AzureKit.PostImage.PostImageRepository>());
 		return services;
 	}
 }

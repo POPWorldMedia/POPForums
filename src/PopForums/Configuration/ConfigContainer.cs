@@ -16,4 +16,7 @@ public class ConfigContainer
 	public string ReCaptchaSecretKey { get; set; }
 	public string IpLookupUrlFormat { get; set; }
 	public string WebAppUrlAndArea { get; set; }
+	public string BaseImageBlobUrl { get; set; }
+	public string StorageConnectionString { get; set; }
+
 }

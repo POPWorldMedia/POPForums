@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using Org.BouncyCastle.Utilities;
+
+namespace PopForums.Services;
 
 public interface IPostImageService
 {
@@ -10,11 +12,13 @@ public class PostImageService : IPostImageService
 {
 	private readonly IImageService _imageService;
 	private readonly IPostImageRepository _postImageRepository;
+	private readonly ISettingsManager _settingsManager;
 
-	public PostImageService(IImageService imageService, IPostImageRepository postImageRepository)
+	public PostImageService(IImageService imageService, IPostImageRepository postImageRepository, ISettingsManager settingsManager)
 	{
 		_imageService = imageService;
 		_postImageRepository = postImageRepository;
+		_settingsManager = settingsManager;
 	}
 
 	private byte[] _bytes;
@@ -25,6 +29,12 @@ public class PostImageService : IPostImageService
 	{
 		_contentType = contentType;
 		_bytes = bytes;
+		if (bytes.Length > _settingsManager.Current.PostImageMaxkBytes * 1024)
+		{
+			_isOk = false;
+return false;
+}
+		_bytes = _imageService.ConstrainResize(bytes, _settingsManager.Current.PostImageMaxHeight, _settingsManager.Current.PostImageMaxWidth, 60, false);
 		_isOk = true;
 		return true;
 	}

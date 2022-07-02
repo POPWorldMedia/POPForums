@@ -60,6 +60,9 @@ public class Settings
 		IsClosingAgedTopics = false;
 		CloseAgedTopicsDays = 365;
 		IsPrivateForumInstance = false;
+		PostImageMaxHeight = 1000;
+		PostImageMaxWidth = 1000;
+		PostImageMaxkBytes = 5000;
 	}
 
 	public virtual string TermsOfService { get; set; }
@@ -118,4 +121,7 @@ public class Settings
 	public virtual bool IsClosingAgedTopics { get; set; }
 	public virtual int CloseAgedTopicsDays { get; set; }
 	public virtual bool IsPrivateForumInstance { get; set; }
+	public virtual int PostImageMaxHeight { get; set; }
+	public virtual int PostImageMaxWidth { get; set; }
+	public virtual int PostImageMaxkBytes { get; set; }
 }

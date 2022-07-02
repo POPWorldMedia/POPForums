@@ -54,6 +54,10 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 {
 	"PopForums": {
 		"IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}", // used on Recent Users screen of admin to lookup IP addresses
+		"BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1", // if using AzureKit to host images, points to the base URL of images uploaded to blob storage (you should really alias the storage to a domain you own)
+		"Storage": {
+			"ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
+		},
 		"Database": {
 			"ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;TrustServerCertificate=True;"
 		},

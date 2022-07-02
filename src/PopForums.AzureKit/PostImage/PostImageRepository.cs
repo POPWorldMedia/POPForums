@@ -23,13 +23,16 @@ public class PostImageRepository : IPostImageRepository
 
 	public async Task<string> Persist(byte[] bytes, string contentType)
 	{
-		var container = new BlobContainerClient(_config.QueueConnectionString, _containerName);
+		var container = new BlobContainerClient(_config.StorageConnectionString, _containerName);
 		await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
-		var path = $"{_tenantService.GetTenant()}_{Guid.NewGuid()}";
+		var tenant = _tenantService.GetTenant();
+		if (string.IsNullOrWhiteSpace(tenant))
+			tenant = "_";
+		var path = $"{tenant}/{Guid.NewGuid()}";
 		var blob = container.GetBlobClient(path);
 		var binary = new BinaryData(bytes);
 		await blob.UploadAsync(binary);
 		await blob.SetHttpHeadersAsync(new BlobHttpHeaders { ContentType = contentType });
-		return "http://127.0.0.1:10000/devstoreaccount1/" + _containerName + "/" + path;
+		return _config.BaseImageBlobUrl + "/" + _containerName + "/" + path;
 	}
 }
