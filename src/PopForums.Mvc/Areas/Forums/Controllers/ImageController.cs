@@ -73,7 +73,7 @@ public class ImageController : Controller
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> UploadPostImage(string hash)
+	public async Task<ActionResult> UploadPostImage()
 	{
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
