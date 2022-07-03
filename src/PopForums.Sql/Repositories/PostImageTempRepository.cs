@@ -21,9 +21,11 @@ public class PostImageTempRepository : IPostImageTempRepository
 			connection.ExecuteAsync("DELETE FROM pf_PostImageTemp WHERE PostImageTempID = @id", new { id }));
 	}
 
-	public async Task Purge(DateTime olderThan)
+	public async Task<List<Guid>> GetOld(DateTime olderThan)
 	{
+		Task<IEnumerable<Guid>> list = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("DELETE FROM pf_PostImageTemp WHERE TimeStamp < @olderThan", new { olderThan }));
+			list = connection.QueryAsync<Guid>("SELECT PostImageTempID FROM pf_PostImageTemp WHERE TimeStamp < @olderThan", new { olderThan }));
+		return list.Result.ToList();
 	}
 }

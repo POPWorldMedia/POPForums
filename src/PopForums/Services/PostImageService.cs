@@ -8,6 +8,8 @@ public interface IPostImageService
 	Task<PostImagePersistPayload> PersistAndGetPayload();
 	Task<PostImage> GetWithoutData(string id);
 	Task<PostImage> Get(string id);
+	Task DeleteTempRecord(string id);
+	Task DeleteTempRecords(string[] ids);
 }
 
 public class PostImageService : IPostImageService
@@ -38,11 +40,13 @@ public class PostImageService : IPostImageService
 			_isOk = false;
 			return false;
 		}
+
 		if (contentType != MediaTypeNames.Image.Jpeg && contentType != MediaTypeNames.Image.Gif)
 		{
 			_isOk = false;
 			return false;
 		}
+
 		_bytes = _imageService.ConstrainResize(bytes, _settingsManager.Current.PostImageMaxWidth, _settingsManager.Current.PostImageMaxHeight, 60, false);
 		_isOk = true;
 		return true;
@@ -70,4 +74,17 @@ public class PostImageService : IPostImageService
 		var postImageSansData = await _postImageRepository.Get(id);
 		return postImageSansData;
 	}
+
+	public async Task DeleteTempRecord(string id)
+	{
+		var guid = Guid.Parse(id);
+		await _postImageTempRepository.Delete(guid);
+	}
+
+	public async Task DeleteTempRecords(string[] ids)
+	{
+		foreach (var id in ids)
+			await DeleteTempRecord(id);
+	}
+
 }

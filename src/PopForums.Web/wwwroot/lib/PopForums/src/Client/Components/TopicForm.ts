@@ -26,12 +26,14 @@ namespace PopForums {
 
         submitTopic() {
             this.button.setAttribute("disabled", "disabled");
-            var model = {
+            let postImageIDs = PopForums.userState.postImageIds;
+            let model = {
                 Title: (this.querySelector("#NewTopic #Title") as HTMLInputElement).value,
                 FullText: (this.querySelector("#NewTopic #FullText")as HTMLInputElement).value,
                 IncludeSignature: (this.querySelector("#NewTopic #IncludeSignature")as HTMLInputElement).checked,
                 ItemID: (this.querySelector("#NewTopic #ItemID")as HTMLInputElement).value,
-                IsPlainText: (this.querySelector("#NewTopic #IsPlainText")as HTMLInputElement).value.toLowerCase() === "true"
+                IsPlainText: (this.querySelector("#NewTopic #IsPlainText")as HTMLInputElement).value.toLowerCase() === "true",
+                PostImageIDs: postImageIDs
             };
             fetch(PopForums.AreaPath + "/Forum/PostTopic", {
                 method: "POST",

@@ -142,4 +142,38 @@ public class PostImageServiceTests
 			Assert.Same(payload, result);
 		}
 	}
+
+	public class DeleteTempRecord : PostImageServiceTests
+	{
+		[Fact]
+		public async void TempRepoCalledWithGuid()
+		{
+			var service = GetService();
+			var guid = Guid.NewGuid();
+			var id = guid.ToString();
+
+			await service.DeleteTempRecord(id);
+
+			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
+		}
+	}
+
+	public class DeleteTempRecords : PostImageServiceTests
+	{
+		[Fact]
+		public async void TempRepoCalledWithGuid()
+		{
+			var service = GetService();
+			var guid = Guid.NewGuid();
+			var id = guid.ToString();
+			var guid2 = Guid.NewGuid();
+			var id2 = guid2.ToString();
+			var array = new[] {id, id2};
+
+			await service.DeleteTempRecords(array);
+
+			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
+			_postImageTempRepository.Verify(x => x.Delete(guid2), Times.Once);
+		}
+	}
 }

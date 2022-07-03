@@ -23,8 +23,9 @@ public class PostMasterService : IPostMasterService
 	private readonly IForumPermissionService _forumPermissionService;
 	private readonly ISettingsManager _settingsManager;
 	private readonly ITopicViewCountService _topicViewCountService;
+	private readonly IPostImageService _postImageService;
 
-	public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumPermissionService forumPermissionService, ISettingsManager settingsManager, ITopicViewCountService topicViewCountService)
+	public PostMasterService(ITextParsingService textParsingService, ITopicRepository topicRepository, IPostRepository postRepository, IForumRepository forumRepository, IProfileRepository profileRepository, IEventPublisher eventPublisher, IBroker broker, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, ISubscribedTopicsService subscribedTopicsService, IModerationLogService moderationLogService, IForumPermissionService forumPermissionService, ISettingsManager settingsManager, ITopicViewCountService topicViewCountService, IPostImageService postImageService)
 	{
 		_textParsingService = textParsingService;
 		_topicRepository = topicRepository;
@@ -40,6 +41,7 @@ public class PostMasterService : IPostMasterService
 		_forumPermissionService = forumPermissionService;
 		_settingsManager = settingsManager;
 		_topicViewCountService = topicViewCountService;
+		_postImageService = postImageService;
 	}
 
 	public async Task<BasicServiceResponse<Topic>> PostNewTopic(User user, NewPost newPost, string ip, string userUrl, Func<Topic, string> topicLinkGenerator, Func<Topic, string> redirectLinkGenerator)
@@ -82,6 +84,7 @@ public class PostMasterService : IPostMasterService
 		var profile = await  _profileRepository.GetProfile(user.UserID);
 		if (profile.IsAutoFollowOnReply)
 			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topicID);
+		await _postImageService.DeleteTempRecords(newPost.PostImageIDs);
 
 		var redirectLink = redirectLinkGenerator(topic);
 
@@ -175,6 +178,7 @@ public class PostMasterService : IPostMasterService
 		var profile = await _profileRepository.GetProfile(user.UserID);
 		if (profile.IsAutoFollowOnReply)
 			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topic.TopicID);
+		await _postImageService.DeleteTempRecords(newPost.PostImageIDs);
 
 		return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 	}

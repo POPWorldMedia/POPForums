@@ -90,7 +90,8 @@ namespace PopForums {
                         throw "Could not upload image";
                     })
                     .then(payload => {
-                        editor.insertContent(`<img src="${payload.url}" />`) ;
+                        editor.insertContent(`<img src="${payload.url}" />`);
+                        PopForums.userState.postImageIds.push(payload.id);
                     })
                     .catch(error => {
                         alert("Could not upload image");
