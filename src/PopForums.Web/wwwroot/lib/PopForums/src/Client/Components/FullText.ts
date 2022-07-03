@@ -85,11 +85,11 @@ namespace PopForums {
                 })
                     .then(response => {
                         if (response.ok)
-                            return response.text();
+                            return response.json();
                         throw "Could not upload image";
                     })
-                    .then(url => {
-                        editor.insertContent(`<img src="${url}" />`) ;
+                    .then(payload => {
+                        editor.insertContent(`<img src="${payload.url}" />`) ;
                     })
                     .catch(error => {
                         alert("Could not upload image");

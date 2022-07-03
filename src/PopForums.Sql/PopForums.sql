@@ -943,11 +943,19 @@ CREATE TABLE [dbo].[pf_PostImage]
 (
 	[ID] NVARCHAR(50) NOT NULL PRIMARY KEY, 
     [TimeStamp] DATETIME NOT NULL, 
-    [TenantID] NVARCHAR(256) NULL, 
+    [TenantID] NVARCHAR(100) NULL, 
     [ImageData] VARBINARY(MAX) NOT NULL
 );
 
 CREATE INDEX [IX_pf_PostImage_TenantID] ON [dbo].[pf_PostImage] ([TenantID]);
+
+
+CREATE TABLE [dbo].[pf_PostImageTemp](
+	[PostImageTempID] [uniqueidentifier] NOT NULL PRIMARY KEY,
+	[TimeStamp] [datetime] NOT NULL
+);
+CREATE NONCLUSTERED INDEX [IX_pf_PostImageTemp_TimeStamp] ON [dbo].[pf_PostImageTemp] ([TimeStamp]);
+
 
 
 

@@ -11,7 +11,7 @@ public class PostImageRepository : IPostImageRepository
 		_tenantService = tenantService;
 	}
 
-	public async Task<string> Persist(byte[] bytes, string contentType)
+	public async Task<PostImagePersistPayload> Persist(byte[] bytes, string contentType)
 	{
 		var guid = Guid.NewGuid();
 		var tenantID = _tenantService.GetTenant();
@@ -25,7 +25,9 @@ public class PostImageRepository : IPostImageRepository
 		};
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 			connection.ExecuteAsync("INSERT INTO pf_PostImage (ID, TimeStamp, ContentType, TenantID, ImageData) VALUES (@ID, @TimeStamp, @ContentType, @TenantID, @ImageData)", postImage));
-		return "/Forums/Image/PostImage/" + postImage.ID;
+		var url = "/Forums/Image/PostImage/" + postImage.ID;
+		var payload = new PostImagePersistPayload {Url = url, ID = postImage.ID};
+		return payload;
 	}
 
 	public async Task<PostImage> GetWithoutData(string id)

@@ -86,7 +86,7 @@ public class ImageController : Controller
 		var isOk = _postImageService.ProcessImageIsOk(bytes, file.ContentType);
 		if (!isOk)
 			return BadRequest();
-		var url = await _postImageService.PersistAndGetFileName();
+		var url = await _postImageService.PersistAndGetPayload();
 		return Ok(url);
 	}
 }
