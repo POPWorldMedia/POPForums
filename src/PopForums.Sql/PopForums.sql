@@ -920,7 +920,8 @@ CREATE TABLE [dbo].[pf_Notifications]
     [NotificationType] INT NOT NULL, 
     [ContextID] BIGINT NOT NULL, 
     [TimeStamp] DATETIME NOT NULL, 
-    [IsRead] BIT NOT NULL, 
+    [IsRead] BIT NOT NULL,
+	[ContentType] NVARCHAR(50) NOT NULL,
     [Data] NVARCHAR(MAX) NULL
 );
 
@@ -932,6 +933,23 @@ CREATE INDEX [IX_pf_Notifications_Context] ON [dbo].[pf_Notifications]
 (
 	UserID, NotificationType, ContextID
 );
+
+
+
+
+
+
+CREATE TABLE [dbo].[pf_PostImage]
+(
+	[ID] NVARCHAR(50) NOT NULL PRIMARY KEY, 
+    [TimeStamp] DATETIME NOT NULL, 
+    [TenantID] NVARCHAR(256) NULL, 
+    [ImageData] VARBINARY(MAX) NOT NULL
+);
+
+CREATE INDEX [IX_pf_PostImage_TenantID] ON [dbo].[pf_PostImage] ([TenantID]);
+
+
 
 
 

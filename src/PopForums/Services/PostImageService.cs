@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Utilities;
+﻿using Org.BouncyCastle.Crypto.Paddings;
+using Org.BouncyCastle.Utilities;
 
 namespace PopForums.Services;
 
@@ -6,6 +7,8 @@ public interface IPostImageService
 {
 	bool ProcessImageIsOk(byte[] bytes, string contentType);
 	Task<string> PersistAndGetFileName();
+	Task<PostImage> GetWithoutData(string id);
+	Task<PostImage> Get(string id);
 }
 
 public class PostImageService : IPostImageService
@@ -47,5 +50,17 @@ return false;
 			throw new Exception($"You can't persist an image that was not Ok after calling {nameof(ProcessImageIsOk)}.");
 		var fileName = await _postImageRepository.Persist(_bytes, _contentType);
 		return fileName;
+	}
+
+	public async Task<PostImage> GetWithoutData(string id)
+	{
+		var postImageSansData = await _postImageRepository.GetWithoutData(id);
+		return postImageSansData;
+	}
+
+	public async Task<PostImage> Get(string id)
+	{
+		var postImageSansData = await _postImageRepository.Get(id);
+		return postImageSansData;
 	}
 }

@@ -34,7 +34,7 @@ public class ImageController : Controller
 		var timeStamp = await imageLastMod(id);
 		if (!timeStamp.HasValue)
 			return NotFound();
-		Response.Headers["Cache-control"] = "public";
+		Response.Headers["Cache-control"] = "private";
 		Response.Headers["Last-modified"] = DateTime.SpecifyKind(timeStamp.Value, DateTimeKind.Utc).ToString("R");
 		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
 		{
@@ -47,6 +47,28 @@ public class ImageController : Controller
 			}
 		}
 		var stream = new MemoryStream(await imageDataFetch(id));
+		return File(stream, "image/jpeg");
+	}
+
+	public async Task<ActionResult> PostImage(string id)
+	{
+		var postImageSansData = await _postImageService.GetWithoutData(id);
+		if (postImageSansData == null)
+			return NotFound();
+		Response.Headers["Cache-control"] = "private";
+		Response.Headers["Last-modified"] = DateTime.SpecifyKind(postImageSansData.TimeStamp, DateTimeKind.Utc).ToString("R");
+		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
+		{
+			var provider = CultureInfo.InvariantCulture;
+			var couldParse = DateTime.TryParseExact(Request.Headers["If-Modified-Since"], "r", provider, DateTimeStyles.None, out var lastMod);
+			if (couldParse && lastMod == postImageSansData.TimeStamp.AddMilliseconds(-postImageSansData.TimeStamp.Millisecond))
+			{
+				Response.StatusCode = 304;
+				return Content(string.Empty);
+			}
+		}
+		var fullPostImage = await _postImageService.Get(id);
+		var stream = new MemoryStream(fullPostImage.ImageData);
 		return File(stream, "image/jpeg");
 	}
 

@@ -201,3 +201,5 @@ using PopForums.AzureKit;
 ...
 services.AddPopForumsAzureBlobStorageForPostImages();
 ```
+
+Another thing to keep in mind is that if you're working locally, and your Azurite instance doesn't have `https` configured, it will break because most browsers do not allow non-`https` images to appear in a secure page. The simplest work around for this is not to install a local certificate, but to change your launch settings for the web app to not run on `https`.

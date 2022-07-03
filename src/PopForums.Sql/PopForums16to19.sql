@@ -98,3 +98,21 @@ BEGIN
 		[UserID] ASC
 	);
 END
+
+
+
+IF OBJECT_ID('pf_PostImage', 'U') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[pf_PostImage]
+	(
+		[ID] NVARCHAR(50) NOT NULL PRIMARY KEY,
+		[TimeStamp] DATETIME NOT NULL,
+		[TenantID] NVARCHAR(256) NULL,
+		[ContentType] NVARCHAR(50) NOT NULL,
+		[ImageData] VARBINARY(MAX) NOT NULL
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_PostImage'), 'IX_pf_PostImage_TenantID', 'IndexID') IS NULL
+BEGIN
+	CREATE INDEX [IX_pf_PostImage_TenantID] ON [dbo].[pf_PostImage] ([TenantID]);
+END

@@ -35,4 +35,14 @@ public class PostImageRepository : IPostImageRepository
 		await blob.SetHttpHeadersAsync(new BlobHttpHeaders { ContentType = contentType });
 		return _config.BaseImageBlobUrl + "/" + _containerName + "/" + path;
 	}
+
+	public Task<Models.PostImage> GetWithoutData(string id)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<Models.PostImage> Get(string id)
+	{
+		throw new NotImplementedException();
+	}
 }
