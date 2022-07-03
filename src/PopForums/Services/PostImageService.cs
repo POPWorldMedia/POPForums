@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using System.Net.Mime;
+
+namespace PopForums.Services;
 
 public interface IPostImageService
 {
@@ -36,7 +38,12 @@ public class PostImageService : IPostImageService
 			_isOk = false;
 			return false;
 		}
-		_bytes = _imageService.ConstrainResize(bytes, _settingsManager.Current.PostImageMaxHeight, _settingsManager.Current.PostImageMaxWidth, 60, false);
+		if (contentType != MediaTypeNames.Image.Jpeg && contentType != MediaTypeNames.Image.Gif)
+		{
+			_isOk = false;
+			return false;
+		}
+		_bytes = _imageService.ConstrainResize(bytes, _settingsManager.Current.PostImageMaxWidth, _settingsManager.Current.PostImageMaxHeight, 60, false);
 		_isOk = true;
 		return true;
 	}
