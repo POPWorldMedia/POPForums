@@ -1,7 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2018",
     "inlineSources": true,
     "inlineSourceMap": true,
     "outFile": "../PopForums.js",

@@ -79,6 +79,7 @@ namespace PopForums {
                 let url = "/Forums/Image/UploadPostImage";
                 let form = new FormData();
                 form.append("file", file);
+                editor.setProgressState(true);
                 fetch(url, {
                     method: "POST",
                     body: form
@@ -93,7 +94,8 @@ namespace PopForums {
                     })
                     .catch(error => {
                         alert("Could not upload image");
-                    });
+                    })
+                    .finally(() => editor.setProgressState(false));
                 });
                 input.click();
             };
