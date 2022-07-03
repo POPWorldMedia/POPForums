@@ -18,13 +18,15 @@ public class PostImageService : IPostImageService
 	private readonly IPostImageRepository _postImageRepository;
 	private readonly IPostImageTempRepository _postImageTempRepository;
 	private readonly ISettingsManager _settingsManager;
+	private readonly ITenantService _tenantService;
 
-	public PostImageService(IImageService imageService, IPostImageRepository postImageRepository, IPostImageTempRepository postImageTempRepository, ISettingsManager settingsManager)
+	public PostImageService(IImageService imageService, IPostImageRepository postImageRepository, IPostImageTempRepository postImageTempRepository, ISettingsManager settingsManager, ITenantService tenantService)
 	{
 		_imageService = imageService;
 		_postImageRepository = postImageRepository;
 		_postImageTempRepository = postImageTempRepository;
 		_settingsManager = settingsManager;
+		_tenantService = tenantService;
 	}
 
 	private byte[] _bytes;
@@ -59,7 +61,8 @@ public class PostImageService : IPostImageService
 		if (!_isOk)
 			throw new Exception($"You can't persist an image that was not Ok after calling {nameof(ProcessImageIsOk)}.");
 		var payload = await _postImageRepository.Persist(_bytes, _contentType);
-		await _postImageTempRepository.Save(Guid.Parse(payload.ID), DateTime.UtcNow);
+		var tenantID = _tenantService.GetTenant();
+		await _postImageTempRepository.Save(Guid.Parse(payload.ID), DateTime.UtcNow, tenantID);
 		return payload;
 	}
 

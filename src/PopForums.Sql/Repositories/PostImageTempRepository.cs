@@ -9,10 +9,10 @@ public class PostImageTempRepository : IPostImageTempRepository
 		_sqlObjectFactory = sqlObjectFactory;
 	}
 
-	public async Task Save(Guid postImageTempID, DateTime timeStamp)
+	public async Task Save(Guid postImageTempID, DateTime timeStamp, string tenantID)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("INSERT INTO pf_PostImageTemp (PostImageTempID, TimeStamp) VALUES (@postImageTempID, @timeStamp)", new { postImageTempID, timeStamp }));
+			connection.ExecuteAsync("INSERT INTO pf_PostImageTemp (PostImageTempID, TimeStamp, TenantID) VALUES (@postImageTempID, @timeStamp, @tenantID)", new { postImageTempID, timeStamp, tenantID }));
 	}
 
 	public async Task Delete(Guid id)

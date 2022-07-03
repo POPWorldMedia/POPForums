@@ -6,6 +6,7 @@ public class PostImageServiceTests
 	private Mock<IPostImageRepository> _postImageRepository;
 	private Mock<IPostImageTempRepository> _postImageTempRepository;
 	private Mock<ISettingsManager> _settingsManager;
+	private Mock<ITenantService> _tenantService;
 
 	protected PostImageService GetService()
 	{
@@ -13,7 +14,8 @@ public class PostImageServiceTests
 		_postImageRepository = new Mock<IPostImageRepository>();
 		_postImageTempRepository = new Mock<IPostImageTempRepository>();
 		_settingsManager = new Mock<ISettingsManager>();
-		return new PostImageService(_imageService.Object, _postImageRepository.Object, _postImageTempRepository.Object, _settingsManager.Object);
+		_tenantService = new Mock<ITenantService>();
+		return new PostImageService(_imageService.Object, _postImageRepository.Object, _postImageTempRepository.Object, _settingsManager.Object, _tenantService.Object);
 	}
 
 	public class ProcessImageIsOk : PostImageServiceTests
@@ -125,13 +127,16 @@ public class PostImageServiceTests
 		}
 
 		[Fact]
-		public async void PersistsImageAndReturnsPayload()
+		public async void PersistsImageAndTempRecordAndReturnsPayload()
 		{
 			var service = GetService();
+			var tenantID = "pop";
+			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
 			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
 			var array = new byte[1];
 			_imageService.Setup(x => x.ConstrainResize(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), false)).Returns(array);
-			var id = Guid.NewGuid().ToString();
+			var guid = Guid.NewGuid();
+			var id = guid.ToString();
 			var payload = new PostImagePersistPayload {ID = id, Url = "neat"};
 			_postImageRepository.Setup(x => x.Persist(It.IsAny<byte[]>(), "image/jpeg")).ReturnsAsync(payload);
 			service.ProcessImageIsOk(new byte[1], "image/jpeg");
@@ -139,6 +144,7 @@ public class PostImageServiceTests
 			var result = await service.PersistAndGetPayload();
 
 			_postImageRepository.Verify(x => x.Persist(array, "image/jpeg"), Times.Once);
+			_postImageTempRepository.Verify(x => x.Save(guid, It.IsAny<DateTime>(), tenantID), Times.Once);
 			Assert.Same(payload, result);
 		}
 	}

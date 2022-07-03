@@ -123,7 +123,8 @@ IF OBJECT_ID('pf_PostImageTemp', 'U') IS NULL
 BEGIN
 	CREATE TABLE [dbo].[pf_PostImageTemp](
 		[PostImageTempID] [uniqueidentifier] NOT NULL PRIMARY KEY,
-		[TimeStamp] [datetime] NOT NULL
+		[TimeStamp] [datetime] NOT NULL,
+		[TenantID] NVARCHAR(100) NULL
 	);
 END
 IF INDEXPROPERTY(Object_Id('pf_PostImageTemp'), 'IX_pf_PostImageTemp_TimeStamp', 'IndexID') IS NULL
