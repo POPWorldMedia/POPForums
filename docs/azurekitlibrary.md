@@ -192,7 +192,9 @@ There are a few configuration values you'll need:
     },
 ```
 * `BaseImageBlobUrl`: The base URL for the storage where images are uplaoded. For local development, using the Azurite storage emulator, this is `http://127.0.0.1:10000/devstoreaccount1`. For a typical Azure storage account, it's probably something like `https://mystorageaccount.blob.core.windows.net`. It should *not* end with a slash, and it shouldn't end with the container name, since that's added in the repository code. In the event you have to move the images for some reason, it's ideal if you could alias a domain name that you own to the storage account.
-* `ConnectionString`: It's assumed that you're going to use the same storage account as your queues, but regardless, you need to specify the connection string here.
+* `ConnectionString`: It's assumed that you're going to use the same storage account as your queues, but regardless, you need to specify the connection string here. You need this in the web app *and* the functions app.
+
+The code will create a container called `postimage` in your storage account, but if you plan to use the public endpoints of the storage account (instead of a CDN), make sure that `Allow blob public access` is enabled for the account, and then when the container is created, it will be created with the `Blob` access level, meaning anyone can access the images, but they can't see the directory or otherwise manipulate the storage account.
 
 Your web app will need to register the right implementation for the `IPostImageRepository`, and this is achieved in your startup/program with this line in the service configuration:
 

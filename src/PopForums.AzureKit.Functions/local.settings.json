@@ -16,6 +16,9 @@
     },
     "Queue": {
       "ConnectionString": "UseDevelopmentStorage=true"
+    },
+    "Storage": {
+      "ConnectionString": "UseDevelopmentStorage=true"
     }
   }
 }
