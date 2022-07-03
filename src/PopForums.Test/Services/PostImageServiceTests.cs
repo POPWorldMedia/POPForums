@@ -167,19 +167,42 @@ public class PostImageServiceTests
 	public class DeleteTempRecords : PostImageServiceTests
 	{
 		[Fact]
-		public async void TempRepoCalledWithGuid()
+		public async void TempRepoCalledWithGuidsFoundInText()
 		{
 			var service = GetService();
 			var guid = Guid.NewGuid();
 			var id = guid.ToString();
 			var guid2 = Guid.NewGuid();
 			var id2 = guid2.ToString();
-			var array = new[] {id, id2};
+			var guid3 = Guid.NewGuid();
+			var id3 = guid3.ToString();
+			var array = new[] {id, id2, id3};
+			var text = $"all the words {id3} and ids {id} {id2} ";
 
-			await service.DeleteTempRecords(array);
+			await service.DeleteTempRecords(array, text);
 
 			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
 			_postImageTempRepository.Verify(x => x.Delete(guid2), Times.Once);
+		}
+
+		[Fact]
+		public async void TempRepoCalledExcludingGuidsNotFoundInText()
+		{
+			var service = GetService();
+			var guid = Guid.NewGuid();
+			var id = guid.ToString();
+			var guid2 = Guid.NewGuid();
+			var id2 = guid2.ToString();
+			var guid3 = Guid.NewGuid();
+			var id3 = guid3.ToString();
+			var array = new[] { id, id2, id3 };
+			var text = $"all the words and ids {id} {id3} ";
+
+			await service.DeleteTempRecords(array, text);
+
+			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
+			_postImageTempRepository.Verify(x => x.Delete(guid2), Times.Never);
+			_postImageTempRepository.Verify(x => x.Delete(guid3), Times.Once);
 		}
 	}
 }

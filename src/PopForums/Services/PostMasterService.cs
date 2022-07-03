@@ -84,7 +84,7 @@ public class PostMasterService : IPostMasterService
 		var profile = await  _profileRepository.GetProfile(user.UserID);
 		if (profile.IsAutoFollowOnReply)
 			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topicID);
-		await _postImageService.DeleteTempRecords(newPost.PostImageIDs);
+		await _postImageService.DeleteTempRecords(newPost.PostImageIDs, newPost.FullText);
 
 		var redirectLink = redirectLinkGenerator(topic);
 
@@ -178,7 +178,7 @@ public class PostMasterService : IPostMasterService
 		var profile = await _profileRepository.GetProfile(user.UserID);
 		if (profile.IsAutoFollowOnReply)
 			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topic.TopicID);
-		await _postImageService.DeleteTempRecords(newPost.PostImageIDs);
+		await _postImageService.DeleteTempRecords(newPost.PostImageIDs, newPost.FullText);
 
 		return new BasicServiceResponse<Post> { Data = post, Message = null, Redirect = redirectLink, IsSuccessful = true };
 	}

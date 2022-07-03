@@ -9,7 +9,7 @@ public interface IPostImageService
 	Task<PostImage> GetWithoutData(string id);
 	Task<PostImage> Get(string id);
 	Task DeleteTempRecord(string id);
-	Task DeleteTempRecords(string[] ids);
+	Task DeleteTempRecords(string[] ids, string fullText);
 }
 
 public class PostImageService : IPostImageService
@@ -84,9 +84,14 @@ public class PostImageService : IPostImageService
 		await _postImageTempRepository.Delete(guid);
 	}
 
-	public async Task DeleteTempRecords(string[] ids)
+	public async Task DeleteTempRecords(string[] ids, string fullText)
 	{
+		var filtered = new List<string>();
 		foreach (var id in ids)
+			if (fullText.Contains(id, StringComparison.OrdinalIgnoreCase))
+				filtered.Add(id);
+
+		foreach (var id in filtered)
 			await DeleteTempRecord(id);
 	}
 

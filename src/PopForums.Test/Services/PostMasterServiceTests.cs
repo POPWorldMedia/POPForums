@@ -243,7 +243,7 @@ public class PostMasterServiceTests
 
 			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 
-			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs), Times.Once);
+			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
 		}
 
 		[Fact]
@@ -879,7 +879,7 @@ public class PostMasterServiceTests
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs), Times.Once);
+			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
 		}
 
 		[Fact]
