@@ -8,6 +8,7 @@ The `PopForums.AzureKit` library makes it possible to wire up the following scen
 * Using Redis for caching (not dependent on Azure specifically... Redis runs everywhere!)
 * Using Azure Storage queues and Functions to queue work for search indexing, emailing and scoring game award calculation
 * Using Azure Search
+* Using Azure storage for hosting uploaded images in posts
 
 You don't need to use the AzureKit components to run in an Azure App Service. These components are intended for making scale-out possible. The web app can run self-contained in a single node on an Azure App Service without these optional bits.
 
@@ -178,3 +179,29 @@ You'll also need to setup the right configuration values:
 * `Url`: The URL for Azure Search, typically `https://{nameOfSearchService}.search.windows.net` with the name set in the Azure portal
 * `Key`: A key provisioned by the portal to connect to Azure Search
 * `Provider`: This is only used in `PopForums.AzureKit.Functions`, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library
+
+## Using Azure storage for hosting uploaded images in posts
+The default implementation for uploading images into forum posts is to upload them into the database. While this is convenient and super portable, it may not be the least expensive option, since database storage is typically more expensive than other means. To that end, you can use `AzureKit` to upload and host the images in an Azure storage container.
+
+There are a few configuration values you'll need:
+```
+ "PopForums": {
+    "BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1",
+    "Storage": {
+      "ConnectionString": "UseDevelopmentStorage=true"
+    },
+```
+* `BaseImageBlobUrl`: The base URL for the storage where images are uplaoded. For local development, using the Azurite storage emulator, this is `http://127.0.0.1:10000/devstoreaccount1`. For a typical Azure storage account, it's probably something like `https://mystorageaccount.blob.core.windows.net`. It should *not* end with a slash, and it shouldn't end with the container name, since that's added in the repository code. In the event you have to move the images for some reason, it's ideal if you could alias a domain name that you own to the storage account.
+* `ConnectionString`: It's assumed that you're going to use the same storage account as your queues, but regardless, you need to specify the connection string here. You need this in the web app *and* the functions app.
+
+The code will create a container called `postimage` in your storage account, but if you plan to use the public endpoints of the storage account (instead of a CDN), make sure that `Allow blob public access` is enabled for the account, and then when the container is created, it will be created with the `Blob` access level, meaning anyone can access the images, but they can't see the directory or otherwise manipulate the storage account.
+
+Your web app will need to register the right implementation for the `IPostImageRepository`, and this is achieved in your startup/program with this line in the service configuration:
+
+```
+using PopForums.AzureKit;
+...
+services.AddPopForumsAzureBlobStorageForPostImages();
+```
+
+Another thing to keep in mind is that if you're working locally, and your Azurite instance doesn't have `https` configured, it will break because most browsers do not allow non-`https` images to appear in a secure page. The simplest work around for this is not to install a local certificate, but to change your launch settings for the web app to not run on `https`.

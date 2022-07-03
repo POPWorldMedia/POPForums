@@ -13,4 +13,5 @@ public class NewPost
 	public bool IsPlainText { get; set; }
 	public bool IsImageEnabled { get; set; }
 	public int ParentPostID { get; set; }
+	public string[] PostImageIDs { get; set; }
 }

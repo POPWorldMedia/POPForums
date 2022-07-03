@@ -7,6 +7,7 @@ export class UserState extends StateBase {
         this.newPmCount = 0;
         this.notificationCount = 0;
         this.notificationService = new NotificationService(this);
+        this.postImageIds = new Array<string>();
     }
 
     private notificationService: NotificationService;
@@ -16,6 +17,7 @@ export class UserState extends StateBase {
     currentNotificationIndex: number;
     isPlainText: boolean;
     isImageEnabled: boolean;
+    postImageIds: Array<string>;
 
     @WatchProperty
     newPmCount: number;

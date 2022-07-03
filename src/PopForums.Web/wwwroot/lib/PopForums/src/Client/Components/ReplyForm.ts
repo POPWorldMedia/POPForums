@@ -26,17 +26,19 @@ namespace PopForums {
 
         submitReply() {
             this.button.setAttribute("disabled", "disabled");
-            var closeCheck = document.querySelector("#CloseOnReply") as HTMLInputElement;
-            var closeOnReply = false;
+            let closeCheck = document.querySelector("#CloseOnReply") as HTMLInputElement;
+            let closeOnReply = false;
             if (closeCheck && closeCheck.checked) closeOnReply = true;
-            var model = {
+            let postImageIDs = PopForums.userState.postImageIds;
+            let model = {
                 Title: (this.querySelector("#NewReply #Title") as HTMLInputElement).value,
                 FullText: (this.querySelector("#NewReply #FullText") as HTMLInputElement).value,
                 IncludeSignature: (this.querySelector("#NewReply #IncludeSignature") as HTMLInputElement).checked,
                 ItemID: (this.querySelector("#NewReply #ItemID") as HTMLInputElement).value,
                 CloseOnReply: closeOnReply,
                 IsPlainText: (this.querySelector("#NewReply #IsPlainText") as HTMLInputElement).value.toLowerCase() === "true",
-                ParentPostID: (this.querySelector("#NewReply #ParentPostID") as HTMLInputElement).value
+                ParentPostID: (this.querySelector("#NewReply #ParentPostID") as HTMLInputElement).value,
+                PostImageIDs: postImageIDs
             };
             fetch(PopForums.AreaPath + "/Forum/PostReply", {
                 method: "POST",

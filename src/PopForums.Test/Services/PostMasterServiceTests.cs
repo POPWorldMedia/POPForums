@@ -20,7 +20,8 @@ public class PostMasterServiceTests
 		_forumPermissionService = new Mock<IForumPermissionService>();
 		_settingsManager = new Mock<ISettingsManager>();
 		_topicViewCountService = new Mock<ITopicViewCountService>();
-		return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object, _settingsManager.Object, _topicViewCountService.Object);
+		_postImageService = new Mock<IPostImageService>();
+		return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object, _settingsManager.Object, _topicViewCountService.Object, _postImageService.Object);
 	}
 
 	private Mock<ITextParsingService> _textParser;
@@ -37,6 +38,7 @@ public class PostMasterServiceTests
 	private Mock<IForumPermissionService> _forumPermissionService;
 	private Mock<ISettingsManager> _settingsManager;
 	private Mock<ITopicViewCountService> _topicViewCountService;
+	private Mock<IPostImageService> _postImageService;
 
 	private async Task<User> DoUpNewTopic()
 	{
@@ -215,6 +217,33 @@ public class PostMasterServiceTests
 			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
 			
 			_subscribedTopicsService.Verify(x => x.AddSubscribedTopic(user.UserID, 543), Times.Once);
+		}
+
+		[Fact]
+		public async Task CallsPostImageServiceWithIDs()
+		{
+			var forum = new Forum { ForumID = 1 };
+			var user = GetUser();
+			const string ip = "127.0.0.1";
+			const string title = "mah title";
+			const string text = "mah text";
+			var postImageIDs = new string[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
+			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false, PostImageIDs = postImageIDs};
+			var profile = new Profile { UserID = user.UserID, IsAutoFollowOnReply = true };
+			var topicService = GetService();
+			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
+			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
+			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
+			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
+			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
+			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
+			_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(543);
+			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(profile);
+
+			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+
+			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
 		}
 
 		[Fact]
@@ -417,7 +446,7 @@ public class PostMasterServiceTests
 		}
 	}
 
-	public class PostReplyTests : PostNewTopicTests
+	public class PostReplyTests : PostMasterServiceTests
 	{
 		[Fact]
 		public async Task NoUserReturnsFalseIsSuccessful()
@@ -829,6 +858,28 @@ public class PostMasterServiceTests
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
 			_profileRepo.Verify(p => p.SetLastPostID(user.UserID, result.Data.PostID), Times.Once);
+		}
+
+		[Fact]
+		public async Task CallsPostImageServiceWithIDs()
+		{
+			var topic = new Topic { TopicID = 1, ForumID = 2 };
+			var user = GetUser();
+			var postTime = DateTime.UtcNow;
+			var service = GetService();
+			var forum = new Forum { ForumID = topic.ForumID };
+			var postImageIDs = new string[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
+			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
+			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
+			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
+			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, PostImageIDs = postImageIDs};
+
+			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
+
+			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
 		}
 
 		[Fact]

@@ -16,7 +16,18 @@ declare namespace tinymce {
     function init(options:any): any;
     function get(id:string): any;
     function triggerSave(): any;
+    let activeEditor: any;
 }
+
+declare class BlobInfo {
+    id: () => string;
+    name: () => string;
+    filename: () => string;
+    blob: () => Blob;
+    base64: () => string;
+    blobUri: () => string;
+    uri: () => string | undefined;
+} 
 
 declare namespace bootstrap {
     class Tooltip {

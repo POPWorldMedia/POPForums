@@ -68,7 +68,45 @@ namespace PopForums {
               editor.save();
               self.value = (self.textBox as HTMLInputElement).value;
               (self.externalFormElement as any).value = self.value;
-            })
+            });
+            
+            function InstantImageUpload() {
+                const input = document.createElement("input");
+                input.setAttribute("type", "file");
+                input.setAttribute("accept", "image/jpeg,image/gif");
+                input.addEventListener("change", (e) => {
+                const file = input.files[0];
+                let url = "/Forums/Image/UploadPostImage";
+                let form = new FormData();
+                form.append("file", file);
+                editor.setProgressState(true);
+                fetch(url, {
+                    method: "POST",
+                    body: form
+                })
+                    .then(response => {
+                        if (response.ok)
+                            return response.json();
+                        throw "Could not upload image";
+                    })
+                    .then(payload => {
+                        editor.insertContent(`<img src="${payload.url}" />`);
+                        PopForums.userState.postImageIds.push(payload.id);
+                    })
+                    .catch(error => {
+                        alert("Could not upload image");
+                    })
+                    .finally(() => editor.setProgressState(false));
+                });
+                input.click();
+            };
+
+            editor.ui.registry.addButton('imageup', {
+                icon: 'upload',
+                tooltip: 'Upload Image',
+                onAction: () => InstantImageUpload()
+            });
+
         };
         tinymce.init(this.editorSettings);
         this.externalFormElement = document.createElement("input") as HTMLInputElement;
@@ -103,7 +141,6 @@ namespace PopForums {
             }
         }
     }
-
     
     private static editorCSS = "/lib/bootstrap/dist/css/bootstrap.min.css,/lib/PopForums/dist/Editor.min.css";
     private static postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
@@ -112,7 +149,7 @@ namespace PopForums {
         plugins: "lists image link",
         content_css: FullText.editorCSS,
         menubar: false,
-        toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image",
+        toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image imageup",
         statusbar: false,
         link_target_list: false,
         link_title: false,

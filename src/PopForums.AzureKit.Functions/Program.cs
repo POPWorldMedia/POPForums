@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using PopForums.AzureKit;
 using PopForums.AzureKit.Functions;
 using PopForums.ElasticKit;
+using PopForums.Repositories;
 using NotificationTunnel = PopForums.AzureKit.Functions.NotificationTunnel;
 
 var configuration = new ConfigurationBuilder()
@@ -35,6 +36,8 @@ var host = new HostBuilder()
 		s.AddSingleton<ICacheHelper, PopForums.AzureKit.Functions.CacheHelper>();
 		s.RemoveAll<INotificationTunnel>();
 		s.AddTransient<INotificationTunnel, NotificationTunnel>();
+		s.RemoveAll<IPostImageRepository>();
+		s.AddTransient<IPostImageRepository, PopForums.AzureKit.PostImage.PostImageRepository>();
 		
 		switch (config.SearchProvider.ToLower())
 		{

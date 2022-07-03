@@ -62,6 +62,9 @@ services.AddSignalR();
 // do NOT call AddPopForumsBackgroundServices()
 services.AddPopForumsAzureFunctionsAndQueues();
 
+// persist image uploads to Azure blob storage, see configuration
+services.AddPopForumsAzureBlobStorageForPostImages();
+
 // creates an instance of the background services for POP Forums... call this last in forum setup,
 // but don't use if you're running these in functions
 //services.AddPopForumsBackgroundServices();

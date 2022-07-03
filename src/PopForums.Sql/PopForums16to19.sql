@@ -98,3 +98,36 @@ BEGIN
 		[UserID] ASC
 	);
 END
+
+
+
+IF OBJECT_ID('pf_PostImage', 'U') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[pf_PostImage]
+	(
+		[ID] NVARCHAR(50) NOT NULL PRIMARY KEY,
+		[TimeStamp] DATETIME NOT NULL,
+		[TenantID] NVARCHAR(100) NULL,
+		[ContentType] NVARCHAR(50) NOT NULL,
+		[ImageData] VARBINARY(MAX) NOT NULL
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_PostImage'), 'IX_pf_PostImage_TenantID', 'IndexID') IS NULL
+BEGIN
+	CREATE INDEX [IX_pf_PostImage_TenantID] ON [dbo].[pf_PostImage] ([TenantID]);
+END
+
+
+
+IF OBJECT_ID('pf_PostImageTemp', 'U') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[pf_PostImageTemp](
+		[PostImageTempID] [uniqueidentifier] NOT NULL PRIMARY KEY,
+		[TimeStamp] [datetime] NOT NULL,
+		[TenantID] NVARCHAR(100) NULL
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_PostImageTemp'), 'IX_pf_PostImageTemp_TimeStamp', 'IndexID') IS NULL
+BEGIN
+	CREATE NONCLUSTERED INDEX [IX_pf_PostImageTemp_TimeStamp] ON [dbo].[pf_PostImageTemp] ([TimeStamp]);
+END

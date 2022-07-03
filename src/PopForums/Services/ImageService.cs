@@ -93,6 +93,8 @@ public class ImageService : IImageService
 		using (var image = Image.Load<Rgba32>(stream))
 		using (var output = new MemoryStream())
 		{
+			if (image.Height <= maxHeight && image.Width <= maxWidth)
+				return bytes;
 			var options = new ResizeOptions
 			{
 				Size = new Size(maxWidth, maxHeight),
