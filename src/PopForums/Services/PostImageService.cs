@@ -10,6 +10,7 @@ public interface IPostImageService
 	Task<PostImage> Get(string id);
 	Task DeleteTempRecord(string id);
 	Task DeleteTempRecords(string[] ids, string fullText);
+	Task DeleteOldPostImages();
 }
 
 public class PostImageService : IPostImageService
@@ -93,6 +94,18 @@ public class PostImageService : IPostImageService
 
 		foreach (var id in filtered)
 			await DeleteTempRecord(id);
+	}
+
+	public async Task DeleteOldPostImages()
+	{
+		var tenantID = _tenantService.GetTenant();
+		var olderThan = DateTime.UtcNow.AddMinutes(-2);
+		var ids = await _postImageTempRepository.GetOld(olderThan);
+		foreach (var id in ids)
+		{
+			await _postImageRepository.DeletePostImageData(id.ToString(), tenantID);
+			await _postImageTempRepository.Delete(id);
+		}
 	}
 
 }

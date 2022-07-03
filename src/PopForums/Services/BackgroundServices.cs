@@ -12,16 +12,19 @@ public class BackgroundServices
 		_searchIndexService = new SearchIndexApplicationService();
 		_awardCalcService = new AwardCalculatorApplicationService();
 		_closeAgedTopicsService = new CloseAgedTopicsApplicationService();
+		_postImageCleanupService = new PostImageCleanupService();
 		_emailService.Start(serviceProvider);
 		_userSessionService.Start(serviceProvider);
 		_searchIndexService.Start(serviceProvider);
 		_awardCalcService.Start(serviceProvider);
 		_closeAgedTopicsService.Start(serviceProvider);
+		_postImageCleanupService.Start(serviceProvider);
 		ApplicationServices.Add(_emailService);
 		ApplicationServices.Add(_userSessionService);
 		ApplicationServices.Add(_searchIndexService);
 		ApplicationServices.Add(_awardCalcService);
 		ApplicationServices.Add(_closeAgedTopicsService);
+		ApplicationServices.Add(_postImageCleanupService);
 	}
 
 	private static EmailApplicationService _emailService;
@@ -29,6 +32,7 @@ public class BackgroundServices
 	private static SearchIndexApplicationService _searchIndexService;
 	private static AwardCalculatorApplicationService _awardCalcService;
 	private static CloseAgedTopicsApplicationService _closeAgedTopicsService;
+	private static PostImageCleanupService _postImageCleanupService;
 
 	public static readonly List<ApplicationServiceBase> ApplicationServices = new List<ApplicationServiceBase>();
 }

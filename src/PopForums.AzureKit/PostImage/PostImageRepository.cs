@@ -40,6 +40,17 @@ public class PostImageRepository : IPostImageRepository
 		return payload;
 	}
 
+	public async Task DeletePostImageData(string id, string tenantID)
+	{
+		var container = new BlobContainerClient(_config.StorageConnectionString, _containerName);
+		await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
+		var tenant = _tenantService.GetTenant();
+		if (string.IsNullOrWhiteSpace(tenant))
+			tenant = "_";
+		var path = $"{tenant}/{id}";
+		await container.DeleteBlobAsync(path, DeleteSnapshotsOption.IncludeSnapshots);
+	}
+
 	// The next two methods are not used when fetching images from Azure storage. The
 	// default SQL implementation does use these.
 

@@ -30,6 +30,12 @@ public class PostImageRepository : IPostImageRepository
 		return payload;
 	}
 
+	public async Task DeletePostImageData(string id, string tenantID)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("DELETE FROM pf_PostImage WHERE ID = @id", new {id}));
+	}
+
 	public async Task<PostImage> GetWithoutData(string id)
 	{
 		Task<PostImage> image = null;

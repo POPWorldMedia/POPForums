@@ -205,4 +205,37 @@ public class PostImageServiceTests
 			_postImageTempRepository.Verify(x => x.Delete(guid3), Times.Once);
 		}
 	}
+
+	public class DeleteOldPostImages : PostImageServiceTests
+	{
+		[Fact]
+		public async void PostImageRepoCalledForEachEntry()
+		{
+			var service = GetService();
+			var tenantID = "pop";
+			var ids = new List<Guid> {Guid.NewGuid(), Guid.NewGuid()};
+			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
+			_postImageTempRepository.Setup(x => x.GetOld(It.IsAny<DateTime>())).ReturnsAsync(ids);
+
+			await service.DeleteOldPostImages();
+
+			_postImageRepository.Verify(x => x.DeletePostImageData(ids[0].ToString(), tenantID), Times.Once);
+			_postImageRepository.Verify(x => x.DeletePostImageData(ids[1].ToString(), tenantID), Times.Once);
+		}
+
+		[Fact]
+		public async void PostImageTempRepoCalledForEachEntry()
+		{
+			var service = GetService();
+			var tenantID = "pop";
+			var ids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
+			_postImageTempRepository.Setup(x => x.GetOld(It.IsAny<DateTime>())).ReturnsAsync(ids);
+
+			await service.DeleteOldPostImages();
+
+			_postImageTempRepository.Verify(x => x.Delete(ids[0]), Times.Once);
+			_postImageTempRepository.Verify(x => x.Delete(ids[1]), Times.Once);
+		}
+	}
 }
