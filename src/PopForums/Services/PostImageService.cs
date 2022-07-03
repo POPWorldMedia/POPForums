@@ -34,6 +34,8 @@ public class PostImageService : IPostImageService
 	private string _contentType;
 	private bool _isOk;
 
+	private const int HoursOldToDelete = 8;
+
 	public bool ProcessImageIsOk(byte[] bytes, string contentType)
 	{
 		_contentType = contentType;
@@ -99,7 +101,7 @@ public class PostImageService : IPostImageService
 	public async Task DeleteOldPostImages()
 	{
 		var tenantID = _tenantService.GetTenant();
-		var olderThan = DateTime.UtcNow.AddMinutes(-2);
+		var olderThan = DateTime.UtcNow.AddHours(-HoursOldToDelete);
 		var ids = await _postImageTempRepository.GetOld(olderThan);
 		foreach (var id in ids)
 		{
