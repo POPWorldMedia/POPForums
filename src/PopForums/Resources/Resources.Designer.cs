@@ -3185,6 +3185,15 @@ namespace PopForums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string UploadImage {
+            get {
+                return ResourceManager.GetString("UploadImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Upload new.
         /// </summary>
         public static string UploadNew {

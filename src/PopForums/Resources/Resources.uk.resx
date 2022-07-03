@@ -1278,4 +1278,7 @@
   <data name="MarkAllRead" xml:space="preserve">
 	  <value>Позначити все як прочитане</value>
   </data>
+  <data name="UploadImage" xml:space="preserve">
+	  <value>Завантажити зображення</value>
+  </data>
 </root>

@@ -1281,4 +1281,7 @@
   <data name="MarkAllRead" xml:space="preserve">
 	  <value>Mark all read</value>
   </data>
+  <data name="UploadImage" xml:space="preserve">
+	  <value>Upload Image</value>
+  </data>
 </root>

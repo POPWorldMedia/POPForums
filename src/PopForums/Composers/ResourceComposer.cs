@@ -21,7 +21,9 @@ public class ResourceComposer : IResourceComposer
 			NewReplyNotification = Resources.NewReplyNotification,
 			Award = Resources.Award,
 			VoteUpNotification = Resources.VoteUpNotification,
-			QuestionAnsweredNotification = Resources.QuestionAnsweredNotification
+			QuestionAnsweredNotification = Resources.QuestionAnsweredNotification,
+
+			UploadImage = Resources.UploadImage
 		};
 		return resources;
 	}

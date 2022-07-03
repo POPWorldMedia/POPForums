@@ -1262,4 +1262,7 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="MarkAllRead" xml:space="preserve">
 	  <value>markiere alles Gelesene</value>
   </data>
+  <data name="UploadImage" xml:space="preserve">
+	  <value>Bild hochladen</value>
+  </data>
 </root>

@@ -1263,4 +1263,7 @@
   <data name="MarkAllRead" xml:space="preserve">
 	  <value>Markeer alles als gelezen</value>
   </data>
+  <data name="UploadImage" xml:space="preserve">
+	  <value>Afbeelding uploaden</value>
+  </data>
 </root>

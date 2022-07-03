@@ -1257,4 +1257,7 @@
   <data name="MarkAllRead" xml:space="preserve">
 	  <value>标记所有已读</value>
   </data>
+  <data name="UploadImage" xml:space="preserve">
+	  <value>上传图片</value>
+  </data>
 </root>

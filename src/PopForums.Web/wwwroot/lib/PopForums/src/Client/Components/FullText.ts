@@ -101,9 +101,9 @@ namespace PopForums {
                 input.click();
             };
 
-            editor.ui.registry.addButton('imageup', {
-                icon: 'upload',
-                tooltip: 'Upload Image',
+            editor.ui.registry.addButton("imageup", {
+                icon: "upload",
+                tooltip: PopForums.localizations.uploadImage,
                 onAction: () => InstantImageUpload()
             });
 
