@@ -34,7 +34,7 @@ public class PostImageRepository : IPostImageRepository
 		var blob = container.GetBlobClient(path);
 		var binary = new BinaryData(bytes);
 		await blob.UploadAsync(binary);
-		await blob.SetHttpHeadersAsync(new BlobHttpHeaders { ContentType = contentType });
+		await blob.SetHttpHeadersAsync(new BlobHttpHeaders {ContentType = contentType, CacheControl = "private"});
 		var url = _config.BaseImageBlobUrl + "/" + _containerName + "/" + path;
 		var payload = new PostImagePersistPayload { Url = url, ID = id };
 		return payload;
