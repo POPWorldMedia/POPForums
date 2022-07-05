@@ -37,7 +37,7 @@ namespace PopForums {
         });
     }
 
-    static template: string = `<input type="button" />
+    static template: string = `<input type="button" class="my-2" />
     <div></div>`;
 }
 

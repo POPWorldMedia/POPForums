@@ -30,10 +30,6 @@
 	<div id="TopicTools">
 		<pf-subscribebutton buttonclass="btn btn-primary" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
 		<pf-favoritebutton buttonclass="btn btn-primary" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
-		@if (user.IsInRole(PermanentRoles.Moderator))
-		{
-			<pf-topicmoderationlogbutton topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.ModerationLog" buttonclass="btn btn-primary"></pf-topicmoderationlogbutton>
-		}
 	</div>
 }
 
@@ -76,6 +72,7 @@ else
 			<label for="CloseOnReply" class="form-check-label">@PopForums.Resources.CloseOnReply</label>
 			@Html.CheckBox("CloseOnReply", new { @class = "form-check-input" })
 		</div>
+		<pf-topicmoderationlogbutton topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.ModerationLog" buttonclass="btn btn-warning"></pf-topicmoderationlogbutton>
 		<ul class="list-inline">
 			<li class="list-inline-item">
 				<form asp-action="ToggleDeleted" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Topic.TopicID" class="inlineModForm"><input type="submit" value="@(Model.Topic.IsDeleted ? PopForums.Resources.Undelete : PopForums.Resources.Delete)" class="btn btn-warning mt-2"/>

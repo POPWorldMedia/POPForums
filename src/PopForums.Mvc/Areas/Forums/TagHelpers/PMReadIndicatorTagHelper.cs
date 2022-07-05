@@ -13,12 +13,12 @@ public class PMReadIndicatorTagHelper : TagHelper
 		if (PrivateMessage.LastPostTime > PrivateMessage.LastViewDate)
 		{
 			output.Attributes.Add("title", Resources.NewPosts);
-			output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span>");
+			output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span>");
 		}
 		else
 		{
 			output.Attributes.Add("title", Resources.NoNewPosts);
-			output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
+			output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span>");
 		}
 
 		output.TagName = "div";
