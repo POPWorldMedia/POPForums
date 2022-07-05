@@ -19,39 +19,39 @@ public class TopicReadIndicatorTagHelper : TagHelper
 			switch (status)
 			{
 				case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.Pinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span><span class=\"icon icon-pin-angle-fill soloLeftBadge topicIndicatorBadge text-success\"></span>");
 					alt = Resources.NewPostsPinned;
 					break;
 				case ReadStatus.Open | ReadStatus.NewPosts | ReadStatus.NotPinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span>");
 					alt = Resources.NewPosts;
 					break;
 				case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-pushpin soloLeftBadge topicIndicatorBadge text-success\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span><span class=\"icon icon-pin-angle-fill soloLeftBadge topicIndicatorBadge text-success\"></span>");
 					alt = Resources.Pinned;
 					break;
 				case ReadStatus.Open | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span>");
 					alt = Resources.NoNewPosts;
 					break;
 				case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.Pinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon-pushpin secondBadge topicIndicatorBadge text-success\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span><span class=\"icon icon-lock-fill firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon icon-pin-angle-fill secondBadge topicIndicatorBadge text-success\"></span>");
 					alt = Resources.NewPostsClosedPinned;
 					break;
 				case ReadStatus.Closed | ReadStatus.NewPosts | ReadStatus.NotPinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span><span class=\"icon icon-lock-fill firstBadge topicIndicatorBadge text-danger\"></span>");
 					alt = Resources.NewPostsClosed;
 					break;
 				case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.Pinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon-pushpin secondBadge topicIndicatorBadge text-success\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span><span class=\"icon icon-lock-fill firstBadge topicIndicatorBadge text-danger\"></span><span class=\"icon icon-pin-angle-fill secondBadge topicIndicatorBadge text-success\"></span>");
 					alt = Resources.ClosedPinned;
 					break;
 				case ReadStatus.Closed | ReadStatus.NoNewPosts | ReadStatus.NotPinned:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span><span class=\"icon icon-lock-fill firstBadge topicIndicatorBadge text-danger\"></span>");
 					alt = Resources.Closed;
 					break;
 				default:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span>");
 					break;
 			}
 		}

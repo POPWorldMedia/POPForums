@@ -51,7 +51,7 @@ namespace PopForums {
         this.badge.innerHTML = "+" + this.votes;
         if (this.badgeclass?.length > 0)
             this.badgeclass.split(" ").forEach((c) => this.badge.classList.add(c));
-        var statusHtml = this.buttonGenerator();
+        let statusHtml = this.buttonGenerator();
         if (statusHtml != "") {
             let status = document.createElement("template");
             status.innerHTML = this.buttonGenerator();
@@ -69,12 +69,12 @@ namespace PopForums {
                         this.votes = result.votes.toString();
                         this.badge.innerHTML = "+" + this.votes;
                         if (result.isVoted) {
-                            voteButton.classList.remove("icon-plus");
-                            voteButton.classList.add("icon-cancel-circle");
+                            voteButton.classList.remove("icon-plus-square");
+                            voteButton.classList.add("icon-plus-square-fill");
                         }
                         else {
-                            voteButton.classList.remove("icon-cancel-circle");
-                            voteButton.classList.add("icon-plus");
+                            voteButton.classList.remove("icon-plus-square-fill");
+                            voteButton.classList.add("icon-plus-square");
                         }
                         this.applyPopover();
                     }));
@@ -98,7 +98,7 @@ namespace PopForums {
             fetch(PopForums.AreaPath + "/Forum/Voters/" + this.postid)
             .then(response => response.text()
                 .then(text => {
-                    var t = document.createElement("template");
+                    let t = document.createElement("template");
                     t.innerHTML = text.trim();
                     this.voterContainer.innerHTML = "";
                     this.voterContainer.appendChild(t.content.firstChild);
@@ -128,8 +128,8 @@ namespace PopForums {
 
     static template: string = `<div></div>`;
 
-    static voteUpButton = "<span class=\"icon-plus\"></span>";
-    static cancelVoteButton = "<span class=\"icon-cancel-circle\"></span>";
+    static voteUpButton = "<span class=\"icon icon-plus-square\"></span>";
+    static cancelVoteButton = "<span class=\"icon icon-plus-square-fill\"></span>";
 }
 
 customElements.define("pf-votecount", VoteCount);

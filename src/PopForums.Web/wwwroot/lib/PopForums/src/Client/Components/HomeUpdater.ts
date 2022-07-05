@@ -23,8 +23,8 @@ namespace PopForums {
             row.querySelector(".postCount").innerHTML = data.postCount;
             row.querySelector(".lastPostName").innerHTML = data.lastPostName;
             row.querySelector("pf-formattedtime").setAttribute("utctime", data.utc);
-            row.querySelector(".newIndicator .icon-file-text2").classList.remove("text-muted");
-            row.querySelector(".newIndicator .icon-file-text2").classList.add("text-warning");
+            row.querySelector(".newIndicator .icon").classList.remove("text-muted", "icon-file-earmark-text");
+            row.querySelector(".newIndicator .icon").classList.add("text-warning", "icon-file-earmark-text-fill");
         };
     }
     

@@ -20,18 +20,18 @@ public class ForumReadIndicatorTagHelper : TagHelper
 			{
 				case ReadStatus.Closed | ReadStatus.NoNewPosts:
 					alt = Resources.Archived;
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 					break;
 				case ReadStatus.Closed | ReadStatus.NewPosts:
 					alt = Resources.ArchivedNewPosts;
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span><span class=\"icon-lock firstBadge topicIndicatorBadge text-danger\"></span>");
 					break;
 				case ReadStatus.NewPosts:
 					alt = Resources.NewPosts;
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-warning\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text-fill text-warning\"></span>");
 					break;
 				default:
-					output.PostElement.AppendHtml("<span class=\"icon-file-text2 text-muted\"></span>");
+					output.PostElement.AppendHtml("<span class=\"icon icon-file-earmark-text text-muted\"></span>");
 					break;
 			}
 		}

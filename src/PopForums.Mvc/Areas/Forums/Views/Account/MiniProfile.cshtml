@@ -9,15 +9,15 @@
 	@PopForums.Resources.Posts: <a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" asp-route-pageNumber="" target="_blank">@Model.PostCount.ToString("N0")</a>, @PopForums.Resources.ScoringGame: @Model.Points.ToString("N0")<br />
 	@if (!String.IsNullOrWhiteSpace(Model.Facebook))
 	{
-		<a href="https://facebook.com/@Model.Facebook" target="_blank" class="icon"><span class="icon-facebook2"></span></a>
+		<a href="https://facebook.com/@Model.Facebook" target="_blank" class="icon"><span class="icon icon-facebook"></span></a>
 	}
 	@if (!String.IsNullOrWhiteSpace(Model.Twitter))
 	{
-		<a href="https://twitter.com/@Model.Twitter" target="_blank" class="icon"><span class="icon-twitter"></span></a>
+		<a href="https://twitter.com/@Model.Twitter" target="_blank" class="icon"><span class="icon icon-twitter"></span></a>
 	}
 	@if (!String.IsNullOrWhiteSpace(Model.Instagram))
 	{
-		<a href="https://www.instagram.com/@Model.Instagram" target="_blank" class="icon"><span class="icon-instagram"></span></a>
+		<a href="https://www.instagram.com/@Model.Instagram" target="_blank" class="icon"><span class="icon icon-instagram"></span></a>
 	}
 	<a asp-action="ViewProfile" asp-route-id="@Model.UserID" target="_blank">Full Profile</a>
 	@if (Model.ShowDetails)
