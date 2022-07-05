@@ -27,10 +27,12 @@ namespace PopForums {
 
     connectedCallback() {
         this.innerHTML = ReplyButton.template;
-        let button = this.querySelector("input") as HTMLInputElement;
-        button.value = this.buttontext;
+        let button = this.querySelector("button") as HTMLButtonElement;
+        button.title = this.buttontext;
         if (this.buttonclass?.length > 0)
             this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
+        if (button.classList.contains("btn"))
+            button.innerText = this.buttontext;
         button.addEventListener("click", (e: MouseEvent) => {
             PopForums.currentTopicState.loadReply(Number(this.topicid), Number(this.postid), true);
         });
@@ -44,14 +46,14 @@ namespace PopForums {
     updateUI(data: boolean): void {
         if (this.overridedisplay?.toLowerCase() === "true")
             return;
-        let button = this.querySelector("input");
+        let button = this.querySelector(":first-child") as HTMLElement;
         if (data)
             button.style.display = "none";
         else
             button.style.display = "initial";
     }
 
-    static template: string = `<input type="button" />`;
+    static template: string = `<button type="button"></button>`;
 }
 
 customElements.define('pf-replybutton', ReplyButton);

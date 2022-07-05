@@ -106,6 +106,7 @@
 }
 #ForumContainer .postItem .voteCount {
     margin-right: 1em;
+	vertical-align: text-top
 }
 .voters {
     max-height: 10em;
@@ -115,7 +116,6 @@
 .voters li { list-style: none;font-size: 100%; }
 pf-votecount span {
     font-size: 1.2em;
-    vertical-align: middle;
     margin-right: 1em;
     cursor: pointer;
 }
@@ -123,11 +123,13 @@ pf-votecount span {
 #ForumContainer .postItem .postTools {
 	display: inline-block;
 }
-#ForumContainer .postTools a, #ForumContainer .postTools input {
+#ForumContainer .postTools a, #ForumContainer .postTools button {
 	color: var(--bs-body-color);
+    font-size: 1.2em;
 }
-#ForumContainer .postTools a, #ForumContainer .postTools input, #ForumContainer li.voteUp.btn-link.list-inline-item, #ForumContainer h2 a {
+#ForumContainer .postTools *, #ForumContainer h2 a {
 	text-decoration: none;
+    cursor: pointer;
 }
 #ForumContainer .postItem .postTools input {
 	padding: 0;
@@ -221,107 +223,10 @@ pf-votecount span {
 
 /* icons */
 
-/*@font-face {
-	font-family: 'pfglyphs';
-	src: url('Fonts/pfglyphs.eot?enukk');
-	src: url('Fonts/pfglyphs.eot?enukk#iefix') format('embedded-opentype'), url('Fonts/pfglyphs.ttf?enukk') format('truetype'), url('Fonts/pfglyphs.woff?enukk') format('woff'), url('Fonts/pfglyphs.svg?enukk#pfglyphs') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}*/
-
 .miniProfile a.icon {
 	text-decoration: none !important;
 	margin-right: .5em;
 }
-
-/*[class^="icon-"], [class*=" icon-"] {
-	font-family: 'pfglyphs' !important;
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}*/
-
-.icon-user-plus:before {
-	content: "\e973";
-}
-
-.icon-user-minus:before {
-	content: "\e974";
-}
-
-.icon-link:before {
-	content: "\e9cb";
-}
-
-.icon-star-empty:before {
-	content: "\e9d7";
-}
-
-.icon-star-full:before {
-	content: "\e9d9";
-}
-
-.icon-warning:before {
-	content: "\ea07";
-}
-
-.icon-question:before {
-	content: "\ea09";
-}
-
-.icon-plus:before {
-	content: "\ea0a";
-}
-
-.icon-minus:before {
-	content: "\ea0b";
-}
-
-.icon-info:before {
-	content: "\ea0c";
-}
-
-.icon-cancel-circle:before {
-	content: "\ea0d";
-}
-
-.icon-cross:before {
-	content: "\ea0f";
-}
-
-.icon-checkmark:before {
-	content: "\ea10";
-}
-
-.icon-checkmark2:before {
-	content: "\ea11";
-}
-
-.icon-circle-up:before {
-	content: "\ea41";
-}
-
-.icon-circle-right:before {
-	content: "\ea42";
-}
-
-.icon-circle-down:before {
-	content: "\ea43";
-}
-
-.icon-circle-left:before {
-	content: "\ea44";
-}
-
-.icon-share2:before {
-	content: "\ea82";
-}
-
-
 
 
 :root {
@@ -333,7 +238,7 @@ pf-votecount span {
 }
 
 #AccountBox .icon, #SearchDropDown .icon {
-	font-size: 1.4em;
+	font-size: 1.3em;
 	vertical-align: text-top;
     margin-left: 0.2em;
 }

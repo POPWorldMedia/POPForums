@@ -29,7 +29,7 @@
     connectedCallback() {
         let targetText = document.getElementById(this.containerid);
         this.innerHTML = QuoteButton.template;
-        let button = this.querySelector("input");
+        let button = this.querySelector("button");
         button.title = this.tip;
         ["mousedown","touchstart"].forEach((e:string) => 
             targetText.addEventListener(e, () => 
@@ -87,7 +87,7 @@
         };
     }
 
-    static template: string = `<input type="button" data-bs-toggle="tooltip" title="" />`;
+    static template: string = `<button type="button" data-bs-toggle="tooltip" title="" />`;
 }
 
 customElements.define('pf-quotebutton', QuoteButton);

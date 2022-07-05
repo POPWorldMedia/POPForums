@@ -48,18 +48,18 @@
 		<hr />
 		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
-	<div class="postToolContainer">
-		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary"></pf-votecount>
+	<div class="mt-3">
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass=""></pf-votecount>
 		<ul class="postTools list-inline">
-			<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Link, "PostLink", "Forum", new {id = Model.Post.PostID}, null)</li>
+			<li class="list-inline-item"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></li>
 			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{
-				<li class="list-inline-item"><pf-replybutton buttonclass="btn-link list-inline-item" buttontext="@PopForums.Resources.Reply" topicid="@Model.Topic.TopicID" postid="@Model.Post.PostID" overridedisplay="true"></pf-replybutton></li>
-				<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link list-inline-item" containerid="text@(Model.Post.PostID)" buttontext="@PopForums.Resources.Quote" tip="@PopForums.Resources.SelectText" postid="@Model.Post.PostID" callback="PopForums.currentTopicState.nextQuote"></pf-quotebutton></li>
+				<li class="list-inline-item"><pf-replybutton buttonclass="btn-link icon icon-reply-fill" buttontext="@PopForums.Resources.Reply" topicid="@Model.Topic.TopicID" postid="@Model.Post.PostID" overridedisplay="true" isposttool="true"></pf-replybutton></li>
+				<li class="list-inline-item"><pf-quotebutton name="@Model.Post.Name" buttonclass="btn-link icon icon-quote list-inline-item" containerid="text@(Model.Post.PostID)" buttontext="@PopForums.Resources.Quote" tip="@PopForums.Resources.SelectText" postid="@Model.Post.PostID" callback="PopForums.currentTopicState.nextQuote"></pf-quotebutton></li>
 			}
 			@if (Model.User.IsPostEditable(Model.Post))
 			{
-				<li class="list-inline-item">@Html.ActionLink(PopForums.Resources.Edit, "Edit", "Forum", new {id = Model.Post.PostID}, null)</li>
+				<li class="list-inline-item"><a asp-controller="Forum" asp-action="Edit" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Edit"><span class="icon icon-pencil-square"></span></a></li>
 				if (Model.Post.IsDeleted)
 				{
 					<li class="list-inline-item">
@@ -69,7 +69,7 @@
 				else
 				{
 					<li class="list-inline-item">
-						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@deleteLink" class="btn-link"/></form>
+						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" value="@deleteLink" class="btn-link"><span class="icon icon-trash3-fill"></span></button></form>
 					</li>
 				}
 			}
