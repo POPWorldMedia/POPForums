@@ -38,7 +38,6 @@
 					if (!SettingsManager.Current.IsPrivateForumInstance)
 					{
 						<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
-						<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 					}
 				}
 				else
@@ -64,7 +63,6 @@
 						</div>
 					</li>
 					<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link">@PopForums.Resources.Recent</a></li>
-					<li class="nav-item"><a asp-controller="@FeedController.Name" asp-action="Index" asp-route-area="Forums" class="nav-link">@PopForums.Resources.ActivityFeed</a></li>
 				}
 			</ul>
 		</div>
