@@ -18,7 +18,7 @@ namespace PopForums {
 
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
-        let button: HTMLInputElement = this.querySelector("input");
+        let button: HTMLButtonElement = this.querySelector("button");
         this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", () => {
             fetch(PopForums.AreaPath + "/Subscription/ToggleSubscription/" + PopForums.currentTopicState.topicID, {
@@ -49,14 +49,20 @@ namespace PopForums {
     }
 
     updateUI(data: boolean): void {
-        let button = this.querySelector("input");
-        if (data)
-            button.value = this.unsubscribetext;
-        else
-            button.value = this.subscribetext;
+        let button = this.querySelector("button");
+        if (data) {
+            button.title = this.unsubscribetext;
+            button.classList.remove("icon-bell-slash", "text-muted");
+            button.classList.add("icon-bell-fill", "text-warning");
+        }
+        else {
+            button.title = this.subscribetext;
+            button.classList.remove("icon-bell-fill", "text-warning");
+            button.classList.add("icon-bell-slash", "text-muted");
+        }
     }
 
-    static template: string = `<input type="button" />`;
+    static template: string = `<button type="button" class="btn-link icon"></button>`;
 }
 
 customElements.define('pf-subscribebutton', SubscribeButton);

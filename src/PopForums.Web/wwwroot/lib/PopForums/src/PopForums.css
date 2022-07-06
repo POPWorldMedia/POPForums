@@ -1,13 +1,13 @@
-﻿#ForumContainer .navbar {
+﻿#ForumContainer h1 .icon {
+	font-size: .8em;
+}
+
+#ForumContainer .navbar {
 	z-index: 1025;
 }
 
 #ForumContainer .newIndicator {
 	max-width: 40px;
-}
-
-#ForumContainer #TopicTools input {
-	margin-bottom: 10px;
 }
 
 #ForumContainer #PostResponseMessage, #ForumContainer #TopicModerationLog {

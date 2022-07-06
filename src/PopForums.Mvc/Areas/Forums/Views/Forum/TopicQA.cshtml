@@ -16,7 +16,14 @@
 </script>
 }
 
-<h1>@Model.Topic.Title</h1>
+<h1>
+	@if (user != null)
+	{
+		<pf-subscribebutton buttonclass="btn-link text-decoration-none" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
+		<pf-favoritebutton buttonclass="btn-link text-decoration-none" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
+	}
+	@Model.Topic.Title
+</h1>
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent">@PopForums.Resources.Recent</a></li>
@@ -27,10 +34,6 @@
 
 @if (user != null) {
 	<p id="AsyncResponse"></p>
-	<div id="TopicTools">
-		<pf-subscribebutton buttonclass="btn btn-primary" subscribetext="@PopForums.Resources.Subscribe" unsubscribetext="@PopForums.Resources.Unsubscribe"></pf-subscribebutton>
-		<pf-favoritebutton buttonclass="btn btn-primary" makefavoritetext="@PopForums.Resources.FavoriteMake" removefavoritetext="@PopForums.Resources.FavoriteRemove"></pf-favoritebutton>
-	</div>
 }
 
 <div id="PostStream">

@@ -18,7 +18,7 @@ namespace PopForums {
 
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
-        let button: HTMLInputElement = this.querySelector("input");
+        let button: HTMLButtonElement = this.querySelector("button");
         this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", () => {
             fetch(PopForums.AreaPath + "/Favorites/ToggleFavorite/" + PopForums.currentTopicState.topicID, {
@@ -49,14 +49,20 @@ namespace PopForums {
     }
 
     updateUI(data: boolean): void {
-        let button = this.querySelector("input");
-        if (data)
-            button.value = this.removefavoritetext;
-        else
-            button.value = this.makefavoritetext;
+        let button = this.querySelector("button");
+        if (data) {
+            button.title = this.removefavoritetext;
+            button.classList.remove("icon-star", "text-muted");
+            button.classList.add("icon-star-fill", "text-warning");
+        }
+        else {
+            button.title = this.makefavoritetext;
+            button.classList.remove("icon-star-fill", "text-warning");
+            button.classList.add("icon-star", "text-muted");
+        }
     }
 
-    static template: string = `<input type="button" />`;
+    static template: string = `<button type="button" class="btn-link icon"></button>`;
 }
 
 customElements.define('pf-favoritebutton', FavoriteButton);

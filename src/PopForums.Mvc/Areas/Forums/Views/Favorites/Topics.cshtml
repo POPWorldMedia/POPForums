@@ -35,7 +35,7 @@ else
 				<td class="text-center">
 					<form asp-action="RemoveFavorite" asp-controller="Favorites" asp-antiforgery="false">
 						<input name="id" id="id" type="hidden" value="@topic.TopicID" />
-						<input type="submit" value="@PopForums.Resources.FavoriteRemove" class="btn btn-primary" />
+						<button type="submit" class="btn btn-primary"><span class="icon icon-star-fill text-warning"></span> @PopForums.Resources.FavoriteRemove</button>
 					</form>
 				</td>
 				<td>
