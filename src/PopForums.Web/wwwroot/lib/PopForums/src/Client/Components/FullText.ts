@@ -103,7 +103,7 @@ namespace PopForums {
 
             editor.ui.registry.addButton("imageup", {
                 icon: "upload",
-                tooltip: PopForums.localizations.uploadImage,
+                tooltip: "Upload Image",
                 onAction: () => InstantImageUpload()
             });
 
