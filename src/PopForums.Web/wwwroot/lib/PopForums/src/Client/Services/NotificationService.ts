@@ -54,6 +54,7 @@ namespace PopForums {
             list.forEach(item => {
                 (item as NotificationItem).MarkRead();
             });
+            this.userState.notificationCount = 0;
         }
 
         private async getNotifications() {
