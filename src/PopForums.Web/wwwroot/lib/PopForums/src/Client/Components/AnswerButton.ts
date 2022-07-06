@@ -34,6 +34,7 @@ namespace PopForums {
 
         connectedCallback() {
             this.button = document.createElement("p");
+            this.button.classList.add("icon");
             this.answerstatusclass.split(" ").forEach((c) => this.button.classList.add(c));
             if (this.isfirstintopic.toLowerCase() === "false" && this.userid === this.startedbyuserid) {
                 // make it a button for author
@@ -54,23 +55,23 @@ namespace PopForums {
                 // this is question author
                 this.button.classList.add("asnswerButton");
                 if (answerPostID && this.postid === answerPostID.toString()) {
-                    this.button.classList.remove("icon-checkmark2");
+                    this.button.classList.remove("icon-check-circle");
                     this.button.classList.remove("text-muted");
-                    this.button.classList.add("icon-checkmark");
+                    this.button.classList.add("icon-check-circle-fill");
                     this.button.classList.add("text-success");
                     this.style.cursor = "default";
                 }
                 else {
-                    this.button.classList.remove("icon-checkmark");
+                    this.button.classList.remove("icon-check-circle-fill");
                     this.button.classList.remove("text-success");
-                    this.button.classList.add("icon-checkmark2");
+                    this.button.classList.add("icon-check-circle");
                     this.button.classList.add("text-muted");
                     this.style.cursor = "pointer";
                 }
             }
             else if (answerPostID && this.postid === answerPostID.toString()) {
                 // not the question author, but it is the answer
-                this.button.classList.add("icon-checkmark");
+                this.button.classList.add("icon-check-circle-fill");
                 this.button.classList.add("text-success");
                 this.style.cursor = "default";
             }

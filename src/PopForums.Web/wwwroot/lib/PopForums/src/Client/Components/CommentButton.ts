@@ -23,10 +23,12 @@ namespace PopForums {
 
         connectedCallback() {
             this.innerHTML = CommentButton.template;
-            let button = this.querySelector("input") as HTMLInputElement;
-            button.value = this.buttontext;
+            let button = this.querySelector("button") as HTMLButtonElement;
+            button.title = this.buttontext;
             if (this.buttonclass?.length > 0)
                 this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
+            if (button.classList.contains("btn"))
+                button.innerText = this.buttontext;
             button.addEventListener("click", (e: MouseEvent) => {
                 PopForums.currentTopicState.loadComment(Number(this.topicid), Number(this.postid));
             });
@@ -47,7 +49,7 @@ namespace PopForums {
                 button.disabled = false;
         }
 
-        static template: string = `<input type="button" />`;
+        static template: string = `<button type="button"></button>`;
 }
 
 customElements.define('pf-commentbutton', CommentButton);
