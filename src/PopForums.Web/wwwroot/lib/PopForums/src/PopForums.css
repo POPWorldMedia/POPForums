@@ -265,6 +265,10 @@ pf-votecount span {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-recycle:before {
+    content: "\e94c";
+}
+
 .icon-trophy:before {
 	content: "\e900";
 }

@@ -1,0 +1,84 @@
+﻿@model Topic
+@inject IUserRetrievalShim UserRetrievalShim
+@{
+	var user = UserRetrievalShim.GetUser();
+}
+
+@if (user != null && user.IsInRole(PermanentRoles.Moderator))
+{
+	<div id="ModeratorPanel" class="bg-light mt-3 p-3">
+		<h3>@PopForums.Resources.Moderator</h3>
+		<div class="form-check">
+			<label for="CloseOnReply" class="form-check-label">@PopForums.Resources.CloseOnReply</label>
+			@Html.CheckBox("CloseOnReply", new { @class = "form-check-input" })
+		</div>
+		<pf-topicmoderationlogbutton topicid="@Model.TopicID" buttontext="@PopForums.Resources.ModerationLog" buttonclass="btn btn-warning"></pf-topicmoderationlogbutton>
+		<ul class="list-inline">
+			<li class="list-inline-item">
+				<form asp-action="ToggleDeleted" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.TopicID" class="inlineModForm">
+					<button type="submit" class="btn btn-warning mt-2">@if (Model.IsDeleted)
+                       {
+	                       <span class="icon icon-recycle"></span> @PopForums.Resources.Undelete
+                       }
+                       else
+                       {
+	                       <span class="icon icon-trash3-fill"></span> @PopForums.Resources.Delete
+                       }
+					</button>
+				</form>
+			</li>
+			<li class="list-inline-item">
+				<form asp-action="TogglePin" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.TopicID" class="inlineModForm">
+					<button type="submit" class="btn btn-warning mt-2">@if (Model.IsPinned)
+                       {
+	                       <span class="icon icon-pin-angle-fill"></span> @PopForums.Resources.Unpin
+                       }
+                       else
+                       {
+	                       <span class="icon icon-pin-angle"></span> @PopForums.Resources.Pin
+                       }
+					</button>
+				</form>
+			</li>
+			<li class="list-inline-item">
+				<form asp-action="ToggleClosed" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.TopicID" class="inlineModForm">
+					<button type="submit" class="btn btn-warning mt-2">@if (Model.IsClosed)
+                       {
+	                       <span class="icon icon-lock-fill"></span> @PopForums.Resources.Open
+                       }
+                       else
+                       {
+	                       <span class="icon icon-lock"></span> @PopForums.Resources.Close
+                       }
+					</button>
+				</form>
+			</li>
+			@if (user.IsInRole(PermanentRoles.Admin))
+			{
+				<li class="list-inline-item">
+					<form asp-action="DeleteTopicPermanently" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.TopicID" class="inlineModForm"><input type="submit" value="@PopForums.Resources.DeletePermanently" class="btn btn-warning mt-2"/>
+					</form></li>
+			}
+		</ul>
+		<form asp-action="UpdateTopic" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.TopicID" class="form-horizontal" role="form">
+			@Html.Hidden("TopicID", Model.TopicID)
+			<div class="mb-3">
+				<label for="NewTitle" class="col-sm-2 form-label">@PopForums.Resources.Title</label>
+				<div class="col-sm-6">
+					@Html.TextBox("NewTitle", Model.Title, new {@class = "form-control"})
+				</div>
+			</div>
+			<div class="mb-3">
+				<label for="NewForum" class="col-sm-2 form-label">@PopForums.Resources.Forum</label>
+				<div class="col-sm-6">
+					<select id="NewForum" name="NewForum" class="form-select" asp-items="ViewBag.CategorizedForums"></select>
+				</div>
+			</div>
+			<div class="mb-3">
+				<div class="col-sm-6">
+					<input type="submit" value="@PopForums.Resources.Update" class="btn btn-warning"/>
+				</div>
+			</div>
+		</form>
+	</div>
+}

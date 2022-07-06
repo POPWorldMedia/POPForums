@@ -67,7 +67,7 @@
 					if (Model.Post.IsDeleted)
 					{
 						<li class="list-inline-item">
-							<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><input type="submit" value="@PopForums.Resources.Undelete" class="btn-link"/></form>
+							<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Undelete" class="btn-link"><span class="icon icon-recycle"></span></button></form>
 						</li>
 					}
 					else
@@ -103,7 +103,7 @@
 						if (comment.IsDeleted)
 						{
 							using (Html.BeginForm("UndeletePost", "Moderator", new { id = comment.PostID }, FormMethod.Post))
-							{<button type="submit" class="btn-link text-decoration-none">@PopForums.Resources.Undelete</button> }
+							{<button type="submit" title="@PopForums.Resources.Undelete" class="btn-link icon icon-recycle text-decoration-none"></button> }
 						}
 						else
 						{
