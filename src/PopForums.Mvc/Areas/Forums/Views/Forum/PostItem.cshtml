@@ -18,7 +18,7 @@
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem" data-postID="@Model.Post.PostID">
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem my-3" data-postID="@Model.Post.PostID">
 	<div class="postUserData bg-primary rounded mb-3 px-3 py-1">
 		<pf-postminiprofile username="@Model.Post.Name" userid="@Model.Post.UserID" miniprofileboxclass="miniProfileBox bg-light text-dark rounded" usernameclass="text-light"></pf-postminiprofile>
 		<small class="postTime text-end text-light text-secondary">
@@ -48,9 +48,9 @@
 		<hr />
 		<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 	}
-	<div class="mt-3">
-		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass=""></pf-votecount>
-		<ul class="postTools list-inline">
+	<div class="mt-3 postToolContainer">
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary align-text-top me-3" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass=""></pf-votecount>
+		<ul class="postTools list-inline d-inline-block">
 			<li class="list-inline-item"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></li>
 			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 			{

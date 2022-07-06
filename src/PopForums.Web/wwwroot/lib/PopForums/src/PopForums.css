@@ -18,15 +18,6 @@
     font-size: .8em;
 }
 
-#ForumContainer .activityFeedPoints {
-	font-size: 200%;
-	font-weight: bold;
-	text-align: center;
-	min-width: 60px;
-	float: left;
-	margin-right: 1em;
-}
-
 #ForumContainer .toLabelX {
 	cursor: pointer;
 }
@@ -42,37 +33,17 @@
 }
 
 #ForumContainer .answerData {
-	text-align: center;
 	min-width: 4em;
 }
 
-#ForumContainer .answerData .answerStatus {
-	margin: 1em auto;
-	font-size: 2em;
-}
-
-#ForumContainer .answerData .badge {
-	font-size: 1.2em;
-}
-
-#ForumContainer .answerButton, #ForumContainer .answerCheck {
-	font-size: 150%;
-	text-align: center;
-}
-
-#ForumContainer .answerButton, pf-notificationtoggle {
+#ForumContainer .answerButton, 
+pf-notificationtoggle,
+#ForumContainer .postUserData h3 {
 	cursor: pointer;
 }
 
-#ForumContainer .answerVote {
-	white-space: nowrap;
-}
-
 #ForumContainer .QAstate {
-	width: 40px;
-}
-#ForumContainer .QAstate span {
-	margin-top: 6px;
+	width: 3em;
 }
 
 #ForumContainer .newPostBlock {
@@ -83,30 +54,15 @@
 
 /* post item */
 
-#ForumContainer .postItem {
-	margin: 20px 0;
-}
-#ForumContainer .postUserData h3 {
-	cursor: pointer;
-}
 #ForumContainer blockquote {
 	font-size: 100%;
 	border-left: 8px solid var(--bs-secondary);
 	padding: 0 1em;
 }
-#ForumContainer .postItem hr {
-	margin: 10px 0;
-}
 #ForumContainer .miniProfileBox {
 	height: 0;
 	overflow: hidden;
 	transition: all .5s ease-in-out;
-}
-#ForumContainer .miniProfileBox.open div {
-}
-#ForumContainer .postItem .voteCount {
-    margin-right: 1em;
-	vertical-align: text-top
 }
 .voters {
     max-height: 10em;
@@ -120,9 +76,6 @@ pf-votecount span {
     cursor: pointer;
 }
 
-#ForumContainer .postItem .postTools {
-	display: inline-block;
-}
 #ForumContainer .postTools a, #ForumContainer .postTools button {
 	color: var(--bs-body-color);
     font-size: 1.2em;
@@ -130,12 +83,6 @@ pf-votecount span {
 #ForumContainer .postTools *, #ForumContainer h2 a {
 	text-decoration: none;
     cursor: pointer;
-}
-#ForumContainer .postItem .postTools input {
-	padding: 0;
-}
-#ForumContainer .postItem .moderationLog {
-	display: none;
 }
 #ForumContainer .postItem .postImage {
 	max-width: 100%;height: auto;

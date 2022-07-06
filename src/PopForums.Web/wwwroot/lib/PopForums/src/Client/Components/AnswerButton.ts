@@ -53,7 +53,7 @@ namespace PopForums {
         updateUI(answerPostID: number): void {
             if (this.isfirstintopic.toLowerCase() === "false" && this.userid === this.startedbyuserid) {
                 // this is question author
-                this.button.classList.add("asnswerButton");
+                this.button.classList.add("asnswerButton", "fs-1", "my-3");
                 if (answerPostID && this.postid === answerPostID.toString()) {
                     this.button.classList.remove("icon-check-circle");
                     this.button.classList.remove("text-muted");

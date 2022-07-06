@@ -102,7 +102,7 @@
 				{
 					<div class="row">
 						<div class="col-4">@PopForums.Resources.Web</div>
-						<div class="col-8"><a href="@Model.Web" target="_blank">@Model.Web</a></div>
+						<div class="col-8"><a href="@Model.Web" target="_blank" rel="nofollow">@Model.Web</a></div>
 					</div>
 				}
 
@@ -123,13 +123,15 @@
 		<div id="ActivityFeed" class="tab-pane">
 			@foreach (var item in Model.Feed)
 			{
-				<div class="alert-light alert mt-2">
+				<div class="alert-light alert mt-2 d-flex">
 					@if (item.Points > 0)
 					{
-						<div class="activityFeedPoints">+@item.Points</div>
+						<div class="fs-1 fw-bold me-3">+@item.Points</div>
 					}
-					<div>@Html.Raw(item.Message)</div>
-					<div class="text-end small"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
+					<div class="w-100">
+						<div>@Html.Raw(item.Message)</div>
+						<div class="text-end small mt-2"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
+					</div>
 				</div>
 			}
 		</div>

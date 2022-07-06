@@ -20,9 +20,9 @@
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 }
 <a name="@Model.Post.PostID"></a>
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap" data-postID="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
-	<div class="answerData col-2">
-		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary m-auto d-block mb-3" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="link-primary m-auto"></pf-votecount>
+<div class="@(Model.Post.IsDeleted ? "bg-warning " : "") row postItem flex-nowrap my-3" data-postID="@Model.Post.PostID" data-topicid="@Model.Topic.TopicID">
+	<div class="answerData col-2 text-center">
+		<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary m-auto d-block mb-3 fs-5" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass="m-auto fs-2"></pf-votecount>
 
 		<pf-answerbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" answerstatusclass="answerStatus" chooseanswertext="@PopForums.Resources.ChooseAnswer" answerpostid="@Model.Topic.AnswerPostID" userid="@user?.UserID" startedbyuserid="@Model.Topic.StartedByUserID" isfirstintopic="@Model.Post.IsFirstInTopic.ToString()"></pf-answerbutton>
 	</div>
@@ -55,7 +55,7 @@
 			<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 		}
 		<div class="postToolContainer">
-			<ul class="postTools list-inline ms-0">
+			<ul class="postTools list-inline ms-0 d-inline-block">
 				<li class="list-inline-item"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></li>
 				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
