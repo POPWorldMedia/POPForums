@@ -89,6 +89,8 @@ public class PostImageService : IPostImageService
 
 	public async Task DeleteTempRecords(string[] ids, string fullText)
 	{
+		if (ids == null || ids.Length == 0)
+			return;
 		var filtered = new List<string>();
 		foreach (var id in ids)
 			if (fullText.Contains(id, StringComparison.OrdinalIgnoreCase))
