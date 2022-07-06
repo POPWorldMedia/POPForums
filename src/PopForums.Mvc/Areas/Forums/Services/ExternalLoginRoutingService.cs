@@ -4,7 +4,7 @@ namespace PopForums.Mvc.Areas.Forums.Services;
 
 public interface IExternalLoginRoutingService
 {
-	Dictionary<ProviderType, string> GetActiveProviderTypeAndNameDictionary();
+	Dictionary<ProviderType, ExternalLoginTypeMetadata> GetActiveProviderTypeAndNameDictionary();
 }
 
 public class ExternalLoginRoutingService : IExternalLoginRoutingService
@@ -16,17 +16,17 @@ public class ExternalLoginRoutingService : IExternalLoginRoutingService
 		_settingsManager = settingsManager;
 	}
 
-	public Dictionary<ProviderType, string> GetActiveProviderTypeAndNameDictionary()
+	public Dictionary<ProviderType, ExternalLoginTypeMetadata> GetActiveProviderTypeAndNameDictionary()
 	{
-		var dictionary = new Dictionary<ProviderType, string>();
+		var dictionary = new Dictionary<ProviderType, ExternalLoginTypeMetadata>();
 		if (_settingsManager.Current.UseGoogleLogin)
-			dictionary.Add(ProviderType.Google, "Google");
+			dictionary.Add(ProviderType.Google, new ExternalLoginTypeMetadata { Name = "Google", CssClass = "icon-google" });
 		if (_settingsManager.Current.UseFacebookLogin)
-			dictionary.Add(ProviderType.Facebook, "Facebook");
+			dictionary.Add(ProviderType.Facebook, new ExternalLoginTypeMetadata { Name = "Facebook", CssClass = "icon-facebook" });
 		if (_settingsManager.Current.UseMicrosoftLogin)
-			dictionary.Add(ProviderType.Microsoft, "Microsoft");
+			dictionary.Add(ProviderType.Microsoft, new ExternalLoginTypeMetadata { Name = "Microsoft", CssClass = "icon-microsoft" });
 		if (_settingsManager.Current.UseOAuth2Login)
-			dictionary.Add(ProviderType.OAuth2, _settingsManager.Current.OAuth2DisplayName);
+			dictionary.Add(ProviderType.OAuth2, new ExternalLoginTypeMetadata { Name = _settingsManager.Current.OAuth2DisplayName, CssClass = "" });
 		return dictionary;
 	}
 }

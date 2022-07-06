@@ -1,7 +1,7 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
 @inject ISettingsManager SettingsManager
 @using PopForums.Configuration
-@model Dictionary<PopIdentity.ProviderType, string>
+@model Dictionary<PopIdentity.ProviderType, ExternalLoginTypeMetadata>
 @{
     ViewBag.Title = PopForums.Resources.Login;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -44,7 +44,7 @@
 			<p>
 				@foreach (var item in Model)
 				{
-					<button type="submit" id="@item.Key" name="provider" value="@item.Key" class="btn btn-primary">@item.Value</button>
+					<button type="submit" id="@item.Key" name="provider" value="@item.Key" class="btn btn-primary"><span class="icon @item.Value.CssClass"></span> @item.Value.Name</button>
 				}
 			</p>
 		</form>

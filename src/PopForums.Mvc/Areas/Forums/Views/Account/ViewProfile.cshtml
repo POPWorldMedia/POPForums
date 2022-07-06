@@ -137,8 +137,9 @@
 		<div id="Awards" class="tab-pane">
 			@foreach (var item in Model.UserAwards)
 			{
-				<div class="alert-light alert mt-2" title="@item.Description">
-					<h2>@item.Title</h2>
+				<div class="alert-light alert mt-2">
+					<h2><span class="icon icon-trophy-fill"></span> @item.Title</h2>
+					<p>@item.Description</p>
 					<div class="text-end small"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></div>
 				</div>
 			}
