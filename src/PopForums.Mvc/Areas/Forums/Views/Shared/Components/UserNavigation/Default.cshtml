@@ -35,7 +35,7 @@
 				else
 				{
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" title="@user.Name"><span class="icon icon-people-fill"></span></a>
+						<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" title="@user.Name"><span class="icon icon-person-fill"></span></a>
 						<div class="dropdown-menu" role="menu">
 							<a class="dropdown-item disabled">@user.Name</a>
 							<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@user.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
