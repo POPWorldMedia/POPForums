@@ -82,7 +82,7 @@ public class PostMasterService : IPostMasterService
 		await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID, IsForRemoval = false });
 		_topicViewCountService.SetViewedTopic(topic);
 		var profile = await  _profileRepository.GetProfile(user.UserID);
-		if (profile.IsAutoFollowOnReply)
+		if (profile != null && profile.IsAutoFollowOnReply)
 			await _subscribedTopicsService.AddSubscribedTopic(user.UserID, topicID);
 		await _postImageService.DeleteTempRecords(newPost.PostImageIDs, newPost.FullText);
 
