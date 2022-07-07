@@ -75,28 +75,28 @@ namespace PopForums {
                 input.setAttribute("type", "file");
                 input.setAttribute("accept", "image/jpeg,image/gif");
                 input.addEventListener("change", (e) => {
-                const file = input.files[0];
-                let url = "/Forums/Image/UploadPostImage";
-                let form = new FormData();
-                form.append("file", file);
-                editor.setProgressState(true);
-                fetch(url, {
-                    method: "POST",
-                    body: form
-                })
-                    .then(response => {
-                        if (response.ok)
-                            return response.json();
-                        throw "Could not upload image";
+                    const file = input.files[0];
+                    let url = "/Forums/Image/UploadPostImage";
+                    let form = new FormData();
+                    form.append("file", file);
+                    editor.setProgressState(true);
+                    fetch(url, {
+                        method: "POST",
+                        body: form
                     })
-                    .then(payload => {
-                        editor.insertContent(`<img src="${payload.url}" />`);
-                        PopForums.userState.postImageIds.push(payload.id);
-                    })
-                    .catch(error => {
-                        alert("Could not upload image");
-                    })
-                    .finally(() => editor.setProgressState(false));
+                        .then(response => {
+                            if (response.ok)
+                                return response.json();
+                            alert("Could not upload image: " + response.status);
+                        })
+                        .then(payload => {
+                            editor.insertContent(`<img src="${payload.url}" />`);
+                            PopForums.userState.postImageIds.push(payload.id);
+                        })
+                        .catch(error => {
+                            alert("Could not upload image: " + error);
+                        })
+                        .finally(() => editor.setProgressState(false));
                 });
                 input.click();
             };
