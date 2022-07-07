@@ -38,6 +38,7 @@ namespace PopForums {
                     return;
                 }
                 container = document.createElement("div");
+                container.classList.add("my-3");
                 parentContainer.appendChild(container);
             }
             if (container.style.display !== "block")

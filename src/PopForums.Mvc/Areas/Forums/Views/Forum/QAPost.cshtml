@@ -54,37 +54,39 @@
 			<hr />
 			<div class="text-secondary">@Html.Raw((Model.Signatures)[Model.Post.UserID])</div>
 		}
-		<div class="my-3 d-flex postToolContainer">
-			<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></div>
-			@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
-			{
-				<div class="toolButton"><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn-link icon icon-reply-fill"></pf-commentbutton></div>
-			}
-			@if (user.IsPostEditable(Model.Post))
-			{
-				<div class="toolButton"><a asp-controller="Forum" asp-action="Edit" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Edit"><span class="icon icon-pencil-square"></span></a></div>
-			}
-			@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
-			{
-				<div>
-					<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".postItem"></pf-postmoderationlogbutton>
-				</div>
-			}
-			@if (Model.User.IsPostEditable(Model.Post))
-			{
-				@if (Model.Post.IsDeleted)
+		<div class="superToolBox">
+			<div class="my-3 d-flex postToolContainer">
+				<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></div>
+				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
-					<div class="toolButton ms-auto">
-						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Undelete" class="btn-link"><span class="icon icon-recycle"></span></button></form>
+					<div class="toolButton"><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn-link icon icon-reply-fill"></pf-commentbutton></div>
+				}
+				@if (user.IsPostEditable(Model.Post))
+				{
+					<div class="toolButton"><a asp-controller="Forum" asp-action="Edit" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Edit"><span class="icon icon-pencil-square"></span></a></div>
+				}
+				@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
+				{
+					<div>
+						<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".superToolBox"></pf-postmoderationlogbutton>
 					</div>
 				}
-				else
+				@if (Model.User.IsPostEditable(Model.Post))
 				{
-					<div class="toolButton ms-auto">
-						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@deleteLink" class="btn-link"><span class="icon icon-trash3-fill"></span></button></form>
-					</div>
+					@if (Model.Post.IsDeleted)
+					{
+						<div class="toolButton ms-auto">
+							<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Undelete" class="btn-link"><span class="icon icon-recycle"></span></button></form>
+						</div>
+					}
+					else
+					{
+						<div class="toolButton ms-auto">
+							<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@deleteLink" class="btn-link"><span class="icon icon-trash3-fill"></span></button></form>
+						</div>
+					}
 				}
-			}
+			</div>
 		</div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
 		{
