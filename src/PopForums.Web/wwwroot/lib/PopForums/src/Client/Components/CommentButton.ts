@@ -40,7 +40,7 @@ namespace PopForums {
         }
         
         updateUI(data: number): void {
-            let button = this.querySelector("input");
+            let button = this.querySelector("button");
             if (data !== undefined) {
                 button.disabled = true;
                 button.style.cursor = "default";

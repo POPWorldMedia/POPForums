@@ -22,7 +22,7 @@ namespace PopForums {
     }
 
     connectedCallback() {
-        this.innerHTML = TopicModerationLogButton.template;
+        this.innerHTML = PostModerationLogButton.template;
         let button = this.querySelector("input");
         button.value = this.buttontext;
         let classes = this.buttonclass;

@@ -76,11 +76,19 @@ pf-votecount span {
     cursor: pointer;
 }
 
-#ForumContainer .postTools a, #ForumContainer .postTools button {
-	color: var(--bs-body-color);
-    font-size: 1.2em;
+#ForumContainer .postToolContainer {
+    clear: both;
 }
-#ForumContainer .postTools *, #ForumContainer h2 a {
+#ForumContainer .postToolContainer .toolButton {
+    width: 2em;
+    text-align: center;
+	font-size: 1.3em;
+    margin: auto 0;
+}
+#ForumContainer .postToolContainer a {
+	color: var(--bs-body-color);
+}
+#ForumContainer .postToolContainer *, #ForumContainer h2 a {
 	text-decoration: none;
     cursor: pointer;
 }
