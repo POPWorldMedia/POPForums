@@ -88,7 +88,7 @@ namespace PopForums {
         this.voterContainer = document.createElement("div");
         if (this.votescontainerclass?.length > 0)
             this.votescontainerclass.split(" ").forEach((c) => this.voterContainer.classList.add(c));
-        this.voterContainer.innerHTML = "Loading...";
+        this.voterContainer.innerHTML = `<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`;
         this.popover = new bootstrap.Popover(this.badge, {
             content: this.voterContainer,
             html: true,
