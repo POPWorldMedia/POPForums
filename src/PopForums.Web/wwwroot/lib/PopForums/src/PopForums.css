@@ -85,7 +85,7 @@ pf-votecount span {
 	font-size: 1.3em;
     margin: auto 0;
 }
-#ForumContainer .postToolContainer a {
+#ForumContainer .postToolContainer a, #ForumContainer .postToolContainer button {
 	color: var(--bs-body-color);
 }
 #ForumContainer .postToolContainer *, #ForumContainer h2 a {
