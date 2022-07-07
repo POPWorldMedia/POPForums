@@ -96,8 +96,13 @@ namespace PopForums {
                         .catch(error => {
                             alert("Could not upload image: " + error);
                         })
-                        .finally(() => editor.setProgressState(false));
+                        .finally(() => {
+                            editor.setProgressState(false);
+                            input.remove();
+                        });
                 });
+                input.style.display = "none";
+                document.getElementById("ForumContainer").append(input);
                 input.click();
             };
 
