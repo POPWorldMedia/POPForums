@@ -63,6 +63,81 @@ public class ProfileServiceTests
 	}
 
 	[Fact]
+	public async Task EditUserProfilePlainText()
+	{
+		var service = GetService();
+		var user = new User { UserID = 1 };
+		user.Roles = new List<string>();
+		var returnedProfile = new Profile { UserID = 1, IsPlainText = true };
+		var profile = new Profile();
+		_profileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		_textParsingService.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
+		var userEdit = new UserEditProfile
+		{
+			Dob = new DateTime(2000, 1, 1),
+			HideVanity = true,
+			Instagram = "i",
+			IsPlainText = true,
+			IsSubscribed = true,
+			Location = "l",
+			Facebook = "fb",
+			Twitter = "tw",
+			ShowDetails = true,
+			Signature = "s",
+			Web = "w",
+			IsAutoFollowOnReply = true
+		};
+
+		await service.EditUserProfile(user, userEdit);
+
+		_profileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		Assert.Equal(new DateTime(2000, 1, 1), profile.Dob);
+		Assert.True(profile.HideVanity);
+		Assert.Equal("i", profile.Instagram);
+		Assert.True(profile.IsPlainText);
+		Assert.True(profile.IsSubscribed);
+		Assert.True(profile.IsAutoFollowOnReply);
+		Assert.Equal("l", profile.Location);
+		Assert.Equal("fb", profile.Facebook);
+		Assert.Equal("tw", profile.Twitter);
+		Assert.True(profile.ShowDetails);
+		Assert.Equal("parsed", profile.Signature);
+		Assert.Equal("w", profile.Web);
+	}
+
+	[Fact]
+	public async Task EditUserProfileRichText()
+	{
+		var service = GetService();
+		var user = new User { UserID = 1 };
+		user.Roles = new List<string>();
+		var returnedProfile = new Profile { UserID = 1, IsPlainText = false };
+		var profile = new Profile();
+		_profileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		_textParsingService.Setup(t => t.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed");
+		var userEdit = new UserEditProfile
+		{
+			Dob = new DateTime(2000, 1, 1),
+			HideVanity = true,
+			Instagram = "i",
+			IsPlainText = true,
+			IsSubscribed = true,
+			Location = "l",
+			Facebook = "fb",
+			Twitter = "tw",
+			ShowDetails = true,
+			Signature = "s",
+			Web = "w"
+		};
+
+		await service.EditUserProfile(user, userEdit);
+
+		Assert.Equal("parsed", profile.Signature);
+	}
+
+	[Fact]
 	public async Task GetProfileForEditParsesSigGuardForNull()
 	{
 		var service = GetService();

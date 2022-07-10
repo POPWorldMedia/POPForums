@@ -7,6 +7,7 @@ public interface IProfileService
 	Task<Profile> Create(User user, SignupData signupData);
 	Task Update(Profile profile);
 	Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false);
+	Task EditUserProfile(User user, UserEditProfile userEditProfile);
 	Task<Dictionary<int, string>> GetSignatures(List<Post> posts);
 	Task<Dictionary<int, int>> GetAvatars(List<Post> posts);
 	Task SetCurrentImageIDToNull(int userID);
@@ -60,6 +61,29 @@ public class ProfileService : IProfileService
 		userEditProfile.Twitter = profile.Twitter;
 		userEditProfile.IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
 		return userEditProfile;
+	}
+
+	public async Task EditUserProfile(User user, UserEditProfile userEditProfile)
+	{
+		var profile = await _profileRepository.GetProfile(user.UserID);
+		if (profile == null)
+			throw new Exception($"No profile found for UserID {user.UserID}");
+		if (profile.IsPlainText)
+			profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
+		else
+			profile.Signature = _textParsingService.ClientHtmlToHtml(userEditProfile.Signature);
+		profile.IsSubscribed = userEditProfile.IsSubscribed;
+		profile.ShowDetails = userEditProfile.ShowDetails;
+		profile.IsPlainText = userEditProfile.IsPlainText;
+		profile.HideVanity = userEditProfile.HideVanity;
+		profile.Location = userEditProfile.Location;
+		profile.Dob = userEditProfile.Dob;
+		profile.Web = userEditProfile.Web;
+		profile.Instagram = userEditProfile.Instagram;
+		profile.Facebook = userEditProfile.Facebook;
+		profile.Twitter = userEditProfile.Twitter;
+		profile.IsAutoFollowOnReply = userEditProfile.IsAutoFollowOnReply;
+		await _profileRepository.Update(profile);
 	}
 
 	public async Task Create(Profile profile)

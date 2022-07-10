@@ -32,7 +32,6 @@ public interface IUserService
 	Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
 	Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
 	Task<UserEdit> GetUserEdit(User user);
-	Task EditUserProfile(User user, UserEditProfile userEditProfile);
 	bool IsPasswordValid(string password, out string errorMessage);
 	Task<bool> IsEmailInUseByDifferentUser(User user, string email);
 	Task<List<User>> GetUsersOnline();
@@ -370,6 +369,18 @@ public class UserService : IUserService
 		return new UserEdit(user, profile);
 	}
 
+	/// <summary>
+	/// Used only from setup service and admin user edits.
+	/// </summary>
+	/// <param name="targetUser"></param>
+	/// <param name="userEdit"></param>
+	/// <param name="removeAvatar"></param>
+	/// <param name="removePhoto"></param>
+	/// <param name="avatarFile"></param>
+	/// <param name="photoFile"></param>
+	/// <param name="ip"></param>
+	/// <param name="user"></param>
+	/// <returns></returns>
 	public async Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user)
 	{
 		if (!string.IsNullOrWhiteSpace(userEdit.NewEmail))
@@ -454,30 +465,6 @@ public class UserService : IUserService
 			profile.ImageID = imageID;
 			await _profileRepository.Update(profile);
 		}
-	}
-
-	// TODO: this and some other stuff probably belongs in ProfileService
-	public async Task EditUserProfile(User user, UserEditProfile userEditProfile)
-	{
-		var profile = await _profileRepository.GetProfile(user.UserID);
-		if (profile == null)
-			throw new Exception($"No profile found for UserID {user.UserID}");
-		if (profile.IsPlainText)
-			profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
-		else
-			profile.Signature = _textParsingService.ClientHtmlToHtml(userEditProfile.Signature);
-		profile.IsSubscribed = userEditProfile.IsSubscribed;
-		profile.ShowDetails = userEditProfile.ShowDetails;
-		profile.IsPlainText = userEditProfile.IsPlainText;
-		profile.HideVanity = userEditProfile.HideVanity;
-		profile.Location = userEditProfile.Location;
-		profile.Dob = userEditProfile.Dob;
-		profile.Web = userEditProfile.Web;
-		profile.Instagram = userEditProfile.Instagram;
-		profile.Facebook = userEditProfile.Facebook;
-		profile.Twitter = userEditProfile.Twitter;
-		profile.IsAutoFollowOnReply = userEditProfile.IsAutoFollowOnReply;
-		await _profileRepository.Update(profile);
 	}
 
 	public bool IsPasswordValid(string password, out string errorMessage)

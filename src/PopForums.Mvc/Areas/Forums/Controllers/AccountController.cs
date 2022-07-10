@@ -271,7 +271,7 @@ public class AccountController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		await _userService.EditUserProfile(user, userEdit);
+		await _profileService.EditUserProfile(user, userEdit);
 		ViewBag.Result = Resources.ProfileUpdated;
 		var profile = await _profileService.GetProfileForEdit(user);
 		var newEdit = new UserEditProfile(profile);
