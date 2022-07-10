@@ -40,75 +40,75 @@
 			<div>
 				@if (Model.ShowDetails)
 				{
-					<div class="row">
-						<div class="col-4">@PopForums.Resources.Contact</div>
-						<div class="col-8">
+					<div class="row mb-3">
+						<div class="col-sm-4">@PopForums.Resources.Contact</div>
+						<div class="col-sm-8">
 							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br/>
 							<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
 						</div>
 					</div>
 				}
 
-				<div class="row">
-					<div class="col-10 offset-4"><a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" asp-route-pageNumber="">@(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")")</a></div>
+				<div class="row mb-3">
+					<div class="col-sm-10 offset-sm-4"><a asp-controller="Account" asp-action="Posts" asp-route-id="@Model.UserID" asp-route-pageNumber="">@(String.Format(PopForums.Resources.NamePosts, Model.Name) + " (" + Model.PostCount.ToString("N0") + ")")</a></div>
 				</div>
 
-				<div class="row">
-					<div class="col-4">@PopForums.Resources.Joined</div>
-					<div class="col-8"><pf-formattedtime utctime="@Model.Joined.ToString("o")"></pf-formattedtime></div>
+				<div class="row mb-3">
+					<div class="col-sm-4">@PopForums.Resources.Joined</div>
+					<div class="col-sm-8"><pf-formattedtime utctime="@Model.Joined.ToString("o")"></pf-formattedtime></div>
 				</div>
 
 				@if (Model.Dob.HasValue)
 				{
-					<div class="row">
-						<div class="col-4">@PopForums.Resources.Birthday</div>
-						<div class="col-8">@Model.Dob.Value.ToString("D")</div>
+					<div class="row mb-3">
+						<div class="col-sm-4">@PopForums.Resources.Birthday</div>
+						<div class="col-sm-8">@Model.Dob.Value.ToString("D")</div>
 					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Location))
 				{
-					<div class="row">
-						<div class="col-4">@PopForums.Resources.Location</div>
-						<div class="col-8">@Model.Location</div>
+					<div class="row mb-3">
+						<div class="col-sm-4">@PopForums.Resources.Location</div>
+						<div class="col-sm-8">@Model.Location</div>
 					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Facebook))
 				{
-					<div class="row">
-						<div class="col-4 text-nowrap"><span class="icon icon-facebook"></span> Facebook</div>
-						<div class="col-8"><a href="https://facebook.com/@Model.Facebook" target="_blank">@Model.Facebook</a></div>
+					<div class="row mb-3">
+						<div class="col-sm-4 text-nowrap"><span class="icon icon-facebook"></span> Facebook</div>
+						<div class="col-sm-8"><a href="https://facebook.com/@Model.Facebook" target="_blank">@Model.Facebook</a></div>
 					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Twitter))
 				{
-					<div class="row">
-						<div class="col-4 text-nowrap"><span class="icon icon-twitter"></span> Twitter</div>
-						<div class="col-8"><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></div>
+					<div class="row mb-3">
+						<div class="col-sm-4 text-nowrap"><span class="icon icon-twitter"></span> Twitter</div>
+						<div class="col-sm-8"><a href="https://twitter.com/@Model.Twitter" target="_blank">&#64;@Model.Twitter</a></div>
 					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Instagram))
 				{
-					<div class="row">
-						<div class="col-4 text-nowrap"><span class="icon icon-instagram"></span> Instagram</div>
-						<div class="col-8"><a href="https://www.instagram.com/@Model.Instagram" target="_blank">&#64;@Model.Instagram</a></div>
+					<div class="row mb-3">
+						<div class="col-sm-4 text-nowrap"><span class="icon icon-instagram"></span> Instagram</div>
+						<div class="col-sm-8"><a href="https://www.instagram.com/@Model.Instagram" target="_blank">&#64;@Model.Instagram</a></div>
 					</div>
 				}
 
 				@if (!String.IsNullOrWhiteSpace(Model.Web))
 				{
-					<div class="row">
-						<div class="col-4">@PopForums.Resources.Web</div>
-						<div class="col-8"><a href="@Model.Web" target="_blank" rel="nofollow">@Model.Web</a></div>
+					<div class="row mb-3">
+						<div class="col-sm-4">@PopForums.Resources.Web</div>
+						<div class="col-sm-8"><a href="@Model.Web" target="_blank" rel="nofollow">@Model.Web</a></div>
 					</div>
 				}
 
-				<div class="row">
-					<div class="col-4">@PopForums.Resources.ScoringGame</div>
-					<div class="col-8">@Model.Points.ToString("N0")</div>
+				<div class="row mb-3">
+					<div class="col-sm-4">@PopForums.Resources.ScoringGame</div>
+					<div class="col-sm-8">@Model.Points.ToString("N0")</div>
 				</div>
 			</div>
 

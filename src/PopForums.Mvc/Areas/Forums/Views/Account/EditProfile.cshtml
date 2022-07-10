@@ -32,31 +32,31 @@
 <h2>@PopForums.Resources.Options</h2>
 
   <div class="mb-3 row">
-  	<div class="offset-2 col-10">
+  	<div class="offset-sm-2 col-sm-10">
   		<input class="form-check-input" type="checkbox" asp-for="IsSubscribed" />
   		<label class="form-check-label" for="IsSubscribed">@PopForums.Resources.SubscribeToList</label>
 	</div>
   </div>
   <div class="mb-3 row">
-	  <div class="offset-2 col-10">
+	  <div class="offset-sm-2 col-sm-10">
 		  <input class="form-check-input" type="checkbox" asp-for="IsAutoFollowOnReply" />
 		  <label class="form-check-label" for="IsAutoFollowOnReply">@PopForums.Resources.AutoFollow</label>
 	  </div>
   </div>
   <div class="mb-3 row">
-  	<div class="offset-2 col-10">
+  	<div class="offset-sm-2 col-sm-10">
   		<input class="form-check-input" type="checkbox" asp-for="ShowDetails" />
   		<label class="form-check-label" for="ShowDetails">@PopForums.Resources.ShowProfileDetails</label>
   </div>
   </div>
   <div class="mb-3 row">
-  	<div class="offset-2 col-10">
+  	<div class="offset-sm-2 col-sm-10">
   		<input class="form-check-input" type="checkbox" asp-for="IsPlainText" />
   		<label class="form-check-label" for="IsPlainText">@PopForums.Resources.ForcePlainTextBox</label>
   </div>
   </div>
   <div class="mb-3 row">
-  	<div class="offset-2 col-10">
+  	<div class="offset-sm-2 col-sm-10">
   		<input class="form-check-input" type="checkbox" asp-for="HideVanity" />
   		<label class="form-check-label" for="HideVanity">@PopForums.Resources.HideVanity</label>
   </div>
@@ -66,24 +66,24 @@
   	<h2>@PopForums.Resources.Details</h2>
   </div>
   <div class="mb-3 row">
-  	<label for="Signature" class="col-2 form-label">@PopForums.Resources.Signature</label>
-  <div class="col-10"><textarea asp-for="Signature" class="form-control" rows="3"></textarea></div>
+  	<label for="Signature" class="col-sm-2 form-label">@PopForums.Resources.Signature</label>
+  <div class="col-sm-10"><textarea asp-for="Signature" class="form-control" rows="3"></textarea></div>
   </div>
   <div class="mb-3 row">
-  	<label for="Location" class="col-2 form-label">@PopForums.Resources.Location</label>
-  <div class="col-10">
+  	<label for="Location" class="col-sm-2 form-label">@PopForums.Resources.Location</label>
+  <div class="col-sm-10">
   	<input type="text" asp-for="Location" class="form-control" />
   </div>
   </div>
   <div class="mb-3 row">
-  	<label for="Dob" class="col-2 form-label">@PopForums.Resources.DateOfBirth</label>
-  <div class="col-10">
+  	<label for="Dob" class="col-sm-2 form-label">@PopForums.Resources.DateOfBirth</label>
+  <div class="col-sm-10">
   	<input type="text" asp-for="Dob" class="form-control" />
   </div>
   </div>
   <div class="mb-3 row">
-	  <label for="Facebook" class="col-2 form-label"><span class="icon icon-facebook"></span> Facebook</label>
-  	<div class="col-10">
+	  <label for="Facebook" class="col-sm-2 form-label"><span class="icon icon-facebook"></span> Facebook</label>
+  	<div class="col-sm-10">
   		<div class="input-group">
   			<div class="input-group-text">https://facebook.com/</div>
   			<input type="text" asp-for="Facebook" class="form-control" />
@@ -91,8 +91,8 @@
   	</div>
   </div>
   <div class="mb-3 row">
-  	<label for="Twitter" class="col-2 form-label"><span class="icon icon-twitter"></span> Twitter</label>
-  	<div class="col-10">
+  	<label for="Twitter" class="col-sm-2 form-label"><span class="icon icon-twitter"></span> Twitter</label>
+  	<div class="col-sm-10">
   		<div class="input-group">
   			<div class="input-group-text">&#64;</div>
   			<input type="text" asp-for="Twitter" class="form-control" />
@@ -100,20 +100,20 @@
   	</div>
   </div>
 	  <div class="mb-3 row">
-		  <label for="Instagram" class="col-2 form-label"><span class="icon icon-instagram"></span> Instagram</label>
-		  <div class="col-10">
+		  <label for="Instagram" class="col-sm-2 form-label"><span class="icon icon-instagram"></span> Instagram</label>
+		  <div class="col-sm-10">
 			  <div class="input-group">
 				  <div class="input-group-text">&#64;</div>
 				  <input type="text" asp-for="Instagram" class="form-control" /></div>
 		  </div>
 	  </div>
 	  <div class="mb-3 row">
-  	<label for="Web" class="col-2 form-label">@PopForums.Resources.Web</label>
-  <div class="col-10">
+  	<label for="Web" class="col-sm-2 form-label">@PopForums.Resources.Web</label>
+  <div class="col-sm-10">
   	<input type="text" asp-for="Web" class="form-control" />
   </div>
   </div>
-  <div class="mb-3 offset-2 col-10">
+  <div class="mb-3 offset-sm-2 col-sm-10">
   	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
   </div>
   </form>
