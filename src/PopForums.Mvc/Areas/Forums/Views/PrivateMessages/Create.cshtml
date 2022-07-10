@@ -30,7 +30,7 @@
 			if (event.target.classList.contains("toItem")) {
 				var item = e.target;
 				var userID = item.getAttribute("data-userID");
-				var label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon-cancel-circle toLabelX"></span></div>';
+				var label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon icon-trash3-fill toLabelX"></span></div>';
 				var t = document.createElement("template");
 				t.innerHTML = label;
 				document.querySelector("#PMToBox").append(t.content.firstChild);
