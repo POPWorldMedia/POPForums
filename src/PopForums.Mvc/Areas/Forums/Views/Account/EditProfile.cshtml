@@ -85,7 +85,7 @@
   <div class="mb-3 row">
   	<label for="Dob" class="col-sm-2 form-label">@PopForums.Resources.DateOfBirth</label>
   <div class="col-sm-10">
-  	<input type="text" asp-for="Dob" class="form-control" />
+  	<input type="text" asp-for="Dob" asp-format="{0:d}" class="form-control" />
   </div>
   </div>
   <div class="mb-3 row">
