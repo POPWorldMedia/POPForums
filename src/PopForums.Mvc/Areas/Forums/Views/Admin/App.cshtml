@@ -248,7 +248,7 @@
 		<h2>@PopForums.Resources.Categories</h2>
 		<div class="form-inline">
 			<input type="text" v-model="newCategory" class="form-control mb-3" />
-			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary ms-3 mb-3" />
+			<input type="button" v-on:click="saveNew" :disabled="loading" value="@PopForums.Resources.AddNew" class="btn btn-primary mb-3" />
 		</div>
 		<table class="table table-sm mt-3">
 			<thead>
@@ -391,7 +391,7 @@
 			</select>
 		</div>
 
-		<div class="container-fluid">
+		<div class="container-fluid mb-3">
 			<div class="row">
 				<div class="col-3">@PopForums.Resources.PostingRoles</div>
 				<div class="offset-5 col-3">@PopForums.Resources.ViewingRoles</div>
@@ -399,13 +399,13 @@
 			<div class="row">
 				<div class="col-3"><select size="6" class="form-select" v-model="selectedPost"><option v-for="r in postRoles">{{r}}</option></select></div>
 				<div class="col-1">
-					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addPost', selectedAll)" /><br />
-					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary" v-on:click="modify('removePost', selectedPost)" />
+					<input type="button" value="&lt;&lt;" class="btn btn-primary btn-sm mb-3" v-on:click="modify('addPost', selectedAll)" /><br />
+					<input type="button" value="&gt;&gt;" class="btn btn-primary btn-sm" v-on:click="modify('removePost', selectedPost)" />
 				</div>
 				<div class="col-3"><select size="6" class="form-select" v-model="selectedAll"><option v-for="r in allRoles">{{r}}</option></select></div>
 				<div class="col-1">
-					<input type="button" value="&gt;&gt;" class="btn-sm btn-primary mb-3" v-on:click="modify('addView', selectedAll)" /><br />
-					<input type="button" value="&lt;&lt;" class="btn-sm btn-primary" v-on:click="modify('removeView', selectedView)" />
+					<input type="button" value="&gt;&gt;" class="btn btn-primary btn-sm mb-3" v-on:click="modify('addView', selectedAll)" /><br />
+					<input type="button" value="&lt;&lt;" class="btn btn-primary btn-sm" v-on:click="modify('removeView', selectedView)" />
 				</div>
 				<div class="col-3"><select size="6" class="form-select" v-model="selectedView"><option v-for="r in viewRoles">{{r}}</option></select></div>
 			</div>
@@ -488,6 +488,8 @@
 		</div>
 		<input type="button" v-on:click="save" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">@PopForums.Resources.SettingsSaved</span></transition>
+        
+        <hr/>
 
 		<h3 class="mt-3">@PopForums.Resources.JunkWords</h3>
 		<div class="mb-3 row">
@@ -495,9 +497,11 @@
 			<div class="col-sm-3"><input type="button" v-on:click="createWord" value="@PopForums.Resources.CreateJunkWordButton" class="btn btn-primary" /></div>
 		</div>
 		<div class="mb-3 row">
-			<select size="10" class="form-select" v-model="selectedWord">
-				<option v-for="w in junkWords">{{w}}</option>
-			</select>
+            <div class="col-sm-12">
+				<select size="10" class="form-select" v-model="selectedWord">
+					<option v-for="w in junkWords">{{w}}</option>
+				</select>
+            </div>
 		</div>
 		<input type="button" v-on:click="deleteWord" value="@PopForums.Resources.DeleteJunkWordButton" class="btn btn-primary" />
 	</main>
@@ -511,7 +515,7 @@
 		<div>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label"><b>Google</b></label>
-				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useGoogleLogin" class="form-check-input" /></div>
+				<div class="col-sm-10 mt-2"><input type="checkbox" v-model="settings.useGoogleLogin" class="form-check-input" /></div>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label">ClientId:</label>
@@ -520,10 +524,11 @@
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label">ClientSecret:</label>
 				<div class="col-sm-10"><input type="text" v-model="settings.googleClientSecret" class="form-control" /></div>
-			</tr>
+			</div>
+            <hr/>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label"><b>Facebook</b></label>
-				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useFacebookLogin" class="form-check-input" /></div>
+				<div class="col-sm-10 mt-2"><input type="checkbox" v-model="settings.useFacebookLogin" class="form-check-input" /></div>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label">AppID:</label>
@@ -533,9 +538,10 @@
 				<label class="col-sm-2 col-form-label">AppSecret:</label>
 				<div class="col-sm-10"><input type="text" v-model="settings.facebookAppSecret" class="form-control" /></div>
 			</div>
+            <hr/>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label"><b>Microsoft</b></label>
-				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useMicrosoftLogin" class="form-check-input" /></div>
+				<div class="col-sm-10 mt-2"><input type="checkbox" v-model="settings.useMicrosoftLogin" class="form-check-input" /></div>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label">ClientID:</label>
@@ -545,9 +551,10 @@
 				<label class="col-sm-2 col-form-label">ClientSecret:</label>
 				<div class="col-sm-10"><input type="text" v-model="settings.microsoftClientSecret" class="form-control" /></div>
 			</div>
+            <hr/>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label"><b>OAuth2 returning JWT</b></label>
-				<div class="col-sm-10 mt-3"><input type="checkbox" v-model="settings.useOAuth2Login" class="form-check-input" /></div>
+				<div class="col-sm-10 mt-2"><input type="checkbox" v-model="settings.useOAuth2Login" class="form-check-input" /></div>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 col-form-label">Client ID:</label>
@@ -605,21 +612,27 @@
 		<h2>@PopForums.Resources.EditUser</h2>
 
 		<form v-on:submit.prevent="search">
-			<div class="mb-3 row">
-				<div class="col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
-				<div class="col-sm-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
+			<div class="row">
+				<div class="mb-3 col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
 			</div>
-			<div class="form-check form-check-inline mb-3">
-				<input class="form-check-input" type="radio" value="name" id="SearchName" v-model="searchType">
-				<label class="form-check-label" for="SearchName">Name</label>
-			</div>
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" value="email" id="SearchEmail" v-model="searchType">
-				<label class="form-check-label" for="SearchEmail">Email</label>
-			</div>
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" value="role" id="SearchRole" v-model="searchType">
-				<label class="form-check-label" for="SearchRole">Role</label>
+            <div class="row mb-3">
+                <div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="name" id="SearchName" v-model="searchType">
+						<label class="form-check-label" for="SearchName">Name</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="email" id="SearchEmail" v-model="searchType">
+						<label class="form-check-label" for="SearchEmail">Email</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="role" id="SearchRole" v-model="searchType">
+						<label class="form-check-label" for="SearchRole">Role</label>
+					</div>
+                </div>
+            </div>
+			<div class="row">
+				<div class="mb-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
 			</div>
 		</form>
 			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning ms-3">@PopForums.Resources.NoResults</span></transition>
@@ -637,33 +650,33 @@
 			<h2>@PopForums.Resources.Security</h2>
 		</div>
 		<div class="mb-3 row">
-			<label class="col-2 control-label">@PopForums.Resources.Name</label>
-			<div class="col-10">
+			<label class="col-sm-2 col-form-label">@PopForums.Resources.Name</label>
+			<div class="col-sm-10">
 				<p class="form-control-static">{{user.name}}</p>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label class="col-2 control-label">@PopForums.Resources.Email</label>
-			<div class="col-10">
+			<label class="col-sm-2 col-form-label">@PopForums.Resources.Email</label>
+			<div class="col-sm-10">
 				<p class="form-control-static"><a v-bind:href="'mailto:' + user.email">{{user.email}}</a></p>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="NewEmail" class="col-2 control-label">@PopForums.Resources.EmailNewOptional</label>
-			<div class="col-10">
+			<label for="NewEmail" class="col-sm-2 col-form-label">@PopForums.Resources.EmailNewOptional</label>
+			<div class="col-sm-10">
 				<input type="email" class="form-control" autocomplete="new-email" v-model="user.newEmail" />
 				<span asp-validation-for="NewEmail"></span>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="NewPassword" class="col-2 control-label">@PopForums.Resources.PasswordNewOptional</label>
-			<div class="col-10">
+			<label for="NewPassword" class="col-sm-2 col-form-label">@PopForums.Resources.PasswordNewOptional</label>
+			<div class="col-sm-10">
 				<input type="password" class="form-control" autocomplete="new-password" v-model="user.newPassword" />
 				<span asp-validation-for="NewPassword"></span>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="IsApproved"> @PopForums.Resources.IsApproved</label>
 			</div>
@@ -673,31 +686,31 @@
 			<h2>@PopForums.Resources.Options</h2>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="IsSubscribed" v-model="user.isSubscribed" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="IsSubscribed"> @PopForums.Resources.SubscribeToList</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="IsAutoFollowOnReply" v-model="user.isAutoFollowOnReply" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="IsAutoFollowOnReply"> @PopForums.Resources.AutoFollow</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="ShowDetails" v-model="user.showDetails" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="ShowDetails"> @PopForums.Resources.ShowProfileDetails</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="IsPlainText" v-model="user.isPlainText" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="IsPlainText"> @PopForums.Resources.ForcePlainTextBox</label>
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<div class="offset-2 col-10">
+			<div class="offset-sm-2 col-sm-10">
 				<input class="form-check-input" type="checkbox" id="HideVanity" v-model="user.hideVanity" class="form-check-input me-2" /> 
 				<label class="form-check-label" for="HideVanity"> @PopForums.Resources.HideVanity</label>
 			</div>
@@ -707,24 +720,24 @@
 			<h2>@PopForums.Resources.Details</h2>
 		</div>
 		<div class="mb-3 row">
-			<label for="Signature" class="col-2 control-label">@PopForums.Resources.Signature</label>
-			<div class="col-10"><textarea id="Signature" class="form-control" rows="3" v-model="user.signature"></textarea></div>
+			<label for="Signature" class="col-sm-2 col-form-label">@PopForums.Resources.Signature</label>
+			<div class="col-sm-10"><textarea id="Signature" class="form-control" rows="3" v-model="user.signature"></textarea></div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Location" class="col-2 control-label">@PopForums.Resources.Location</label>
-			<div class="col-10">
+			<label for="Location" class="col-sm-2 col-form-label">@PopForums.Resources.Location</label>
+			<div class="col-sm-10">
 				<input type="text" id="Location" class="form-control" v-model="user.location" />
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Dob" class="col-2 control-label">@PopForums.Resources.DateOfBirth</label>
-			<div class="col-10">
+			<label for="Dob" class="col-sm-2 col-form-label">@PopForums.Resources.DateOfBirth</label>
+			<div class="col-sm-10">
 				<input type="text" id="Dob" class="form-control" v-model="user.dob" />
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Facebook" class="col-2 control-label">Facebook</label>
-			<div class="col-10">
+			<label for="Facebook" class="col-sm-2 col-form-label">Facebook</label>
+			<div class="col-sm-10">
 				<div class="input-group">
 					<div class="input-group-text">https://facebook.com/</div>
 					<input type="text" id="Facebook" class="form-control" v-model="user.facebook" />
@@ -732,8 +745,8 @@
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Twitter" class="col-2 control-label">Twitter</label>
-			<div class="col-10">
+			<label for="Twitter" class="col-sm-2 col-form-label">Twitter</label>
+			<div class="col-sm-10">
 				<div class="input-group">
 					<div class="input-group-text">&#64;</div>
 					<input type="text" id="Twitter" class="form-control" v-model="user.twitter" />
@@ -741,8 +754,8 @@
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Instagram" class="col-2 control-label">Instagram</label>
-			<div class="col-10">
+			<label for="Instagram" class="col-sm-2 col-form-label">Instagram</label>
+			<div class="col-sm-10">
 				<div class="input-group">
 					<div class="input-group-text">&#64;</div>
 					<input type="text" id="Instagram" class="form-control" v-model="user.instagram" />
@@ -750,8 +763,8 @@
 			</div>
 		</div>
 		<div class="mb-3 row">
-			<label for="Web" class="col-2 control-label">@PopForums.Resources.Web</label>
-			<div class="col-10">
+			<label for="Web" class="col-sm-2 col-form-label">@PopForums.Resources.Web</label>
+			<div class="col-sm-10">
 				<input type="text" id="Web" class="form-control" v-model="user.web" />
 			</div>
 		</div>
@@ -760,7 +773,7 @@
 			<h2>@PopForums.Resources.Roles</h2>
 		</div>
 		<div class="mb-3">
-			<div class="col-10 offset-2">
+			<div class="col-sm-10 offset-sm-2">
 				<template v-for="r in roles">
 					<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" class="form-check-input me-2" /> 
 					<label :for="'rz' + r"> {{r}}</label>
@@ -796,9 +809,9 @@
 	<main>
 		<h2>@PopForums.Resources.UserRoles</h2>
 		
-		<div class="mb-3 row">
-			<div class="col-sm-8"><input type="text" v-model="newRole" class="form-control" /></div>
-			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.CreateNewRole" v-on:click="createRole" class="btn btn-primary" :disabled="loading" /></div>
+		<div class="row">
+			<div class="mb-3 col-sm-8"><input type="text" v-model="newRole" class="form-control" /></div>
+			<div class="mb-3 col-sm-3"><input type="button" value="@PopForums.Resources.CreateNewRole" v-on:click="createRole" class="btn btn-primary" :disabled="loading" /></div>
 		</div>
 		
 		<div class="mb-3">
@@ -838,9 +851,9 @@
 
 		<h3>@PopForums.Resources.EmailBan</h3>
 
-		<div class="mb-3 row">
-			<div class="col-sm-8"><input type="text" v-model="newEmail" class="form-control" /></div>
-			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banEmail" class="btn btn-primary" :disabled="loading" /></div>
+		<div class="row">
+			<div class="mb-3 col-sm-8"><input type="text" v-model="newEmail" class="form-control" /></div>
+			<div class="mb-3 col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banEmail" class="btn btn-primary" :disabled="loading" /></div>
 		</div>
 
 		<div class="mb-3">
@@ -852,9 +865,9 @@
 
 		<h3>@PopForums.Resources.IpBan</h3>
 
-		<div class="mb-3 row">
-			<div class="col-sm-8"><input type="text" v-model="newIP" class="form-control" /></div>
-			<div class="col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banIP" class="btn btn-primary" :disabled="loading" /></div>
+		<div class="row">
+			<div class="mb-3 col-sm-8"><input type="text" v-model="newIP" class="form-control" /></div>
+			<div class="mb-3 col-sm-3"><input type="button" value="@PopForums.Resources.Ban" v-on:click="banIP" class="btn btn-primary" :disabled="loading" /></div>
 		</div>
 
 		<div class="mb-3">
@@ -909,23 +922,27 @@
 
 		<p><input type="button" class="btn btn-primary" v-on:click="openNewEvent" value="Add Event" /></p>
 
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>@PopForums.Resources.Description</th>
-				<th>Point Value</th>
-				<th>Publish to Feed</th>
-				<th>&nbsp;</th>
-			</tr>
-			<tr v-for="e in allEvents">
-				<td>{{e.eventDefinitionID}}</td>
-				<td>{{e.description}}</td>
-				<td>{{e.pointValue}}</td>
-				<td><input type="checkbox" disabled="disabled" v-model="e.isPublishedToFeed" class="form-check-input" /></td>
-				<td>
-					<input type="button" value="Delete" class="btn btn-primary" v-show="!staticIDs.includes(e.eventDefinitionID)" v-on:click="deleteEvent(e)" :disabled="loading" />
-				</td>
-			</tr>
+		<table class="table table-striped">
+            <thead>
+				<tr>
+					<th>ID</th>
+					<th>@PopForums.Resources.Description</th>
+					<th>Point Value</th>
+					<th>Publish to Feed</th>
+					<th>&nbsp;</th>
+				</tr>
+            </thead>
+            <tbody>
+				<tr v-for="e in allEvents">
+					<td>{{e.eventDefinitionID}}</td>
+					<td>{{e.description}}</td>
+					<td>{{e.pointValue}}</td>
+					<td><input type="checkbox" disabled="disabled" v-model="e.isPublishedToFeed" class="form-check-input" /></td>
+					<td>
+						<input type="button" value="Delete" class="btn btn-primary" v-show="!staticIDs.includes(e.eventDefinitionID)" v-on:click="deleteEvent(e)" :disabled="loading" />
+					</td>
+				</tr>
+            </tbody>
 		</table>
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
 			<div class="modal-dialog" role="document">
@@ -968,23 +985,27 @@
 
 		<p><input type="button" class="btn btn-primary" v-on:click="openNewAward" value="Add Award" /></p>
 
-		<table>
-			<tr>
-				<th>ID</th>
-				<th>@PopForums.Resources.Title</th>
-				<th>@PopForums.Resources.Description</th>
-				<th>Single-time Award</th>
-				<th>&nbsp;</th>
-			</tr>
-			<tr v-for="a in allAwards">
-				<td><router-link :to="{path:'/awarddefinitions/'+a.awardDefinitionID}">{{a.awardDefinitionID}}</router-link></td>
-				<td>{{a.title}}</td>
-				<td>{{a.description}}</td>
-				<td><input type="checkbox" disabled="disabled" v-model="a.isSingleTimeAward" class="form-check-input" /></td>
-				<td>
-					<input type="button" value="Delete" class="btn btn-primary" v-on:click="deleteAward(a)" :disabled="loading" />
-				</td>
-			</tr>
+		<table class="table table-striped">
+            <thead>
+				<tr>
+					<th>ID</th>
+					<th>@PopForums.Resources.Title</th>
+					<th>@PopForums.Resources.Description</th>
+					<th>Single-time Award</th>
+					<th>&nbsp;</th>
+				</tr>
+            </thead>
+            <tbody>
+				<tr v-for="a in allAwards">
+					<td><router-link :to="{path:'/awarddefinitions/'+a.awardDefinitionID}">{{a.awardDefinitionID}}</router-link></td>
+					<td>{{a.title}}</td>
+					<td>{{a.description}}</td>
+					<td><input type="checkbox" disabled="disabled" v-model="a.isSingleTimeAward" class="form-check-input" /></td>
+					<td>
+						<input type="button" value="Delete" class="btn btn-primary" v-on:click="deleteAward(a)" :disabled="loading" />
+					</td>
+				</tr>
+            </tbody>
 		</table>
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
 			<div class="modal-dialog" role="document">
@@ -1025,38 +1046,42 @@
 	<main>
 		<h2>Award Detail</h2>
 
-		<table>
-			<tr>
-				<td>Award Definition ID</td>
-				<td>{{award.awardDefinitionID}}</td>
-			</tr>
-			<tr>
-				<td>Title</td>
-				<td>{{award.title}}</td>
-			</tr>
-			<tr>
-				<td>Description</td>
-				<td>{{award.description}}</td>
-			</tr>
-			<tr>
-				<td>Single-time award</td>
-				<td><input type="checkbox" disabled="disabled" v-model="award.isSingleTimeAward" class="form-check-input" /></td>
-			</tr>
+		<table class="table">
+            <tbody>
+				<tr>
+					<td>Award Definition ID</td>
+					<td>{{award.awardDefinitionID}}</td>
+				</tr>
+				<tr>
+					<td>Title</td>
+					<td>{{award.title}}</td>
+				</tr>
+				<tr>
+					<td>Description</td>
+					<td>{{award.description}}</td>
+				</tr>
+				<tr>
+					<td>Single-time award</td>
+					<td><input type="checkbox" disabled="disabled" v-model="award.isSingleTimeAward" class="form-check-input" /></td>
+				</tr>
+            </tbody>
 		</table>
 
 		<h3>Conditions</h3>
 		<p><input type="button" class="btn btn-primary" v-on:click="openNewCondition" value="Add Condition" /></p>
-		<table>
-			<tr>
-				<th>EventDefinitionID</th>
-				<th>Event Count</th>
-				<th>&nbsp;</th>
-			</tr>
-			<tr v-for="c in conditions">
-				<td>{{c.eventDefinitionID}}</td>
-				<td>{{c.eventCount}}</td>
-				<td><input type="button" v-on:click="deleteCondition(c)" value="@PopForums.Resources.Delete" class="btn btn-primary" :disabled="loading" /></td>
-			</tr>
+		<table class="table">
+            <tbody>
+				<tr>
+					<th>EventDefinitionID</th>
+					<th>Event Count</th>
+					<th>&nbsp;</th>
+				</tr>
+				<tr v-for="c in conditions">
+					<td>{{c.eventDefinitionID}}</td>
+					<td>{{c.eventCount}}</td>
+					<td><input type="button" v-on:click="deleteCondition(c)" value="@PopForums.Resources.Delete" class="btn btn-primary" :disabled="loading" /></td>
+				</tr>
+            </tbody>
 		</table>
 		<div class="modal" tabindex="-1" role="dialog" ref="modal">
 			<div class="modal-dialog" role="document">
@@ -1093,7 +1118,7 @@
 		<h2>@PopForums.Resources.ManualEvent</h2>
 
 		<div class="mb-3">
-			<label><input type="button" class="btn btn-primary" value="@PopForums.Resources.To" v-on:click="openSearch" /></label>
+			<label><input type="button" class="btn btn-primary mb-3" value="@PopForums.Resources.To" v-on:click="openSearch" /></label>
 			<input type="text" disabled v-model="selectedUser.name" class="form-control" />
 		</div>
 		<div class="mb-3">
@@ -1198,6 +1223,14 @@
 				<label>@PopForums.Resources.Search</label>
 				<input type="text" class="form-control" v-model="query.searchTerm" />
 			</div>
+			<div class="form-check form-check-inline mb-3">
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="UserID" v-model="query.type">
+				<label class="form-check-label" for="inlineRadio2">UserID</label>
+			</div>
+			<div class="form-check form-check-inline mb-3">
+				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Name" v-model="query.type">
+				<label class="form-check-label" for="inlineRadio1">Name</label>
+			</div>
 			<div class="mb-3">
 				<label>@PopForums.Resources.StartDate</label>
 				<input type="text" class="form-control" v-model="query.start" />
@@ -1205,14 +1238,6 @@
 			<div class="mb-3">
 				<label>@PopForums.Resources.EndDate</label>
 				<input type="text" class="form-control" v-model="query.end" />
-			</div>
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Name" v-model="query.type">
-				<label class="form-check-label" for="inlineRadio1">Name</label>
-			</div>
-			<div class="form-check form-check-inline">
-				<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="UserID" v-model="query.type">
-				<label class="form-check-label" for="inlineRadio2">UserID</label>
 			</div>
 			<input type="button" value="@PopForums.Resources.Search" class="btn btn-primary" v-on:click="getHistory" :disabled="loading" />
 		</div>
