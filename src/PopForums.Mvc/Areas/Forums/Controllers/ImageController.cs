@@ -6,16 +6,18 @@ namespace PopForums.Mvc.Areas.Forums.Controllers;
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ImageController : Controller
 {
-	public ImageController(IImageService imageService, IUserRetrievalShim userRetrievalShim, IPostImageService postImageService)
+	public ImageController(IImageService imageService, IUserRetrievalShim userRetrievalShim, IPostImageService postImageService, ISettingsManager settingsManager)
 	{
 		_imageService = imageService;
 		_userRetrievalShim = userRetrievalShim;
 		_postImageService = postImageService;
+		_settingsManager = settingsManager;
 	}
 
 	private readonly IImageService _imageService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly IPostImageService _postImageService;
+	private readonly ISettingsManager _settingsManager;
 
 	[PopForumsAuthorizationIgnore]
 	public async Task<ActionResult> Avatar(int id)
@@ -78,6 +80,8 @@ public class ImageController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return Unauthorized();
+		if (!_settingsManager.Current.AllowImages)
+			return BadRequest();
 		var file = Request.Form.Files[0];
 		if (file.ContentType != MediaTypeNames.Image.Jpeg && file.ContentType != MediaTypeNames.Image.Gif)
 			return BadRequest();
