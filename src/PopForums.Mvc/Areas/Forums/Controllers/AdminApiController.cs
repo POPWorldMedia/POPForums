@@ -242,7 +242,7 @@ public class AdminApiController : Controller
 		var user = await _userService.GetUser(id);
 		if (user == null)
 			return NotFound();
-		var profile = await _profileService.GetProfileForEdit(user);
+		var profile = await _profileService.GetProfileForEdit(user, true);
 		var model = new UserEdit(user, profile);
 		return model;
 	}
@@ -260,7 +260,7 @@ public class AdminApiController : Controller
 		}
 		var file = Request.Form.Files[0];
 		await _userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
-		var profile = await _profileService.GetProfileForEdit(user);
+		var profile = await _profileService.GetProfileForEdit(user, true);
 		return new {profile.AvatarID};
 	}
 

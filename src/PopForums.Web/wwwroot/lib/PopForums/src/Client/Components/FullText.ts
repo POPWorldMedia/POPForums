@@ -9,6 +9,14 @@ namespace PopForums {
         return this.getAttribute("overridelistener");
     }
 
+    get forcenoimage(): string {
+        return this.getAttribute("forcenoimage");
+    }
+
+    get isshort(): string {
+        return this.getAttribute("isshort");
+    }
+
     get formID() { return this.getAttribute("formid") };
 
     get value() { return this._value;}
@@ -33,6 +41,8 @@ namespace PopForums {
             if (this.value)
             (this.externalFormElement as HTMLTextAreaElement).value = this.value;
             (this.externalFormElement as HTMLTextAreaElement).rows = 12;
+            if (this.isshort?.toLowerCase() === "true")
+                (this.externalFormElement as HTMLTextAreaElement).rows = 3;
             let self = this;
             this.externalFormElement.addEventListener("change", () => {
                 self.value = (this.externalFormElement as HTMLTextAreaElement).value;
@@ -50,8 +60,10 @@ namespace PopForums {
         if (this.value)
             (this.textBox as HTMLTextAreaElement).innerText = this.value;
         this.editorSettings.target = this.textBox;
-        if (!userState.isImageEnabled)
+        if (!userState.isImageEnabled || this.forcenoimage?.toLowerCase() === "true")
             this.editorSettings.toolbar = FullText.postNoImageToolbar;
+        if (this.isshort?.toLowerCase() === "true")
+            this.editorSettings.height = "200";
         var self = this;
         this.editorSettings.setup = function (editor: any) {
             editor.on("init", function () {
@@ -171,7 +183,8 @@ namespace PopForums {
         contextmenu: "",
         paste_as_text: true,
         paste_data_images: false,
-        setup: null as Function
+        setup: null as Function,
+        height: null as string
     };
 
     static id: string = "FullText";

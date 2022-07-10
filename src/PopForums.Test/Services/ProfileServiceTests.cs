@@ -35,16 +35,31 @@ public class ProfileServiceTests
 	}
 
 	[Fact]
-	public async Task GetProfileForEditParsesSig()
+	public async Task GetProfileForEditParsesSigRichText()
 	{
 		var service = GetService();
-		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "blah" };
+		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "blah", IsPlainText = false };
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
 		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
-		_textParsingService.Setup(t => t.ClientHtmlToForumCode("blah")).Returns("parsed");
+		_textParsingService.Setup(t => t.HtmlToClientHtml("blah")).Returns("parsed");
+
 		var result = await service.GetProfileForEdit(user);
+
 		Assert.Equal("parsed", result.Signature);
-		_profileRepo.Verify(p => p.GetProfile(user.UserID), Times.Once());
+	}
+
+	[Fact]
+	public async Task GetProfileForEditParsesSigPlainText()
+	{
+		var service = GetService();
+		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "blah", IsPlainText = true };
+		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
+		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
+		_textParsingService.Setup(t => t.HtmlToForumCode("blah")).Returns("parsed");
+
+		var result = await service.GetProfileForEdit(user);
+
+		Assert.Equal("parsed", result.Signature);
 	}
 
 	[Fact]

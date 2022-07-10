@@ -273,7 +273,9 @@ public class AccountController : Controller
 			return View("EditAccountNoUser");
 		await _userService.EditUserProfile(user, userEdit);
 		ViewBag.Result = Resources.ProfileUpdated;
-		return View(userEdit);
+		var profile = await _profileService.GetProfileForEdit(user);
+		var newEdit = new UserEditProfile(profile);
+		return View(newEdit);
 	}
 
 	public ViewResult Security()

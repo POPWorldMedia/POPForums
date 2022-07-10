@@ -462,11 +462,14 @@ public class UserService : IUserService
 		var profile = await _profileRepository.GetProfile(user.UserID);
 		if (profile == null)
 			throw new Exception($"No profile found for UserID {user.UserID}");
+		if (profile.IsPlainText)
+			profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
+		else
+			profile.Signature = _textParsingService.ClientHtmlToHtml(userEditProfile.Signature);
 		profile.IsSubscribed = userEditProfile.IsSubscribed;
 		profile.ShowDetails = userEditProfile.ShowDetails;
 		profile.IsPlainText = userEditProfile.IsPlainText;
 		profile.HideVanity = userEditProfile.HideVanity;
-		profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
 		profile.Location = userEditProfile.Location;
 		profile.Dob = userEditProfile.Dob;
 		profile.Web = userEditProfile.Web;

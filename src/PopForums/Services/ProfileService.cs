@@ -6,7 +6,7 @@ public interface IProfileService
 	Task Create(Profile profile);
 	Task<Profile> Create(User user, SignupData signupData);
 	Task Update(Profile profile);
-	Task<Profile> GetProfileForEdit(User user);
+	Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false);
 	Task<Dictionary<int, string>> GetSignatures(List<Post> posts);
 	Task<Dictionary<int, int>> GetAvatars(List<Post> posts);
 	Task SetCurrentImageIDToNull(int userID);
@@ -35,14 +35,31 @@ public class ProfileService : IProfileService
 		return await _profileRepository.GetProfile(user.UserID);
 	}
 
-	public async Task<Profile> GetProfileForEdit(User user)
+	public async Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false)
 	{
 		var profile = await _profileRepository.GetProfile(user.UserID);
+		var userEditProfile = new Profile();
 		if (string.IsNullOrWhiteSpace(profile.Signature))
-			profile.Signature = string.Empty;
+			userEditProfile.Signature = string.Empty;
 		else
-			profile.Signature = _textParsingService.ClientHtmlToForumCode(profile.Signature);
-		return profile;
+		{
+			if (profile.IsPlainText || forcePlainText) 
+				userEditProfile.Signature = _textParsingService.HtmlToForumCode(profile.Signature);
+			else
+				userEditProfile.Signature = _textParsingService.HtmlToClientHtml(profile.Signature);
+		}
+		userEditProfile.IsSubscribed = profile.IsSubscribed;
+		userEditProfile.ShowDetails = profile.ShowDetails;
+		userEditProfile.IsPlainText = profile.IsPlainText;
+		userEditProfile.HideVanity = profile.HideVanity;
+		userEditProfile.Location = profile.Location;
+		userEditProfile.Dob = profile.Dob;
+		userEditProfile.Web = profile.Web;
+		userEditProfile.Instagram = profile.Instagram;
+		userEditProfile.Facebook = profile.Facebook;
+		userEditProfile.Twitter = profile.Twitter;
+		userEditProfile.IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
+		return userEditProfile;
 	}
 
 	public async Task Create(Profile profile)

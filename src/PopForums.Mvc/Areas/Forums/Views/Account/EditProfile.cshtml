@@ -7,6 +7,11 @@
 	var user = UserRetrievalShim.GetUser();
 }
 
+@section HeaderContent
+{
+	<script type="text/javascript" src="~/lib/tinymce/tinymce.min.js" asp-append-version="true"></script>
+}
+
 <h1>@PopForums.Resources.Account - @PopForums.Resources.EditProfile</h1>
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
@@ -67,7 +72,9 @@
   </div>
   <div class="mb-3 row">
   	<label for="Signature" class="col-sm-2 form-label">@PopForums.Resources.Signature</label>
-  <div class="col-sm-10"><textarea asp-for="Signature" class="form-control" rows="3"></textarea></div>
+	  <div class="col-sm-10">
+		  <pf-fulltext formid="Signature" overridelistener="true" forcenoimage="true" isshort="true" value="@Model.Signature"></pf-fulltext>
+	  </div>
   </div>
   <div class="mb-3 row">
   	<label for="Location" class="col-sm-2 form-label">@PopForums.Resources.Location</label>
