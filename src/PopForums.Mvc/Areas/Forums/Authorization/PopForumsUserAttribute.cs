@@ -40,6 +40,10 @@ public class PopForumsUserAttribute : IAuthorizationFilter, IActionFilter
 		if (_ignore)
 			return;
 
+		var userAgents = filterContext.HttpContext.Request.Headers.UserAgent;
+		if (userAgents.Count > 0 && userAgents[0].ToLower().Contains("bot"))
+			return;
+
 		if (filterContext.HttpContext.Response.StatusCode == StatusCodes.Status301MovedPermanently || filterContext.HttpContext.Response.StatusCode == StatusCodes.Status302Found)
 			return;
 		int.TryParse(filterContext.HttpContext.Request.Cookies[UserSessionService._sessionIDCookieName], out var cookieSessionID);
