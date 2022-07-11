@@ -85,7 +85,7 @@ namespace PopForums {
             function InstantImageUpload() {
                 const input = document.createElement("input");
                 input.setAttribute("type", "file");
-                input.setAttribute("accept", "image/jpeg,image/gif");
+                input.setAttribute("accept", "image/jpeg,image/gif,image/png");
                 input.addEventListener("change", (e) => {
                     const file = input.files[0];
                     let url = "/Forums/Image/UploadPostImage";

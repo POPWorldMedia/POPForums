@@ -46,7 +46,9 @@ public class PostImageService : IPostImageService
 			return false;
 		}
 
-		if (contentType != MediaTypeNames.Image.Jpeg && contentType != MediaTypeNames.Image.Gif)
+		if (contentType != MediaTypeNames.Image.Jpeg 
+		    && contentType != MediaTypeNames.Image.Gif
+		    && contentType != "image/png")
 		{
 			_isOk = false;
 			return false;

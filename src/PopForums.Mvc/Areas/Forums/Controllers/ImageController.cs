@@ -83,7 +83,9 @@ public class ImageController : Controller
 		if (!_settingsManager.Current.AllowImages)
 			return BadRequest();
 		var file = Request.Form.Files[0];
-		if (file.ContentType != MediaTypeNames.Image.Jpeg && file.ContentType != MediaTypeNames.Image.Gif)
+		if (file.ContentType != MediaTypeNames.Image.Jpeg 
+		    && file.ContentType != MediaTypeNames.Image.Gif
+		    && file.ContentType != "image/png")
 			return BadRequest();
 		var stream = file.OpenReadStream();
 		var bytes = stream.ToBytes();
