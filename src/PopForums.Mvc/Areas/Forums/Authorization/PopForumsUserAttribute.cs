@@ -41,7 +41,7 @@ public class PopForumsUserAttribute : IAuthorizationFilter, IActionFilter
 			return;
 
 		var userAgents = filterContext.HttpContext.Request.Headers.UserAgent;
-		if (userAgents.Count > 0 && userAgents[0].ToLower().Contains("bot"))
+		if (userAgents.Count > 0 && (userAgents[0].ToLower().Contains("bot") || userAgents[0].ToLower().Contains("crawl")))
 			return;
 
 		if (filterContext.HttpContext.Response.StatusCode == StatusCodes.Status301MovedPermanently || filterContext.HttpContext.Response.StatusCode == StatusCodes.Status302Found)
