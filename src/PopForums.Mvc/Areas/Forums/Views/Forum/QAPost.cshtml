@@ -65,12 +65,6 @@
 				{
 					<div class="toolButton"><a asp-controller="Forum" asp-action="Edit" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Edit"><span class="icon icon-pencil-square"></span></a></div>
 				}
-				@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
-				{
-					<div>
-						<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".superToolBox"></pf-postmoderationlogbutton>
-					</div>
-				}
 				@if (Model.User.IsPostEditable(Model.Post))
 				{
 					@if (Model.Post.IsDeleted)
@@ -87,6 +81,12 @@
 					}
 				}
 			</div>
+			@if (Model.Post.IsEdited && user != null && user.IsInRole(PermanentRoles.Moderator))
+			{
+				<div class="my-3">
+					<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".superToolBox"></pf-postmoderationlogbutton>
+				</div>
+			}
 		</div>
 		@if (Model.PostWithChildren.Children != null && Model.PostWithChildren.Children.Count > 0)
 		{
