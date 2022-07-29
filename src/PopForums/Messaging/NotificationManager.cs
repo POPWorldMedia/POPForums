@@ -16,6 +16,7 @@ public class NotificationManager : INotificationManager
 	private readonly INotificationRepository _notificationRepository;
 	private readonly IBroker _broker;
 	private const int PageSize = 20;
+	private const int MaxNotificationCount = 100;
 
 	public NotificationManager(INotificationRepository notificationRepository, IBroker broker)
 	{
@@ -64,6 +65,8 @@ public class NotificationManager : INotificationManager
 
 	public async Task<int> GetPageCount(int userID)
 	{
+		var oldest = await _notificationRepository.GetOldestTime(userID, MaxNotificationCount);
+		await _notificationRepository.DeleteOlderThan(userID, oldest);
 		return await _notificationRepository.GetPageCount(userID, PageSize);
 	}
 

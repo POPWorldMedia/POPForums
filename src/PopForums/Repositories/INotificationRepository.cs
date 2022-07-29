@@ -9,4 +9,6 @@ public interface INotificationRepository
 	Task<int> GetPageCount(int userID, int pageSize);
 	Task<int> GetUnreadNotificationCount(int userID);
 	Task MarkAllRead(int userID);
+	Task<DateTime> GetOldestTime(int userID, int takeCount);
+	Task DeleteOlderThan(int userID, DateTime timeCutOff);
 }

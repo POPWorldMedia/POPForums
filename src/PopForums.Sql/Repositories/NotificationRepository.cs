@@ -81,4 +81,19 @@ SET ROWCOUNT 0";
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_Notifications SET IsRead = 1 WHERE UserID = @userID", new { userID }));
 	}
+
+	public async Task<DateTime> GetOldestTime(int userID, int takeCount)
+	{
+		var notifications = await GetNotifications(userID, 1, takeCount);
+		if (notifications.Count == 0)
+			return new DateTime(1990, 1, 1);
+		var last = notifications.Last();
+		return last.TimeStamp;
+	}
+
+	public async Task DeleteOlderThan(int userID, DateTime timeCutOff)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("DELETE FROM pf_Notifications WHERE UserID = @UserID AND TimeStamp < @TimeStamp", new { UserID = userID, TimeStamp = timeCutOff }));
+	}
 }
