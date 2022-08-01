@@ -4,35 +4,40 @@
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
 
-<div>
+<div class="vh-100 d-flex flex-column">
+
+<div class="row">
 	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
 	</ul>
 </div>
-@foreach (var post in Model.Posts)
-{
-	<div class="postItem">
-		<div class="postUserData bg-primary text-light rounded mb-2 px-3 py-1">
-			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID" class="text-light">@post.Name</a></h3>
-			<small class="postTime text-end"><pf-formattedtime utctime="@post.PostTime.ToString("o")"></pf-formattedtime></small>
-		</div>
-		@Html.Raw(post.FullText)
-	</div>
-}
 
-<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
-	<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
-</form>
-	
-<h2>Reply</h2>
-
-<form asp-action="Reply" asp-route-id="@Model.PrivateMessage.PMID" method="post" role="form">
-	<div class="form-group">
-		<div class="col-12">
-			<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>
-		</div>
+<div class="row overflow-auto">
+	<div class="">
+		@foreach (var post in Model.Posts)
+		{
+			<div class="postItem">
+				<div class="postUserData bg-primary text-light rounded mb-2 px-3 py-1">
+					<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID" class="text-light">@post.Name</a></h3>
+					<small class="postTime text-end"><pf-formattedtime utctime="@post.PostTime.ToString("o")"></pf-formattedtime></small>
+				</div>
+				@Html.Raw(post.FullText)
+			</div>
+		}
 	</div>
-	<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn btn-primary my-3" />
-</form>
+</div>
+
+<div class="row">
+	<form asp-action="Reply" asp-route-id="@Model.PrivateMessage.PMID" method="post" role="form">
+		<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>
+		<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn btn-primary my-3" />
+	</form>
+
+	<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
+		<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
+	</form>
+</div>
+
+</div>
