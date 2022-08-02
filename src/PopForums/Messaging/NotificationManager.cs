@@ -72,7 +72,8 @@ public class NotificationManager : INotificationManager
 
 	public async Task<int> GetUnreadNotificationCount(int userID)
 	{
-		return await _notificationRepository.GetUnreadNotificationCount(userID);
+		var count = await _notificationRepository.GetUnreadNotificationCount(userID);
+		return count > MaxNotificationCount ? MaxNotificationCount : count;
 	}
 
 	public async Task MarkAllRead(int userID)
