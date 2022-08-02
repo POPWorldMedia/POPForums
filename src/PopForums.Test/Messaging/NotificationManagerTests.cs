@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Org.BouncyCastle.Bcpg;
 
 namespace PopForums.Test.Messaging;
 
@@ -90,6 +91,72 @@ public class NotificationManagerTests
 			Assert.Equal(contextID, result.ContextID);
 			var serializedData = JsonSerializer.SerializeToElement(data);
 			Assert.Equal(serializedData.ToString(), result.Data.ToString());
+		}
+	}
+
+	public class GetUnreadNotificationCount : NotificationManagerTests
+	{
+		[Fact]
+		public async Task Over100Returns100()
+		{
+			var manager = GetManager();
+			const int userID = 123;
+			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(101);
+
+			var result = await manager.GetUnreadNotificationCount(userID);
+
+			Assert.Equal(100, result);
+		}
+
+		[Fact]
+		public async Task Under100ReturnsRepoValue()
+		{
+			var manager = GetManager();
+			const int userID = 123;
+			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(99);
+
+			var result = await manager.GetUnreadNotificationCount(userID);
+
+			Assert.Equal(99, result);
+		}
+
+		[Fact]
+		public async Task The100Returns100()
+		{
+			var manager = GetManager();
+			const int userID = 123;
+			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(100);
+
+			var result = await manager.GetUnreadNotificationCount(userID);
+
+			Assert.Equal(100, result);
+		}
+	}
+
+	public class GetPageCount : NotificationManagerTests
+	{
+		[Fact]
+		public async Task CallToOldestGetsOldestTimeAndDeletes()
+		{
+			var manager = GetManager();
+			const int userID = 123;
+			var oldestTime = new DateTime(1999, 1, 2);
+			_notificationRepository.Setup(x => x.GetOldestTime(userID, 100)).ReturnsAsync(oldestTime);
+
+			await manager.GetPageCount(userID);
+
+			_notificationRepository.Verify(x => x.DeleteOlderThan(userID, oldestTime), Times.Once);
+		}
+
+		[Fact]
+		public async Task CallToRepoForPageCountGetsPageSize()
+		{
+			var manager = GetManager();
+			const int userID = 123;
+
+			await manager.GetPageCount(userID);
+
+			_notificationRepository.Verify(x => x.GetPageCount(userID, 20), Times.Once);
 		}
 	}
 }
