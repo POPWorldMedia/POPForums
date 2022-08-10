@@ -1,6 +1,4 @@
-﻿using PopForums.Extensions;
-
-namespace PopForums.Services;
+﻿namespace PopForums.Services;
 
 public interface IPrivateMessageService
 {
@@ -60,13 +58,13 @@ public class PrivateMessageService : IPrivateMessageService
 	public async Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers)
 	{
 		if (String.IsNullOrWhiteSpace(subject))
-			throw new ArgumentNullException("subject");
+			throw new ArgumentNullException(nameof(subject));
 		if (String.IsNullOrWhiteSpace(fullText))
-			throw new ArgumentNullException("fullText");
+			throw new ArgumentNullException(nameof(fullText));
 		if (user == null)
-			throw new ArgumentNullException("user");
+			throw new ArgumentNullException(nameof(user));
 		if (toUsers == null || toUsers.Count == 0)
-			throw new ArgumentException("toUsers must include at least one user.", "toUsers");
+			throw new ArgumentException("toUsers must include at least one user.", nameof(toUsers));
 		var names = user.Name;
 		foreach (var toUser in toUsers)
 			names += ", " + toUser.Name;

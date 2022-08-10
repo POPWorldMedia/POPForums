@@ -2,6 +2,7 @@ namespace PopForums {
     export const AreaPath = "/Forums";
     export var currentTopicState: TopicState;
     export var currentForumState: ForumState;
+    export var currentPmState: PrivateMessageState;
     export var userState: UserState;
     export var localizations: Localizations;
 

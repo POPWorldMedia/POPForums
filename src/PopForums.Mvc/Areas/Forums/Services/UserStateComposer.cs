@@ -5,6 +5,7 @@ public interface IUserStateComposer
 	Task<UserState> GetState();
 }
 
+// TODO: move this to base library
 public class UserStateComposer : IUserStateComposer
 {
 	private readonly IUserRetrievalShim _userRetrievalShim;

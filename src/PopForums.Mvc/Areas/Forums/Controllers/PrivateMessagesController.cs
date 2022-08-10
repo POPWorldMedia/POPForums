@@ -1,19 +1,23 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopForums.Composers;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class PrivateMessagesController : Controller
 {
-	public PrivateMessagesController(IPrivateMessageService privateMessageService, IUserService userService, IUserRetrievalShim userRetrievalShim)
+	public PrivateMessagesController(IPrivateMessageService privateMessageService, IUserService userService, IUserRetrievalShim userRetrievalShim, IPrivateMessageStateComposer privateMessageStateComposer)
 	{
 		_privateMessageService = privateMessageService;
 		_userService = userService;
 		_userRetrievalShim = userRetrievalShim;
+		_privateMessageStateComposer = privateMessageStateComposer;
 	}
 
 	private readonly IPrivateMessageService _privateMessageService;
 	private readonly IUserService _userService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
+	private readonly IPrivateMessageStateComposer _privateMessageStateComposer;
 
 	public static string Name = "PrivateMessages";
 
@@ -43,13 +47,16 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
+		// TODO: defer this to state composer
 		if (await _privateMessageService.IsUserInPM(user, pm) == false)
 			return StatusCode(403);
 		var posts = await _privateMessageService.GetPosts(pm);
+		var state = await _privateMessageStateComposer.GetState(pm.PMID);
 		var model = new PrivateMessageView
 		{
 			PrivateMessage = pm,
-			Posts = posts
+			Posts = posts,
+			State = state
 		};
 		await _privateMessageService.MarkPMRead(user, pm);
 		return View(model);

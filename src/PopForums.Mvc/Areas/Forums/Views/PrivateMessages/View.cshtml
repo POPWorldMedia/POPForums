@@ -1,7 +1,15 @@
 ﻿@model PrivateMessageView
 @{
 	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
-	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+    var pmSerialized = JsonSerializer.Serialize(Model.State, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+}
+
+@section HeaderContent {
+	<script type="text/javascript">
+        PopForums.currentPmState = Object.assign(new PopForums.PrivateMessageState(), @Html.Raw(pmSerialized));
+        PopForums.currentPmState.setupPm();
+	</script>
 }
 
 <div class="vh-100 d-flex flex-column">
@@ -15,7 +23,7 @@
 </div>
 
 <div class="row overflow-auto">
-	<div class="">
+	<div class="py-2">
 		@foreach (var post in Model.Posts)
 		{
 			<div class="postItem">
