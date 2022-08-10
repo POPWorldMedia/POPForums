@@ -6,4 +6,5 @@ public class UserState
 	public bool IsPlainText { get; set; }
 	public int NewPmCount { get; set; }
 	public int NotificationCount { get; set; }
+	public int UserID { get; set; }
 }
