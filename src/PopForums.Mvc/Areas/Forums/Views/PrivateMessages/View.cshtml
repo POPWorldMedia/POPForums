@@ -1,6 +1,8 @@
-﻿@model PrivateMessageView
+﻿@inject IUserRetrievalShim UserRetrievalShim
+@model PrivateMessageView
 @{
-	var title = "USER NAMES HERE";
+	var user = UserRetrievalShim.GetUser();
+	var title = PrivateMessage.GetUserNames(Model.PrivateMessage, user.UserID);
 	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + title;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
     var pmSerialized = JsonSerializer.Serialize(Model.State, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
