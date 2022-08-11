@@ -3,11 +3,13 @@
 public class PMHub : Hub
 {
 	private readonly IPrivateMessageService _privateMessageService;
+	private readonly IUserService _userService;
 	private readonly ITenantService _tenantService;
 
-	public PMHub(IPrivateMessageService privateMessageService, ITenantService tenantService)
+	public PMHub(IPrivateMessageService privateMessageService, IUserService userService, ITenantService tenantService)
 	{
 		_privateMessageService = privateMessageService;
+		_userService = userService;
 		_tenantService = tenantService;
 	}
 
@@ -20,15 +22,23 @@ public class PMHub : Hub
 		return userID;
 	}
 
-	public async void ListenTo(int pmID)
+	public async Task ListenTo(int pmID)
 	{
-		return;
-
 		var pm = await _privateMessageService.Get(pmID);
 		var userID = GetUserID();
 		if (! await _privateMessageService.IsUserInPM(userID, pmID))
 			return;
 		var tenant = _tenantService.GetTenant();
 		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:{pmID}");
+	}
+
+	public async Task Send(int pmID, string fullText)
+	{
+		var pm = await _privateMessageService.Get(pmID);
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+			return;
+		var user = await _userService.GetUser(userID);
+		await _privateMessageService.Reply(pm, fullText, user);
 	}
 }

@@ -117,6 +117,7 @@ public class PrivateMessageService : IPrivateMessageService
 		var now = DateTime.UtcNow;
 		await _privateMessageRepository.UpdateLastPostTime(pm.PMID, now);
 		await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, now);
+		_broker.SendPMMessage(post);
 		foreach (var receiver in users)
 		{
 			var receiverPMCount = await _privateMessageRepository.GetUnreadCount(receiver.UserID);

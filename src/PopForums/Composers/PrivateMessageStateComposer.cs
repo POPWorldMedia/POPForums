@@ -21,7 +21,6 @@ public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 		var state = new PrivateMessageState();
 		var user = _userRetrievalShim.GetUser();
 		var pm = await _privateMessageService.Get(pmID);
-		// TODO: this will be embedded in the new db field with serialized users
 		if (! await _privateMessageService.IsUserInPM(user.UserID, pm.PMID))
 			return null;
 		// TODO: paging

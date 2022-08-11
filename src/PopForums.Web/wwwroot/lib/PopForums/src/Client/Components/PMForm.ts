@@ -18,6 +18,11 @@ export class PMForm extends HTMLElement {
         this.innerHTML = PMForm.template;
         let button = this.querySelector("button");
         button.innerHTML = PopForums.localizations.send;
+        button.addEventListener("click", () => {
+            let textBox = this.querySelector("textarea") as HTMLTextAreaElement;
+            PopForums.currentPmState.send(textBox.value);
+            textBox.value = "";
+        });
     }
 
     static template: string = 

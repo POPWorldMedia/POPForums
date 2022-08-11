@@ -18,14 +18,14 @@ public class NotificationHub : Hub
 		return userID;
 	}
 
-	public async void MarkNotificationRead(long contextID, int notificationType)
+	public async Task MarkNotificationRead(long contextID, int notificationType)
 	{
 		var notificationTypeEnum = (NotificationType)notificationType;
 		var userID = GetUserID();
 		await _notificationManager.MarkNotificationRead(userID, notificationTypeEnum, contextID);
 	}
 
-	public async void MarkAllRead()
+	public async Task MarkAllRead()
 	{
 		var userID = GetUserID();
 		await _notificationManager.MarkAllRead(userID);

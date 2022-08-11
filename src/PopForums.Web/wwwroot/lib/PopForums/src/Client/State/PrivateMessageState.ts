@@ -10,22 +10,31 @@ export class PrivateMessageState extends StateBase {
     messages: PrivateMessage[];
 
     private postStream: HTMLElement;
+    private connection: any;
 
     setupPm() {
         PopForums.Ready(() => {
             this.postStream = document.getElementById("PostStream");
             this.messages.forEach(x => {
-                var messageRow = this.populateMessage(x);
+                let messageRow = this.populateMessage(x);
                 this.postStream.append(messageRow);
             });
             
-            let connection = new signalR.HubConnectionBuilder().withUrl("/PMHub").withAutomaticReconnect().build();
+            this.connection = new signalR.HubConnectionBuilder().withUrl("/PMHub").withAutomaticReconnect().build();
             let self = this;
-            connection.start()
+            this.connection.on("addMessage", function(message: PrivateMessage) {
+                let messageRow = self.populateMessage(message);
+                self.postStream.append(messageRow);
+            });
+            this.connection.start()
                 .then(function () {
-                    return connection.invoke("listenTo", self.pmID);
+                    return self.connection.invoke("listenTo", self.pmID);
                 });
         });
+    }
+
+    send(fullText: string) {
+        this.connection.invoke("send", this.pmID, fullText);
     }
 
     populateMessage(data: PrivateMessage) {
