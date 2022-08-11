@@ -34,6 +34,8 @@ export class PrivateMessageState extends StateBase {
     }
 
     send(fullText: string) {
+        if (!fullText || fullText.trim().length === 0)
+            return;
         this.connection.invoke("send", this.pmID, fullText);
     }
 
