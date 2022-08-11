@@ -25,6 +25,7 @@ export class PrivateMessageState extends StateBase {
             this.connection.on("addMessage", function(message: PrivateMessage) {
                 let messageRow = self.populateMessage(message);
                 self.postStream.append(messageRow);
+                (self.postStream.lastChild as HTMLElement).scrollIntoView(true);
             });
             this.connection.start()
                 .then(function () {
