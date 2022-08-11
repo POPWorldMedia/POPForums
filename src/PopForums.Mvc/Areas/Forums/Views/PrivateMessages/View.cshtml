@@ -15,7 +15,7 @@
 
 <div class="vh-100 d-flex flex-column mb-3">
 
-<div class="row">
+<div>
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
@@ -23,11 +23,11 @@
 	<h2>@title</h2>
 </div>
 
-<div class="row overflow-auto my-3">
+<div class="overflow-auto my-3 px-3">
     <div id="PostStream"></div>
 </div>
 
-<div class="row">
+<div>
 	<pf-pmform></pf-pmform>
 
 	<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
