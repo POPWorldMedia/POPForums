@@ -22,6 +22,7 @@ public class ResourceComposer : IResourceComposer
 			Award = Resources.Award,
 			VoteUpNotification = Resources.VoteUpNotification,
 			QuestionAnsweredNotification = Resources.QuestionAnsweredNotification,
+			Send = Resources.Send,
 
 			UploadImage = Resources.UploadImage
 		};

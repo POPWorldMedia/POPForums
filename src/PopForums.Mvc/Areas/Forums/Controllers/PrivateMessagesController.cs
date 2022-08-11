@@ -48,7 +48,7 @@ public class PrivateMessagesController : Controller
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
 		// TODO: defer this to state composer
-		if (await _privateMessageService.IsUserInPM(user, pm) == false)
+		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		var posts = await _privateMessageService.GetPosts(pm);
 		var state = await _privateMessageStateComposer.GetState(pm.PMID);
@@ -80,25 +80,25 @@ public class PrivateMessagesController : Controller
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> CreateOne(string subject, string fullText, int userID)
+	public async Task<ActionResult> CreateOne(string fullText, int userID)
 	{
-		return await Create(subject, fullText, userID.ToString(CultureInfo.InvariantCulture));
+		return await Create(fullText, userID.ToString(CultureInfo.InvariantCulture));
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> Create(string subject, string fullText, string userIDs)
+	public async Task<ActionResult> Create(string fullText, string userIDs)
 	{
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return StatusCode(403);
-		if (string.IsNullOrWhiteSpace(userIDs) || string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(fullText))
+		if (string.IsNullOrWhiteSpace(userIDs) || string.IsNullOrWhiteSpace(fullText))
 		{
 			ViewBag.Warning = Resources.PMCreateWarnings;
 			return View("Create");
 		}
 		var ids = userIDs.Split(new[] { ',' }).Select(i => Convert.ToInt32(i));
 		var users = ids.Select(id => _userService.GetUser(id).Result).ToList();
-		await _privateMessageService.Create(subject, fullText, user, users);
+		await _privateMessageService.Create(fullText, user, users);
 		return RedirectToAction("Index");
 	}
 
@@ -109,7 +109,7 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
-		if (await _privateMessageService.IsUserInPM(user, pm) == false)
+		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		if (string.IsNullOrEmpty(fullText))
 			fullText = string.Empty;
@@ -131,7 +131,7 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
-		if (await _privateMessageService.IsUserInPM(user, pm) == false)
+		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		await _privateMessageService.Archive(user, pm);
 		return RedirectToAction("Index");
@@ -144,7 +144,7 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
-		if (await _privateMessageService.IsUserInPM(user, pm) == false)
+		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		await _privateMessageService.Unarchive(user, pm);
 		return RedirectToAction("Archive");

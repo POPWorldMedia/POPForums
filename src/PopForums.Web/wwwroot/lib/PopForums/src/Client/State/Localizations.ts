@@ -11,6 +11,7 @@ namespace PopForums {
         award: string;
         voteUpNotification: string;
         questionAnsweredNotification: string;
+        send: string;
 
         uploadImage: string;
     }

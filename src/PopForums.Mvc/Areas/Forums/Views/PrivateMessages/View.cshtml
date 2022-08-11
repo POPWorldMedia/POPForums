@@ -1,6 +1,7 @@
 ﻿@model PrivateMessageView
 @{
-	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
+	var title = "USER NAMES HERE";
+	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + title;
     Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
     var pmSerialized = JsonSerializer.Serialize(Model.State, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
@@ -12,14 +13,14 @@
 	</script>
 }
 
-<div class="vh-100 d-flex flex-column">
+<div class="vh-100 d-flex flex-column mb-3">
 
 <div class="row">
-	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
 	</ul>
+	<h2>@title</h2>
 </div>
 
 <div class="row overflow-auto my-3">
@@ -27,10 +28,7 @@
 </div>
 
 <div class="row">
-	<form asp-action="Reply" asp-route-id="@Model.PrivateMessage.PMID" method="post" role="form">
-		<textarea id="FullText" name="FullText" class="form-control" rows="2"></textarea>
-		<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn btn-primary my-3" />
-	</form>
+	<pf-pmform></pf-pmform>
 
 	<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
 		<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>

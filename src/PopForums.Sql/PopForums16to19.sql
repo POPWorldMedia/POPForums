@@ -131,3 +131,20 @@ IF INDEXPROPERTY(Object_Id('pf_PostImageTemp'), 'IX_pf_PostImageTemp_TimeStamp',
 BEGIN
 	CREATE NONCLUSTERED INDEX [IX_pf_PostImageTemp_TimeStamp] ON [dbo].[pf_PostImageTemp] ([TimeStamp]);
 END
+
+
+
+
+IF COL_LENGTH('dbo.pf_PrivateMessage', 'UserNames') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_PrivateMessage DROP COLUMN UserNames;
+END
+IF COL_LENGTH('dbo.pf_PrivateMessage', 'Subject') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_PrivateMessage DROP COLUMN [Subject];
+END
+
+IF COL_LENGTH('dbo.pf_PrivateMessage', 'Users') IS NULL
+BEGIN
+	ALTER TABLE pf_PrivateMessage ADD [Users] [nvarchar](MAX) NOT NULL DEFAULT('{}');
+END

@@ -18,6 +18,13 @@ export class PrivateMessageState extends StateBase {
                 var messageRow = this.populateMessage(x);
                 this.postStream.append(messageRow);
             });
+            
+            let connection = new signalR.HubConnectionBuilder().withUrl("/PMHub").withAutomaticReconnect().build();
+            let self = this;
+            connection.start()
+                .then(function () {
+                    return connection.invoke("listenTo", self.pmID);
+                });
         });
     }
 

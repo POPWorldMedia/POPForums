@@ -2,7 +2,7 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, ITenantService tenantService)
+	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService)
 	{
 		_forumRepo = forumRepo;
 		_topicHubContext = topicHubContext;
@@ -10,6 +10,7 @@ public class Broker : IBroker
 		_forumsHubContext = forumsHubContext;
 		_recentHubContext = recentHubContext;
 		_notificationHubContext = notificationHubContext;
+		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
 	}
 	
@@ -19,6 +20,7 @@ public class Broker : IBroker
 	private readonly IHubContext<ForumsHub> _forumsHubContext;
 	private readonly IHubContext<RecentHub> _recentHubContext;
 	private readonly IHubContext<NotificationHub> _notificationHubContext;
+	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
 
 	public void NotifyNewPosts(Topic topic, int lasPostID)
