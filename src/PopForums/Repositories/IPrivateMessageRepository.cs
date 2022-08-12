@@ -14,4 +14,5 @@ public interface IPrivateMessageRepository
 	Task<int> GetUnreadCount(int userID);
 	Task<int> GetBoxCount(int userID, PrivateMessageBoxType boxType);
 	Task UpdateLastPostTime(int pmID, DateTime lastPostTime);
+	Task<int> GetExistingFromIDs(List<int> ids);
 }

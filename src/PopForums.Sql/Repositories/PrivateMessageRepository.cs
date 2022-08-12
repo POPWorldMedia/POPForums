@@ -28,6 +28,21 @@ public class PrivateMessageRepository : IPrivateMessageRepository
 		return await pm;
 	}
 
+	public async Task<int> GetExistingFromIDs(List<int> ids)
+	{
+		Task<int> result = null;
+		var count = ids.Count;
+		var array = string.Join(", ", ids);
+		var sql = @$"SELECT PMID
+FROM pf_PrivateMessageUser 
+GROUP BY PMID 
+HAVING SUM(CASE WHEN UserID IN ({array}) THEN 1 ELSE 0 END) = {count}
+AND COUNT(*) = {count}";
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			result = connection.QueryFirstOrDefaultAsync<int>(sql));
+		return await result;
+	}
+
 	public async Task<List<PrivateMessagePost>> GetPosts(int pmID)
 	{
 		Task<IEnumerable<PrivateMessagePost>> result = null;

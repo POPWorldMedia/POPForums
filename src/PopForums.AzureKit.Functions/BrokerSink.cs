@@ -44,4 +44,9 @@ public class BrokerSink : IBroker
 	{
 		throw new System.NotImplementedException();
 	}
+
+	public void SendPMMessage(PrivateMessagePost post)
+	{
+		throw new System.NotImplementedException();
+	}
 }

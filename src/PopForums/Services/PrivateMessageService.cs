@@ -63,6 +63,15 @@ public class PrivateMessageService : IPrivateMessageService
 			throw new ArgumentNullException(nameof(user));
 		if (toUsers == null || toUsers.Count == 0)
 			throw new ArgumentException("toUsers must include at least one user.", nameof(toUsers));
+		var userIDs = toUsers.Select(x => x.UserID).ToList();
+		userIDs.Add(user.UserID);
+		var existingPMID = await _privateMessageRepository.GetExistingFromIDs(userIDs);
+		if (existingPMID != 0)
+		{
+			var existingPM = await _privateMessageRepository.Get(existingPMID);
+			await Reply(existingPM, fullText, user);
+			return existingPM;
+		}
 		var now = DateTime.UtcNow;
 		var dynamicUserList = toUsers.Select(x => new {x.UserID, x.Name}).ToList();
 		dynamicUserList.Add(new {user.UserID, user.Name});
