@@ -26,7 +26,7 @@
 			<td class="text-center">
 				<form asp-action="UnarchivePM" asp-route-id="@pm.PMID" method="post"><input type="submit" value="@PopForums.Resources.Unarchive" class="btn btn-primary" /></form>
 			</td>
-            <td>@PrivateMessage.GetUserNames(pm, user.UserID)</td>
+            <td><a asp-action="View" asp-route-id="@pm.PMID">@PrivateMessage.GetUserNames(pm, user.UserID)</a></td>
 			<td><small><pf-formattedtime utctime="@pm.LastPostTime.ToString("o")"></pf-formattedtime></small></td>
 		</tr>
 	}

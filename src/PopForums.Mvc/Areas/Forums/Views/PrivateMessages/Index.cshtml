@@ -27,7 +27,7 @@
 			<td class="text-center">
 				<form asp-action="ArchivePM" asp-route-id="@pm.PMID"><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></form>
 			</td>
-			<td>@PrivateMessage.GetUserNames(pm, user.UserID)</td>
+			<td><a asp-action="View" asp-route-id="@pm.PMID">@PrivateMessage.GetUserNames(pm, user.UserID)</a></td>
 			<td><small><pf-formattedtime utctime="@pm.LastPostTime.ToString("o")"></pf-formattedtime></small></td>
 		</tr>
 	}
