@@ -73,7 +73,7 @@ public class PrivateMessageService : IPrivateMessageService
 			LastPostTime = now
 		};
 		pm.PMID = await _privateMessageRepository.CreatePrivateMessage(pm);
-		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
+		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, false);
 		await _privateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
 		var post = new PrivateMessagePost
 		{

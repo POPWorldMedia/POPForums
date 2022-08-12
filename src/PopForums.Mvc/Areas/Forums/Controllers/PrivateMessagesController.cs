@@ -47,7 +47,6 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id);
-		// TODO: defer this to state composer
 		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		var posts = await _privateMessageService.GetPosts(pm);
@@ -98,23 +97,8 @@ public class PrivateMessagesController : Controller
 		}
 		var ids = userIDs.Split(new[] { ',' }).Select(i => Convert.ToInt32(i));
 		var users = ids.Select(id => _userService.GetUser(id).Result).ToList();
-		await _privateMessageService.Create(fullText, user, users);
-		return RedirectToAction("Index");
-	}
-
-	[HttpPost]
-	public async Task<ActionResult> Reply(int id, string fullText)
-	{
-		var user = _userRetrievalShim.GetUser();
-		if (user == null)
-			return StatusCode(403);
-		var pm = await _privateMessageService.Get(id);
-		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
-			return StatusCode(403);
-		if (string.IsNullOrEmpty(fullText))
-			fullText = string.Empty;
-		await _privateMessageService.Reply(pm, fullText, user);
-		return RedirectToAction("View", new { id });
+		var pm = await _privateMessageService.Create(fullText, user, users);
+		return RedirectToAction("View", new { id = pm.PMID });
 	}
 
 	public async Task<JsonResult> GetNames(string id)
