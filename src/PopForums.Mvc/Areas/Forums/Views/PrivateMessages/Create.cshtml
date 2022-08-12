@@ -17,9 +17,13 @@
 					.then(result => {
 						toList.innerHTML = "";
 						result.forEach(item => {
-							let t = document.createElement("template");
-							t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
-							toList.append(t.content.firstChild);
+							let ids = document.getElementById("UserIDs").value;
+							let idArray = ids.split(",");
+							if (!idArray.includes(item.userID.toString())) {
+								let t = document.createElement("template");
+								t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
+								toList.append(t.content.firstChild);
+                            }
 						});
 					});
 			} else
@@ -30,6 +34,10 @@
 			if (event.target.classList.contains("toItem")) {
 				let item = e.target;
 				let userID = item.getAttribute("data-userID");
+				let ids = document.getElementById("UserIDs").value;
+				let idArray = ids.split(",");
+				if (idArray.includes(userID))
+					return;
 				let label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon icon-trash3-fill toLabelX"></span></div>';
 				let t = document.createElement("template");
 				t.innerHTML = label;
@@ -57,12 +65,12 @@
 		serializeIDs();
 
             let textBox = document.getElementById("NewMessage");
-		textBox.addEventListener("keydown", (e) => {
-			if (e.key === "Enter" && !e.shiftKey) {
-				e.preventDefault();
-                    if (textBox.value.trim().length > 0 && document.querySelector("#UserIDs").value.length > 0)
-					document.forms["NewPMForm"].submit();
-			}
+			textBox.addEventListener("keydown", (e) => {
+				if (e.key === "Enter" && !e.shiftKey) {
+					e.preventDefault();
+	                    if (textBox.value.trim().length > 0 && document.querySelector("#UserIDs").value.length > 0)
+						document.forms["NewPMForm"].submit();
+				}
 		});
 	});
 
