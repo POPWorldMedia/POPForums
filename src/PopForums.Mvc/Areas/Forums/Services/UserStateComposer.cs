@@ -5,6 +5,7 @@ public interface IUserStateComposer
 	Task<UserState> GetState();
 }
 
+// TODO: move this to base library
 public class UserStateComposer : IUserStateComposer
 {
 	private readonly IUserRetrievalShim _userRetrievalShim;
@@ -31,6 +32,7 @@ public class UserStateComposer : IUserStateComposer
 			state.NewPmCount = await _privateMessageService.GetUnreadCount(user);
 			state.IsImageEnabled = _settingsManager.Current.AllowImages;
 			state.NotificationCount = await _notificationManager.GetUnreadNotificationCount(user.UserID);
+			state.UserID = user.UserID;
 		}
 		return state;
 	}

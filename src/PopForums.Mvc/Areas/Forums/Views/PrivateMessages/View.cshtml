@@ -1,38 +1,40 @@
-﻿@model PrivateMessageView
+﻿@inject IUserRetrievalShim UserRetrievalShim
+@model PrivateMessageView
 @{
-	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + Model.PrivateMessage.Subject;
-	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser();
+	var title = PrivateMessage.GetUserNames(Model.PrivateMessage, user.UserID);
+	ViewBag.Title = PopForums.Resources.PrivateMessages + " - " + title;
+    Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+    var pmSerialized = JsonSerializer.Serialize(Model.State, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 }
 
+@section HeaderContent {
+	<script type="text/javascript">
+        PopForums.currentPmState = Object.assign(new PopForums.PrivateMessageState(), @Html.Raw(pmSerialized));
+        PopForums.currentPmState.setupPm();
+	</script>
+}
+
+<div class="vh-100 d-flex flex-column mb-3">
+
 <div>
-	<h1>@Model.PrivateMessage.Subject</h1>
 	<ul id="TopBreadcrumb" class="breadcrumb">
 		<li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@PopForums.Resources.Forums</a></li>
 		<li class="breadcrumb-item"><a asp-action="Index">@PopForums.Resources.PrivateMessages</a></li>
 	</ul>
+	<h2>@title</h2>
 </div>
-@foreach (var post in Model.Posts)
-{
-	<div class="postItem">
-		<div class="postUserData bg-primary text-light rounded mb-2 px-3 py-1">
-			<h3 class="postNameLink"><a asp-controller="Account" asp-action="ViewProfile" asp-route-id="@post.UserID" class="text-light">@post.Name</a></h3>
-			<small class="postTime text-end"><pf-formattedtime utctime="@post.PostTime.ToString("o")"></pf-formattedtime></small>
-		</div>
-		@Html.Raw(post.FullText)
-	</div>
-}
 
-<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
-	<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
-</form>
-	
-<h2>Reply</h2>
+<div class="overflow-auto my-3 px-3">
+    <div id="PostStream"></div>
+</div>
 
-<form asp-action="Reply" asp-route-id="@Model.PrivateMessage.PMID" method="post" role="form">
-	<div class="form-group">
-		<div class="col-12">
-			<textarea id="FullText" name="FullText" class="form-control" rows="4"></textarea>
-		</div>
-	</div>
-	<input id="SendButton" type="submit" value="@PopForums.Resources.Reply" class="btn btn-primary my-3" />
-</form>
+<div>
+	<pf-pmform></pf-pmform>
+
+	<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
+		<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
+	</form>
+</div>
+
+</div>

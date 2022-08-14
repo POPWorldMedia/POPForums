@@ -13,6 +13,7 @@ public static class ServiceCollections
 		// composers
 		services.AddTransient<ITopicStateComposer, TopicStateComposer>();
 		services.AddTransient<IForumStateComposer, ForumStateComposer>();
+		services.AddTransient<IPrivateMessageStateComposer, PrivateMessageStateComposer>();
 
 		// email
 		services.AddTransient<IForgotPasswordMailer, ForgotPasswordMailer>();

@@ -1,5 +1,7 @@
-﻿@model List<PrivateMessage>
+﻿@inject IUserRetrievalShim UserRetrievalShim
+@model List<PrivateMessage>
 @{
+	var user = UserRetrievalShim.GetUser();
 	ViewBag.Title = PopForums.Resources.PrivateMessages;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
@@ -25,8 +27,7 @@
 			<td class="text-center">
 				<form asp-action="ArchivePM" asp-route-id="@pm.PMID"><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></form>
 			</td>
-			<td><a asp-action="View" asp-route-id="@pm.PMID">@pm.Subject</a></td>
-			<td>@pm.UserNames</td>
+			<td><a asp-action="View" asp-route-id="@pm.PMID">@PrivateMessage.GetUserNames(pm, user.UserID)</a></td>
 			<td><small><pf-formattedtime utctime="@pm.LastPostTime.ToString("o")"></pf-formattedtime></small></td>
 		</tr>
 	}

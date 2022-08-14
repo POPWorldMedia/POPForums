@@ -1,6 +1,4 @@
-﻿using PopForums.Extensions;
-
-namespace PopForums.Services;
+﻿namespace PopForums.Services;
 
 public interface IPrivateMessageService
 {
@@ -8,9 +6,9 @@ public interface IPrivateMessageService
 	Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm);
 	Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex);
 	Task<int> GetUnreadCount(User user);
-	Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers);
+	Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers);
 	Task Reply(PrivateMessage pm, string fullText, User user);
-	Task<bool> IsUserInPM(User user, PrivateMessage pm);
+	Task<bool> IsUserInPM(int userID, int pmID);
 	Task MarkPMRead(User user, PrivateMessage pm);
 	Task Archive(User user, PrivateMessage pm);
 	Task Unarchive(User user, PrivateMessage pm);
@@ -57,28 +55,34 @@ public class PrivateMessageService : IPrivateMessageService
 		return await _privateMessageRepository.GetUnreadCount(user.UserID);
 	}
 
-	public async Task<PrivateMessage> Create(string subject, string fullText, User user, List<User> toUsers)
+	public async Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers)
 	{
-		if (String.IsNullOrWhiteSpace(subject))
-			throw new ArgumentNullException("subject");
 		if (String.IsNullOrWhiteSpace(fullText))
-			throw new ArgumentNullException("fullText");
+			throw new ArgumentNullException(nameof(fullText));
 		if (user == null)
-			throw new ArgumentNullException("user");
+			throw new ArgumentNullException(nameof(user));
 		if (toUsers == null || toUsers.Count == 0)
-			throw new ArgumentException("toUsers must include at least one user.", "toUsers");
-		var names = user.Name;
-		foreach (var toUser in toUsers)
-			names += ", " + toUser.Name;
+			throw new ArgumentException("toUsers must include at least one user.", nameof(toUsers));
+		var userIDs = toUsers.Select(x => x.UserID).ToList();
+		userIDs.Add(user.UserID);
+		var existingPMID = await _privateMessageRepository.GetExistingFromIDs(userIDs);
+		if (existingPMID != 0)
+		{
+			var existingPM = await _privateMessageRepository.Get(existingPMID);
+			await Reply(existingPM, fullText, user);
+			return existingPM;
+		}
 		var now = DateTime.UtcNow;
+		var dynamicUserList = toUsers.Select(x => new {x.UserID, x.Name}).ToList();
+		dynamicUserList.Add(new {user.UserID, user.Name});
+		var serializedUsers = JsonSerializer.SerializeToElement(dynamicUserList, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 		var pm = new PrivateMessage
 		{
-			Subject = _textParsingService.EscapeHtmlAndCensor(subject),
-			UserNames = names,
+			Users = serializedUsers,
 			LastPostTime = now
 		};
 		pm.PMID = await _privateMessageRepository.CreatePrivateMessage(pm);
-		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, true);
+		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, false);
 		await _privateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
 		var post = new PrivateMessagePost
 		{
@@ -105,7 +109,7 @@ public class PrivateMessageService : IPrivateMessageService
 			throw new ArgumentNullException("fullText");
 		if (user == null)
 			throw new ArgumentNullException("user");
-		if (await IsUserInPM(user, pm) == false)
+		if (await IsUserInPM(user.UserID, pm.PMID) == false)
 			throw new Exception("Can't add a PM reply for a user not part of the PM.");
 		var post = new PrivateMessagePost
 		{
@@ -122,6 +126,7 @@ public class PrivateMessageService : IPrivateMessageService
 		var now = DateTime.UtcNow;
 		await _privateMessageRepository.UpdateLastPostTime(pm.PMID, now);
 		await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, now);
+		_broker.SendPMMessage(post);
 		foreach (var receiver in users)
 		{
 			var receiverPMCount = await _privateMessageRepository.GetUnreadCount(receiver.UserID);
@@ -129,10 +134,10 @@ public class PrivateMessageService : IPrivateMessageService
 		}
 	}
 
-	public async Task<bool> IsUserInPM(User user, PrivateMessage pm)
+	public async Task<bool> IsUserInPM(int userID, int pmID)
 	{
-		var pmUsers = await _privateMessageRepository.GetUsers(pm.PMID);
-		return pmUsers.Count(p => p.UserID == user.UserID) != 0;
+		var pmUsers = await _privateMessageRepository.GetUsers(pmID);
+		return pmUsers.Count(p => p.UserID == userID) != 0;
 	}
 
 	public async Task MarkPMRead(User user, PrivateMessage pm)

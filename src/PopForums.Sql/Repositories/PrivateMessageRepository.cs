@@ -6,6 +6,7 @@ public class PrivateMessageRepository : IPrivateMessageRepository
 	{
 		_cacheHelper = cacheHelper;
 		_sqlObjectFactory = sqlObjectFactory;
+		SqlMapper.AddTypeHandler(new JsonElementTypeHandler());
 	}
 
 	private readonly ICacheHelper _cacheHelper;
@@ -23,8 +24,23 @@ public class PrivateMessageRepository : IPrivateMessageRepository
 	{
 		Task<PrivateMessage> pm = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			pm = connection.QuerySingleOrDefaultAsync<PrivateMessage>("SELECT PMID, Subject, LastPostTime, UserNames FROM pf_PrivateMessage WHERE PMID = @PMID", new { PMID = pmID }));
+			pm = connection.QuerySingleOrDefaultAsync<PrivateMessage>("SELECT PMID, LastPostTime, Users FROM pf_PrivateMessage WHERE PMID = @PMID", new { PMID = pmID }));
 		return await pm;
+	}
+
+	public async Task<int> GetExistingFromIDs(List<int> ids)
+	{
+		Task<int> result = null;
+		var count = ids.Count;
+		var array = string.Join(", ", ids);
+		var sql = @$"SELECT PMID
+FROM pf_PrivateMessageUser 
+GROUP BY PMID 
+HAVING SUM(CASE WHEN UserID IN ({array}) THEN 1 ELSE 0 END) = {count}
+AND COUNT(*) = {count}";
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			result = connection.QueryFirstOrDefaultAsync<int>(sql));
+		return await result;
 	}
 
 	public async Task<List<PrivateMessagePost>> GetPosts(int pmID)
@@ -39,7 +55,7 @@ public class PrivateMessageRepository : IPrivateMessageRepository
 	{
 		Task<int> id = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			id = connection.QuerySingleAsync<int>("INSERT INTO pf_PrivateMessage (Subject, LastPostTime, UserNames) VALUES (@Subject, @LastPostTime, @UserNames);SELECT CAST(SCOPE_IDENTITY() as int)", new { pm.Subject, pm.LastPostTime, pm.UserNames }));
+			id = connection.QuerySingleAsync<int>("INSERT INTO pf_PrivateMessage (LastPostTime, Users) VALUES (@LastPostTime, @Users);SELECT CAST(SCOPE_IDENTITY() as int)", new { pm.LastPostTime, pm.Users }));
 		pm.PMID = await id;
 		return pm.PMID;
 	}
@@ -99,12 +115,12 @@ SET ROWCOUNT @Counter;
 
 WITH Entries AS ( 
 	SELECT ROW_NUMBER() OVER (ORDER BY [LastPostTime] DESC)
-	AS Row, P.PMID, Subject, LastPostTime, UserNames, U.LastViewDate 
+	AS Row, P.PMID, LastPostTime, Users, U.LastViewDate 
 	FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U 
 	ON P.PMID = U.PMID WHERE U.UserID = @UserID 
 	AND U.IsArchived = @IsArchived)
 
-SELECT PMID, Subject, LastPostTime, UserNames, LastViewDate
+SELECT PMID, LastPostTime, Users, LastViewDate
 FROM Entries 
 WHERE Row between 
 @StartRow and @StartRow + @PageSize - 1

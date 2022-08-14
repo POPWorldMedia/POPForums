@@ -1,0 +1,44 @@
+﻿namespace PopForums.Mvc.Areas.Forums.Messaging;
+
+public class PMHub : Hub
+{
+	private readonly IPrivateMessageService _privateMessageService;
+	private readonly IUserService _userService;
+	private readonly ITenantService _tenantService;
+
+	public PMHub(IPrivateMessageService privateMessageService, IUserService userService, ITenantService tenantService)
+	{
+		_privateMessageService = privateMessageService;
+		_userService = userService;
+		_tenantService = tenantService;
+	}
+
+	private int GetUserID()
+	{
+		var userIDstring = Context.User?.Claims?.Single(x => x.Type == PopForumsAuthorizationDefaults.ForumsUserIDType);
+		if (userIDstring == null)
+			throw new Exception("No forum user ID claim found in hub context of User");
+		var userID = Convert.ToInt32(userIDstring.Value);
+		return userID;
+	}
+
+	public async Task ListenTo(int pmID)
+	{
+		var pm = await _privateMessageService.Get(pmID);
+		var userID = GetUserID();
+		if (! await _privateMessageService.IsUserInPM(userID, pmID))
+			return;
+		var tenant = _tenantService.GetTenant();
+		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:{pmID}");
+	}
+
+	public async Task Send(int pmID, string fullText)
+	{
+		var pm = await _privateMessageService.Get(pmID);
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+			return;
+		var user = await _userService.GetUser(userID);
+		await _privateMessageService.Reply(pm, fullText, user);
+	}
+}

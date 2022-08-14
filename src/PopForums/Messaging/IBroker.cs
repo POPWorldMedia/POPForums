@@ -10,4 +10,5 @@ public interface IBroker
 	void NotifyPMCount(int userID, int pmCount);
 	void NotifyUser(Notification notification);
 	void NotifyUser(Notification notification, string tenantID);
+	void SendPMMessage(PrivateMessagePost post);
 }

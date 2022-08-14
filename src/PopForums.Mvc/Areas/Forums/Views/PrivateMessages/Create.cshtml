@@ -7,19 +7,23 @@
 {
 <script type="text/javascript" language="javascript">
 	PopForums.Ready(() => {
-		var toText = document.querySelector("#ToText");
-		var toList = document.querySelector("#ToList");
+		let toText = document.querySelector("#ToText");
+		let toList = document.querySelector("#ToList");
 		toText.addEventListener("keyup", () => {
-			var q = toText.value;
+			let q = toText.value;
 			if (q.length > 1) {
 				fetch(PopForums.AreaPath + "/PrivateMessages/GetNames?id=" + q)
 					.then(response => response.json())
 					.then(result => {
 						toList.innerHTML = "";
 						result.forEach(item => {
-							var t = document.createElement("template");
-							t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
-							toList.append(t.content.firstChild);
+							let ids = document.getElementById("UserIDs").value;
+							let idArray = ids.split(",");
+							if (!idArray.includes(item.userID.toString())) {
+								let t = document.createElement("template");
+								t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
+								toList.append(t.content.firstChild);
+                            }
 						});
 					});
 			} else
@@ -28,15 +32,19 @@
 
 		document.addEventListener("click", e => {
 			if (event.target.classList.contains("toItem")) {
-				var item = e.target;
-				var userID = item.getAttribute("data-userID");
-				var label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon icon-trash3-fill toLabelX"></span></div>';
-				var t = document.createElement("template");
+				let item = e.target;
+				let userID = item.getAttribute("data-userID");
+				let ids = document.getElementById("UserIDs").value;
+				let idArray = ids.split(",");
+				if (idArray.includes(userID))
+					return;
+				let label = '<div data-userID="' + userID + '" class="badge bg-primary toLabel">' + item.innerHTML + ' <span class="icon icon-trash3-fill toLabelX"></span></div>';
+				let t = document.createElement("template");
 				t.innerHTML = label;
 				document.querySelector("#PMToBox").append(t.content.firstChild);
 				toList.innerHTML = "";
 				toText.value = "";
-				var modal = bootstrap.Modal.getInstance(document.getElementById("ToModal"));
+				let modal = bootstrap.Modal.getInstance(document.getElementById("ToModal"));
 				modal.hide();
 				serializeIDs();
 			}
@@ -49,12 +57,21 @@
 			}
 		});
 
-		var modal = document.getElementById('ToModal');
+		let modal = document.getElementById('ToModal');
 		modal.addEventListener("shown.bs.modal", () => {
 			document.querySelector("#ToText").focus();
 		});
 		
 		serializeIDs();
+
+            let textBox = document.getElementById("NewMessage");
+			textBox.addEventListener("keydown", (e) => {
+				if (e.key === "Enter" && !e.shiftKey) {
+					e.preventDefault();
+	                    if (textBox.value.trim().length > 0 && document.querySelector("#UserIDs").value.length > 0)
+						document.forms["NewPMForm"].submit();
+				}
+		});
 	});
 
 	function serializeIDs() {
@@ -97,7 +114,7 @@
 	</div>
 </div>
 
-<form method="post">
+<form id="NewPMForm" method="post">
 	<input type="hidden" id="UserIDs" name="UserIDs"/>
 	<div role="form">
 		<div class="mb-3">
@@ -105,18 +122,13 @@
 			<div id="PMToBox">
 				@if (ViewBag.TargetUserID != null)
 				{
-					<div data-userid="@ViewBag.TargetUserID" class="badge bg-primary toLabel">@ViewBag.TargetUserName <span class="icon-cancel-circle toLabelX"></span></div>
+                    <div data-userid="@ViewBag.TargetUserID" class="badge bg-primary toLabel">@ViewBag.TargetUserName <span class="icon icon-trash3-fill toLabelX"></span></div>
 				}
 			</div>
 		</div>
-		<div class="mb-3">
-			<label for="Subject" class="form-label">@PopForums.Resources.Subject</label>
-			<input type="text" id="Subject" name="Subject" class="form-control"/>
+		<div class="input-group mb-3">
+            <textarea class="form-control" id="NewMessage" name="FullText"></textarea>
+            <button class="btn btn-primary" type="submit">@PopForums.Resources.Send</button>
 		</div>
-		<div class="mb-3">
-			<label for="FullText" class="form-label">@PopForums.Resources.Message</label>
-			<textarea id="FullText" name="FullText" class="form-control"></textarea>
-		</div>
-		<input id="SendButton" type="submit" value="@PopForums.Resources.Send" class="btn btn-primary my-3"/>
 	</div>
 </form>

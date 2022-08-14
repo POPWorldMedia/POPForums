@@ -18,6 +18,7 @@ export class UserState extends StateBase {
     isPlainText: boolean;
     isImageEnabled: boolean;
     postImageIds: Array<string>;
+    userID: number;
 
     @WatchProperty
     newPmCount: number;

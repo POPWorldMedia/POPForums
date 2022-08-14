@@ -684,7 +684,7 @@ CREATE TABLE [dbo].[pf_PrivateMessage](
 	[PMID] [int] IDENTITY(1,1) NOT NULL,
 	[Subject] [nvarchar](256) NOT NULL,
 	[LastPostTime] [datetime] NOT NULL,
-	[UserNames] [nvarchar](MAX) NOT NULL,
+	[Users] [nvarchar](MAX) NOT NULL,
  CONSTRAINT [PK_pf_PrivateMessage] PRIMARY KEY CLUSTERED 
 (
 	[PMID] ASC
