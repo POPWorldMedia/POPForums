@@ -57,7 +57,7 @@ public class PrivateMessagesController : Controller
 			Posts = posts,
 			State = state
 		};
-		await _privateMessageService.MarkPMRead(user, pm);
+		await _privateMessageService.MarkPMRead(user.UserID, pm.PMID);
 		return View(model);
 	}
 

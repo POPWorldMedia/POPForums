@@ -9,7 +9,7 @@ public interface IPrivateMessageService
 	Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers);
 	Task Reply(PrivateMessage pm, string fullText, User user);
 	Task<bool> IsUserInPM(int userID, int pmID);
-	Task MarkPMRead(User user, PrivateMessage pm);
+	Task MarkPMRead(int userID, int pmID);
 	Task Archive(User user, PrivateMessage pm);
 	Task Unarchive(User user, PrivateMessage pm);
 }
@@ -140,11 +140,11 @@ public class PrivateMessageService : IPrivateMessageService
 		return pmUsers.Count(p => p.UserID == userID) != 0;
 	}
 
-	public async Task MarkPMRead(User user, PrivateMessage pm)
+	public async Task MarkPMRead(int userID, int pmID)
 	{
-		await _privateMessageRepository.SetLastViewTime(pm.PMID, user.UserID, DateTime.UtcNow);
-		var pmCount = await _privateMessageRepository.GetUnreadCount(user.UserID);
-		_broker.NotifyPMCount(user.UserID, pmCount);
+		await _privateMessageRepository.SetLastViewTime(pmID, userID, DateTime.UtcNow);
+		var pmCount = await _privateMessageRepository.GetUnreadCount(userID);
+		_broker.NotifyPMCount(userID, pmCount);
 	}
 
 	public async Task Archive(User user, PrivateMessage pm)

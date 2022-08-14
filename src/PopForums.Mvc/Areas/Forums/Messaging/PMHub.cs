@@ -41,4 +41,10 @@ public class PMHub : Hub
 		var user = await _userService.GetUser(userID);
 		await _privateMessageService.Reply(pm, fullText, user);
 	}
+
+	public async Task AckRead(int pmID)
+	{
+		var userID = GetUserID();
+		await _privateMessageService.MarkPMRead(userID, pmID);
+	}
 }

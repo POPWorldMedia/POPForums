@@ -29,6 +29,7 @@ export class PrivateMessageState extends StateBase {
                 self.postStream.append(messageRow);
                 if (isBottom)
                     (self.postStream.lastChild as HTMLElement).scrollIntoView(true);
+                self.ackRead();
             });
             this.connection.start()
                 .then(function () {
@@ -41,6 +42,10 @@ export class PrivateMessageState extends StateBase {
         if (!fullText || fullText.trim().length === 0)
             return;
         this.connection.invoke("send", this.pmID, fullText);
+    }
+
+    ackRead() {
+        this.connection.invoke("ackRead", this.pmID);
     }
 
     populateMessage(data: PrivateMessage) {
