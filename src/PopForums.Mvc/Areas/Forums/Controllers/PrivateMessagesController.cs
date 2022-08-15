@@ -77,12 +77,6 @@ public class PrivateMessagesController : Controller
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> CreateOne(string fullText, int userID)
-	{
-		return await Create(fullText, userID.ToString(CultureInfo.InvariantCulture));
-	}
-
-	[HttpPost]
 	public async Task<ActionResult> Create(string fullText, string userIDs)
 	{
 		var user = _userRetrievalShim.GetUser();
