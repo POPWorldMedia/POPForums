@@ -20,15 +20,14 @@ public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 	{
 		var state = new PrivateMessageState();
 		var user = _userRetrievalShim.GetUser();
-		var pm = await _privateMessageService.Get(pmID);
-		if (! await _privateMessageService.IsUserInPM(user.UserID, pm.PMID))
-			return null;
+		var pm = await _privateMessageService.Get(pmID, user.UserID);
 		// TODO: paging
-		var messages = await _privateMessageService.GetPosts(pm);
+		var messages = await _privateMessageService.GetPosts(pmID);
 		state.PmID = pm.PMID;
-		dynamic[] clientMessages = messages.Select(x => new { x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		dynamic[] clientMessages = messages.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
 		state.Messages = clientMessages;
 		state.Users = pm.Users;
+		state.NewestPostID = await _privateMessageService.GetFirstUnreadPostID(pm.PMID, pm.LastViewDate);
 		return state;
 	}
 }

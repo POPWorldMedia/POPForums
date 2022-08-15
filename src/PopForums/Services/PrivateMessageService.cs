@@ -2,8 +2,8 @@
 
 public interface IPrivateMessageService
 {
-	Task<PrivateMessage> Get(int pmID);
-	Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm);
+	Task<PrivateMessage> Get(int pmID, int userID);
+	Task<List<PrivateMessagePost>> GetPosts(int pmID);
 	Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex);
 	Task<int> GetUnreadCount(User user);
 	Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers);
@@ -12,6 +12,7 @@ public interface IPrivateMessageService
 	Task MarkPMRead(int userID, int pmID);
 	Task Archive(User user, PrivateMessage pm);
 	Task Unarchive(User user, PrivateMessage pm);
+	Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastViewDate);
 }
 
 public class PrivateMessageService : IPrivateMessageService
@@ -29,14 +30,14 @@ public class PrivateMessageService : IPrivateMessageService
 	private readonly ITextParsingService _textParsingService;
 	private readonly IBroker _broker;
 
-	public async Task<PrivateMessage> Get(int pmID)
+	public async Task<PrivateMessage> Get(int pmID, int userID)
 	{
-		return await _privateMessageRepository.Get(pmID);
+		return await _privateMessageRepository.Get(pmID, userID);
 	}
 
-	public async Task<List<PrivateMessagePost>> GetPosts(PrivateMessage pm)
+	public async Task<List<PrivateMessagePost>> GetPosts(int pmID)
 	{
-		return await _privateMessageRepository.GetPosts(pm.PMID);
+		return await _privateMessageRepository.GetPosts(pmID);
 	}
 
 	public async Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex)
@@ -68,7 +69,7 @@ public class PrivateMessageService : IPrivateMessageService
 		var existingPMID = await _privateMessageRepository.GetExistingFromIDs(userIDs);
 		if (existingPMID != 0)
 		{
-			var existingPM = await _privateMessageRepository.Get(existingPMID);
+			var existingPM = await _privateMessageRepository.Get(existingPMID, user.UserID);
 			await Reply(existingPM, fullText, user);
 			return existingPM;
 		}
@@ -155,5 +156,10 @@ public class PrivateMessageService : IPrivateMessageService
 	public async Task Unarchive(User user, PrivateMessage pm)
 	{
 		await _privateMessageRepository.SetArchive(pm.PMID, user.UserID, false);
+	}
+
+	public async Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastViewDate)
+	{
+		return await _privateMessageRepository.GetFirstUnreadPostID(pmID, lastViewDate);
 	}
 }

@@ -46,15 +46,13 @@ public class PrivateMessagesController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return StatusCode(403);
-		var pm = await _privateMessageService.Get(id);
+		var pm = await _privateMessageService.Get(id, user.UserID);
 		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
-		var posts = await _privateMessageService.GetPosts(pm);
 		var state = await _privateMessageStateComposer.GetState(pm.PMID);
 		var model = new PrivateMessageView
 		{
 			PrivateMessage = pm,
-			Posts = posts,
 			State = state
 		};
 		await _privateMessageService.MarkPMRead(user.UserID, pm.PMID);
@@ -114,7 +112,7 @@ public class PrivateMessagesController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return StatusCode(403);
-		var pm = await _privateMessageService.Get(id);
+		var pm = await _privateMessageService.Get(id, user.UserID);
 		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		await _privateMessageService.Archive(user, pm);
@@ -127,7 +125,7 @@ public class PrivateMessagesController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return StatusCode(403);
-		var pm = await _privateMessageService.Get(id);
+		var pm = await _privateMessageService.Get(id, user.UserID);
 		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
 			return StatusCode(403);
 		await _privateMessageService.Unarchive(user, pm);

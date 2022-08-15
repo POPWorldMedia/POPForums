@@ -2,7 +2,7 @@
 
 public interface IPrivateMessageRepository
 {
-	Task<PrivateMessage> Get(int pmID);
+	Task<PrivateMessage> Get(int pmID, int userID);
 	Task<List<PrivateMessagePost>> GetPosts(int pmID);
 	Task<int> CreatePrivateMessage(PrivateMessage pm);
 	Task AddUsers(int pmID, List<int> userIDs, DateTime viewDate, bool isArchived);
@@ -15,4 +15,5 @@ public interface IPrivateMessageRepository
 	Task<int> GetBoxCount(int userID, PrivateMessageBoxType boxType);
 	Task UpdateLastPostTime(int pmID, DateTime lastPostTime);
 	Task<int> GetExistingFromIDs(List<int> ids);
+	Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastReadTime);
 }

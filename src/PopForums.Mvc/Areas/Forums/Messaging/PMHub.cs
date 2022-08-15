@@ -24,20 +24,20 @@ public class PMHub : Hub
 
 	public async Task ListenTo(int pmID)
 	{
-		var pm = await _privateMessageService.Get(pmID);
 		var userID = GetUserID();
 		if (! await _privateMessageService.IsUserInPM(userID, pmID))
 			return;
+		var pm = await _privateMessageService.Get(pmID, userID);
 		var tenant = _tenantService.GetTenant();
 		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:{pmID}");
 	}
 
 	public async Task Send(int pmID, string fullText)
 	{
-		var pm = await _privateMessageService.Get(pmID);
 		var userID = GetUserID();
 		if (!await _privateMessageService.IsUserInPM(userID, pmID))
 			return;
+		var pm = await _privateMessageService.Get(pmID, userID);
 		var user = await _userService.GetUser(userID);
 		await _privateMessageService.Reply(pm, fullText, user);
 	}

@@ -20,11 +20,11 @@ public class PrivateMessageRepository : IPrivateMessageRepository
 		}
 	}
 
-	public async Task<PrivateMessage> Get(int pmID)
+	public async Task<PrivateMessage> Get(int pmID, int userID)
 	{
 		Task<PrivateMessage> pm = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			pm = connection.QuerySingleOrDefaultAsync<PrivateMessage>("SELECT PMID, LastPostTime, Users FROM pf_PrivateMessage WHERE PMID = @PMID", new { PMID = pmID }));
+			pm = connection.QuerySingleOrDefaultAsync<PrivateMessage>("SELECT P.PMID, LastPostTime, Users, U.LastViewDate FROM pf_PrivateMessage P JOIN pf_PrivateMessageUser U ON P.PMID = U.PMID WHERE P.PMID = @pmID AND U.UserID = @userID", new { pmID, userID }));
 		return await pm;
 	}
 
@@ -158,5 +158,13 @@ SET ROWCOUNT 0";
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
 			connection.ExecuteAsync("UPDATE pf_PrivateMessage SET LastPostTime = @LastPostTime WHERE PMID = @PMID", new { LastPostTime = lastPostTime, PMID = pmID }));
+	}
+
+	public async Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastReadTime)
+	{
+		Task<int?> pmPostID = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			pmPostID = connection.QueryFirstOrDefaultAsync<int?>("SELECT TOP 1 PMPostID FROM pf_PrivateMessagePost WHERE PostTime > @lastReadTime AND PMID = @pmID ORDER BY PostTime", new { lastReadTime, pmID }));
+		return await pmPostID;
 	}
 }

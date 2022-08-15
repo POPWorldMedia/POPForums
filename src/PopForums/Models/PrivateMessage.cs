@@ -5,9 +5,6 @@ public class PrivateMessage
 	public int PMID { get; set; }
 	public DateTime LastPostTime { get; set; }
 	public JsonElement Users { get; set; }
-	/// <summary>
-	/// This property is populated only when getting lists of PM's.
-	/// </summary>
 	public DateTime LastViewDate { get; set; }
 
 	public static string GetUserNames(PrivateMessage pm, int excludeUserID)

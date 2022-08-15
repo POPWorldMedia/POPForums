@@ -8,6 +8,7 @@ export class PrivateMessageState extends StateBase {
     pmID: number;
     users: PrivateMessageUser[];
     messages: PrivateMessage[];
+    newestPostID: number;
 
     private postStream: HTMLElement;
     private connection: any;
@@ -35,6 +36,12 @@ export class PrivateMessageState extends StateBase {
                 .then(function () {
                     return self.connection.invoke("listenTo", self.pmID);
                 });
+            if (this.newestPostID) {
+                this.scrollToElement("p" + this.newestPostID)
+            }
+            else {
+                this.postStream.parentElement.scrollTop = this.postStream.parentElement.scrollHeight;
+            }
         });
     }
 
@@ -68,7 +75,14 @@ export class PrivateMessageState extends StateBase {
         let name = messageRow.querySelector(".messageName");
         name.innerHTML = data.name;
 
+        body.parentElement.id = "p" + data.pmPostID;
+
         return messageRow;
+    };
+
+    scrollToElement = (id: string) => {
+        let e = document.getElementById(id) as HTMLElement;
+        e.scrollIntoView();
     };
 
     static template: string = 
