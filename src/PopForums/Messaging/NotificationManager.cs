@@ -5,10 +5,9 @@ public interface INotificationManager
 	Task MarkNotificationRead(int userID, NotificationType notificationType, long contextID);
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data);
 	Task ProcessNotification(int userID, NotificationType notificationType, long contextID, dynamic data, string tenantID);
-	Task<List<Notification>> GetNotifications(int userID, int pageIndex);
-	Task<int> GetPageCount(int userID);
 	Task<int> GetUnreadNotificationCount(int userID);
 	Task MarkAllRead(int userID);
+	Task<List<Notification>> GetNotifications(int userID, DateTime afterDateTime);
 }
 
 public class NotificationManager : INotificationManager
@@ -57,17 +56,9 @@ public class NotificationManager : INotificationManager
 		await _notificationRepository.MarkNotificationRead(userID, notificationType, contextID);
 	}
 
-	public async Task<List<Notification>> GetNotifications(int userID, int pageIndex)
+	public async Task<List<Notification>> GetNotifications(int userID, DateTime afterDateTime)
 	{
-		var startRow = ((pageIndex - 1) * PageSize) + 1;
-		return await _notificationRepository.GetNotifications(userID, startRow, PageSize);
-	}
-
-	public async Task<int> GetPageCount(int userID)
-	{
-		var oldest = await _notificationRepository.GetOldestTime(userID, MaxNotificationCount);
-		await _notificationRepository.DeleteOlderThan(userID, oldest);
-		return await _notificationRepository.GetPageCount(userID, PageSize);
+		return await _notificationRepository.GetNotifications(userID, afterDateTime, PageSize);
 	}
 
 	public async Task<int> GetUnreadNotificationCount(int userID)

@@ -39,7 +39,7 @@ declare namespace bootstrap {
         enable(): void;
         disable(): void;
     }
-    class Offcanvas {
+    class Offcanvas extends HTMLElement {
         constructor(el: Element);
         show(): void;
     }

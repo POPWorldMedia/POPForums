@@ -6,19 +6,19 @@ export class UserState extends StateBase {
         this.isPlainText = false;
         this.newPmCount = 0;
         this.notificationCount = 0;
-        this.notificationService = new NotificationService(this);
         this.postImageIds = new Array<string>();
+        this.notificationService = new NotificationService(this);
     }
 
     private notificationService: NotificationService;
     private isLoadingNotifications: boolean;
-    private notificationPageCount: number;
 
-    currentNotificationIndex: number;
     isPlainText: boolean;
     isImageEnabled: boolean;
     postImageIds: Array<string>;
     userID: number;
+    lastNotificationDate: Date;
+    isNotificationEnd: boolean;
 
     @WatchProperty
     newPmCount: number;
@@ -30,11 +30,11 @@ export class UserState extends StateBase {
     list: HTMLElement;
 
     async LoadNotifications(): Promise<void> {
-        this.notifications = new Array<Notification>();
         this.isLoadingNotifications = true;
-        this.notificationPageCount = await this.notificationService.GetPageCount();
-        this.currentNotificationIndex = 1;
-        this.notificationService.LoadNotifications();
+        this.lastNotificationDate = new Date(2100, 1, 1);
+        this.isNotificationEnd = false;
+        this.notifications = new Array<Notification>();
+        await this.notificationService.LoadNotifications();
         this.isLoadingNotifications = false;
     }
 
@@ -47,6 +47,8 @@ export class UserState extends StateBase {
     }
 
     ScrollLoad = async () => {
+        if (this.isNotificationEnd)
+            return;
         let streamEnd = (document.querySelector("#NotificationBottom") as HTMLElement);
         if (!streamEnd) {
             console.log("Can't find bottom of notifications.");
@@ -55,14 +57,13 @@ export class UserState extends StateBase {
         let top = streamEnd.offsetTop;
         let viewEnd = this.list.scrollTop + this.list.clientHeight;
         let distance = top - viewEnd;
-        if (!this.isLoadingNotifications && distance < 250 && this.currentNotificationIndex < this.notificationPageCount) {
+        if (!this.isLoadingNotifications && distance < 250 && !this.isNotificationEnd) {
             await this.LoadMoreNotifications();
         }
     };
 
     private async LoadMoreNotifications() {
         this.isLoadingNotifications = true;
-        this.currentNotificationIndex++;
         await this.notificationService.LoadNotifications();
         this.isLoadingNotifications = false;
     }

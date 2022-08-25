@@ -132,31 +132,4 @@ public class NotificationManagerTests
 			Assert.Equal(100, result);
 		}
 	}
-
-	public class GetPageCount : NotificationManagerTests
-	{
-		[Fact]
-		public async Task CallToOldestGetsOldestTimeAndDeletes()
-		{
-			var manager = GetManager();
-			const int userID = 123;
-			var oldestTime = new DateTime(1999, 1, 2);
-			_notificationRepository.Setup(x => x.GetOldestTime(userID, 100)).ReturnsAsync(oldestTime);
-
-			await manager.GetPageCount(userID);
-
-			_notificationRepository.Verify(x => x.DeleteOlderThan(userID, oldestTime), Times.Once);
-		}
-
-		[Fact]
-		public async Task CallToRepoForPageCountGetsPageSize()
-		{
-			var manager = GetManager();
-			const int userID = 123;
-
-			await manager.GetPageCount(userID);
-
-			_notificationRepository.Verify(x => x.GetPageCount(userID, 20), Times.Once);
-		}
-	}
 }

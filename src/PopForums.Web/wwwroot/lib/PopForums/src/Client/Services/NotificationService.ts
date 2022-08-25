@@ -29,19 +29,19 @@ namespace PopForums {
         private userState: UserState;
         private connection: any;
 
-        async GetPageCount(): Promise<number> {
-            const response = await this.connection.invoke("GetPageCount");
-            return response as number;
-        }
-
         async LoadNotifications(): Promise<void> {
             const json = await this.getNotifications();
             let a = new Array<Notification>();
+            let isEnd = true;
             json.forEach((item: Notification) => {
                 let n = Object.assign(new Notification(), item);
                 a.push(n);
+                this.userState.lastNotificationDate = n.timeStamp;
+                isEnd = false;
             });
-            this.userState.notifications = a;
+            this.userState.isNotificationEnd = isEnd;
+            if (!isEnd)
+                this.userState.notifications = a;
         }
 
         async MarkRead(contextID: number, notificationType: number) : Promise<void> {
@@ -58,7 +58,7 @@ namespace PopForums {
         }
 
         private async getNotifications() {
-            const response = await this.connection.invoke("GetNotifications", this.userState.currentNotificationIndex);
+            const response = await this.connection.invoke("GetNotifications", this.userState.lastNotificationDate);
             return response;
         }
     }

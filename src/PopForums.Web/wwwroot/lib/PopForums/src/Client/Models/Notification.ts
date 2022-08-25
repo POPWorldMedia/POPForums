@@ -2,7 +2,7 @@ namespace PopForums {
 
     export class Notification {
         userID: number;
-        timeStamp: string;
+        timeStamp: Date;
         isRead: boolean;
         notificationType: number;
         contextID: number;

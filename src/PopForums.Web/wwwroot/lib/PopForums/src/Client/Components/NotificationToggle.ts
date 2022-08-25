@@ -31,15 +31,18 @@ namespace PopForums {
         this.title = PopForums.localizations.notifications;
         this.panel = document.getElementById(this.panelid);
         this.offCanvas = new bootstrap.Offcanvas(this.panel);
-        this.addEventListener("click", this.toggle);
+        this.addEventListener("click", this.show);
         let list = document.getElementById(this.notificationlistid);
         this.userState.list = list;
-        list.addEventListener("scroll", this.userState.ScrollLoad);
     }
 
-    private toggle() {
+    private async show() {
         this.offCanvas.show();
-        this.userState.LoadNotifications();
+        this.panel.addEventListener("hide.bs.offcanvas", event => {
+            this.userState.list.removeEventListener("scroll", this.userState.ScrollLoad);
+        });
+        await this.userState.LoadNotifications();
+        this.userState.list.addEventListener("scroll", this.userState.ScrollLoad);
     }
 
     getDependentReference(): [StateBase, string] {

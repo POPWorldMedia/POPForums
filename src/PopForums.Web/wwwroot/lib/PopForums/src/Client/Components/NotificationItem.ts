@@ -50,7 +50,7 @@ namespace PopForums {
 </div>`;
         this.innerHTML = template;
         let timeStamp = new FormattedTime();
-        timeStamp.setAttribute("utctime", this.notification.timeStamp);
+        timeStamp.setAttribute("utctime", this.notification.timeStamp.toString());
         let footer = this.querySelector(".card-footer");
         footer.append(timeStamp);
 
