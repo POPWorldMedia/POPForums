@@ -46,7 +46,7 @@ export class UserState extends StateBase {
         await this.notificationService.MarkAllRead();
     }
 
-    ScrollLoad = () => {
+    ScrollLoad = async () => {
         let streamEnd = (document.querySelector("#NotificationBottom") as HTMLElement);
         if (!streamEnd) {
             console.log("Can't find bottom of notifications.");
@@ -56,14 +56,14 @@ export class UserState extends StateBase {
         let viewEnd = this.list.scrollTop + this.list.clientHeight;
         let distance = top - viewEnd;
         if (!this.isLoadingNotifications && distance < 250 && this.currentNotificationIndex < this.notificationPageCount) {
-            this.LoadMoreNotifications();
+            await this.LoadMoreNotifications();
         }
     };
 
-    private LoadMoreNotifications() {
+    private async LoadMoreNotifications() {
         this.isLoadingNotifications = true;
         this.currentNotificationIndex++;
-        this.notificationService.LoadNotifications();
+        await this.notificationService.LoadNotifications();
         this.isLoadingNotifications = false;
     }
 }
