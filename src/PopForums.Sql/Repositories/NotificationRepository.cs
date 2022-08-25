@@ -89,7 +89,7 @@ SET ROWCOUNT 0";
 		var key = GetCacheKey(userID);
 		var cachedItem = _cacheHelper.GetCacheObject<int?>(key);
 		if (cachedItem != null)
-			return 0;
+			return cachedItem.Value;
 		Task<int> count = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			count = connection.QuerySingleAsync<int>("SELECT COUNT(*) FROM pf_Notifications WHERE UserID = @userID AND IsRead = 0", new { userID }));
