@@ -47,15 +47,15 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		var pm = await _privateMessageService.Get(id, user.UserID);
-		if (await _privateMessageService.IsUserInPM(user.UserID, pm.PMID) == false)
+		if (await _privateMessageService.IsUserInPM(user.UserID, id) == false)
 			return StatusCode(403);
-		var state = await _privateMessageStateComposer.GetState(pm.PMID);
+		var state = await _privateMessageStateComposer.GetState(pm);
 		var model = new PrivateMessageView
 		{
 			PrivateMessage = pm,
 			State = state
 		};
-		await _privateMessageService.MarkPMRead(user.UserID, pm.PMID);
+		await _privateMessageService.MarkPMRead(user.UserID, id);
 		return View(model);
 	}
 

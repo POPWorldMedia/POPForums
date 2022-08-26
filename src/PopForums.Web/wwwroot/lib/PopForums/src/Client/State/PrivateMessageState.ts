@@ -3,6 +3,7 @@ namespace PopForums{
 export class PrivateMessageState extends StateBase {
     constructor() {
         super();
+        this.isStart = false;
     }
 
     pmID: number;
@@ -12,9 +13,10 @@ export class PrivateMessageState extends StateBase {
 
     private postStream: HTMLElement;
     private connection: any;
+    private isStart: boolean;
 
     setupPm() {
-        PopForums.Ready(() => {
+        PopForums.Ready(async () => {
             this.postStream = document.getElementById("PostStream");
             this.messages.forEach(x => {
                 let messageRow = this.populateMessage(x);
@@ -35,14 +37,43 @@ export class PrivateMessageState extends StateBase {
             this.connection.start()
                 .then(function () {
                     return self.connection.invoke("listenTo", self.pmID);
+                })
+                .then(async function () {
+                    await self.LoadCheck();
+                    if (self.newestPostID) {
+                        self.scrollToElement("p" + self.newestPostID)
+                    }
+                    else {
+                        self.postStream.parentElement.scrollTop = self.postStream.parentElement.scrollHeight;
+                    }
                 });
-            if (this.newestPostID) {
-                this.scrollToElement("p" + this.newestPostID)
-            }
-            else {
-                this.postStream.parentElement.scrollTop = this.postStream.parentElement.scrollHeight;
-            }
+            this.postStream.parentElement.addEventListener("scroll", this.ScrollLoad)
         });
+    }
+
+    ScrollLoad = async () => {
+        await this.LoadCheck();
+    }
+
+    async LoadCheck() {
+        let box = this.postStream.parentElement;
+        if (!this.isStart && box.scrollTop < 250) {
+            const posts = await this.GetPosts();
+            let isStart = true;
+            posts.reverse().forEach((item: PrivateMessage) => {
+                this.messages.unshift(item);
+                let m = this.populateMessage(item);
+                this.postStream.prepend(m);
+                isStart = false;
+            });
+            this.isStart = isStart;
+        }
+    }
+
+    private async GetPosts() {
+        let earliestPostTime = this.messages[0].postTime;
+        const response = await this.connection.invoke("GetPosts", this.pmID, earliestPostTime) as PrivateMessage[];
+        return response;
     }
 
     send(fullText: string) {
@@ -70,7 +101,7 @@ export class PrivateMessageState extends StateBase {
             body.classList.add("alert-primary");
 
         let timeStamp = messageRow.querySelector("pf-formattedtime");
-        timeStamp.setAttribute("utctime", data.postTime);
+        timeStamp.setAttribute("utctime", data.postTime.toString());
 
         let name = messageRow.querySelector(".messageName");
         name.innerHTML = data.name;

@@ -3,7 +3,8 @@
 public interface IPrivateMessageRepository
 {
 	Task<PrivateMessage> Get(int pmID, int userID);
-	Task<List<PrivateMessagePost>> GetPosts(int pmID);
+	Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime afterDateTime);
+	Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime beforeDateTime, int pageSize);
 	Task<int> CreatePrivateMessage(PrivateMessage pm);
 	Task AddUsers(int pmID, List<int> userIDs, DateTime viewDate, bool isArchived);
 	Task<int> AddPost(PrivateMessagePost post);

@@ -4,7 +4,7 @@ namespace PopForums {
         pmPostID: number;
         userID: number;
         name: string;
-        postTime: string;
+        postTime: Date;
         fullText: string;
     }
 }

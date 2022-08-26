@@ -43,12 +43,23 @@ AND COUNT(*) = {count}";
 		return await result;
 	}
 
-	public async Task<List<PrivateMessagePost>> GetPosts(int pmID)
+	public async Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime afterDateTime)
 	{
+		var sql = $"SELECT * FROM pf_PrivateMessagePost WHERE PMID = @pmID AND PostTime > @afterDateTime ORDER BY PostTime";
 		Task<IEnumerable<PrivateMessagePost>> result = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			result = connection.QueryAsync<PrivateMessagePost>("SELECT PMPostID, PMID, UserID, Name, PostTime, FullText FROM pf_PrivateMessagePost WHERE PMID = @PMID ORDER BY PostTime", new { PMID = pmID }));
+			result = connection.QueryAsync<PrivateMessagePost>(sql, new { pmID, afterDateTime }));
 		return result.Result.ToList();
+	}
+
+	public async Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime beforeDateTime, int pageSize)
+	{
+		var sql = $"SELECT TOP {pageSize} * FROM pf_PrivateMessagePost WHERE PMID = @pmID AND PostTime < @beforeDateTime ORDER BY PostTime DESC";
+		Task<IEnumerable<PrivateMessagePost>> result = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			result = connection.QueryAsync<PrivateMessagePost>(sql, new { pmID, beforeDateTime }));
+		var list = result.Result.Reverse().ToList();
+		return list;
 	}
 
 	public virtual async Task<int> CreatePrivateMessage(PrivateMessage pm)

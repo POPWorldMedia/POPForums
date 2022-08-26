@@ -47,4 +47,16 @@ public class PMHub : Hub
 		var userID = GetUserID();
 		await _privateMessageService.MarkPMRead(userID, pmID);
 	}
+
+	public async Task<dynamic[]> GetPosts(int pmID, DateTime beforeDateTime)
+	{
+		var userID = GetUserID();
+		if (! await _privateMessageService.IsUserInPM(userID, pmID))
+		{
+			return null;
+		}
+		var posts = await _privateMessageService.GetPosts(pmID, beforeDateTime);
+		dynamic[] clientMessages = posts.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		return clientMessages;
+	}
 }

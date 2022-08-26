@@ -3,7 +3,8 @@
 public interface IPrivateMessageService
 {
 	Task<PrivateMessage> Get(int pmID, int userID);
-	Task<List<PrivateMessagePost>> GetPosts(int pmID);
+	Task<List<PrivateMessagePost>> GetMostRecentPosts(int pmID, DateTime afterDateTime);
+	Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime beforeDateTime);
 	Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex);
 	Task<int> GetUnreadCount(User user);
 	Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers);
@@ -30,14 +31,21 @@ public class PrivateMessageService : IPrivateMessageService
 	private readonly ITextParsingService _textParsingService;
 	private readonly IBroker _broker;
 
+	private static int _postPageSize = 20;
+
 	public async Task<PrivateMessage> Get(int pmID, int userID)
 	{
 		return await _privateMessageRepository.Get(pmID, userID);
 	}
 
-	public async Task<List<PrivateMessagePost>> GetPosts(int pmID)
+	public async Task<List<PrivateMessagePost>> GetMostRecentPosts(int pmID, DateTime afterDateTime)
 	{
-		return await _privateMessageRepository.GetPosts(pmID);
+		return await _privateMessageRepository.GetPosts(pmID, afterDateTime);
+	}
+
+	public async Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime beforeDateTime)
+	{
+		return await _privateMessageRepository.GetPosts(pmID, beforeDateTime, _postPageSize);
 	}
 
 	public async Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex)
