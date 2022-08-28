@@ -29,7 +29,7 @@ public class UserStateComposer : IUserStateComposer
 		{
 			var profile = _userRetrievalShim.GetProfile();
 			state.IsPlainText = profile.IsPlainText;
-			state.NewPmCount = await _privateMessageService.GetUnreadCount(user);
+			state.NewPmCount = await _privateMessageService.GetUnreadCount(user.UserID);
 			state.IsImageEnabled = _settingsManager.Current.AllowImages;
 			state.NotificationCount = await _notificationManager.GetUnreadNotificationCount(user.UserID);
 			state.UserID = user.UserID;

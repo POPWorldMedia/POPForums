@@ -3,10 +3,12 @@
 public class NotificationHub : Hub
 {
 	private readonly INotificationManager _notificationManager;
+	private readonly IPrivateMessageService _privateMessageService;
 
-	public NotificationHub(INotificationManager notificationManager)
+	public NotificationHub(INotificationManager notificationManager, IPrivateMessageService privateMessageService)
 	{
 		_notificationManager = notificationManager;
+		_privateMessageService = privateMessageService;
 	}
 
 	private int GetUserID()
@@ -36,5 +38,19 @@ public class NotificationHub : Hub
 		var userID = GetUserID();
 		var notifications = await _notificationManager.GetNotifications(userID, afterDateTime);
 		return notifications;
+	}
+
+	public async Task<int> GetNotificationCount()
+	{
+		var userID = GetUserID();
+		var count = await _notificationManager.GetUnreadNotificationCount(userID);
+		return count;
+	}
+
+	public async Task<int> GetPMCount()
+	{
+		var userID = GetUserID();
+		var count = await _privateMessageService.GetUnreadCount(userID);
+		return count;
 	}
 }

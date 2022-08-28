@@ -6,7 +6,7 @@ public interface IPrivateMessageService
 	Task<List<PrivateMessagePost>> GetMostRecentPosts(int pmID, DateTime afterDateTime);
 	Task<List<PrivateMessagePost>> GetPosts(int pmID, DateTime beforeDateTime);
 	Task<Tuple<List<PrivateMessage>, PagerContext>> GetPrivateMessages(User user, PrivateMessageBoxType boxType, int pageIndex);
-	Task<int> GetUnreadCount(User user);
+	Task<int> GetUnreadCount(int userID);
 	Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers);
 	Task Reply(PrivateMessage pm, string fullText, User user);
 	Task<bool> IsUserInPM(int userID, int pmID);
@@ -59,9 +59,9 @@ public class PrivateMessageService : IPrivateMessageService
 		return Tuple.Create(messages, pagerContext);
 	}
 
-	public async Task<int> GetUnreadCount(User user)
+	public async Task<int> GetUnreadCount(int userID)
 	{
-		return await _privateMessageRepository.GetUnreadCount(user.UserID);
+		return await _privateMessageRepository.GetUnreadCount(userID);
 	}
 
 	public async Task<PrivateMessage> Create(string fullText, User user, List<User> toUsers)

@@ -23,6 +23,12 @@ namespace PopForums {
                     self.userState.notificationCount++;
                 self.userState.notifications.unshift(notification);
             });
+            this.connection.onreconnected(async () => {
+                let notificationCount = await this.connection.invoke("GetNotificationCount");
+                self.userState.notificationCount = notificationCount;
+                let pmCount = await this.connection.invoke("GetPMCount");
+                self.userState.newPmCount = pmCount;
+            });
             this.connection.start();
         }
 

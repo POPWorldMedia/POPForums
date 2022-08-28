@@ -131,7 +131,7 @@ public class PrivateMessagesController : Controller
 		var user = _userRetrievalShim.GetUser();
 		if (user == null)
 			return Content(String.Empty);
-		var count = await _privateMessageService.GetUnreadCount(user);
+		var count = await _privateMessageService.GetUnreadCount(user.UserID);
 		return Content(count.ToString());
 	}
 }
