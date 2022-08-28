@@ -682,7 +682,6 @@ CREATE NONCLUSTERED INDEX [IX_pf_LastTopicView_TopicID] ON [dbo].[pf_LastTopicVi
 
 CREATE TABLE [dbo].[pf_PrivateMessage](
 	[PMID] [int] IDENTITY(1,1) NOT NULL,
-	[Subject] [nvarchar](256) NOT NULL,
 	[LastPostTime] [datetime] NOT NULL,
 	[Users] [nvarchar](MAX) NOT NULL,
  CONSTRAINT [PK_pf_PrivateMessage] PRIMARY KEY CLUSTERED 
@@ -921,7 +920,6 @@ CREATE TABLE [dbo].[pf_Notifications]
     [ContextID] BIGINT NOT NULL, 
     [TimeStamp] DATETIME NOT NULL, 
     [IsRead] BIT NOT NULL,
-	[ContentType] NVARCHAR(50) NOT NULL,
     [Data] NVARCHAR(MAX) NULL
 );
 
@@ -944,6 +942,7 @@ CREATE TABLE [dbo].[pf_PostImage]
 	[ID] NVARCHAR(50) NOT NULL PRIMARY KEY, 
     [TimeStamp] DATETIME NOT NULL, 
     [TenantID] NVARCHAR(100) NULL, 
+	[ContentType] NVARCHAR(50) NOT NULL,
     [ImageData] VARBINARY(MAX) NOT NULL
 );
 
