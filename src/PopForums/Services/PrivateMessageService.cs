@@ -91,8 +91,6 @@ public class PrivateMessageService : IPrivateMessageService
 			LastPostTime = now
 		};
 		pm.PMID = await _privateMessageRepository.CreatePrivateMessage(pm);
-		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, now, false);
-		await _privateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), now.AddSeconds(-1), false);
 		var post = new PrivateMessagePost
 		{
 			FullText = _textParsingService.ForumCodeToHtml(fullText),
@@ -101,12 +99,15 @@ public class PrivateMessageService : IPrivateMessageService
 			PostTime = now,
 			UserID = user.UserID
 		};
+		var lastReadDate = now.AddMinutes(-1);
+		await _privateMessageRepository.AddPost(post);
+		await _privateMessageRepository.AddUsers(pm.PMID, new List<int> {user.UserID}, lastReadDate, false);
+		await _privateMessageRepository.AddUsers(pm.PMID, toUsers.Select(u => u.UserID).ToList(), lastReadDate, false);
 		foreach (var receiver in toUsers)
 		{
 			var receiverPMCount = await _privateMessageRepository.GetUnreadCount(receiver.UserID);
 			_broker.NotifyPMCount(receiver.UserID, receiverPMCount);
 		}
-		await _privateMessageRepository.AddPost(post);
 		return pm;
 	}
 
