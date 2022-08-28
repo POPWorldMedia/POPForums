@@ -106,7 +106,6 @@ public class AccountController : Controller
 			{
 				var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
 				await _externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
-				_externalLoginTempService.Remove();
 			}
 
 			await IdentityController.PerformSignInAsync(user, HttpContext);

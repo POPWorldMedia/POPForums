@@ -37,6 +37,7 @@ public class ExternalLoginTempService : IExternalLoginTempService
 		}
 		var decryptedSerialized = protector.Unprotect(encryptedTempAuth);
 		var result = JsonSerializer.Deserialize<ExternalLoginState>(decryptedSerialized);
+		Remove();
 		return result;
 	}
 
