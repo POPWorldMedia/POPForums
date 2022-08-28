@@ -34,6 +34,14 @@ export class PrivateMessageState extends StateBase {
                     (self.postStream.lastChild as HTMLElement).scrollIntoView(true);
                 self.ackRead();
             });
+            this.connection.onreconnected(async () => {
+                let latestPostTime = this.messages[this.messages.length - 1].pmPostID;
+                const posts = await this.connection.invoke("GetMostRecentPosts", this.pmID, latestPostTime) as PrivateMessage[];
+                posts.reverse().forEach((item: PrivateMessage) => {
+                    let m = this.populateMessage(item);
+                    this.postStream.append(m);
+                });
+            });
             this.connection.start()
                 .then(function () {
                     return self.connection.invoke("listenTo", self.pmID);

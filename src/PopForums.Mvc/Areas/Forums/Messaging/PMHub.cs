@@ -59,4 +59,16 @@ public class PMHub : Hub
 		dynamic[] clientMessages = posts.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
 		return clientMessages;
 	}
+
+	public async Task<dynamic[]> GetMostRecentPosts(int pmID, DateTime afterDateTime)
+	{
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+		{
+			return null;
+		}
+		var posts = await _privateMessageService.GetMostRecentPosts(pmID, afterDateTime);
+		dynamic[] clientMessages = posts.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		return clientMessages;
+	}
 }
