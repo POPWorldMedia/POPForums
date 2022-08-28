@@ -93,7 +93,7 @@ public class Broker : IBroker
 
 	public async void SendPMMessage(PrivateMessagePost post)
 	{
-		var message = new {post.UserID, post.Name, PostTime = post.PostTime.ToString("o"), post.FullText};
+		var message = ClientPrivateMessagePost.MapForClient(post);
 		var tenantID = _tenantService.GetTenant();
 		await _pmHubContext.Clients.Group($"{tenantID}:{post.PMID}").SendAsync("addMessage", message);
 	}

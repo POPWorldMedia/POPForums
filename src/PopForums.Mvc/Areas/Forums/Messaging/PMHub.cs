@@ -48,7 +48,7 @@ public class PMHub : Hub
 		await _privateMessageService.MarkPMRead(userID, pmID);
 	}
 
-	public async Task<dynamic[]> GetPosts(int pmID, DateTime beforeDateTime)
+	public async Task<ClientPrivateMessagePost[]> GetPosts(int pmID, DateTime beforeDateTime)
 	{
 		var userID = GetUserID();
 		if (! await _privateMessageService.IsUserInPM(userID, pmID))
@@ -56,11 +56,11 @@ public class PMHub : Hub
 			return null;
 		}
 		var posts = await _privateMessageService.GetPosts(pmID, beforeDateTime);
-		dynamic[] clientMessages = posts.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		var clientMessages = ClientPrivateMessagePost.MapForClient(posts);
 		return clientMessages;
 	}
 
-	public async Task<dynamic[]> GetMostRecentPosts(int pmID, DateTime afterDateTime)
+	public async Task<ClientPrivateMessagePost[]> GetMostRecentPosts(int pmID, DateTime afterDateTime)
 	{
 		var userID = GetUserID();
 		if (!await _privateMessageService.IsUserInPM(userID, pmID))
@@ -68,7 +68,7 @@ public class PMHub : Hub
 			return null;
 		}
 		var posts = await _privateMessageService.GetMostRecentPosts(pmID, afterDateTime);
-		dynamic[] clientMessages = posts.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		var clientMessages = ClientPrivateMessagePost.MapForClient(posts);
 		return clientMessages;
 	}
 }

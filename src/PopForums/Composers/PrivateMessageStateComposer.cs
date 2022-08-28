@@ -27,7 +27,7 @@ public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 		var bufferMessages = await _privateMessageService.GetPosts(pm.PMID, pm.LastViewDate);
 		messages.InsertRange(0, bufferMessages);
 		state.PmID = pm.PMID;
-		dynamic[] clientMessages = messages.Select(x => new { pmPostID = x.PMPostID, x.UserID, x.Name, PostTime = x.PostTime.ToString("o"), x.FullText }).ToArray();
+		var clientMessages = ClientPrivateMessagePost.MapForClient(messages);
 		state.Messages = clientMessages;
 		state.Users = pm.Users;
 		return state;
