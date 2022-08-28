@@ -1118,7 +1118,7 @@
     <value>Закріпити тему</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>Повинна включати заголовок, повідомлення та хоча б одного користувача</value>
+	  <value>Повинна включати повідомлення та хоча б одного користувача</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>Ви не можете відправити пусте повідомлення</value>

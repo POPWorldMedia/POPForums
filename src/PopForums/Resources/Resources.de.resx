@@ -1118,7 +1118,7 @@
     <value>gemerktes Thema</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>Muss beinhalten ein Thema, Nachricht und zuletzt ein Mitglied.</value>
+	  <value>Muss beinhalten ein Nachricht und zuletzt ein Mitglied.</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>Ein leerer Beitrag kann nicht erstellt werden.</value>

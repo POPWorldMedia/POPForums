@@ -1105,7 +1105,7 @@
     <value>已釘選</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>必須包含主旨、訊息或至少一個用戶</value>
+	  <value>必須包含消息和至少一位用戶</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>主題不能為空白</value>

@@ -1118,7 +1118,7 @@
     <value>Gepinde topic</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>Je moet een onderwerp, bericht en op z'n minst één gebruiker toevoegen</value>
+	  <value>Je moet een bericht en op z'n minst één gebruiker toevoegen</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>Je kunt geen lege post maken</value>

@@ -1118,7 +1118,7 @@
     <value>Pinned topic</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>Must include subject, message and at least one user</value>
+	  <value>Must include message and at least one user</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>Can't make an empty post</value>

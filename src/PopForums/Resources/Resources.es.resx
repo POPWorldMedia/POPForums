@@ -1118,7 +1118,7 @@
     <value>Tópico anclado</value>
   </data>
   <data name="PMCreateWarnings" xml:space="preserve">
-    <value>Debe incluir asunto, mensaje y al menos un usuario.</value>
+	  <value>Debe incluir mensaje y al menos un usuario.</value>
   </data>
   <data name="PostEmpty" xml:space="preserve">
     <value>No se puede crear un mensaje vacio.</value>
