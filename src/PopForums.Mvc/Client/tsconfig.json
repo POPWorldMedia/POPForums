@@ -4,7 +4,7 @@
     "target": "es2018",
     "inlineSources": true,
     "inlineSourceMap": true,
-    "outFile": "../PopForums.js",
+    "outFile": "../wwwroot/PopForums.js",
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,

@@ -13,15 +13,26 @@
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 		<Copyright>2022, POP World Media, LLC</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<!--This is an important line to trigger the hot reload:-->
+		<AssignTargetPathsDependsOn>CompileTypeScript;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="PopIdentity" Version="3.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Client\" />
+	  <Folder Include="wwwroot\" />
 	</ItemGroup>
 
 </Project>

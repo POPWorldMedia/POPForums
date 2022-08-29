@@ -19,4 +19,4 @@ src/PopForums.Web/wwwroot/lib/PopForums/dist/*
 node_modules
 src/PopForums.AzureKit.Functions/Properties/ServiceDependencies
 src/PopForums.Web/package-lock.json
-src/PopForums.Web/wwwroot/lib/PopForums/src/PopForums.js
+src/PopForums.Mvc/wwwroot/PopForums.js
