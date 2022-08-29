@@ -31,7 +31,7 @@ export class PrivateMessageState extends StateBase {
                 let isBottom = parent.scrollHeight - parent.scrollTop - parent.clientHeight < 200;
                 self.postStream.append(messageRow);
                 if (isBottom)
-                    (self.postStream.lastChild as HTMLElement).scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
+                    parent.scrollTop = parent.scrollHeight;
                 self.ackRead();
             });
             this.connection.onreconnected(async () => {
