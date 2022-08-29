@@ -42,20 +42,16 @@ export class PrivateMessageState extends StateBase {
                     this.postStream.append(m);
                 });
             });
-            this.connection.start()
-                .then(function () {
-                    return self.connection.invoke("listenTo", self.pmID);
-                })
-                .then(async function () {
-                    await self.LoadCheck();
-                    if (self.newestPostID) {
-                        self.scrollToElement("p" + self.newestPostID)
-                    }
-                    else {
-                        self.postStream.parentElement.scrollTop = self.postStream.parentElement.scrollHeight;
-                    }
-                });
-            this.postStream.parentElement.addEventListener("scroll", this.ScrollLoad)
+            await this.connection.start();
+            await this.connection.invoke("listenTo", this.pmID);
+            if (this.newestPostID) {
+                this.scrollToElement("p" + this.newestPostID)
+            }
+            else {
+                this.postStream.parentElement.scrollTop = this.postStream.parentElement.scrollHeight;
+            }
+            await this.LoadCheck();
+            this.postStream.parentElement.addEventListener("scroll", this.ScrollLoad);
         });
     }
 
