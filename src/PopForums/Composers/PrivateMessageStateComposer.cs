@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace PopForums.Composers;
+﻿namespace PopForums.Composers;
 
 public interface IPrivateMessageStateComposer
 {
@@ -9,19 +7,16 @@ public interface IPrivateMessageStateComposer
 
 public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 {
-	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly IPrivateMessageService _privateMessageService;
 
-	public PrivateMessageStateComposer(IUserRetrievalShim userRetrievalShim, IPrivateMessageService privateMessageService)
+	public PrivateMessageStateComposer(IPrivateMessageService privateMessageService)
 	{
-		_userRetrievalShim = userRetrievalShim;
 		_privateMessageService = privateMessageService;
 	}
 
 	public async Task<PrivateMessageState> GetState(PrivateMessage pm)
 	{
 		var state = new PrivateMessageState();
-		var user = _userRetrievalShim.GetUser();
 		var messages = await _privateMessageService.GetMostRecentPosts(pm.PMID, pm.LastViewDate);
 		state.NewestPostID = messages.Any() ? messages.First().PMPostID : 0;
 		var bufferMessages = await _privateMessageService.GetPosts(pm.PMID, pm.LastViewDate);
