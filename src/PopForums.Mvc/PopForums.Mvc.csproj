@@ -18,6 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <TypeScriptCompile Remove="node_modules\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.2">
 		  <PrivateAssets>all</PrivateAssets>

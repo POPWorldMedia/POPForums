@@ -1,6 +1,4 @@
 {
-  "name": "popforums",
-  "version": "18.0.99",
   "scripts": {},
   "dependencies": {
     "@microsoft/signalr": "6.0.4",
