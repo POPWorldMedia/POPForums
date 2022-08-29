@@ -28,10 +28,10 @@ export class PrivateMessageState extends StateBase {
             this.connection.on("addMessage", function(message: PrivateMessage) {
                 let messageRow = self.populateMessage(message);
                 let parent = self.postStream.parentElement;
-                let isBottom = parent.scrollHeight - parent.scrollTop - parent.clientHeight < 1;
+                let isBottom = parent.scrollHeight - parent.scrollTop - parent.clientHeight < 200;
                 self.postStream.append(messageRow);
                 if (isBottom)
-                    (self.postStream.lastChild as HTMLElement).scrollIntoView(true);
+                    (self.postStream.lastChild as HTMLElement).scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
                 self.ackRead();
             });
             this.connection.onreconnected(async () => {
