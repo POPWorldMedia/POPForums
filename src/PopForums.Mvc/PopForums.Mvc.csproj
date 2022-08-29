@@ -30,9 +30,4 @@
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Client\" />
-	  <Folder Include="wwwroot\" />
-	</ItemGroup>
-
 </Project>
