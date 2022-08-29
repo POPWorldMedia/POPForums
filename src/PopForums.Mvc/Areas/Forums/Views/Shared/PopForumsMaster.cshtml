@@ -4,14 +4,14 @@
 
 @section HeaderContent {
 	<environment include="Development">
-		<script src="~/lib/signalr/dist/signalr.js" asp-append-version="true"></script>
+        <script src="~/_content/PopForums.Mvc/lib/signalr/dist/signalr.js" asp-append-version="true"></script>
         <script src="~/_content/PopForums.Mvc/PopForums.js" asp-append-version="true"></script>
         <link href="~/_content/PopForums.Mvc/PopForums.css" rel="stylesheet" asp-append-version="true" />
 	</environment>
 	<environment exclude="Development">
-		<script src="~/lib/signalr/dist/signalr.min.js" asp-append-version="true"></script>
-        <script src="~/_content/PopForums.Mvc/PopForums.js" asp-append-version="true"></script>
-        <link href="~/_content/PopForums.Mvc/PopForums.css" rel="stylesheet" asp-append-version="true" />
+		<script src="~/_content/PopForums.Mvc/lib/signalr/dist/signalr.min.js" asp-append-version="true"></script>
+        <script src="~/_content/PopForums.Mvc/lib/PopForums/dist/PopForums.min.js" asp-append-version="true"></script>
+        <link href="~/_content/PopForums.Mvc/lib/PopForums/dist/PopForums.min.css" rel="stylesheet" asp-append-version="true" />
 	</environment>
 	@RenderSection("HeaderContent", required: false)
 	@await Component.InvokeAsync("UserState")

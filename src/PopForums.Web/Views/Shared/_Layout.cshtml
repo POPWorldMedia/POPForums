@@ -4,8 +4,15 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewBag.Title</title>
-		<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-		<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <environment include="Development">
+	        <script src="~/_content/PopForums.Mvc/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+	        <link href="~/_content/PopForums.Mvc/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+	    </environment>
+	    <environment exclude="Development">
+	        <script src="~/_content/PopForums.Mvc/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	        <link href="~/_content/PopForums.Mvc/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+	    </environment>
+		
 		@RenderSection("HeaderContent", false)
     </head>
     <body>
