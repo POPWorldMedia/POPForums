@@ -11,9 +11,9 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-v18 ditches the use of a separate configuration file, `PopForums.json`, and uses the default file in the web project, so you'll have to move your config settings there when running locally.
+v19 includes substantial architectural changes. The biggest change is that the front-end code, including Javascript and CSS, is delivered with the `PopForums.Mvc` package or project. The front-end parts are now written in TypeScript, and utilize plain vanilla web components (the admin still uses Vue.js). Private messages have been converted into real-time chat.
 
-The v18 and v17 releases have no data changes. If you need to upgrade from v15, run the PopForums15to16.sql script against your database, which is found in the `PopForums.Sql` project.
+This version has big data changes. If you need to upgrade from v16.x, v.17x or v18.x, run the `PopForums16to19.sql` script against your database, which is found in the `PopForums.Sql` project. Because of the changes to private messages, you must also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
@@ -22,14 +22,13 @@ You'll need the following locally:
 * Visual Studio 2022 or later, with the Azure workload (community version is fine)
 * Node.js (comes with npm)
 * SQL Server Developer
-* Optionally, Docker if you intend to run Redis, ElasticSearch, etc.
+* Optionally, Docker if you intend to run Azurite, Redis, ElasticSearch, etc.
 
 ## Build vs. reference
 
-You should definitely get to know the installation information below to understand the project structure, but understand that you can also use POP Forums by way of Nuget and npm pagackage references. The [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project shows how you can do this without having to build this project. The short story is this:
+You should definitely get to know the installation information below to understand the project structure, but understand that you can also use POP Forums by way of Nuget package references. The [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project shows how you can do this without having to build this project. The short story is this:
 * Reference `PopForums.Mvc` and `PopForums.Sql` from Nuget. If you want to use the scale-out kits (`PopForums.AzureKit` and `PopForums.ElasticKit`), add those as well.
-* Reference `@popworldmedia/popforums` from npm.
-* Use gulp or some other package to copy or pack the various scripts and CSS. The sample project uses gulp and you can see how it's done in the gulpfile.js. If you get this wrong, the client CSS and Javascript won't be in the right place.
+* Starting with v19, `PopForums.Mvc` includes all of the front-end goodies, the Javascript and CSS, right in the package.
 * You'll need a layout view for the forum to live in.
 * Set up the various options in `Program.cs` as described in its comments and this documentation.
 * `appsettings.json` will have your forum configuration.
@@ -38,15 +37,14 @@ You should definitely get to know the installation information below to understa
 
 For the bleeding edge, latest build from master, the CI build packages can be obtained by a MyGet feed:
 * https://www.myget.org/F/popforums/api/v3/index.json (Nuget for the backend)
-* https://www.myget.org/feed/popforums/package/npm/@popworldmedia/popforums (npm for the front end)
 
 ## Installation
 
 * Download the latest source code from GitHub, or use the production packages as described above. Build it.
-* The project files require an up-to-date version of Visual Studio 2019 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
-* This project is built on ASP.NET v6. Make sure you have the required SDK installed (v6.0.100).
-* The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation.
-* The `main` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2022 probably has all of the SDK's and storage emulators in place to host these. If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. (You may need to run the Azure Storage emulator manually to get functions running on Windows, or [Azurite](https://github.com/azure/azurite) on Mac.)
+* The project files require an up-to-date version of Visual Studio 2022 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
+* This project is built on ASP.NET v6. Make sure you have the required SDK installed (v6.0.400).
+* The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation.
+* The `main` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2022 probably has all of the SDK's and storage emulation is required, so run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
 * `appsettings.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
 
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
@@ -64,7 +62,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 		"Cache": {
 			"Seconds": 180,
 			"ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
-			"ForceLocalOnly": "false" // used for Redis cache in AzureKit
+			"ForceLocalOnly": false // used for Redis cache in AzureKit
 		},
 		"Search": { // used for Azure Search in AzureKit
 			"Url": "popforumsdev",
@@ -74,21 +72,21 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 		"Queue": { // used for queues with Azure Functions
 			"ConnectionString": "UseDevelopmentStorage=true"
 		},
-		"LogTopicViews": "true", // optional, records topic views for future analytics
+		"LogTopicViews": true, // optional, records topic views for future analytics
 		"ReCaptcha": { // Google ReCaptcha on signup (the key/secret below works on localhost)
-			"UseReCaptcha": "true",
+			"UseReCaptcha": true,
 			"SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
 			"SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
 		},
 		"WebAppUrlAndArea": "https://somehost/forums", // used only by Azure Functions to find endpoint of your web app
-		"RenderBootstrap": "true" // optional, put false here if your hose page will have its own build of Bootstrap CSS
+		"RenderBootstrap": true // optional, put false here if your hose page will have its own build of Bootstrap CSS
 	}
 }
 ```
-* Attempt to run the app either locally, or in IIS, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums18`.
+* Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums19`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to /Forums/Setup now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
-* Building requires that you have Node.js (and therefore npm) installed to get the client side references and run Gulp tasks to copy them to the wwwroot folder. If you run the app and the scripts and CSS are broken, it's because you don't have this. To troubleshoot Gulp action, right-click `gulpfile.js` in the web project and choose "Task Runner Explorer."
+* The `PopForums.Mvc` package includes Bootstrap, which is used as the base style for the entire app. To give it your own look, you can add your own CSS to override Bootstrap in your `_Layout.cshtml`, or do your own build of Bootstrap with whatever variables you like. If you prefer your own build, make sure _both_ the Javascript and CSS tags appear _before_ the `RenderSection` in your header, and set the `RenderBootstrap` setting in `appconfig.json` to `false`.
 * If you're using Azure functions in the background, instead of embedding the background work in the web app (see "Using AzureKit"), you'll want to run multiple startup projects, specifically the `PopForums.Web` and `PopForums.AzureKit.Functions`.
 
 Here’s what each field on the setup page does: 
@@ -107,9 +105,9 @@ Here’s what each field on the setup page does:
 * If you typed everything you need correctly, you should see a happy result, otherwise you’ll see a stack trace and exception.
 * Restart the app.
 * From here, you can follow the link to the admin home page and add categories and forums. You’ll be logged in as the user you created, and that account will be part of the Admin and Moderator roles.
-* Once you’ve added some forums on the “Forums” admin page, you can go to /Forums to start posting.
-* If you want to test your e-mail setup, go to /Forums/Account/Forgot and enter your e-mail address. Failures are also logged in the error log, which is found in the admin area.
-* For future reference, you can revisit the admin area at /Forums/Admin
+* Once you’ve added some forums on the “Forums” admin page, you can go to `/Forums` to start posting.
+* If you want to test your e-mail setup, go to `/Forums/Account/Forgot` and enter your e-mail address. Failures are also logged in the error log, which is found in the admin area.
+* For future reference, you can revisit the admin area at `/Forums/Admin`, and when you're logged in as an admin, a link appears in the user dropdown from the navigation menu.
 
 ## Integration
 

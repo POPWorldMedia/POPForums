@@ -55,7 +55,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Audit CSS and use Bootstrap when possible. #186
 * Search for user on enter on admin user edit page. #194
 * Use hashing mechanism for topic unsubscribes, the way mailing list works. #189
-* Migrate to `Microsoft.Azure.Storage` pacakges from `Microsoft.WindowsAzure.Storage`. #182
+* Migrate to `Microsoft.Azure.Storage` packages from `Microsoft.WindowsAzure.Storage`. #182
 * Use Bootstrap hidden utilities to hide elements on mobile. #181
 * Move recent and feed links to navigation bar. #187
 * Embrace `IHttpContextAccessor` in user shim. #176

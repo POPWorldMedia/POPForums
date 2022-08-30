@@ -32,10 +32,10 @@ One of the requirements back in the day was to simply work with the existing dat
 Look, when almost all of your methods are async what's the point? The only place I use it is when there are both synchronous and asynchronous methods. Your fancy IDE knows what the return type is, and the compiler lets you know when you're not awaiting. You'll be fine.
 
 ## What external frameworks are you using, and why?
-I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, it's still using jQuery (for now), along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
+I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, the main app uses vanilla web components written in TypeScript, along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
 
 ## The unit tests suck.
-In porting to Core, much of the controller-level unit testing didn't come along, because it's likely that it will change significantly when the front-end becomes more modern. See next item...
+In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring.
 
 ## What's the release roadmap?
 It has generally been my intention to keep up with the latest .NET framework versions, but getting to Core took way longer than expected. You can check the issue tracker for stuff currently in flight. I have strong desire to modernize the front end, though not in a "heavy" way. Forums attract Google juice because they're textually dense, and the "app-ness" of a forum is not complex as it's little more than a few simple forms. To that end, sure, you could go nuts and rewrite the whole thing to use a SPA framework, but at great indexability cost. So while there will be changes to bring it forward, they'll be targeted.
