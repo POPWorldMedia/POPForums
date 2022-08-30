@@ -18,5 +18,5 @@ public class ConfigContainer
 	public string WebAppUrlAndArea { get; set; }
 	public string BaseImageBlobUrl { get; set; }
 	public string StorageConnectionString { get; set; }
-
+	public bool RenderBootstrap { get; set; }
 }

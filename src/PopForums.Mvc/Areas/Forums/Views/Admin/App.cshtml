@@ -8,11 +8,11 @@
 <head>
 	<meta name="viewport" content="width=device-width" />
 	<title>@PopForums.Resources.PopForumsAdmin</title>
-	<script src="~/lib/vue/dist/vue.global.prod.js"></script>
-	<script src="~/lib/vue-router/dist/vue-router.global.prod.js"></script>
-	<script src="~/lib/axios/dist/axios.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/_content/PopForums.Mvc/lib/vue/dist/vue.global.prod.js"></script>
+	<script src="~/_content/PopForums.Mvc/lib/vue-router/dist/vue-router.global.prod.js"></script>
+	<script src="~/_content/PopForums.Mvc/lib/axios/dist/axios.min.js"></script>
+	<script src="~/_content/PopForums.Mvc/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<link href="~/_content/PopForums.Mvc/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 	<style>
 		.fade-enter-active, .fade-leave-active {
 			transition: opacity .5s;
@@ -1365,10 +1365,10 @@
 </script>
 
 <environment include="Development">
-	<script src="~/lib/PopForums/src/Admin.js" type="text/javascript"></script>
+	<script src="~/_content/PopForums.Mvc/Admin.js" type="text/javascript"></script>
 </environment>
 <environment exclude="Development">
-	<script src="~/lib/PopForums/dist/Admin.min.js" type="text/javascript"></script>
+	<script src="~/_content/PopForums.Mvc/lib/PopForums/dist/Admin.min.js" type="text/javascript"></script>
 </environment>
 </body>
 </html>

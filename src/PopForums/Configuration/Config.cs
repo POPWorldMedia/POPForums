@@ -18,6 +18,7 @@ public interface IConfig
 	string WebAppUrlAndArea { get; }
 	string BaseImageBlobUrl { get; }
 	string StorageConnectionString { get; }
+	bool RenderBootstrap { get; }
 }
 
 public class Config : IConfig
@@ -49,4 +50,5 @@ public class Config : IConfig
 	public string WebAppUrlAndArea => _configContainer.WebAppUrlAndArea;
 	public string BaseImageBlobUrl => _configContainer.BaseImageBlobUrl;
 	public string StorageConnectionString => _configContainer.StorageConnectionString;
+	public bool RenderBootstrap => _configContainer.RenderBootstrap;
 }

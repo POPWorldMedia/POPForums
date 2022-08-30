@@ -4,9 +4,8 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>@ViewBag.Title</title>
-		<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-		<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-		@RenderSection("HeaderContent", false)
+
+        @await RenderSectionAsync("HeaderContent", false)
     </head>
     <body>
         <div class="container">
