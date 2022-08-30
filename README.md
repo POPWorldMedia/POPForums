@@ -19,7 +19,7 @@ https://meta.popforums.com/Forums
 CI build of main runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
-[![Build status](https://popw.visualstudio.com/POP%20Forums/_apis/build/status/popforumsdev)](https://popw.visualstudio.com/POP%20Forums/_build/latest?definitionId=2)
+[![Build status](https://dev.azure.com/popw/POP%20Forums/_apis/build/status/popforumsdev)](https://dev.azure.com/popw/POP%20Forums/_build/latest?definitionId=13)
 
 Latest release:  
 https://github.com/POPWorldMedia/POPForums/releases/tag/v18.0.0  
