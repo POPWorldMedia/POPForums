@@ -23,7 +23,7 @@ public class NewAccountMailerTests
 		Assert.Equal(SmtpStatusCode.Ok, result);
 		Assert.Equal(resultMessage.ToName, user.Name);
 		Assert.Equal(resultMessage.ToEmail, user.Email);
-		Assert.Equal(resultMessage.FromName, forumTitle);
-		Assert.Equal(resultMessage.FromEmail, mailerAddress);
+		Assert.Equal(forumTitle, resultMessage.FromName);
+		Assert.Equal(mailerAddress, resultMessage.FromEmail);
 	}
 }

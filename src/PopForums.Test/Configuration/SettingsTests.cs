@@ -43,9 +43,9 @@ public class SettingsTests
 		var settings = settingsManager.Current;
 		
 		Assert.False(settings.IsNewUserApproved);
-		Assert.Equal(settings.TopicsPerPage, topicsPerPage);
-		Assert.Equal(settings.PostsPerPage, postsPerPage);
-		Assert.Equal(settings.ForumTitle, title);
+		Assert.Equal(topicsPerPage, settings.TopicsPerPage);
+		Assert.Equal(postsPerPage, settings.PostsPerPage);
+		Assert.Equal(title, settings.ForumTitle);
 		settingsRepo.Verify(s => s.Get(), Times.Once());
 	}
 
