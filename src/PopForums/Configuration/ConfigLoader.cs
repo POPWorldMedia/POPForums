@@ -25,6 +25,8 @@ public class ConfigLoader
 		container.WebAppUrlAndArea = configuration["PopForums:WebAppUrlAndArea"];
 		container.BaseImageBlobUrl = configuration["PopForums:BaseImageBlobUrl"];
 		container.StorageConnectionString = configuration["PopForums:Storage:ConnectionString"];
+		var renderBootstrap = configuration["PopForums:RenderBootstrap"];
+		container.RenderBootstrap = renderBootstrap != null ? bool.Parse(renderBootstrap) : true;
 		return container;
 	} 
 }

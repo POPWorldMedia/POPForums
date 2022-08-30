@@ -64,7 +64,7 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 		"Cache": {
 			"Seconds": 180,
 			"ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
-			"ForceLocalOnly": false // used for Redis cache in AzureKit
+			"ForceLocalOnly": "false" // used for Redis cache in AzureKit
 		},
 		"Search": { // used for Azure Search in AzureKit
 			"Url": "popforumsdev",
@@ -74,13 +74,14 @@ For the bleeding edge, latest build from master, the CI build packages can be ob
 		"Queue": { // used for queues with Azure Functions
 			"ConnectionString": "UseDevelopmentStorage=true"
 		},
-		"LogTopicViews": true, // records topic views for future analytics
+		"LogTopicViews": "true", // optional, records topic views for future analytics
 		"ReCaptcha": { // Google ReCaptcha on signup (the key/secret below works on localhost)
-			"UseReCaptcha": true,
+			"UseReCaptcha": "true",
 			"SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
 			"SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
 		},
-		"WebAppUrlAndArea": "https://somehost/forums" // used only by Azure Functions to find endpoint of your web app
+		"WebAppUrlAndArea": "https://somehost/forums", // used only by Azure Functions to find endpoint of your web app
+		"RenderBootstrap": "true" // optional, put false here if your hose page will have its own build of Bootstrap CSS
 	}
 }
 ```
