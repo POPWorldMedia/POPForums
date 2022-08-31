@@ -21,6 +21,13 @@
 	  <TypeScriptCompile Remove="node_modules\**" />
 	</ItemGroup>
 
+	<!--necessary to prevent pack in nuget package-->
+	<ItemGroup>
+		<Content Remove="Client\tsconfig.json" />
+		<Content Remove="package-lock.json" />
+		<Content Remove="package.json" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.2">
@@ -40,9 +47,6 @@
 
 	<!--necessary to prevent pack in nuget package-->
 	<ItemGroup>
-	  <Content Remove="Client\tsconfig.json" />
-	  <Content Remove="package-lock.json" />
-	  <Content Remove="package.json" />
 	  <TypeScriptCompile Include="Client\tsconfig.json" />
 	  <None Include="package-lock.json" />
 	  <None Include="package.json" />
