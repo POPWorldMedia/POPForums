@@ -159,7 +159,7 @@ namespace PopForums {
         }
     }
     
-    private static editorCSS = "/_content/PopForums.Mvc/lib/bootstrap/dist/css/bootstrap.min.css,/_content/PopForums.Mvc/lib/PopForums/dist/Editor.min.css";
+        private static editorCSS = "/PopForums/lib/bootstrap/dist/css/bootstrap.min.css,/PopForums/lib/PopForums/dist/Editor.min.css";
     private static postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
     editorSettings = {
         target: null as HTMLElement,

@@ -15,6 +15,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<!--This is an important line to trigger the hot reload:-->
 		<AssignTargetPathsDependsOn>CompileTypeScript;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
+		<StaticWebAssetBasePath>/PopForums</StaticWebAssetBasePath>
 	</PropertyGroup>
 
 	<ItemGroup>
