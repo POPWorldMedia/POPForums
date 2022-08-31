@@ -38,10 +38,17 @@
 	  <Folder Include="wwwroot\lib\" />
 	</ItemGroup>
 
+	<!--necessary to prevent pack in nuget package-->
 	<ItemGroup>
-	  <Content Update="package.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Content>
+	  <Content Remove="Client\tsconfig.json" />
+	  <Content Remove="package-lock.json" />
+	  <Content Remove="package.json" />
+	  <TypeScriptCompile Include="Client\tsconfig.json" />
+	  <None Include="package-lock.json" />
+	  <None Include="package.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 	</ItemGroup>
 
 </Project>
