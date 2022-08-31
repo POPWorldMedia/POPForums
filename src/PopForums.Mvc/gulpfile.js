@@ -6,10 +6,16 @@ var gulp = require("gulp"),
 	cleancss = require("gulp-clean-css"),
 	uglify = require("gulp-uglify"),
 	sourcemaps = require("gulp-sourcemaps"),
-	rename = require("gulp-rename");
+	rename = require("gulp-rename"),
+	typescript = require("gulp-typescript");
 
+var project = typescript.createProject("Client/tsconfig.json")
 var nodeRoot = "./node_modules/";
 var targetPath = "./wwwroot/lib/";
+
+gulp.task("ts", function () {
+	return project.src().pipe(project()).js.pipe(gulp.dest("wwwroot"));
+});
 
 gulp.task("copies", function () {
 	var streams = [
@@ -49,4 +55,4 @@ gulp.task("css", function () {
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
 });
 
-gulp.task("default", gulp.series(["copies","js","css"]));
+gulp.task("default", gulp.series(["ts","copies","js","css"]));

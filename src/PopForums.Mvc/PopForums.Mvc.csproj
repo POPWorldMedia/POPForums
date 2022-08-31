@@ -19,6 +19,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="PopIdentity" Version="3.0.0" />
+		<ProjectReference Include="..\PopForums\PopForums.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <TypeScriptCompile Remove="node_modules\**" />
 	</ItemGroup>
 
@@ -27,19 +37,6 @@
 		<Content Remove="Client\tsconfig.json" />
 		<Content Remove="package-lock.json" />
 		<Content Remove="package.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.2">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="PopIdentity" Version="3.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
