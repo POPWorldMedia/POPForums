@@ -7,6 +7,41 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v19.0.0 (x/x/22)
+* Image upload in posts #109
+* Create notification system #265
+* Change PM system to real-time chat #304
+* Refine post quoting to reduce full-post quotes #283
+* Clean up old notifications #298
+* Refresh and expand iconography #300
+* Migrate from email based subscriptions to in-app notification #264
+* Remove email subscriptions #276
+* Update PM count in real-time #275
+* New setting: reply-to email address #252
+* Offer view of recent users in admin for spam monitoring #258
+* Don't show user profiles for unverified accounts #263
+* Include prompts to verify account where necessary #266
+* Allow vote up reversal #287
+* Use a reactive state box as base for new features #269
+* Remove composite activity feed #299
+* Use fulltext editor for profile signatures #291
+* Refactor: Move all of the client stuff to the `Mvc` project, ditch the npm package #285
+* Refactor: Update MailKit library to v3.x #268
+* Refactor: Update ImageSharp library to v2.x #267
+* Refactor: Update TinyMCE library to v6.x #274
+* Refactor: DateTime parsing on client using server localization, with DST #188
+* Refactor: Create proper client-side localization mechanism #293
+* Refactor: Migrate old PopForums.js to a more manageable, not-spaghetti, TypeScript base #286
+* Refactor: Clean up on aisle admin #295
+* Refactor: Exclude bots from session tracking #301
+* BUG: New `SqlCommand` can't parse setup script without semicolons #288
+* BUG: Scroll to newest misses target because of inline images loading #290
+* BUG: Infinite scroll repositions back to hash when more posts load #257
+* BUG: New topic or reply fails if using Azure queues and they fail #284
+
+# Known issues
+None.
+
 ## Version v18.0.2 (5/28/22)
 * BUG: Fix bug in newer version of SqlClient when running setup script. #288
 
