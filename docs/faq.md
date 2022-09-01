@@ -5,7 +5,7 @@ nav_order: 3
 ---
 # Frequently Asked Questions
 
-These are a few of the questions people ask me about the project. Feel free to ping me with other questions at jeff@popw.com. If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issue tracker on GitHub for that, please.
+These are a few of the questions people ask me about the project. Feel free to ask other questions in the [GitHub discussions](https://github.com/POPWorldMedia/POPForums/discussions). If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issue tracker on GitHub for that, please.
 
 ## Do I have to pay for this or not?
 Not. POP Forums is an open source software project hosted on GitHub and for use under the MIT license. There is a commercially hosted version available at [PopForums.com](https://popforums.com/), yes, for people who don't write code or don't want to mess with managing their own software. Everything on GitHub continues to be open source.
@@ -20,7 +20,7 @@ Yes, I sometimes feel cursed to rewrite it for all eternity. The Webforms versio
 Yes, it's the very same code, though obviously decorated with additional code to facilitate multi-tenancy and provisioning.
 
 ## What languages are supported?
-Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW) and German (de). If you'd like to translate, the .resx file has between 350 and 400 entries. Contact me to learn more, and we can talk about a pull request to add another language.
+Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW) and German (de). If you'd like to translate, the .resx file has around 400 entries. Open an issue to learn more, and we can talk about a pull request to add another language.
 
 ## You used to work on the forums for MSDN and TechNet. Is this that forum?
 Not at all. That app served a great many different functions and was integrated with Microsoft ID's, a centralized profiling system, etc. It was/is huge. This app has its roots in the web sites I've been running for fun and profit for years, to the extent that you can find old posts on those sites from the turn of the century with all kinds of formatting failures. Those were the ASP.old days.
@@ -34,8 +34,11 @@ Look, when almost all of your methods are async what's the point? The only place
 ## What external frameworks are you using, and why?
 I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, the main app uses vanilla web components written in TypeScript, along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
 
+## What? You're not using React?
+Here's the thing about a forum... it's mostly walls of text. I can tell you from the 60,000+ topics I have indexed on a couple of sites that it's super SEO friendly. To that end, the functionality of a forum is mostly making posts, which doesn't require a big library to do. That's why there are little web components spread around on little islands, and not an all-in effort to React. Heck, the admin area uses Vue.js, but even that works by way of a simple script reference.
+
 ## The unit tests suck.
-In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring.
+That's not a question. In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring. Ideally, there shouldn't be so much logic in the controllers.
 
 ## What's the release roadmap?
 It has generally been my intention to keep up with the latest .NET framework versions, but getting to Core took way longer than expected. You can check the issue tracker for stuff currently in flight. I have strong desire to modernize the front end, though not in a "heavy" way. Forums attract Google juice because they're textually dense, and the "app-ness" of a forum is not complex as it's little more than a few simple forms. To that end, sure, you could go nuts and rewrite the whole thing to use a SPA framework, but at great indexability cost. So while there will be changes to bring it forward, they'll be targeted.

@@ -24,8 +24,8 @@ The project goals include:
 More information: 
 * [FAQ](faq.md)
 * [POP Forums Version History](versionhistory.md)
-* [CI build from `main`](https://popforumsdev.azurewebsites.net/Forums)
-* Follow more on [Jeff's blog](https://jeffputz.com/)
+* [CI build from `main` in action](https://popforumsdev.azurewebsites.net/Forums)
+* Follow more on [Jeff's blog](https://jeffputz.com/) (may contain autism advocacy and politics)
 
 Setup:
 

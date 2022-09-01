@@ -1,7 +1,7 @@
 ---
 layout: default
 title: The Scoring Game
-nav_order: 8
+nav_order: 9
 ---
 # The Scoring Game
 
