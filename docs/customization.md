@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Start Here
+title: Customization
 nav_order: 2.5
 ---
 # Customization
