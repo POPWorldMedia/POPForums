@@ -113,3 +113,5 @@ Now a different view will be rendered, and it might look something like this:
 ```
 
 This is super flexible, but not without a lot of work. You're highjacking the model from a page like `/Forums/Topic/some-topic`, replacing it with your own, then rendering your own view.
+
+To light one of these up, you'll have to go to the admin -> Forums -> Edit, and in the bottom field, labeled `Forum Adapter (optional, use "Namespace.Type, AssemblyName")`, you should enter what it's asking for. So if the fully qualified name of your adapter is `MyLibrary.MyForumAdapter` in the `MyLibrary` assembly, you would put `MyLibrary.MyForumAdapter, MyLibrary` here.
