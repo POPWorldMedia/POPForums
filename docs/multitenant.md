@@ -32,7 +32,7 @@ public class TenantService : ITenantService
 ```
 Then, in your `Program.cs` file, swap out the default implementation for your own. If you're using Azure Functions with [`PopForums.AzureKit`](azurekitlibrary.md), be sure to do it in the function project's `Program.cs` as well:
 ```
-services.Replace(ServiceDescriptor.Transient<ITenantService, CoasterBuzz.Services.TenantService>());
+services.Replace(ServiceDescriptor.Transient<ITenantService, MyApp.TenantService>());
 ```
 In our ElasticSearch scenario, the indexer will store the ID with every document, and searches will filter by it.
 

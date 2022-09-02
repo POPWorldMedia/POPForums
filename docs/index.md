@@ -11,6 +11,8 @@ _This documentation is for the open source POP Forums project. For documentation
 
 _If you're working with a version that isn't v19, check the `/docs` folder in the source branch that matches the version you're using._
 
+Get a load of [all the features](features.md).
+
 Make test posts and try it out here:  
 https://meta.popforums.com/Forums
 

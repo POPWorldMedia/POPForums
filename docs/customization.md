@@ -63,8 +63,8 @@ You can also use your own Bootstrap build and go crazy with customization on the
 To use your own Bootstrap build from any of the methods above, first you have to turn off the rendering of the default Bootstrap included in the `PopForums.Mvc` package. To do so, you'll need to change the `appsettings.json`:
 ```
 {
-	"PopForums": {
-        "RenderBootstrap": false,
+	"PopForums": { 
+        "RenderBootstrap": false, 
         ...
 ```
 With that taken care of, considering the template above, add references to your built Bootstrap CSS _and_ script _before_ you render the header content:
