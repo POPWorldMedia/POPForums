@@ -13,7 +13,7 @@ namespace PopForums {
     }
 
     connectedCallback() {
-        this.innerHTML = `<input type="button" class="${this.buttonclass}" value="${this.buttontext}" />`;
+        this.innerHTML = `<input type="button" class="${this.buttonclass}" value="${this.buttontext}" data-bs-dismiss="offcanvas" />`;
         this.querySelector("input").addEventListener("click", () => {
             PopForums.userState.MarkAllRead();
         });
