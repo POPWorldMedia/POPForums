@@ -34,6 +34,7 @@ nav_order: 1.5
 * Your own terms of service
 * Adjust number of topics and posts per page
 * Restrict size of uploaded images and YouTube video size
+* Automatically close topics after days of inactivity
 * External (social) logins
 * View detailed security logs
 * Limit posts by interval in seconds
@@ -42,10 +43,12 @@ nav_order: 1.5
 * Monitor last run of background services
 * Edit users
 * Email all users
+* Set topic/post page size
 
 ## Moderation
 * All-private, sign-up required option
 * E-mail confirmed sign-ups
+* CAPTCHA check
 * Parse out naughty words
 * Assign users to custom roles, limit viewing and posting to those roles by forum
 * Approve profile photos
