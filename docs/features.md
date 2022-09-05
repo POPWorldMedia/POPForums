@@ -29,6 +29,7 @@ nav_order: 1.5
 * Private forums
 * Restrict posts to certain roles by forum
 * Edit posts
+* Localized for English, Spanish, German, Dutch, Ukranian and Taiwanese Mandarin
 
 ## Administration
 * Your own terms of service
