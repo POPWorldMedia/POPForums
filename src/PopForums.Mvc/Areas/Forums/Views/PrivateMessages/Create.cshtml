@@ -5,7 +5,7 @@
 
 @section HeaderContent
 {
-<script type="text/javascript" language="javascript">
+	<script type="text/javascript" language="javascript">
 	PopForums.Ready(() => {
 		let toText = document.querySelector("#ToText");
 		let toList = document.querySelector("#ToList");
@@ -57,28 +57,33 @@
 			}
 		});
 
-		let modal = document.getElementById('ToModal');
+		let modal = document.getElementById("ToModal");
 		modal.addEventListener("shown.bs.modal", () => {
 			document.querySelector("#ToText").focus();
 		});
 		
 		serializeIDs();
 
-            let textBox = document.getElementById("NewMessage");
-			textBox.addEventListener("keydown", (e) => {
-				if (e.key === "Enter" && !e.shiftKey) {
-					e.preventDefault();
-	                    if (textBox.value.trim().length > 0 && document.querySelector("#UserIDs").value.length > 0)
-						document.forms["NewPMForm"].submit();
-				}
+        let textBox = document.getElementById("NewMessage");
+		textBox.addEventListener("keydown", (e) => {
+			if (e.key === "Enter" && !e.shiftKey) {
+				e.preventDefault();
+                    if (textBox.value.trim().length > 0 && document.querySelector("#UserIDs").value.length > 0)
+					document.forms["NewPMForm"].submit();
+			}
 		});
 	});
 
 	function serializeIDs() {
-		var items = document.querySelectorAll("#PMToBox div");
-		var ids = [];
+		let items = document.querySelectorAll("#PMToBox div");
+		let ids = [];
 		items.forEach(item => { ids.push(item.getAttribute("data-userID")); });
 		document.querySelector("#UserIDs").value = ids;
+        let button = document.getElementById("ToButton");
+        if (ids.length > 9)
+			button.disabled = true;
+        else
+			button.disabled = false;
 	}
 </script>
 }
@@ -118,7 +123,7 @@
 	<input type="hidden" id="UserIDs" name="UserIDs"/>
 	<div role="form">
 		<div class="mb-3">
-			<label class="form-label"><input type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ToModal" value="@PopForums.Resources.To"/></label>
+            <label class="form-label"><input type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ToModal" value="@PopForums.Resources.To" id="ToButton" /></label>
 			<div id="PMToBox">
 				@if (ViewBag.TargetUserID != null)
 				{
