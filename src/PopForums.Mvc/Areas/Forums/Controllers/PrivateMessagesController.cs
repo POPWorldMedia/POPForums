@@ -88,6 +88,8 @@ public class PrivateMessagesController : Controller
 			return View("Create");
 		}
 		var ids = userIDs.Split(new[] { ',' }).Select(i => Convert.ToInt32(i));
+		if (ids.Count() > 10)
+			ids = ids.Take(10);
 		var users = ids.Select(id => _userService.GetUser(id).Result).ToList();
 		var pm = await _privateMessageService.Create(fullText, user, users);
 		return RedirectToAction("View", new { id = pm.PMID });
