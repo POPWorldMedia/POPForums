@@ -51,9 +51,9 @@ namespace PopForums {
 
     updateUI(data: number): void {
         if (data === 0)
-            this.innerHTML = `<span class="icon icon-bell-fill"></span>`;
+            this.innerHTML = `<a class="nav-link"><span class="icon icon-bell-fill"></span></a>`;
         else
-            this.innerHTML = `<span class="icon icon-bell-fill"></span><span class="badge ms-1">${data}</span>`;
+            this.innerHTML = `<a class="nav-link"><span class="icon icon-bell-fill"></span><span class="badge ms-1">${data}</span></a>`;
     }
 }
 
