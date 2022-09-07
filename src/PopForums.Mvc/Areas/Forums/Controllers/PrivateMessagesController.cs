@@ -65,7 +65,7 @@ public class PrivateMessagesController : Controller
 		if (user == null)
 			return StatusCode(403);
 		ViewBag.UserIDs = " ";
-		if (id.HasValue)
+		if (id.HasValue && id != user.UserID)
 		{
 			var targetUser = await _userService.GetUser(id.Value);
 			ViewBag.UserIDs = targetUser.UserID.ToString(CultureInfo.InvariantCulture);

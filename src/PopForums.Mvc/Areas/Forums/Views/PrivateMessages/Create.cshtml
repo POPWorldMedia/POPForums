@@ -19,7 +19,7 @@
 						result.forEach(item => {
 							let ids = document.getElementById("UserIDs").value;
 							let idArray = ids.split(",");
-							if (!idArray.includes(item.userID.toString())) {
+                            if (!idArray.includes(item.userID.toString()) && PopForums.userState.userID != item.userID.toString()) {
 								let t = document.createElement("template");
 								t.innerHTML = '<li><a href="#" data-userID="' + item.userID + '" class="toItem">' + item.value + '</a></li>';
 								toList.append(t.content.firstChild);
