@@ -32,6 +32,14 @@ You can almost run everything in this stack locally. Here's the breakdown:
 * Azure Search only runs in Azure.
 * ElasticSearch can run in a Docker container.
 
+## Setting locale in Azure Functions
+Since Azure Functions do not run as a normal web app, listening to the locale of the user's web browser, it defaults to whatever Azure decides is default, probably `en-US` in a lot of places. For some of the functions that are generating notifications, this matters, because you might be serving a Spanish-speaking audience and want them to get notifications in that language.
+
+To set the language in a function, add the following to those function methods in one of the supported languages:
+```
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("es");
+```
+
 ## Using Redis for caching
 Redis is a great tool for caching data for a stand-alone instance of the app or between many nodes. The default caching provided by the `PopForms.Sql` implementation uses in-memory cache in the app instance itself, which doesn't work when you have many nodes (that is, several web heads running behind a load balancer, like a scaled-out Azure App Service). Redis helps by caching data in a "neutral" location between these nodes.
 
