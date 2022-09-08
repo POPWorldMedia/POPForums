@@ -52,14 +52,15 @@ public class ErrorLog : IErrorLog
 			}
 		}
 		s.Append("\r\n");
+		var moreData = s.ToString();
 		try
 		{
 			// TODO: Eventually make this async, but its web of call stacks are huge
-			_errorLogRepository.Create(DateTime.UtcNow, message, stackTrace, s.ToString(), severity);
+			_errorLogRepository.Create(DateTime.UtcNow, message, stackTrace, moreData, severity);
 		}
 		catch
 		{
-			throw new ErrorLogException($"Can't log error: {message}\r\n\r\n{stackTrace}\r\n\r\n{s}");
+			throw new ErrorLogException($"Can't log error: {message}\r\n\r\n{stackTrace}\r\n\r\n{moreData}");
 		}
 	}
 

@@ -15,10 +15,12 @@ public class Logger : ILogger
 
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
 	{
+		if (exception is ErrorLogException)
+			return;
 		if (IsEnabled(logLevel))
 		{
 			string data = null;
-			if (_httpContextAccessor == null || _httpContextAccessor.HttpContext == null)
+			if (_httpContextAccessor?.HttpContext == null)
 				data = "HttpContext not available";
 			else
 			{

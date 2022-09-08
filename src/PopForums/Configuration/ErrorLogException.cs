@@ -7,11 +7,5 @@ public class ErrorLogException : Exception
 		
 	}
 
-	public override string Message
-	{
-		get
-		{
-			return "Can't log exception: " + base.Message;
-		}
-	}
+	public override string Message => "Can't log exception: " + base.Message;
 }
