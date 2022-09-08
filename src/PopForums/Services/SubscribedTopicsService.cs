@@ -40,20 +40,15 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 		if (user != null && topic != null)
 			await RemoveSubscribedTopic(user, topic);
 	}
-
-	// TODO: there has to be a better way than this
-#pragma warning disable 1998
+	
 	public async Task NotifySubscribers(Topic topic, User postingUser)
 	{
-		new Thread(async () => {
 			// new notifications
 			var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
 			var filteredUserIDs = userIDs.Where(x => x != postingUser.UserID);
 			foreach (var userID in filteredUserIDs)
 				await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID);
-		}).Start();
 	}
-#pragma warning restore 1998
 
 	public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)
 	{
