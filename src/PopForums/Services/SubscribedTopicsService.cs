@@ -57,12 +57,6 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 			TenantID = tenantID
 		};
 		await _subscribeNotificationRepository.Enqueue(payload);
-
-		// new notifications
-		//var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
-		//var filteredUserIDs = userIDs.Where(x => x != postingUser.UserID);
-		//foreach (var userID in filteredUserIDs)
-		//	await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID, tenantID);
 	}
 
 	public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)

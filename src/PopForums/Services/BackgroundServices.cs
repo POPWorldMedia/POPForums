@@ -13,18 +13,21 @@ public class BackgroundServices
 		_awardCalcService = new AwardCalculatorApplicationService();
 		_closeAgedTopicsService = new CloseAgedTopicsApplicationService();
 		_postImageCleanupService = new PostImageCleanupService();
+		_subscribeNotificationApplicationService = new SubscribeNotificationApplicationService();
 		_emailService.Start(serviceProvider);
 		_userSessionService.Start(serviceProvider);
 		_searchIndexService.Start(serviceProvider);
 		_awardCalcService.Start(serviceProvider);
 		_closeAgedTopicsService.Start(serviceProvider);
 		_postImageCleanupService.Start(serviceProvider);
+		_subscribeNotificationApplicationService.Start(serviceProvider);
 		ApplicationServices.Add(_emailService);
 		ApplicationServices.Add(_userSessionService);
 		ApplicationServices.Add(_searchIndexService);
 		ApplicationServices.Add(_awardCalcService);
 		ApplicationServices.Add(_closeAgedTopicsService);
 		ApplicationServices.Add(_postImageCleanupService);
+		ApplicationServices.Add(_subscribeNotificationApplicationService);
 	}
 
 	private static EmailApplicationService _emailService;
@@ -33,6 +36,7 @@ public class BackgroundServices
 	private static AwardCalculatorApplicationService _awardCalcService;
 	private static CloseAgedTopicsApplicationService _closeAgedTopicsService;
 	private static PostImageCleanupService _postImageCleanupService;
+	private static SubscribeNotificationApplicationService _subscribeNotificationApplicationService;
 
 	public static readonly List<ApplicationServiceBase> ApplicationServices = new List<ApplicationServiceBase>();
 }

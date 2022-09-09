@@ -28,7 +28,7 @@ OUTPUT DELETED.Payload;";
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			serializedPayload = connection.QuerySingleOrDefaultAsync<string>(sql));
 		if (string.IsNullOrEmpty(serializedPayload.Result))
-			return new SubscribeNotificationPayload();
+			return null;
 		var payload = JsonSerializer.Deserialize<SubscribeNotificationPayload>(serializedPayload.Result);
 		return payload;
 	}
