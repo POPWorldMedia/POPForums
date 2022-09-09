@@ -6,4 +6,5 @@ public class SubscribeNotificationPayload
 	public string TopicTitle { get; set; }
 	public int PostingUserID { get; set; }
 	public string PostingUserName { get; set; }
+	public string TenantID { get; set; }
 }

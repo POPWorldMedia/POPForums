@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Models;
+
+namespace PopForums.Services;
 
 public interface ISubscribedTopicsService
 {
@@ -8,6 +10,7 @@ public interface ISubscribedTopicsService
 	Task NotifySubscribers(Topic topic, User postingUser, string tenantID);
 	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
 	Task<bool> IsTopicSubscribed(int userID, int topicID);
+	Task<List<int>> GetSubscribedUserIDs(int topicID);
 }
 
 public class SubscribedTopicsService : ISubscribedTopicsService
@@ -50,7 +53,8 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 			TopicID = topic.TopicID,
 			TopicTitle = topic.Title,
 			PostingUserID = postingUser.UserID,
-			PostingUserName = postingUser.Name
+			PostingUserName = postingUser.Name,
+			TenantID = tenantID
 		};
 		await _subscribeNotificationRepository.Enqueue(payload);
 
@@ -75,5 +79,10 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 	public async Task<bool> IsTopicSubscribed(int userID, int topicID)
 	{
 		return await _subscribedTopicsRepository.IsTopicSubscribed(userID, topicID);
+	}
+
+	public async Task<List<int>> GetSubscribedUserIDs(int topicID)
+	{
+		return await _subscribedTopicsRepository.GetSubscribedUserIDs(topicID);
 	}
 }
