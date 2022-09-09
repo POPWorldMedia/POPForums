@@ -5,23 +5,25 @@ public interface ISubscribedTopicsService
 	Task AddSubscribedTopic(int userID, int topicID);
 	Task RemoveSubscribedTopic(User user, Topic topic);
 	Task TryRemoveSubscribedTopic(User user, Topic topic);
-	Task NotifySubscribers(Topic topic, User postingUser);
+	Task NotifySubscribers(Topic topic, User postingUser, string tenantID);
 	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
 	Task<bool> IsTopicSubscribed(int userID, int topicID);
 }
 
 public class SubscribedTopicsService : ISubscribedTopicsService
 {
-	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISettingsManager settingsManager, INotificationAdapter notificationAdapter)
+	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISettingsManager settingsManager, INotificationAdapter notificationAdapter, ISubscribeNotificationRepository subscribeNotificationRepository)
 	{
 		_subscribedTopicsRepository = subscribedTopicsRepository;
 		_settingsManager = settingsManager;
 		_notificationAdapter = notificationAdapter;
+		_subscribeNotificationRepository = subscribeNotificationRepository;
 	}
 
 	private readonly ISubscribedTopicsRepository _subscribedTopicsRepository;
 	private readonly ISettingsManager _settingsManager;
 	private readonly INotificationAdapter _notificationAdapter;
+	private readonly ISubscribeNotificationRepository _subscribeNotificationRepository;
 
 	public async Task AddSubscribedTopic(int userID, int topicID)
 	{
@@ -41,13 +43,22 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 			await RemoveSubscribedTopic(user, topic);
 	}
 	
-	public async Task NotifySubscribers(Topic topic, User postingUser)
+	public async Task NotifySubscribers(Topic topic, User postingUser, string tenantID)
 	{
-			// new notifications
-			var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
-			var filteredUserIDs = userIDs.Where(x => x != postingUser.UserID);
-			foreach (var userID in filteredUserIDs)
-				await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID);
+		var payload = new SubscribeNotificationPayload
+		{
+			TopicID = topic.TopicID,
+			TopicTitle = topic.Title,
+			PostingUserID = postingUser.UserID,
+			PostingUserName = postingUser.Name
+		};
+		await _subscribeNotificationRepository.Enqueue(payload);
+
+		// new notifications
+		//var userIDs = await _subscribedTopicsRepository.GetSubscribedUserIDs(topic.TopicID);
+		//var filteredUserIDs = userIDs.Where(x => x != postingUser.UserID);
+		//foreach (var userID in filteredUserIDs)
+		//	await _notificationAdapter.Reply(postingUser.Name, topic.Title, topic.TopicID, userID, tenantID);
 	}
 
 	public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)

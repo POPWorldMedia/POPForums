@@ -890,6 +890,15 @@ CREATE CLUSTERED INDEX IX_pf_SearchQueue_ID ON pf_SearchQueue (ID);
 
 
 
+CREATE TABLE [dbo].[pf_SubNotifyQueue](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
+);
+
+CREATE CLUSTERED INDEX IX_pf_SubNotifyQueue_ID ON pf_SubNotifyQueue (ID);
+
+
+
 CREATE TABLE [dbo].[pf_ServiceHeartbeat](
 	[ServiceName] [nvarchar](256) NOT NULL,
 	[MachineName] [nvarchar](256) NOT NULL,

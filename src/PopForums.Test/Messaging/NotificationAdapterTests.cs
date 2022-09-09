@@ -22,15 +22,16 @@ public class NotificationAdapterTests
 			var title = "The Topic";
 			var topicID = 123;
 			var userID = 456;
+			var tenantID = "cb";
 			ReplyData replyData = null;
-			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>())).Callback<int, NotificationType, long, dynamic>(((i, type, arg3, arg4) => replyData = arg4));
+			_notificationManager.Setup(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>(), tenantID)).Callback<int, NotificationType, long, dynamic, string>(((i, type, arg3, arg4, arg5) => replyData = arg4));
 
-			await adapter.Reply(name, title, topicID, userID);
+			await adapter.Reply(name, title, topicID, userID, tenantID);
 
 			Assert.Equal(name, replyData.PostName);
 			Assert.Equal(topicID, replyData.TopicID);
 			Assert.Equal(title, replyData.Title);
-			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>()), Times.Once);
+			_notificationManager.Verify(x => x.ProcessNotification(userID, NotificationType.NewReply, topicID, It.IsAny<ReplyData>(), tenantID), Times.Once);
 		}
 	}
 

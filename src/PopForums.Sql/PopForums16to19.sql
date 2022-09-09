@@ -148,3 +148,19 @@ IF COL_LENGTH('dbo.pf_PrivateMessage', 'Users') IS NULL
 BEGIN
 	ALTER TABLE pf_PrivateMessage ADD [Users] [nvarchar](MAX) NOT NULL DEFAULT('{}');
 END
+
+
+
+
+
+IF OBJECT_ID('pf_SubNotifyQueue', 'U') IS NULL
+BEGIN
+	CREATE TABLE [dbo].[pf_SubNotifyQueue](
+		[Id] [int] IDENTITY(1,1) NOT NULL,
+		[Payload] [nvarchar](256) NOT NULL
+	);
+END
+IF INDEXPROPERTY(Object_Id('pf_SubNotifyQueue'), 'IX_pf_SubNotifyQueue_ID', 'IndexID') IS NULL
+BEGIN
+	CREATE CLUSTERED INDEX IX_pf_SubNotifyQueue_ID ON pf_SubNotifyQueue (ID);
+END

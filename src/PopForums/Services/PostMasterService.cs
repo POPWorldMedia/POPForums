@@ -157,7 +157,8 @@ public class PostMasterService : IPostMasterService
 		await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = topic.TopicID });
 		await _profileRepository.SetLastPostID(user.UserID, postID);
 		var topicLink = topicLinkGenerator(topic);
-		await _subscribedTopicsService.NotifySubscribers(topic, user);
+		var tenantID = _tenantService.GetTenant();
+		await _subscribedTopicsService.NotifySubscribers(topic, user, tenantID);
 		// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
 		var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
 		var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;

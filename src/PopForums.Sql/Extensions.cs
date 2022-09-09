@@ -90,6 +90,7 @@ public static class Extensions
 		services.AddTransient<INotificationRepository, NotificationRepository>();
 		services.AddTransient<IPostImageRepository, PostImageRepository>();
 		services.AddTransient<IPostImageTempRepository, PostImageTempRepository>();
+		services.AddTransient<ISubscribeNotificationRepository, SubscribeNotificationRepository>();
 	}
 
 	public static object GetObjectOrDbNull(this object value)
