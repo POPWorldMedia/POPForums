@@ -52,7 +52,7 @@
 		<div class="my-auto">
 			<pf-votecount votes="@Model.Post.Votes" postid="@Model.Post.PostID" votescontainerclass="voters" badgeclass="voteCount badge bg-primary align-text-top me-3" isloggedin="@isLoggedIn.ToString()" isauthor="@isAuthor.ToString()" isvoted="@isVoted.ToString()" votebuttonclass=""></pf-votecount>
 		</div>
-		<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></div>
+		<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link" rel="nofollow"><span class="icon icon-link"></span></a></div>
 		@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 		{
 			<div class="toolButton"><pf-replybutton buttonclass="btn-link icon icon-reply-fill" buttontext="@PopForums.Resources.Reply" topicid="@Model.Topic.TopicID" postid="@Model.Post.PostID" overridedisplay="true" isposttool="true"></pf-replybutton></div>

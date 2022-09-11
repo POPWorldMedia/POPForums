@@ -56,7 +56,7 @@
 		}
 		<div class="superToolBox">
 			<div class="my-3 d-flex postToolContainer">
-				<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link"><span class="icon icon-link"></span></a></div>
+				<div class="toolButton"><a asp-controller="Forum" asp-action="PostLink" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Link" rel="nofollow"><span class="icon icon-link"></span></a></div>
 				@if (user != null && Model.Topic != null && Model.Topic.IsClosed == false)
 				{
 					<div class="toolButton"><pf-commentbutton postid="@Model.Post.PostID" topicid="@Model.Topic.TopicID" buttontext="@PopForums.Resources.Reply" buttonclass="btn-link icon icon-reply-fill"></pf-commentbutton></div>
