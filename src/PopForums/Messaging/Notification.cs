@@ -8,4 +8,5 @@ public class Notification
 	public NotificationType NotificationType { get; set; }
 	public long ContextID { get; set; }
 	public JsonElement Data { get; set; }
+	public int UnreadCount { get; set; }
 }

@@ -44,6 +44,7 @@ public class NotificationManager : INotificationManager
 		var recordsUpdated = await _notificationRepository.UpdateNotification(notification);
 		if (recordsUpdated == 0)
 			await _notificationRepository.CreateNotification(notification);
+		notification.UnreadCount = await _notificationRepository.GetUnreadNotificationCount(userID);
 
 		if (tenantID == null || string.IsNullOrWhiteSpace(tenantID))
 			_broker.NotifyUser(notification);

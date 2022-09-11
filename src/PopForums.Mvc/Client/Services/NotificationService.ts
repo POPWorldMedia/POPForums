@@ -9,18 +9,15 @@ namespace PopForums {
                 self.userState.newPmCount = pmCount;
             });
             this.connection.on("notify", function(data: any) {
-                let notification = Object.assign(new Notification(), data);
-                let isExisting: boolean = false;
+                let notification: Notification = Object.assign(new Notification(), data);
                 let list = self.userState.list.querySelectorAll("pf-notificationitem");
                 list.forEach(item => {
                     let nitem = (item as NotificationItem).notification;
                     if (nitem.contextID === notification.contextID && nitem.notificationType === notification.notificationType) {
-                        isExisting = true;
                         item.remove();
                     }
                 });
-                if (!isExisting)
-                    self.userState.notificationCount++;
+                self.userState.notificationCount = notification.unreadCount;
                 self.userState.notifications.unshift(notification);
             });
             this.connection.onreconnected(async () => {

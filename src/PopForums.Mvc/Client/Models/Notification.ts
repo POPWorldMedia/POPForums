@@ -7,5 +7,6 @@ namespace PopForums {
         notificationType: number;
         contextID: number;
         data: any;
+        unreadCount: number;
     }
 }

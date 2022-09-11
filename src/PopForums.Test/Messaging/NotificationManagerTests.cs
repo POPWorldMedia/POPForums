@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Org.BouncyCastle.Bcpg;
 
 namespace PopForums.Test.Messaging;
 
@@ -25,8 +24,10 @@ public class NotificationManagerTests
 			var contextID = 2;
 			var notificationType = NotificationType.NewReply;
 			var data = new {a = 123, b = "xyz"};
+			var unreadCount = 42;
 			Notification result = null;
 			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1).Callback<Notification>(n => result = n);
+			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(unreadCount);
 
 			await manager.ProcessNotification(userID, notificationType, contextID, data);
 
@@ -36,6 +37,7 @@ public class NotificationManagerTests
 			Assert.Equal(contextID, result.ContextID);
 			var serializedData = JsonSerializer.SerializeToElement(data);
 			Assert.Equal(serializedData.ToString(), result.Data.ToString());
+			Assert.Equal(unreadCount, result.UnreadCount);
 		}
 
 		[Fact]
