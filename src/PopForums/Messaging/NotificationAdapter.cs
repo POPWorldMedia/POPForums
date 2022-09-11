@@ -4,7 +4,7 @@ namespace PopForums.Messaging;
 
 public interface INotificationAdapter
 {
-	Task Reply(string postName, string title, int topicID, int userID);
+	Task Reply(string postName, string title, int topicID, int userID, string tenantID);
 	Task Vote(string voterName, string title, int postID, int userID);
 	Task QuestionAnswer(string askerName, string title, int postID, int userID);
 	Task Award(string title, int userID);
@@ -20,7 +20,7 @@ public class NotificationAdapter : INotificationAdapter
 		_notificationManager = notificationManager;
 	}
 
-	public async Task Reply(string postName, string title, int topicID, int userID)
+	public async Task Reply(string postName, string title, int topicID, int userID, string tenantID)
 	{
 		var replyData = new ReplyData
 		{
@@ -28,7 +28,7 @@ public class NotificationAdapter : INotificationAdapter
 			Title = title,
 			TopicID = topicID
 		};
-		await _notificationManager.ProcessNotification(userID, NotificationType.NewReply, replyData.TopicID, replyData);
+		await _notificationManager.ProcessNotification(userID, NotificationType.NewReply, replyData.TopicID, replyData, tenantID);
 	}
 
 	public async Task Vote(string voterName, string title, int postID, int userID)

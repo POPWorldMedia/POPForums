@@ -25,8 +25,27 @@ public class NotificationTunnel : INotificationTunnel
 			UserID = userID,
 			TenantID = tenantID
 		};
-		var authHash = _config.QueueConnectionString.GetSHA256Hash();
 		var url = _config.WebAppUrlAndArea + "/api/notifyaward";
+		SendMessage(url, payload);
+	}
+
+	public void SendNotificationForReply(string postName, string title, int topicID, int userID, string tenantID)
+	{
+		var payload = new ReplyPayload
+		{
+			PostName = postName,
+			Title = title,
+			TopicID = topicID,
+			UserID = userID,
+			TenantID = tenantID
+		};
+		var url = _config.WebAppUrlAndArea + "/api/notifyreply";
+		SendMessage(url, payload);
+	}
+
+	private void SendMessage(string url, object payload)
+	{
+		var authHash = _config.QueueConnectionString.GetSHA256Hash();
 		using var httpClient = new HttpClient();
 		httpClient.DefaultRequestHeaders.Add(Messaging.NotificationTunnel.HeaderName, authHash);
 		var result = httpClient.PostAsJsonAsync(url, payload).Result;

@@ -43,6 +43,7 @@ public static class ServiceCollectionExtensions
 		services.Replace(ServiceDescriptor.Transient<IEmailQueueRepository, PopForums.AzureKit.Queue.EmailQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<IAwardCalculationQueueRepository, PopForums.AzureKit.Queue.AwardCalculationQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<ISearchIndexQueueRepository, PopForums.AzureKit.Queue.SearchIndexQueueRepository>());
+		services.Replace(ServiceDescriptor.Transient<ISubscribeNotificationRepository, PopForums.AzureKit.Queue.SubscribeNotificationRepository>());
 		return services;
 	}
 

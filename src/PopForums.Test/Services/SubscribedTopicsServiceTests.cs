@@ -5,13 +5,15 @@ public class SubscribedTopicsServiceTests
 	private Mock<ISubscribedTopicsRepository> _mockSubRepo;
 	private Mock<ISettingsManager> _mockSettingsManager;
 	private Mock<INotificationAdapter> _mockNotificationAdapter;
+	private Mock<ISubscribeNotificationRepository> _subNotificationRepo;
 
 	private SubscribedTopicsService GetService()
 	{
 		_mockSubRepo = new Mock<ISubscribedTopicsRepository>();
 		_mockSettingsManager = new Mock<ISettingsManager>();
 		_mockNotificationAdapter = new Mock<INotificationAdapter>();
-		return new SubscribedTopicsService(_mockSubRepo.Object, _mockSettingsManager.Object, _mockNotificationAdapter.Object);
+		_subNotificationRepo = new Mock<ISubscribeNotificationRepository>();
+		return new SubscribedTopicsService(_mockSubRepo.Object, _mockSettingsManager.Object, _mockNotificationAdapter.Object, _subNotificationRepo.Object);
 	}
 
 	[Fact]

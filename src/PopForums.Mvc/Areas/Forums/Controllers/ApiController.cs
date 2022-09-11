@@ -27,4 +27,17 @@ public class ApiController : Controller
 		await _notificationAdapter.Award(awardPayload.Title, awardPayload.UserID, awardPayload.TenantID);
 		return Ok();
 	}
+
+	[HttpPost("/Forums/Api/NotifyReply")]
+	public async Task<IActionResult> NotifyReply(ReplyPayload replyPayload)
+	{
+		var hash = _config.QueueConnectionString.GetSHA256Hash();
+		var result = HttpContext.Request.Headers.TryGetValue(NotificationTunnel.HeaderName, out var headerValue);
+		if (headerValue != hash)
+			return Unauthorized();
+		if (replyPayload == null)
+			return BadRequest();
+		await _notificationAdapter.Reply(replyPayload.PostName, replyPayload.Title, replyPayload.TopicID, replyPayload.UserID, replyPayload.TenantID);
+		return Ok();
+	}
 }

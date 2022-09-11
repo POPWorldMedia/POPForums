@@ -673,6 +673,7 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
+			var tenandID = "cb";
 			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
 			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
 			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
@@ -680,10 +681,11 @@ public class PostMasterServiceTests
 			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
 			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
+			_tenantService.Setup(x => x.GetTenant()).Returns(tenandID);
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user), Times.Once());
+			_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, tenandID), Times.Once());
 		}
 
 		[Fact]
