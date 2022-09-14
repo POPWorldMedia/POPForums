@@ -67,7 +67,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 			"ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
 			"ForceLocalOnly": false // used for Redis cache in AzureKit
 		},
-		"Search": { // used for Azure Search in AzureKit
+		"Search": { // used for Elastic or Azure Search (see docs)
 			"Url": "popforumsdev",
 			"Key": "99011A70D3D50D251B0A6141A97B40E7",
 			"Provider": ""
