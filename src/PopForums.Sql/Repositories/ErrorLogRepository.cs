@@ -12,8 +12,16 @@ public class ErrorLogRepository : IErrorLogRepository
 	public async Task<ErrorLogEntry> Create(DateTime timeStamp, string message, string stackTrace, string data, ErrorSeverity severity)
 	{
 		Task<int> errorID = null;
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			errorID = connection.QuerySingleAsync<int>("INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity);SELECT CAST(SCOPE_IDENTITY() as int)", new { TimeStamp = timeStamp, Message = message, StackTrace = stackTrace, Data = data, Severity = severity }));
+		try
+		{
+			await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+				errorID = connection.QuerySingleAsync<int>("INSERT INTO pf_ErrorLog (TimeStamp, Message, StackTrace, Data, Severity) VALUES (@TimeStamp, @Message, @StackTrace, @Data, @Severity);SELECT CAST(SCOPE_IDENTITY() as int)", new {TimeStamp = timeStamp, Message = message, StackTrace = stackTrace, Data = data, Severity = severity}));
+		}
+		catch (Exception exc)
+		{
+			// gross, but necessary to prevent a loop trying to record database errors to an unavailable database
+			Console.WriteLine($"Can't log to database because: {exc.Message}\r\nOriginal error: {message}\r\n{stackTrace}");
+		}
 		var errorLog = new ErrorLogEntry
 		{
 			ErrorID = errorID.Result,
