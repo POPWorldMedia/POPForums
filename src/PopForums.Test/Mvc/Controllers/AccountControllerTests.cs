@@ -10,7 +10,6 @@ public class AccountControllerTests
 	private Mock<ITopicService> _topicService;
 	private Mock<IForumService> _forumService;
 	private Mock<ILastReadService> _lastReadService;
-	private Mock<IUserEmailer> _userEmailer;
 	private Mock<IImageService> _imageService;
 	private Mock<IFeedService> _feedService;
 	private Mock<IUserAwardService> _userAwardService;
@@ -31,7 +30,6 @@ public class AccountControllerTests
 		_topicService = new Mock<ITopicService>();
 		_forumService = new Mock<IForumService>();
 		_lastReadService = new Mock<ILastReadService>();
-		_userEmailer = new Mock<IUserEmailer>();
 		_imageService = new Mock<IImageService>();
 		_feedService = new Mock<IFeedService>();
 		_userAwardService = new Mock<IUserAwardService>();
@@ -41,7 +39,7 @@ public class AccountControllerTests
 		_externalLoginTempService = new Mock<IExternalLoginTempService>();
 		_config = new Mock<IConfig>();
 		_recaptchaService = new Mock<IReCaptchaService>();
-		return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _userEmailer.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
+		return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
 	}
 
 	[Fact]

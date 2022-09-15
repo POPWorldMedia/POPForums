@@ -3,7 +3,7 @@
 [Area("Forums")]
 public class AccountController : Controller
 {
-	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IUserEmailer userEmailer, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
+	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
 	{
 		_userService = userService;
 		_settingsManager = settingsManager;
@@ -13,7 +13,6 @@ public class AccountController : Controller
 		_topicService = topicService;
 		_forumService = forumService;
 		_lastReadService = lastReadService;
-		_userEmailer = userEmailer;
 		_imageService = imageService;
 		_feedService = feedService;
 		_userAwardService = userAwardService;
@@ -37,7 +36,6 @@ public class AccountController : Controller
 	private readonly ITopicService _topicService;
 	private readonly IForumService _forumService;
 	private readonly ILastReadService _lastReadService;
-	private readonly IUserEmailer _userEmailer;
 	private readonly IImageService _imageService;
 	private readonly IFeedService _feedService;
 	private readonly IUserAwardService _userAwardService;
@@ -435,41 +433,6 @@ public class AccountController : Controller
 		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();
 
 		return View(externalLoginList);
-	}
-
-	public async Task<ActionResult> EmailUser(int id)
-	{
-		var user = _userRetrievalShim.GetUser();
-		if (user == null)
-			return StatusCode(403);
-		var toUser = await _userService.GetUser(id);
-		if (toUser == null)
-			return NotFound();
-		if (await _userEmailer.IsUserEmailable(toUser) == false)
-			return StatusCode(403);
-		ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
-		return View(toUser);
-	}
-
-	[HttpPost]
-	public async Task<ActionResult> EmailUser(int id, string subject, string text)
-	{
-		var user = _userRetrievalShim.GetUser();
-		if (user == null)
-			return StatusCode(403);
-		var toUser = await _userService.GetUser(id);
-		if (toUser == null)
-			return NotFound();
-		if (await _userEmailer.IsUserEmailable(toUser) == false)
-			return StatusCode(403);
-		if (string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(text))
-		{
-			ViewBag.EmailResult = Resources.PMCreateWarnings;
-			ViewBag.IP = HttpContext.Connection.RemoteIpAddress.ToString();
-			return View(toUser);
-		}
-		await _userEmailer.ComposeAndQueue(toUser, user, HttpContext.Connection.RemoteIpAddress.ToString(), subject, text);
-		return View("EmailSent");
 	}
 
 	[PopForumsAuthorizationIgnore]

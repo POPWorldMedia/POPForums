@@ -43,8 +43,7 @@
 					<div class="row mb-3">
 						<div class="col-sm-4">@PopForums.Resources.Contact</div>
 						<div class="col-sm-8">
-							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a><br/>
-							<a asp-controller="Account" asp-action="EmailUser" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNameEmail, Model.Name)</a>
+							<a asp-controller="PrivateMessages" asp-action="Create" asp-route-id="@Model.UserID">@String.Format(PopForums.Resources.SendNamePM, Model.Name)</a>
 						</div>
 					</div>
 				}
