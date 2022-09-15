@@ -310,7 +310,6 @@ CREATE TABLE [dbo].[pf_Setting] (
 
 CREATE TABLE [dbo].[pf_QueuedEmailMessage] (
 	[MessageID] [int] IDENTITY (1, 1) NOT NULL,
-	[FromEmail] [nvarchar] (256) NOT NULL,
 	[FromName] [nvarchar] (256) NOT NULL,
 	[ToEmail] [nvarchar] (256) NOT NULL,
 	[ToName] [nvarchar] (256) NOT NULL,

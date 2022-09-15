@@ -31,7 +31,6 @@ public class ForgotPasswordMailer : IForgotPasswordMailer
 			Subject = String.Format(Resources.ForgotPasswordSubject, settings.ForumTitle),
 			ToEmail = user.Email,
 			ToName = user.Name,
-			FromEmail = settings.MailerAddress,
 			FromName = settings.ForumTitle,
 			QueueTime = DateTime.UtcNow
 		};

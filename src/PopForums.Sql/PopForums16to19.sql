@@ -164,3 +164,9 @@ IF INDEXPROPERTY(Object_Id('pf_SubNotifyQueue'), 'IX_pf_SubNotifyQueue_ID', 'Ind
 BEGIN
 	CREATE CLUSTERED INDEX IX_pf_SubNotifyQueue_ID ON pf_SubNotifyQueue (ID);
 END
+
+
+IF COL_LENGTH('dbo.pf_QueuedEmailMessage', 'FromEmail') IS NOT NULL
+BEGIN
+	ALTER TABLE pf_QueuedEmailMessage DROP COLUMN FromEmail;
+END

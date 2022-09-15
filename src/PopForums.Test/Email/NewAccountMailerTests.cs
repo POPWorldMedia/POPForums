@@ -24,6 +24,5 @@ public class NewAccountMailerTests
 		Assert.Equal(resultMessage.ToName, user.Name);
 		Assert.Equal(resultMessage.ToEmail, user.Email);
 		Assert.Equal(forumTitle, resultMessage.FromName);
-		Assert.Equal(mailerAddress, resultMessage.FromEmail);
 	}
 }

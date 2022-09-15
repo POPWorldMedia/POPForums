@@ -26,7 +26,6 @@ public class MailingListComposer : IMailingListComposer
 			Subject = subject,
 			ToEmail = user.Email,
 			ToName = user.Name,
-			FromEmail = settings.MailerAddress,
 			FromName = settings.ForumTitle,
 			QueueTime = DateTime.UtcNow
 		};

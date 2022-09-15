@@ -48,7 +48,6 @@ public class NewAccountMailer : INewAccountMailer
 		{
 			ToEmail = user.Email,
 			ToName = user.Name,
-			FromEmail = settings.MailerAddress,
 			FromName = settings.ForumTitle
 		};
 		message.Subject = String.Format(Resources.RegisterEmailSubject, settings.ForumTitle);

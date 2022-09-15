@@ -48,9 +48,9 @@ ______________________
 			Subject = subject,
 			ToEmail = toUser.Email,
 			ToName = toUser.Name,
-			FromEmail = fromUser.Email,
 			FromName = fromUser.Name,
-			QueueTime = DateTime.UtcNow
+			QueueTime = DateTime.UtcNow,
+			ReplyTo = fromUser.Email
 		};
 		await _queuedEmailService.CreateAndQueueEmail(message);
 	}
