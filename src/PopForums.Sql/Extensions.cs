@@ -34,7 +34,7 @@ public static class Extensions
 
 	public static async Task UsingAsync(this DbConnection connection, Func<DbConnection, Task> action)
 	{
-		using (connection)
+		await using (connection)
 		{
 			try
 			{
@@ -43,7 +43,7 @@ public static class Extensions
 			}
 			finally
 			{
-				connection.Close();
+				await connection.CloseAsync();
 				connection.Dispose();
 			}
 		}
