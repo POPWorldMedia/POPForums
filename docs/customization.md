@@ -32,7 +32,7 @@ The basic page that we include in the main and sample repositories is fairly spa
 ```
 You'll notice that after the `title` tags, we render a section called `HeaderContent`. This is where the forum drops in all of its `script` and `link` references for Javascript and CSS. If you want to go deeper, look in the `PopForums.Mvc` project at `/Areas/Forums/Views/Shared/PopForumsMaster.csthml`.
 
-### Overrides
+### Style overrides
 One simple approach to customizing the look is to include a style sheet, linked in the template header _after_ Bootstrap. So given the template shown above, you would include your `link` tag to your CSS after the `RenderSectionAsync` call. Mostly, your CSS will consist of things like font selection and colors on high-level elements. For example, given that you've imported fonts elsewhere:
 ```
 body {
