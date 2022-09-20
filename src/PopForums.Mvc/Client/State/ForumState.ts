@@ -12,9 +12,9 @@ namespace PopForums {
         isNewTopicLoaded: boolean;
 
         setupForum() {
-            PopForums.Ready(() => {
+            PopForums.Ready(async () => {
                 this.isNewTopicLoaded = false;
-                this.forumListen();
+                await this.forumListen();
             });
         }
 
@@ -33,8 +33,9 @@ namespace PopForums {
                 });
         }
 
-        forumListen() {
-            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").withAutomaticReconnect().build();
+        async forumListen() {
+            let service = await MessagingService.GetService();
+            let connection = service.connection;
             let self = this;
             connection.on("notifyUpdatedTopic", function (data: any) { // TODO: refactor to strong type
                 let removal = document.querySelector('#TopicList tr[data-topicID="' + data.topicID + '"]');
@@ -49,10 +50,7 @@ namespace PopForums {
                 row.classList.remove("hidden");
                 document.querySelector("#TopicList tbody").prepend(row);
             });
-            connection.start()
-                .then(function () {
-                    return connection.invoke("listenTo", self.forumID);
-                });
+            connection.invoke("listenToForum", self.forumID);
         }
 
         recentListen() {

@@ -5,16 +5,14 @@ namespace PopForums {
             super();
         }
 
-        connectedCallback() {
-            let connection = new signalR.HubConnectionBuilder().withUrl("/ForumsHub").withAutomaticReconnect().build();
+        async connectedCallback() {
+            let service = await MessagingService.GetService();
+            let connection = service.connection;
             let self = this;
             connection.on("notifyForumUpdate", function (data: any) {
                 self.updateForumStats(data);
             });
-            connection.start()
-                .then(function () {
-                    return connection.invoke("listenToAll");
-                });
+            connection.invoke("listenToAllForums");
         }
 
         updateForumStats(data: any) {
