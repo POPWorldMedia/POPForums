@@ -12,7 +12,6 @@ public static class EndpointRouteBuilders
 	{
 		endpoints.MapHub<PopForumsHub>("/PopForumsHub");
 		endpoints.MapHub<TopicsHub>("/TopicsHub");
-		endpoints.MapHub<RecentHub>("/RecentHub");
 		endpoints.MapHub<FeedHub>("/FeedHub");
 		endpoints.MapHub<NotificationHub>("/NotificationHub");
 		endpoints.MapHub<PMHub>("/PMHub");

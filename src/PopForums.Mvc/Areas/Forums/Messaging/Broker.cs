@@ -2,12 +2,11 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
+	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
 	{
 		_forumRepo = forumRepo;
 		_topicHubContext = topicHubContext;
 		_feedHubContext = feedHubContext;
-		_recentHubContext = recentHubContext;
 		_notificationHubContext = notificationHubContext;
 		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
@@ -17,7 +16,6 @@ public class Broker : IBroker
 	private readonly IForumRepository _forumRepo;
 	private readonly IHubContext<TopicsHub> _topicHubContext;
 	private readonly IHubContext<FeedHub> _feedHubContext;
-	private readonly IHubContext<RecentHub> _recentHubContext;
 	private readonly IHubContext<NotificationHub> _notificationHubContext;
 	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
@@ -65,9 +63,9 @@ public class Broker : IBroker
 			topic.LastPostName
 		};
 		if (isForumViewRestricted)
-			_recentHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
 		else
-			_recentHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyRecentUpdate", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyRecentUpdate", result);
 		_popForumsHubContext.Clients.Group($"{tenant}:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
 	}
 

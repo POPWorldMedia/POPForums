@@ -53,8 +53,9 @@ namespace PopForums {
             connection.invoke("listenToForum", self.forumID);
         }
 
-        recentListen() {
-            var connection = new signalR.HubConnectionBuilder().withUrl("/RecentHub").withAutomaticReconnect().build();
+        async recentListen() {
+            let service = await MessagingService.GetService();
+            let connection = service.connection;
             let self = this;
             connection.on("notifyRecentUpdate", function (data: any) {
                 var removal = document.querySelector('#TopicList tr[data-topicID="' + data.topicID + '"]');
@@ -69,10 +70,7 @@ namespace PopForums {
                 row.classList.remove("hidden");
                 document.querySelector("#TopicList tbody").prepend(row);
             });
-            connection.start()
-                .then(function () {
-                    return connection.invoke("register");
-                });
+            connection.invoke("listenRecent");
         }
 
         populateTopicRow = function (data: any) {
