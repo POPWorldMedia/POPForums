@@ -2,10 +2,9 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
+	public Broker(IForumRepository forumRepo, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
 	{
 		_forumRepo = forumRepo;
-		_topicHubContext = topicHubContext;
 		_notificationHubContext = notificationHubContext;
 		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
@@ -13,7 +12,6 @@ public class Broker : IBroker
 	}
 	
 	private readonly IForumRepository _forumRepo;
-	private readonly IHubContext<TopicsHub> _topicHubContext;
 	private readonly IHubContext<NotificationHub> _notificationHubContext;
 	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
@@ -22,19 +20,19 @@ public class Broker : IBroker
 	public void NotifyNewPosts(Topic topic, int lasPostID)
 	{
 		var tenant = _tenantService.GetTenant();
-		_topicHubContext.Clients.Group($"{tenant}:{topic.TopicID}").SendAsync("notifyNewPosts", lasPostID);
+		_popForumsHubContext.Clients.Group($"{tenant}:topic:{topic.TopicID}").SendAsync("notifyNewPosts", lasPostID);
 	}
 
 	public void NotifyNewPost(Topic topic, int postID)
 	{
 		var tenant = _tenantService.GetTenant();
-		_topicHubContext.Clients.Group($"{tenant}:{topic.TopicID}").SendAsync("fetchNewPost", postID);
+		_popForumsHubContext.Clients.Group($"{tenant}:topic:{topic.TopicID}").SendAsync("fetchNewPost", postID);
 	}
 
 	public void NotifyForumUpdate(Forum forum)
 	{
 		var tenant = _tenantService.GetTenant();
-		_popForumsHubContext.Clients.Group($"{tenant}:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
+		_popForumsHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
 	}
 
 	public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
@@ -54,10 +52,10 @@ public class Broker : IBroker
 			topic.LastPostName
 		};
 		if (isForumViewRestricted)
-			_popForumsHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:recent:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
 		else
-			_popForumsHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyRecentUpdate", result);
-		_popForumsHubContext.Clients.Group($"{tenant}:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:recent:all").SendAsync("notifyRecentUpdate", result);
+		_popForumsHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
 	}
 
 	public async void NotifyPMCount(int userID, int pmCount)
