@@ -35,6 +35,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Refactor: Migrate old PopForums.js to a more manageable, not-spaghetti, TypeScript base #286
 * Refactor: Clean up on aisle admin #295
 * Refactor: Exclude bots from session tracking #301
+* Refactor: Signalr hub consolidation #312
 * BUG: New `SqlCommand` can't parse setup script without semicolons #288
 * BUG: Scroll to newest misses target because of inline images loading #290
 * BUG: Infinite scroll repositions back to hash when more posts load #257
