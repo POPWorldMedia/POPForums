@@ -11,7 +11,6 @@ public static class EndpointRouteBuilders
 	public static IEndpointRouteBuilder AddPopForumsEndpoints(this IEndpointRouteBuilder endpoints, IApplicationBuilder app)
 	{
 		endpoints.MapHub<PopForumsHub>("/PopForumsHub");
-		endpoints.MapHub<PMHub>("/PMHub");
 
 		endpoints.MapControllerRoute(
 			"pfadmin",

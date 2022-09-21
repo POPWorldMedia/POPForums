@@ -106,4 +106,55 @@ public class PopForumsHub : Hub
 		var count = await _privateMessageService.GetUnreadCount(userID);
 		return count;
 	}
+
+	// *** Private Messages
+
+	public async Task ListenToPm(int pmID)
+	{
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+			return;
+		var tenant = _tenantService.GetTenant();
+		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:pm:{pmID}");
+	}
+
+	public async Task SendPm(int pmID, string fullText)
+	{
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+			return;
+		var pm = await _privateMessageService.Get(pmID, userID);
+		var user = await _userService.GetUser(userID);
+		await _privateMessageService.Reply(pm, fullText, user);
+	}
+
+	public async Task AckReadPm(int pmID)
+	{
+		var userID = GetUserID();
+		await _privateMessageService.MarkPMRead(userID, pmID);
+	}
+
+	public async Task<ClientPrivateMessagePost[]> GetPmPosts(int pmID, DateTime beforeDateTime)
+	{
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+		{
+			return null;
+		}
+		var posts = await _privateMessageService.GetPosts(pmID, beforeDateTime);
+		var clientMessages = ClientPrivateMessagePost.MapForClient(posts);
+		return clientMessages;
+	}
+
+	public async Task<ClientPrivateMessagePost[]> GetMostRecentPmPosts(int pmID, DateTime afterDateTime)
+	{
+		var userID = GetUserID();
+		if (!await _privateMessageService.IsUserInPM(userID, pmID))
+		{
+			return null;
+		}
+		var posts = await _privateMessageService.GetMostRecentPosts(pmID, afterDateTime);
+		var clientMessages = ClientPrivateMessagePost.MapForClient(posts);
+		return clientMessages;
+	}
 }

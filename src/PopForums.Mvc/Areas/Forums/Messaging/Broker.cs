@@ -2,16 +2,14 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
+	public Broker(IForumRepository forumRepo, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
 	{
 		_forumRepo = forumRepo;
-		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
 		_popForumsHubContext = popForumsHubContext;
 	}
 	
 	private readonly IForumRepository _forumRepo;
-	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
 	private readonly IHubContext<PopForumsHub> _popForumsHubContext;
 
@@ -80,6 +78,6 @@ public class Broker : IBroker
 	{
 		var message = ClientPrivateMessagePost.MapForClient(post);
 		var tenantID = _tenantService.GetTenant();
-		await _pmHubContext.Clients.Group($"{tenantID}:{post.PMID}").SendAsync("addMessage", message);
+		await _popForumsHubContext.Clients.Group($"{tenantID}:pm:{post.PMID}").SendAsync("addMessage", message);
 	}
 }

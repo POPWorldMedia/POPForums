@@ -25,9 +25,6 @@ export class UserState extends StateBase {
     list: HTMLElement;
 
     async initialize(): Promise<void> {
-        this.isPlainText = false;
-        this.newPmCount = 0;
-        this.notificationCount = 0;
         this.postImageIds = new Array<string>();
         this.notificationService = new NotificationService(this);
         await this.notificationService.initialize();

@@ -22,8 +22,10 @@ export class PrivateMessageState extends StateBase {
                 let messageRow = this.populateMessage(x);
                 this.postStream.append(messageRow);
             });
-            
-            this.connection = new signalR.HubConnectionBuilder().withUrl("/PMHub").withAutomaticReconnect().build();
+
+            let service = await MessagingService.GetService();
+            this.connection = service.connection;
+
             let self = this;
             this.connection.on("addMessage", function(message: PrivateMessage) {
                 let messageRow = self.populateMessage(message);
@@ -36,14 +38,13 @@ export class PrivateMessageState extends StateBase {
             });
             this.connection.onreconnected(async () => {
                 let latestPostTime = this.messages[this.messages.length - 1].pmPostID;
-                const posts = await this.connection.invoke("GetMostRecentPosts", this.pmID, latestPostTime) as PrivateMessage[];
+                const posts = await this.connection.invoke("GetMostRecentPmPosts", this.pmID, latestPostTime) as PrivateMessage[];
                 posts.reverse().forEach((item: PrivateMessage) => {
                     let m = this.populateMessage(item);
                     this.postStream.append(m);
                 });
             });
-            await this.connection.start();
-            await this.connection.invoke("listenTo", this.pmID);
+            await this.connection.invoke("listenToPm", this.pmID);
             if (this.newestPostID) {
                 this.scrollToElement("p" + this.newestPostID)
             }
@@ -76,18 +77,18 @@ export class PrivateMessageState extends StateBase {
 
     private async GetPosts() {
         let earliestPostTime = this.messages[0].postTime;
-        const response = await this.connection.invoke("GetPosts", this.pmID, earliestPostTime) as PrivateMessage[];
+        const response = await this.connection.invoke("GetPmPosts", this.pmID, earliestPostTime) as PrivateMessage[];
         return response;
     }
 
     send(fullText: string) {
         if (!fullText || fullText.trim().length === 0)
             return;
-        this.connection.invoke("send", this.pmID, fullText);
+        this.connection.invoke("sendPm", this.pmID, fullText);
     }
 
     ackRead() {
-        this.connection.invoke("ackRead", this.pmID);
+        this.connection.invoke("ackReadPm", this.pmID);
     }
 
     populateMessage(data: PrivateMessage) {

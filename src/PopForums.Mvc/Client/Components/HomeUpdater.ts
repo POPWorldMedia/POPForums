@@ -12,7 +12,7 @@ namespace PopForums {
             connection.on("notifyForumUpdate", function (data: any) {
                 self.updateForumStats(data);
             });
-            connection.invoke("listenToAllForums");
+            await connection.invoke("listenToAllForums");
         }
 
         updateForumStats(data: any) {
