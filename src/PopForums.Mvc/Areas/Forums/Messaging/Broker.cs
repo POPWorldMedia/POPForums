@@ -2,50 +2,33 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<TopicsHub> topicHubContext, IHubContext<FeedHub> feedHubContext, IHubContext<ForumsHub> forumsHubContext, IHubContext<RecentHub> recentHubContext, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService)
+	public Broker(IForumRepository forumRepo, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
 	{
 		_forumRepo = forumRepo;
-		_topicHubContext = topicHubContext;
-		_feedHubContext = feedHubContext;
-		_forumsHubContext = forumsHubContext;
-		_recentHubContext = recentHubContext;
-		_notificationHubContext = notificationHubContext;
-		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
+		_popForumsHubContext = popForumsHubContext;
 	}
 	
 	private readonly IForumRepository _forumRepo;
-	private readonly IHubContext<TopicsHub> _topicHubContext;
-	private readonly IHubContext<FeedHub> _feedHubContext;
-	private readonly IHubContext<ForumsHub> _forumsHubContext;
-	private readonly IHubContext<RecentHub> _recentHubContext;
-	private readonly IHubContext<NotificationHub> _notificationHubContext;
-	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
+	private readonly IHubContext<PopForumsHub> _popForumsHubContext;
 
 	public void NotifyNewPosts(Topic topic, int lasPostID)
 	{
 		var tenant = _tenantService.GetTenant();
-		_topicHubContext.Clients.Group($"{tenant}:{topic.TopicID}").SendAsync("notifyNewPosts", lasPostID);
+		_popForumsHubContext.Clients.Group($"{tenant}:topic:{topic.TopicID}").SendAsync("notifyNewPosts", lasPostID);
 	}
 
 	public void NotifyNewPost(Topic topic, int postID)
 	{
 		var tenant = _tenantService.GetTenant();
-		_topicHubContext.Clients.Group($"{tenant}:{topic.TopicID}").SendAsync("fetchNewPost", postID);
-	}
-
-	public void NotifyFeed(string message)
-	{
-		var tenant = _tenantService.GetTenant();
-		var data = new { Message = message, Utc = new DateTime(DateTime.UtcNow.Ticks, DateTimeKind.Unspecified).ToString("o"), TimeStamp = Resources.LessThanMinute };
-		_feedHubContext.Clients.Group($"{tenant}:feed").SendAsync("notifyFeed", data);
+		_popForumsHubContext.Clients.Group($"{tenant}:topic:{topic.TopicID}").SendAsync("fetchNewPost", postID);
 	}
 
 	public void NotifyForumUpdate(Forum forum)
 	{
 		var tenant = _tenantService.GetTenant();
-		_forumsHubContext.Clients.Group($"{tenant}:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
+		_popForumsHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyForumUpdate", new { forum.ForumID, TopicCount = forum.TopicCount.ToString("N0"), PostCount = forum.PostCount.ToString("N0"), forum.LastPostName, Utc = forum.LastPostTime.ToString("o") });
 	}
 
 	public void NotifyTopicUpdate(Topic topic, Forum forum, string topicLink)
@@ -65,36 +48,36 @@ public class Broker : IBroker
 			topic.LastPostName
 		};
 		if (isForumViewRestricted)
-			_recentHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:recent:{forum.ForumID}").SendAsync("notifyRecentUpdate", result);
 		else
-			_recentHubContext.Clients.Group($"{tenant}:forum:all").SendAsync("notifyRecentUpdate", result);
-		_forumsHubContext.Clients.Group($"{tenant}:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
+			_popForumsHubContext.Clients.Group($"{tenant}:recent:all").SendAsync("notifyRecentUpdate", result);
+		_popForumsHubContext.Clients.Group($"{tenant}:forum:{forum.ForumID}").SendAsync("notifyUpdatedTopic", result);
 	}
 
 	public async void NotifyPMCount(int userID, int pmCount)
 	{
 		var tenantID = _tenantService.GetTenant();
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, userID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
 	}
 
 	public async void NotifyUser(Notification notification)
 	{
 		var tenantID = _tenantService.GetTenant();
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
 
 	public async void NotifyUser(Notification notification, string tenantID)
 	{
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
 
 	public async void SendPMMessage(PrivateMessagePost post)
 	{
 		var message = ClientPrivateMessagePost.MapForClient(post);
 		var tenantID = _tenantService.GetTenant();
-		await _pmHubContext.Clients.Group($"{tenantID}:{post.PMID}").SendAsync("addMessage", message);
+		await _popForumsHubContext.Clients.Group($"{tenantID}:pm:{post.PMID}").SendAsync("addMessage", message);
 	}
 }

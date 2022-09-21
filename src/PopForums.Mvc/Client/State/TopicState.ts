@@ -34,14 +34,15 @@ export class TopicState extends StateBase {
     selectionAncestor: Node;
 
     setupTopic() {
-        PopForums.Ready(() => {
+        PopForums.Ready(async () => {
             this.isReplyLoaded = false;
             this.isNewerPostsAvailable = false;
             this.lowPage = this.pageIndex;
             this.highPage = this.pageIndex;
 
             // signalR connections
-            let connection = new signalR.HubConnectionBuilder().withUrl("/TopicsHub").withAutomaticReconnect().build();
+            let service = await MessagingService.GetService();
+            let connection = service.connection;
             let self = this;
             // for all posts loaded but reply not open
             connection.on("fetchNewPost", function (postID: number) {
@@ -60,13 +61,8 @@ export class TopicState extends StateBase {
             connection.on("notifyNewPosts", function (theLastPostID: number) {
                 self.setMorePostsAvailable(theLastPostID);
             });
-            connection.start()
-                .then(function () {
-                    return connection.invoke("listenTo", self.topicID);
-                })
-                .then(function () {
-                    self.connection = connection
-                });
+            connection.invoke("listenToTopic", this.topicID);
+            this.connection = connection;
 
             document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
 

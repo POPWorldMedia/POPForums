@@ -4,7 +4,6 @@ public interface IFeedService
 {
 	Task PublishToFeed(User user, string message, int points, DateTime timeStamp);
 	Task<List<FeedEvent>> GetFeed(User user);
-	void PublishToActivityFeed(string message);
 }
 
 public class FeedService : IFeedService
@@ -33,10 +32,5 @@ public class FeedService : IFeedService
 	public async Task<List<FeedEvent>> GetFeed(User user)
 	{
 		return await _feedRepository.GetFeed(user.UserID, MaxFeedCount);
-	}
-
-	public void PublishToActivityFeed(string message)
-	{
-		_broker.NotifyFeed(message);
 	}
 }

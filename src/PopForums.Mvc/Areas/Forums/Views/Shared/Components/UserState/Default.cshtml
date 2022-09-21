@@ -8,7 +8,8 @@
 <script>
 	PopForums.LocalizationService.init();
 	@if (user != null)
-{
-	<text>PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));</text>
-}
+{<text>
+	PopForums.userState = Object.assign(new PopForums.UserState(), @Html.Raw(serialized));
+    PopForums.userState.initialize();
+</text>}
 </script>

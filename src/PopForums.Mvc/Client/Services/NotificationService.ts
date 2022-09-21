@@ -3,12 +3,19 @@ namespace PopForums {
     export class NotificationService {
         constructor(userState: UserState) {
             this.userState = userState;
+        }
+
+        private userState: UserState;
+        private connection: any;
+
+        async initialize(): Promise<void> {
             let self = this;
-            this.connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").withAutomaticReconnect().build();
-            this.connection.on("updatePMCount", function(pmCount: number) {
+            let service = await MessagingService.GetService();
+            this.connection = service.connection;
+            this.connection.on("updatePMCount", function (pmCount: number) {
                 self.userState.newPmCount = pmCount;
             });
-            this.connection.on("notify", function(data: any) {
+            this.connection.on("notify", function (data: any) {
                 let notification: Notification = Object.assign(new Notification(), data);
                 let list = self.userState.list.querySelectorAll("pf-notificationitem");
                 list.forEach(item => {
@@ -26,11 +33,7 @@ namespace PopForums {
                 let pmCount = await this.connection.invoke("GetPMCount");
                 self.userState.newPmCount = pmCount;
             });
-            this.connection.start();
-        }
-
-        private userState: UserState;
-        private connection: any;
+		}
 
         async LoadNotifications(): Promise<void> {
             const json = await this.getNotifications();
