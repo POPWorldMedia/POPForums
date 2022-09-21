@@ -2,17 +2,15 @@
 
 public class Broker : IBroker
 {
-	public Broker(IForumRepository forumRepo, IHubContext<NotificationHub> notificationHubContext, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
+	public Broker(IForumRepository forumRepo, IHubContext<PMHub> pmHubContext, ITenantService tenantService, IHubContext<PopForumsHub> popForumsHubContext)
 	{
 		_forumRepo = forumRepo;
-		_notificationHubContext = notificationHubContext;
 		_pmHubContext = pmHubContext;
 		_tenantService = tenantService;
 		_popForumsHubContext = popForumsHubContext;
 	}
 	
 	private readonly IForumRepository _forumRepo;
-	private readonly IHubContext<NotificationHub> _notificationHubContext;
 	private readonly IHubContext<PMHub> _pmHubContext;
 	private readonly ITenantService _tenantService;
 	private readonly IHubContext<PopForumsHub> _popForumsHubContext;
@@ -62,20 +60,20 @@ public class Broker : IBroker
 	{
 		var tenantID = _tenantService.GetTenant();
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, userID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("updatePMCount", pmCount);
 	}
 
 	public async void NotifyUser(Notification notification)
 	{
 		var tenantID = _tenantService.GetTenant();
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
 
 	public async void NotifyUser(Notification notification, string tenantID)
 	{
 		var userIDString = PopForumsUserIdProvider.FormatUserID(tenantID, notification.UserID);
-		await _notificationHubContext.Clients.User(userIDString).SendAsync("notify", notification);
+		await _popForumsHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
 
 	public async void SendPMMessage(PrivateMessagePost post)

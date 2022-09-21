@@ -5,8 +5,9 @@
 
 		static async GetService(): Promise<MessagingService> {
 			if (!MessagingService.service) {
-				MessagingService.service = new MessagingService();
-				await MessagingService.service.start();
+				let service = new MessagingService();
+				await service.start();
+				MessagingService.service = service;
 			}
 			return MessagingService.service;
 		}
@@ -17,12 +18,13 @@
 		async start() {
 			this.connection = new signalR.HubConnectionBuilder().withUrl("/PopForumsHub").withAutomaticReconnect().build();
 
-			this.connection.onreconnected(async () => {
-				for (let f of this.reconnectHandlers)
-					f();
-			});
-
 			await this.connection.start();
+
+			this.connection.onreconnected(() => {
+				if (this.reconnectHandlers)
+					for (let f of this.reconnectHandlers)
+						f();
+			});
 		}
 
 		registerReconnectHandler(f: Function) {

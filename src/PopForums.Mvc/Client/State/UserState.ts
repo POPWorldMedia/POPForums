@@ -3,11 +3,6 @@
 export class UserState extends StateBase {
     constructor() {
         super();
-        this.isPlainText = false;
-        this.newPmCount = 0;
-        this.notificationCount = 0;
-        this.postImageIds = new Array<string>();
-        this.notificationService = new NotificationService(this);
     }
 
     private notificationService: NotificationService;
@@ -28,6 +23,15 @@ export class UserState extends StateBase {
     notifications: Array<Notification>;
 
     list: HTMLElement;
+
+    async initialize(): Promise<void> {
+        this.isPlainText = false;
+        this.newPmCount = 0;
+        this.notificationCount = 0;
+        this.postImageIds = new Array<string>();
+        this.notificationService = new NotificationService(this);
+        await this.notificationService.initialize();
+	}
 
     async LoadNotifications(): Promise<void> {
         this.isLoadingNotifications = true;

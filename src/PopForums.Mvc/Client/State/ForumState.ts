@@ -50,7 +50,7 @@ namespace PopForums {
                 row.classList.remove("hidden");
                 document.querySelector("#TopicList tbody").prepend(row);
             });
-            connection.invoke("listenToForum", self.forumID);
+            await connection.invoke("listenToForum", self.forumID);
         }
 
         async recentListen() {
