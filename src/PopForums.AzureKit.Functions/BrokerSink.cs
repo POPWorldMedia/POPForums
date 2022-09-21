@@ -10,11 +10,6 @@ public class BrokerSink : IBroker
 		throw new System.NotImplementedException();
 	}
 
-	public void NotifyFeed(string message)
-	{
-		throw new System.NotImplementedException();
-	}
-
 	public void NotifyForumUpdate(Forum forum)
 	{
 		throw new System.NotImplementedException();

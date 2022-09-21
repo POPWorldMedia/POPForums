@@ -47,30 +47,6 @@ public class EventPublisherTests
 	}
 
 	[Fact]
-	public async Task ProcessEventPublishesToFeedServiceForActivity()
-	{
-		var user = new User { UserID = 123 };
-		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
-		const string message = "msg";
-		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
-		await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
-		_feedService.Verify(x => x.PublishToActivityFeed(message), Times.Once());
-	}
-
-	[Fact]
-	public async Task ProcessEventDoesNotPublishToFeedServiceForActivityWhenEventDefSaysNo()
-	{
-		var user = new User { UserID = 123 };
-		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
-		const string message = "msg";
-		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
-		await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
-		_feedService.Verify(x => x.PublishToActivityFeed(message), Times.Never());
-	}
-
-	[Fact]
 	public async Task ProcessEventDoesNotPublishToFeedServiceWhenEventDefSaysNo()
 	{
 		var user = new User { UserID = 123 };

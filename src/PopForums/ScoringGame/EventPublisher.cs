@@ -33,7 +33,6 @@ public class EventPublisher : IEventPublisher
 		if (eventDefinition.IsPublishedToFeed && !overridePublishToActivityFeed)
 		{
 			await _feedService.PublishToFeed(user, feedMessage, eventDefinition.PointValue, timeStamp);
-			_feedService.PublishToActivityFeed(feedMessage);
 		}
 		await _awardCalculator.QueueCalculation(user, eventDefinition);
 	}
