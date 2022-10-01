@@ -52,4 +52,10 @@ public static class ServiceCollectionExtensions
 		services.Replace(ServiceDescriptor.Transient<IPostImageRepository, PopForums.AzureKit.PostImage.PostImageRepository>());
 		return services;
 	}
+
+	public static IServiceCollection AddPopForumsTableStorageLogging(this IServiceCollection services)
+	{
+		services.Replace(ServiceDescriptor.Transient<IErrorLogRepository, PopForums.AzureKit.Logging.ErrorLogRepository>());
+		return services;
+	}
 }

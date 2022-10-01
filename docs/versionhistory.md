@@ -26,6 +26,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Remove composite activity feed #299
 * Use fulltext editor for profile signatures #291
 * Decommission email from profile #310
+* Add option to write error log to table storage #314
 * Refactor: Move all of the client stuff to the `Mvc` project, ditch the npm package #285
 * Refactor: Update MailKit library to v3.x #268
 * Refactor: Update ImageSharp library to v2.x #267

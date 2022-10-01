@@ -9,7 +9,8 @@ The `PopForums.AzureKit` library makes it possible to wire up the following scen
 * Using Azure Storage queues and Functions to queue work for search indexing, emailing and scoring game award calculation
 * Using Azure Storage for image uploads
 * Using Azure Search
-* Using Azure storage for hosting uploaded images in posts
+* Using Azure Storage for hosting uploaded images in posts
+* Using Azure Table Storage for error logging
 
 You don't need to use the AzureKit components to run in an Azure App Service. These components are intended for making scale-out possible. The web app can run self-contained in a single node on an Azure App Service without these optional bits.
 
@@ -214,3 +215,11 @@ services.AddPopForumsAzureBlobStorageForPostImages();
 It's important to note that `PopForums.AzureKit.Functions` is already wired to use the blob storage `IPostImageRepository` version, because it's assumed that if you're already using an Azure queue, you also have a storage account.
 
 Another thing to keep in mind is that if you're working locally, and your Azurite instance doesn't have `https` configured, it will break because most browsers do not allow non-`https` images to appear in a secure page. The simplest work around for this is not to install a local certificate, but to change your launch settings for the web app to not run on `https`.
+
+## Using Azure Table Storage for error logging
+
+You may prefer to do your error logging to Azure Table Storage instead of the SQL database. You can do this by adding one line to your `Program` file, which swaps out the SQL error repository for the table storage:
+```
+services.AddPopForumsTableStorageLogging();
+```
+The one limitation here is that you can't use the admin UI to look at errors, since paging and ordering is fairly crude in table storage. For the connection string, it will use whatever is found in `PopForums:Storage:ConnectionString`, the same setting used by the image uploads.

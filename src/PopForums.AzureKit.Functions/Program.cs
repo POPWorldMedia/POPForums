@@ -38,7 +38,10 @@ var host = new HostBuilder()
 		s.AddTransient<INotificationTunnel, NotificationTunnel>();
 		s.RemoveAll<IPostImageRepository>();
 		s.AddTransient<IPostImageRepository, PopForums.AzureKit.PostImage.PostImageRepository>();
-		
+
+		// use Azure table storage for logging instead of database
+		//s.AddPopForumsTableStorageLogging();
+
 		switch (config.SearchProvider.ToLower())
 		{
 			case "elasticsearch":

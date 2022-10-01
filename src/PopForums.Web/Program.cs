@@ -43,6 +43,9 @@ services.AddPopForumsSql();
 // this adds dependencies from the MVC project (and base dependencies) and sets up authentication for the forum
 services.AddPopForumsMvc();
 
+// use Azure table storage for logging instead of database
+//services.AddPopForumsTableStorageLogging();
+
 // use Redis cache for POP Forums using AzureKit
 //services.AddPopForumsRedisCache();
 
