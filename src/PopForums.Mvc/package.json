@@ -1,17 +1,17 @@
 {
   "scripts": {},
   "dependencies": {
-    "@microsoft/signalr": "6.0.8",
+    "@microsoft/signalr": "6.0.9",
     "axios": "0.27.2",
-    "bootstrap": "5.2.0",
-    "tinymce": "6.1.2",
-    "vue": "3.2.38",
+    "bootstrap": "5.2.1",
+    "tinymce": "6.2.0",
+    "vue": "3.2.40",
     "vue-router": "4.1.5"
   },
   "devDependencies": {
     "gulp-typescript": "5.0.1",
-    "@babel/core": "7.18.13",
-    "@babel/preset-env": "7.18.10",
+    "@babel/core": "7.19.3",
+    "@babel/preset-env": "7.19.3",
     "gulp": "4.0.2",
     "gulp-babel": "8.0.0",
     "gulp-clean-css": "4.3.0",
