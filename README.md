@@ -3,12 +3,12 @@
 POP Forums
 =========
 
-A forum and Q&A application with real-time updating in multiple languages.
+A forum and Q&A application with real-time updating, image uploading and private message chat in multiple languages.
 
-The main branch is now the work-in-progress for future versions running on .NET 6+. The v18.x branch is v18.x, running on .NET 6. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
+The main branch is now the work-in-progress for future versions running on .NET 6+. The v19.x branch is v19.x, running on .NET 6. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
 
 Roadmap:
-The v18 release concentrates on performance and optimization, along with significant refactoring to use modern frameworks and bug fixes. Forthcoming releases will focus on UI refinement and modernization.
+The v19 release concentrates on long awaited new feature requests, updates to the user interface and minor bug fixes.
 
 For the latest information and documentation, and how to get started, check the pages (also in markdown in /docs of source):  
 https://popworldmedia.github.io/POPForums/

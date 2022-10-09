@@ -31,13 +31,14 @@ You should definitely get to know the installation information below to understa
 
 ## Reference
 
+* Again, [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) is a good starting point when using POP Forums via reference, but the `PopForums.Web` project in the source code works similarly, with project references instead of NuGet references.
 * Reference `PopForums.Mvc` and `PopForums.Sql` from Nuget. If you want to use the scale-out kits (`PopForums.AzureKit` and `PopForums.ElasticKit`), add those as well.
 * Starting with v19, `PopForums.Mvc` includes all of the front-end goodies, the Javascript and CSS, right in the package.
 * You'll need a layout view for the forum to live in.
 * Set up the various options in `Program.cs` as described in its comments and this documentation.
 * `appsettings.json` will have your forum configuration.
 * There is no package for the Azure Functions, because it's currently hard to make them work from a shared library in certain situations. However, you can deploy the project from the main repo with ease given the tooling in VS or Azure DevOps Pipelines. Just be sure to set the right values up in the application configuration in the Azure portal.
-* POP Forums uses ASP.NET Data Protection in multi-node or external login scenarios. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your `Program.cs`, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things.
+* POP Forums uses ASP.NET Data Protection in multi-node or external login scenarios. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your `Program.cs`, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things. If you use slots in Azure App Services, you'll also want the Data Protection setup, otherwise the swap will cause everyone to be logged out.
 
 For the bleeding edge, latest build from `main`, the CI build packages can be obtained by a MyGet feed:
 * https://www.myget.org/F/popforums/api/v3/index.json (Nuget package includes the server application and front-end assets)
@@ -46,9 +47,11 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 
 * Download the latest source code from GitHub, or use the production packages as described above. Build it.
 * The project files require an up-to-date version of Visual Studio 2022 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
-* This project is built on ASP.NET v6. Make sure you have the required SDK installed (v6.0.400).
-* The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementations of functions, used if you're not using in-app context background services (see below).
-* The `main` branch is using Azure Functions by default to run background processes. A recent build of Visual Studio 2022 probably has all of the SDK's but storage emulation is required, so run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
+* This project is built on ASP.NET v6. Make sure you have the required SDK installed (v6.0.401).
+* The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
+* The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
+
+> Running the background services in the web context can cause some wild variations in CPU and RAM usage on a busy forum, especially in the code associated with updating the search index. If you are running in Azure, using Functions is a much better choice for consistent and predictable app performance.
 
 ## Installation
 
@@ -91,7 +94,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 	}
 }
 ```
-* Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing, by default it's looking for a local database on the default SQL Server instance called `popforums19`.
+* Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums19`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to /Forums/Setup now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 * The `PopForums.Mvc` package includes Bootstrap, which is used as the base style for the entire app. To give it your own look, you can add your own CSS to override Bootstrap in your `_Layout.cshtml`, or do your own build of Bootstrap with whatever variables you like. If you prefer your own build, make sure _both_ the Javascript and CSS tags appear _before_ the `RenderSection` in your header, and set the `RenderBootstrap` setting in `appconfig.json` to `false`. Learn more in [customization](customization.md).
@@ -110,6 +113,9 @@ Here’s what each field on the setup page does:
 * **Display name:** How you want your name to appear in the forum.
 * **E-mail:** The e-mail address you’ll use to login with.
 * **Password:** The password you’ll use to login with.
+
+You're almost there!
+
 * If you typed everything you need correctly, you should see a happy result, otherwise you’ll see a stack trace and exception.
 * Restart the app.
 * From here, you can follow the link to the admin home page and add categories and forums. You’ll be logged in as the user you created, and that account will be part of the Admin and Moderator roles.

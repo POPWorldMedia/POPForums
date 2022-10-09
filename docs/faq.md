@@ -26,10 +26,10 @@ Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese M
 Not at all. That app served a great many different functions and was integrated with Microsoft ID's, a centralized profiling system, etc. It was/is huge. This app has its roots in the web sites I've been running for fun and profit for years, to the extent that you can find old posts on those sites from the turn of the century with all kinds of formatting failures. Those were the ASP.old days.
 
 ## I noticed you're not using [some ORM framework]. Why not?
-One of the requirements back in the day was to simply work with the existing data structures of v8.x, a Webforms app. In that sense, the data plumbing was already pretty well established and known to work, and it has followed all the way up through the Core version. My opinion is that ORM's tend to be a leaky abstraction that never work in the black box way that you would hope. I have adopted Dapper though, which covers the core use case that you're really after anyway: Mapping parameters to queries and results to objects. One doesn't have to write actual SQL all that often.
+One of the requirements back in the day was to simply work with the existing data structures of v8.x, a Webforms app. In that sense, the data plumbing was already pretty well established and known to work, and it has followed all the way up through the Core version. My opinion is that ORM's tend to be leaky abstractions that never work in the black box way that you would hope. I have adopted Dapper though, which covers the core use case that you're really after anyway: Mapping parameters to queries and results to objects. One doesn't have to write actual SQL all that often.
 
 ## You don't name your async methods with the `Async` suffix. Just who do you think you are?
-Look, when almost all of your methods are async what's the point? The only place I use it is when there are both synchronous and asynchronous methods. Your fancy IDE knows what the return type is, and the compiler lets you know when you're not awaiting. You'll be fine.
+Look, when almost all of your methods are async with no synchronous version what's the point? The only place I use it is when there are both synchronous and asynchronous methods. Your fancy IDE knows what the return type is, and the compiler lets you know when you're not awaiting. You'll be fine.
 
 ## What external frameworks are you using, and why?
 I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, the main app uses vanilla web components written in TypeScript, along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
@@ -38,10 +38,10 @@ I wanted to keep external binaries to a minimum, but I'm using MailKit for email
 Here's the thing about a forum... it's mostly walls of text. I can tell you from the 60,000+ topics I have indexed on a couple of sites that it's super SEO friendly. To that end, the functionality of a forum is mostly making posts, which doesn't require a big library to do. That's why there are little web components spread around on little islands, and not an all-in effort to React. Heck, the admin area uses Vue.js, but even that works by way of a simple script reference.
 
 ## The unit tests suck.
-That's not a question. In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring. Ideally, there shouldn't be so much logic in the controllers.
+That's not a question. In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring. Ideally, there shouldn't be so much logic in the controllers, but there is still a lot there.
 
 ## What's the release roadmap?
-It has generally been my intention to keep up with the latest .NET framework versions, but getting to Core took way longer than expected. You can check the issue tracker for stuff currently in flight. The app needs a fair amount of refactoring, so that will happen over time, and hopefully enable more unit tests. I expect refinement after all of the new features of v19 get some reasonable use.
+It has generally been my intention to keep up with the latest .NET framework versions. You can check the issue tracker for stuff currently in flight. The app needs a fair amount of refactoring, so that will happen over time, and hopefully enable more unit tests. I expect refinement after all of the new features of v19 get some reasonable use.
 
 ## Can I contribute?
 I very much welcome translations of the `.resx` files, so send a pull request for those immediately! If someone really digs into the source code and understands it in a non-trivial way, then yes, I'll happily accept pull requests. If you can find a bug to squish from the issue log, that would be a great PR to see!

@@ -7,7 +7,7 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version v19.0.0 (x/x/22)
+## Version v19.0.0 (10/9/22)
 * Image upload in posts #109
 * Create notification system #265
 * Change PM system to real-time chat #304
