@@ -217,6 +217,7 @@ public class PostMasterService : IPostMasterService
 		await _moderationLogService.LogPost(editingUser, ModerationType.PostEdit, post, postEdit.Comment, oldText);
 		await _searchIndexQueueRepository.Enqueue(new SearchIndexPayload { TenantID = _tenantService.GetTenant(), TopicID = post.TopicID, IsForRemoval = false });
 		var redirectLink = redirectLinkGenerator(post);
+		await _postImageService.DeleteTempRecords(postEdit.PostImageIDs, postEdit.FullText);
 		return new BasicServiceResponse<Post> { Data = post, IsSuccessful = true, Message = string.Empty, Redirect = redirectLink };
 	}
 
