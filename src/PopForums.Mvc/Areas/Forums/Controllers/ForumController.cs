@@ -404,6 +404,7 @@ public class ForumController : Controller
 	public async Task<ActionResult> Edit(int id, PostEdit postEdit)
 	{
 		var user = _userRetrievalShim.GetUser();
+		postEdit.PostImageIDs = postEdit.PostImageIDs[0]?.Split(',');
 		string RedirectLinkGenerator(Post p) => Url.RouteUrl(new { controller = "Forum", action = "PostLink", id = p.PostID });
 		var result = await _postMasterService.EditPost(id, postEdit, user, RedirectLinkGenerator);
 		if (result.IsSuccessful)

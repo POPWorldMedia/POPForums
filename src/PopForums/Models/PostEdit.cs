@@ -17,4 +17,5 @@ public class PostEdit
 	public string Comment { get; set; }
 	public bool IsPlainText { get; set; }
 	public bool IsFirstInTopic { get; set; }
+	public string[] PostImageIDs { get; set; }
 }

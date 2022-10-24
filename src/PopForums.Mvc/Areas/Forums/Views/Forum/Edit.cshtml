@@ -8,12 +8,22 @@
 
 @section HeaderContent
 {
-    <script type="text/javascript" src="~/PopForums/lib/tinymce/tinymce.min.js" asp-append-version="true"></script>
+	<script type="text/javascript" src="~/PopForums/lib/tinymce/tinymce.min.js" asp-append-version="true"></script>
+	<script>
+		PopForums.Ready(() => {
+			let form = document.getElementById("EditForm");
+			form.addEventListener("submit", () => {
+	            let imageIDinput = document.getElementById("PostImageIDs");
+	            imageIDinput.value = PopForums.userState.postImageIds;
+	            return true;
+	        });
+        });
+	</script>
 }
 
 <h1>@PopForums.Resources.EditPost</h1>
 
-<form method="post">
+<form method="post" id="EditForm">
 	<div class="postForm" role="form" class="mb-3">
 		@if (Model.IsFirstInTopic)
 		{
@@ -32,6 +42,7 @@
 			<textarea asp-for="Comment" class="form-control" rows="3"></textarea>
 		</div>
 		<input type="hidden" asp-for="IsPlainText"/>
+        <input type="hidden" asp-for="PostImageIDs"/>
 	</div>
 	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary" />
 	<pf-previewbutton textSourceSelector=".postForm #FullText" isplaintextselector=".postForm #IsPlainText" labelText="@PopForums.Resources.Preview"></pf-previewbutton>
