@@ -152,7 +152,8 @@ export class TopicState extends StateBase {
                     t.innerHTML = text.trim();
                     let stuff = t.content.firstChild as HTMLElement;
                     let links = stuff.querySelector(".pagerLinks");
-                    stuff.removeChild(links);
+                    if (links)
+                        stuff.removeChild(links);
                     let lastPostID = stuff.querySelector(".lastPostID") as HTMLInputElement;
                     stuff.removeChild(lastPostID);
                     let newPageCount = stuff.querySelector(".pageCount") as HTMLInputElement;
