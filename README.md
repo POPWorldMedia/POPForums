@@ -29,6 +29,9 @@ The latest CI build packages can be found with these feeds on MyGet:
 https://www.myget.org/F/popforums/api/v3/index.json   
 https://www.myget.org/F/popforums/npm/  
 
+Sample app using only the packages:  
+https://github.com/POPWorldMedia/POPForums.Sample  
+
 ## Prerequisites:
 * .NET v6.
 * npm and Node.js to build the front-end.
