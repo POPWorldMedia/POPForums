@@ -304,8 +304,8 @@ public class TextParsingService : ITextParsingService
 		// put URL's in url tags (plus youtube)
 		if (_settingsManager.Current.AllowImages)
 			text = YouTubePattern.Replace(text, match => $"[youtube={match.Value}]");
-		text = ProtocolPattern.Replace(text, match => $"[url={match.Value}]{match.Value.Trimmer(80)}[/url]");
-		text = WwwPattern.Replace(text, match => $"[url=https://{match.Value}]{match.Value.Trimmer(80)}[/url]");
+		text = ProtocolPattern.Replace(text, match => $"[url={match.Value}]{match.Value.Trimmer(40)}[/url]");
+		text = WwwPattern.Replace(text, match => $"[url=https://{match.Value}]{match.Value.Trimmer(40)}[/url]");
 		text = EmailPattern.Replace(text, match => $"[url=mailto:{match.Value}]{match.Value}[/url]");
 
 		// escape out rogue HTML tags

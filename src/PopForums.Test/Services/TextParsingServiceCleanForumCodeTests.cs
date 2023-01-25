@@ -141,7 +141,7 @@ public class TextParsingServiceCleanForumCodeTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCode("ohf i oih hgoehi http://popw.com/1234567890123456789012345678901234567890123456789012345678901234567890 owahfaowhfwohf");
-		Assert.Equal("ohf i oih hgoehi [url=http://popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]http://popw.com/123456789012345678901234567890123456789012345678901...1234567890[/url] owahfaowhfwohf", result);
+		Assert.Equal("ohf i oih hgoehi [url=http://popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]http://popw.com/12345678901...1234567890[/url] owahfaowhfwohf", result);
 	}
 
 	[Fact]
@@ -157,7 +157,7 @@ public class TextParsingServiceCleanForumCodeTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCode("ohf i oih hgoehi www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890 owahfaowhfwohf");
-		Assert.Equal("ohf i oih hgoehi [url=https://www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]www.popw.com/123456789012345678901234567890123456789012345678901234...1234567890[/url] owahfaowhfwohf", result);
+		Assert.Equal("ohf i oih hgoehi [url=https://www.popw.com/1234567890123456789012345678901234567890123456789012345678901234567890]www.popw.com/12345678901234...1234567890[/url] owahfaowhfwohf", result);
 	}
 
 	[Fact]
@@ -189,7 +189,7 @@ public class TextParsingServiceCleanForumCodeTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCode("blah http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/ blah");
-		Assert.Equal("blah [url=http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/]http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/[/url] blah", result);
+		Assert.Equal("blah [url=http://web.archive.org/web/20001002225219/http://coasterbuzz.com/forums/]http://web.archive.org/web/...om/forums/[/url] blah", result);
 	}
 
 	[Fact]
