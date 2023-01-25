@@ -23,7 +23,7 @@ You'll need the following locally:
 * Node.js (comes with npm)
 * SQL Server Developer, or SQL Server running in a Docker container
 * A mail sending service that supports SMTP
-* Optionally, Docker if you intend to run Azurite, Redis, ElasticSearch, etc.
+* Optionally, Docker if you intend to run Azurite, Redis, ElasticSearch, etc. (instructions below)
 
 ## Build vs. reference
 
@@ -128,6 +128,19 @@ You're almost there!
 The `PopForums.Web` project is the template you can use as the basis for your own POP Forums apps. If you want to build via the most recent stable builds, the [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project is an example of how to do that (see above). The app uses the standard claims-based authentication, but it does not use Identity or Entity Framework. When you're logged in, you'll find the identity of the user on the User property of the controller as expected. The `PopForumsAuthorizationMiddleware` loads user and profile data into the request pipeline, so it can be loaded once and used throughout the request lifecycle.
 
 Accessing the user data can be achieved via an instance of `IUserRetrievalShim`, which you can inject into your dependency chain. From a controller, simply call `_userRetrievalShim.GetUser()` to get the fully hydrated POP Forums `User`, or `_userRetrievalShim.GetProfile()` to get the profile. Under the hood, these are stored in the `Items` collection of the current `HttpContext`.
+
+## Running third-party services in Docker containers
+
+If you want to run locally with some of the "kits" described in the documentation, you'll need to fire them up using Docker. Here are the commands for the most common things. These sometimes change, because of new names, versions and such, but they're current as of early 2023.  
+  
+* SQL Server  
+`docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sqledge -d mcr.microsoft.com/azure-sql-edge`  
+* Azureite, for storage and queues  
+`docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite`  
+* Redis, for distributed cache and SignalR backplane  
+`docker run --name some-redis -d redis`  
+* ElasticSearch, for better search  
+`docker run --name es-01 -p 9200:9200 -it docker.elastic.co/elasticsearch/elasticsearch:8.6.0`  
 
 ## Customization
 
