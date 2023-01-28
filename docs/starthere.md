@@ -138,7 +138,7 @@ If you want to run locally with some of the "kits" described in the documentatio
 * Azureite, for storage and queues  
 `docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite`  
 * Redis, for distributed cache and SignalR backplane  
-`docker run --name some-redis -d redis`  
+`docker run --name some-redis -p 6379:6379 -d redis`  
 * ElasticSearch, for better search  
 `docker run --name es-01 -p 9200:9200 -it docker.elastic.co/elasticsearch/elasticsearch:8.6.0`  
 
