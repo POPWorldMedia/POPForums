@@ -20,3 +20,4 @@ src/PopForums.Mvc/package-lock.json
 src/PopForums.Mvc/node_modules
 
 src/PopForums.Web/Areas/Forums
+src/PopForums.Web/appsettings.development.json
