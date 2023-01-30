@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>PopForums Class Library</Description>
-		<VersionPrefix>19.0.0</VersionPrefix>
+		<VersionPrefix>20.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>PopForums</AssemblyName>
@@ -10,7 +10,7 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
-		<Copyright>2022, POP World Media, LLC</Copyright>
+		<Copyright>2023, POP World Media, LLC</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
