@@ -116,10 +116,6 @@ app.UseAuthorization();
 // POP Forums routes
 app.AddPopForumsEndpoints();
 
-// need this if you have lots of routing and/or areas
-app.MapAreaControllerRoute("forumroutes", "forums",
-	"Forums/{controller=Home}/{action=Index}/{id?}");
-
 // app routes
 app.MapControllerRoute(
 	"areaRoute",
