@@ -4,7 +4,7 @@
 		<Description>PopForums Class Library</Description>
 		<VersionPrefix>20.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<AssemblyName>PopForums</AssemblyName>
 		<PackageId>PopForums</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>

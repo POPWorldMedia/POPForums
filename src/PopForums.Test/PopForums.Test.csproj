@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<VersionPrefix>20.0.0-alpha1</VersionPrefix>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<AssemblyName>PopForums.Test</AssemblyName>
 		<PackageId>PopForums.Test</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
