@@ -411,7 +411,7 @@ public class AdminApiController : Controller
 	{
 		if (string.IsNullOrWhiteSpace(container.Subject) || string.IsNullOrWhiteSpace(container.Body))
 			return StatusCode((int)HttpStatusCode.BadRequest, new {Error = Resources.SubjectAndBodyNotEmpty});
-		var baseString = this.FullUrlHelper("Unsubscribe", AccountController.Name, new { id = "--id--", key = "--key--" });
+		var baseString = Url.Action("Unsubscribe", AccountController.Name, new { id = "--id--", key = "--key--" }, Request.Scheme);
 		baseString = baseString.Replace("--id--", "{0}").Replace("--key--", "{1}");
 		string UnsubscribeLinkGenerator(User user) => string.Format(baseString, user.UserID, _profileService.GetUnsubscribeHash(user));
 		_mailingListService.MailUsers(container.Subject, container.Body, container.HtmlBody, UnsubscribeLinkGenerator);

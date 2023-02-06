@@ -86,8 +86,7 @@ public class AccountController : Controller
 		{
 			var user = await _userService.CreateUser(signupData, ip);
 			await _profileService.Create(user, signupData);
-			// TODO: get rid of FullUrlHelper extension
-			var verifyUrl = this.FullUrlHelper("Verify", "Account");
+			var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
 			var result = _newAccountMailer.Send(user, verifyUrl);
 			if (result != SmtpStatusCode.Ok)
 				ViewData["EmailProblem"] = Resources.EmailProblemAccount + (result?.ToString() ?? "App exception") + ".";
@@ -174,7 +173,7 @@ public class AccountController : Controller
 			ViewData["Result"] = Resources.NoUserFoundWithEmail;
 			return View("Verify", new { id = String.Empty });
 		}
-		var verifyUrl = this.FullUrlHelper("Verify", "Account");
+		var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
 		var result = _newAccountMailer.Send(user, verifyUrl);
 		if (result != SmtpStatusCode.Ok)
 			ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
@@ -201,7 +200,7 @@ public class AccountController : Controller
 		else
 		{
 			ViewBag.Result = Resources.ForgotInstructionsSent;
-			var resetLink = this.FullUrlHelper("ResetPassword", "Account");
+			var resetLink = Url.Action("ResetPassword", "Account", null, Request.Scheme);
 			await _userService.GeneratePasswordResetEmail(user, resetLink);
 		}
 		return View();
@@ -326,7 +325,7 @@ public class AccountController : Controller
 			else
 			{
 				ViewBag.EmailResult = Resources.VerificationEmailSent;
-				var verifyUrl = this.FullUrlHelper("Verify", "Account");
+				var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
 				var result = _newAccountMailer.Send(user, verifyUrl);
 				if (result != SmtpStatusCode.Ok)
 					ViewBag.EmailResult = Resources.EmailProblemAccount + result;

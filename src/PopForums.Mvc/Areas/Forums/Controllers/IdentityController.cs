@@ -97,22 +97,22 @@ public class IdentityController : Controller
 		switch (provider.ToLower())
 		{
 			case "facebook":
-				var facebookRedirect = this.FullUrlHelper(nameof(CallbackHandler), Name);
+				var facebookRedirect = Url.Action(nameof(CallbackHandler), Name, null, Request.Scheme);
 				redirect = _loginLinkFactory.GetLink(ProviderType.Facebook, facebookRedirect, state, _settingsManager.Current.FacebookAppID);
 				providerType = ProviderType.Facebook;
 				break;
 			case "google":
-				var googleRedirect = this.FullUrlHelper(nameof(CallbackHandler), Name);
+				var googleRedirect = Url.Action(nameof(CallbackHandler), Name, null, Request.Scheme);
 				redirect = _loginLinkFactory.GetLink(ProviderType.Google, googleRedirect, state, _settingsManager.Current.GoogleClientId);
 				providerType = ProviderType.Google;
 				break;
 			case "microsoft":
-				var msftRedirect = this.FullUrlHelper(nameof(CallbackHandler), Name);
+				var msftRedirect = Url.Action(nameof(CallbackHandler), Name, null, Request.Scheme);
 				redirect = _loginLinkFactory.GetLink(ProviderType.Microsoft, msftRedirect, state, _settingsManager.Current.MicrosoftClientID);
 				providerType = ProviderType.Microsoft;
 				break;
 			case "oauth2":
-				var oauthRedirect = this.FullUrlHelper(nameof(CallbackHandler), Name);
+				var oauthRedirect = Url.Action(nameof(CallbackHandler), Name, null, Request.Scheme);
 				var linkGenerator = new OAuth2LoginUrlGenerator();
 				var oauthClaims = new List<string>(new[] { "openid", "email" });
 				redirect = linkGenerator.GetUrl(_settingsManager.Current.OAuth2LoginUrl, _settingsManager.Current.OAuth2ClientID, oauthRedirect, state, oauthClaims);
@@ -202,7 +202,7 @@ public class IdentityController : Controller
 			await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 			return View("ExternalError", Resources.Error + ": " + Resources.LoginBad);
 		}
-		var redirectUri = this.FullUrlHelper(nameof(CallbackHandler), Name);
+		var redirectUri = Url.Action(nameof(CallbackHandler), Name, null, Request.Scheme);
 		CallbackResult result;
 		switch (loginState.ProviderType)
 		{

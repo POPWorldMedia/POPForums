@@ -29,7 +29,7 @@ public class HomeController : Controller
 		var registeredUsers = await _userService.GetTotalUsers();
 		ViewBag.RegisteredUsers = registeredUsers.ToString("N0");
 		var user = _userRetrievalShim.GetUser();
-		ViewBag.SitemapUrl = this.FullUrlHelper("Index", SitemapController.Name);
+		ViewBag.SitemapUrl = Url.Action("Index", SitemapController.Name, null, Request.Scheme);
 		return View(await _forumService.GetCategorizedForumContainerFilteredForUser(user));
 	}
 }

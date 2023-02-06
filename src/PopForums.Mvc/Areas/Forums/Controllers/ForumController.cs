@@ -282,7 +282,7 @@ public class ForumController : Controller
 	{
 		var user = _userRetrievalShim.GetUser();
 		var userProfileUrl = Url.Action("ViewProfile", "Account", new { id = user.UserID });
-		string TopicLinkGenerator(Topic t) => this.FullUrlHelper("GoToNewestPost", Name, new { id = t.TopicID });
+		string TopicLinkGenerator(Topic t) => Url.Action("GoToNewestPost", Name, new { id = t.TopicID });
 		string PostLinkGenerator(Post p) => Url.Action("PostLink", "Forum", new {id = p.PostID});
 		string RedirectLinkGenerator(Post p) => Url.RouteUrl(new {controller = "Forum", action = "PostLink", id = p.PostID});
 		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();

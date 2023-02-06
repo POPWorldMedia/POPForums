@@ -17,7 +17,7 @@ public class SitemapController : Controller
 	[ResponseCache(Duration = 900)]
 	public async Task<IActionResult> Index()
 	{
-		string SitemapPageLinkGenerator(int page) => this.FullUrlHelper("Page", Name, new { page });
+		string SitemapPageLinkGenerator(int page) => Url.Action("Page", Name, new { page }, Request.Scheme);
 		var sitemapIndex = await _sitemapService.GenerateIndex(SitemapPageLinkGenerator);
 		return Content(sitemapIndex, "text/xml");
 	}
@@ -26,7 +26,7 @@ public class SitemapController : Controller
 	[ResponseCache(Duration = 900)]
 	public async Task<IActionResult> Page(int page)
 	{
-		string TopicLinkGenerator(string id) => this.FullUrlHelper("Topic", ForumController.Name, new { id });
+		string TopicLinkGenerator(string id) => Url.Action("Topic", ForumController.Name, new { id }, Request.Scheme);
 		var sitemap = await _sitemapService.GeneratePage(TopicLinkGenerator, page);
 		return Content(sitemap, "text/xml");
 	}
