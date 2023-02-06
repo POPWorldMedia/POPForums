@@ -1,4 +1,6 @@
-﻿using PopForums.Mvc.Areas.Forums.Models;
+﻿using System.Net;
+using Microsoft.AspNetCore.Http;
+using PopForums.Mvc.Areas.Forums.Models;
 using PopIdentity;
 
 namespace PopForums.Test.Mvc.Controllers;
@@ -42,10 +44,16 @@ public class AccountControllerTests
 		_externalLoginTempService = new Mock<IExternalLoginTempService>();
 		_config = new Mock<IConfig>();
 		_recaptchaService = new Mock<IReCaptchaService>();
-		return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
+		var controller = new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
+		controller.ControllerContext = new ControllerContext
+		{
+			HttpContext = new DefaultHttpContext()
+		};
+		controller.HttpContext.Connection.RemoteIpAddress = IPAddress.Loopback;
+		return controller;
 	}
 	
-	public class View : AccountControllerTests
+	public class Create : AccountControllerTests
 	{
 		[Fact]
 		public void PopulatesDefaultValues()
@@ -79,6 +87,81 @@ public class AccountControllerTests
 			Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
 			Assert.Equal(externalLoginState.ResultData.Email, signupData.Email);
 			Assert.Equal(externalLoginState.ResultData.Name, signupData.Name);
+		}
+	}
+
+	public class Verify : AccountControllerTests
+	{
+		[Fact]
+		public async Task ReturnVerifyFailViewWhenNonGuidCode()
+		{
+			var controller = GetController();
+
+			var result = await controller.Verify("notaguid");
+			
+			Assert.Equal("VerifyFail", result.ViewName);
+		}
+		
+		[Fact]
+		public async Task ReturnDefaultViewWhenNoCode()
+		{
+			var controller = GetController();
+
+			var result = await controller.Verify("");
+			
+			Assert.Null(result.ViewName);
+		}
+		
+		[Fact]
+		public async Task ReturnVerifyFailViewWhenGuidMatchesNoUser()
+		{
+			var controller = GetController();
+			_userService.Setup(x => x.VerifyAuthorizationCode(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync((User)null);
+
+			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
+			
+			Assert.Equal("VerifyFail", result.ViewName);
+		}
+		
+		[Fact]
+		public async Task SuccessReturnViewWithMessage()
+		{
+			var controller = GetController();
+			var user = new User();
+			_userService.Setup(x => x.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), It.IsAny<string>())).ReturnsAsync(user);
+
+			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
+			
+			Assert.Null(result.ViewName);
+			Assert.Equal(Resources.AccountVerified, result.ViewData["Result"]);
+		}
+		
+		[Fact]
+		public async Task SuccessLoginUser()
+		{
+			var controller = GetController();
+			var user = new User();
+			_userService.Setup(x => x.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), It.IsAny<string>())).ReturnsAsync(user);
+
+			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
+			
+			_userService.Verify(x => x.Login(user, It.IsAny<string>()), Times.Once);
+		}
+	}
+	
+	public class VerifyCode : AccountControllerTests
+	{
+		[Fact]
+		public void RedirectsToVerify()
+		{
+			var controller = GetController();
+			var code = "ED89EDB4-FBDD-494E-9ACF-2FE2AD69D21D";
+
+			var result = controller.VerifyCode(code);
+
+			Assert.IsType<RedirectToActionResult>(result);
+			Assert.Equal("Verify", result.ActionName);
+			Assert.Equal(code, result.RouteValues?["id"]);
 		}
 	}
 }
