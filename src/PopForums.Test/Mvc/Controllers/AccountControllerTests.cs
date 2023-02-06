@@ -1,4 +1,7 @@
-﻿namespace PopForums.Test.Mvc.Controllers;
+﻿using PopForums.Mvc.Areas.Forums.Models;
+using PopIdentity;
+
+namespace PopForums.Test.Mvc.Controllers;
 
 public class AccountControllerTests
 {
@@ -41,15 +44,41 @@ public class AccountControllerTests
 		_recaptchaService = new Mock<IReCaptchaService>();
 		return new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
 	}
-
-	[Fact]
-	public void CreateViewPopulatesDefaultValues()
+	
+	public class View : AccountControllerTests
 	{
-		var controller = GetController();
-		_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
+		[Fact]
+		public void PopulatesDefaultValues()
+		{
+			var controller = GetController();
+			_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
 
-		var result = controller.Create();
+			var result = controller.Create();
+			
+			Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
+		}
 		
-		Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
+		[Fact]
+		public void PopulatesValuesFromExternalLogin()
+		{
+			var controller = GetController();
+			_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
+			var externalLoginState = new ExternalLoginState
+			{
+				ResultData = new ResultData
+				{
+					Email = "a@b.com",
+					Name = "Diana"
+				}
+			};
+			_externalLoginTempService.Setup(x => x.Read()).Returns(externalLoginState);
+
+			var result = controller.Create();
+
+			var signupData = (SignupData)result.Model;
+			Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
+			Assert.Equal(externalLoginState.ResultData.Email, signupData.Email);
+			Assert.Equal(externalLoginState.ResultData.Name, signupData.Name);
+		}
 	}
 }
