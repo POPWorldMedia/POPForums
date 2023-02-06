@@ -9,6 +9,7 @@
     "vue-router": "4.1.6"
   },
   "devDependencies": {
+    "typescript": "4.9.5",
     "gulp-typescript": "5.0.1",
     "@babel/core": "7.19.3",
     "@babel/preset-env": "7.19.3",
