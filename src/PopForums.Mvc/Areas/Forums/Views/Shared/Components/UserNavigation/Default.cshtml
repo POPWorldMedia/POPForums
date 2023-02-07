@@ -57,7 +57,7 @@
 					</li>
 					<li class="nav-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="" asp-route-area="Forums" class="nav-link" title="@PopForums.Resources.Recent"><span class="icon icon-clock-history"></span></a></li>
 					<li class="nav-item"><a class="nav-link" asp-controller="@PrivateMessagesController.Name" asp-action="Index" asp-route-pageNumber="" asp-route-area="Forums" title="@PopForums.Resources.PrivateMessages"><span class="icon icon-envelope"></span> <pf-pmcount></pf-pmcount></a></li>
-					<pf-notificationtoggle class="nav-item" panelid="NotificationBar" notificationlistid="NotificationList"></pf-notificationtoggle>
+					<li class="nav-link"><pf-notificationtoggle class="nav-item" panelid="NotificationBar" notificationlistid="NotificationList"></pf-notificationtoggle></li>
 				}
 			</ul>
 		</div>

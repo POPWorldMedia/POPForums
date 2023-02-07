@@ -158,6 +158,22 @@ pf-votecount span {
 	top: -2px;
 }
 
+#ForumContainer .explode {
+	animation: explode 0.5s;
+	animation-fill-mode: forwards;
+}
+@keyframes explode {
+	45% {
+		transform: scale(2, 2);
+	}
+	55% {
+		transform: scale(2, 2);
+	}
+	50% {
+		background-color: var(--bs-light);
+	}
+}
+
 #ForumContainer .hidden {
 	display: none !important;
 }

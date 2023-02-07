@@ -4,6 +4,7 @@ namespace PopForums {
     constructor() {
         super();
         this.userState = PopForums.userState;
+        this.isInit = false;
     }
     
     get panelid(): string {
@@ -18,6 +19,7 @@ namespace PopForums {
     private isReady: boolean;
     private panel: HTMLElement;
     private offCanvas: bootstrap.Offcanvas;
+    private isInit: boolean;
 
     connectedCallback() {
         const delegate = this.ready.bind(this);
@@ -51,9 +53,14 @@ namespace PopForums {
 
     updateUI(data: number): void {
         if (data === 0)
-            this.innerHTML = `<a class="nav-link"><span class="icon icon-bell-fill"></span></a>`;
-        else
-            this.innerHTML = `<a class="nav-link"><span class="icon icon-bell-fill"></span><span class="badge ms-1">${data}</span></a>`;
+            this.innerHTML = `<span class="icon icon-bell-fill"></span>`;
+        else {
+            this.innerHTML = `<span class="icon icon-bell-fill"></span><span class="badge ms-1">${data}</span>`;
+            if (this.isInit) {
+                this.innerHTML = `<span class="icon icon-bell-fill"></span><span class="badge ms-1 explode">${data}</span>`;
+            }
+        }
+        this.isInit = true;
     }
 }
 
