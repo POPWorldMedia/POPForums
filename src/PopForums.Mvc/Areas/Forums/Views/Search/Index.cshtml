@@ -58,7 +58,7 @@ else
 						<a asp-controller="@ForumController.Name" asp-action="GoToNewestPost" asp-route-id="@topic.TopicID"><pf-topicReadIndicator topic="@topic" pagedTopicContainer="@Model" /></a>
 					}
 				</td>
-				<td>
+				<td class="w-100">
 					<h2>@Html.ActionLink(topic.Title, "Topic", "Forum", new { id = topic.UrlName, pageNumber = 1 }, null)</h2>
 					<small class="float-end d-none d-sm-block text-secondary">
 						@PopForums.Resources.StartedBy: @topic.StartedByName @PopForums.Resources.In @Model.ForumTitles[topic.ForumID] | @PopForums.Resources.Views: @topic.ViewCount | @PopForums.Resources.Replies: @topic.ReplyCount | @PopForums.Resources.Last: <pf-formattedtime utctime="@topic.LastPostTime.ToString("o")"></pf-formattedtime> @PopForums.Resources.By @topic.LastPostName

@@ -6,10 +6,6 @@
 	z-index: 1025;
 }
 
-#ForumContainer .newIndicator {
-	max-width: 40px;
-}
-
 #ForumContainer #PostResponseMessage, #ForumContainer #TopicModerationLog {
 	display: none;
 }
