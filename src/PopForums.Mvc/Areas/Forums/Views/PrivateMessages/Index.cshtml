@@ -18,18 +18,22 @@
 <pf-pagerlinks controllerName="PrivateMessages" actionName="Index" pagerContext="@(PagerContext)ViewBag.PagerContext" class="pagination pagination-sm pagerLinks" moreTextClass="morePager" currentTextClass="currentPager active"/>
 
 <table class="table mt-3 table-hover">
+	<tbody>
 	@foreach (var pm in Model)
 	{
 		<tr>
 			<td class="newIndicator">
-				<a asp-action="View" asp-route-id="@pm.PMID"><pf-pmReadIndicator privateMessage="@pm" /></a>
+				<a asp-action="View" asp-route-id="@pm.PMID"><pf-pmReadIndicator privateMessage="@pm"/></a>
 			</td>
-			<td class="text-center">
-				<form asp-action="ArchivePM" asp-route-id="@pm.PMID"><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></form>
+			<td>
+				<form asp-action="ArchivePM" asp-route-id="@pm.PMID"><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary"/></form>
 			</td>
-			<td><a asp-action="View" asp-route-id="@pm.PMID">@PrivateMessage.GetUserNames(pm, user.UserID)</a></td>
-			<td><small><pf-formattedtime utctime="@pm.LastPostTime.ToString("o")"></pf-formattedtime></small></td>
+			<td class="w-100">
+				<h2><a asp-action="View" asp-route-id="@pm.PMID">@PrivateMessage.GetUserNames(pm, user.UserID)</a></h2>
+				<small class="float-end d-none d-sm-block text-secondary"><pf-formattedtime utctime="@pm.LastPostTime.ToString("o")"></pf-formattedtime></small>
+			</td>
 		</tr>
 	}
+	</tbody>
 </table>
 <p><a asp-action="Archive">@PopForums.Resources.ViewArchivedMessages</a></p>
