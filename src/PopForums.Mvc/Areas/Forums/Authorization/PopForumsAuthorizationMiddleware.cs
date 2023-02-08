@@ -18,10 +18,9 @@ public class PopForumsAuthorizationMiddleware
 			return;
 		}
 		var authResult = await context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
-		var identity = authResult?.Principal?.Identity as ClaimsIdentity;
-		if (identity != null)
+		if (authResult.Principal?.Identity is ClaimsIdentity identity)
 		{
-			var user = userService.GetUserByName(identity.Name).Result;
+			var user = await userService.GetUserByName(identity.Name);
 			if (user != null)
 			{
 				foreach (var role in user.Roles)
