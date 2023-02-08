@@ -36,8 +36,6 @@ public static class ServiceCollections
 		services.AddTransient<IUserStateComposer, UserStateComposer>();
 		services.AddTransient<IBroker, Broker>();
 		services.AddTransient<IUserIdProvider, PopForumsUserIdProvider>();
-		// this is required for error logging:
-		services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			
 		var serviceProvider = services.BuildServiceProvider();
 		var setupService = serviceProvider.GetService<ISetupService>();
@@ -45,7 +43,11 @@ public static class ServiceCollections
 			return services;
 
 		services.AddAuthentication()
-			.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option => option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0));
+			.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option =>
+			{
+				option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0);
+				option.LoginPath = "/Forums/Account/Login";
+			});
 
 		return services;
 	}
