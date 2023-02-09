@@ -27,6 +27,18 @@ public class ConfigLoader
 		container.StorageConnectionString = configuration["PopForums:Storage:ConnectionString"];
 		var renderBootstrap = configuration["PopForums:RenderBootstrap"];
 		container.RenderBootstrap = renderBootstrap != null ? bool.Parse(renderBootstrap) : true;
+		var isOAuthOnly = configuration["PopForums:OAuthOnly:IsOAuthOnly"];
+		container.IsOAuthOnly = isOAuthOnly != null && bool.Parse(isOAuthOnly);
+		container.OAuthClientID = configuration["PopForums:OAuthOnly:OAuthClientID"];
+		container.OAuthClientSecret = configuration["PopForums:OAuthOnly:OAuthClientSecret"];
+		container.OAuthLoginBaseUrl = configuration["PopForums:OAuthOnly:OAuthLoginBaseUrl"];
+		container.OAuthTokenUrl = configuration["PopForums:OAuthOnly:OAuthTokenUrl"];
+		container.OAuthAdminClaimName = configuration["PopForums:OAuthOnly:OAuthAdminClaimName"];
+		container.OAuthAdminClaimValue = configuration["PopForums:OAuthOnly:OAuthAdminClaimValue"];
+		container.OAuthModeratorClaimName = configuration["PopForums:OAuthOnly:OAuthModeratorClaimName"];
+		container.OAuthModeratorClaimValue = configuration["PopForums:OAuthOnly:OAuthModeratorClaimValue"];
+		container.OAuthScopes = configuration["PopForums:OAuthOnly:OAuthScopes"];
+		
 		return container;
 	} 
 }

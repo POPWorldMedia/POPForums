@@ -19,6 +19,16 @@ public interface IConfig
 	string BaseImageBlobUrl { get; }
 	string StorageConnectionString { get; }
 	bool RenderBootstrap { get; }
+	bool IsOAuthOnly { get; }
+	string OAuthClientID { get; }
+	string OAuthClientSecret { get; }
+	string OAuthLoginBaseUrl { get; }
+	string OAuthTokenUrl { get; }
+	string OAuthAdminClaimName { get; }
+	string OAuthAdminClaimValue { get; }
+	string OAuthModeratorClaimName { get; }
+	string OAuthModeratorClaimValue { get; }
+	String OAuthScopes { get; }
 }
 
 public class Config : IConfig
@@ -51,4 +61,14 @@ public class Config : IConfig
 	public string BaseImageBlobUrl => _configContainer.BaseImageBlobUrl;
 	public string StorageConnectionString => _configContainer.StorageConnectionString;
 	public bool RenderBootstrap => _configContainer.RenderBootstrap;
+	public bool IsOAuthOnly => _configContainer.IsOAuthOnly;
+	public string OAuthClientID => _configContainer.OAuthClientID;
+	public string OAuthClientSecret => _configContainer.OAuthClientSecret;
+	public string OAuthLoginBaseUrl => _configContainer.OAuthLoginBaseUrl;
+	public string OAuthTokenUrl => _configContainer.OAuthTokenUrl;
+	public string OAuthAdminClaimName => _configContainer.OAuthAdminClaimName;
+	public string OAuthAdminClaimValue => _configContainer.OAuthAdminClaimValue;
+	public string OAuthModeratorClaimName => _configContainer.OAuthModeratorClaimName;
+	public string OAuthModeratorClaimValue => _configContainer.OAuthModeratorClaimValue;
+	public string OAuthScopes => _configContainer.OAuthScopes;
 }
