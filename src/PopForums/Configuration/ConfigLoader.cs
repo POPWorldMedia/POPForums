@@ -28,7 +28,7 @@ public class ConfigLoader
 		var renderBootstrap = configuration["PopForums:RenderBootstrap"];
 		container.RenderBootstrap = renderBootstrap != null ? bool.Parse(renderBootstrap) : true;
 		var isOAuthOnly = configuration["PopForums:OAuthOnly:IsOAuthOnly"];
-		container.IsOAuthOnly = isOAuthOnly != null && bool.Parse(isOAuthOnly);
+		container.IsOAuthOnly = isOAuthOnly != null ? bool.Parse(isOAuthOnly) : false;
 		container.OAuthClientID = configuration["PopForums:OAuthOnly:OAuthClientID"];
 		container.OAuthClientSecret = configuration["PopForums:OAuthOnly:OAuthClientSecret"];
 		container.OAuthLoginBaseUrl = configuration["PopForums:OAuthOnly:OAuthLoginBaseUrl"];
