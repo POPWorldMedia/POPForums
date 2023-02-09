@@ -1,6 +1,6 @@
 POP Forums
-Copyright (c)1999-2022, POP World Media, LLC and Jeffrey M. Putz
-http://popw.com/
+Copyright (c)1999-2023, POP World Media, LLC and Jeffrey M. Putz
+https://popw.com/
 https://jeffputz.com/
 
 TRANSLATIONS PROVIDED BY:
@@ -32,6 +32,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 OTHER LICENSES:
-.NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit, TinyMCE: MIT
-SignalR, xunit, ImageSharp: Apache 2.0
 MOQ: BSD 3-Clause
+.NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit, TinyMCE: MIT
+SignalR, xunit: Apache 2.0
+ImageSharp: Apache 2.0 as long as you meet the open source and/or revenue stipulations 
+indicated in their license: https://github.com/SixLabors/ImageSharp/blob/main/LICENSE
