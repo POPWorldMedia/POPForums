@@ -36,6 +36,7 @@ public static class ServiceCollections
 		services.AddTransient<IUserStateComposer, UserStateComposer>();
 		services.AddTransient<IBroker, Broker>();
 		services.AddTransient<IUserIdProvider, PopForumsUserIdProvider>();
+		services.AddTransient<IOAuthOnlyService, OAuthOnlyService>();
 			
 		var serviceProvider = services.BuildServiceProvider();
 		var setupService = serviceProvider.GetService<ISetupService>();

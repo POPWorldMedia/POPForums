@@ -24,6 +24,7 @@ public class AccountControllerTests
 	private Mock<IExternalLoginTempService> _externalLoginTempService;
 	private Mock<IConfig> _config;
 	private Mock<IReCaptchaService> _recaptchaService;
+	private Mock<IOAuthOnlyService> _oAuthOnlyService;
 
 	private AccountController GetController()
 	{
@@ -44,7 +45,8 @@ public class AccountControllerTests
 		_externalLoginTempService = new Mock<IExternalLoginTempService>();
 		_config = new Mock<IConfig>();
 		_recaptchaService = new Mock<IReCaptchaService>();
-		var controller = new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object);
+		_oAuthOnlyService = new Mock<IOAuthOnlyService>();
+		var controller = new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object, _oAuthOnlyService.Object);
 		controller.ControllerContext = new ControllerContext
 		{
 			HttpContext = new DefaultHttpContext()

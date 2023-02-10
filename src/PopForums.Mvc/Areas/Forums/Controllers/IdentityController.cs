@@ -1,4 +1,5 @@
-﻿using PopIdentity;
+﻿using System.Security.Authentication;
+using PopIdentity;
 using PopIdentity.Providers.Facebook;
 using PopIdentity.Providers.Google;
 using PopIdentity.Providers.Microsoft;
@@ -21,8 +22,9 @@ public class IdentityController : Controller
 	private readonly IExternalLoginTempService _externalLoginTempService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly ISecurityLogService _securityLogService;
+	private readonly IOAuthOnlyService _oAuthOnlyService;
 
-	public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService)
+	public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService, IOAuthOnlyService oAuthOnlyService)
 	{
 		_loginLinkFactory = loginLinkFactory;
 		_stateHashingService = stateHashingService;
@@ -36,6 +38,7 @@ public class IdentityController : Controller
 		_externalLoginTempService = externalLoginTempService;
 		_userRetrievalShim = userRetrievalShim;
 		_securityLogService = securityLogService;
+		_oAuthOnlyService = oAuthOnlyService;
 	}
 
 	public static string Name = "Identity";
@@ -143,8 +146,14 @@ public class IdentityController : Controller
 			await _userService.Login(matchResult.User, ip);
 			_externalLoginTempService.Remove();
 			await PerformSignInAsync(matchResult.User, HttpContext);
+			if (string.IsNullOrEmpty(returnUrl))
+				returnUrl = Url.Action(nameof(HomeController.Index), HomeController.Name);
 			return Redirect(returnUrl);
 		}
+
+		if (loginState.ProviderType == ProviderType.OAuthOnly)
+			throw new AuthenticationException(
+				"A callback was made to login in IsOAuthOnly mode, but no user was found.");
 		ViewBag.Referrer = returnUrl;
 		return View();
 	}
@@ -206,6 +215,9 @@ public class IdentityController : Controller
 		CallbackResult result;
 		switch (loginState.ProviderType)
 		{
+			case ProviderType.OAuthOnly:
+				result = await _oAuthOnlyService.ProcessOAuthLogin(redirectUri);
+				break;
 			case ProviderType.Facebook:
 				result = await _facebookCallbackProcessor.VerifyCallback(redirectUri, _settingsManager.Current.FacebookAppID, _settingsManager.Current.FacebookAppSecret);
 				break;

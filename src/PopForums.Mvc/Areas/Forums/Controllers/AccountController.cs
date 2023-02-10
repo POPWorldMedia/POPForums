@@ -1,9 +1,11 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopIdentity;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 public class AccountController : Controller
 {
-	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
+	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService, IOAuthOnlyService oAuthOnlyService)
 	{
 		_userService = userService;
 		_settingsManager = settingsManager;
@@ -22,6 +24,7 @@ public class AccountController : Controller
 		_externalLoginTempService = externalLoginTempService;
 		_config = config;
 		_reCaptchaService = reCaptchaService;
+		_oAuthOnlyService = oAuthOnlyService;
 	}
 
 	public static string Name = "Account";
@@ -45,6 +48,7 @@ public class AccountController : Controller
 	private readonly IExternalLoginTempService _externalLoginTempService;
 	private readonly IConfig _config;
 	private readonly IReCaptchaService _reCaptchaService;
+	private readonly IOAuthOnlyService _oAuthOnlyService;
 
 	[PopForumsAuthorizationIgnore]
 	public ViewResult Create()
@@ -416,8 +420,17 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
-	public ViewResult Login()
+	public ActionResult Login()
 	{
+		if (_config.IsOAuthOnly)
+		{
+			var identityProviderRedirectUrl = Url.Action(nameof(IdentityController.CallbackHandler), IdentityController.Name, null, Request.Scheme);
+			var redirect = _oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
+			var loginState = new ExternalLoginState {ProviderType = ProviderType.OAuthOnly, ReturnUrl = identityProviderRedirectUrl };
+			_externalLoginTempService.Persist(loginState);
+			return Redirect(redirect);
+		}
+		
 		string link;
 		if (string.IsNullOrWhiteSpace(Request.Headers.Referer))
 			link = Url.Action("Index", HomeController.Name);
