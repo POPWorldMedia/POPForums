@@ -9,6 +9,8 @@ public class OAuthOnlyServiceTests
 	private Mock<IOAuth2LoginUrlGenerator> _oAuth2LoginUrlGen;
 	private Mock<IStateHashingService> _stateHashingService;
 	private Mock<IOAuth2JwtCallbackProcessor> _oAuth2JwtCallbackProcessor;
+	private Mock<IExternalUserAssociationManager> _externalUserAssociationManager;
+	private Mock<IUserService> _userService;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -16,7 +18,9 @@ public class OAuthOnlyServiceTests
 		_oAuth2LoginUrlGen = new Mock<IOAuth2LoginUrlGenerator>();
 		_stateHashingService = new Mock<IStateHashingService>();
 		_oAuth2JwtCallbackProcessor = new Mock<IOAuth2JwtCallbackProcessor>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object);
+		_externalUserAssociationManager = new Mock<IExternalUserAssociationManager>();
+		_userService = new Mock<IUserService>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -60,7 +64,7 @@ public class OAuthOnlyServiceTests
 			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
 				.ReturnsAsync(callbackResult);
 
-			var result = await service.ProcessOAuthLogin("url");
+			var result = await service.ProcessOAuthLogin("url", "ip");
 			
 			Assert.False(result.IsSuccessful);
 		}

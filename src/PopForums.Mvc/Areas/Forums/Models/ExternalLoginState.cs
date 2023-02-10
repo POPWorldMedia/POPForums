@@ -7,4 +7,5 @@ public class ExternalLoginState
 	public ResultData ResultData { get; set; }
 	public string ReturnUrl { get; set; }
 	public ProviderType ProviderType { get; set; }
+	public DateTime? Expiration { get; set; }
 }

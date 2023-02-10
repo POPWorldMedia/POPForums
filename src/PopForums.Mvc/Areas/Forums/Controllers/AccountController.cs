@@ -51,8 +51,11 @@ public class AccountController : Controller
 	private readonly IOAuthOnlyService _oAuthOnlyService;
 
 	[PopForumsAuthorizationIgnore]
-	public ViewResult Create()
+	public IActionResult Create()
 	{
+		if (_config.IsOAuthOnly)
+			return Forbid();
+		
 		SetupCreateData();
 		var signupData = new SignupData
 		{
@@ -76,8 +79,11 @@ public class AccountController : Controller
 
 	[PopForumsAuthorizationIgnore]
 	[HttpPost]
-	public async Task<ViewResult> Create(SignupData signupData)
+	public async Task<IActionResult> Create(SignupData signupData)
 	{
+		if (_config.IsOAuthOnly)
+			return Forbid();
+		
 		var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 		if (_config.UseReCaptcha)
 		{

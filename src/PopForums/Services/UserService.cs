@@ -197,7 +197,8 @@ public class UserService : IUserService
 
 	public async Task<User> CreateUserWithProfile(SignupData signupData, string ip)
 	{
-		var user = await CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
+		var isApproved = _config.IsOAuthOnly || _settingsManager.Current.IsNewUserApproved;
+		var user = await CreateUser(signupData.Name, signupData.Email, signupData.Password, isApproved, ip);
 		var profile = new Profile
 		{
 			UserID = user.UserID,
