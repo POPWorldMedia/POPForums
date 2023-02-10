@@ -88,8 +88,7 @@ public class AccountController : Controller
 		await ValidateSignupData(signupData, ModelState, ip);
 		if (ModelState.IsValid)
 		{
-			var user = await _userService.CreateUser(signupData, ip);
-			await _profileService.Create(user, signupData);
+			var user = await _userService.CreateUserWithProfile(signupData, ip);
 			var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
 			var result = _newAccountMailer.Send(user, verifyUrl);
 			if (result != SmtpStatusCode.Ok)

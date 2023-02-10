@@ -10,7 +10,7 @@ public interface IUserService
 	Task<User> GetUserByAuhtorizationKey(Guid authorizationKey);
 	Task<bool> IsNameInUse(string name);
 	Task<bool> IsEmailInUse(string email);
-	Task<User> CreateUser(SignupData signupData, string ip);
+	Task<User> CreateUserWithProfile(SignupData signupData, string ip);
 	Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip);
 	Task DeleteUser(User targetUser, User user, string ip, bool ban);
 	Task UpdateLastActivityDate(User user);
@@ -195,9 +195,18 @@ public class UserService : IUserService
 		return await _banRepository.EmailIsBanned(email);
 	}
 
-	public async Task<User> CreateUser(SignupData signupData, string ip)
+	public async Task<User> CreateUserWithProfile(SignupData signupData, string ip)
 	{
-		return await CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
+		var user = await CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
+		var profile = new Profile
+		{
+			UserID = user.UserID,
+			IsSubscribed = signupData.IsSubscribed,
+			IsTos = signupData.IsTos,
+			IsAutoFollowOnReply = signupData.IsAutoFollowOnReply
+		};
+		await _profileRepository.Create(profile);
+		return user;
 	}
 
 	public async Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip)

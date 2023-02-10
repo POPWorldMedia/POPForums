@@ -172,22 +172,6 @@ public class ProfileServiceTests
 	}
 
 	[Fact]
-	public async Task CreateFromUserAndSignupData()
-	{
-		var service = GetService();
-		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		var signupData = new SignupData {IsSubscribed = true, IsTos = true, };
-		_profileRepo.Setup(r => r.Create(It.Is<Profile>(p =>
-			p.UserID == user.UserID &&
-			p.IsSubscribed == signupData.IsSubscribed &&
-			p.IsTos == signupData.IsTos ))).Verifiable();
-		var result = await service.Create(user, signupData);
-		Assert.Equal(user.UserID, result.UserID);
-		Assert.Equal(signupData.IsSubscribed, result.IsSubscribed);
-		Assert.Equal(signupData.IsTos, result.IsTos);
-	}
-
-	[Fact]
 	public async Task Update()
 	{
 		var service = GetService();

@@ -65,7 +65,7 @@ public class AccountControllerTests
 
 			var result = controller.Create();
 			
-			Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
+			Assert.Equal("tos", (result as ViewResult)?.ViewData[AccountController.TosKey]);
 		}
 		
 		[Fact]
@@ -85,8 +85,8 @@ public class AccountControllerTests
 
 			var result = controller.Create();
 
-			var signupData = (SignupData)result.Model;
-			Assert.Equal("tos", result.ViewData[AccountController.TosKey]);
+			var signupData = (SignupData)(result as ViewResult)?.Model;
+			Assert.Equal("tos", (result as ViewResult)?.ViewData[AccountController.TosKey]);
 			Assert.Equal(externalLoginState.ResultData.Email, signupData.Email);
 			Assert.Equal(externalLoginState.ResultData.Name, signupData.Name);
 		}

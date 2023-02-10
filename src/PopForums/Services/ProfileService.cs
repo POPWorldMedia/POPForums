@@ -4,7 +4,6 @@ public interface IProfileService
 {
 	Task<Profile> GetProfile(User user);
 	Task Create(Profile profile);
-	Task<Profile> Create(User user, SignupData signupData);
 	Task Update(Profile profile);
 	Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false);
 	Task EditUserProfile(User user, UserEditProfile userEditProfile);
@@ -91,19 +90,6 @@ public class ProfileService : IProfileService
 		if (profile.UserID == 0)
 			throw new Exception("Can't create a profile not associated with a valid UserID");
 		await _profileRepository.Create(profile);
-	}
-
-	public async Task<Profile> Create(User user, SignupData signupData)
-	{
-		var profile = new Profile
-		{
-			UserID = user.UserID,
-			IsSubscribed = signupData.IsSubscribed,
-			IsTos = signupData.IsTos,
-			IsAutoFollowOnReply = signupData.IsAutoFollowOnReply
-		};
-		await _profileRepository.Create(profile);
-		return profile;
 	}
 
 	public async Task Update(Profile profile)
