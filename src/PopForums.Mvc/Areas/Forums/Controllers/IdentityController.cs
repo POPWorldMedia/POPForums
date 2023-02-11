@@ -93,6 +93,7 @@ public class IdentityController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public IActionResult ExternalLogin(string provider, string returnUrl)
 	{
@@ -164,6 +165,7 @@ public class IdentityController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> LoginAndAssociate([FromBody] Credentials credentials)
 	{

@@ -51,11 +51,9 @@ public class AccountController : Controller
 	private readonly IOAuthOnlyService _oAuthOnlyService;
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public IActionResult Create()
 	{
-		if (_config.IsOAuthOnly)
-			return Forbid();
-		
 		SetupCreateData();
 		var signupData = new SignupData
 		{
@@ -78,12 +76,10 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> Create(SignupData signupData)
 	{
-		if (_config.IsOAuthOnly)
-			return Forbid();
-		
 		var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 		if (_config.UseReCaptcha)
 		{
@@ -151,6 +147,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> Verify(string id)
 	{
 		var authKey = Guid.Empty;
@@ -167,6 +164,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public RedirectToActionResult VerifyCode(string authorizationCode)
 	{
@@ -174,6 +172,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> RequestCode(string email)
 	{
 		var user = await _userService.GetUserByEmail(email);
@@ -198,6 +197,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> Forgot(string email)
 	{
@@ -216,6 +216,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> ResetPassword(string id)
 	{
 		var authKey = Guid.Empty;
@@ -231,6 +232,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 	{
@@ -252,6 +254,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ActionResult ResetPasswordSuccess()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -283,6 +286,7 @@ public class AccountController : Controller
 		return View(newEdit);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ViewResult Security()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -293,6 +297,7 @@ public class AccountController : Controller
 		return View(userEdit);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
 	{
@@ -314,6 +319,7 @@ public class AccountController : Controller
 		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
 	{
@@ -461,6 +467,7 @@ public class AccountController : Controller
 		return View();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> ExternalLogins()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -471,6 +478,7 @@ public class AccountController : Controller
 		return View(externalAssociations);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> RemoveExternalLogin(int id)
 	{
 		var user = _userRetrievalShim.GetUser();

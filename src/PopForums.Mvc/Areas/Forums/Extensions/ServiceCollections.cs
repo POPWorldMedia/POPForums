@@ -49,6 +49,12 @@ public static class ServiceCollections
 			{
 				option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0);
 				option.LoginPath = "/Forums/Account/Login";
+				// TODO: This is lame because of fx, see: https://github.com/dotnet/aspnetcore/issues/9039
+				option.Events.OnRedirectToAccessDenied = context =>
+				{
+					context.Response.StatusCode = 403;
+					return Task.CompletedTask;
+				};
 			});
 
 		return services;
