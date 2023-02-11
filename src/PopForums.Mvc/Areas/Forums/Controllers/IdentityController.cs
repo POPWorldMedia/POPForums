@@ -52,6 +52,7 @@ public class IdentityController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> Login([FromBody] Credentials credentials)
 	{
