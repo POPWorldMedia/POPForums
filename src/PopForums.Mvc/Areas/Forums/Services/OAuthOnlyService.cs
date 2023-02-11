@@ -17,8 +17,9 @@ public class OAuthOnlyService : IOAuthOnlyService
 	private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 	private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 	private readonly IUserService _userService;
+	private readonly IOAuthOnlyRoleMapper _oAuthOnlyRoleMapper;
 
-	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService)
+	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IOAuthOnlyRoleMapper oAuthOnlyRoleMapper)
 	{
 		_config = config;
 		_oAuth2LoginUrlGenerator = oAuth2LoginUrlGenerator;
@@ -26,6 +27,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		_oAuth2JwtCallbackProcessor = oAuth2JwtCallbackProcessor;
 		_externalUserAssociationManager = externalUserAssociationManager;
 		_userService = userService;
+		_oAuthOnlyRoleMapper = oAuthOnlyRoleMapper;
 	}
 
 	public string GetLoginUrl(string redirectUrl)
@@ -59,7 +61,10 @@ public class OAuthOnlyService : IOAuthOnlyService
 		}
 		
 		// lookup the external user
-		var externalLoginInfo = new ExternalLoginInfo(ProviderType.OAuthOnly.ToString(), callbackResult.ResultData.ID, callbackResult.ResultData.Name);
+		var externalLoginInfo = new ExternalLoginInfo(
+			ProviderType.OAuthOnly.ToString(), 
+			callbackResult.ResultData.ID, 
+			callbackResult.ResultData.Name);
 		var matchResult = await _externalUserAssociationManager.ExternalUserAssociationCheck(externalLoginInfo, ip);
 
 		User user;
@@ -88,6 +93,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		}
 		
 		// set admin/mod based on claims
+		await _oAuthOnlyRoleMapper.MapRoles(user, callbackResult.Claims);
 
 		return callbackResult;
 	}

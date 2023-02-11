@@ -231,8 +231,11 @@ public class IdentityController : Controller
 		{
 			case ProviderType.OAuthOnly:
 				result = await _oAuthOnlyService.ProcessOAuthLogin(redirectUri, ip);
-				loginState.Expiration = result.Token.ValidTo;
-				loginState.ReturnUrl = null;
+				if (result.IsSuccessful)
+				{
+					loginState.Expiration = result.Token.ValidTo;
+					loginState.ReturnUrl = null;
+				}
 				break;
 			case ProviderType.Facebook:
 				result = await _facebookCallbackProcessor.VerifyCallback(redirectUri, _settingsManager.Current.FacebookAppID, _settingsManager.Current.FacebookAppSecret);

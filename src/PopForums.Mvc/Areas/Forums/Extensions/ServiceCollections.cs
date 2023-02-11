@@ -37,6 +37,7 @@ public static class ServiceCollections
 		services.AddTransient<IBroker, Broker>();
 		services.AddTransient<IUserIdProvider, PopForumsUserIdProvider>();
 		services.AddTransient<IOAuthOnlyService, OAuthOnlyService>();
+		services.AddTransient<IOAuthOnlyRoleMapper, OAuthOnlyRoleMapper>();
 			
 		var serviceProvider = services.BuildServiceProvider();
 		var setupService = serviceProvider.GetService<ISetupService>();

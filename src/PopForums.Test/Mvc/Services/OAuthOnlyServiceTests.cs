@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using PopIdentity;
 using PopIdentity.Providers.OAuth2;
 
@@ -11,6 +12,7 @@ public class OAuthOnlyServiceTests
 	private Mock<IOAuth2JwtCallbackProcessor> _oAuth2JwtCallbackProcessor;
 	private Mock<IExternalUserAssociationManager> _externalUserAssociationManager;
 	private Mock<IUserService> _userService;
+	private Mock<IOAuthOnlyRoleMapper> oAuthOnlyRoleMapper;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -20,7 +22,8 @@ public class OAuthOnlyServiceTests
 		_oAuth2JwtCallbackProcessor = new Mock<IOAuth2JwtCallbackProcessor>();
 		_externalUserAssociationManager = new Mock<IExternalUserAssociationManager>();
 		_userService = new Mock<IUserService>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object);
+		oAuthOnlyRoleMapper = new Mock<IOAuthOnlyRoleMapper>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, oAuthOnlyRoleMapper.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -67,6 +70,65 @@ public class OAuthOnlyServiceTests
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
 			Assert.False(result.IsSuccessful);
+		}
+
+		[Fact]
+		public async Task CallbackValuesMappedToExternalCheck()
+		{
+			var service = GetService();
+			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new List<Claim>(), ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(callbackResult);
+			var externalUserMatch = new ExternalUserAssociationMatchResult { User = new User(), Successful = true };
+			ExternalLoginInfo calledExternalInfo = null;
+			_externalUserAssociationManager
+				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>())).ReturnsAsync(externalUserMatch)
+				.Callback<ExternalLoginInfo, string>((e, i) => calledExternalInfo = e);
+
+			var result = await service.ProcessOAuthLogin("url", "ip");
+			
+			Assert.Equal(callbackResult.ResultData.ID, calledExternalInfo.ProviderKey);
+			Assert.Equal(callbackResult.ResultData.Name, calledExternalInfo.ProviderDisplayName);
+			Assert.Equal(ProviderType.OAuthOnly.ToString(), calledExternalInfo.LoginProvider);
+		}
+		
+		[Fact]
+		public async Task ExistingUserMappedToClaims()
+		{
+			var service = GetService();
+			var claims = new Claim[] { new("name", "value") };
+			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = claims, ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(callbackResult);
+			var externalUserMatch = new ExternalUserAssociationMatchResult { User = new User(), Successful = true };
+			_externalUserAssociationManager
+				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
+				.ReturnsAsync(externalUserMatch);
+
+			var result = await service.ProcessOAuthLogin("url", "ip");
+			
+			oAuthOnlyRoleMapper.Verify(x => x.MapRoles(externalUserMatch.User, claims), Times.Once);
+		}
+		
+		[Fact]
+		public async Task NewUserMappedToClaims()
+		{
+			var service = GetService();
+			var claims = new Claim[] { new("name", "value") };
+			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = claims, ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(callbackResult);
+			var externalUserMatch = new ExternalUserAssociationMatchResult { Successful = false };
+			_externalUserAssociationManager
+				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
+				.ReturnsAsync(externalUserMatch);
+			var user = new User();
+			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), It.IsAny<string>()))
+				.ReturnsAsync(user);
+
+			var result = await service.ProcessOAuthLogin("url", "ip");
+			
+			oAuthOnlyRoleMapper.Verify(x => x.MapRoles(user, claims), Times.Once);
 		}
 	}
 }
