@@ -149,10 +149,7 @@ public class IdentityController : Controller
 		{
 			await _userService.Login(matchResult.User, ip);
 			_externalLoginTempService.Remove();
-			if (loginState.ProviderType == ProviderType.OAuthOnly && loginState.Expiration.HasValue)
-				await PerformSignInAsync(matchResult.User, HttpContext, loginState.Expiration.Value);
-			else
-				await PerformSignInAsync(matchResult.User, HttpContext);
+			await PerformSignInAsync(matchResult.User, HttpContext);
 			if (string.IsNullOrEmpty(returnUrl))
 				returnUrl = Url.Action(nameof(HomeController.Index), HomeController.Name);
 			return Redirect(returnUrl);

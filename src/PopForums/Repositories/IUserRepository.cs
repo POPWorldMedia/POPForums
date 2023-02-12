@@ -93,4 +93,7 @@ public interface IUserRepository
 	Task<int> GetTotalUsers();
 	Dictionary<User, int> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
+	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
+	Task UpdateRefreshToken(User user, string refreshToken);
+	Task<string> GetRefreshToken(User user);
 }

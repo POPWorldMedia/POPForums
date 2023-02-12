@@ -44,6 +44,9 @@ public interface IUserService
 	Task<List<User>> GetSubscribedUsers();
 	Dictionary<User, int> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
+	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
+	Task UpdateRefreshToken(User user, string refreshToken);
+	Task<string> GetRefreshToken(User user);
 }
 
 public class UserService : IUserService
@@ -538,5 +541,20 @@ public class UserService : IUserService
 			}
 		}
 		return userResults;
+	}
+
+	public async Task UpdateTokenExpiration(User user, DateTime? tokenExpiration)
+	{
+		await _userRepository.UpdateTokenExpiration(user, tokenExpiration);
+	}
+
+	public async Task UpdateRefreshToken(User user, string refreshToken)
+	{
+		await _userRepository.UpdateRefreshToken(user, refreshToken);
+	}
+
+	public async Task<string> GetRefreshToken(User user)
+	{
+		return await _userRepository.GetRefreshToken(user);
 	}
 }

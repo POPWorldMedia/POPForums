@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
 		public const string PointTotals = "PopForums.Users.Points.";
 	}
 
-	public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey";
+	public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey, pf_PopForumsUser.TokenExpiration";
 
 	private void CacheUser(User user)
 	{
@@ -144,6 +144,20 @@ public class UserRepository : IUserRepository
 			connection.ExecuteAsync("UPDATE pf_UserActivity SET LastLoginDate = @LastLoginDate WHERE UserID = @UserID", new { LastLoginDate = newDate, user.UserID }));
 	}
 
+	public async Task UpdateRefreshToken(User user, string refreshToken)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("UPDATE pf_UserActivity SET RefreshToken = @refreshToken WHERE UserID = @UserID", new { refreshToken, user.UserID }));
+	}
+
+	public async Task<string> GetRefreshToken(User user)
+	{
+		Task<string> refreshToken = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			refreshToken = connection.QuerySingleOrDefaultAsync<string>("SELECT RefreshToken FROM pf_UserActivity WHERE UserID = @UserID", new { user.UserID }));
+		return refreshToken.Result;
+	}
+
 	public async Task ChangeName(User user, string newName)
 	{
 		var oldName = user.Name;
@@ -170,6 +184,13 @@ public class UserRepository : IUserRepository
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_PopForumsUser SET AuthorizationKey = @AuthorizationKey WHERE UserID = @UserID", new { AuthorizationKey = key, user.UserID }));
+		RemoveCacheUser(user.Name);
+	}
+
+	public async Task UpdateTokenExpiration(User user, DateTime? tokenExpiration)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("UPDATE pf_PopForumsUser SET TokenExpiration = @tokenExpiration WHERE UserID = @UserID", new { tokenExpiration, user.UserID }));
 		RemoveCacheUser(user.Name);
 	}
 

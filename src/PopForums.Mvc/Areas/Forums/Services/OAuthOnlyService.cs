@@ -7,6 +7,7 @@ public interface IOAuthOnlyService
 {
 	string GetLoginUrl(string redirectUrl);
 	Task<CallbackResult> ProcessOAuthLogin(string redirectUrl, string ip);
+	Task<bool> AttemptTokenRefresh(User user);
 }
 
 public class OAuthOnlyService : IOAuthOnlyService
@@ -92,9 +93,27 @@ public class OAuthOnlyService : IOAuthOnlyService
 			// reconcile name
 		}
 		
+		// set the token expiration
+		await _userService.UpdateTokenExpiration(user, callbackResult.Token.ValidTo);
+		// update refresh token
+		await _userService.UpdateRefreshToken(user, callbackResult.RefreshToken);
+		
 		// set admin/mod based on claims
 		await _claimsToRoleMapper.MapRoles(user, callbackResult.Claims);
 
 		return callbackResult;
+	}
+
+	public async Task<bool> AttemptTokenRefresh(User user)
+	{
+		var previousToken = await _userService.GetRefreshToken(user);
+		var callbackResult = await _oAuth2JwtCallbackProcessor.GetRefreshToken(previousToken, _config.OAuthTokenUrl,
+			_config.OAuthClientID, _config.OAuthClientSecret);
+		if (callbackResult.IsSuccessful)
+		{
+			await _userService.UpdateRefreshToken(user, callbackResult.RefreshToken);
+			await _userService.UpdateTokenExpiration(user, callbackResult.Token.ValidTo);
+		}
+		return callbackResult.IsSuccessful;
 	}
 }
