@@ -24,9 +24,9 @@ public class ConfigContainer
 	public string OAuthClientSecret { get; set; }
 	public string OAuthLoginBaseUrl { get; set; }
 	public string OAuthTokenUrl { get; set; }
-	public string OAuthAdminClaimName { get; set; }
+	public string OAuthAdminClaimType { get; set; }
 	public string OAuthAdminClaimValue { get; set; }
-	public string OAuthModeratorClaimName { get; set; }
+	public string OAuthModeratorClaimType { get; set; }
 	public string OAuthModeratorClaimValue { get; set; }
 	public string OAuthScopes { get; set; }
 }

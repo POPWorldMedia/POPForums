@@ -20,7 +20,7 @@ public class ClaimsToRoleMapperTests
 		public async void NoMappingWithNoClaims()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns((string)null);
+			_config.Setup(x => x.OAuthAdminClaimType).Returns((string)null);
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns((string)null);
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>();
@@ -37,9 +37,9 @@ public class ClaimsToRoleMapperTests
 		public async void NoMappingWithNoMatchingClaims()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns("iowfhwe");
+			_config.Setup(x => x.OAuthAdminClaimType).Returns("iowfhwe");
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns("efoijh");
-			_config.Setup(x => x.OAuthModeratorClaimName).Returns("iowfhwe");
+			_config.Setup(x => x.OAuthModeratorClaimType).Returns("iowfhwe");
 			_config.Setup(x => x.OAuthModeratorClaimValue).Returns("efoijh");
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>();
@@ -56,9 +56,9 @@ public class ClaimsToRoleMapperTests
 		public async void NoMappingWithNoMatchingClaimsValues()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns("admin");
+			_config.Setup(x => x.OAuthAdminClaimType).Returns("admin");
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns("yes");
-			_config.Setup(x => x.OAuthModeratorClaimName).Returns("mod");
+			_config.Setup(x => x.OAuthModeratorClaimType).Returns("mod");
 			_config.Setup(x => x.OAuthModeratorClaimValue).Returns("yes");
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>
@@ -79,7 +79,7 @@ public class ClaimsToRoleMapperTests
 		public async void AdminNameNoValueMapsAdminRole()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns("adminclaim");
+			_config.Setup(x => x.OAuthAdminClaimType).Returns("adminclaim");
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns((string)null);
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>
@@ -99,7 +99,7 @@ public class ClaimsToRoleMapperTests
 		public async void AdminNameWithValueMapsAdminRole()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns("adminclaim");
+			_config.Setup(x => x.OAuthAdminClaimType).Returns("adminclaim");
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns("adminvalue");
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>
@@ -119,7 +119,7 @@ public class ClaimsToRoleMapperTests
 		public async void ModNameNoValueMapsModRole()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthModeratorClaimName).Returns("modclaim");
+			_config.Setup(x => x.OAuthModeratorClaimType).Returns("modclaim");
 			_config.Setup(x => x.OAuthModeratorClaimValue).Returns((string)null);
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>
@@ -139,7 +139,7 @@ public class ClaimsToRoleMapperTests
 		public async void ModNameWithValueMapsModRole()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthAdminClaimName).Returns("modclaim");
+			_config.Setup(x => x.OAuthAdminClaimType).Returns("modclaim");
 			_config.Setup(x => x.OAuthAdminClaimValue).Returns("modvalue");
 			var user = new User { Roles = new List<string>(), UserID = 123 };
 			var claims = new List<Claim>

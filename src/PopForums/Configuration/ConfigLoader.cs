@@ -33,9 +33,9 @@ public class ConfigLoader
 		container.OAuthClientSecret = configuration["PopForums:OAuthOnly:OAuthClientSecret"];
 		container.OAuthLoginBaseUrl = configuration["PopForums:OAuthOnly:OAuthLoginBaseUrl"];
 		container.OAuthTokenUrl = configuration["PopForums:OAuthOnly:OAuthTokenUrl"];
-		container.OAuthAdminClaimName = configuration["PopForums:OAuthOnly:OAuthAdminClaimName"];
+		container.OAuthAdminClaimType = configuration["PopForums:OAuthOnly:OAuthAdminClaimType"];
 		container.OAuthAdminClaimValue = configuration["PopForums:OAuthOnly:OAuthAdminClaimValue"];
-		container.OAuthModeratorClaimName = configuration["PopForums:OAuthOnly:OAuthModeratorClaimName"];
+		container.OAuthModeratorClaimType = configuration["PopForums:OAuthOnly:OAuthModeratorClaimType"];
 		container.OAuthModeratorClaimValue = configuration["PopForums:OAuthOnly:OAuthModeratorClaimValue"];
 		container.OAuthScopes = configuration["PopForums:OAuthOnly:OAuthScopes"];
 		

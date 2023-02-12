@@ -22,11 +22,11 @@ public class ClaimsToRoleMapper : IClaimsToRoleMapper
 	{
 		bool isAdmin = false, isModerator = false;
 		var claimsList = claims.ToList();
-		var adminClaims = claimsList.Where(x => x.Type == _config.OAuthAdminClaimName).ToList();
+		var adminClaims = claimsList.Where(x => x.Type == _config.OAuthAdminClaimType).ToList();
 		if ((string.IsNullOrEmpty(_config.OAuthAdminClaimValue) && adminClaims.Any()) 
 		    || adminClaims.Any(x => x.Value == _config.OAuthAdminClaimValue))
 			isAdmin = true;
-		var modClaims = claimsList.Where(x => x.Type == _config.OAuthModeratorClaimName).ToList();
+		var modClaims = claimsList.Where(x => x.Type == _config.OAuthModeratorClaimType).ToList();
 		if ((string.IsNullOrEmpty(_config.OAuthModeratorClaimValue) && modClaims.Any()) 
 		    || modClaims.Any(x => x.Value == _config.OAuthModeratorClaimValue))
 			isModerator = true;

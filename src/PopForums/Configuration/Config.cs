@@ -24,9 +24,9 @@ public interface IConfig
 	string OAuthClientSecret { get; }
 	string OAuthLoginBaseUrl { get; }
 	string OAuthTokenUrl { get; }
-	string OAuthAdminClaimName { get; }
+	string OAuthAdminClaimType { get; }
 	string OAuthAdminClaimValue { get; }
-	string OAuthModeratorClaimName { get; }
+	string OAuthModeratorClaimType { get; }
 	string OAuthModeratorClaimValue { get; }
 	String OAuthScopes { get; }
 }
@@ -66,9 +66,9 @@ public class Config : IConfig
 	public string OAuthClientSecret => _configContainer.OAuthClientSecret;
 	public string OAuthLoginBaseUrl => _configContainer.OAuthLoginBaseUrl;
 	public string OAuthTokenUrl => _configContainer.OAuthTokenUrl;
-	public string OAuthAdminClaimName => _configContainer.OAuthAdminClaimName;
+	public string OAuthAdminClaimType => _configContainer.OAuthAdminClaimType;
 	public string OAuthAdminClaimValue => _configContainer.OAuthAdminClaimValue;
-	public string OAuthModeratorClaimName => _configContainer.OAuthModeratorClaimName;
+	public string OAuthModeratorClaimType => _configContainer.OAuthModeratorClaimType;
 	public string OAuthModeratorClaimValue => _configContainer.OAuthModeratorClaimValue;
 	public string OAuthScopes => _configContainer.OAuthScopes;
 }
