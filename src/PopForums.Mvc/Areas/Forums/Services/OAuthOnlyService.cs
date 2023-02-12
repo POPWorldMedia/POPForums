@@ -17,9 +17,9 @@ public class OAuthOnlyService : IOAuthOnlyService
 	private readonly IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
 	private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 	private readonly IUserService _userService;
-	private readonly IOAuthOnlyRoleMapper _oAuthOnlyRoleMapper;
+	private readonly IClaimsToRoleMapper _claimsToRoleMapper;
 
-	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IOAuthOnlyRoleMapper oAuthOnlyRoleMapper)
+	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper)
 	{
 		_config = config;
 		_oAuth2LoginUrlGenerator = oAuth2LoginUrlGenerator;
@@ -27,7 +27,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		_oAuth2JwtCallbackProcessor = oAuth2JwtCallbackProcessor;
 		_externalUserAssociationManager = externalUserAssociationManager;
 		_userService = userService;
-		_oAuthOnlyRoleMapper = oAuthOnlyRoleMapper;
+		_claimsToRoleMapper = claimsToRoleMapper;
 	}
 
 	public string GetLoginUrl(string redirectUrl)
@@ -93,7 +93,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		}
 		
 		// set admin/mod based on claims
-		await _oAuthOnlyRoleMapper.MapRoles(user, callbackResult.Claims);
+		await _claimsToRoleMapper.MapRoles(user, callbackResult.Claims);
 
 		return callbackResult;
 	}

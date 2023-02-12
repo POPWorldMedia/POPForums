@@ -1,16 +1,18 @@
-namespace PopForums.Mvc.Areas.Forums.Services;
+using System.Security.Claims;
 
-public interface IOAuthOnlyRoleMapper
+namespace PopForums.Services;
+
+public interface IClaimsToRoleMapper
 {
 	Task MapRoles(User user, IEnumerable<Claim> claims);
 }
 
-public class OAuthOnlyRoleMapper : IOAuthOnlyRoleMapper
+public class ClaimsToRoleMapper : IClaimsToRoleMapper
 {
 	private readonly IConfig _config;
 	private readonly IRoleRepository _roleRepository;
 
-	public OAuthOnlyRoleMapper(IConfig config, IRoleRepository roleRepository)
+	public ClaimsToRoleMapper(IConfig config, IRoleRepository roleRepository)
 	{
 		_config = config;
 		_roleRepository = roleRepository;

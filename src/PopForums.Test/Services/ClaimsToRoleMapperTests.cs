@@ -1,20 +1,20 @@
 using System.Security.Claims;
 
-namespace PopForums.Test.Mvc.Services;
+namespace PopForums.Test.Services;
 
-public class OAuthOnlyRoleMapperTests
+public class ClaimsToRoleMapperTests
 {
 	private Mock<IConfig> _config;
 	private Mock<IRoleRepository> _roleRepo;
 	
-	private OAuthOnlyRoleMapper GetService()
+	private ClaimsToRoleMapper GetService()
 	{
 		_config = new Mock<IConfig>();
 		_roleRepo = new Mock<IRoleRepository>();
-		return new OAuthOnlyRoleMapper(_config.Object, _roleRepo.Object);
+		return new ClaimsToRoleMapper(_config.Object, _roleRepo.Object);
 	}
 
-	public class MapRoles : OAuthOnlyRoleMapperTests
+	public class MapRoles : ClaimsToRoleMapperTests
 	{
 		[Fact]
 		public async void NoMappingWithNoClaims()

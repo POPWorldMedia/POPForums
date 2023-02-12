@@ -12,7 +12,7 @@ public class OAuthOnlyServiceTests
 	private Mock<IOAuth2JwtCallbackProcessor> _oAuth2JwtCallbackProcessor;
 	private Mock<IExternalUserAssociationManager> _externalUserAssociationManager;
 	private Mock<IUserService> _userService;
-	private Mock<IOAuthOnlyRoleMapper> oAuthOnlyRoleMapper;
+	private Mock<IClaimsToRoleMapper> _claimsToRoleMapper;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -22,8 +22,8 @@ public class OAuthOnlyServiceTests
 		_oAuth2JwtCallbackProcessor = new Mock<IOAuth2JwtCallbackProcessor>();
 		_externalUserAssociationManager = new Mock<IExternalUserAssociationManager>();
 		_userService = new Mock<IUserService>();
-		oAuthOnlyRoleMapper = new Mock<IOAuthOnlyRoleMapper>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, oAuthOnlyRoleMapper.Object);
+		_claimsToRoleMapper = new Mock<IClaimsToRoleMapper>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -107,7 +107,7 @@ public class OAuthOnlyServiceTests
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			oAuthOnlyRoleMapper.Verify(x => x.MapRoles(externalUserMatch.User, claims), Times.Once);
+			_claimsToRoleMapper.Verify(x => x.MapRoles(externalUserMatch.User, claims), Times.Once);
 		}
 		
 		[Fact]
@@ -128,7 +128,7 @@ public class OAuthOnlyServiceTests
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			oAuthOnlyRoleMapper.Verify(x => x.MapRoles(user, claims), Times.Once);
+			_claimsToRoleMapper.Verify(x => x.MapRoles(user, claims), Times.Once);
 		}
 	}
 }

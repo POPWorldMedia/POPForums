@@ -69,6 +69,7 @@ public static class ServiceCollections
 		services.AddTransient<INotificationAdapter, NotificationAdapter>();
 		services.AddTransient<INotificationTunnel, NotificationTunnel>();
 		services.AddTransient<IPostImageService, PostImageService>();
+		services.AddTransient<IClaimsToRoleMapper, ClaimsToRoleMapper>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)
