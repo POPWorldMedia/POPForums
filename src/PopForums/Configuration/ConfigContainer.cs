@@ -29,4 +29,5 @@ public class ConfigContainer
 	public string OAuthModeratorClaimType { get; set; }
 	public string OAuthModeratorClaimValue { get; set; }
 	public string OAuthScopes { get; set; }
+	public int OAuthRefreshExpirationMinutes { get; set; }
 }

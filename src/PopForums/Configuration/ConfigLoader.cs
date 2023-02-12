@@ -38,6 +38,8 @@ public class ConfigLoader
 		container.OAuthModeratorClaimType = configuration["PopForums:OAuthOnly:OAuthModeratorClaimType"];
 		container.OAuthModeratorClaimValue = configuration["PopForums:OAuthOnly:OAuthModeratorClaimValue"];
 		container.OAuthScopes = configuration["PopForums:OAuthOnly:OAuthScopes"];
+		var refreshMinutes = configuration["PopForums:OAuthOnly:OAuthRefreshExpirationMinutes"];
+		container.OAuthRefreshExpirationMinutes = refreshMinutes == null ? 60 : Convert.ToInt32(refreshMinutes);
 		
 		return container;
 	} 

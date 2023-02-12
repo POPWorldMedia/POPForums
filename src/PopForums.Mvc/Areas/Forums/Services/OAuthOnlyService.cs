@@ -94,7 +94,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		}
 		
 		// set the token expiration
-		await _userService.UpdateTokenExpiration(user, callbackResult.Token.ValidTo);
+		await _userService.UpdateTokenExpiration(user, DateTime.UtcNow.AddMinutes(_config.OAuthRefreshExpirationMinutes));
 		// update refresh token
 		await _userService.UpdateRefreshToken(user, callbackResult.RefreshToken);
 		

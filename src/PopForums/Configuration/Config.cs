@@ -28,7 +28,8 @@ public interface IConfig
 	string OAuthAdminClaimValue { get; }
 	string OAuthModeratorClaimType { get; }
 	string OAuthModeratorClaimValue { get; }
-	String OAuthScopes { get; }
+	string OAuthScopes { get; }
+	int OAuthRefreshExpirationMinutes { get; }
 }
 
 public class Config : IConfig
@@ -71,4 +72,5 @@ public class Config : IConfig
 	public string OAuthModeratorClaimType => _configContainer.OAuthModeratorClaimType;
 	public string OAuthModeratorClaimValue => _configContainer.OAuthModeratorClaimValue;
 	public string OAuthScopes => _configContainer.OAuthScopes;
+	public int OAuthRefreshExpirationMinutes => _configContainer.OAuthRefreshExpirationMinutes;
 }
