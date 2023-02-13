@@ -112,7 +112,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		if (callbackResult.IsSuccessful)
 		{
 			await _userService.UpdateRefreshToken(user, callbackResult.RefreshToken);
-			await _userService.UpdateTokenExpiration(user, callbackResult.Token.ValidTo);
+			await _userService.UpdateTokenExpiration(user, DateTime.UtcNow.AddMinutes(_config.OAuthRefreshExpirationMinutes));
 		}
 		return callbackResult.IsSuccessful;
 	}

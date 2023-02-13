@@ -130,5 +130,74 @@ public class OAuthOnlyServiceTests
 			
 			_claimsToRoleMapper.Verify(x => x.MapRoles(user, claims), Times.Once);
 		}
+
+		[Fact]
+		public async Task UnmatchedUserIsCreatedAndAssociated()
+		{
+			var service = GetService();
+			var redirUrl = "redir";
+			var ip = "127.0.0.1";
+			var callbackResult = new CallbackResult
+			{
+				ResultData = new ResultData
+				{
+					Email = "a@b.com",
+					ID = "id",
+					Name = "Diana"
+				},
+				IsSuccessful = true
+			};
+			_config.Setup(x => x.OAuthTokenUrl).Returns("t");
+			_config.Setup(x => x.OAuthClientID).Returns("c");
+			_config.Setup(x => x.OAuthClientSecret).Returns("s");
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(redirUrl, "t", "c", "s")).ReturnsAsync(callbackResult);
+			ExternalLoginInfo externalLoginInfo = null;
+			_externalUserAssociationManager.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), ip)).ReturnsAsync(new ExternalUserAssociationMatchResult { Successful = false }).Callback<ExternalLoginInfo, string>((e, i) => externalLoginInfo = e);
+			var user = new User();
+			SignupData signupData = null;
+			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), ip)).ReturnsAsync(user).Callback<SignupData, string>((s, i) => signupData = s);
+
+			await service.ProcessOAuthLogin(redirUrl, ip);
+			
+			Assert.Equal(callbackResult.ResultData.ID, externalLoginInfo.ProviderKey);
+			Assert.Equal(callbackResult.ResultData.Name, externalLoginInfo.ProviderDisplayName);
+			_userService.Verify(x => x.CreateUserWithProfile(signupData, ip));
+			_externalUserAssociationManager.Verify(x => x.Associate(user, externalLoginInfo, ip));
+		}
+	}
+
+	public class AttemptTokenRefresh : OAuthOnlyServiceTests
+	{
+		[Fact]
+		public async Task FailedCallbackMakesNoUpdates()
+		{
+			var service = GetService();
+			_oAuth2JwtCallbackProcessor.Setup(x => x.GetRefreshToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new CallbackResult { IsSuccessful = false });
+
+			await service.AttemptTokenRefresh(It.IsAny<User>());
+			
+			_userService.Verify(x => x.UpdateTokenExpiration(It.IsAny<User>(), It.IsAny<DateTime>()), Times.Never);
+			_userService.Verify(x => x.UpdateRefreshToken(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Fact]
+		public async Task GoodTokenUpdatesStuff()
+		{
+			var service = GetService();
+			var user = new User();
+			var token = "token";
+			var newToken = "newtoken";
+			_userService.Setup(x => x.GetRefreshToken(user)).ReturnsAsync(token);
+			_config.Setup(x => x.OAuthTokenUrl).Returns("u");
+			_config.Setup(x => x.OAuthClientID).Returns("c");
+			_config.Setup(x => x.OAuthClientSecret).Returns("s");
+			_oAuth2JwtCallbackProcessor.Setup(x => x.GetRefreshToken(token, "u", "c", "s")).ReturnsAsync(new CallbackResult { IsSuccessful = true, RefreshToken = newToken });
+
+			await service.AttemptTokenRefresh(user);
+			
+			_oAuth2JwtCallbackProcessor.Verify(x => x.GetRefreshToken(token, "u", "c", "s"), Times.Once);
+			_userService.Verify(x => x.UpdateTokenExpiration(user, It.IsAny<DateTime>()), Times.Once);
+			_userService.Verify(x => x.UpdateRefreshToken(user, newToken), Times.Once);
+		}
 	}
 }
