@@ -12,7 +12,8 @@ public class PopForumsPrivateForumsFilterTests
 	{
 		_userRetrievalShim = new Mock<IUserRetrievalShim>();
 		_settingsManager = new Mock<ISettingsManager>();
-		return new PopForumsPrivateForumsFilter(_userRetrievalShim.Object, _settingsManager.Object);
+		_config = new Mock<IConfig>();
+		return new PopForumsPrivateForumsFilter(_userRetrievalShim.Object, _settingsManager.Object, _config.Object);
 	}
 
 	private ActionExecutingContext GetContext()
@@ -22,13 +23,15 @@ public class PopForumsPrivateForumsFilterTests
 
 	private Mock<IUserRetrievalShim> _userRetrievalShim;
 	private Mock<ISettingsManager> _settingsManager;
+	private Mock<IConfig> _config;
 
 	public class OnActionExecuting : PopForumsPrivateForumsFilterTests
 	{
 		[Fact]
-		public void DoesNothingIfSettingIsFalse()
+		public void DoesNothingIfSettingIsFalseAndOAuthOnlyIsFalse()
 		{
 			var filter = GetFilter();
+			_config.Setup(x => x.IsOAuthOnly).Returns(false);
 			_settingsManager.Setup(x => x.Current.IsPrivateForumInstance).Returns(false);
 			var context = GetContext();
 			
@@ -42,7 +45,24 @@ public class PopForumsPrivateForumsFilterTests
 		public void DoesNothingIfSettingIsTrueAndUserPresent()
 		{
 			var filter = GetFilter();
+			_config.Setup(x => x.IsOAuthOnly).Returns(false);
 			_settingsManager.Setup(x => x.Current.IsPrivateForumInstance).Returns(true);
+			var context = GetContext();
+			var user = new User();
+			_userRetrievalShim.Setup(x => x.GetUser()).Returns(user);
+			
+			filter.OnActionExecuting(context);
+			
+			_userRetrievalShim.Verify(x => x.GetUser(), Times.Once);
+			Assert.Null(context.Result);
+		}
+
+		[Fact]
+		public void DoesNothingIfOAuthOnlyIsTrueAndUserPresent()
+		{
+			var filter = GetFilter();
+			_config.Setup(x => x.IsOAuthOnly).Returns(true);
+			_settingsManager.Setup(x => x.Current.IsPrivateForumInstance).Returns(false);
 			var context = GetContext();
 			var user = new User();
 			_userRetrievalShim.Setup(x => x.GetUser()).Returns(user);
@@ -57,7 +77,22 @@ public class PopForumsPrivateForumsFilterTests
 		public void RedirectIfSettingIsTrueAndNoUserPresent()
 		{
 			var filter = GetFilter();
+			_config.Setup(x => x.IsOAuthOnly).Returns(false);
 			_settingsManager.Setup(x => x.Current.IsPrivateForumInstance).Returns(true);
+			var context = GetContext();
+			
+			filter.OnActionExecuting(context);
+			
+			_userRetrievalShim.Verify(x => x.GetUser(), Times.Once);
+			Assert.IsType<RedirectToActionResult>(context.Result);
+		}
+
+		[Fact]
+		public void RedirectIfOAuthOnlyIsTrueAndNoUserPresent()
+		{
+			var filter = GetFilter();
+			_config.Setup(x => x.IsOAuthOnly).Returns(true);
+			_settingsManager.Setup(x => x.Current.IsPrivateForumInstance).Returns(false);
 			var context = GetContext();
 			
 			filter.OnActionExecuting(context);

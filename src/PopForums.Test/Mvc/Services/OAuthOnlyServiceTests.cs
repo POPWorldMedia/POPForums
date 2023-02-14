@@ -84,6 +84,7 @@ public class OAuthOnlyServiceTests
 			_externalUserAssociationManager
 				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>())).ReturnsAsync(externalUserMatch)
 				.Callback<ExternalLoginInfo, string>((e, i) => calledExternalInfo = e);
+			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
@@ -104,6 +105,7 @@ public class OAuthOnlyServiceTests
 			_externalUserAssociationManager
 				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
 				.ReturnsAsync(externalUserMatch);
+			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
@@ -125,6 +127,7 @@ public class OAuthOnlyServiceTests
 			var user = new User();
 			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), It.IsAny<string>()))
 				.ReturnsAsync(user);
+			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			

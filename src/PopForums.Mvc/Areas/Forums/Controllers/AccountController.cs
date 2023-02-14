@@ -435,11 +435,7 @@ public class AccountController : Controller
 	{
 		if (_config.IsOAuthOnly)
 		{
-			var identityProviderRedirectUrl = Url.Action(nameof(IdentityController.CallbackHandler), IdentityController.Name, null, Request.Scheme);
-			var redirect = _oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
-			var loginState = new ExternalLoginState {ProviderType = ProviderType.OAuthOnly, ReturnUrl = identityProviderRedirectUrl };
-			_externalLoginTempService.Persist(loginState);
-			return Redirect(redirect);
+			return Redirect("OAuthLogin");
 		}
 		
 		string link;
@@ -454,8 +450,23 @@ public class AccountController : Controller
 		ViewBag.Referrer = link;
 
 		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();
-
+		
 		return View(externalLoginList);
+	}
+
+	[PopForumsAuthorizationIgnore]
+	public IActionResult OAuthLogin()
+	{
+		if (_config.IsOAuthOnly)
+		{
+			var identityProviderRedirectUrl = Url.Action(nameof(IdentityController.CallbackHandler), IdentityController.Name, null, Request.Scheme);
+			var redirect = _oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
+			var loginState = new ExternalLoginState {ProviderType = ProviderType.OAuthOnly, ReturnUrl = identityProviderRedirectUrl };
+			_externalLoginTempService.Persist(loginState);
+			return View("OAuthLogin", redirect);
+		}
+
+		return RedirectToAction("Login");
 	}
 
 	[PopForumsAuthorizationIgnore]
