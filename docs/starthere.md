@@ -61,37 +61,40 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
 ```js
 {
-	"PopForums": {
-		"IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}", // used on Recent Users screen of admin to lookup IP addresses
-		"BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1", // if using AzureKit to host images, points to the base URL of images uploaded to blob storage (you should really alias the storage to a domain you own)
-		"Storage": {
-			"ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
-		},
-		"Database": {
-			"ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;TrustServerCertificate=True;"
-		},
-		"Cache": {
-			"Seconds": 180,
-			"ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
-			"ForceLocalOnly": false // used for Redis cache in AzureKit
-		},
-		"Search": { // used for Elastic or Azure Search (see docs)
-			"Url": "popforumsdev",
-			"Key": "99011A70D3D50D251B0A6141A97B40E7",
-			"Provider": ""
-		},
-		"Queue": { // used for queues with Azure Functions
-			"ConnectionString": "UseDevelopmentStorage=true"
-		},
-		"LogTopicViews": true, // optional, records topic views for future analytics
-		"ReCaptcha": { // Google ReCaptcha on signup (the key/secret below works on localhost)
-			"UseReCaptcha": true,
-			"SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
-			"SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
-		},
-		"WebAppUrlAndArea": "https://somehost/forums", // used only by Azure Functions to find endpoint of your web app
-		"RenderBootstrap": true // optional, defaults to true, put false here if your host page will have its own build of Bootstrap CSS
-	}
+    "PopForums": {
+        "IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}", // used on Recent Users screen of admin to lookup IP addresses
+        "BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1", // if using AzureKit to host images, points to the base URL of images uploaded to blob storage (you should really alias the storage to a domain you own)
+        "Storage": {
+            "ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
+        },
+        "Database": {
+            "ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;TrustServerCertificate=True;"
+        },
+        "Cache": {
+            "Seconds": 180,
+            "ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
+            "ForceLocalOnly": false // used for Redis cache in AzureKit
+        },
+        "Search": { // used for Elastic or Azure Search (see docs)
+            "Url": "popforumsdev",
+            "Key": "99011A70D3D50D251B0A6141A97B40E7",
+            "Provider": ""
+        },
+        "Queue": { // used for queues with Azure Functions
+            "ConnectionString": "UseDevelopmentStorage=true"
+        },
+        "LogTopicViews": true, // optional, records topic views for future analytics
+        "ReCaptcha": { // Google ReCaptcha on signup (the key/secret below works on localhost)
+            "UseReCaptcha": true,
+            "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
+            "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
+        },
+        "WebAppUrlAndArea": "https://somehost/forums", // used only by Azure Functions to find endpoint of your web app
+        "RenderBootstrap": true, // optional, defaults to true, put false here if your host page will have its own build of Bootstrap CSS
+        "OAuthOnly": {
+            // this section is detailed in the OAuth-Only Mode section
+        }
+    }
 }
 ```
 * Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums19`.
@@ -128,6 +131,8 @@ You're almost there!
 The `PopForums.Web` project is the template you can use as the basis for your own POP Forums apps. If you want to build via the most recent stable builds, the [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project is an example of how to do that (see above). The app uses the standard claims-based authentication, but it does not use Identity or Entity Framework. When you're logged in, you'll find the identity of the user on the User property of the controller as expected. The `PopForumsAuthorizationMiddleware` loads user and profile data into the request pipeline, so it can be loaded once and used throughout the request lifecycle.
 
 Accessing the user data can be achieved via an instance of `IUserRetrievalShim`, which you can inject into your dependency chain. From a controller, simply call `_userRetrievalShim.GetUser()` to get the fully hydrated POP Forums `User`, or `_userRetrievalShim.GetProfile()` to get the profile. Under the hood, these are stored in the `Items` collection of the current `HttpContext`.
+
+The easiest way to integrate with an existing set of users is to connect via an OAuth2 provider. Read more about [OAuth-Only Mode](oauthonly.md).
 
 ## Running third-party services in Docker containers
 

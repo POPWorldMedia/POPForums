@@ -3,6 +3,7 @@ packages
 /.vs
 /*.user
 *.user
+.idea
 .idea/.idea.PopForums/.idea
 .idea/.idea.PopForums/riderModule.iml
 
