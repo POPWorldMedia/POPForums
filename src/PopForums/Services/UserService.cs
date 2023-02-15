@@ -422,15 +422,18 @@ public class UserService : IUserService
 			profile.ImageID = null;
 		await _profileRepository.Update(profile);
 
-		var newRoles = userEdit.Roles ?? new string[0];
-		await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
-		foreach (var role in targetUser.Roles)
-			if (!newRoles.Contains(role))
-				await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
-		foreach (var role in newRoles)
-			if (!targetUser.Roles.Contains(role))
-				await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
-
+		if (!_config.IsOAuthOnly)
+		{
+			var newRoles = userEdit.Roles ?? new string[0];
+			await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
+			foreach (var role in targetUser.Roles)
+				if (!newRoles.Contains(role))
+					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
+			foreach (var role in newRoles)
+				if (!targetUser.Roles.Contains(role))
+					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
+		}
+		
 		if (avatarFile != null && avatarFile.Length > 0)
 		{
 			var avatarID = await _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
