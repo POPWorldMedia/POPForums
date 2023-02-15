@@ -1,0 +1,22 @@
+@using PopForums
+@model string
+
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>@Resources.Login</title>
+	<link href="~/PopForums/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body>
+<div class="vh-100 vw-100 p-5 d-flex flex-column justify-content-center">
+	<div class="alert alert-primary d-flex justify-content-center">
+		<a href="@Model" class="btn btn-primary">@Resources.Login</a>
+	</div>
+</div>
+</body>
+</html>

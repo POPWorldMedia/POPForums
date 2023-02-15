@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 	[IsApproved] [bit] NOT NULL DEFAULT ((-1)),
 	[Password] [nvarchar](256) NOT NULL,
 	[AuthorizationKey] [uniqueidentifier] NOT NULL DEFAULT ('00000000-0000-0000-0000-000000000000'),
-	[Salt] [uniqueidentifier] NULL
+	[Salt] [uniqueidentifier] NULL,
+    [TokenExpiration] [datetime] NULL
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name]);
@@ -53,7 +54,8 @@ ALTER TABLE [dbo].[pf_Profile] CHECK CONSTRAINT [FK_pf_Profile_pf_PopForumsUser]
 CREATE TABLE [dbo].[pf_UserActivity](
 	[UserID] [int] NOT NULL PRIMARY KEY CLUSTERED,
 	[LastActivityDate] [datetime] NOT NULL,
-	[LastLoginDate] [datetime] NOT NULL
+	[LastLoginDate] [datetime] NOT NULL,
+    [RefreshToken] [nvarchar](MAX) NULL
 );
 
 ALTER TABLE [dbo].[pf_UserActivity]  WITH CHECK ADD  CONSTRAINT [FK_pf_UserActivity_pf_PopForumsUser] FOREIGN KEY([UserID])

@@ -8,6 +8,7 @@ public class User
 	public string Email { get; set; }
 	public Guid AuthorizationKey { get; set; }
 	public bool IsApproved { get; set; }
+	public DateTime? TokenExpiration { get; set; }
 	public List<string> Roles { get; set; }
 
 	public bool IsInRole(string role)

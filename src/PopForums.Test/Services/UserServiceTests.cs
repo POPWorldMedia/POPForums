@@ -332,7 +332,7 @@ public class UserServiceTests
 		var settings = new Settings();
 		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
 		var signUpdata = new SignupData {Email = email, Name = name, Password = password};
-		var user = await userManager.CreateUser(signUpdata, ip);
+		var user = await userManager.CreateUserWithProfile(signUpdata, ip);
 		_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
 		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
 	}

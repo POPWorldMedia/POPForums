@@ -1,11 +1,10 @@
 ﻿@model UserEditPhoto
-@inject IUserRetrievalShim UserRetrievalShim
+@inject IConfig Config
 
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 }
-
 
 <h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
@@ -15,11 +14,13 @@
 		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.ManagePhotos</a>
 		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
 			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
-			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
-			<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			@if (!Config.IsOAuthOnly)
+			{
+				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			}
 		</div>
 	</li>
-
 </ul>
 
 <form asp-action="ManagePhotos" method="post" enctype="multipart/form-data" role="form">

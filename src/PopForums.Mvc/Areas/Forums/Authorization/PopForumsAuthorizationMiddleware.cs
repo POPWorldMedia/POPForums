@@ -9,7 +9,7 @@ public class PopForumsAuthorizationMiddleware
 		_next = next;
 	}
 
-	public async Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService)
+	public async Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService, IConfig config, IOAuthOnlyService oAuthOnlyService)
 	{
 		var isSetupAndConnectionGood = setupService.IsRuntimeConnectionAndSetupGood();
 		if (!isSetupAndConnectionGood)
@@ -30,6 +30,12 @@ public class PopForumsAuthorizationMiddleware
 				var profile = await profileService.GetProfile(user);
 				context.Items["PopForumsProfile"] = profile;
 				context.User = new ClaimsPrincipal(identity);
+				if (config.IsOAuthOnly && user.TokenExpiration < DateTime.UtcNow)
+				{
+					var isSuccess = await oAuthOnlyService.AttemptTokenRefresh(user);
+					if (!isSuccess)
+						context.Response.Redirect("/Forums/Account/Login");
+				}
 			}
 		}
 		await _next.Invoke(context);

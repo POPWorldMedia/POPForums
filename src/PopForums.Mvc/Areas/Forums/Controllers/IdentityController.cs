@@ -1,4 +1,5 @@
-﻿using PopIdentity;
+﻿using System.Security.Authentication;
+using PopIdentity;
 using PopIdentity.Providers.Facebook;
 using PopIdentity.Providers.Google;
 using PopIdentity.Providers.Microsoft;
@@ -21,8 +22,10 @@ public class IdentityController : Controller
 	private readonly IExternalLoginTempService _externalLoginTempService;
 	private readonly IUserRetrievalShim _userRetrievalShim;
 	private readonly ISecurityLogService _securityLogService;
+	private readonly IOAuthOnlyService _oAuthOnlyService;
+	private readonly IConfig _config;
 
-	public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService)
+	public IdentityController(ILoginLinkFactory loginLinkFactory, IStateHashingService stateHashingService, ISettingsManager settingsManager, IFacebookCallbackProcessor facebookCallbackProcessor, IGoogleCallbackProcessor googleCallbackProcessor, IMicrosoftCallbackProcessor microsoftCallbackProcessor, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IExternalLoginTempService externalLoginTempService, IUserRetrievalShim userRetrievalShim, ISecurityLogService securityLogService, IOAuthOnlyService oAuthOnlyService, IConfig config)
 	{
 		_loginLinkFactory = loginLinkFactory;
 		_stateHashingService = stateHashingService;
@@ -36,6 +39,8 @@ public class IdentityController : Controller
 		_externalLoginTempService = externalLoginTempService;
 		_userRetrievalShim = userRetrievalShim;
 		_securityLogService = securityLogService;
+		_oAuthOnlyService = oAuthOnlyService;
+		_config = config;
 	}
 
 	public static string Name = "Identity";
@@ -47,6 +52,7 @@ public class IdentityController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> Login([FromBody] Credentials credentials)
 	{
@@ -88,6 +94,7 @@ public class IdentityController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public IActionResult ExternalLogin(string provider, string returnUrl)
 	{
@@ -142,17 +149,30 @@ public class IdentityController : Controller
 		{
 			await _userService.Login(matchResult.User, ip);
 			_externalLoginTempService.Remove();
-			await PerformSignInAsync(matchResult.User, HttpContext);
+			if (loginState.ProviderType == ProviderType.OAuthOnly)
+				await PerformSignInAsync(matchResult.User, HttpContext, DateTime.UtcNow.AddMinutes(_config.OAuthRefreshExpirationMinutes));
+			else
+				await PerformSignInAsync(matchResult.User, HttpContext);
+			if (string.IsNullOrEmpty(returnUrl))
+				returnUrl = Url.Action(nameof(HomeController.Index), HomeController.Name);
 			return Redirect(returnUrl);
 		}
+
+		if (loginState.ProviderType == ProviderType.OAuthOnly)
+			throw new AuthenticationException(
+				"A callback was made to login in IsOAuthOnly mode, but no user was found.");
 		ViewBag.Referrer = returnUrl;
 		return View();
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
-	public async Task<JsonResult> LoginAndAssociate([FromBody] Credentials credentials)
+	public async Task<IActionResult> LoginAndAssociate([FromBody] Credentials credentials)
 	{
+		if (_config.IsOAuthOnly)
+			return Forbid();
+		
 		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 		var (result, user) = await _userService.Login(credentials.Email, credentials.Password, ip);
 		if (result)
@@ -177,15 +197,21 @@ public class IdentityController : Controller
 
 	public static async Task PerformSignInAsync(User user, HttpContext httpContext)
 	{
+		var expiration = DateTime.UtcNow.AddYears(1);
+		await PerformSignInAsync(user, httpContext, expiration);
+	}
+
+	public static async Task PerformSignInAsync(User user, HttpContext httpContext, DateTime expiration)
+	{
 		var claims = new List<Claim>
 		{
-			new Claim(ClaimTypes.Name, user.Name)
+			new (ClaimTypes.Name, user.Name)
 		};
 
 		var props = new AuthenticationProperties
 		{
 			IsPersistent = true,
-			ExpiresUtc = DateTime.UtcNow.AddYears(1)
+			ExpiresUtc = expiration
 		};
 
 		var id = new ClaimsIdentity(claims, PopForumsAuthorizationDefaults.AuthenticationScheme);
@@ -196,9 +222,9 @@ public class IdentityController : Controller
 	public async Task<IActionResult> CallbackHandler()
 	{
 		var loginState = _externalLoginTempService.Read();
+		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 		if (loginState == null)
 		{
-			var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 			await _securityLogService.CreateLogEntry((User)null, null, ip, "Temp auth cookie missing on callback", SecurityLogType.ExternalAssociationCheckFailed);
 			return View("ExternalError", Resources.Error + ": " + Resources.LoginBad);
 		}
@@ -206,6 +232,14 @@ public class IdentityController : Controller
 		CallbackResult result;
 		switch (loginState.ProviderType)
 		{
+			case ProviderType.OAuthOnly:
+				result = await _oAuthOnlyService.ProcessOAuthLogin(redirectUri, ip);
+				if (result.IsSuccessful)
+				{
+					loginState.Expiration = result.Token.ValidTo;
+					loginState.ReturnUrl = null;
+				}
+				break;
 			case ProviderType.Facebook:
 				result = await _facebookCallbackProcessor.VerifyCallback(redirectUri, _settingsManager.Current.FacebookAppID, _settingsManager.Current.FacebookAppSecret);
 				break;

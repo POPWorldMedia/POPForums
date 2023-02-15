@@ -1,6 +1,6 @@
 ﻿@model UserEditProfile
 @inject IUserRetrievalShim UserRetrievalShim
-@using System.Linq;
+@inject IConfig Config
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -19,9 +19,15 @@
 	<li class="breadcrumb-item dropdown">
 		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.EditProfile</a>
 		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+			@if (!Config.IsOAuthOnly)
+			{
+				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
+			}
 			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
-			<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			@if (!Config.IsOAuthOnly)
+			{
+				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			}
 		</div>
 	</li>
 </ul>

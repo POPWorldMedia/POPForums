@@ -1,9 +1,11 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopIdentity;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 public class AccountController : Controller
 {
-	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService)
+	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService, IOAuthOnlyService oAuthOnlyService)
 	{
 		_userService = userService;
 		_settingsManager = settingsManager;
@@ -22,6 +24,7 @@ public class AccountController : Controller
 		_externalLoginTempService = externalLoginTempService;
 		_config = config;
 		_reCaptchaService = reCaptchaService;
+		_oAuthOnlyService = oAuthOnlyService;
 	}
 
 	public static string Name = "Account";
@@ -45,9 +48,11 @@ public class AccountController : Controller
 	private readonly IExternalLoginTempService _externalLoginTempService;
 	private readonly IConfig _config;
 	private readonly IReCaptchaService _reCaptchaService;
+	private readonly IOAuthOnlyService _oAuthOnlyService;
 
 	[PopForumsAuthorizationIgnore]
-	public ViewResult Create()
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
+	public IActionResult Create()
 	{
 		SetupCreateData();
 		var signupData = new SignupData
@@ -71,8 +76,9 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
-	public async Task<ViewResult> Create(SignupData signupData)
+	public async Task<IActionResult> Create(SignupData signupData)
 	{
 		var ip = HttpContext.Connection.RemoteIpAddress.ToString();
 		if (_config.UseReCaptcha)
@@ -84,8 +90,7 @@ public class AccountController : Controller
 		await ValidateSignupData(signupData, ModelState, ip);
 		if (ModelState.IsValid)
 		{
-			var user = await _userService.CreateUser(signupData, ip);
-			await _profileService.Create(user, signupData);
+			var user = await _userService.CreateUserWithProfile(signupData, ip);
 			var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
 			var result = _newAccountMailer.Send(user, verifyUrl);
 			if (result != SmtpStatusCode.Ok)
@@ -142,6 +147,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> Verify(string id)
 	{
 		var authKey = Guid.Empty;
@@ -158,6 +164,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public RedirectToActionResult VerifyCode(string authorizationCode)
 	{
@@ -165,6 +172,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> RequestCode(string email)
 	{
 		var user = await _userService.GetUserByEmail(email);
@@ -189,6 +197,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> Forgot(string email)
 	{
@@ -207,6 +216,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> ResetPassword(string id)
 	{
 		var authKey = Guid.Empty;
@@ -222,6 +232,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 	{
@@ -243,6 +254,7 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ActionResult ResetPasswordSuccess()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -274,6 +286,7 @@ public class AccountController : Controller
 		return View(newEdit);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ViewResult Security()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -284,6 +297,7 @@ public class AccountController : Controller
 		return View(userEdit);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
 	{
@@ -305,6 +319,7 @@ public class AccountController : Controller
 		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
 	{
@@ -416,8 +431,13 @@ public class AccountController : Controller
 	}
 
 	[PopForumsAuthorizationIgnore]
-	public ViewResult Login()
+	public ActionResult Login()
 	{
+		if (_config.IsOAuthOnly)
+		{
+			return Redirect("OAuthLogin");
+		}
+		
 		string link;
 		if (string.IsNullOrWhiteSpace(Request.Headers.Referer))
 			link = Url.Action("Index", HomeController.Name);
@@ -430,8 +450,23 @@ public class AccountController : Controller
 		ViewBag.Referrer = link;
 
 		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();
-
+		
 		return View(externalLoginList);
+	}
+
+	[PopForumsAuthorizationIgnore]
+	public IActionResult OAuthLogin()
+	{
+		if (_config.IsOAuthOnly)
+		{
+			var identityProviderRedirectUrl = Url.Action(nameof(IdentityController.CallbackHandler), IdentityController.Name, null, Request.Scheme);
+			var redirect = _oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
+			var loginState = new ExternalLoginState {ProviderType = ProviderType.OAuthOnly, ReturnUrl = identityProviderRedirectUrl };
+			_externalLoginTempService.Persist(loginState);
+			return View("OAuthLogin", redirect);
+		}
+
+		return RedirectToAction("Login");
 	}
 
 	[PopForumsAuthorizationIgnore]
@@ -443,6 +478,7 @@ public class AccountController : Controller
 		return View();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> ExternalLogins()
 	{
 		var user = _userRetrievalShim.GetUser();
@@ -453,6 +489,7 @@ public class AccountController : Controller
 		return View(externalAssociations);
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> RemoveExternalLogin(int id)
 	{
 		var user = _userRetrievalShim.GetUser();

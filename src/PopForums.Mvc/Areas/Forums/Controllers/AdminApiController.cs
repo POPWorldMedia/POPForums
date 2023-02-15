@@ -291,6 +291,7 @@ public class AdminApiController : Controller
 		return Ok();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/DeleteUser/{id}")]
 	public async Task<ActionResult> DeleteUser(int id)
 	{
@@ -298,6 +299,7 @@ public class AdminApiController : Controller
 		return Ok();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/DeleteAndBanUser/{id}")]
 	public async Task<ActionResult> DeleteAndBanUser(int id)
 	{
@@ -322,6 +324,7 @@ public class AdminApiController : Controller
 		return roles;
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/CreateRole/{role}")]
 	public async Task<ActionResult> CreateRole(string role)
 	{
@@ -331,6 +334,7 @@ public class AdminApiController : Controller
 		return NoContent();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/DeleteRole/{role}")]
 	public async Task<ActionResult> DeleteRole(string role)
 	{
@@ -367,6 +371,7 @@ public class AdminApiController : Controller
 
 	// ********** email ip ban
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpGet("/Forums/AdminApi/GetEmailIPBan")]
 	public async Task<ActionResult<object>> GetEmailIPBan()
 	{
@@ -376,6 +381,7 @@ public class AdminApiController : Controller
 		return container;
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/BanEmail")]
 	public async Task<ActionResult> BanEmail([FromBody] SingleString val)
 	{
@@ -383,6 +389,7 @@ public class AdminApiController : Controller
 		return NoContent();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/RemoveEmail")]
 	public async Task<ActionResult> RemoveEmail([FromBody] SingleString val)
 	{
@@ -390,6 +397,7 @@ public class AdminApiController : Controller
 		return NoContent();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/BanIP")]
 	public async Task<ActionResult> BanIP([FromBody] SingleString val)
 	{
@@ -397,6 +405,7 @@ public class AdminApiController : Controller
 		return NoContent();
 	}
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/RemoveIP")]
 	public async Task<ActionResult> RemoveIP([FromBody] SingleString val)
 	{
@@ -406,6 +415,7 @@ public class AdminApiController : Controller
 
 	// ********** email users
 
+	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost("/Forums/AdminApi/EmailUsers")]
 	public ActionResult EmailUsers([FromBody]EmailUsersContainer container)
 	{

@@ -10,7 +10,7 @@ public interface IUserService
 	Task<User> GetUserByAuhtorizationKey(Guid authorizationKey);
 	Task<bool> IsNameInUse(string name);
 	Task<bool> IsEmailInUse(string email);
-	Task<User> CreateUser(SignupData signupData, string ip);
+	Task<User> CreateUserWithProfile(SignupData signupData, string ip);
 	Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip);
 	Task DeleteUser(User targetUser, User user, string ip, bool ban);
 	Task UpdateLastActivityDate(User user);
@@ -44,6 +44,9 @@ public interface IUserService
 	Task<List<User>> GetSubscribedUsers();
 	Dictionary<User, int> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
+	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
+	Task UpdateRefreshToken(User user, string refreshToken);
+	Task<string> GetRefreshToken(User user);
 }
 
 public class UserService : IUserService
@@ -195,9 +198,19 @@ public class UserService : IUserService
 		return await _banRepository.EmailIsBanned(email);
 	}
 
-	public async Task<User> CreateUser(SignupData signupData, string ip)
+	public async Task<User> CreateUserWithProfile(SignupData signupData, string ip)
 	{
-		return await CreateUser(signupData.Name, signupData.Email, signupData.Password, _settingsManager.Current.IsNewUserApproved, ip);
+		var isApproved = _config.IsOAuthOnly || _settingsManager.Current.IsNewUserApproved;
+		var user = await CreateUser(signupData.Name, signupData.Email, signupData.Password, isApproved, ip);
+		var profile = new Profile
+		{
+			UserID = user.UserID,
+			IsSubscribed = signupData.IsSubscribed,
+			IsTos = signupData.IsTos,
+			IsAutoFollowOnReply = signupData.IsAutoFollowOnReply
+		};
+		await _profileRepository.Create(profile);
+		return user;
 	}
 
 	public async Task<User> CreateUser(string name, string email, string password, bool isApproved, string ip)
@@ -409,15 +422,18 @@ public class UserService : IUserService
 			profile.ImageID = null;
 		await _profileRepository.Update(profile);
 
-		var newRoles = userEdit.Roles ?? new string[0];
-		await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
-		foreach (var role in targetUser.Roles)
-			if (!newRoles.Contains(role))
-				await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
-		foreach (var role in newRoles)
-			if (!targetUser.Roles.Contains(role))
-				await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
-
+		if (!_config.IsOAuthOnly)
+		{
+			var newRoles = userEdit.Roles ?? new string[0];
+			await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
+			foreach (var role in targetUser.Roles)
+				if (!newRoles.Contains(role))
+					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
+			foreach (var role in newRoles)
+				if (!targetUser.Roles.Contains(role))
+					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
+		}
+		
 		if (avatarFile != null && avatarFile.Length > 0)
 		{
 			var avatarID = await _userAvatarRepository.SaveNewAvatar(targetUser.UserID, avatarFile, DateTime.UtcNow);
@@ -528,5 +544,20 @@ public class UserService : IUserService
 			}
 		}
 		return userResults;
+	}
+
+	public async Task UpdateTokenExpiration(User user, DateTime? tokenExpiration)
+	{
+		await _userRepository.UpdateTokenExpiration(user, tokenExpiration);
+	}
+
+	public async Task UpdateRefreshToken(User user, string refreshToken)
+	{
+		await _userRepository.UpdateRefreshToken(user, refreshToken);
+	}
+
+	public async Task<string> GetRefreshToken(User user)
+	{
+		return await _userRepository.GetRefreshToken(user);
 	}
 }
