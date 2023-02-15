@@ -1,5 +1,7 @@
-﻿@{
+﻿@inject IConfig Config
+@{
     Layout = null;
+	var isOAuthOnly = Config.IsOAuthOnly;
 }
 
 <!DOCTYPE html>
@@ -30,7 +32,7 @@
 	</div>
 	<div class="container mb-3 small">&copy;@DateTime.Now.Year, POP World Media, LLC</div>
 
-	<script type="x-templates" id="Top">
+<script type="x-templates" id="Top">
 	<main>
 		<div v-show="loading" class="spinner-border text-primary float-end me-3 mt-1" role="status">
 			<span class="visually-hidden">Loading...</span>
@@ -46,16 +48,28 @@
 				<router-link to="/categories" class="dropdown-item">@PopForums.Resources.Categories</router-link>
 				<router-link to="/forums" class="dropdown-item">@PopForums.Resources.Forums</router-link>
 				<router-link to="/forumpermissions" class="dropdown-item">@PopForums.Resources.ForumPermisions</router-link>
-				<router-link to="/email" class="dropdown-item">@PopForums.Resources.Email</router-link>
+				@if (!isOAuthOnly)
+				{
+					<router-link to="/email" class="dropdown-item">@PopForums.Resources.Email</router-link>
+				}
 				<router-link to="/search" class="dropdown-item">@PopForums.Resources.Search</router-link>
-				<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
+				@if (!isOAuthOnly)
+				{
+					<router-link to="/externallogins" class="dropdown-item">@PopForums.Resources.ExternalLogins</router-link>
+				}
 				<div class="dropdown-divider"></div>
 				<router-link to="/recentusers" class="dropdown-item">Recent Users</router-link>
 				<router-link to="/edituser" class="dropdown-item">@PopForums.Resources.EditUser</router-link>
-				<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
+				@if (!isOAuthOnly)
+				{
+					<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
+				}
 				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
-				<router-link to="/emailipban" class="dropdown-item">@PopForums.Resources.EmailIpBan</router-link>
-				<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
+				@if (!isOAuthOnly)
+				{
+					<router-link to="/emailipban" class="dropdown-item">@PopForums.Resources.EmailIpBan</router-link>
+					<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
+				}
 				<div class="dropdown-divider"></div>
 				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
 				<router-link to="/eventdefinitions" class="dropdown-item">@PopForums.Resources.EventDefinitions</router-link>
@@ -74,7 +88,7 @@
 	</main>
 	</script>
 
-	<script type="x-templates" id="General">
+<script type="x-templates" id="General">
 	<main>
 		<h2>@PopForums.Resources.GeneralSettings</h2>
 		<div>
@@ -99,11 +113,14 @@
 				<label for="MinimumSecondsBetweenPosts" class="col-sm-4 col-form-label">@PopForums.Resources.MinimumTimeBetweenPosts</label>
 				<div class="col-sm-2"><input type="text" v-model="settings.minimumSecondsBetweenPosts" class="form-control" /></div>
 			</div>
-			<div class="mb-3 row">
-				<div class="col-sm-8 offset-sm-4">
-					<label for="IsNewUserApproved"><input type="checkbox" v-model="settings.isNewUserApproved" id="IsNewUserApproved" class="form-check-input" /> @PopForums.Resources.NewUserApprovedWithoutVerification</label>
+			@if (!isOAuthOnly)
+			{
+				<div class="mb-3 row">
+					<div class="col-sm-8 offset-sm-4">
+						<label for="IsNewUserApproved"><input type="checkbox" v-model="settings.isNewUserApproved" id="IsNewUserApproved" class="form-check-input" /> @PopForums.Resources.NewUserApprovedWithoutVerification</label>
+					</div>
 				</div>
-			</div>
+			}
 			<div class="mb-3 row">
 				<div class="col-sm-8 offset-sm-4">
 					<label for="IsNewUserImageApproved"><input type="checkbox" v-model="settings.isNewUserImageApproved" id="IsNewUserImageApproved" class="form-check-input" /> @PopForums.Resources.NewUserImageApprovedWithoutMod</label>
@@ -190,11 +207,14 @@
 					</div>
 				</div>
 			</div>
-			<div class="mb-3 row">
-				<div class="col-sm-8 offset-sm-4">
-					<label for="IsPrivateForumInstance"><input type="checkbox" v-model="settings.isPrivateForumInstance" id="IsPrivateForumInstance" class="form-check-input" /> @PopForums.Resources.PrivateForum</label>
+			@if (!isOAuthOnly)
+			{
+				<div class="mb-3 row">
+					<div class="col-sm-8 offset-sm-4">
+						<label for="IsPrivateForumInstance"><input type="checkbox" v-model="settings.isPrivateForumInstance" id="IsPrivateForumInstance" class="form-check-input" /> @PopForums.Resources.PrivateForum</label>
+					</div>
 				</div>
-			</div>
+			}
 
 			<h3>@PopForums.Resources.Parsing</h3>
 
@@ -230,11 +250,14 @@
 				</div>
 			</div>
 
-			<h3>@PopForums.Resources.TermsOfService</h3>
+			@if (!isOAuthOnly)
+			{
+				<h3>@PopForums.Resources.TermsOfService</h3>
 
-			<div class="mb-3 row">
-				<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
-			</div>
+				<div class="mb-3 row">
+					<div class="col-sm-12"><textarea class="form-control" rows="6" v-model="settings.termsOfService"></textarea></div>
+				</div>
+			}
 
 			<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 			<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
@@ -646,41 +669,45 @@
 	<main>
 		<h2>@PopForums.Resources.EditUser</h2>
 
-		<div class="row">
-			<h2>@PopForums.Resources.Security</h2>
-		</div>
+		@if (!isOAuthOnly)
+		{
+			<div class="row">
+				<h2>@PopForums.Resources.Security</h2>
+			</div>
+		}
 		<div class="mb-3 row">
 			<label class="col-sm-2 col-form-label">@PopForums.Resources.Name</label>
 			<div class="col-sm-10">
 				<p class="form-control-static">{{user.name}}</p>
 			</div>
 		</div>
-		<div class="mb-3 row">
-			<label class="col-sm-2 col-form-label">@PopForums.Resources.Email</label>
-			<div class="col-sm-10">
-				<p class="form-control-static"><a v-bind:href="'mailto:' + user.email">{{user.email}}</a></p>
+		@if (!isOAuthOnly)
+		{
+			<div class="mb-3 row">
+				<label class="col-sm-2 col-form-label">@PopForums.Resources.Email</label>
+				<div class="col-sm-10">
+					<p class="form-control-static"><a v-bind:href="'mailto:' + user.email">{{user.email}}</a></p>
+				</div>
 			</div>
-		</div>
-		<div class="mb-3 row">
-			<label for="NewEmail" class="col-sm-2 col-form-label">@PopForums.Resources.EmailNewOptional</label>
-			<div class="col-sm-10">
-				<input type="email" class="form-control" autocomplete="new-email" v-model="user.newEmail" />
-				<span asp-validation-for="NewEmail"></span>
+			<div class="mb-3 row">
+				<label for="NewEmail" class="col-sm-2 col-form-label">@PopForums.Resources.EmailNewOptional</label>
+				<div class="col-sm-10">
+					<input type="email" class="form-control" autocomplete="new-email" v-model="user.newEmail" />
+				</div>
 			</div>
-		</div>
-		<div class="mb-3 row">
-			<label for="NewPassword" class="col-sm-2 col-form-label">@PopForums.Resources.PasswordNewOptional</label>
-			<div class="col-sm-10">
-				<input type="password" class="form-control" autocomplete="new-password" v-model="user.newPassword" />
-				<span asp-validation-for="NewPassword"></span>
+			<div class="mb-3 row">
+				<label for="NewPassword" class="col-sm-2 col-form-label">@PopForums.Resources.PasswordNewOptional</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control" autocomplete="new-password" v-model="user.newPassword" />
+				</div>
 			</div>
-		</div>
-		<div class="mb-3 row">
-			<div class="offset-sm-2 col-sm-10">
-				<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" class="form-check-input me-2" /> 
-				<label class="form-check-label" for="IsApproved"> @PopForums.Resources.IsApproved</label>
+			<div class="mb-3 row">
+				<div class="offset-sm-2 col-sm-10">
+					<input class="form-check-input" type="checkbox" id="IsApproved" v-model="user.isApproved" class="form-check-input me-2" /> 
+					<label class="form-check-label" for="IsApproved"> @PopForums.Resources.IsApproved</label>
+				</div>
 			</div>
-		</div>
+		}
 
 		<div class="row">
 			<h2>@PopForums.Resources.Options</h2>
@@ -769,16 +796,18 @@
 			</div>
 		</div>
 
-		<div class="row">
-			<h2>@PopForums.Resources.Roles</h2>
-		</div>
-		<div class="mb-3">
-			<div class="col-sm-10 offset-sm-2">
-				<template v-for="r in roles">
-					<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" class="form-check-input me-2" /> 
-					<label :for="'rz' + r"> {{r}}</label>
-					<br />
-				</template>
+		<div v-show="@((!isOAuthOnly).ToString().ToLower())">
+			<div class="row">
+				<h2>@PopForums.Resources.Roles</h2>
+			</div>
+			<div class="mb-3">
+				<div class="col-sm-10 offset-sm-2">
+					<template v-for="r in roles">
+						<input :id="'rz' + r" type="checkbox" name="roles" :value="r" v-model="user.roles" class="form-check-input me-2" /> 
+						<label :for="'rz' + r"> {{r}}</label>
+						<br />
+					</template>
+				</div>
 			</div>
 		</div>
 
@@ -797,11 +826,14 @@
 		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
 
-		<hr />
-		<div class="text-end">
-			<input type="button" class="btn btn-primary mb-3" value="@PopForums.Resources.DeleteUserButton" v-on:click="deleteUser" /><br />
-			<input type="button" class="btn btn-primary" value="@PopForums.Resources.DeleteAndBanButton" v-on:click="deleteAndBanUser" />
-		</div>
+		@if (!isOAuthOnly)
+		{
+			<hr />
+				<div class="text-end">
+				<input type="button" class="btn btn-primary mb-3" value="@PopForums.Resources.DeleteUserButton" v-on:click="deleteUser" /><br />
+				<input type="button" class="btn btn-primary" value="@PopForums.Resources.DeleteAndBanButton" v-on:click="deleteAndBanUser" />
+			</div>
+		}
 	</main>
 </script>
 

@@ -1,6 +1,7 @@
 ﻿@using PopForums.Configuration
 @inject IUserRetrievalShim UserRetrievalShim
 @inject ISettingsManager SettingsManager
+@inject IConfig Config
 @{
 	var user = UserRetrievalShim.GetUser();
 }
@@ -43,9 +44,15 @@
 							<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
 							<div class="dropdown-divider"></div>
 							<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
-							<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+							@if (!Config.IsOAuthOnly)
+							{
+								<a asp-controller="@AccountController.Name" asp-action="Security" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ChangeYourEmailPassword</a>
+							}
 							<a asp-controller="@AccountController.Name" asp-action="ManagePhotos" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ManageYourPhotos</a>
-							<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+							@if (!Config.IsOAuthOnly)
+							{
+								<a asp-controller="@AccountController.Name" asp-action="ExternalLogins" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.ExternalLogins</a>
+							}
 							@if (user.IsInRole(PermanentRoles.Admin))
 							{
 								<div class="dropdown-divider"></div>
