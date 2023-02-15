@@ -96,4 +96,5 @@ public interface IUserRepository
 	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
 	Task UpdateRefreshToken(User user, string refreshToken);
 	Task<string> GetRefreshToken(User user);
+	Task<IEnumerable<string>> GetUserNamesThatStartWith(string startingName);
 }

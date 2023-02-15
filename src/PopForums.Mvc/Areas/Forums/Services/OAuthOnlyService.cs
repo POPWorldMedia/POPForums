@@ -19,8 +19,9 @@ public class OAuthOnlyService : IOAuthOnlyService
 	private readonly IExternalUserAssociationManager _externalUserAssociationManager;
 	private readonly IUserService _userService;
 	private readonly IClaimsToRoleMapper _claimsToRoleMapper;
+	private readonly IUserNameReconciler _userNameReconciler;
 
-	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper)
+	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper, IUserNameReconciler userNameReconciler)
 	{
 		_config = config;
 		_oAuth2LoginUrlGenerator = oAuth2LoginUrlGenerator;
@@ -29,6 +30,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		_externalUserAssociationManager = externalUserAssociationManager;
 		_userService = userService;
 		_claimsToRoleMapper = claimsToRoleMapper;
+		_userNameReconciler = userNameReconciler;
 	}
 
 	public string GetLoginUrl(string redirectUrl)
@@ -72,9 +74,14 @@ public class OAuthOnlyService : IOAuthOnlyService
 		if (!matchResult.Successful)
 		{
 			// if not found, create the new user
+			
+			// reconcile email
+			
+			// reconcile name
+			var uniqueName = await _userNameReconciler.GetUniqueNameForUser(callbackResult.ResultData.Name);
 			var signupData = new SignupData
 			{
-				Name = callbackResult.ResultData.Name,
+				Name = uniqueName,
 				Email = callbackResult.ResultData.Email,
 				Password = Guid.NewGuid().ToString(),
 				IsCoppa = true,
@@ -87,10 +94,14 @@ public class OAuthOnlyService : IOAuthOnlyService
 		}
 		else
 		{
-			// if found, verify name/email correct
+			// if found, verify name is correct
 			user = matchResult.User;
-			// reconcile email
 			// reconcile name
+			if (user.Name != callbackResult.ResultData.Name)
+			{
+				var updatedName = await _userNameReconciler.GetUniqueNameForUser(callbackResult.ResultData.Name);
+				await _userService.ChangeName(user, updatedName, null, ip);
+			}
 		}
 		
 		// set the token expiration

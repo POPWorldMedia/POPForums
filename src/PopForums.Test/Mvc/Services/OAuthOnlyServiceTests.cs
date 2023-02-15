@@ -13,6 +13,7 @@ public class OAuthOnlyServiceTests
 	private Mock<IExternalUserAssociationManager> _externalUserAssociationManager;
 	private Mock<IUserService> _userService;
 	private Mock<IClaimsToRoleMapper> _claimsToRoleMapper;
+	private Mock<IUserNameReconciler> _userNameReconciler;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -23,7 +24,8 @@ public class OAuthOnlyServiceTests
 		_externalUserAssociationManager = new Mock<IExternalUserAssociationManager>();
 		_userService = new Mock<IUserService>();
 		_claimsToRoleMapper = new Mock<IClaimsToRoleMapper>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object);
+		_userNameReconciler = new Mock<IUserNameReconciler>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -113,6 +115,44 @@ public class OAuthOnlyServiceTests
 		}
 		
 		[Fact]
+		public async Task ExistingUserNameUnchangedNotChanged()
+		{
+			var service = GetService();
+			var user = new User { Name = "Simon" };
+			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new Claim[]{}, ResultData = new ResultData{Email = "e", ID = "i", Name = user.Name}};
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(callbackResult);
+			var externalUserMatch = new ExternalUserAssociationMatchResult { User = user, Successful = true };
+			_externalUserAssociationManager
+				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
+				.ReturnsAsync(externalUserMatch);
+			_userNameReconciler.Setup(x => x.GetUniqueNameForUser(It.IsAny<string>())).ReturnsAsync(user.Name);
+
+			var result = await service.ProcessOAuthLogin("url", "ip");
+			
+			_userService.Verify(x => x.ChangeName(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+		}
+		
+		[Fact]
+		public async Task ExistingUserNameChangedIsChanged()
+		{
+			var service = GetService();
+			var user = new User { Name = "Simon" };
+			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new Claim[]{}, ResultData = new ResultData{Email = "e", ID = "i", Name = "Jeff"}};
+			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(callbackResult);
+			var externalUserMatch = new ExternalUserAssociationMatchResult { User = user, Successful = true };
+			_externalUserAssociationManager
+				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
+				.ReturnsAsync(externalUserMatch);
+			_userNameReconciler.Setup(x => x.GetUniqueNameForUser(It.IsAny<string>())).ReturnsAsync("unique");
+
+			var result = await service.ProcessOAuthLogin("url", "ip");
+			
+			_userService.Verify(x => x.ChangeName(user, "unique", It.IsAny<User>(), It.IsAny<string>()), Times.Once);
+		}
+		
+		[Fact]
 		public async Task NewUserMappedToClaims()
 		{
 			var service = GetService();
@@ -159,11 +199,12 @@ public class OAuthOnlyServiceTests
 			var user = new User();
 			SignupData signupData = null;
 			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), ip)).ReturnsAsync(user).Callback<SignupData, string>((s, i) => signupData = s);
+			_userNameReconciler.Setup(x => x.GetUniqueNameForUser("Diana")).ReturnsAsync("UniqueD");
 
 			await service.ProcessOAuthLogin(redirUrl, ip);
 			
 			Assert.Equal(callbackResult.ResultData.ID, externalLoginInfo.ProviderKey);
-			Assert.Equal(callbackResult.ResultData.Name, externalLoginInfo.ProviderDisplayName);
+			Assert.Equal("UniqueD", signupData.Name);
 			_userService.Verify(x => x.CreateUserWithProfile(signupData, ip));
 			_externalUserAssociationManager.Verify(x => x.Associate(user, externalLoginInfo, ip));
 		}

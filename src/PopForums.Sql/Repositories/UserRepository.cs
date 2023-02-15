@@ -278,4 +278,12 @@ FROM pf_PopForumsUser U JOIN pf_SecurityLog S ON U.UserID = S.TargetUserID
 WHERE SecurityLogType = 6 ORDER BY CreationDate DESC"));
 		return list.Result.ToList();
 	}
+
+	public async Task<IEnumerable<string>> GetUserNamesThatStartWith(string startingName)
+	{
+		Task<IEnumerable<string>> list = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			list = connection.QueryAsync<string>(@"SELECT [Name] FROM pf_PopForumsUser WHERE [Name] LIKE @startingName + '%'", new { startingName }));
+		return list.Result.ToList();
+	}
 }

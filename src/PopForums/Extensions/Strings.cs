@@ -60,17 +60,23 @@ public static class Strings
 	public static string ToUniqueUrlName(this string name, List<string> matchingStartsWith)
 	{
 		var urlName = name.ToUrlName();
-		var originalName = urlName;
-		var matchTest = urlName.Replace("-", @"\-");
+		return ToUniqueName(urlName, matchingStartsWith);
+	}
+
+	public static string ToUniqueName(this string name, List<string> matchingStartsWith)
+	{
+		var originalName = name;
+		var matchTest = name.Replace("-", @"\-");
 		var count = matchingStartsWith.Count(m => Regex.IsMatch(m, @"^(" + matchTest + @")(\-\d)?$"));
 		if (count > 0)
-			urlName = urlName + "-" + (count + 1);
-		while (matchingStartsWith.Exists(x => x == urlName))
+			name = name + "-" + (count + 1);
+		while (matchingStartsWith.Exists(x => x == name))
 		{
 			count++;
-			urlName = originalName + "-" + (count + 1);
+			name = originalName + "-" + (count + 1);
 		}
-		return urlName;
+
+		return name;
 	}
 
 	public static string Trimmer(this string stringToTrim, int maxLength)
