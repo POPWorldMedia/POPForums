@@ -32,7 +32,7 @@ This mode uses OpenID Connect (OIDC) claims. The identity provider, in addition 
 
 The amount of access and configuration that you have in your identity provider varies a ton. At the very least, the provider should have OIDC enabled, and return `email` and `name` claims. Beyond that, it should return specific claims for forum admins and moderators. The forum can assign these roles based on just the presence of a claim, or by the claim and a specific value.
 
->In Azure Active Directory, for example, you can create a group and assign members to it. In an app registration, you can configure tokens to return groups as claims. The claims will all be named `roles`, with values that are guids that identify the groups' object ID's. So if a group called "Forum Admins" has an object ID of `978efeac-3baf-4e61-a519-9b06eb26a0bf`, the token will have a claim called `roles` with that guid as a value. Other identity providers it may be possible to simply assign a claim called `ForumAdmin` with no value to represent a forum administrator.
+>In Azure Active Directory, for example, you can create a group and assign members to it. In an app registration, you can configure tokens to return groups as claims. The claims will all be named `roles`, with values that are guids that identify the groups' object ID's. So if a group called "Forum Admins" has an object ID of `978efeac-3baf-4e61-a519-9b06eb26a0bf`, the token will have a claim called `roles` with that guid as a value. With other identity providers, it may be possible to simply assign a claim called `ForumAdmin` with no value to represent a forum administrator.
 
 Find out what _scopes_ are required to make sure you're getting the `name` and `email` claims, as well as those that identify your moderators and admins. The typical scope you'll specify, as it relates to the OIDC standard, is:
 ```
@@ -44,7 +44,7 @@ Finally, the provider has to know what the valid redirect URL back to the forum 
 ```
 https://localhost:5091/Forums/Identity/CallbackHandler
 ```
-This is what you would use to redirect to a locally running developer instance of the forum. For real environments, you replace `localhost:5091` with your domain, like `contoso.com`. Most providers require `https`.
+This is what you would use to redirect to a locally running developer instance of the forum. For real environments, you replace `localhost:5091` with your domain, like `example.com`. Most providers require `https`.
 
 ## Configure POP Forums
 
@@ -70,7 +70,7 @@ Now that you understand the provider's needs, you can set up the configuration f
 ```
 Here's what these do:
 * `IsOAuthOnly`: The master switch for this mode. When set to true, all of the things the forum would do to manage user accounts, like account creation, passwords, email, goes away, delegating it to the OAuth identity provider.
-* `OAuthClientID`: Sometimes called an "application ID," this value comes from the identity provider to understand what service (your forum) is talking to it.
+* `OAuthClientID`: Sometimes called an "application ID," this value comes from the identity provider to understand what service (your forum, in this case) is talking to it.
 * `OAuthClientSecret`: The forum uses this value when it calls back to the provider to validate or refresh a token.
 * `OAuthLoginBaseUrl`: This is the base URL that the forum uses to redirect users to the identity provider. It appends this with a query string, including the callback URL (handled by the forum), the scope, and a state value.
 * `OAuthTokenUrl`: The URL that the forum uses to validate a code or refresh token that came back from the user redirect.
@@ -79,4 +79,4 @@ Here's what these do:
 * `OAuthModeratorClaimType`: This is the name of the claim that identifies a user as a forum moderator.
 * `OAuthModeratorClaimValue`: This is the value of the above named claim that identifies a user as a forum moderator. If not set, the presence of a `OAuthModeratorClaimType` claim with any or no value designates the user as a forum administrator.
 * `OAuthScopes`: The scopes to get from the identity provider so that it returns the `sub`, `name` and `email` claims. This is often how you tell the service to return a refresh token as well. Typically, this setting will use `openid email profile offline_access`.
-* `OAuthRefreshExpirationMinutes`: The number of minutes that should pass until the forum asks the identity provider's token endpoint for an updated refresh token. If the user is no longer valid, they will be logged out on their next request.
+* `OAuthRefreshExpirationMinutes`: The number of minutes that should pass until the forum asks the identity provider's token endpoint for an updated refresh token. If the user is no longer valid, they will be logged out on their next request. Use a value that is short enough to cause revoked accounts to be shut out, but long enough that every forum request isn't slowed by fetching a refresh token.
