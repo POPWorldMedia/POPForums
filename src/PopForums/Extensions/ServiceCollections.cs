@@ -71,6 +71,7 @@ public static class ServiceCollections
 		services.AddTransient<IPostImageService, PostImageService>();
 		services.AddTransient<IClaimsToRoleMapper, ClaimsToRoleMapper>();
 		services.AddTransient<IUserNameReconciler, UserNameReconciler>();
+		services.AddTransient<IUserEmailReconciler, UserEmailReconciler>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)

@@ -20,8 +20,9 @@ public class OAuthOnlyService : IOAuthOnlyService
 	private readonly IUserService _userService;
 	private readonly IClaimsToRoleMapper _claimsToRoleMapper;
 	private readonly IUserNameReconciler _userNameReconciler;
+	private readonly IUserEmailReconciler _userEmailReconciler;
 
-	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper, IUserNameReconciler userNameReconciler)
+	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper, IUserNameReconciler userNameReconciler, IUserEmailReconciler userEmailReconciler)
 	{
 		_config = config;
 		_oAuth2LoginUrlGenerator = oAuth2LoginUrlGenerator;
@@ -31,6 +32,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		_userService = userService;
 		_claimsToRoleMapper = claimsToRoleMapper;
 		_userNameReconciler = userNameReconciler;
+		_userEmailReconciler = userEmailReconciler;
 	}
 
 	public string GetLoginUrl(string redirectUrl)
@@ -74,15 +76,14 @@ public class OAuthOnlyService : IOAuthOnlyService
 		if (!matchResult.Successful)
 		{
 			// if not found, create the new user
-			
 			// reconcile email
-			
+			var uniqueEmail = await _userEmailReconciler.GetUniqueEmail(callbackResult.ResultData.Email, callbackResult.ResultData.ID);
 			// reconcile name
 			var uniqueName = await _userNameReconciler.GetUniqueNameForUser(callbackResult.ResultData.Name);
 			var signupData = new SignupData
 			{
 				Name = uniqueName,
-				Email = callbackResult.ResultData.Email,
+				Email = uniqueEmail,
 				Password = Guid.NewGuid().ToString(),
 				IsCoppa = true,
 				IsTos = true,

@@ -14,6 +14,7 @@ public class OAuthOnlyServiceTests
 	private Mock<IUserService> _userService;
 	private Mock<IClaimsToRoleMapper> _claimsToRoleMapper;
 	private Mock<IUserNameReconciler> _userNameReconciler;
+	private Mock<IUserEmailReconciler> _userEmailReconciler;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -25,7 +26,8 @@ public class OAuthOnlyServiceTests
 		_userService = new Mock<IUserService>();
 		_claimsToRoleMapper = new Mock<IClaimsToRoleMapper>();
 		_userNameReconciler = new Mock<IUserNameReconciler>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object);
+		_userEmailReconciler = new Mock<IUserEmailReconciler>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object, _userEmailReconciler.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -200,11 +202,13 @@ public class OAuthOnlyServiceTests
 			SignupData signupData = null;
 			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), ip)).ReturnsAsync(user).Callback<SignupData, string>((s, i) => signupData = s);
 			_userNameReconciler.Setup(x => x.GetUniqueNameForUser("Diana")).ReturnsAsync("UniqueD");
+			_userEmailReconciler.Setup(x => x.GetUniqueEmail("a@b.com", "id")).ReturnsAsync("uid");
 
 			await service.ProcessOAuthLogin(redirUrl, ip);
 			
 			Assert.Equal(callbackResult.ResultData.ID, externalLoginInfo.ProviderKey);
 			Assert.Equal("UniqueD", signupData.Name);
+			Assert.Equal("uid", signupData.Email);
 			_userService.Verify(x => x.CreateUserWithProfile(signupData, ip));
 			_externalUserAssociationManager.Verify(x => x.Associate(user, externalLoginInfo, ip));
 		}
