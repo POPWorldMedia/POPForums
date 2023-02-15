@@ -7,7 +7,7 @@ public class ConfigLoader
 		var container = new ConfigContainer();
 		container.DatabaseConnectionString = configuration["PopForums:Database:ConnectionString"];
 		var cacheSeconds = configuration["PopForums:Cache:Seconds"];
-		container.CacheSeconds = cacheSeconds == null ? 90 : Convert.ToInt32(cacheSeconds);
+		container.CacheSeconds = string.IsNullOrEmpty(cacheSeconds) ? 90 : Convert.ToInt32(cacheSeconds);
 		container.CacheConnectionString = configuration["PopForums:Cache:ConnectionString"];
 		container.CacheForceLocalOnly = Convert.ToBoolean(configuration["PopForums:Cache:ForceLocalOnly"]);
 		container.SearchUrl = configuration["PopForums:Search:Url"];
@@ -39,7 +39,7 @@ public class ConfigLoader
 		container.OAuthModeratorClaimValue = configuration["PopForums:OAuthOnly:OAuthModeratorClaimValue"];
 		container.OAuthScopes = configuration["PopForums:OAuthOnly:OAuthScopes"];
 		var refreshMinutes = configuration["PopForums:OAuthOnly:OAuthRefreshExpirationMinutes"];
-		container.OAuthRefreshExpirationMinutes = refreshMinutes == null ? 60 : Convert.ToInt32(refreshMinutes);
+		container.OAuthRefreshExpirationMinutes = string.IsNullOrEmpty(refreshMinutes) ? 60 : Convert.ToInt32(refreshMinutes);
 		
 		return container;
 	} 
