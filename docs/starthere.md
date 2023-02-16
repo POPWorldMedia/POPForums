@@ -112,7 +112,6 @@ Here’s what each field on the setup page does:
 * **Use ESMTP for credentials:** Check this box if you have to authenticate with your server (this is almost always the case). Checking this makes the two boxes below it editable.
 * **SMTP User:** User name (often the e-mail address) to authenticate with. Not editable unless the “Use ESMTP” box is checked.
 * **SMTP Password:** Password to authenticate with. Not editable unless the “Use ESMTP” box is checked.
-* **Time zone and Use daylight saving:** Determines how your forum should handle time. This will also be the time adjustment your admin account will use. Both can be changed later.
 * **Display name:** How you want your name to appear in the forum.
 * **E-mail:** The e-mail address you’ll use to login with.
 * **Password:** The password you’ll use to login with.
