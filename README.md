@@ -23,11 +23,10 @@ https://popforumsdev.azurewebsites.net/Forums
 
 Latest release:  
 https://github.com/POPWorldMedia/POPForums/releases/tag/v19.0.1  
-Packages available on NuGet and npm.
+Packages available on NuGet.
 
 The latest CI build packages can be found with these feeds on MyGet:  
 https://www.myget.org/F/popforums/api/v3/index.json   
-https://www.myget.org/F/popforums/npm/  
 
 Sample app using only the packages:  
 https://github.com/POPWorldMedia/POPForums.Sample  
