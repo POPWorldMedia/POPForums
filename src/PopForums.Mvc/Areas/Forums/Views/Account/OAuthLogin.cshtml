@@ -1,5 +1,6 @@
 @using PopForums
 @model string
+@inject ISettingsManager SettingsManager
 
 @{
 	Layout = null;
@@ -14,6 +15,7 @@
 </head>
 <body>
 <div class="vh-100 vw-100 p-5 d-flex flex-column justify-content-center">
+	<h1 class="mx-auto mb-3">@SettingsManager.Current.ForumTitle</h1>
 	<div class="alert alert-primary d-flex justify-content-center">
 		<a href="@Model" class="btn btn-primary">@Resources.Login</a>
 	</div>

@@ -59,6 +59,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * `appsettings.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
 
 > If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
+
 ```js
 {
     "PopForums": {

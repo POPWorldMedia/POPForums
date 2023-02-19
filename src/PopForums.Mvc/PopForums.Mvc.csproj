@@ -24,7 +24,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PopIdentity" Version="4.99.99-CI-20230212-025255" />
+		<PackageReference Include="PopIdentity" Version="4.3.0" />
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 	</ItemGroup>
 
