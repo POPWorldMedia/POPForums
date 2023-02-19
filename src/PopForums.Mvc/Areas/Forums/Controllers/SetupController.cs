@@ -3,18 +3,22 @@
 [Area("Forums")]
 public class SetupController : Controller
 {
-	public SetupController(ISetupService setupService)
+	public SetupController(ISetupService setupService, IConfig config)
 	{
 		_setupService = setupService;
+		_config = config;
 	}
 
 	private readonly ISetupService _setupService;
+	private readonly IConfig _config;
 
 	public static string Name = "Setup";
 
 	[PopForumsAuthorizationIgnore]
 	public ActionResult Index()
 	{
+		if (_config.IsOAuthOnly)
+			return RedirectToAction(nameof(OAuthOnlySetup));
 		if (!_setupService.IsConnectionPossible())
 			return View("NoConnection");
 		if (_setupService.IsDatabaseSetup())
@@ -24,6 +28,18 @@ public class SetupController : Controller
 			SmtpPort = 25
 		};
 		return View(setupVariables);
+	}
+
+	public IActionResult OAuthOnlySetup()
+	{
+		if (!_setupService.IsConnectionPossible())
+			return View("NoConnection");
+		if (_setupService.IsDatabaseSetup())
+			return StatusCode(403);
+		var exception = _setupService.SetupDatabaseWithoutSettingsOrUser();
+		if (exception != null)
+			return View("Exception");
+		return View("Success");
 	}
 
 	[PopForumsAuthorizationIgnore]

@@ -21,8 +21,9 @@ public class OAuthOnlyService : IOAuthOnlyService
 	private readonly IClaimsToRoleMapper _claimsToRoleMapper;
 	private readonly IUserNameReconciler _userNameReconciler;
 	private readonly IUserEmailReconciler _userEmailReconciler;
+	private readonly ISecurityLogService _securityLogService;
 
-	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper, IUserNameReconciler userNameReconciler, IUserEmailReconciler userEmailReconciler)
+	public OAuthOnlyService(IConfig config, IOAuth2LoginUrlGenerator oAuth2LoginUrlGenerator, IStateHashingService stateHashingService, IOAuth2JwtCallbackProcessor oAuth2JwtCallbackProcessor, IExternalUserAssociationManager externalUserAssociationManager, IUserService userService, IClaimsToRoleMapper claimsToRoleMapper, IUserNameReconciler userNameReconciler, IUserEmailReconciler userEmailReconciler, ISecurityLogService securityLogService)
 	{
 		_config = config;
 		_oAuth2LoginUrlGenerator = oAuth2LoginUrlGenerator;
@@ -33,6 +34,7 @@ public class OAuthOnlyService : IOAuthOnlyService
 		_claimsToRoleMapper = claimsToRoleMapper;
 		_userNameReconciler = userNameReconciler;
 		_userEmailReconciler = userEmailReconciler;
+		_securityLogService = securityLogService;
 	}
 
 	public string GetLoginUrl(string redirectUrl)
@@ -48,7 +50,10 @@ public class OAuthOnlyService : IOAuthOnlyService
 		var callbackResult = await _oAuth2JwtCallbackProcessor.VerifyCallback(redirectUrl, _config.OAuthTokenUrl,
 			_config.OAuthClientID, _config.OAuthClientSecret);
 		if (!callbackResult.IsSuccessful)
+		{
+			await _securityLogService.CreateLogEntry((User)null, null, ip, callbackResult.Message, SecurityLogType.ExternalLoginChallengeFailed);
 			return callbackResult;
+		}
 		if (string.IsNullOrEmpty(callbackResult.ResultData.Name))
 		{
 			callbackResult.IsSuccessful = false;

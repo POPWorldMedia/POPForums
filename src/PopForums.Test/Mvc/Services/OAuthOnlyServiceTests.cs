@@ -15,6 +15,7 @@ public class OAuthOnlyServiceTests
 	private Mock<IClaimsToRoleMapper> _claimsToRoleMapper;
 	private Mock<IUserNameReconciler> _userNameReconciler;
 	private Mock<IUserEmailReconciler> _userEmailReconciler;
+	private Mock<ISecurityLogService> _securityLogService;
 	
 	private OAuthOnlyService GetService()
 	{
@@ -27,7 +28,8 @@ public class OAuthOnlyServiceTests
 		_claimsToRoleMapper = new Mock<IClaimsToRoleMapper>();
 		_userNameReconciler = new Mock<IUserNameReconciler>();
 		_userEmailReconciler = new Mock<IUserEmailReconciler>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object, _userEmailReconciler.Object);
+		_securityLogService = new Mock<ISecurityLogService>();
+		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object, _userEmailReconciler.Object, _securityLogService.Object);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests

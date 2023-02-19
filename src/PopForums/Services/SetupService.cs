@@ -6,6 +6,7 @@ public interface ISetupService
 	bool IsConnectionPossible();
 	bool IsDatabaseSetup();
 	Task<Tuple<User, Exception>> SetupDatabase(SetupVariables setupVariables);
+	Exception SetupDatabaseWithoutSettingsOrUser();
 }
 
 public class SetupService : ISetupService
@@ -48,6 +49,20 @@ public class SetupService : ISetupService
 	public bool IsDatabaseSetup()
 	{
 		return _setupRepository.IsDatabaseSetup();
+	}
+
+	public Exception SetupDatabaseWithoutSettingsOrUser()
+	{
+		try
+		{
+			_setupRepository.SetupDatabase();
+		}
+		catch (Exception exception)
+		{
+			return exception;
+		}
+
+		return null;
 	}
 
 	public async Task<Tuple<User, Exception>> SetupDatabase(SetupVariables setupVariables)
