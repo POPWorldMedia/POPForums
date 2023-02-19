@@ -46,7 +46,7 @@ https://localhost:5091/Forums/Identity/CallbackHandler
 ```
 This is what you would use to redirect to a locally running developer instance of the forum. For real environments, you replace `localhost:5091` with your domain, like `example.com`. Most providers require `https`.
 
-## Configure POP Forums
+## Configure POP Forums for OAuth-Only
 
 Now that you understand the provider's needs, you can set up the configuration for the forum. These are in addition to the settings described on the [Start Here](starthere.md) page.
 ```
@@ -80,3 +80,7 @@ Here's what these do:
 * `OAuthModeratorClaimValue`: This is the value of the above named claim that identifies a user as a forum moderator. If not set, the presence of a `OAuthModeratorClaimType` claim with any or no value designates the user as a forum administrator.
 * `OAuthScopes`: The scopes to get from the identity provider so that it returns the `sub`, `name` and `email` claims. This is often how you tell the service to return a refresh token as well. Typically, this setting will use `openid email profile offline_access`.
 * `OAuthRefreshExpirationMinutes`: The number of minutes that should pass until the forum asks the identity provider's token endpoint for an updated refresh token. If the user is no longer valid, they will be logged out on their next request. Use a value that is short enough to cause revoked accounts to be shut out, but long enough that every forum request isn't slowed by fetching a refresh token.
+
+## Troubleshooting
+
+Errors should appear right in the user interface. If you need additional context, check the `pf_SecurityLog` table in the database.
