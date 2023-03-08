@@ -34,8 +34,7 @@ public class MailWorker
 				if (queuedMessage == null)
 					break;
 				messageGroup.Add(queuedMessage);
-				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.FullMessage)
-					queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
+				queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
 			}
 			Parallel.ForEach(messageGroup, message =>
 			{
