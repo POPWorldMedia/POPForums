@@ -45,6 +45,7 @@ public class EmailProcessor
 				message.ToName = payload.ToName;
 			}
 			_smtpWrapper.Send(message);
+			await _queuedEmailRepo.DeleteMessage(message.MessageID);
 		}
 		catch (Exception exc)
 		{
