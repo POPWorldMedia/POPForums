@@ -157,6 +157,10 @@ Then fire up the container and associate it with the volume, and tell it to use 
 docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -e 'MSSQL_DATA_DIR=/DATA' -p 1433:1433 --name sqledge -v sqldata:/DATA  -d mcr.microsoft.com/azure-sql-edge
 ```
 
+## Running Azure Functions on a Mac
+
+This isn't the most straightfoward thing, and it's hard to find the information, but you need to install the Azure Functions Core tools via Homebrew. [Microsoft explains how to do this.](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Cmacos%2Ccsharp%2Cportal%2Cbash#install-the-azure-functions-core-tools)
+
 ## Customization
 
 To make POP Forums look the way you want, or with extra functionality, read up on [customization](customization.md).
