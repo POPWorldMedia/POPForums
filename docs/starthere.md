@@ -139,7 +139,7 @@ The easiest way to integrate with an existing set of users is to connect via an 
 
 If you want to run locally with some of the "kits" described in the documentation, you'll need to fire them up using Docker. Here are the commands for the most common things. These sometimes change, because of new names, versions and such, but they're current as of early 2023.  
   
-* SQL Server  
+* SQL Server (keep in mind that `mcr.microsoft.com/azure-sql-edge` is the ARM versoin of SQL)  
 `docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sqledge -d mcr.microsoft.com/azure-sql-edge`  
 * Azureite, for storage and queues  
 `docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite`  
@@ -147,6 +147,15 @@ If you want to run locally with some of the "kits" described in the documentatio
 `docker run --name some-redis -p 6379:6379 -d redis`  
 * ElasticSearch, for better search  
 `docker run --name es-01 -p 9200:9200 -it docker.elastic.co/elasticsearch/elasticsearch:8.6.0`  
+
+You may want to have your databases be more durable in the event you trash the SQL container or update to a new one. To do that, first create a new volume, either in Docker Desktop or on the command line:
+```
+docker volume create sqldata
+```
+Then fire up the container and associate it with the volume, and tell it to use that volume for all of the data.
+```
+docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -e 'MSSQL_DATA_DIR=/DATA' -p 1433:1433 --name sqledge -v sqldata:/DATA  -d mcr.microsoft.com/azure-sql-edge
+```
 
 ## Customization
 
