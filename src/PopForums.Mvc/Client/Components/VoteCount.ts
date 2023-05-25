@@ -63,17 +63,19 @@ namespace PopForums {
                 this.votebuttonclass.split(" ").forEach((c) => voteButton.classList.add(c));
             type resultType = { votes: number; isVoted: boolean; }
             voteButton.addEventListener("click", () => {
+                voteButton.classList.remove("icon-plus-square", "icon-plus-square-fill");
+                voteButton.classList.add("spinner-border", "spinner-border-sm");
                 fetch(PopForums.AreaPath + "/Forum/ToggleVote/" + this.postid, { method: "POST"})
                 .then(response => response.json()
                     .then((result: resultType) => {
                         this.votes = result.votes.toString();
                         this.badge.innerHTML = "+" + this.votes;
                         if (result.isVoted) {
-                            voteButton.classList.remove("icon-plus-square");
+                            voteButton.classList.remove("spinner-border", "spinner-border-sm");
                             voteButton.classList.add("icon-plus-square-fill");
                         }
                         else {
-                            voteButton.classList.remove("icon-plus-square-fill");
+                            voteButton.classList.remove("spinner-border", "spinner-border-sm");
                             voteButton.classList.add("icon-plus-square");
                         }
                         this.applyPopover();
