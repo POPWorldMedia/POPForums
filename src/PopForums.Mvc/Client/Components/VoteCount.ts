@@ -16,6 +16,10 @@ namespace PopForums {
         return this.getAttribute("postid");
     }
 
+    get containerclass(): string {
+        return this.getAttribute("containerclass");
+    }
+
     get votescontainerclass(): string {
         return this.getAttribute("votescontainerclass");
     }
@@ -47,7 +51,10 @@ namespace PopForums {
 
     connectedCallback() {
         this.innerHTML = VoteCount.template;
-        this.badge = this.querySelector("div");
+        let topContainer = this.querySelector("div");
+        if (this.containerclass?.length > 0)
+            this.containerclass.split(" ").forEach((c) => topContainer.classList.add(c));
+        this.badge = this.querySelector("div > div");
         this.badge.innerHTML = "+" + this.votes;
         if (this.badgeclass?.length > 0)
             this.badgeclass.split(" ").forEach((c) => this.badge.classList.add(c));
@@ -55,7 +62,7 @@ namespace PopForums {
         if (statusHtml != "") {
             let status = document.createElement("template");
             status.innerHTML = this.buttonGenerator();
-            this.append(status.content.firstChild);
+            this.firstElementChild.append(status.content.firstChild);
         }
         let voteButton = this.querySelector("span");
         if (voteButton) {
@@ -128,7 +135,7 @@ namespace PopForums {
         return VoteCount.voteUpButton;
     }
 
-    static template: string = `<div></div>`;
+    static template: string = `<div><div></div></div>`;
 
     static voteUpButton = "<span class=\"icon icon-plus-square\"></span>";
     static cancelVoteButton = "<span class=\"icon icon-plus-square-fill\"></span>";

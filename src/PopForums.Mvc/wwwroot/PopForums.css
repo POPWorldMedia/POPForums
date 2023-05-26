@@ -66,10 +66,17 @@ pf-notificationtoggle,
 }
 .voters ul { padding: 0; margin: 0; }
 .voters li { list-style: none;font-size: 100%; }
-pf-votecount span {
+pf-votecount div span {
     font-size: 1.2em;
     margin-right: 1em;
     cursor: pointer;
+}
+
+#ForumContainer .voteUpContainer {
+	width: 6.5em;
+}
+#ForumContainer .voteUpContainerVert {
+	height: 6.5em;
 }
 
 #ForumContainer .postToolContainer {
@@ -87,6 +94,7 @@ pf-votecount span {
 #ForumContainer .postToolContainer *, #ForumContainer h2 a {
 	text-decoration: none;
     cursor: pointer;
+	vertical-align: middle;
 }
 #ForumContainer .postItem .postImage {
 	max-width: 100%;height: auto;
