@@ -5,7 +5,7 @@ nav_order: 7
 ---
 # Using ElasticKit Library
 The `PopForums.ElasticKit` library makes it possible to wire up the following scenarios:
-* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x,v17.x and v18.x uses v7.x of ElasticSearch._
+* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x,v17.x and v18.x, v19.x uses v7.x of ElasticSearch._
 
 ElasticSearch can run quite literally anywhere in a docker container or straight up in a VM, if that's your thing. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed. In the commercial hosted version of POP Forums, we use Elastic's managed service running in Azure. Elastic runs in all of the major clouds and is generally reasonably priced.
 
@@ -44,6 +44,6 @@ You'll also need to setup the right configuration values if you're running web i
 ```
 * `Url`: The base URL for the ElasticSearch endpoints
 * `Key`: After v16.x, this will optionally set an API key, using the format `id|key` (that's a pipe separating the ID and API key). Make sure that you use the ID, not the name.
-* `Provider`: This is optional and not actually implemented anywhere other than in our Azure Functions example project, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library.
+* `Provider`: This is optional in the web app and not actually implemented anywhere other than in our Azure Functions example project, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library.
 
 Configuring ElasticSearch and setting up security rules for it are beyond the scope of this wiki.
