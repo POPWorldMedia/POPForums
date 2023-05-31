@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Nest;
+using Elastic.Clients.Elasticsearch;
 using Polly;
 using PopForums.Configuration;
 using PopForums.Services;
@@ -71,14 +71,16 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 
 		try
 		{
-			var policy = Polly.Policy.HandleResult<IndexResponse>(x => !x.IsValid)
+			var policy = Polly.Policy.HandleResult<IndexResponse>(x => !x.IsValidResponse)
 				.WaitAndRetry(new[]
 				{
 					TimeSpan.FromSeconds(1),
 					TimeSpan.FromSeconds(5),
 					TimeSpan.FromSeconds(30)
-				}, (exception, timeSpan) => {
-					_errorLog.Log(exception.Result.OriginalException, ErrorSeverity.Error, $"Retry after {timeSpan.Seconds}: {exception.Result.DebugInformation}");
+				}, (result, timeSpan) =>
+				{
+					result.Result.TryGetOriginalException(out var exc);
+					_errorLog.Log(exc, ErrorSeverity.Error, $"Retry after {timeSpan.Seconds}: {result.Result.DebugInformation}");
 				});
 			policy.Execute(() =>
 			{
@@ -101,7 +103,8 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 			var result = _elasticSearchClientWrapper.RemoveTopic(id);
 			if (result.Result != Result.Deleted)
 			{
-				_errorLog.Log(result.OriginalException, ErrorSeverity.Error, $"Debug information: {result.DebugInformation}");
+				result.TryGetOriginalException(out var exc);
+				_errorLog.Log(exc, ErrorSeverity.Error, $"Debug information: {result.DebugInformation}");
 			}
 		}
 		catch (Exception exc)

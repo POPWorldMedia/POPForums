@@ -59,7 +59,7 @@ services.AddSignalR();
 //services.AddPopForumsAzureSearch();
 
 // use ElasticSearch for POP Forums using ElasticKit
-//services.AddPopForumsElasticSearch();
+services.AddPopForumsElasticSearch();
 
 // use Azure Functions queues for POP Forums using AzureKit for background tasks...
 // do NOT call AddPopForumsBackgroundServices()
