@@ -31,6 +31,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		_errorLog = errorLog;
 		_tenantService = tenantService;
 		var node = new Uri(config.SearchUrl);
+		// TODO: rewrite ES setting
 		var settings = new ElasticsearchClientSettings(node)
 			.DefaultIndex(IndexName).DisableDirectStreaming()
 			.CertificateFingerprint("c1c8caa3b7123b6e6281918cf2d2f421b0c8c1c1e91de74a5954fc50c52fbdff")
@@ -95,7 +96,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 				.MultiMatch(m => m.Query(searchTerm)
 					.Fields(new [] { "title^10", "firstPost^5", "posts" })
 					.Fuzziness(new Fuzziness("auto"))))
-			.Fields(fd => fd.Field(x => x.TopicID))
+			.SourceIncludes(new []{"topicID"})
 			.Sort(sortSelector)
 			.From(startRow)
 			.Size(pageSize));

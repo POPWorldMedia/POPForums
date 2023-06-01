@@ -58,6 +58,7 @@ services.AddSignalR();
 // use Azure Search for POP Forums using AzureKit
 //services.AddPopForumsAzureSearch();
 
+// TODO: revert
 // use ElasticSearch for POP Forums using ElasticKit
 services.AddPopForumsElasticSearch();
 
