@@ -6,17 +6,17 @@ public class TopicStateComposerTests
 {
 	protected TopicStateComposer GetComposer()
 	{
-		_userRetrievalShim = new Mock<IUserRetrievalShim>();
-		_settingsManager = new Mock<ISettingsManager>();
-		_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
-		_favoriteTopicService = new Mock<IFavoriteTopicService>();
-		return new TopicStateComposer(_userRetrievalShim.Object, _settingsManager.Object, _subscribedTopicsService.Object, _favoriteTopicService.Object);
+		_userRetrievalShim = Substitute.For<IUserRetrievalShim>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_subscribedTopicsService = Substitute.For<ISubscribedTopicsService>();
+		_favoriteTopicService = Substitute.For<IFavoriteTopicService>();
+		return new TopicStateComposer(_userRetrievalShim, _settingsManager, _subscribedTopicsService, _favoriteTopicService);
 	}
 
-	private Mock<IUserRetrievalShim> _userRetrievalShim;
-	private Mock<ISettingsManager> _settingsManager;
-	private Mock<ISubscribedTopicsService> _subscribedTopicsService;
-	private Mock<IFavoriteTopicService> _favoriteTopicService;
+	private IUserRetrievalShim _userRetrievalShim;
+	private ISettingsManager _settingsManager;
+	private ISubscribedTopicsService _subscribedTopicsService;
+	private IFavoriteTopicService _favoriteTopicService;
 
 	public class GetState : TopicStateComposerTests
 	{
@@ -24,7 +24,7 @@ public class TopicStateComposerTests
 		public async Task MapsCorrectlyWithoutUser()
 		{
 			var composer = GetComposer();
-			_userRetrievalShim.Setup(x => x.GetUser()).Returns((User) null);
+			_userRetrievalShim.GetUser().Returns((User) null);
 			var topic = new Topic {TopicID = 123, AnswerPostID = 789};
 
 			var result = await composer.GetState(topic, 4, 5, 6);
@@ -45,10 +45,10 @@ public class TopicStateComposerTests
 			var composer = GetComposer();
 			var user = new User {UserID = 111};
 			var topic = new Topic { TopicID = 123, AnswerPostID = 789 };
-			_userRetrievalShim.Setup(x => x.GetUser()).Returns(user);
-			_favoriteTopicService.Setup(x => x.IsTopicFavorite(user.UserID, topic.TopicID)).ReturnsAsync(true);
-			_subscribedTopicsService.Setup(x => x.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(true);
-			_settingsManager.Setup(x => x.Current.AllowImages).Returns(true);
+			_userRetrievalShim.GetUser().Returns(user);
+			_favoriteTopicService.IsTopicFavorite(user.UserID, topic.TopicID).Returns(Task.FromResult(true));
+			_subscribedTopicsService.IsTopicSubscribed(user.UserID, topic.TopicID).Returns(Task.FromResult(true));
+			_settingsManager.Current.AllowImages.Returns(true);
 
 			var result = await composer.GetState(topic, 4, 5, 6);
 
@@ -60,8 +60,8 @@ public class TopicStateComposerTests
 			Assert.True(result.IsFavorite);
 			Assert.True(result.IsSubscribed);
 			Assert.True(result.IsImageEnabled);
-			_favoriteTopicService.Verify(x => x.IsTopicFavorite(user.UserID, topic.TopicID), Times.Once());
-			_subscribedTopicsService.Verify(x => x.IsTopicSubscribed(user.UserID, topic.TopicID), Times.Once);
+			await _favoriteTopicService.Received().IsTopicFavorite(user.UserID, topic.TopicID);
+			await _subscribedTopicsService.Received().IsTopicSubscribed(user.UserID, topic.TopicID);
 		}
 	}
 }

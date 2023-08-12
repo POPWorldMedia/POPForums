@@ -4,20 +4,20 @@ public class EventDefintionServiceTests
 {
 	private EventDefinitionService GetService()
 	{
-		_eventDefRepo = new Mock<IEventDefinitionRepository>();
-		_awardConditionRepo = new Mock<IAwardConditionRepository>();
-		return new EventDefinitionService(_eventDefRepo.Object, _awardConditionRepo.Object);
+		_eventDefRepo = Substitute.For<IEventDefinitionRepository>();
+		_awardConditionRepo = Substitute.For<IAwardConditionRepository>();
+		return new EventDefinitionService(_eventDefRepo, _awardConditionRepo);
 	}
 
-	private Mock<IEventDefinitionRepository> _eventDefRepo;
-	private Mock<IAwardConditionRepository> _awardConditionRepo;
+	private IEventDefinitionRepository _eventDefRepo;
+	private IAwardConditionRepository _awardConditionRepo;
 
 	[Fact]
 	public async Task GetReturnsFromRepo()
 	{
 		var service = GetService();
 		var def = new EventDefinition {EventDefinitionID = "whatevs", PointValue = 2, Description = "stuff"};
-		_eventDefRepo.Setup(x => x.Get(def.EventDefinitionID)).ReturnsAsync(def);
+		_eventDefRepo.Get(def.EventDefinitionID).Returns(Task.FromResult(def));
 		var result = await service.GetEventDefinition(def.EventDefinitionID);
 		Assert.Same(def, result);
 	}
@@ -35,7 +35,7 @@ public class EventDefintionServiceTests
 	{
 		var service = GetService();
 		var list = new List<EventDefinition> {new() {EventDefinitionID = "AAA"}, new() {EventDefinitionID = "ZZZ"}};
-		_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
+		_eventDefRepo.GetAll().Returns(Task.FromResult(list));
 		var result = await service.GetAll();
 		Assert.Equal(7, result.Count);
 		Assert.True(result.Count(x => x.EventDefinitionID == "AAA") == 1);
@@ -50,7 +50,7 @@ public class EventDefintionServiceTests
 	{
 		var service = GetService();
 		var list = new List<EventDefinition> { new() { EventDefinitionID = "AAA" }, new() { EventDefinitionID = "ZZZ" } };
-		_eventDefRepo.Setup(x => x.GetAll()).ReturnsAsync(list);
+		_eventDefRepo.GetAll().Returns(Task.FromResult(list));
 		var result = await service.GetAll();
 		Assert.Equal(7, result.Count);
 		Assert.Equal("AAA", result[0].EventDefinitionID);
@@ -67,7 +67,7 @@ public class EventDefintionServiceTests
 		var service = GetService();
 		var eventDef = new EventDefinition();
 		await service.Create(eventDef);
-		_eventDefRepo.Verify(x => x.Create(eventDef), Times.Once());
+		await _eventDefRepo.Received().Create(eventDef);
 	}
 
 	[Fact]
@@ -76,7 +76,7 @@ public class EventDefintionServiceTests
 		var service = GetService();
 		const string eventDefID = "ohnoes!";
 		await service.Delete(eventDefID);
-		_eventDefRepo.Verify(x => x.Delete(eventDefID), Times.Once());
-		_awardConditionRepo.Verify(x => x.DeleteConditionsByEventDefinitionID(eventDefID), Times.Once());
+		_eventDefRepo.Received().Delete(eventDefID);
+		await _awardConditionRepo.Received().DeleteConditionsByEventDefinitionID(eventDefID);
 	}
 }

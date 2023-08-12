@@ -6,30 +6,30 @@ namespace PopForums.Test.Mvc.Services;
 
 public class OAuthOnlyServiceTests
 {
-	private Mock<IConfig> _config;
-	private Mock<IOAuth2LoginUrlGenerator> _oAuth2LoginUrlGen;
-	private Mock<IStateHashingService> _stateHashingService;
-	private Mock<IOAuth2JwtCallbackProcessor> _oAuth2JwtCallbackProcessor;
-	private Mock<IExternalUserAssociationManager> _externalUserAssociationManager;
-	private Mock<IUserService> _userService;
-	private Mock<IClaimsToRoleMapper> _claimsToRoleMapper;
-	private Mock<IUserNameReconciler> _userNameReconciler;
-	private Mock<IUserEmailReconciler> _userEmailReconciler;
-	private Mock<ISecurityLogService> _securityLogService;
+	private IConfig _config;
+	private IOAuth2LoginUrlGenerator _oAuth2LoginUrlGen;
+	private IStateHashingService _stateHashingService;
+	private IOAuth2JwtCallbackProcessor _oAuth2JwtCallbackProcessor;
+	private IExternalUserAssociationManager _externalUserAssociationManager;
+	private IUserService _userService;
+	private IClaimsToRoleMapper _claimsToRoleMapper;
+	private IUserNameReconciler _userNameReconciler;
+	private IUserEmailReconciler _userEmailReconciler;
+	private ISecurityLogService _securityLogService;
 	
 	private OAuthOnlyService GetService()
 	{
-		_config = new Mock<IConfig>();
-		_oAuth2LoginUrlGen = new Mock<IOAuth2LoginUrlGenerator>();
-		_stateHashingService = new Mock<IStateHashingService>();
-		_oAuth2JwtCallbackProcessor = new Mock<IOAuth2JwtCallbackProcessor>();
-		_externalUserAssociationManager = new Mock<IExternalUserAssociationManager>();
-		_userService = new Mock<IUserService>();
-		_claimsToRoleMapper = new Mock<IClaimsToRoleMapper>();
-		_userNameReconciler = new Mock<IUserNameReconciler>();
-		_userEmailReconciler = new Mock<IUserEmailReconciler>();
-		_securityLogService = new Mock<ISecurityLogService>();
-		return new OAuthOnlyService(_config.Object, _oAuth2LoginUrlGen.Object, _stateHashingService.Object, _oAuth2JwtCallbackProcessor.Object, _externalUserAssociationManager.Object, _userService.Object, _claimsToRoleMapper.Object, _userNameReconciler.Object, _userEmailReconciler.Object, _securityLogService.Object);
+		_config = Substitute.For<IConfig>();
+		_oAuth2LoginUrlGen = Substitute.For<IOAuth2LoginUrlGenerator>();
+		_stateHashingService = Substitute.For<IStateHashingService>();
+		_oAuth2JwtCallbackProcessor = Substitute.For<IOAuth2JwtCallbackProcessor>();
+		_externalUserAssociationManager = Substitute.For<IExternalUserAssociationManager>();
+		_userService = Substitute.For<IUserService>();
+		_claimsToRoleMapper = Substitute.For<IClaimsToRoleMapper>();
+		_userNameReconciler = Substitute.For<IUserNameReconciler>();
+		_userEmailReconciler = Substitute.For<IUserEmailReconciler>();
+		_securityLogService = Substitute.For<ISecurityLogService>();
+		return new OAuthOnlyService(_config, _oAuth2LoginUrlGen, _stateHashingService, _oAuth2JwtCallbackProcessor, _externalUserAssociationManager, _userService, _claimsToRoleMapper, _userNameReconciler, _userEmailReconciler, _securityLogService);
 	}
 
 	public class GetLoginUrl : OAuthOnlyServiceTests
@@ -38,16 +38,16 @@ public class OAuthOnlyServiceTests
 		public void ConfigParameterAndHashValuesCalledToLoginGen()
 		{
 			var service = GetService();
-			_config.Setup(x => x.OAuthLoginBaseUrl).Returns("baseUrl");
-			_config.Setup(x => x.OAuthClientID).Returns("clientID");
+			_config.OAuthLoginBaseUrl.Returns("baseUrl");
+			_config.OAuthClientID.Returns("clientID");
 			var redirectUrl = "the redirect url";
 			var code = "hash";
-			_stateHashingService.Setup(x => x.SetCookieAndReturnHash()).Returns(code);
-			_config.Setup(x => x.OAuthScopes).Returns("openid email profile");
+			_stateHashingService.SetCookieAndReturnHash().Returns(code);
+			_config.OAuthScopes.Returns("openid email profile");
 
 			service.GetLoginUrl(redirectUrl);
 			
-			_oAuth2LoginUrlGen.Verify(x => x.GetUrl(_config.Object.OAuthLoginBaseUrl, _config.Object.OAuthClientID, redirectUrl, code, _config.Object.OAuthScopes), Times.Once);
+			_oAuth2LoginUrlGen.Received().GetUrl(_config.OAuthLoginBaseUrl, _config.OAuthClientID, redirectUrl, code, _config.OAuthScopes);
 		}
 
 		[Fact]
@@ -55,7 +55,7 @@ public class OAuthOnlyServiceTests
 		{
 			var service = GetService();
 			var url = "the return url";
-			_oAuth2LoginUrlGen.Setup(x => x.GetUrl(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(url);
+			_oAuth2LoginUrlGen.GetUrl(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(url);
 
 			var result = service.GetLoginUrl("whatever");
 			
@@ -70,8 +70,8 @@ public class OAuthOnlyServiceTests
 		{
 			var service = GetService();
 			var callbackResult = new CallbackResult { IsSuccessful = false };
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
@@ -83,14 +83,14 @@ public class OAuthOnlyServiceTests
 		{
 			var service = GetService();
 			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new List<Claim>(), ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 			var externalUserMatch = new ExternalUserAssociationMatchResult { User = new User(), Successful = true };
 			ExternalLoginInfo calledExternalInfo = null;
 			_externalUserAssociationManager
-				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>())).ReturnsAsync(externalUserMatch)
-				.Callback<ExternalLoginInfo, string>((e, i) => calledExternalInfo = e);
-			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
+				.ExternalUserAssociationCheck(Arg.Do<ExternalLoginInfo>(x => calledExternalInfo = x), Arg.Any<string>())
+				.Returns(Task.FromResult(externalUserMatch));
+			_config.OAuthRefreshExpirationMinutes.Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
@@ -105,17 +105,17 @@ public class OAuthOnlyServiceTests
 			var service = GetService();
 			var claims = new Claim[] { new("name", "value") };
 			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = claims, ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 			var externalUserMatch = new ExternalUserAssociationMatchResult { User = new User(), Successful = true };
 			_externalUserAssociationManager
-				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
-				.ReturnsAsync(externalUserMatch);
-			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
+				.ExternalUserAssociationCheck(Arg.Any<ExternalLoginInfo>(), Arg.Any<string>())
+				.Returns(Task.FromResult(externalUserMatch));
+			_config.OAuthRefreshExpirationMinutes.Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			_claimsToRoleMapper.Verify(x => x.MapRoles(externalUserMatch.User, claims), Times.Once);
+			await _claimsToRoleMapper.Received().MapRoles(externalUserMatch.User, claims);
 		}
 		
 		[Fact]
@@ -124,17 +124,17 @@ public class OAuthOnlyServiceTests
 			var service = GetService();
 			var user = new User { Name = "Simon" };
 			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new Claim[]{}, ResultData = new ResultData{Email = "e", ID = "i", Name = user.Name}};
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 			var externalUserMatch = new ExternalUserAssociationMatchResult { User = user, Successful = true };
 			_externalUserAssociationManager
-				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
-				.ReturnsAsync(externalUserMatch);
-			_userNameReconciler.Setup(x => x.GetUniqueNameForUser(It.IsAny<string>())).ReturnsAsync(user.Name);
+				.ExternalUserAssociationCheck(Arg.Any<ExternalLoginInfo>(), Arg.Any<string>())
+				.Returns(Task.FromResult(externalUserMatch));
+			_userNameReconciler.GetUniqueNameForUser(Arg.Any<string>()).Returns(Task.FromResult(user.Name));
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			_userService.Verify(x => x.ChangeName(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+			await _userService.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<User>(), Arg.Any<string>());
 		}
 		
 		[Fact]
@@ -143,17 +143,17 @@ public class OAuthOnlyServiceTests
 			var service = GetService();
 			var user = new User { Name = "Simon" };
 			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = new Claim[]{}, ResultData = new ResultData{Email = "e", ID = "i", Name = "Jeff"}};
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 			var externalUserMatch = new ExternalUserAssociationMatchResult { User = user, Successful = true };
 			_externalUserAssociationManager
-				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
-				.ReturnsAsync(externalUserMatch);
-			_userNameReconciler.Setup(x => x.GetUniqueNameForUser(It.IsAny<string>())).ReturnsAsync("unique");
+				.ExternalUserAssociationCheck(Arg.Any<ExternalLoginInfo>(), Arg.Any<string>())
+				.Returns(Task.FromResult(externalUserMatch));
+			_userNameReconciler.GetUniqueNameForUser(Arg.Any<string>()).Returns(Task.FromResult("unique"));
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			_userService.Verify(x => x.ChangeName(user, "unique", It.IsAny<User>(), It.IsAny<string>()), Times.Once);
+			await _userService.Received().ChangeName(user, "unique", Arg.Any<User>(), Arg.Any<string>());
 		}
 		
 		[Fact]
@@ -162,20 +162,20 @@ public class OAuthOnlyServiceTests
 			var service = GetService();
 			var claims = new Claim[] { new("name", "value") };
 			var callbackResult = new CallbackResult { IsSuccessful = true, Claims = claims, ResultData = new ResultData{Email = "e", ID = "i", Name = "n"}};
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-				.ReturnsAsync(callbackResult);
+			_oAuth2JwtCallbackProcessor.VerifyCallback(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+				.Returns(Task.FromResult(callbackResult));
 			var externalUserMatch = new ExternalUserAssociationMatchResult { Successful = false };
 			_externalUserAssociationManager
-				.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), It.IsAny<string>()))
-				.ReturnsAsync(externalUserMatch);
+				.ExternalUserAssociationCheck(Arg.Any<ExternalLoginInfo>(), Arg.Any<string>())
+				.Returns(Task.FromResult(externalUserMatch));
 			var user = new User();
-			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), It.IsAny<string>()))
-				.ReturnsAsync(user);
-			_config.Setup(x => x.OAuthRefreshExpirationMinutes).Returns(60);
+			_userService.CreateUserWithProfile(Arg.Any<SignupData>(), Arg.Any<string>())
+				.Returns(Task.FromResult(user));
+			_config.OAuthRefreshExpirationMinutes.Returns(60);
 
 			var result = await service.ProcessOAuthLogin("url", "ip");
 			
-			_claimsToRoleMapper.Verify(x => x.MapRoles(user, claims), Times.Once);
+			await _claimsToRoleMapper.Received().MapRoles(user, claims);
 		}
 
 		[Fact]
@@ -194,25 +194,27 @@ public class OAuthOnlyServiceTests
 				},
 				IsSuccessful = true
 			};
-			_config.Setup(x => x.OAuthTokenUrl).Returns("t");
-			_config.Setup(x => x.OAuthClientID).Returns("c");
-			_config.Setup(x => x.OAuthClientSecret).Returns("s");
-			_oAuth2JwtCallbackProcessor.Setup(x => x.VerifyCallback(redirUrl, "t", "c", "s")).ReturnsAsync(callbackResult);
+			_config.OAuthTokenUrl.Returns("t");
+			_config.OAuthClientID.Returns("c");
+			_config.OAuthClientSecret.Returns("s");
+			_oAuth2JwtCallbackProcessor.VerifyCallback(redirUrl, "t", "c", "s").Returns(Task.FromResult(callbackResult));
 			ExternalLoginInfo externalLoginInfo = null;
-			_externalUserAssociationManager.Setup(x => x.ExternalUserAssociationCheck(It.IsAny<ExternalLoginInfo>(), ip)).ReturnsAsync(new ExternalUserAssociationMatchResult { Successful = false }).Callback<ExternalLoginInfo, string>((e, i) => externalLoginInfo = e);
+			_externalUserAssociationManager
+				.ExternalUserAssociationCheck(Arg.Do<ExternalLoginInfo>(x => externalLoginInfo = x), ip)
+				.Returns(Task.FromResult(new ExternalUserAssociationMatchResult { Successful = false }));
 			var user = new User();
 			SignupData signupData = null;
-			_userService.Setup(x => x.CreateUserWithProfile(It.IsAny<SignupData>(), ip)).ReturnsAsync(user).Callback<SignupData, string>((s, i) => signupData = s);
-			_userNameReconciler.Setup(x => x.GetUniqueNameForUser("Diana")).ReturnsAsync("UniqueD");
-			_userEmailReconciler.Setup(x => x.GetUniqueEmail("a@b.com", "id")).ReturnsAsync("uid");
+			_userService.CreateUserWithProfile(Arg.Do<SignupData>(x => signupData = x), ip).Returns(Task.FromResult(user));
+			_userNameReconciler.GetUniqueNameForUser("Diana").Returns(Task.FromResult("UniqueD"));
+			_userEmailReconciler.GetUniqueEmail("a@b.com", "id").Returns(Task.FromResult("uid"));
 
 			await service.ProcessOAuthLogin(redirUrl, ip);
 			
 			Assert.Equal(callbackResult.ResultData.ID, externalLoginInfo.ProviderKey);
 			Assert.Equal("UniqueD", signupData.Name);
 			Assert.Equal("uid", signupData.Email);
-			_userService.Verify(x => x.CreateUserWithProfile(signupData, ip));
-			_externalUserAssociationManager.Verify(x => x.Associate(user, externalLoginInfo, ip));
+			await _userService.Received().CreateUserWithProfile(signupData, ip);
+			await _externalUserAssociationManager.Received().Associate(user, externalLoginInfo, ip);
 		}
 	}
 
@@ -222,12 +224,12 @@ public class OAuthOnlyServiceTests
 		public async Task FailedCallbackMakesNoUpdates()
 		{
 			var service = GetService();
-			_oAuth2JwtCallbackProcessor.Setup(x => x.GetRefreshToken(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new CallbackResult { IsSuccessful = false });
+			_oAuth2JwtCallbackProcessor.GetRefreshToken(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(Task.FromResult(new CallbackResult { IsSuccessful = false }));
 
-			await service.AttemptTokenRefresh(It.IsAny<User>());
+			await service.AttemptTokenRefresh(default);
 			
-			_userService.Verify(x => x.UpdateTokenExpiration(It.IsAny<User>(), It.IsAny<DateTime>()), Times.Never);
-			_userService.Verify(x => x.UpdateRefreshToken(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+			await _userService.DidNotReceive().UpdateTokenExpiration(Arg.Any<User>(), Arg.Any<DateTime>());
+			await _userService.DidNotReceive().UpdateRefreshToken(Arg.Any<User>(), Arg.Any<string>());
 		}
 
 		[Fact]
@@ -237,17 +239,17 @@ public class OAuthOnlyServiceTests
 			var user = new User();
 			var token = "token";
 			var newToken = "newtoken";
-			_userService.Setup(x => x.GetRefreshToken(user)).ReturnsAsync(token);
-			_config.Setup(x => x.OAuthTokenUrl).Returns("u");
-			_config.Setup(x => x.OAuthClientID).Returns("c");
-			_config.Setup(x => x.OAuthClientSecret).Returns("s");
-			_oAuth2JwtCallbackProcessor.Setup(x => x.GetRefreshToken(token, "u", "c", "s")).ReturnsAsync(new CallbackResult { IsSuccessful = true, RefreshToken = newToken });
+			_userService.GetRefreshToken(user).Returns(Task.FromResult(token));
+			_config.OAuthTokenUrl.Returns("u");
+			_config.OAuthClientID.Returns("c");
+			_config.OAuthClientSecret.Returns("s");
+			_oAuth2JwtCallbackProcessor.GetRefreshToken(token, "u", "c", "s").Returns(Task.FromResult(new CallbackResult { IsSuccessful = true, RefreshToken = newToken }));
 
 			await service.AttemptTokenRefresh(user);
 			
-			_oAuth2JwtCallbackProcessor.Verify(x => x.GetRefreshToken(token, "u", "c", "s"), Times.Once);
-			_userService.Verify(x => x.UpdateTokenExpiration(user, It.IsAny<DateTime>()), Times.Once);
-			_userService.Verify(x => x.UpdateRefreshToken(user, newToken), Times.Once);
+			await _oAuth2JwtCallbackProcessor.Received().GetRefreshToken(token, "u", "c", "s");
+			await _userService.Received().UpdateTokenExpiration(user, Arg.Any<DateTime>());
+			await _userService.Received().UpdateRefreshToken(user, newToken);
 		}
 	}
 }

@@ -1,23 +1,21 @@
-﻿using System.Text.Json;
-
-namespace PopForums.Test.Services;
+﻿namespace PopForums.Test.Services;
 
 public class PrivateMessageServiceTests
 {
 	private PrivateMessageService GetService()
 	{
-		_mockPMRepo = new Mock<IPrivateMessageRepository>();
-		_mockSettings = new Mock<ISettingsManager>();
-		_mockTextParse = new Mock<ITextParsingService>();
-		_mockBroker = new Mock<IBroker>();
-		var service = new PrivateMessageService(_mockPMRepo.Object, _mockSettings.Object, _mockTextParse.Object, _mockBroker.Object);
+		_mockPMRepo = Substitute.For<IPrivateMessageRepository>();
+		_mockSettings = Substitute.For<ISettingsManager>();
+		_mockTextParse = Substitute.For<ITextParsingService>();
+		_mockBroker = Substitute.For<IBroker>();
+		var service = new PrivateMessageService(_mockPMRepo, _mockSettings, _mockTextParse, _mockBroker);
 		return service;
 	}
 
-	private Mock<IPrivateMessageRepository> _mockPMRepo;
-	private Mock<ISettingsManager> _mockSettings;
-	private Mock<ITextParsingService> _mockTextParse;
-	private Mock<IBroker> _mockBroker;
+	private IPrivateMessageRepository _mockPMRepo;
+	private ISettingsManager _mockSettings;
+	private ITextParsingService _mockTextParse;
+	private IBroker _mockBroker;
 
 	[Fact]
 	public async Task CreateNullTextThrows()
@@ -78,11 +76,11 @@ public class PrivateMessageServiceTests
 	public async Task CreateCallsNotificationBroker()
 	{
 		var service = GetService();
-		_mockPMRepo.Setup(x => x.GetUnreadCount(45)).ReturnsAsync(3);
+		_mockPMRepo.GetUnreadCount(45).Returns(Task.FromResult(3));
 
 		var pm = await service.Create("oihefio", new User { UserID = 12, Name = "jeff" }, new List<User> { new User { UserID = 45, Name = "diana" } });
 
-		_mockBroker.Verify(x => x.NotifyPMCount(45, 3), Times.Once);
+		_mockBroker.Received().NotifyPMCount(45, 3);
 	}
 
 	[Fact]
@@ -90,8 +88,8 @@ public class PrivateMessageServiceTests
 	{
 		var service = GetService();
 		var persist = new PrivateMessage();
-		_mockPMRepo.Setup(p => p.CreatePrivateMessage(It.IsAny<PrivateMessage>())).ReturnsAsync(69).Callback<PrivateMessage>(p => persist = p);
-		_mockTextParse.Setup(t => t.EscapeHtmlAndCensor("ohqefwwf")).Returns("ohqefwwf");
+		_mockPMRepo.CreatePrivateMessage(Arg.Do<PrivateMessage>(x => persist = x)).Returns(Task.FromResult(69));
+		_mockTextParse.EscapeHtmlAndCensor("ohqefwwf").Returns("ohqefwwf");
 		var pm = await service.Create("oihefio", new User { UserID = 12, Name = "jeff" }, new List<User> { new User { UserID = 45, Name = "diana" }, new User { UserID = 67, Name = "simon"} });
 		Assert.Equal(69, pm.PMID);
 	}
@@ -105,9 +103,9 @@ public class PrivateMessageServiceTests
 		var service = GetService();
 		var users = new List<int>();
 		var originalUser = new List<int>();
-		_mockPMRepo.Setup(p => p.CreatePrivateMessage(It.IsAny<PrivateMessage>())).ReturnsAsync(69);
-		_mockPMRepo.Setup(p => p.AddUsers(It.IsAny<int>(), It.IsAny<List<int>>(), It.IsAny<DateTime>(), false)).Callback<int, List<int>, DateTime, bool>((pm, u, now, isa) => originalUser = u);
-		_mockPMRepo.Setup(p => p.AddUsers(It.IsAny<int>(), It.IsAny<List<int>>(), It.IsAny<DateTime>(), false)).Callback<int, List<int>, DateTime, bool>((pm, u, now, isa) => users = u);
+		_mockPMRepo.CreatePrivateMessage(Arg.Any<PrivateMessage>()).Returns(Task.FromResult(69));
+		await _mockPMRepo.AddUsers(Arg.Any<int>(), Arg.Do<List<int>>(x => originalUser = x), Arg.Any<DateTime>(), false);
+		await _mockPMRepo.AddUsers(Arg.Any<int>(), Arg.Do<List<int>>(x => users = x), Arg.Any<DateTime>(), false);
 
 		await service.Create("oihefio", user, new List<User> { to1, to2 });
 
@@ -125,10 +123,10 @@ public class PrivateMessageServiceTests
 		var to1 = new User { UserID = 45 };
 		var to2 = new User { UserID = 67 };
 		var service = GetService();
-		_mockPMRepo.Setup(p => p.CreatePrivateMessage(It.IsAny<PrivateMessage>())).ReturnsAsync(69);
+		_mockPMRepo.CreatePrivateMessage(Arg.Any<PrivateMessage>()).Returns(Task.FromResult(69));
 		var post = new PrivateMessagePost();
-		_mockPMRepo.Setup(p => p.AddPost(It.IsAny<PrivateMessagePost>())).Callback<PrivateMessagePost>(p => post = p);
-		_mockTextParse.Setup(t => t.ForumCodeToHtml("oihefio")).Returns("oihefio");
+		await _mockPMRepo.AddPost(Arg.Do<PrivateMessagePost>(x => post = x));
+		_mockTextParse.ForumCodeToHtml("oihefio").Returns("oihefio");
 		await service.Create("oihefio", user, new List<User> { to1, to2 });
 		Assert.Equal("oihefio", post.FullText);
 		Assert.Equal("jeff", post.Name);
@@ -176,13 +174,13 @@ public class PrivateMessageServiceTests
 	{
 		var service = GetService();
 		var post = new PrivateMessagePost();
-		_mockPMRepo.Setup(p => p.AddPost(It.IsAny<PrivateMessagePost>())).Callback<PrivateMessagePost>(p => post = p);
+		await _mockPMRepo.AddPost(Arg.Do<PrivateMessagePost>(x => post = x));
 		var user = new User { UserID = 1, Name = "jeff"};
 		var pm = new PrivateMessage {PMID = 2};
 		var text = "mah message";
-		_mockTextParse.Setup(t => t.ForumCodeToHtml(text)).Returns(text);
-		_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> {new PrivateMessageUser {UserID = user.UserID}});
-		_mockPMRepo.Setup(x => x.GetUnreadCount(user.UserID)).ReturnsAsync(42);
+		_mockTextParse.ForumCodeToHtml(text).Returns(text);
+		_mockPMRepo.GetUsers(pm.PMID).Returns(Task.FromResult(new List<PrivateMessageUser> {new PrivateMessageUser {UserID = user.UserID}}));
+		_mockPMRepo.GetUnreadCount(user.UserID).Returns(Task.FromResult(42));
 
 		await service.Reply(pm, text, user);
 
@@ -190,7 +188,7 @@ public class PrivateMessageServiceTests
 		Assert.Equal(user.Name, post.Name);
 		Assert.Equal(user.UserID, post.UserID);
 		Assert.Equal(pm.PMID, post.PMID);
-		_mockBroker.Verify(x => x.NotifyPMCount(user.UserID, 42), Times.Once);
+		_mockBroker.Received().NotifyPMCount(user.UserID, 42);
 	}
 
 	[Fact]
@@ -198,7 +196,7 @@ public class PrivateMessageServiceTests
 	{
 		var service = GetService();
 		var user = new User { UserID = 1 };
-		_mockPMRepo.Setup(p => p.GetUsers(It.IsAny<int>())).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 456 } });
+		_mockPMRepo.GetUsers(Arg.Any<int>()).Returns(Task.FromResult(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 456 } }));
 		await Assert.ThrowsAsync<Exception>(() => service.Reply(new PrivateMessage { PMID = 2 }, "wohfwo", user));
 	}
 
@@ -208,7 +206,7 @@ public class PrivateMessageServiceTests
 		var service = GetService();
 		var user = new User { UserID = 1 };
 		var pm = new PrivateMessage { PMID = 2 };
-		_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = user.UserID } });
+		_mockPMRepo.GetUsers(pm.PMID).Returns(Task.FromResult(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = user.UserID } }));
 		Assert.True(await service.IsUserInPM(user.UserID, pm.PMID));
 	}
 
@@ -218,7 +216,7 @@ public class PrivateMessageServiceTests
 		var service = GetService();
 		var user = new User { UserID = 1 };
 		var pm = new PrivateMessage { PMID = 2 };
-		_mockPMRepo.Setup(p => p.GetUsers(pm.PMID)).ReturnsAsync(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 765 } });
+		_mockPMRepo.GetUsers(pm.PMID).Returns(Task.FromResult(new List<PrivateMessageUser> { new PrivateMessageUser { UserID = 765 } }));
 		Assert.False(await service.IsUserInPM(user.UserID, pm.PMID));
 	}
 }

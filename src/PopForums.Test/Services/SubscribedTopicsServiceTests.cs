@@ -2,18 +2,18 @@
 
 public class SubscribedTopicsServiceTests
 {
-	private Mock<ISubscribedTopicsRepository> _mockSubRepo;
-	private Mock<ISettingsManager> _mockSettingsManager;
-	private Mock<INotificationAdapter> _mockNotificationAdapter;
-	private Mock<ISubscribeNotificationRepository> _subNotificationRepo;
+	private ISubscribedTopicsRepository _mockSubRepo;
+	private ISettingsManager _mockSettingsManager;
+	private INotificationAdapter _mockNotificationAdapter;
+	private ISubscribeNotificationRepository _subNotificationRepo;
 
 	private SubscribedTopicsService GetService()
 	{
-		_mockSubRepo = new Mock<ISubscribedTopicsRepository>();
-		_mockSettingsManager = new Mock<ISettingsManager>();
-		_mockNotificationAdapter = new Mock<INotificationAdapter>();
-		_subNotificationRepo = new Mock<ISubscribeNotificationRepository>();
-		return new SubscribedTopicsService(_mockSubRepo.Object, _mockSettingsManager.Object, _mockNotificationAdapter.Object, _subNotificationRepo.Object);
+		_mockSubRepo = Substitute.For<ISubscribedTopicsRepository>();
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
+		_mockNotificationAdapter = Substitute.For<INotificationAdapter>();
+		_subNotificationRepo = Substitute.For<ISubscribeNotificationRepository>();
+		return new SubscribedTopicsService(_mockSubRepo, _mockSettingsManager, _mockNotificationAdapter, _subNotificationRepo);
 	}
 
 	[Fact]
@@ -22,11 +22,11 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
-		_mockSubRepo.Setup(x => x.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(false);
+		_mockSubRepo.IsTopicSubscribed(user.UserID, topic.TopicID).Returns(Task.FromResult(false));
 
 		await service.AddSubscribedTopic(user.UserID, topic.TopicID);
 
-		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once);
+		await _mockSubRepo.Received().AddSubscribedTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -35,11 +35,11 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
-		_mockSubRepo.Setup(x => x.IsTopicSubscribed(user.UserID, topic.TopicID)).ReturnsAsync(true);
+		_mockSubRepo.IsTopicSubscribed(user.UserID, topic.TopicID).Returns(Task.FromResult(true));
 
 		await service.AddSubscribedTopic(user.UserID, topic.TopicID);
 
-		_mockSubRepo.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Never);
+		await _mockSubRepo.DidNotReceive().AddSubscribedTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -49,7 +49,7 @@ public class SubscribedTopicsServiceTests
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
 		await service.RemoveSubscribedTopic(user, topic);
-		_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
+		await _mockSubRepo.Received().RemoveSubscribedTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -59,7 +59,7 @@ public class SubscribedTopicsServiceTests
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
 		await service.TryRemoveSubscribedTopic(user, topic);
-		_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(user.UserID, topic.TopicID), Times.Once());
+		await _mockSubRepo.Received().RemoveSubscribedTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -68,7 +68,7 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		await service.TryRemoveSubscribedTopic(user, null);
-		_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
+		await _mockSubRepo.DidNotReceive().RemoveSubscribedTopic(Arg.Any<int>(), Arg.Any<int>());
 	}
 
 	[Fact]
@@ -77,7 +77,7 @@ public class SubscribedTopicsServiceTests
 		var service = GetService();
 		var topic = new Topic { TopicID = 456 };
 		await service.TryRemoveSubscribedTopic(null, topic);
-		_mockSubRepo.Verify(s => s.RemoveSubscribedTopic(It.IsAny<int>(), It.IsAny<int>()), Times.Never());
+		await _mockSubRepo.DidNotReceive().RemoveSubscribedTopic(Arg.Any<int>(), Arg.Any<int>());
 	}
 		
 	[Fact]
@@ -86,9 +86,9 @@ public class SubscribedTopicsServiceTests
 		var user = new User { UserID = 123 };
 		var service = GetService();
 		var settings = new Settings { TopicsPerPage = 20 };
-		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
+		_mockSettingsManager.Current.Returns(settings);
 		var list = new List<Topic>();
-		_mockSubRepo.Setup(s => s.GetSubscribedTopics(user.UserID, 1, 20)).ReturnsAsync(list);
+		_mockSubRepo.GetSubscribedTopics(user.UserID, 1, 20).Returns(Task.FromResult(list));
 		var (result, _) = await service.GetTopics(user, 1);
 		Assert.Same(list, result);
 	}
@@ -99,9 +99,9 @@ public class SubscribedTopicsServiceTests
 		var user = new User { UserID = 123 };
 		var service = GetService();
 		var settings = new Settings { TopicsPerPage = 20 };
-		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
+		_mockSettingsManager.Current.Returns(settings);
 		var (_, pagerContext) = await service.GetTopics(user, 3);
-		_mockSubRepo.Verify(s => s.GetSubscribedTopics(user.UserID, 41, 20), Times.Once());
+		await _mockSubRepo.Received().GetSubscribedTopics(user.UserID, 41, 20);
 		Assert.Equal(20, pagerContext.PageSize);
 	}
 }

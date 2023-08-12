@@ -6,13 +6,13 @@ public class NotificationManagerTests
 {
 	protected NotificationManager GetManager()
 	{
-		_notificationRepository = new Mock<INotificationRepository>();
-		_broker = new Mock<IBroker>();
-		return new NotificationManager(_notificationRepository.Object, _broker.Object);
+		_notificationRepository = Substitute.For<INotificationRepository>();
+		_broker = Substitute.For<IBroker>();
+		return new NotificationManager(_notificationRepository, _broker);
 	}
 
-	private Mock<INotificationRepository> _notificationRepository;
-	private Mock<IBroker> _broker;
+	private INotificationRepository _notificationRepository;
+	private IBroker _broker;
 
 	public class ProcessNotification : NotificationManagerTests
 	{
@@ -26,8 +26,8 @@ public class NotificationManagerTests
 			var data = new {a = 123, b = "xyz"};
 			var unreadCount = 42;
 			Notification result = null;
-			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1).Callback<Notification>(n => result = n);
-			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(unreadCount);
+			_notificationRepository.UpdateNotification(Arg.Do<Notification>(x => result = x)).Returns(Task.FromResult(1));
+			_notificationRepository.GetUnreadNotificationCount(userID).Returns(Task.FromResult(unreadCount));
 
 			await manager.ProcessNotification(userID, notificationType, contextID, data);
 
@@ -44,11 +44,11 @@ public class NotificationManagerTests
 		public async Task CreateNotCalledOnSuccessfulUpdate()
 		{
 			var manager = GetManager();
-			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1);
+			_notificationRepository.UpdateNotification(Arg.Any<Notification>()).Returns(Task.FromResult(1));
 
 			await manager.ProcessNotification(1, NotificationType.NewReply, 2, new {});
 			
-			_notificationRepository.Verify(x => x.CreateNotification(It.IsAny<Notification>()), Times.Never);
+			await _notificationRepository.DidNotReceive().CreateNotification(Arg.Any<Notification>());
 		}
 
 		[Fact]
@@ -60,8 +60,8 @@ public class NotificationManagerTests
 			var notificationType = NotificationType.NewReply;
 			var data = new { a = 123, b = "xyz" };
 			Notification result = null;
-			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(0);
-			_notificationRepository.Setup(x => x.CreateNotification(It.IsAny<Notification>())).Callback<Notification>(n => result = n);
+			_notificationRepository.UpdateNotification(Arg.Any<Notification>()).Returns(Task.FromResult(0));
+			await _notificationRepository.CreateNotification(Arg.Do<Notification>(x => result = x));
 
 			await manager.ProcessNotification(userID, notificationType, contextID, data);
 
@@ -82,8 +82,8 @@ public class NotificationManagerTests
 			var notificationType = NotificationType.NewReply;
 			var data = new { a = 123, b = "xyz" };
 			Notification result = null;
-			_notificationRepository.Setup(x => x.UpdateNotification(It.IsAny<Notification>())).ReturnsAsync(1);
-			_broker.Setup(x => x.NotifyUser(It.IsAny<Notification>())).Callback<Notification>(n => result = n);
+			_notificationRepository.UpdateNotification(Arg.Any<Notification>()).Returns(Task.FromResult(1));
+			_broker.NotifyUser(Arg.Do<Notification>(x => result = x));
 
 			await manager.ProcessNotification(userID, notificationType, contextID, data);
 
@@ -103,7 +103,7 @@ public class NotificationManagerTests
 		{
 			var manager = GetManager();
 			const int userID = 123;
-			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(101);
+			_notificationRepository.GetUnreadNotificationCount(userID).Returns(Task.FromResult(101));
 
 			var result = await manager.GetUnreadNotificationCount(userID);
 
@@ -115,7 +115,7 @@ public class NotificationManagerTests
 		{
 			var manager = GetManager();
 			const int userID = 123;
-			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(99);
+			_notificationRepository.GetUnreadNotificationCount(userID).Returns(Task.FromResult(99));
 
 			var result = await manager.GetUnreadNotificationCount(userID);
 
@@ -127,7 +127,7 @@ public class NotificationManagerTests
 		{
 			var manager = GetManager();
 			const int userID = 123;
-			_notificationRepository.Setup(x => x.GetUnreadNotificationCount(userID)).ReturnsAsync(100);
+			_notificationRepository.GetUnreadNotificationCount(userID).Returns(Task.FromResult(100));
 
 			var result = await manager.GetUnreadNotificationCount(userID);
 

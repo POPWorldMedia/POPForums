@@ -2,16 +2,16 @@
 
 public class QueuedEmailServiceTests
 {
-	private Mock<IQueuedEmailMessageRepository> _queuedEmailMessageRepo;
-	private Mock<IEmailQueueRepository> _emailQueueRepo;
-	private Mock<ITenantService> _tenantService;
+	private IQueuedEmailMessageRepository _queuedEmailMessageRepo;
+	private IEmailQueueRepository _emailQueueRepo;
+	private ITenantService _tenantService;
 
 	private QueuedEmailService GetService()
 	{
-		_queuedEmailMessageRepo = new Mock<IQueuedEmailMessageRepository>();
-		_emailQueueRepo = new Mock<IEmailQueueRepository>();
-		_tenantService = new Mock<ITenantService>();
-		return new QueuedEmailService(_queuedEmailMessageRepo.Object, _emailQueueRepo.Object, _tenantService.Object);
+		_queuedEmailMessageRepo = Substitute.For<IQueuedEmailMessageRepository>();
+		_emailQueueRepo = Substitute.For<IEmailQueueRepository>();
+		_tenantService = Substitute.For<ITenantService>();
+		return new QueuedEmailService(_queuedEmailMessageRepo, _emailQueueRepo, _tenantService);
 	}
 
 	[Fact]
@@ -19,12 +19,12 @@ public class QueuedEmailServiceTests
 	{
 		var service = GetService();
 		var message = new QueuedEmailMessage();
-		_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).ReturnsAsync(1);
-		_tenantService.Setup(x => x.GetTenant()).Returns("");
+		_queuedEmailMessageRepo.CreateMessage(message).Returns(Task.FromResult(1));
+		_tenantService.GetTenant().Returns("");
 
 		await service.CreateAndQueueEmail(message);
 
-		_queuedEmailMessageRepo.Verify(x => x.CreateMessage(message), Times.Once);
+		await _queuedEmailMessageRepo.Received().CreateMessage(message);
 	}
 
 	[Fact]
@@ -33,11 +33,11 @@ public class QueuedEmailServiceTests
 		var service = GetService();
 		var messageID = 123;
 		var message = new QueuedEmailMessage();
-		_queuedEmailMessageRepo.Setup(x => x.CreateMessage(message)).ReturnsAsync(messageID);
+		_queuedEmailMessageRepo.CreateMessage(message).Returns(Task.FromResult(messageID));
 		var tenantID = "t1";
-		_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
+		_tenantService.GetTenant().Returns(tenantID);
 		var payload = new EmailQueuePayload();
-		_emailQueueRepo.Setup(x => x.Enqueue(It.IsAny<EmailQueuePayload>())).Callback<EmailQueuePayload>(p => payload = p);
+		await _emailQueueRepo.Enqueue(Arg.Do<EmailQueuePayload>(x => payload = x));
 
 		await service.CreateAndQueueEmail(message);
 

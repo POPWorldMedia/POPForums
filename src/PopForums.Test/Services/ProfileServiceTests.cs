@@ -2,16 +2,16 @@
 
 public class ProfileServiceTests
 {
-	private Mock<IProfileRepository> _profileRepo;
-	private Mock<ITextParsingService> _textParsingService;
-	private Mock<IPointLedgerRepository> _pointLedger;
+	private IProfileRepository _profileRepo;
+	private ITextParsingService _textParsingService;
+	private IPointLedgerRepository _pointLedger;
 
 	private ProfileService GetService()
 	{
-		_profileRepo = new Mock<IProfileRepository>();
-		_textParsingService = new Mock<ITextParsingService>();
-		_pointLedger = new Mock<IPointLedgerRepository>();
-		return new ProfileService(_profileRepo.Object, _textParsingService.Object, _pointLedger.Object);
+		_profileRepo = Substitute.For<IProfileRepository>();
+		_textParsingService = Substitute.For<ITextParsingService>();
+		_pointLedger = Substitute.For<IPointLedgerRepository>();
+		return new ProfileService(_profileRepo, _textParsingService, _pointLedger);
 	}
 
 	[Fact]
@@ -20,10 +20,10 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland" };
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
 		var result = await service.GetProfile(user);
 		Assert.Equal(profile, result);
-		_profileRepo.Verify(p => p.GetProfile(user.UserID), Times.Once());
+		await _profileRepo.Received().GetProfile(user.UserID);
 	}
 
 	[Fact]
@@ -40,8 +40,8 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "blah", IsPlainText = false };
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
-		_textParsingService.Setup(t => t.HtmlToClientHtml("blah")).Returns("parsed");
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
+		_textParsingService.HtmlToClientHtml("blah").Returns("parsed");
 
 		var result = await service.GetProfileForEdit(user);
 
@@ -54,8 +54,8 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "blah", IsPlainText = true };
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
-		_textParsingService.Setup(t => t.HtmlToForumCode("blah")).Returns("parsed");
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
+		_textParsingService.HtmlToForumCode("blah").Returns("parsed");
 
 		var result = await service.GetProfileForEdit(user);
 
@@ -70,9 +70,9 @@ public class ProfileServiceTests
 		user.Roles = new List<string>();
 		var returnedProfile = new Profile { UserID = 1, IsPlainText = true };
 		var profile = new Profile();
-		_profileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
-		_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-		_textParsingService.Setup(t => t.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed");
+		_profileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
+		await _profileRepo.Update(Arg.Do<Profile>(x => profile = x));
+		_textParsingService.ForumCodeToHtml(Arg.Any<string>()).Returns("parsed");
 		var userEdit = new UserEditProfile
 		{
 			Dob = new DateTime(2000, 1, 1),
@@ -91,7 +91,7 @@ public class ProfileServiceTests
 
 		await service.EditUserProfile(user, userEdit);
 
-		_profileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _profileRepo.Received().Update(Arg.Any<Profile>());
 		Assert.Equal(new DateTime(2000, 1, 1), profile.Dob);
 		Assert.True(profile.HideVanity);
 		Assert.Equal("i", profile.Instagram);
@@ -114,9 +114,9 @@ public class ProfileServiceTests
 		user.Roles = new List<string>();
 		var returnedProfile = new Profile { UserID = 1, IsPlainText = false };
 		var profile = new Profile();
-		_profileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
-		_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
-		_textParsingService.Setup(t => t.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed");
+		_profileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
+		await _profileRepo.Update(Arg.Do<Profile>(x => profile = x));
+		_textParsingService.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed");
 		var userEdit = new UserEditProfile
 		{
 			Dob = new DateTime(2000, 1, 1),
@@ -143,13 +143,13 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = null };
 		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
-		_profileRepo.Setup(p => p.GetProfile(user.UserID)).ReturnsAsync(profile);
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
 
 		var result = await service.GetProfileForEdit(user);
 
-		_textParsingService.Verify(x => x.ClientHtmlToForumCode(It.IsAny<string>()), Times.Never);
+		_textParsingService.DidNotReceive().ClientHtmlToForumCode(Arg.Any<string>());
 		Assert.Equal(string.Empty, result.Signature);
-		_profileRepo.Verify(p => p.GetProfile(user.UserID), Times.Once());
+		await _profileRepo.Received().GetProfile(user.UserID);
 	}
 
 	[Fact]
@@ -157,9 +157,8 @@ public class ProfileServiceTests
 	{
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland" };
-		_profileRepo.Setup(p => p.Create(profile));
 		await service.Create(profile);
-		_profileRepo.Verify(p => p.Create(profile), Times.Once());
+		await _profileRepo.Received().Create(profile);
 	}
 
 	[Fact]
@@ -168,7 +167,7 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile();
 		await Assert.ThrowsAsync<Exception>(() => service.Create(profile));
-		_profileRepo.Verify(p => p.Create(profile), Times.Never());
+		await _profileRepo.DidNotReceive().Create(profile);
 	}
 
 	[Fact]
@@ -176,9 +175,9 @@ public class ProfileServiceTests
 	{
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = ""};
-		_profileRepo.Setup(p => p.Update(profile)).ReturnsAsync(true);
+		_profileRepo.Update(profile).Returns(Task.FromResult(true));
 		await service.Update(profile);
-		_profileRepo.Verify(p => p.Update(profile), Times.Once());
+		await _profileRepo.Received().Update(profile);
 	}
 
 	[Fact]
@@ -187,7 +186,7 @@ public class ProfileServiceTests
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = " " };
 		var trimProfile = new Profile { Signature = "no"};
-		_profileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true).Callback<Profile>(p => trimProfile = p);
+		_profileRepo.Update(Arg.Do<Profile>(x => trimProfile = x)).Returns(Task.FromResult(true));
 		await service.Update(profile);
 		Assert.Equal("", trimProfile.Signature);
 	}
@@ -197,9 +196,9 @@ public class ProfileServiceTests
 	{
 		var service = GetService();
 		var profile = new Profile { UserID = 123, Location = "Cleveland", Signature = "" };
-		_profileRepo.Setup(p => p.Update(profile)).ReturnsAsync(false);
+		_profileRepo.Update(profile).Returns(Task.FromResult(false));
 		await Assert.ThrowsAsync<Exception>(() => service.Update(profile));
-		_profileRepo.Verify(p => p.Update(profile), Times.Once());
+		await _profileRepo.Received().Update(profile);
 	}
 
 	[Fact]
@@ -216,7 +215,7 @@ public class ProfileServiceTests
 		};
 		var service = GetService();
 		var ids = new List<int>();
-		_profileRepo.Setup(p => p.GetSignatures(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
+		await _profileRepo.GetSignatures(Arg.Do<List<int>>(x => ids = x));
 		await service.GetSignatures(posts);
 		Assert.Equal(3, ids.Count);
 		Assert.Equal(2, ids[0]);
@@ -238,7 +237,7 @@ public class ProfileServiceTests
 		};
 		var service = GetService();
 		var ids = new List<int>();
-		_profileRepo.Setup(p => p.GetSignatures(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
+		await _profileRepo.GetSignatures(Arg.Do<List<int>>(x => ids = x));
 		await service.GetSignatures(posts);
 		Assert.Equal(2, ids.Count);
 		Assert.Equal(2, ids[0]);
@@ -259,7 +258,7 @@ public class ProfileServiceTests
 		};
 		var service = GetService();
 		var ids = new List<int>();
-		_profileRepo.Setup(p => p.GetAvatars(It.IsAny<List<int>>())).Callback<List<int>>(l => ids = l);
+		await _profileRepo.GetAvatars(Arg.Do<List<int>>(x => ids = x));
 		await service.GetAvatars(posts);
 		Assert.Equal(3, ids.Count);
 		Assert.Equal(1, ids[0]);
@@ -273,8 +272,8 @@ public class ProfileServiceTests
 		var service = GetService();
 		var user = new User { UserID = 123 };
 		const int total = 87;
-		_pointLedger.Setup(x => x.GetPointTotal(user.UserID)).ReturnsAsync(total);
+		_pointLedger.GetPointTotal(user.UserID).Returns(Task.FromResult(total));
 		await service.UpdatePointTotal(user);
-		_profileRepo.Verify(x => x.UpdatePoints(user.UserID, total), Times.Once());
+		await _profileRepo.Received().UpdatePoints(user.UserID, total);
 	}
 }

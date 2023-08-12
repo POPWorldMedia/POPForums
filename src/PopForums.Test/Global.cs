@@ -24,5 +24,5 @@ global using PopForums.Mvc.Areas.Forums.Services;
 
 global using PopForums.Test.Models;
 
-global using Moq;
+global using NSubstitute;
 global using Xunit;

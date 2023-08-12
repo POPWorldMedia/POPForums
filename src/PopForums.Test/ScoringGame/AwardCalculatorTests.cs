@@ -4,25 +4,25 @@ public class AwardCalculatorTests
 {
 	private AwardCalculator GetCalc()
 	{
-		_awardCalcRepo = new Mock<IAwardCalculationQueueRepository>();
-		_eventDefService = new Mock<IEventDefinitionService>();
-		_userRepo = new Mock<IUserRepository>();
-		_errorLog = new Mock<IErrorLog>();
-		_awardDefService = new Mock<IAwardDefinitionService>();
-		_userAwardService = new Mock<IUserAwardService>();
-		_pointLedgerRepo = new Mock<IPointLedgerRepository>();
-		_tenantService = new Mock<ITenantService>();
-		return new AwardCalculator(_awardCalcRepo.Object, _eventDefService.Object, _userRepo.Object, _errorLog.Object, _awardDefService.Object, _userAwardService.Object, _pointLedgerRepo.Object, _tenantService.Object);
+		_awardCalcRepo = Substitute.For<IAwardCalculationQueueRepository>();
+		_eventDefService = Substitute.For<IEventDefinitionService>();
+		_userRepo = Substitute.For<IUserRepository>();
+		_errorLog = Substitute.For<IErrorLog>();
+		_awardDefService = Substitute.For<IAwardDefinitionService>();
+		_userAwardService = Substitute.For<IUserAwardService>();
+		_pointLedgerRepo = Substitute.For<IPointLedgerRepository>();
+		_tenantService = Substitute.For<ITenantService>();
+		return new AwardCalculator(_awardCalcRepo, _eventDefService, _userRepo, _errorLog, _awardDefService, _userAwardService, _pointLedgerRepo, _tenantService);
 	}
 
-	private Mock<IAwardCalculationQueueRepository> _awardCalcRepo;
-	private Mock<IEventDefinitionService> _eventDefService;
-	private Mock<IUserRepository> _userRepo;
-	private Mock<IErrorLog> _errorLog;
-	private Mock<IAwardDefinitionService> _awardDefService;
-	private Mock<IUserAwardService> _userAwardService;
-	private Mock<IPointLedgerRepository> _pointLedgerRepo;
-	private Mock<ITenantService> _tenantService;
+	private IAwardCalculationQueueRepository _awardCalcRepo;
+	private IEventDefinitionService _eventDefService;
+	private IUserRepository _userRepo;
+	private IErrorLog _errorLog;
+	private IAwardDefinitionService _awardDefService;
+	private IUserAwardService _userAwardService;
+	private IPointLedgerRepository _pointLedgerRepo;
+	private ITenantService _tenantService;
 
 	[Fact]
 	public async Task EnqueueDoesWhatItSaysItShould()
@@ -31,11 +31,11 @@ public class AwardCalculatorTests
 		var user = new User();
 		var eventDef = new EventDefinition {EventDefinitionID = "blah"};
 		var tenantID = "t1";
-		_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
+		_tenantService.GetTenant().Returns(tenantID);
 		var payload = new AwardCalculationPayload();
-		_awardCalcRepo.Setup(x => x.Enqueue(It.IsAny<AwardCalculationPayload>())).Returns(Task.CompletedTask).Callback<AwardCalculationPayload>(a => payload = a);
+		_awardCalcRepo.Enqueue(Arg.Do<AwardCalculationPayload>(x => payload = x)).Returns(Task.CompletedTask);
 		await calc.QueueCalculation(user, eventDef);
-		_awardCalcRepo.Verify(x => x.Enqueue(It.IsAny<AwardCalculationPayload>()), Times.Once());
+		await _awardCalcRepo.Received().Enqueue(Arg.Any<AwardCalculationPayload>());
 		Assert.Equal(tenantID, payload.TenantID);
 		Assert.Equal(eventDef.EventDefinitionID, payload.EventDefinitionID);
 	}
@@ -45,12 +45,12 @@ public class AwardCalculatorTests
 	{
 		var calc = GetCalc();
 		var user = new User();
-		_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).ReturnsAsync((EventDefinition) null);
-		_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync(user);
-		_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>("oih", user.UserID));
+		_eventDefService.GetEventDefinition(Arg.Any<string>()).Returns((EventDefinition) null);
+		_userRepo.GetUser(Arg.Any<int>()).Returns(Task.FromResult(user));
+		_awardCalcRepo.Dequeue().Returns(Task.FromResult(new KeyValuePair<string, int>("oih", user.UserID)));
 		await calc.ProcessCalculation(null, 0);
-		_errorLog.Verify(x => x.Log(It.IsAny<Exception>(), ErrorSeverity.Warning), Times.Once());
-		_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
+		_errorLog.Received().Log(Arg.Any<Exception>(), ErrorSeverity.Warning);
+		await _userAwardService.DidNotReceive().IssueAward(Arg.Any<User>(), Arg.Any<AwardDefinition>());
 	}
 
 	[Fact]
@@ -60,13 +60,13 @@ public class AwardCalculatorTests
 		var eventDef = new EventDefinition {EventDefinitionID = "oi"};
 		var user = new User();
 		var awardDef = new AwardDefinition {AwardDefinitionID = "sweet", IsSingleTimeAward = true};
-		_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
-		_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).ReturnsAsync(eventDef);
-		_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync(user);
-		_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> {awardDef});
-		_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).ReturnsAsync(true);
+		_awardCalcRepo.Dequeue().Returns(Task.FromResult(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID)));
+		_eventDefService.GetEventDefinition(Arg.Any<string>()).Returns(Task.FromResult(eventDef));
+		_userRepo.GetUser(Arg.Any<int>()).Returns(Task.FromResult(user));
+		_awardDefService.GetByEventDefinitionID(eventDef.EventDefinitionID).Returns(Task.FromResult(new List<AwardDefinition> {awardDef}));
+		_userAwardService.IsAwarded(user, awardDef).Returns(Task.FromResult(true));
 		await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
-		_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
+		await _userAwardService.DidNotReceive().IssueAward(Arg.Any<User>(), Arg.Any<AwardDefinition>());
 	}
 
 	[Fact]
@@ -81,16 +81,16 @@ public class AwardCalculatorTests
 			new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 		};
-		_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
-		_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).ReturnsAsync(eventDef);
-		_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync(user);
-		_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> { awardDef });
-		_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).ReturnsAsync(false);
-		_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(4);
+		_awardCalcRepo.Dequeue().Returns(Task.FromResult(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID)));
+		_eventDefService.GetEventDefinition(Arg.Any<string>()).Returns(Task.FromResult(eventDef));
+		_userRepo.GetUser(Arg.Any<int>()).Returns(Task.FromResult(user));
+		_awardDefService.GetByEventDefinitionID(eventDef.EventDefinitionID).Returns(Task.FromResult(new List<AwardDefinition> { awardDef }));
+		_userAwardService.IsAwarded(user, awardDef).Returns(Task.FromResult(false));
+		_awardDefService.GetConditions(awardDef.AwardDefinitionID).Returns(Task.FromResult(conditions));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[0].EventDefinitionID).Returns(Task.FromResult(10));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[1].EventDefinitionID).Returns(Task.FromResult(4));
 		await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
-		_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Never());
+		await _userAwardService.DidNotReceive().IssueAward(Arg.Any<User>(), Arg.Any<AwardDefinition>());
 	}
 
 	[Fact]
@@ -105,16 +105,16 @@ public class AwardCalculatorTests
 			new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			new AwardCondition { AwardDefinitionID = awardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 		};
-		_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
-		_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).ReturnsAsync(eventDef);
-		_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync(user);
-		_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> { awardDef });
-		_userAwardService.Setup(x => x.IsAwarded(user, awardDef)).ReturnsAsync(false);
-		_awardDefService.Setup(x => x.GetConditions(awardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(5);
+		_awardCalcRepo.Dequeue().Returns(Task.FromResult(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID)));
+		_eventDefService.GetEventDefinition(Arg.Any<string>()).Returns(Task.FromResult(eventDef));
+		_userRepo.GetUser(Arg.Any<int>()).Returns(Task.FromResult(user));
+		_awardDefService.GetByEventDefinitionID(eventDef.EventDefinitionID).Returns(Task.FromResult(new List<AwardDefinition> { awardDef }));
+		_userAwardService.IsAwarded(user, awardDef).Returns(Task.FromResult(false));
+		_awardDefService.GetConditions(awardDef.AwardDefinitionID).Returns(Task.FromResult(conditions));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[0].EventDefinitionID).Returns(Task.FromResult(10));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[1].EventDefinitionID).Returns(Task.FromResult(5));
 		await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
-		_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
+		await _userAwardService.Received().IssueAward(Arg.Any<User>(), Arg.Any<AwardDefinition>());
 	}
 
 	[Fact]
@@ -130,16 +130,16 @@ public class AwardCalculatorTests
 			new AwardCondition { AwardDefinitionID = secondAwardDef.AwardDefinitionID, EventDefinitionID ="qwerty", EventCount = 3},
 			new AwardCondition { AwardDefinitionID = secondAwardDef.AwardDefinitionID, EventDefinitionID ="asdfgh", EventCount = 5}
 		};
-		_awardCalcRepo.Setup(x => x.Dequeue()).ReturnsAsync(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID));
-		_eventDefService.Setup(x => x.GetEventDefinition(It.IsAny<string>())).ReturnsAsync(eventDef);
-		_userRepo.Setup(x => x.GetUser(It.IsAny<int>())).ReturnsAsync(user);
-		_awardDefService.Setup(x => x.GetByEventDefinitionID(eventDef.EventDefinitionID)).ReturnsAsync(new List<AwardDefinition> { firstAwardDef, secondAwardDef });
-		_userAwardService.Setup(x => x.IsAwarded(user, secondAwardDef)).ReturnsAsync(false);
-		_awardDefService.Setup(x => x.GetConditions(firstAwardDef.AwardDefinitionID)).ReturnsAsync(new List<AwardCondition>());
-		_awardDefService.Setup(x => x.GetConditions(secondAwardDef.AwardDefinitionID)).ReturnsAsync(conditions);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[0].EventDefinitionID)).ReturnsAsync(10);
-		_pointLedgerRepo.Setup(x => x.GetEntryCount(user.UserID, conditions[1].EventDefinitionID)).ReturnsAsync(5);
+		_awardCalcRepo.Dequeue().Returns(Task.FromResult(new KeyValuePair<string, int>(eventDef.EventDefinitionID, user.UserID)));
+		_eventDefService.GetEventDefinition(Arg.Any<string>()).Returns(Task.FromResult(eventDef));
+		_userRepo.GetUser(Arg.Any<int>()).Returns(Task.FromResult(user));
+		_awardDefService.GetByEventDefinitionID(eventDef.EventDefinitionID).Returns(Task.FromResult(new List<AwardDefinition> { firstAwardDef, secondAwardDef }));
+		_userAwardService.IsAwarded(user, secondAwardDef).Returns(Task.FromResult(false));
+		_awardDefService.GetConditions(firstAwardDef.AwardDefinitionID).Returns(Task.FromResult(new List<AwardCondition>()));
+		_awardDefService.GetConditions(secondAwardDef.AwardDefinitionID).Returns(Task.FromResult(conditions));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[0].EventDefinitionID).Returns(Task.FromResult(10));
+		_pointLedgerRepo.GetEntryCount(user.UserID, conditions[1].EventDefinitionID).Returns(Task.FromResult(5));
 		await calc.ProcessCalculation(eventDef.EventDefinitionID, user.UserID);
-		_userAwardService.Verify(x => x.IssueAward(It.IsAny<User>(), It.IsAny<AwardDefinition>()), Times.Once());
+		await _userAwardService.Received().IssueAward(Arg.Any<User>(), Arg.Any<AwardDefinition>());
 	}
 }

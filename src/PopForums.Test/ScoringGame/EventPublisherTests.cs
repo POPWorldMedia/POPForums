@@ -4,19 +4,19 @@ public class EventPublisherTests
 {
 	private EventPublisher GetPublisher()
 	{
-		_eventDefService = new Mock<IEventDefinitionService>();
-		_pointLedgerRepo = new Mock<IPointLedgerRepository>();
-		_feedService = new Mock<IFeedService>();
-		_awardCalc = new Mock<IAwardCalculator>();
-		_profileService = new Mock<IProfileService>();
-		return new EventPublisher(_eventDefService.Object, _pointLedgerRepo.Object, _feedService.Object, _awardCalc.Object, _profileService.Object);
+		_eventDefService = Substitute.For<IEventDefinitionService>();
+		_pointLedgerRepo = Substitute.For<IPointLedgerRepository>();
+		_feedService = Substitute.For<IFeedService>();
+		_awardCalc = Substitute.For<IAwardCalculator>();
+		_profileService = Substitute.For<IProfileService>();
+		return new EventPublisher(_eventDefService, _pointLedgerRepo, _feedService, _awardCalc, _profileService);
 	}
 
-	private Mock<IEventDefinitionService> _eventDefService;
-	private Mock<IPointLedgerRepository> _pointLedgerRepo;
-	private Mock<IFeedService> _feedService;
-	private Mock<IAwardCalculator> _awardCalc;
-	private Mock<IProfileService> _profileService;
+	private IEventDefinitionService _eventDefService;
+	private IPointLedgerRepository _pointLedgerRepo;
+	private IFeedService _feedService;
+	private IAwardCalculator _awardCalc;
+	private IProfileService _profileService;
 
 	[Fact]
 	public async Task ProcessEventPublishesToLedger()
@@ -25,9 +25,9 @@ public class EventPublisherTests
 		var eventDef = new EventDefinition {EventDefinitionID = "blah", PointValue = 42};
 		const string message = "msg";
 		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+		_eventDefService.GetEventDefinition(eventDef.EventDefinitionID).Returns(Task.FromResult(eventDef));
 		var entry = new PointLedgerEntry();
-		_pointLedgerRepo.Setup(x => x.RecordEntry(It.IsAny<PointLedgerEntry>())).Callback<PointLedgerEntry>(x => entry = x);
+		await _pointLedgerRepo.RecordEntry(Arg.Do<PointLedgerEntry>(x => entry = x));
 		await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
 		Assert.Equal(user.UserID, entry.UserID);
 		Assert.Equal(eventDef.EventDefinitionID, entry.EventDefinitionID);
@@ -41,9 +41,9 @@ public class EventPublisherTests
 		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = true };
 		const string message = "msg";
 		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+		_eventDefService.GetEventDefinition(eventDef.EventDefinitionID).Returns(Task.FromResult(eventDef));
 		await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
-		_feedService.Verify(x => x.PublishToFeed(user, message, eventDef.PointValue, It.IsAny<DateTime>()), Times.Once());
+		await _feedService.Received().PublishToFeed(user, message, eventDef.PointValue, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -53,9 +53,9 @@ public class EventPublisherTests
 		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42, IsPublishedToFeed = false };
 		const string message = "msg";
 		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+		_eventDefService.GetEventDefinition(eventDef.EventDefinitionID).Returns(Task.FromResult(eventDef));
 		await publisher.ProcessEvent(message, user, eventDef.EventDefinitionID, false);
-		_feedService.Verify(x => x.PublishToFeed(user, message, eventDef.PointValue, It.IsAny<DateTime>()), Times.Never());
+		await _feedService.DidNotReceive().PublishToFeed(user, message, eventDef.PointValue, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -64,9 +64,9 @@ public class EventPublisherTests
 		var user = new User { UserID = 123 };
 		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+		_eventDefService.GetEventDefinition(eventDef.EventDefinitionID).Returns(Task.FromResult(eventDef));
 		await publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
-		_awardCalc.Verify(x => x.QueueCalculation(user, eventDef), Times.Once());
+		await _awardCalc.Received().QueueCalculation(user, eventDef);
 	}
 
 	[Fact]
@@ -75,9 +75,9 @@ public class EventPublisherTests
 		var user = new User { UserID = 123 };
 		var eventDef = new EventDefinition { EventDefinitionID = "blah", PointValue = 42 };
 		var publisher = GetPublisher();
-		_eventDefService.Setup(x => x.GetEventDefinition(eventDef.EventDefinitionID)).ReturnsAsync(eventDef);
+		_eventDefService.GetEventDefinition(eventDef.EventDefinitionID).Returns(Task.FromResult(eventDef));
 		await publisher.ProcessEvent("msg", user, eventDef.EventDefinitionID, false);
-		_profileService.Verify(x => x.UpdatePointTotal(user), Times.Once());
+		await _profileService.Received().UpdatePointTotal(user);
 	}
 
 	[Fact]
@@ -88,7 +88,7 @@ public class EventPublisherTests
 		const int points = 252;
 		var publisher = GetPublisher();
 		var entry = new PointLedgerEntry();
-		_pointLedgerRepo.Setup(x => x.RecordEntry(It.IsAny<PointLedgerEntry>())).Callback<PointLedgerEntry>(x => entry = x);
+		await _pointLedgerRepo.RecordEntry(Arg.Do<PointLedgerEntry>(x => entry = x));
 		await publisher.ProcessManualEvent(message, user, points);
 		Assert.Equal(user.UserID, entry.UserID);
 		Assert.Equal("Manual", entry.EventDefinitionID);
@@ -103,7 +103,7 @@ public class EventPublisherTests
 		const int points = 252;
 		var publisher = GetPublisher();
 		await publisher.ProcessManualEvent(message, user, points);
-		_feedService.Verify(x => x.PublishToFeed(user, message, points, It.IsAny<DateTime>()), Times.Once());
+		await _feedService.Received().PublishToFeed(user, message, points, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -112,6 +112,6 @@ public class EventPublisherTests
 		var user = new User { UserID = 123 };
 		var publisher = GetPublisher();
 		await publisher.ProcessManualEvent("msg", user, 252);
-		_profileService.Verify(x => x.UpdatePointTotal(user), Times.Once());
+		await _profileService.Received().UpdatePointTotal(user);
 	}
 }
