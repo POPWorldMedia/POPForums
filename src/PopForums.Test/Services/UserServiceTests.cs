@@ -62,7 +62,9 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", Arg.Any<Guid?>())));
 
-		Assert.False(userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1);
+		var result = userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1;
+
+		Assert.False(result);
 	}
 
 	[Fact]
@@ -442,7 +444,7 @@ public class UserServiceTests
 		_mockUserRepo.GetUserByEmail(newEmail).Returns(Task.FromResult(GetDummyUser("Diana", newEmail)));
 		_mockSettingsManager.Current.IsNewUserApproved.Returns(true);
 		var user = GetDummyUser(oldName, oldEmail);
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeEmail(user, newEmail, Arg.Any<User>(), Arg.Any<string>()));
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeEmail(user, newEmail, new User(), string.Empty));
 		await _mockUserRepo.DidNotReceive().ChangeEmail(Arg.Any<User>(), Arg.Any<string>());
 	}
 
@@ -453,7 +455,7 @@ public class UserServiceTests
 		var userManager = GetMockedUserService();
 		_mockSettingsManager.Current.IsNewUserApproved.Returns(true);
 		var user = GetDummyUser("", "");
-		await Assert.ThrowsAsync<Exception>(() => userManager.ChangeEmail(user, badEmail, Arg.Any<User>(), Arg.Any<string>()));
+		await Assert.ThrowsAsync<Exception>(() => userManager.ChangeEmail(user, badEmail, new User(), String.Empty));
 		await _mockUserRepo.DidNotReceive().ChangeEmail(Arg.Any<User>(), Arg.Any<string>());
 	}
 
@@ -502,7 +504,7 @@ public class UserServiceTests
 		_mockUserRepo.GetUserByName(oldName).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
 		_mockUserRepo.GetUserByName(newName).Returns(Task.FromResult(GetDummyUser(newName, oldEmail)));
 		var user = GetDummyUser(oldName, oldEmail);
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, Arg.Any<User>(), Arg.Any<string>()));
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, new User(), string.Empty));
 		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
@@ -511,7 +513,7 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("Jeff", "a@b.com");
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, null, Arg.Any<User>(), Arg.Any<string>()));
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, null, new User(), string.Empty));
 		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
@@ -520,8 +522,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("Jeff", "a@b.com");
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, String.Empty, Arg.Any<User>(), Arg.Any<string>()));
-		await _mockUserRepo.Received().ChangeName(Arg.Any<User>(), Arg.Any<string>());
+		
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, String.Empty, new User(), string.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -636,9 +639,12 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		const string role = "blah";
-		await userService.CreateRole(role, Arg.Any<User>(), Arg.Any<string>());
+		await _mockSecurityLogService.CreateLogEntry(Arg.Any<User>(), (User)null, string.Empty, Arg.Any<string>(), SecurityLogType.RoleCreated);
+		
+		await userService.CreateRole(role, new User(), string.Empty);
+		
 		await _mockRoleRepo.Received().CreateRole(role);
-		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), null, Arg.Any<string>(), "Role: blah", SecurityLogType.RoleCreated);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), null, string.Empty, "Role: blah", SecurityLogType.RoleCreated);
 	}
 
 	[Fact]
@@ -646,7 +652,7 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		const string role = "blah";
-		await userService.DeleteRole(role, Arg.Any<User>(), Arg.Any<string>());
+		await userService.DeleteRole(role, default, default);
 		await _mockRoleRepo.Received().DeleteRole(role);
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), null, Arg.Any<string>(), "Role: blah", SecurityLogType.RoleDeleted);
 	}
@@ -655,10 +661,10 @@ public class UserServiceTests
 	public async Task DeleteRoleThrowsOnAdminOrMod()
 	{
 		var userService = GetMockedUserService();
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", Arg.Any<User>(), Arg.Any<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", Arg.Any<User>(), Arg.Any<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", Arg.Any<User>(), Arg.Any<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", Arg.Any<User>(), Arg.Any<string>()));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", default, default));
 		await _mockRoleRepo.DidNotReceive().DeleteRole(Arg.Any<string>());
 	}
 

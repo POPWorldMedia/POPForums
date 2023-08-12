@@ -226,7 +226,7 @@ public class OAuthOnlyServiceTests
 			var service = GetService();
 			_oAuth2JwtCallbackProcessor.GetRefreshToken(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).Returns(Task.FromResult(new CallbackResult { IsSuccessful = false }));
 
-			await service.AttemptTokenRefresh(Arg.Any<User>());
+			await service.AttemptTokenRefresh(default);
 			
 			await _userService.DidNotReceive().UpdateTokenExpiration(Arg.Any<User>(), Arg.Any<DateTime>());
 			await _userService.DidNotReceive().UpdateRefreshToken(Arg.Any<User>(), Arg.Any<string>());

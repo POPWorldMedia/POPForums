@@ -115,7 +115,7 @@ public class ExternalUserAssociationManagerTests
 	{
 		var manager = GetManager();
 
-		await Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.Associate(null, Arg.Any<ExternalLoginInfo>(), String.Empty));
+		await Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.Associate(null, default, String.Empty));
 	}
 
 	[Fact]
@@ -166,6 +166,7 @@ public class ExternalUserAssociationManagerTests
 	{
 		var manager = GetManager();
 		var user = new User { UserID = 123 };
+		await _externalUserAssociationRepo.GetByUser(user.UserID);
 
 		await manager.GetExternalUserAssociations(user);
 

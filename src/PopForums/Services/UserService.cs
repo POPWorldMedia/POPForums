@@ -134,6 +134,7 @@ public class UserService : IUserService
 
 	public async Task<User> GetUserByName(string name)
 	{
+		name = name.ToLower();
 		if (string.IsNullOrWhiteSpace(name))
 			return null;
 		var user = await _userRepository.GetUserByName(name);
@@ -152,6 +153,7 @@ public class UserService : IUserService
 
 	public async Task<User> GetUserByEmail(string email)
 	{
+		email = email.ToLower();
 		if (string.IsNullOrWhiteSpace(email))
 			return null;
 		var user = await _userRepository.GetUserByEmail(email);

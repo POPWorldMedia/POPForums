@@ -286,6 +286,6 @@ public class SettingsTests
 		settings.PostImageMaxkBytes = postImageMaxkBytes;
 		settingsManager.SaveCurrent();
 
-		settingsRepo.Received().Save(dictionary);
+		settingsRepo.Received().Save(Arg.Is<Dictionary<string, object>>(x => x.SequenceEqual(dictionary)));
 	}
 }
