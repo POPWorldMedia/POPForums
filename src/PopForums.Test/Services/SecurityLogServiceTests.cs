@@ -2,14 +2,14 @@
 
 public class SecurityLogServiceTests
 {
-	private Mock<ISecurityLogRepository> _securityLogRepo;
-	private Mock<IUserRepository> _userRepo;
+	private ISecurityLogRepository _securityLogRepo;
+	private IUserRepository _userRepo;
 
 	private SecurityLogService GetService()
 	{
-		_securityLogRepo = new Mock<ISecurityLogRepository>();
-		_userRepo = new Mock<IUserRepository>();
-		return new SecurityLogService(_securityLogRepo.Object, _userRepo.Object);
+		_securityLogRepo = Substitute.For<ISecurityLogRepository>();
+		_userRepo = Substitute.For<IUserRepository>();
+		return new SecurityLogService(_securityLogRepo, _userRepo);
 	}
 
 	[Fact]
@@ -18,7 +18,7 @@ public class SecurityLogServiceTests
 		var service = GetService();
 		const int id = 123;
 		await service.GetLogEntriesByUserID(id, DateTime.MinValue, DateTime.MaxValue);
-		_securityLogRepo.Verify(s => s.GetByUserID(id, DateTime.MinValue, DateTime.MaxValue), Times.Once());
+		await _securityLogRepo.Received().GetByUserID(id, DateTime.MinValue, DateTime.MaxValue);
 	}
 
 	[Fact]
@@ -27,9 +27,9 @@ public class SecurityLogServiceTests
 		var service = GetService();
 		const int id = 123;
 		const string name = "jeff";
-		_userRepo.Setup(u => u.GetUserByName(name)).ReturnsAsync(new User { UserID = id, Name = name});
+		_userRepo.GetUserByName(name).Returns(Task.FromResult(new User { UserID = id, Name = name}));
 		await service.GetLogEntriesByUserName(name, DateTime.MinValue, DateTime.MaxValue);
-		_securityLogRepo.Verify(s => s.GetByUserID(id, DateTime.MinValue, DateTime.MaxValue), Times.Once());
+		await _securityLogRepo.Received().GetByUserID(id, DateTime.MinValue, DateTime.MaxValue);
 	}
 
 	[Fact]
@@ -51,7 +51,7 @@ public class SecurityLogServiceTests
 	{
 		var service = GetService();
 		SecurityLogEntry entry = null;
-		_securityLogRepo.Setup(s => s.Create(It.IsAny<SecurityLogEntry>())).Callback<SecurityLogEntry>(e => entry = e);
+		await _securityLogRepo.Create(Arg.Do<SecurityLogEntry>(x => entry = x));
 		await service.CreateLogEntry(new User { UserID = 1 }, new User { UserID = 2 }, "123", "msg", SecurityLogType.Undefined);
 		Assert.Equal(1, entry.UserID);
 		Assert.Equal(2, entry.TargetUserID);

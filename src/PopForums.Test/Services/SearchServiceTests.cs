@@ -2,20 +2,20 @@ namespace PopForums.Test.Services;
 
 public class SearchServiceTests
 {
-	private Mock<ISettingsManager> _mockSettingsManager;
-	private Mock<ISearchRepository> _mockSearchRepo;
-	private Mock<IForumService> _mockForumService;
-	private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
-	private Mock<IErrorLog> _errorLog;
+	private ISettingsManager _mockSettingsManager;
+	private ISearchRepository _mockSearchRepo;
+	private IForumService _mockForumService;
+	private ISearchIndexQueueRepository _searchIndexQueueRepo;
+	private IErrorLog _errorLog;
 
 	private SearchService GetService()
 	{
-		_mockSearchRepo = new Mock<ISearchRepository>();
-		_mockSettingsManager = new Mock<ISettingsManager>();
-		_mockForumService = new Mock<IForumService>();
-		_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
-		_errorLog = new Mock<IErrorLog>();
-		return new SearchService(_mockSearchRepo.Object, _mockSettingsManager.Object, _mockForumService.Object, _searchIndexQueueRepo.Object, _errorLog.Object);
+		_mockSearchRepo = Substitute.For<ISearchRepository>();
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
+		_mockForumService = Substitute.For<IForumService>();
+		_searchIndexQueueRepo = Substitute.For<ISearchIndexQueueRepository>();
+		_errorLog = Substitute.For<IErrorLog>();
+		return new SearchService(_mockSearchRepo, _mockSettingsManager, _mockForumService, _searchIndexQueueRepo, _errorLog);
 	}
 
 	[Fact]
@@ -23,9 +23,9 @@ public class SearchServiceTests
 	{
 		var words = new List<string>();
 		var service = GetService();
-		_mockSearchRepo.Setup(s => s.GetJunkWords()).ReturnsAsync(words);
+		_mockSearchRepo.GetJunkWords().Returns(Task.FromResult(words));
 		var result = await service.GetJunkWords();
-		_mockSearchRepo.Verify(s => s.GetJunkWords(), Times.Once());
+		await _mockSearchRepo.Received().GetJunkWords();
 		Assert.Same(words, result);
 	}
 
@@ -34,23 +34,23 @@ public class SearchServiceTests
 	{
 		var service = GetService();
 		await service.CreateJunkWord("blah");
-		_mockSearchRepo.Verify(s => s.CreateJunkWord("blah"), Times.Once());
+		await _mockSearchRepo.Received().CreateJunkWord("blah");
 	}
 
 	[Fact]
-	public void DeleteWord()
+	public async Task DeleteWord()
 	{
 		var service = GetService();
-		service.DeleteJunkWord("blah");
-		_mockSearchRepo.Verify(s => s.DeleteJunkWord("blah"), Times.Once());
+		await service.DeleteJunkWord("blah");
+		await _mockSearchRepo.Received().DeleteJunkWord("blah");
 	}
 
 	[Fact]
 	public async Task GetTopicsReturnsValidResponseWithNoResultsWhenSearchTermIsNull()
 	{
 		var service = GetService();
-		_mockForumService.Setup(x => x.GetNonViewableForumIDs(null)).ReturnsAsync(new List<int>());
-		_mockSettingsManager.Setup(x => x.Current.TopicsPerPage).Returns(20);
+		_mockForumService.GetNonViewableForumIDs(null).Returns(Task.FromResult(new List<int>()));
+		_mockSettingsManager.Current.TopicsPerPage.Returns(20);
 
 		var result = await service.GetTopics(null, SearchType.Rank, null, false, 1);
 
@@ -62,8 +62,8 @@ public class SearchServiceTests
 	public async Task GetTopicsReturnsValidResponseWithNoResultsWhenSearchTermIsEmpty()
 	{
 		var service = GetService();
-		_mockForumService.Setup(x => x.GetNonViewableForumIDs(null)).ReturnsAsync(new List<int>());
-		_mockSettingsManager.Setup(x => x.Current.TopicsPerPage).Returns(20);
+		_mockForumService.GetNonViewableForumIDs(null).Returns(Task.FromResult(new List<int>()));
+		_mockSettingsManager.Current.TopicsPerPage.Returns(20);
 
 		var result = await service.GetTopics(String.Empty, SearchType.Rank, null, false, 1);
 
@@ -78,13 +78,13 @@ public class SearchServiceTests
 		var user = new User();
 		var noViewIDs = new List<int> {1};
 		var service = GetService();
-		_mockForumService.Setup(x => x.GetNonViewableForumIDs(user)).ReturnsAsync(noViewIDs);
-		_mockSettingsManager.Setup(x => x.Current.TopicsPerPage).Returns(20);
-		_mockSearchRepo.Setup(x => x.SearchTopics(query, noViewIDs, SearchType.Rank, 1, 20)).ReturnsAsync(Tuple.Create(new Response<List<Topic>>(new List<Topic>()), 0));
+		_mockForumService.GetNonViewableForumIDs(user).Returns(Task.FromResult(noViewIDs));
+		_mockSettingsManager.Current.TopicsPerPage.Returns(20);
+		_mockSearchRepo.SearchTopics(query, noViewIDs, SearchType.Rank, 1, 20).Returns((Tuple.Create(new Response<List<Topic>>(new List<Topic>()), 0)));
 
 		await service.GetTopics(query, SearchType.Rank, user, false, 1);
 
-		_mockSearchRepo.Verify(x => x.SearchTopics(query, noViewIDs, SearchType.Rank, 1, 20), Times.Once);
+		await _mockSearchRepo.Received().SearchTopics(query, noViewIDs, SearchType.Rank, 1, 20);
 	}
 
 	[Fact]
@@ -95,10 +95,10 @@ public class SearchServiceTests
 		var noViewIDs = new List<int> { 1 };
 		var list = new List<Topic>();
 		var service = GetService();
-		_mockForumService.Setup(x => x.GetNonViewableForumIDs(user)).ReturnsAsync(noViewIDs);
-		_mockSettingsManager.Setup(x => x.Current.TopicsPerPage).Returns(20);
+		_mockForumService.GetNonViewableForumIDs(user).Returns(Task.FromResult(noViewIDs));
+		_mockSettingsManager.Current.TopicsPerPage.Returns(20);
 		var count = 50;
-		_mockSearchRepo.Setup(x => x.SearchTopics(query, noViewIDs, SearchType.Rank, 21, 20)).ReturnsAsync(Tuple.Create(new Response<List<Topic>>(list), count));
+		_mockSearchRepo.SearchTopics(query, noViewIDs, SearchType.Rank, 21, 20).Returns(Tuple.Create(new Response<List<Topic>>(list), count));
 
 		var (response, pagerContext) = await service.GetTopics(query, SearchType.Rank, user, false, 2);
 
@@ -110,16 +110,16 @@ public class SearchServiceTests
 	}
 
 	[Fact]
-	public async Task GetTopicsReturnsEmptyResultWithIsValidFalseAndAnemicPagerContext()
+	public async Task GetTopicsReturnsEmptyResultIsValidFalseAndAnemicPagerContext()
 	{
 		var query = "test";
 		var user = new User();
 		var noViewIDs = new List<int> { 1 };
 		var service = GetService();
-		_mockForumService.Setup(x => x.GetNonViewableForumIDs(user)).ReturnsAsync(noViewIDs);
-		_mockSettingsManager.Setup(x => x.Current.TopicsPerPage).Returns(20);
+		_mockForumService.GetNonViewableForumIDs(user).Returns(Task.FromResult(noViewIDs));
+		_mockSettingsManager.Current.TopicsPerPage.Returns(20);
 		var count = 50;
-		_mockSearchRepo.Setup(x => x.SearchTopics(query, noViewIDs, SearchType.Rank, 21, 20)).ReturnsAsync(Tuple.Create(new Response<List<Topic>>(new List<Topic>(), false), count));
+		_mockSearchRepo.SearchTopics(query, noViewIDs, SearchType.Rank, 21, 20).Returns(Tuple.Create(new Response<List<Topic>>(new List<Topic>(), false), count));
 
 		var (response, pagerContext) = await service.GetTopics(query, SearchType.Rank, user, false, 2);
 

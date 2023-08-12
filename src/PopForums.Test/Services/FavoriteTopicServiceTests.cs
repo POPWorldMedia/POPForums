@@ -2,14 +2,14 @@
 
 public class FavoriteTopicServiceTests
 {
-	private Mock<IFavoriteTopicsRepository> _mockFaveRepo;
-	private Mock<ISettingsManager> _mockSettingsManager;
+	private IFavoriteTopicsRepository _mockFaveRepo;
+	private ISettingsManager _mockSettingsManager;
 
 	private FavoriteTopicService GetService()
 	{
-		_mockFaveRepo = new Mock<IFavoriteTopicsRepository>();
-		_mockSettingsManager = new Mock<ISettingsManager>();
-		return new FavoriteTopicService(_mockSettingsManager.Object, _mockFaveRepo.Object);
+		_mockFaveRepo = Substitute.For<IFavoriteTopicsRepository>();
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
+		return new FavoriteTopicService(_mockSettingsManager, _mockFaveRepo);
 	}
 
 	[Fact]
@@ -18,9 +18,9 @@ public class FavoriteTopicServiceTests
 		var user = new User { UserID = 123 };
 		var service = GetService();
 		var settings = new Settings { TopicsPerPage = 20 };
-		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
+		_mockSettingsManager.Current.Returns(settings);
 		var list = new List<Topic>();
-		_mockFaveRepo.Setup(s => s.GetFavoriteTopics(user.UserID, 1, 20)).ReturnsAsync(list);
+		_mockFaveRepo.GetFavoriteTopics(user.UserID, 1, 20).Returns(Task.FromResult(list));
 		var result = await service.GetTopics(user, 1);
 		Assert.Same(list, result.Item1);
 	}
@@ -32,7 +32,7 @@ public class FavoriteTopicServiceTests
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
 		await service.AddFavoriteTopic(user, topic);
-		_mockFaveRepo.Verify(s => s.AddFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
+		await _mockFaveRepo.Received().AddFavoriteTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -42,7 +42,7 @@ public class FavoriteTopicServiceTests
 		var user = new User { UserID = 123 };
 		var topic = new Topic { TopicID = 456 };
 		await service.RemoveFavoriteTopic(user, topic);
-		_mockFaveRepo.Verify(s => s.RemoveFavoriteTopic(user.UserID, topic.TopicID), Times.Once());
+		await _mockFaveRepo.Received().RemoveFavoriteTopic(user.UserID, topic.TopicID);
 	}
 
 	[Fact]
@@ -51,9 +51,9 @@ public class FavoriteTopicServiceTests
 		var user = new User { UserID = 123 };
 		var service = GetService();
 		var settings = new Settings { TopicsPerPage = 20 };
-		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
+		_mockSettingsManager.Current.Returns(settings);
 		var result = await service.GetTopics(user, 3);
-		_mockFaveRepo.Verify(s => s.GetFavoriteTopics(user.UserID, 41, 20), Times.Once());
+		await _mockFaveRepo.Received().GetFavoriteTopics(user.UserID, 41, 20);
 		result.Item2.PageSize = settings.TopicsPerPage;
 	}
 }

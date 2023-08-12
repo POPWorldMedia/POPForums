@@ -4,13 +4,13 @@ public class LastReadServiceTests
 {
 	private LastReadService GetService()
 	{
-		_lastReadRepo = new Mock<ILastReadRepository>();
-		_postRepo = new Mock<IPostRepository>();
-		return new LastReadService(_lastReadRepo.Object, _postRepo.Object);
+		_lastReadRepo = Substitute.For<ILastReadRepository>();
+		_postRepo = Substitute.For<IPostRepository>();
+		return new LastReadService(_lastReadRepo, _postRepo);
 	}
 
-	private Mock<ILastReadRepository> _lastReadRepo;
-	private Mock<IPostRepository> _postRepo;
+	private ILastReadRepository _lastReadRepo;
+	private IPostRepository _postRepo;
 
 	[Fact]
 	public async Task MarkForumReadSetsReadTime()
@@ -19,7 +19,7 @@ public class LastReadServiceTests
 		var forum = new Forum { ForumID = 123 };
 		var user = new User { UserID = 456 };
 		await service.MarkForumRead(user, forum);
-		_lastReadRepo.Verify(l => l.SetForumRead(user.UserID, forum.ForumID, It.IsAny<DateTime>()), Times.Exactly(1));
+		await _lastReadRepo.Received(1).SetForumRead(user.UserID, forum.ForumID, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -29,7 +29,7 @@ public class LastReadServiceTests
 		var forum = new Forum { ForumID = 123 };
 		var user = new User { UserID = 456 };
 		await service.MarkForumRead(user, forum);
-		_lastReadRepo.Verify(l => l.DeleteTopicReadsInForum(user.UserID, forum.ForumID), Times.Exactly(1));
+		await _lastReadRepo.Received(1).DeleteTopicReadsInForum(user.UserID, forum.ForumID);
 	}
 
 	[Fact]
@@ -73,7 +73,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var user = new User { UserID = 456 };
 		await service.MarkAllForumsRead(user);
-		_lastReadRepo.Verify(l => l.SetAllForumsRead(user.UserID, It.IsAny<DateTime>()), Times.Exactly(1));
+		await _lastReadRepo.Received(1).SetAllForumsRead(user.UserID, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -82,7 +82,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var user = new User { UserID = 456 };
 		await service.MarkAllForumsRead(user);
-		_lastReadRepo.Verify(l => l.DeleteAllTopicReads(user.UserID), Times.Exactly(1));
+		await _lastReadRepo.Received(1).DeleteAllTopicReads(user.UserID);
 	}
 
 	[Fact]
@@ -106,7 +106,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } }));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -119,8 +119,8 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime>());
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForum(user.UserID, forum.ForumID)).ReturnsAsync(new DateTime(2000, 1, 1, 3, 0, 0));
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
+		_lastReadRepo.GetLastReadTimesForForum(user.UserID, forum.ForumID).Returns(new DateTime(2000, 1, 1, 3, 0, 0));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -133,7 +133,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -146,7 +146,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } }));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -159,7 +159,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } }));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -172,7 +172,7 @@ public class LastReadServiceTests
 		var service = GetService();
 		var forum = new Forum { ForumID = 1, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0), IsArchived = true };
 		var user = new User { UserID = 2 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(2)).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(2).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } }));
 		var container = new CategorizedForumContainer(new List<Category>(), new[] { forum });
 		await service.GetForumReadStatus(user, container);
 		Assert.Single(container.ReadStatusLookup);
@@ -199,8 +199,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime>());
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -212,8 +212,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime>());
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } }));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -225,8 +225,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -238,8 +238,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 2, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } }));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -251,8 +251,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -264,8 +264,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime>());
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } }));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -277,8 +277,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 3, 0, 0) } }));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -290,8 +290,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } });
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 1, new DateTime(2000, 1, 1, 7, 0, 0) } }));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -303,8 +303,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new [] {1})).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new [] {1}).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.Pinned, container.ReadStatusLookup[1]);
 	}
@@ -316,8 +316,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -329,8 +329,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.Pinned, container.ReadStatusLookup[1]);
 	}
@@ -342,8 +342,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Open | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -355,8 +355,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Closed | ReadStatus.Pinned, container.ReadStatusLookup[1]);
 	}
@@ -368,8 +368,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 3, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NewPosts | ReadStatus.Closed | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -381,8 +381,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, IsPinned = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Closed | ReadStatus.Pinned, container.ReadStatusLookup[1]);
 	}
@@ -394,8 +394,8 @@ public class LastReadServiceTests
 		var container = new PagedTopicContainer();
 		container.Topics = new List<Topic> { new Topic { TopicID = 1, ForumID = 2, IsClosed = true, LastPostTime = new DateTime(2000, 1, 1, 5, 0, 0) } };
 		var user = new User { UserID = 123 };
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForForums(user.UserID)).ReturnsAsync(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } });
-		_lastReadRepo.Setup(l => l.GetLastReadTimesForTopics(user.UserID, new[] { 1 })).ReturnsAsync(new Dictionary<int, DateTime>());
+		_lastReadRepo.GetLastReadTimesForForums(user.UserID).Returns(Task.FromResult(new Dictionary<int, DateTime> { { 2, new DateTime(2000, 1, 1, 7, 0, 0) } }));
+		_lastReadRepo.GetLastReadTimesForTopics(user.UserID, new[] { 1 }).Returns(Task.FromResult(new Dictionary<int, DateTime>()));
 		await service.GetTopicReadStatus(user, container);
 		Assert.Equal(ReadStatus.NoNewPosts | ReadStatus.Closed | ReadStatus.NotPinned, container.ReadStatusLookup[1]);
 	}
@@ -407,7 +407,7 @@ public class LastReadServiceTests
 		var user = new User { UserID = 1 };
 		var topic = new Topic { TopicID = 2 };
 		await service.MarkTopicRead(user, topic);
-		_lastReadRepo.Verify(l => l.SetTopicRead(user.UserID, topic.TopicID, It.IsAny<DateTime>()), Times.Exactly(1));
+		await _lastReadRepo.Received(1).SetTopicRead(user.UserID, topic.TopicID, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -417,12 +417,12 @@ public class LastReadServiceTests
 		var user = new User { UserID = 1 };
 		var topic = new Topic { TopicID = 2 };
 		var lastRead = new DateTime(2010, 1, 1);
-		_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).ReturnsAsync(lastRead);
+		_lastReadRepo.GetLastReadTimeForTopic(user.UserID, topic.TopicID).Returns(lastRead);
 
 		var result = await service.GetLastReadTime(user, topic);
 
 		Assert.Equal(lastRead, result);
-		_lastReadRepo.Verify(x => x.GetLastReadTimesForForum(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		await _lastReadRepo.DidNotReceive().GetLastReadTimesForForum(Arg.Any<int>(), Arg.Any<int>());
 	}
 
 	[Fact]
@@ -432,8 +432,8 @@ public class LastReadServiceTests
 		var user = new User { UserID = 1 };
 		var topic = new Topic { TopicID = 2, ForumID = 3};
 		var lastRead = new DateTime(2010, 1, 1);
-		_lastReadRepo.Setup(x => x.GetLastReadTimeForTopic(user.UserID, topic.TopicID)).ReturnsAsync((DateTime?)null);
-		_lastReadRepo.Setup(x => x.GetLastReadTimesForForum(user.UserID, topic.ForumID)).ReturnsAsync(lastRead);
+		_lastReadRepo.GetLastReadTimeForTopic(user.UserID, topic.TopicID).Returns((DateTime?)null);
+		_lastReadRepo.GetLastReadTimesForForum(user.UserID, topic.ForumID).Returns(lastRead);
 
 		var result = await service.GetLastReadTime(user, topic);
 

@@ -5,10 +5,10 @@ public class SettingsTests
 	[Fact]
 	public void LoadDefaults()
 	{
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(new Dictionary<string, string>());
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 
@@ -35,10 +35,10 @@ public class SettingsTests
 			{"PostsPerPage", postsPerPage.ToString()},
 			{"ForumTitle", title}
 		};
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(dictionary);
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(dictionary);
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 		
@@ -46,16 +46,16 @@ public class SettingsTests
 		Assert.Equal(topicsPerPage, settings.TopicsPerPage);
 		Assert.Equal(postsPerPage, settings.PostsPerPage);
 		Assert.Equal(title, settings.ForumTitle);
-		settingsRepo.Verify(s => s.Get(), Times.Once());
+		settingsRepo.Received().Get();
 	}
 
 	[Fact]
 	public void LoadFromRepoThenCache()
 	{
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(new Dictionary<string, string>());
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 		var settings2 = settingsManager.Current;
@@ -63,35 +63,35 @@ public class SettingsTests
 
 		Assert.Equal(settings, settings2);
 		Assert.Equal(settings, settings3);
-		settingsRepo.Verify(s => s.Get(), Times.Once());
+		settingsRepo.Received().Get();
 	}
 
 	[Fact]
 	public void LoadFromRepoWhenStale()
 	{
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-		settingsRepo.Setup(s => s.IsStale(It.IsAny<DateTime>())).Returns(true);
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(new Dictionary<string, string>());
+		settingsRepo.IsStale(Arg.Any<DateTime>()).Returns(true);
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 		settings = settingsManager.Current;
-		settingsRepo.Verify(s => s.Get(), Times.Exactly(2));
+		settingsRepo.Received(2).Get();
 	}
 
 	[Fact]
 	public void DoNotLoadFromRepoWhenNotStale()
 	{
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-		settingsRepo.Setup(s => s.IsStale(It.IsAny<DateTime>())).Returns(false);
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(new Dictionary<string, string>());
+		settingsRepo.IsStale(Arg.Any<DateTime>()).Returns(false);
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 		settings = settingsManager.Current;
-		settingsRepo.Verify(s => s.Get(), Times.Once());
+		settingsRepo.Received().Get();
 	}
 
 	[Fact]
@@ -219,10 +219,10 @@ public class SettingsTests
 			{"PostImageMaxkBytes", postImageMaxkBytes}
 		};
 
-		var settingsRepo = new Mock<ISettingsRepository>();
-		settingsRepo.Setup(s => s.Get()).Returns(new Dictionary<string, string>());
-		var errorLog = new Mock<IErrorLog>();
-		var settingsManager = new SettingsManager(settingsRepo.Object, errorLog.Object);
+		var settingsRepo = Substitute.For<ISettingsRepository>();
+		settingsRepo.Get().Returns(new Dictionary<string, string>());
+		var errorLog = Substitute.For<IErrorLog>();
+		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
 		var settings = settingsManager.Current;
 		settings.TermsOfService = tos;
@@ -286,6 +286,6 @@ public class SettingsTests
 		settings.PostImageMaxkBytes = postImageMaxkBytes;
 		settingsManager.SaveCurrent();
 
-		settingsRepo.Verify(s => s.Save(dictionary), Times.Once());
+		settingsRepo.Received().Save(dictionary);
 	}
 }

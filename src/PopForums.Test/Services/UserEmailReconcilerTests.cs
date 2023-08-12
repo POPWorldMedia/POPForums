@@ -2,12 +2,12 @@ namespace PopForums.Test.Services;
 
 public class UserEmailReconcilerTests
 {
-	private Mock<IUserRepository> _userRepo;
+	private IUserRepository _userRepo;
 
 	private UserEmailReconciler GetService()
 	{
-		_userRepo = new Mock<IUserRepository>();
-		return new UserEmailReconciler(_userRepo.Object);
+		_userRepo = Substitute.For<IUserRepository>();
+		return new UserEmailReconciler(_userRepo);
 	}
 
 	public class GetUniqueEmail : UserEmailReconcilerTests
@@ -17,7 +17,7 @@ public class UserEmailReconcilerTests
 		{
 			var service = GetService();
 			var email = "a@b.com";
-			_userRepo.Setup(x => x.GetUserByEmail(email)).ReturnsAsync((User)null);
+			_userRepo.GetUserByEmail(email).Returns((User)null);
 
 			var result = await service.GetUniqueEmail(email, "12345");
 			
@@ -30,7 +30,7 @@ public class UserEmailReconcilerTests
 			var service = GetService();
 			var email = "a@b.com";
 			var user = new User { Email = email };
-			_userRepo.Setup(x => x.GetUserByEmail(email)).ReturnsAsync(user);
+			_userRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
 			var result = await service.GetUniqueEmail(email, "12345");
 			
