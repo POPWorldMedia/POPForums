@@ -51,16 +51,18 @@ public class UserServiceTests
 	public void CheckPassword()
 	{
 		var userService = GetMockedUserService();
-		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", Arg.Any<Guid?>())));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", (Guid?)null)));
+		
+		var result = userService.CheckPassword(String.Empty, "fred").Result.Item1;
 
-		Assert.True(userService.CheckPassword(string.Empty, "fred").Result.Item1);
+		Assert.True(result);
 	}
 
 	[Fact]
 	public void CheckPasswordFail()
 	{
 		var userService = GetMockedUserService();
-		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", Arg.Any<Guid?>())));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", (Guid?)null)));
 
 		var result = userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1;
 
@@ -186,7 +188,7 @@ public class UserServiceTests
 		var roles = new List<string> { "blah", PermanentRoles.Admin };
 		var dummyUser = GetDummyUser(name, email);
 		var userService = GetMockedUserService();
-		_mockUserRepo.GetUserByName(name).Returns(Task.FromResult(dummyUser));
+		_mockUserRepo.GetUserByName(name.ToLower()).Returns(Task.FromResult(dummyUser));
 		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
 		var user = await userService.GetUserByName(name);
 		Assert.Same(dummyUser, user);
@@ -197,8 +199,8 @@ public class UserServiceTests
 	{
 		const string name = "Jeff";
 		var userService = GetMockedUserService();
-		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i != name)).Returns(Task.FromResult(GetDummyUser(name, "")));
-		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i == name)).Returns((User)null);
+		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i != name.ToLower())).Returns(Task.FromResult(GetDummyUser(name, "")));
+		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i == name.ToLower())).Returns((User)null);
 		var user = await userService.GetUserByName(name);
 		Assert.Null(user);
 	}
@@ -501,8 +503,8 @@ public class UserServiceTests
 		const string newName = "Diana";
 
 		var userService = GetMockedUserService();
-		_mockUserRepo.GetUserByName(oldName).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
-		_mockUserRepo.GetUserByName(newName).Returns(Task.FromResult(GetDummyUser(newName, oldEmail)));
+		_mockUserRepo.GetUserByName(oldName.ToLower()).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByName(newName.ToLower()).Returns(Task.FromResult(GetDummyUser(newName, oldEmail)));
 		var user = GetDummyUser(oldName, oldEmail);
 		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, new User(), string.Empty));
 		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
@@ -639,12 +641,11 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		const string role = "blah";
-		await _mockSecurityLogService.CreateLogEntry(Arg.Any<User>(), (User)null, string.Empty, Arg.Any<string>(), SecurityLogType.RoleCreated);
 		
 		await userService.CreateRole(role, new User(), string.Empty);
 		
 		await _mockRoleRepo.Received().CreateRole(role);
-		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), null, string.Empty, "Role: blah", SecurityLogType.RoleCreated);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), Arg.Any<User>(), string.Empty, "Role: blah", SecurityLogType.RoleCreated);
 	}
 
 	[Fact]
@@ -654,7 +655,7 @@ public class UserServiceTests
 		const string role = "blah";
 		await userService.DeleteRole(role, default, default);
 		await _mockRoleRepo.Received().DeleteRole(role);
-		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), null, Arg.Any<string>(), "Role: blah", SecurityLogType.RoleDeleted);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), Arg.Any<User>(), Arg.Any<string>(), "Role: blah", SecurityLogType.RoleDeleted);
 	}
 
 	[Fact]

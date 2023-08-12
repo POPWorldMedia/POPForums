@@ -137,7 +137,7 @@ public class PostMasterServiceTests
 
 			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			await _postRepo.Received().Create(Arg.Any<int>(), Arg.Any<int>(), ip, true, Arg.Any<bool>(), user.UserID, user.Name, "parsed title", "bb text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
+			await _postRepo.Received().Create(0, 0, ip, true, false, user.UserID, user.Name, "parsed title", "bb text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
 			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
@@ -162,7 +162,7 @@ public class PostMasterServiceTests
 
 			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			await _postRepo.Received().Create(Arg.Any<int>(), Arg.Any<int>(), ip, true, Arg.Any<bool>(), user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
+			await _postRepo.Received().Create(0, 0, ip, true, false, user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
 			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
@@ -188,7 +188,7 @@ public class PostMasterServiceTests
 
 			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			await _postRepo.Received().Create(543, Arg.Any<int>(), ip, true, Arg.Any<bool>(), user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
+			await _postRepo.Received().Create(543, 0, ip, true, false, user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
 		}
 
 		[Fact]
@@ -932,7 +932,7 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
-			_postRepo.Create(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), false, true, Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>(), false, Arg.Any<string>(), null, false, 0).Returns(Task.FromResult(123));
+			_postRepo.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", Arg.Any<DateTime>(), false, Arg.Any<string>(), null, false, 0).Returns(Task.FromResult(123));
 			var forum = new Forum { ForumID = topic.ForumID };
 			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
 			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
