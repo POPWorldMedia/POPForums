@@ -136,6 +136,7 @@ public class UserService : IUserService
 	{
 		if (string.IsNullOrWhiteSpace(name))
 			return null;
+		name = name.ToLower();
 		var user = await _userRepository.GetUserByName(name);
 		if (user == null)
 			return null;
@@ -154,6 +155,7 @@ public class UserService : IUserService
 	{
 		if (string.IsNullOrWhiteSpace(email))
 			return null;
+		email = email.ToLower();
 		var user = await _userRepository.GetUserByEmail(email);
 		await PopulateRoles(user);
 		return user;

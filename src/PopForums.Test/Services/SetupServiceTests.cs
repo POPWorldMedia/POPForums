@@ -2,22 +2,22 @@
 
 public class SetupServiceTests
 {
-	private Mock<ISetupRepository> _setupRepository;
-	private Mock<IUserService> _userService;
-	private Mock<ISettingsManager> _settingsManager;
-	private Mock<IProfileService> _profileService;
+	private ISetupRepository _setupRepository;
+	private IUserService _userService;
+	private ISettingsManager _settingsManager;
+	private IProfileService _profileService;
 
 	private SetupService GetService()
 	{
 		// kind of gross leaky abstraction here
 		var staticSetupIndicator = typeof(SetupService).GetField("_isConnectionSetupGood", BindingFlags.Static | BindingFlags.NonPublic);
 		staticSetupIndicator.SetValue(null, null);
-		_setupRepository = new Mock<ISetupRepository>();
-		_userService = new Mock<IUserService>();
-		_settingsManager = new Mock<ISettingsManager>();
-		_profileService = new Mock<IProfileService>();
-		return new SetupService(_setupRepository.Object, _userService.Object, _settingsManager.Object,
-			_profileService.Object);
+		_setupRepository = Substitute.For<ISetupRepository>();
+		_userService = Substitute.For<IUserService>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_profileService = Substitute.For<IProfileService>();
+		return new SetupService(_setupRepository, _userService, _settingsManager,
+			_profileService);
 	}
 
 	public class IsRuntimeConnectionAndSetupGoodTests : SetupServiceTests
@@ -26,8 +26,8 @@ public class SetupServiceTests
 		public void GoodConnectionAndSetupAlwaysReturnsTrue()
 		{
 			var service = GetService();
-			_setupRepository.Setup(x => x.IsConnectionPossible()).Returns(true);
-			_setupRepository.Setup(x => x.IsDatabaseSetup()).Returns(true);
+			_setupRepository.IsConnectionPossible().Returns(true);
+			_setupRepository.IsDatabaseSetup().Returns(true);
 
 			var result1 = service.IsRuntimeConnectionAndSetupGood();
 			var result2 = service.IsRuntimeConnectionAndSetupGood();
@@ -40,8 +40,8 @@ public class SetupServiceTests
 		public void GoodConnectionAndSetupOnlyCallsReposOnce()
 		{
 			var service = GetService();
-			_setupRepository.Setup(x => x.IsConnectionPossible()).Returns(true);
-			_setupRepository.Setup(x => x.IsDatabaseSetup()).Returns(true);
+			_setupRepository.IsConnectionPossible().Returns(true);
+			_setupRepository.IsDatabaseSetup().Returns(true);
 
 			service.IsRuntimeConnectionAndSetupGood();
 			service.IsRuntimeConnectionAndSetupGood();
@@ -49,15 +49,15 @@ public class SetupServiceTests
 			service.IsRuntimeConnectionAndSetupGood();
 			service.IsRuntimeConnectionAndSetupGood();
 
-			_setupRepository.Verify(x => x.IsDatabaseSetup(), Times.Once);
-			_setupRepository.Verify(x => x.IsConnectionPossible(), Times.Once);
+			_setupRepository.Received().IsDatabaseSetup();
+			_setupRepository.Received().IsConnectionPossible();
 		}
 
 		[Fact]
 		public void BadConnectionReturnsFalse()
 		{
 			var service = GetService();
-			_setupRepository.Setup(x => x.IsConnectionPossible()).Returns(false);
+			_setupRepository.IsConnectionPossible().Returns(false);
 
 			var result = service.IsRuntimeConnectionAndSetupGood();
 
@@ -68,8 +68,8 @@ public class SetupServiceTests
 		public void GoodConnectionButNotSetupReturnsFalse()
 		{
 			var service = GetService();
-			_setupRepository.Setup(x => x.IsConnectionPossible()).Returns(true);
-			_setupRepository.Setup(x => x.IsDatabaseSetup()).Returns(false);
+			_setupRepository.IsConnectionPossible().Returns(true);
+			_setupRepository.IsDatabaseSetup().Returns(false);
 
 			var result = service.IsRuntimeConnectionAndSetupGood();
 

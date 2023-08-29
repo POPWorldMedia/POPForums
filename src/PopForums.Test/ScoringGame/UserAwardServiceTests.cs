@@ -4,15 +4,15 @@ public class UserAwardServiceTests
 {
 	public UserAwardService GetService()
 	{
-		_userAwardRepo = new Mock<IUserAwardRepository>();
-		_notificationTunnel = new Mock<INotificationTunnel>();
-		_tenantService = new Mock<ITenantService>();
-		return new UserAwardService(_userAwardRepo.Object, _notificationTunnel.Object, _tenantService.Object);
+		_userAwardRepo = Substitute.For<IUserAwardRepository>();
+		_notificationTunnel = Substitute.For<INotificationTunnel>();
+		_tenantService = Substitute.For<ITenantService>();
+		return new UserAwardService(_userAwardRepo, _notificationTunnel, _tenantService);
 	}
 
-	private Mock<IUserAwardRepository> _userAwardRepo;
-	private Mock<INotificationTunnel> _notificationTunnel;
-	private Mock<ITenantService> _tenantService;
+	private IUserAwardRepository _userAwardRepo;
+	private INotificationTunnel _notificationTunnel;
+	private ITenantService _tenantService;
 
 	[Fact]
 	public async Task IssueMapsFieldsToRepoCall()
@@ -21,7 +21,7 @@ public class UserAwardServiceTests
 		var awardDef = new AwardDefinition {AwardDefinitionID = "blah", Description = "desc", Title = "title", IsSingleTimeAward = true};
 		var service = GetService();
 		await service.IssueAward(user, awardDef);
-		_userAwardRepo.Verify(x => x.IssueAward(user.UserID, awardDef.AwardDefinitionID, awardDef.Title, awardDef.Description, It.IsAny<DateTime>()), Times.Once());
+		await _userAwardRepo.Received().IssueAward(user.UserID, awardDef.AwardDefinitionID, awardDef.Title, awardDef.Description, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -30,7 +30,7 @@ public class UserAwardServiceTests
 		var user = new User { UserID = 123 };
 		var awardDef = new AwardDefinition { AwardDefinitionID = "blah" };
 		var service = GetService();
-		_userAwardRepo.Setup(x => x.IsAwarded(user.UserID, awardDef.AwardDefinitionID)).ReturnsAsync(true);
+		_userAwardRepo.IsAwarded(user.UserID, awardDef.AwardDefinitionID).Returns(Task.FromResult(true));
 		var result = await service.IsAwarded(user, awardDef);
 		Assert.True(result);
 	}
@@ -41,7 +41,7 @@ public class UserAwardServiceTests
 		var user = new User { UserID = 123 };
 		var list = new List<UserAward>();
 		var service = GetService();
-		_userAwardRepo.Setup(x => x.GetAwards(user.UserID)).ReturnsAsync(list);
+		_userAwardRepo.GetAwards(user.UserID).Returns(Task.FromResult(list));
 		var result = await service.GetAwards(user);
 		Assert.Same(list, result);
 	}

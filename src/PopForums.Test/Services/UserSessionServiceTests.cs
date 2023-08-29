@@ -2,18 +2,18 @@ namespace PopForums.Test.Services;
 
 public class UserSessionServiceTests
 {
-	private Mock<ISettingsManager> _mockSettingsManager;
-	private Mock<IUserRepository> _mockUserRepo;
-	private Mock<IUserSessionRepository> _mockUserSessionRepo;
-	private Mock<ISecurityLogService> _mockSecurityLogService;
+	private ISettingsManager _mockSettingsManager;
+	private IUserRepository _mockUserRepo;
+	private IUserSessionRepository _mockUserSessionRepo;
+	private ISecurityLogService _mockSecurityLogService;
 
 	private UserSessionService GetService()
 	{
-		_mockSettingsManager = new Mock<ISettingsManager>();
-		_mockUserRepo = new Mock<IUserRepository>();
-		_mockUserSessionRepo = new Mock<IUserSessionRepository>();
-		_mockSecurityLogService = new Mock<ISecurityLogService>();
-		var service = new UserSessionService(_mockSettingsManager.Object, _mockUserRepo.Object, _mockUserSessionRepo.Object, _mockSecurityLogService.Object);
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
+		_mockUserRepo = Substitute.For<IUserRepository>();
+		_mockUserSessionRepo = Substitute.For<IUserSessionRepository>();
+		_mockSecurityLogService = Substitute.For<ISecurityLogService>();
+		var service = new UserSessionService(_mockSettingsManager, _mockUserRepo, _mockUserSessionRepo, _mockSecurityLogService);
 		return service;
 	}
 
@@ -30,9 +30,9 @@ public class UserSessionServiceTests
 			
 		Assert.False(deleteCalled);
 		Assert.True(createResult.HasValue);
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), null, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry((int?)null, null, "1.1.1.1", createResult.Value.ToString(), SecurityLogType.UserSessionStart), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(It.IsAny<User>(), It.IsAny<DateTime>()), Times.Never());
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), null, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry((int?)null, null, "1.1.1.1", createResult.Value.ToString(), SecurityLogType.UserSessionStart);
+		await _mockUserRepo.DidNotReceive().UpdateLastActivityDate(Arg.Any<User>(), Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -44,15 +44,15 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
-		_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(true);
+		_mockUserSessionRepo.UpdateSession(sessionID, Arg.Any<DateTime>()).Returns(Task.FromResult(true));
+		_mockUserSessionRepo.IsSessionAnonymous(sessionID).Returns(Task.FromResult(true));
 
 		var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
 		Assert.False(deleteCalled);
 		Assert.Equal(sessionID, result);
-		_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(It.IsAny<User>(), It.IsAny<DateTime>()), Times.Never());
+		await _mockUserSessionRepo.Received().UpdateSession(sessionID, Arg.Any<DateTime>());
+		await _mockUserRepo.DidNotReceive().UpdateLastActivityDate(Arg.Any<User>(), Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -65,19 +65,19 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
-		_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(true);
+		_mockUserSessionRepo.UpdateSession(sessionID, Arg.Any<DateTime>()).Returns(Task.FromResult(true));
+		_mockUserSessionRepo.IsSessionAnonymous(sessionID).Returns(Task.FromResult(true));
 
 		var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 
 		Assert.True(deleteCalled);
 		Assert.Equal(createResult, result);
-		_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.DeleteSessions(null, sessionID), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, null, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, It.IsAny<DateTime>()), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), user.UserID, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, It.IsAny<string>(), It.IsAny<string>(), SecurityLogType.UserSessionStart), Times.Once());
+		await _mockUserSessionRepo.Received().UpdateSession(sessionID, Arg.Any<DateTime>());
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
+		await _mockUserSessionRepo.Received().DeleteSessions(null, sessionID);
+		await _mockSecurityLogService.Received().CreateLogEntry(null, null, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, Arg.Any<DateTime>());
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), user.UserID, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, Arg.Any<string>(), Arg.Any<string>(), SecurityLogType.UserSessionStart);
 	}
 
 	[Fact]
@@ -89,18 +89,18 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
-		_mockUserSessionRepo.Setup(u => u.IsSessionAnonymous(sessionID)).ReturnsAsync(false);
+		_mockUserSessionRepo.UpdateSession(sessionID, Arg.Any<DateTime>()).Returns(Task.FromResult(true));
+		_mockUserSessionRepo.IsSessionAnonymous(sessionID).Returns(Task.FromResult(false));
 
 		var result = await service.ProcessUserRequest(null, sessionID, "1.1.1.1", delete, create);
 
 		Assert.True(deleteCalled);
 		Assert.Equal(createResult, result);
-		_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.DeleteSessions(null, sessionID), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, null, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, It.IsAny<DateTime>()), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), null, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry((int?)null, null, It.IsAny<string>(), It.IsAny<string>(), SecurityLogType.UserSessionStart), Times.Once());
+		await _mockUserSessionRepo.Received().UpdateSession(sessionID, Arg.Any<DateTime>());
+		await _mockUserSessionRepo.Received().DeleteSessions(null, sessionID);
+		await _mockSecurityLogService.Received().CreateLogEntry(null, null, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, Arg.Any<DateTime>());
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), null, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry((int?)null, null, Arg.Any<string>(), Arg.Any<string>(), SecurityLogType.UserSessionStart);
 	}
 
 	[Fact]
@@ -112,15 +112,15 @@ public class UserSessionServiceTests
 		Action delete = () => { deleteCalled = true; };
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
-		_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(It.IsAny<int>())).ReturnsAsync((ExpiredUserSession)null);
+		_mockUserSessionRepo.GetSessionIDByUserID(Arg.Any<int>()).Returns((ExpiredUserSession)null);
 
 		var result = await service.ProcessUserRequest(user, null, "1.1.1.1", delete, create);
 
 		Assert.False(deleteCalled);
 		Assert.Equal(createResult, result);
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), 123, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, It.IsAny<string>(), result.ToString(), SecurityLogType.UserSessionStart), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), 123, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, Arg.Any<string>(), result.ToString(), SecurityLogType.UserSessionStart);
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -133,15 +133,15 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.UpdateSession(sessionID, It.IsAny<DateTime>())).ReturnsAsync(true);
+		_mockUserSessionRepo.UpdateSession(sessionID, Arg.Any<DateTime>()).Returns(Task.FromResult(true));
 
 		var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 
 		Assert.Null(createResult);
 		Assert.False(deleteCalled);
 		Assert.Equal(sessionID, result);
-		_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserSessionRepo.Received().UpdateSession(sessionID, Arg.Any<DateTime>());
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -153,16 +153,16 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).ReturnsAsync(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
+		_mockUserSessionRepo.GetSessionIDByUserID(user.UserID).Returns(Task.FromResult(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue }));
 
 		var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
 		Assert.Equal(createResult, result);
-		_mockUserSessionRepo.Verify(u => u.DeleteSessions(user.UserID, sessionID));
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, DateTime.MinValue), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), user.UserID, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, "1.1.1.1", createResult.ToString(), SecurityLogType.UserSessionStart), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserSessionRepo.Received().DeleteSessions(user.UserID, sessionID);
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, DateTime.MinValue);
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), user.UserID, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, "1.1.1.1", createResult.ToString(), SecurityLogType.UserSessionStart);
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -174,17 +174,17 @@ public class UserSessionServiceTests
 		int? createResult = null;
 		Action<int> create = i => { createResult = i; };
 		const int sessionID = 5467;
-		_mockUserSessionRepo.Setup(u => u.GetSessionIDByUserID(user.UserID)).ReturnsAsync(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue });
+		_mockUserSessionRepo.GetSessionIDByUserID(user.UserID).Returns(Task.FromResult(new ExpiredUserSession { UserID = user.UserID, SessionID = sessionID, LastTime = DateTime.MinValue }));
 
 		var result = await service.ProcessUserRequest(user, sessionID, "1.1.1.1", delete, create);
 			
 		Assert.Equal(createResult, result);
-		_mockUserSessionRepo.Verify(u => u.UpdateSession(sessionID, It.IsAny<DateTime>()), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.DeleteSessions(user.UserID, sessionID));
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, DateTime.MinValue), Times.Once());
-		_mockUserSessionRepo.Verify(u => u.CreateSession(It.IsAny<int>(), user.UserID, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user.UserID, It.IsAny<string>(), It.IsAny<string>(), SecurityLogType.UserSessionStart), Times.Once());
-		_mockUserRepo.Verify(u => u.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserSessionRepo.Received().UpdateSession(sessionID, Arg.Any<DateTime>());
+		await _mockUserSessionRepo.Received().DeleteSessions(user.UserID, sessionID);
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, String.Empty, sessionID.ToString(), SecurityLogType.UserSessionEnd, DateTime.MinValue);
+		await _mockUserSessionRepo.Received().CreateSession(Arg.Any<int>(), user.UserID, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user.UserID, Arg.Any<string>(), Arg.Any<string>(), SecurityLogType.UserSessionStart);
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -196,10 +196,10 @@ public class UserSessionServiceTests
 			new ExpiredUserSession { SessionID = 123, UserID = null, LastTime = new DateTime(2000, 2, 5)},
 			new ExpiredUserSession { SessionID = 789, UserID = 456, LastTime = new DateTime(2010, 3, 6)}
 		};
-		_mockUserSessionRepo.Setup(u => u.GetAndDeleteExpiredSessions(It.IsAny<DateTime>())).ReturnsAsync(sessions);
-		_mockSettingsManager.Setup(s => s.Current.SessionLength).Returns(20);
+		_mockUserSessionRepo.GetAndDeleteExpiredSessions(Arg.Any<DateTime>()).Returns(Task.FromResult(sessions));
+		_mockSettingsManager.Current.SessionLength.Returns(20);
 		await service.CleanUpExpiredSessions();
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, sessions[0].UserID, String.Empty, sessions[0].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[0].LastTime), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, sessions[1].UserID, String.Empty, sessions[1].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[1].LastTime), Times.Once());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, sessions[0].UserID, String.Empty, sessions[0].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[0].LastTime);
+		await _mockSecurityLogService.Received().CreateLogEntry(null, sessions[1].UserID, String.Empty, sessions[1].SessionID.ToString(), SecurityLogType.UserSessionEnd, sessions[1].LastTime);
 	}
 }

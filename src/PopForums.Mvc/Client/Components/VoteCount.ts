@@ -46,7 +46,7 @@ namespace PopForums {
 
     private badge: HTMLElement;
     private voterContainer: HTMLElement;
-    private popover: bootstrap.Popover;
+    private popOver: bootstrap.Popover;
     private popoverEventHander: EventListenerOrEventListenerObject;
 
     connectedCallback() {
@@ -98,7 +98,7 @@ namespace PopForums {
         if (this.votescontainerclass?.length > 0)
             this.votescontainerclass.split(" ").forEach((c) => this.voterContainer.classList.add(c));
         this.voterContainer.innerHTML = `<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>`;
-        this.popover = new bootstrap.Popover(this.badge, {
+        this.popOver = new bootstrap.Popover(this.badge, {
             content: this.voterContainer,
             html: true,
             trigger: "click focus"
@@ -119,11 +119,11 @@ namespace PopForums {
     private applyPopover(): void {
         if (this.votes === "0") {
             this.badge.style.cursor = "default";
-            this.popover.disable();
+            this.popOver.disable();
         }
         else {
             this.badge.style.cursor = "pointer";
-            this.popover.enable();
+            this.popOver.enable();
         }
     }
 

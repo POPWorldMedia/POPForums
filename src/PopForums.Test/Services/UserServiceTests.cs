@@ -2,35 +2,35 @@
 
 public class UserServiceTests
 {
-	private Mock<IUserRepository> _mockUserRepo;
-	private Mock<IRoleRepository> _mockRoleRepo;
-	private Mock<IProfileRepository> _mockProfileRepo;
-	private Mock<ISettingsManager> _mockSettingsManager;
-	private Mock<IUserAvatarRepository> _mockUserAvatarRepo;
-	private Mock<IUserImageRepository> _mockUserImageRepo;
-	private Mock<ISecurityLogService> _mockSecurityLogService;
-	private Mock<ITextParsingService> _mockTextParser;
-	private Mock<IBanRepository> _mockBanRepo;
-	private Mock<IForgotPasswordMailer> _mockForgotMailer;
-	private Mock<IImageService> _mockImageService;
-	private Mock<IConfig> _config;
+	private IUserRepository _mockUserRepo;
+	private IRoleRepository _mockRoleRepo;
+	private IProfileRepository _mockProfileRepo;
+	private ISettingsManager _mockSettingsManager;
+	private IUserAvatarRepository _mockUserAvatarRepo;
+	private IUserImageRepository _mockUserImageRepo;
+	private ISecurityLogService _mockSecurityLogService;
+	private ITextParsingService _mockTextParser;
+	private IBanRepository _mockBanRepo;
+	private IForgotPasswordMailer _mockForgotMailer;
+	private IImageService _mockImageService;
+	private IConfig _config;
 
 	private UserService GetMockedUserService()
 	{
-		_mockUserRepo = new Mock<IUserRepository>();
-		_mockRoleRepo = new Mock<IRoleRepository>();
-		_mockProfileRepo = new Mock<IProfileRepository>();
-		_mockSettingsManager = new Mock<ISettingsManager>();
-		_mockUserAvatarRepo = new Mock<IUserAvatarRepository>();
-		_mockUserImageRepo = new Mock<IUserImageRepository>();
-		_mockSecurityLogService = new Mock<ISecurityLogService>();
-		_mockTextParser = new Mock<ITextParsingService>();
-		_mockBanRepo = new Mock<IBanRepository>();
-		_mockForgotMailer = new Mock<IForgotPasswordMailer>();
-		_mockImageService = new Mock<IImageService>();
-		_config = new Mock<IConfig>();
-		_mockRoleRepo.Setup(r => r.GetUserRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-		return new UserService(_mockUserRepo.Object, _mockRoleRepo.Object, _mockProfileRepo.Object, _mockSettingsManager.Object, _mockUserAvatarRepo.Object, _mockUserImageRepo.Object, _mockSecurityLogService.Object, _mockTextParser.Object, _mockBanRepo.Object, _mockForgotMailer.Object, _mockImageService.Object, _config.Object);
+		_mockUserRepo = Substitute.For<IUserRepository>();
+		_mockRoleRepo = Substitute.For<IRoleRepository>();
+		_mockProfileRepo = Substitute.For<IProfileRepository>();
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
+		_mockUserAvatarRepo = Substitute.For<IUserAvatarRepository>();
+		_mockUserImageRepo = Substitute.For<IUserImageRepository>();
+		_mockSecurityLogService = Substitute.For<ISecurityLogService>();
+		_mockTextParser = Substitute.For<ITextParsingService>();
+		_mockBanRepo = Substitute.For<IBanRepository>();
+		_mockForgotMailer = Substitute.For<IForgotPasswordMailer>();
+		_mockImageService = Substitute.For<IImageService>();
+		_config = Substitute.For<IConfig>();
+		_mockRoleRepo.GetUserRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+		return new UserService(_mockUserRepo, _mockRoleRepo, _mockProfileRepo, _mockSettingsManager, _mockUserAvatarRepo, _mockUserImageRepo, _mockSecurityLogService, _mockTextParser, _mockBanRepo, _mockForgotMailer, _mockImageService, _config);
 	}
 
 	[Fact]
@@ -39,30 +39,34 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("jeff", "a@b.com");
 		var salt = Guid.NewGuid();
-		_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
+		await _mockUserRepo.SetHashedPassword(user, Arg.Any<string>(), Arg.Do<Guid>(x => salt = x));
 
 		await userService.SetPassword(user, "fred", String.Empty, user);
 
 		var hashedPassword = "fred".GetSHA256Hash(salt);
-		_mockUserRepo.Verify(r => r.SetHashedPassword(user, hashedPassword, salt));
+		await _mockUserRepo.Received().SetHashedPassword(user, hashedPassword, salt);
 	}
 
 	[Fact]
 	public void CheckPassword()
 	{
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", It.IsAny<Guid?>()));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", (Guid?)null)));
+		
+		var result = userService.CheckPassword(String.Empty, "fred").Result.Item1;
 
-		Assert.True(userService.CheckPassword(string.Empty, "fred").Result.Item1);
+		Assert.True(result);
 	}
 
 	[Fact]
 	public void CheckPasswordFail()
 	{
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", It.IsAny<Guid?>()));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", (Guid?)null)));
 
-		Assert.False(userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1);
+		var result = userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1;
+
+		Assert.False(result);
 	}
 
 	[Fact]
@@ -71,7 +75,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetSHA256Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
 		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 	}
@@ -82,7 +86,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetSHA256Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
 		Assert.False(userService.CheckPassword(String.Empty, "dsfsdfsdfsdf").Result.Item1);
 	}
@@ -93,7 +97,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = null;
 		var hashedPassword = "fred".GetMD5Hash();
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
 		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 	}
@@ -104,7 +108,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
 		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
 	}
@@ -115,7 +119,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(string.Empty)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
+		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
 		Assert.False(userService.CheckPassword(String.Empty, "blah").Result.Item1);
 	}
@@ -128,11 +132,11 @@ public class UserServiceTests
 		var email = "a@b.com";
 		var user = new User { Email = email };
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
-		_mockUserRepo.Setup(x => x.GetUserByEmail(email)).ReturnsAsync(user);
+		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
+		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
 		Assert.False(userService.CheckPassword(email, "abc").Result.Item1);
-		_mockUserRepo.Verify(x => x.SetHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Never);
+		_mockUserRepo.DidNotReceive().SetHashedPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
@@ -143,11 +147,11 @@ public class UserServiceTests
 		var email = "a@b.com";
 		var user = new User {Email = email};
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email)).ReturnsAsync(Tuple.Create(hashedPassword, salt));
-		_mockUserRepo.Setup(x => x.GetUserByEmail(email)).ReturnsAsync(user);
+		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
+		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
 		Assert.True(userService.CheckPassword(email, "fred").Result.Item1);
-		_mockUserRepo.Verify(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
+		_mockUserRepo.Received().SetHashedPassword(user, Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
@@ -159,8 +163,8 @@ public class UserServiceTests
 		var roles = new List<string> {"blah", PermanentRoles.Admin};
 		var userService = GetMockedUserService();
 		var dummyUser = GetDummyUser(name, email);
-		_mockUserRepo.Setup(r => r.GetUser(id)).ReturnsAsync(dummyUser);
-		_mockRoleRepo.Setup(r => r.GetUserRoles(id)).ReturnsAsync(roles);
+		_mockUserRepo.GetUser(id).Returns(Task.FromResult(dummyUser));
+		_mockRoleRepo.GetUserRoles(id).Returns(Task.FromResult(roles));
 		var user = await userService.GetUser(id);
 		Assert.Same(dummyUser, user);
 	}
@@ -170,8 +174,8 @@ public class UserServiceTests
 	{
 		const int id = 1;
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUser(It.Is<int>(i => i != 1))).ReturnsAsync(GetDummyUser("", ""));
-		_mockUserRepo.Setup(r => r.GetUser(It.Is<int>(i => i == 1))).ReturnsAsync((User)null);
+		_mockUserRepo.GetUser(Arg.Is<int>(i => i != 1)).Returns(Task.FromResult(GetDummyUser("", "")));
+		_mockUserRepo.GetUser(Arg.Is<int>(i => i == 1)).Returns((User)null);
 		var user = await userService.GetUser(id);
 		Assert.Null(user);
 	}
@@ -184,8 +188,8 @@ public class UserServiceTests
 		var roles = new List<string> { "blah", PermanentRoles.Admin };
 		var dummyUser = GetDummyUser(name, email);
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByName(name)).ReturnsAsync(dummyUser);
-		_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).ReturnsAsync(roles);
+		_mockUserRepo.GetUserByName(name.ToLower()).Returns(Task.FromResult(dummyUser));
+		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
 		var user = await userService.GetUserByName(name);
 		Assert.Same(dummyUser, user);
 	}
@@ -195,8 +199,8 @@ public class UserServiceTests
 	{
 		const string name = "Jeff";
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByName(It.Is<string>(i => i != name))).ReturnsAsync(GetDummyUser(name, ""));
-		_mockUserRepo.Setup(r => r.GetUserByName(It.Is<string>(i => i == name))).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i != name.ToLower())).Returns(Task.FromResult(GetDummyUser(name, "")));
+		_mockUserRepo.GetUserByName(Arg.Is<string>(i => i == name.ToLower())).Returns((User)null);
 		var user = await userService.GetUserByName(name);
 		Assert.Null(user);
 	}
@@ -217,8 +221,8 @@ public class UserServiceTests
 		var roles = new List<string> { "blah", PermanentRoles.Admin };
 		var dummyUser = GetDummyUser(name, email);
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(email)).ReturnsAsync(dummyUser);
-		_mockRoleRepo.Setup(r => r.GetUserRoles(dummyUser.UserID)).ReturnsAsync(roles);
+		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(dummyUser));
+		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
 		var user = await userService.GetUserByEmail(email);
 		Assert.Same(dummyUser, user);
 	}
@@ -228,8 +232,8 @@ public class UserServiceTests
 	{
 		const string email = "a@b.com";
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(It.Is<string>(i => i != email))).ReturnsAsync(GetDummyUser("", email));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(It.Is<string>(i => i == email))).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByEmail(Arg.Is<string>(i => i != email)).Returns(Task.FromResult(GetDummyUser("", email)));
+		_mockUserRepo.GetUserByEmail(Arg.Is<string>(i => i == email)).Returns((User)null);
 		var user = await userManager.GetUserByEmail(email);
 		Assert.Null(user);
 	}
@@ -244,9 +248,10 @@ public class UserServiceTests
 	{
 		const string name = "jeff";
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByName(It.IsRegex("^" + name + "$", RegexOptions.IgnoreCase))).ReturnsAsync(GetDummyUser(name, "a@b.com"));
+		_mockUserRepo.GetUserByName(Arg.Is(name)).Returns(Task.FromResult(GetDummyUser(name, "a@b.com")));
+		
 		Assert.True(await userService.IsNameInUse(name));
-		_mockUserRepo.Verify(r => r.GetUserByName(name), Times.Exactly(1));
+		await _mockUserRepo.Received(1).GetUserByName(name);
 		Assert.False(await userService.IsNameInUse("notjeff"));
 		Assert.True(await userService.IsNameInUse(name.ToUpper()));
 	}
@@ -256,9 +261,9 @@ public class UserServiceTests
 	{
 		const string email = "a@b.com";
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(It.IsRegex("^" + email + "$", RegexOptions.IgnoreCase))).ReturnsAsync(GetDummyUser("jeff", email));
+		_mockUserRepo.GetUserByEmail(Arg.Is(email)).Returns(Task.FromResult(GetDummyUser("jeff", email)));
 		Assert.True(await userManager.IsEmailInUse(email));
-		_mockUserRepo.Verify(r => r.GetUserByEmail(email), Times.Exactly(1));
+		await _mockUserRepo.Received(1).GetUserByEmail(email);
 		Assert.False(await userManager.IsEmailInUse("nota@b.com"));
 		Assert.True(await userManager.IsEmailInUse(email.ToUpper()));
 	}
@@ -268,9 +273,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("jeff", "a@b.com");
-		_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).ReturnsAsync(new User { UserID = 123 });
+		_mockUserRepo.GetUserByEmail("c@d.com").Returns(Task.FromResult(new User { UserID = 123 }));
 		var result = await userService.IsEmailInUseByDifferentUser(user, "c@d.com");
-		_mockUserRepo.Verify(u => u.GetUserByEmail("c@d.com"), Times.Once());
+		await _mockUserRepo.Received().GetUserByEmail("c@d.com");
 		Assert.True(result);
 	}
 
@@ -279,9 +284,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("jeff", "a@b.com");
-		_mockUserRepo.Setup(u => u.GetUserByEmail("a@b.com")).ReturnsAsync(user);
+		_mockUserRepo.GetUserByEmail("a@b.com").Returns(Task.FromResult(user));
 		var result = await userService.IsEmailInUseByDifferentUser(user, "a@b.com");
-		_mockUserRepo.Verify(u => u.GetUserByEmail("a@b.com"), Times.Once());
+		await _mockUserRepo.Received().GetUserByEmail("a@b.com");
 		Assert.False(result);
 	}
 
@@ -290,9 +295,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("jeff", "a@b.com");
-		_mockUserRepo.Setup(u => u.GetUserByEmail("c@d.com")).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByEmail("c@d.com").Returns((User)null);
 		var result = await userService.IsEmailInUseByDifferentUser(user, "c@d.com");
-		_mockUserRepo.Verify(u => u.GetUserByEmail("c@d.com"), Times.Once());
+		await _mockUserRepo.Received().GetUserByEmail("c@d.com");
 		Assert.False(result);
 	}
 
@@ -306,14 +311,14 @@ public class UserServiceTests
 		const string ip = "127.0.0.1";
 		var userService = GetMockedUserService();
 		var dummyUser = GetDummyUser(nameCensor, email);
-		_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(dummyUser);
-		_mockTextParser.Setup(t => t.Censor(name)).Returns(nameCensor);
+		_mockUserRepo.CreateUser(nameCensor, email, Arg.Any<DateTime>(), true, Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(dummyUser));
+		_mockTextParser.Censor(name).Returns(nameCensor);
 		var user = await userService.CreateUser(name, email, password, true, ip);
 		Assert.Equal(dummyUser.Name, user.Name);
 		Assert.Equal(dummyUser.Email, user.Email);
-		_mockTextParser.Verify(t => t.Censor(name), Times.Once());
-		_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
+		_mockTextParser.Received().Censor(name);
+		await _mockUserRepo.Received().CreateUser(nameCensor, email, Arg.Any<DateTime>(), true, Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<Guid>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated);
 	}
 
 
@@ -327,21 +332,21 @@ public class UserServiceTests
 		const string ip = "127.0.0.1";
 		var userManager = GetMockedUserService();
 		var dummyUser = GetDummyUser(nameCensor, email);
-		_mockUserRepo.Setup(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(dummyUser);
-		_mockTextParser.Setup(t => t.Censor(name)).Returns(nameCensor);
+		_mockUserRepo.CreateUser(nameCensor, email, Arg.Any<DateTime>(), true, Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(dummyUser));
+		_mockTextParser.Censor(name).Returns(nameCensor);
 		var settings = new Settings();
-		_mockSettingsManager.Setup(s => s.Current).Returns(settings);
-		var signUpdata = new SignupData {Email = email, Name = name, Password = password};
-		var user = await userManager.CreateUserWithProfile(signUpdata, ip);
-		_mockUserRepo.Verify(r => r.CreateUser(nameCensor, email, It.IsAny<DateTime>(), true, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated));
+		_mockSettingsManager.Current.Returns(settings);
+		var signupData = new SignupData {Email = email, Name = name, Password = password};
+		var user = await userManager.CreateUserWithProfile(signupData, ip);
+		await _mockUserRepo.Received().CreateUser(nameCensor, email, Arg.Any<DateTime>(), true, Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<Guid>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.UserCreated);
 	}
 
 	[Fact]
 	public async Task CreateInvalidEmail()
 	{
 		var userService = GetMockedUserService();
-		_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
+		_mockTextParser.Censor(Arg.Any<string>()).Returns("blah");
 		await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("", "a b@oihfwe", "", true, ""));
 	}
 
@@ -351,9 +356,9 @@ public class UserServiceTests
 		const string usedName = "jeff";
 		const string email = "a@b.com";
 		var userService = GetMockedUserService();
-		_mockTextParser.Setup(t => t.Censor("jeff")).Returns("jeff");
-		_mockTextParser.Setup(t => t.Censor("anynamejeff")).Returns("anynamejeff");
-		_mockUserRepo.Setup(r => r.GetUserByName(It.IsRegex("^" + usedName + "$", RegexOptions.IgnoreCase))).ReturnsAsync(GetDummyUser(usedName, email));
+		_mockTextParser.Censor("jeff").Returns("jeff");
+		_mockTextParser.Censor("anynamejeff").Returns("anynamejeff");
+		_mockUserRepo.GetUserByName(Arg.Is(usedName)).Returns(Task.FromResult(GetDummyUser(usedName, email)));
 		await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser(usedName, email, "", true, ""));
 		await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser(usedName.ToUpper(), email, "", true, ""));
 	}
@@ -377,8 +382,8 @@ public class UserServiceTests
 	{
 		const string usedEmail = "a@b.com";
 		var userService = GetMockedUserService();
-		_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-		_mockUserRepo.Setup(r => r.GetUserByEmail(It.IsRegex("^" + usedEmail + "$", RegexOptions.IgnoreCase))).ReturnsAsync(GetDummyUser("jeff", usedEmail));
+		_mockTextParser.Censor(Arg.Any<string>()).Returns("blah");
+		_mockUserRepo.GetUserByEmail(Arg.Is(usedEmail)).Returns(Task.FromResult(GetDummyUser("jeff", usedEmail)));
 		await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("", usedEmail, "", true, ""));
 	}
 
@@ -387,8 +392,8 @@ public class UserServiceTests
 	{
 		const string bannedEmail = "a@b.com";
 		var userService = GetMockedUserService();
-		_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-		_mockBanRepo.Setup(b => b.EmailIsBanned(bannedEmail)).ReturnsAsync(true);
+		_mockTextParser.Censor(Arg.Any<string>()).Returns("blah");
+		_mockBanRepo.EmailIsBanned(bannedEmail).Returns(Task.FromResult(true));
 		await Assert.ThrowsAsync<Exception>(async () => await userService.CreateUser("name", bannedEmail, "", true, ""));
 	}
 
@@ -397,8 +402,8 @@ public class UserServiceTests
 	{
 		const string bannedIP = "1.2.3.4";
 		var userManager = GetMockedUserService();
-		_mockTextParser.Setup(t => t.Censor(It.IsAny<string>())).Returns("blah");
-		_mockBanRepo.Setup(b => b.IPIsBanned(bannedIP)).ReturnsAsync(true);
+		_mockTextParser.Censor(Arg.Any<string>()).Returns("blah");
+		_mockBanRepo.IPIsBanned(bannedIP).Returns(Task.FromResult(true));
 		await Assert.ThrowsAsync<Exception>(async () => await userManager.CreateUser("", "a@b.com", "", true, bannedIP));
 	}
 
@@ -408,7 +413,7 @@ public class UserServiceTests
 		var userManager = GetMockedUserService();
 		var user = UserTest.GetTestUser();
 		await userManager.UpdateLastActivityDate(user);
-		_mockUserRepo.Verify(r => r.UpdateLastActivityDate(user, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserRepo.Received().UpdateLastActivityDate(user, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -419,14 +424,14 @@ public class UserServiceTests
 		const string newEmail = "c@d.com";
 
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).ReturnsAsync(GetDummyUser(oldName, oldEmail));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).ReturnsAsync((User)null);
-		_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(false);
+		_mockUserRepo.GetUserByEmail(oldEmail).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByEmail(newEmail).Returns((User)null);
+		_mockSettingsManager.Current.IsNewUserApproved.Returns(false);
 		var targetUser = GetDummyUser(oldName, oldEmail);
 		var user = new User { UserID = 34243 };
 		await userManager.ChangeEmail(targetUser, newEmail, user, "123");
-		_mockUserRepo.Verify(r => r.ChangeEmail(targetUser, newEmail), Times.Exactly(1));
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: a@b.com, New: c@d.com", SecurityLogType.EmailChange));
+		await _mockUserRepo.Received(1).ChangeEmail(targetUser, newEmail);
+		await _mockSecurityLogService.Received().CreateLogEntry(user, targetUser, "123", "Old: a@b.com, New: c@d.com", SecurityLogType.EmailChange);
 	}
 
 	[Fact]
@@ -437,12 +442,12 @@ public class UserServiceTests
 		const string newEmail = "c@d.com";
 
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).ReturnsAsync(GetDummyUser(oldName, oldEmail));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).ReturnsAsync(GetDummyUser("Diana", newEmail));
-		_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
+		_mockUserRepo.GetUserByEmail(oldEmail).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByEmail(newEmail).Returns(Task.FromResult(GetDummyUser("Diana", newEmail)));
+		_mockSettingsManager.Current.IsNewUserApproved.Returns(true);
 		var user = GetDummyUser(oldName, oldEmail);
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeEmail(user, newEmail, It.IsAny<User>(), It.IsAny<string>()));
-		_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeEmail(user, newEmail, new User(), string.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeEmail(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -450,10 +455,10 @@ public class UserServiceTests
 	{
 		const string badEmail = "a b @ c";
 		var userManager = GetMockedUserService();
-		_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
+		_mockSettingsManager.Current.IsNewUserApproved.Returns(true);
 		var user = GetDummyUser("", "");
-		await Assert.ThrowsAsync<Exception>(() => userManager.ChangeEmail(user, badEmail, It.IsAny<User>(), It.IsAny<string>()));
-		_mockUserRepo.Verify(r => r.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		await Assert.ThrowsAsync<Exception>(() => userManager.ChangeEmail(user, badEmail, new User(), String.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeEmail(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -464,13 +469,13 @@ public class UserServiceTests
 		const string newEmail = "c@d.com";
 
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByEmail(oldEmail)).ReturnsAsync(GetDummyUser(oldName, oldEmail));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(newEmail)).ReturnsAsync((User)null);
-		_mockSettingsManager.Setup(x => x.Current.IsNewUserApproved).Returns(true);
+		_mockUserRepo.GetUserByEmail(oldEmail).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByEmail(newEmail).Returns((User)null);
+		_mockSettingsManager.Current.IsNewUserApproved.Returns(true);
 		var targetUser = GetDummyUser(oldName, oldEmail);
 		var user = new User { UserID = 34243 };
 		await userManager.ChangeEmail(targetUser, newEmail, user, "123");
-		_mockUserRepo.Verify(x => x.UpdateIsApproved(targetUser, true), Times.Once());
+		await _mockUserRepo.Received().UpdateIsApproved(targetUser, true);
 	}
 
 	[Fact]
@@ -481,13 +486,13 @@ public class UserServiceTests
 		const string newName = "Diana";
 
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByName(oldName)).ReturnsAsync(GetDummyUser(oldName, oldEmail));
-		_mockUserRepo.Setup(r => r.GetUserByName(newName)).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByName(oldName).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByName(newName).Returns((User)null);
 		var targetUser = GetDummyUser(oldName, oldEmail);
 		var user = new User { UserID = 1234531 };
 		await userManager.ChangeName(targetUser, newName, user, "123");
-		_mockUserRepo.Verify(r => r.ChangeName(targetUser, newName));
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "123", "Old: Jeff, New: Diana", SecurityLogType.NameChange));
+		await _mockUserRepo.Received().ChangeName(targetUser, newName);
+		await _mockSecurityLogService.Received().CreateLogEntry(user, targetUser, "123", "Old: Jeff, New: Diana", SecurityLogType.NameChange);
 	}
 
 	[Fact]
@@ -498,11 +503,11 @@ public class UserServiceTests
 		const string newName = "Diana";
 
 		var userService = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByName(oldName)).ReturnsAsync(GetDummyUser(oldName, oldEmail));
-		_mockUserRepo.Setup(r => r.GetUserByName(newName)).ReturnsAsync(GetDummyUser(newName, oldEmail));
+		_mockUserRepo.GetUserByName(oldName.ToLower()).Returns(Task.FromResult(GetDummyUser(oldName, oldEmail)));
+		_mockUserRepo.GetUserByName(newName.ToLower()).Returns(Task.FromResult(GetDummyUser(newName, oldEmail)));
 		var user = GetDummyUser(oldName, oldEmail);
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, It.IsAny<User>(), It.IsAny<string>()));
-		_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, newName, new User(), string.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -510,8 +515,8 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("Jeff", "a@b.com");
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, null, It.IsAny<User>(), It.IsAny<string>()));
-		_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, null, new User(), string.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -519,8 +524,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var user = GetDummyUser("Jeff", "a@b.com");
-		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, String.Empty, It.IsAny<User>(), It.IsAny<string>()));
-		_mockUserRepo.Verify(r => r.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
+		
+		await Assert.ThrowsAsync<Exception>(() => userService.ChangeName(user, String.Empty, new User(), string.Empty));
+		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
 	}
 
 	[Fact]
@@ -529,7 +535,7 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		var user = UserTest.GetTestUser();
 		await userService.Logout(user, "123");
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, "123", String.Empty, SecurityLogType.Logout));
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, "123", String.Empty, SecurityLogType.Logout);
 	}
 
 	[Fact]
@@ -542,16 +548,15 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var saltedHash = password.GetSHA256Hash(salt.Value);
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email)).ReturnsAsync(Tuple.Create(saltedHash, salt));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(email)).ReturnsAsync(user);
-		_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
+		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Task.FromResult(Tuple.Create(saltedHash, salt)));
+		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
-		var (result, userOut) = await userService.Login(email, password, ip);
+		var (result, _) = await userService.Login(email, password, ip);
 
 		Assert.True(result);
-		_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, "", SecurityLogType.Login), Times.Once());
-		_mockUserRepo.Verify(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Never());
+		await _mockUserRepo.Received().UpdateLastLoginDate(user, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, "", SecurityLogType.Login);
+		await _mockUserRepo.DidNotReceive().SetHashedPassword(user, Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
@@ -564,18 +569,17 @@ public class UserServiceTests
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		Guid? nosalt = null;
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(email)).ReturnsAsync(Tuple.Create(password.GetSHA256Hash(), nosalt));
-		_mockUserRepo.Setup(r => r.GetUserByEmail(email)).ReturnsAsync(user);
-		_mockUserRepo.Setup(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()));
-		_mockUserRepo.Setup(x => x.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>())).Callback<User, string, Guid>((u, p, s) => salt = s);
+		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Tuple.Create(password.GetSHA256Hash(), nosalt));
+		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
+		await _mockUserRepo.SetHashedPassword(user, Arg.Any<string>(), Arg.Do<Guid>(x => salt = x));
 
-		var (result, userOut) = await userService.Login(email, password, ip);
+		var (result, _) = await userService.Login(email, password, ip);
 
 		Assert.True(result);
-		_mockUserRepo.Verify(r => r.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, "", SecurityLogType.Login), Times.Once());
+		await _mockUserRepo.Received().UpdateLastLoginDate(user, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, "", SecurityLogType.Login);
 		var saltyPassword = password.GetSHA256Hash(salt.Value);
-		_mockUserRepo.Verify(x => x.SetHashedPassword(user, saltyPassword, salt.Value), Times.Once());
+		await _mockUserRepo.Received().SetHashedPassword(user, saltyPassword, salt.Value);
 	}
 
 	[Fact]
@@ -586,13 +590,13 @@ public class UserServiceTests
 		const string ip = "1.1.1.1";
 		var userService = GetMockedUserService();
 		Guid? salt = null;
-		_mockUserRepo.Setup(r => r.GetHashedPasswordByEmail(It.IsAny<string>())).ReturnsAsync(Tuple.Create("1234", salt));
+		_mockUserRepo.GetHashedPasswordByEmail(Arg.Any<string>()).Returns(Task.FromResult(Tuple.Create("1234", salt)));
 
 		var (result, userOut) = await userService.Login(email, password, ip);
 
 		Assert.False(result);
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin), Times.Once());
-		_mockUserRepo.Verify(x => x.SetHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Never());
+		await _mockSecurityLogService.Received().CreateLogEntry((User)null, null, ip, "E-mail attempted: " + email, SecurityLogType.FailedLogin);
+		await _mockUserRepo.DidNotReceive().SetHashedPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
@@ -604,8 +608,8 @@ public class UserServiceTests
 
 		await service.Login(user, ip);
 			
-		_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login), Times.Once());
+		await _mockUserRepo.Received().UpdateLastLoginDate(user, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 	}
 
 	[Fact]
@@ -617,8 +621,8 @@ public class UserServiceTests
 
 		await service.Login(user, ip);
 
-		_mockUserRepo.Verify(u => u.UpdateLastLoginDate(user, It.IsAny<DateTime>()), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login), Times.Once());
+		await _mockUserRepo.Received().UpdateLastLoginDate(user, Arg.Any<DateTime>());
+		await _mockSecurityLogService.Received().CreateLogEntry(null, user, ip, String.Empty, SecurityLogType.Login);
 	}
 
 	[Fact]
@@ -626,9 +630,9 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		var list = new List<string>();
-		_mockRoleRepo.Setup(r => r.GetAllRoles()).ReturnsAsync(list);
+		_mockRoleRepo.GetAllRoles().Returns(Task.FromResult(list));
 		var result = await userService.GetAllRoles();
-		_mockRoleRepo.Verify(r => r.GetAllRoles(), Times.Once());
+		await _mockRoleRepo.Received().GetAllRoles();
 		Assert.Same(list, result);
 	}
 
@@ -637,9 +641,11 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		const string role = "blah";
-		await userService.CreateRole(role, It.IsAny<User>(), It.IsAny<string>());
-		_mockRoleRepo.Verify(r => r.CreateRole(role), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), null, It.IsAny<string>(), "Role: blah", SecurityLogType.RoleCreated), Times.Once());
+		
+		await userService.CreateRole(role, new User(), string.Empty);
+		
+		await _mockRoleRepo.Received().CreateRole(role);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), Arg.Any<User>(), string.Empty, "Role: blah", SecurityLogType.RoleCreated);
 	}
 
 	[Fact]
@@ -647,20 +653,20 @@ public class UserServiceTests
 	{
 		var userService = GetMockedUserService();
 		const string role = "blah";
-		await userService.DeleteRole(role, It.IsAny<User>(), It.IsAny<string>());
-		_mockRoleRepo.Verify(r => r.DeleteRole(role), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), null, It.IsAny<string>(), "Role: blah", SecurityLogType.RoleDeleted), Times.Once());
+		await userService.DeleteRole(role, default, default);
+		await _mockRoleRepo.Received().DeleteRole(role);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), Arg.Any<User>(), Arg.Any<string>(), "Role: blah", SecurityLogType.RoleDeleted);
 	}
 
 	[Fact]
 	public async Task DeleteRoleThrowsOnAdminOrMod()
 	{
 		var userService = GetMockedUserService();
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", It.IsAny<User>(), It.IsAny<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", It.IsAny<User>(), It.IsAny<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", It.IsAny<User>(), It.IsAny<string>()));
-		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", It.IsAny<User>(), It.IsAny<string>()));
-		_mockRoleRepo.Verify(r => r.DeleteRole(It.IsAny<string>()), Times.Never());
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", default, default));
+		await _mockRoleRepo.DidNotReceive().DeleteRole(Arg.Any<string>());
 	}
 
 	[Fact]
@@ -670,8 +676,8 @@ public class UserServiceTests
 		var targetUser = GetDummyUser("Jeff", "a@b.com");
 		var user = new User { UserID = 97 };
 		await userService.UpdateIsApproved(targetUser, true, user, "123");
-		_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, true), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsApproved));
+		await _mockUserRepo.Received().UpdateIsApproved(targetUser, true);
+		await _mockSecurityLogService.Received().CreateLogEntry(user, targetUser, Arg.Any<string>(), String.Empty, SecurityLogType.IsApproved);
 	}
 
 	[Fact]
@@ -681,8 +687,8 @@ public class UserServiceTests
 		var targetUser = GetDummyUser("Jeff", "a@b.com");
 		var user = new User { UserID = 97 };
 		await userService.UpdateIsApproved(targetUser, false, user, "123");
-		_mockUserRepo.Verify(u => u.UpdateIsApproved(targetUser, false), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, It.IsAny<string>(), String.Empty, SecurityLogType.IsNotApproved));
+		await _mockUserRepo.Received().UpdateIsApproved(targetUser, false);
+		await _mockSecurityLogService.Received().CreateLogEntry(user, targetUser, Arg.Any<string>(), String.Empty, SecurityLogType.IsNotApproved);
 	}
 
 	[Fact]
@@ -692,7 +698,7 @@ public class UserServiceTests
 		var user = GetDummyUser("Jeff", "a@b.com");
 		var key = Guid.NewGuid();
 		await userService.UpdateAuthorizationKey(user, key);
-		_mockUserRepo.Verify(u => u.UpdateAuthorizationKey(user, key), Times.Once());
+		await _mockUserRepo.Received().UpdateAuthorizationKey(user, key);
 	}
 
 	[Fact]
@@ -704,20 +710,20 @@ public class UserServiceTests
 		var dummyUser = GetDummyUser(name, email);
 		dummyUser.AuthorizationKey = key;
 		var userManager = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByAuthorizationKey(key)).ReturnsAsync(dummyUser);
+		_mockUserRepo.GetUserByAuthorizationKey(key).Returns(Task.FromResult(dummyUser));
 		var user = await userManager.VerifyAuthorizationCode(dummyUser.AuthorizationKey, "123");
 		Assert.Same(dummyUser, user);
-		_mockUserRepo.Verify(u => u.UpdateIsApproved(dummyUser, true), Times.Once());
+		await _mockUserRepo.Received().UpdateIsApproved(dummyUser, true);
 	}
 
 	[Fact]
 	public async Task VerifyUserByAuthKeyFail()
 	{
 		var service = GetMockedUserService();
-		_mockUserRepo.Setup(r => r.GetUserByAuthorizationKey(It.IsAny<Guid>())).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByAuthorizationKey(Arg.Any<Guid>()).Returns((User)null);
 		var user = await service.VerifyAuthorizationCode(Guid.NewGuid(), "123");
 		Assert.Null(user);
-		_mockUserRepo.Verify(u => u.UpdateIsApproved(It.IsAny<User>(), true), Times.Never());
+		await _mockUserRepo.DidNotReceive().UpdateIsApproved(Arg.Any<User>(), true);
 	}
 
 	[Fact]
@@ -725,10 +731,10 @@ public class UserServiceTests
 	{
 		var service = GetMockedUserService();
 		var list = new List<User>();
-		_mockUserRepo.Setup(u => u.SearchByEmail("blah")).ReturnsAsync(list);
+		_mockUserRepo.SearchByEmail("blah").Returns(Task.FromResult(list));
 		var result = await service.SearchByEmail("blah");
 		Assert.Same(list, result);
-		_mockUserRepo.Verify(u => u.SearchByEmail("blah"), Times.Once());
+		await _mockUserRepo.Received().SearchByEmail("blah");
 	}
 
 	[Fact]
@@ -736,10 +742,10 @@ public class UserServiceTests
 	{
 		var service = GetMockedUserService();
 		var list = new List<User>();
-		_mockUserRepo.Setup(u => u.SearchByName("blah")).ReturnsAsync(list);
+		_mockUserRepo.SearchByName("blah").Returns(Task.FromResult(list));
 		var result = await service.SearchByName("blah");
 		Assert.Same(list, result);
-		_mockUserRepo.Verify(u => u.SearchByName("blah"), Times.Once());
+		await _mockUserRepo.Received().SearchByName("blah");
 	}
 
 	[Fact]
@@ -747,17 +753,17 @@ public class UserServiceTests
 	{
 		var service = GetMockedUserService();
 		var list = new List<User>();
-		_mockUserRepo.Setup(u => u.SearchByRole("blah")).ReturnsAsync(list);
+		_mockUserRepo.SearchByRole("blah").Returns(Task.FromResult(list));
 		var result = await service.SearchByRole("blah");
 		Assert.Same(list, result);
-		_mockUserRepo.Verify(u => u.SearchByRole("blah"), Times.Once());
+		await _mockUserRepo.Received().SearchByRole("blah");
 	}
 
 	[Fact]
 	public async Task GetUserEdit()
 	{
 		var service = GetMockedUserService();
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(new Profile { UserID = 1, Web = "blah"});
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(new Profile { UserID = 1, Web = "blah"}));
 		var user = new User { UserID = 1 };
 		user.Roles = new List<string>();
 		var result = await service.GetUserEdit(user);
@@ -774,15 +780,15 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var profile = new Profile();
 		var returnedProfile = GetReturnedProfile(userEdit);
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
 
-		_mockUserRepo.Verify(u => u.ChangeEmail(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
-		_mockUserRepo.Verify(u => u.ChangeName(It.IsAny<User>(), It.IsAny<string>()), Times.Never());
-		_mockUserRepo.Verify(u => u.SetHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Never());
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _mockUserRepo.DidNotReceive().ChangeEmail(Arg.Any<User>(), Arg.Any<string>());
+		await _mockUserRepo.DidNotReceive().ChangeName(Arg.Any<User>(), Arg.Any<string>());
+		await _mockUserRepo.DidNotReceive().SetHashedPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<Guid>());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 	}
 
 	private Profile GetReturnedProfile(UserEdit userEdit)
@@ -811,9 +817,9 @@ public class UserServiceTests
 		var user = new User { UserID = 1, IsApproved = false};
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit {IsApproved = true};
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockUserRepo.Verify(u => u.UpdateIsApproved(user, true), Times.Once());
+		await _mockUserRepo.Received().UpdateIsApproved(user, true);
 	}
 
 	[Fact]
@@ -823,9 +829,9 @@ public class UserServiceTests
 		var user = new User { UserID = 1, Email = "c@d.com" };
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit { NewEmail = "a@b.com" };
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockUserRepo.Verify(u => u.ChangeEmail(user, "a@b.com"), Times.Once());
+		await _mockUserRepo.Received().ChangeEmail(user, "a@b.com");
 	}
 
 	[Fact]
@@ -835,9 +841,9 @@ public class UserServiceTests
 		var user = new User { UserID = 1 };
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit { NewPassword = "foo" };
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockUserRepo.Verify(u => u.SetHashedPassword(user, It.IsAny<string>(), It.IsAny<Guid>()), Times.Once());
+		await _mockUserRepo.Received().SetHashedPassword(user, Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
@@ -847,11 +853,11 @@ public class UserServiceTests
 		var user = new User { UserID = 1 };
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit { Roles = new [] {"Admin", "Moderator"} };
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockRoleRepo.Verify(r => r.ReplaceUserRoles(1, userEdit.Roles), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Admin", SecurityLogType.UserAddedToRole), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Moderator", SecurityLogType.UserAddedToRole), Times.Once());
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserAddedToRole);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserAddedToRole);
 	}
 
 	[Fact]
@@ -861,11 +867,11 @@ public class UserServiceTests
 		var user = new User { UserID = 1 };
 		user.Roles = new List<string> { "Admin", "Moderator" };
 		var userEdit = new UserEdit { Roles = new[] { "SomethingElse" } };
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(GetReturnedProfile(userEdit));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockRoleRepo.Verify(r => r.ReplaceUserRoles(1, userEdit.Roles), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Admin", SecurityLogType.UserRemovedFromRole), Times.Once());
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(It.IsAny<User>(), user, "123", "Moderator", SecurityLogType.UserRemovedFromRole), Times.Once());
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserRemovedFromRole);
+		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserRemovedFromRole);
 	}
 
 	[Fact]
@@ -876,11 +882,11 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.AvatarID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUser(user, userEdit, true, false, null, null, "123", user);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 		Assert.Null(profile.AvatarID);
 	}
 
@@ -893,11 +899,11 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.AvatarID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 		Assert.Equal(3, profile.AvatarID);
 	}
 
@@ -910,11 +916,11 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.ImageID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUser(user, userEdit, false, true, null, null, "123", user);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 		Assert.Null(profile.ImageID);
 	}
 
@@ -927,11 +933,11 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.ImageID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 		Assert.Equal(3, profile.ImageID);
 	}
 
@@ -943,14 +949,14 @@ public class UserServiceTests
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
-		_mockUserAvatarRepo.Setup(a => a.SaveNewAvatar(1, It.IsAny<byte[]>(), It.IsAny<DateTime>())).ReturnsAsync(12);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
+		_mockProfileRepo.Update(Arg.Any<Profile>()).Returns(Task.FromResult(true));
+		_mockUserAvatarRepo.SaveNewAvatar(1, Arg.Any<byte[]>(), Arg.Any<DateTime>()).Returns(Task.FromResult(12));
 		var image = new byte[1];
 
 		await service.EditUser(user, userEdit, false, false, image, null, "123", user);
 
-		_mockUserAvatarRepo.Verify(a => a.SaveNewAvatar(1, image, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserAvatarRepo.Received().SaveNewAvatar(1, image, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -961,14 +967,14 @@ public class UserServiceTests
 		user.Roles = new List<string>();
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).ReturnsAsync(true);
-		_mockUserImageRepo.Setup(a => a.SaveNewImage(1, 0, true, It.IsAny<byte[]>(), It.IsAny<DateTime>())).ReturnsAsync(12);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
+		_mockProfileRepo.Update(Arg.Any<Profile>()).Returns(Task.FromResult(true));
+		_mockUserImageRepo.SaveNewImage(1, 0, true, Arg.Any<byte[]>(), Arg.Any<DateTime>()).Returns(Task.FromResult(12));
 		var image = new byte[1];
 
 		await service.EditUser(user, userEdit, false, false, null, image, "123", user);
 
-		_mockUserImageRepo.Verify(a => a.SaveNewImage(1, 0, true, image, It.IsAny<DateTime>()), Times.Once());
+		await _mockUserImageRepo.Received().SaveNewImage(1, 0, true, image, Arg.Any<DateTime>());
 	}
 
 	[Fact]
@@ -979,12 +985,12 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.AvatarID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUserProfileImages(user, true, false, null, null);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
-		_mockUserAvatarRepo.Verify(u => u.DeleteAvatarsByUserID(user.UserID));
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
+		await _mockUserAvatarRepo.Received().DeleteAvatarsByUserID(user.UserID);
 		Assert.Null(profile.AvatarID);
 	}
 
@@ -996,12 +1002,12 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.AvatarID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUserProfileImages(user, false, false, null, null);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
-		_mockUserAvatarRepo.Verify(u => u.DeleteAvatarsByUserID(user.UserID), Times.Never());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
+		await _mockUserAvatarRepo.DidNotReceive().DeleteAvatarsByUserID(user.UserID);
 		Assert.Equal(3, profile.AvatarID);
 	}
 
@@ -1013,12 +1019,12 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.ImageID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUserProfileImages(user, false, true, null, null);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
-		_mockUserImageRepo.Verify(u => u.DeleteImagesByUserID(user.UserID));
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
+		await _mockUserImageRepo.Received().DeleteImagesByUserID(user.UserID);
 		Assert.Null(profile.ImageID);
 	}
 
@@ -1030,12 +1036,12 @@ public class UserServiceTests
 		var userEdit = new UserEdit();
 		var returnedProfile = GetReturnedProfile(userEdit);
 		returnedProfile.ImageID = 3;
-		_mockProfileRepo.Setup(p => p.GetProfile(1)).ReturnsAsync(returnedProfile);
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(returnedProfile));
 		var profile = new Profile();
-		_mockProfileRepo.Setup(p => p.Update(It.IsAny<Profile>())).Callback<Profile>(p => profile = p);
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
 		await service.EditUserProfileImages(user, false, false, null, null);
-		_mockProfileRepo.Verify(p => p.Update(It.IsAny<Profile>()), Times.Once());
-		_mockUserImageRepo.Verify(u => u.DeleteImagesByUserID(user.UserID), Times.Never());
+		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
+		await _mockUserImageRepo.DidNotReceive().DeleteImagesByUserID(user.UserID);
 		Assert.Equal(3, profile.ImageID);
 	}
 
@@ -1044,9 +1050,9 @@ public class UserServiceTests
 	{
 		var service = GetMockedUserService();
 		var users = new List<User>();
-		_mockUserRepo.Setup(u => u.GetUsersOnline()).ReturnsAsync(users);
+		_mockUserRepo.GetUsersOnline().Returns(Task.FromResult(users));
 		var result = await service.GetUsersOnline();
-		_mockUserRepo.Verify(u => u.GetUsersOnline(), Times.Once());
+		await _mockUserRepo.Received().GetUsersOnline();
 		Assert.Same(users, result);
 	}
 
@@ -1057,7 +1063,7 @@ public class UserServiceTests
 		var user = new User { UserID = 2 };
 		var service = GetMockedUserService();
 		await service.DeleteUser(targetUser, user, "127.0.0.1", true);
-		_mockSecurityLogService.Verify(s => s.CreateLogEntry(user, targetUser, "127.0.0.1", It.IsAny<string>(), SecurityLogType.UserDeleted));
+		await _mockSecurityLogService.Received().CreateLogEntry(user, targetUser, "127.0.0.1", Arg.Any<string>(), SecurityLogType.UserDeleted);
 	}
 
 	[Fact]
@@ -1067,7 +1073,7 @@ public class UserServiceTests
 		var user = new User { UserID = 2 };
 		var service = GetMockedUserService();
 		await service.DeleteUser(targetUser, user, "127.0.0.1", true);
-		_mockUserRepo.Verify(u => u.DeleteUser(targetUser), Times.Once());
+		await _mockUserRepo.Received().DeleteUser(targetUser);
 	}
 
 	[Fact]
@@ -1077,7 +1083,7 @@ public class UserServiceTests
 		var user = new User { UserID = 2 };
 		var service = GetMockedUserService();
 		await service.DeleteUser(targetUser, user, "127.0.0.1", true);
-		_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Once());
+		await _mockBanRepo.Received().BanEmail(targetUser.Email);
 	}
 
 	[Fact]
@@ -1087,7 +1093,7 @@ public class UserServiceTests
 		var user = new User { UserID = 2 };
 		var service = GetMockedUserService();
 		await service.DeleteUser(targetUser, user, "127.0.0.1", false);
-		_mockBanRepo.Verify(b => b.BanEmail(targetUser.Email), Times.Never());
+		await _mockBanRepo.DidNotReceive().BanEmail(targetUser.Email);
 	}
 
 	[Fact]
@@ -1095,9 +1101,9 @@ public class UserServiceTests
 	{
 		var user = new User { UserID = 2, Email = "a@b.com" };
 		var service = GetMockedUserService();
-		_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).ReturnsAsync(user);
+		_mockUserRepo.GetUserByEmail(user.Email).Returns(Task.FromResult(user));
 		await service.GeneratePasswordResetEmail(user, "http");
-		_mockForgotMailer.Verify(f => f.ComposeAndQueue(user, It.IsAny<string>()), Times.Exactly(1));
+		await _mockForgotMailer.Received(1).ComposeAndQueue(user, Arg.Any<string>());
 	}
 
 	[Fact]
@@ -1105,17 +1111,17 @@ public class UserServiceTests
 	{
 		var user = new User { UserID = 2, Email = "a@b.com" };
 		var service = GetMockedUserService();
-		_mockUserRepo.Setup(u => u.GetUserByEmail(user.Email)).ReturnsAsync(user);
+		_mockUserRepo.GetUserByEmail(user.Email).Returns(Task.FromResult(user));
 		await service.GeneratePasswordResetEmail(user, "http");
-		_mockUserRepo.Verify(u => u.UpdateAuthorizationKey(user, It.IsAny<Guid>()), Times.Exactly(1));
+		await _mockUserRepo.Received(1).UpdateAuthorizationKey(user, Arg.Any<Guid>());
 	}
 
 	[Fact]
 	public async Task ForgotPasswordThrowsForNoUser()
 	{
 		var service = GetMockedUserService();
-		_mockUserRepo.Setup(u => u.GetUserByEmail(It.IsAny<string>())).ReturnsAsync((User)null);
+		_mockUserRepo.GetUserByEmail(Arg.Any<string>()).Returns((User)null);
 		await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.GeneratePasswordResetEmail(null, "http"));
-		_mockForgotMailer.Verify(f => f.ComposeAndQueue(It.IsAny<User>(), It.IsAny<string>()), Times.Exactly(0));
+		await _mockForgotMailer.DidNotReceive().ComposeAndQueue(Arg.Any<User>(), Arg.Any<string>());
 	}
 }

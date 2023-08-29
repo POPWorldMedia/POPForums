@@ -1,44 +1,42 @@
-﻿using PopForums.Models;
-
-namespace PopForums.Test.Services;
+﻿namespace PopForums.Test.Services;
 
 public class PostMasterServiceTests
 {
 	private PostMasterService GetService()
 	{
-		_textParser = new Mock<ITextParsingService>();
-		_topicRepo = new Mock<ITopicRepository>();
-		_postRepo = new Mock<IPostRepository>();
-		_forumRepo = new Mock<IForumRepository>();
-		_profileRepo = new Mock<IProfileRepository>();
-		_eventPublisher = new Mock<IEventPublisher>();
-		_broker = new Mock<IBroker>();
-		_searchIndexQueueRepo = new Mock<ISearchIndexQueueRepository>();
-		_tenantService = new Mock<ITenantService>();
-		_subscribedTopicsService = new Mock<ISubscribedTopicsService>();
-		_moderationLogService = new Mock<IModerationLogService>();
-		_forumPermissionService = new Mock<IForumPermissionService>();
-		_settingsManager = new Mock<ISettingsManager>();
-		_topicViewCountService = new Mock<ITopicViewCountService>();
-		_postImageService = new Mock<IPostImageService>();
-		return new PostMasterService(_textParser.Object, _topicRepo.Object, _postRepo.Object, _forumRepo.Object, _profileRepo.Object, _eventPublisher.Object, _broker.Object, _searchIndexQueueRepo.Object, _tenantService.Object, _subscribedTopicsService.Object, _moderationLogService.Object, _forumPermissionService.Object, _settingsManager.Object, _topicViewCountService.Object, _postImageService.Object);
+		_textParser = Substitute.For<ITextParsingService>();
+		_topicRepo = Substitute.For<ITopicRepository>();
+		_postRepo = Substitute.For<IPostRepository>();
+		_forumRepo = Substitute.For<IForumRepository>();
+		_profileRepo = Substitute.For<IProfileRepository>();
+		_eventPublisher = Substitute.For<IEventPublisher>();
+		_broker = Substitute.For<IBroker>();
+		_searchIndexQueueRepo = Substitute.For<ISearchIndexQueueRepository>();
+		_tenantService = Substitute.For<ITenantService>();
+		_subscribedTopicsService = Substitute.For<ISubscribedTopicsService>();
+		_moderationLogService = Substitute.For<IModerationLogService>();
+		_forumPermissionService = Substitute.For<IForumPermissionService>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_topicViewCountService = Substitute.For<ITopicViewCountService>();
+		_postImageService = Substitute.For<IPostImageService>();
+		return new PostMasterService(_textParser, _topicRepo, _postRepo, _forumRepo, _profileRepo, _eventPublisher, _broker, _searchIndexQueueRepo, _tenantService, _subscribedTopicsService, _moderationLogService, _forumPermissionService, _settingsManager, _topicViewCountService, _postImageService);
 	}
 
-	private Mock<ITextParsingService> _textParser;
-	private Mock<ITopicRepository> _topicRepo;
-	private Mock<IPostRepository> _postRepo;
-	private Mock<IForumRepository> _forumRepo;
-	private Mock<IProfileRepository> _profileRepo;
-	private Mock<IEventPublisher> _eventPublisher;
-	private Mock<IBroker> _broker;
-	private Mock<ISearchIndexQueueRepository> _searchIndexQueueRepo;
-	private Mock<ITenantService> _tenantService;
-	private Mock<ISubscribedTopicsService> _subscribedTopicsService;
-	private Mock<IModerationLogService> _moderationLogService;
-	private Mock<IForumPermissionService> _forumPermissionService;
-	private Mock<ISettingsManager> _settingsManager;
-	private Mock<ITopicViewCountService> _topicViewCountService;
-	private Mock<IPostImageService> _postImageService;
+	private ITextParsingService _textParser;
+	private ITopicRepository _topicRepo;
+	private IPostRepository _postRepo;
+	private IForumRepository _forumRepo;
+	private IProfileRepository _profileRepo;
+	private IEventPublisher _eventPublisher;
+	private IBroker _broker;
+	private ISearchIndexQueueRepository _searchIndexQueueRepo;
+	private ITenantService _tenantService;
+	private ISubscribedTopicsService _subscribedTopicsService;
+	private IModerationLogService _moderationLogService;
+	private IForumPermissionService _forumPermissionService;
+	private ISettingsManager _settingsManager;
+	private ITopicViewCountService _topicViewCountService;
+	private IPostImageService _postImageService;
 
 	private async Task<User> DoUpNewTopic()
 	{
@@ -49,16 +47,16 @@ public class PostMasterServiceTests
 		const string text = "mah text";
 		var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 		var service = GetService();
-		_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-		_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-		_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-		_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), null, It.IsAny<bool>(), It.IsAny<int>())).ReturnsAsync(69);
-		_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-		_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-		_topicRepo.Setup(x => x.Create(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(111);
-		_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext {UserCanModerate = false, UserCanPost = true, UserCanView = true});
-		_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
-		await service.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+		_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+		_textParser.ClientHtmlToHtml("mah text").Returns("parsed text");
+		_textParser.Censor("mah title").Returns("parsed title");
+		_postRepo.Create(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<bool>(), Arg.Any<string>(), null, Arg.Any<bool>(), Arg.Any<int>()).Returns(Task.FromResult(69));
+		_forumRepo.Get(forum.ForumID).Returns(forum);
+		_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+		_topicRepo.Create(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<string>()).Returns(Task.FromResult(111));
+		_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext {UserCanModerate = false, UserCanPost = true, UserCanView = true}));
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
+		await service.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 		return user;
 	}
 		
@@ -86,9 +84,9 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var forum = new Forum{ForumID = 1};
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
 			var user = GetUser();
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true});
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext {DenialReason = Resources.ForumNoPost, UserCanModerate = false, UserCanPost = false, UserCanView = true}));
 
 			var result = await service.PostNewTopic(user, new NewPost {ItemID = forum.ForumID}, "", "", x => "", x => "");
 
@@ -100,9 +98,9 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var forum = new Forum { ForumID = 1 };
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
 			var user = GetUser();
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false });
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { DenialReason = Resources.ForumNoView, UserCanModerate = false, UserCanPost = false, UserCanView = false }));
 
 			var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID }, "", "", x => "", x => "");
 
@@ -113,7 +111,7 @@ public class PostMasterServiceTests
 		public async Task NoForumMatchThrows()
 		{
 			var service = GetService();
-			_forumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
+			_forumRepo.Get(Arg.Any<int>()).Returns((Forum) null);
 
 			await Assert.ThrowsAsync<Exception>(async () => await service.PostNewTopic(GetUser(), new NewPost {ItemID = 1}, "", "", x => "", x => ""));
 		}
@@ -128,19 +126,19 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = true };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
-			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("html text");
+			_textParser.ForumCodeToHtml("mah text").Returns("bb text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "bb text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
-			_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			await _postRepo.Received().Create(0, 0, ip, true, false, user.UserID, user.Name, "parsed title", "bb text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
+			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
 		[Fact]
@@ -153,19 +151,19 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
-			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("html text");
+			_textParser.ForumCodeToHtml("mah text").Returns("bb text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_postRepo.Verify(x => x.Create(It.IsAny<int>(), It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
-			_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			await _postRepo.Received().Create(0, 0, ip, true, false, user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
+			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
 		[Fact]
@@ -178,19 +176,19 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
-			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(543);
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("html text");
+			_textParser.ForumCodeToHtml("mah text").Returns("bb text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_topicRepo.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title").Returns(Task.FromResult(543));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_postRepo.Verify(x => x.Create(543, It.IsAny<int>(), ip, true, It.IsAny<bool>(), user.UserID, user.Name, "parsed title", "html text", It.IsAny<DateTime>(), false, user.Name, null, false, 0));
+			await _postRepo.Received().Create(543, 0, ip, true, false, user.UserID, user.Name, "parsed title", "html text", Arg.Any<DateTime>(), false, user.Name, null, false, 0);
 		}
 
 		[Fact]
@@ -204,19 +202,19 @@ public class PostMasterServiceTests
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false };
 			var profile = new Profile {UserID = user.UserID, IsAutoFollowOnReply = true};
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
-			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(543);
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(profile);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("html text");
+			_textParser.ForumCodeToHtml("mah text").Returns("bb text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_topicRepo.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title").Returns(Task.FromResult(543));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 			
-			_subscribedTopicsService.Verify(x => x.AddSubscribedTopic(user.UserID, 543), Times.Once);
+			await _subscribedTopicsService.Received().AddSubscribedTopic(user.UserID, 543);
 		}
 
 		[Fact]
@@ -231,19 +229,19 @@ public class PostMasterServiceTests
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1, IsPlainText = false, PostImageIDs = postImageIDs};
 			var profile = new Profile { UserID = user.UserID, IsAutoFollowOnReply = true };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("html text");
-			_textParser.Setup(t => t.ForumCodeToHtml("mah text")).Returns("bb text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_topicRepo.Setup(x => x.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(543);
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(profile);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("html text");
+			_textParser.ForumCodeToHtml("mah text").Returns("bb text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_topicRepo.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title").Returns(Task.FromResult(543));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
+			await _postImageService.Received().DeleteTempRecords(postImageIDs, newPost.FullText);
 		}
 
 		[Fact]
@@ -251,15 +249,15 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var forum = new Forum { ForumID = 1 };
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
 			var user = GetUser();
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
 			var lastPost = "last post text";
 			var lastPostID = 456;
-			_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(lastPostID);
-			_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post {FullText = lastPost, PostTime = DateTime.MinValue});
-			_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
-			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+			_profileRepo.GetLastPostID(user.UserID).Returns(lastPostID);
+			_postRepo.Get(lastPostID).Returns(Task.FromResult(new Post {FullText = lastPost, PostTime = DateTime.MinValue}));
+			_textParser.ClientHtmlToHtml(lastPost).Returns(lastPost);
+			_settingsManager.Current.MinimumSecondsBetweenPosts.Returns(9);
 
 			var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = lastPost }, "", "", x => "", x => "");
 
@@ -272,15 +270,15 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var forum = new Forum { ForumID = 1 };
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
 			var user = GetUser();
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
 			var lastPost = "last post text";
 			var lastPostID = 456;
-			_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(lastPostID);
-			_postRepo.Setup(x => x.Get(lastPostID)).ReturnsAsync(new Post { FullText = lastPost, PostTime = DateTime.UtcNow });
-			_textParser.Setup(x => x.ClientHtmlToHtml(lastPost)).Returns(lastPost);
-			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+			_profileRepo.GetLastPostID(user.UserID).Returns(lastPostID);
+			_postRepo.Get(lastPostID).Returns(Task.FromResult(new Post { FullText = lastPost, PostTime = DateTime.UtcNow }));
+			_textParser.ClientHtmlToHtml(lastPost).Returns(lastPost);
+			_settingsManager.Current.MinimumSecondsBetweenPosts.Returns(9);
 
 			var result = await service.PostNewTopic(user, new NewPost { ItemID = forum.ForumID, FullText = "oiheorihgeorihg" }, "", "", x => "", x => "");
 
@@ -298,17 +296,17 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("parsed text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
 		[Fact]
@@ -321,68 +319,68 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("parsed text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, _ => "", _ => "");
 
-			_topicRepo.Verify(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title"), Times.Once());
+			await _topicRepo.Received().Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title");
 		}
 
 		[Fact]
 		public async Task CallsForumTopicPostIncrement()
 		{
 			await DoUpNewTopic();
-			_forumRepo.Verify(f => f.IncrementPostAndTopicCount(1), Times.Once());
+			await _forumRepo.Received().IncrementPostAndTopicCount(1);
 		}
 
 		[Fact]
 		public async Task CallsForumUpdateLastUser()
 		{
 			var user = await DoUpNewTopic();
-			_forumRepo.Verify(f => f.UpdateLastTimeAndUser(1, It.IsAny<DateTime>(), user.Name), Times.Once());
+			await _forumRepo.Received().UpdateLastTimeAndUser(1, Arg.Any<DateTime>(), user.Name);
 		}
 
 		[Fact]
 		public async Task CallsProfileSetLastPost()
 		{
 			var user = await DoUpNewTopic();
-			_profileRepo.Verify(p => p.SetLastPostID(user.UserID, 69), Times.Once());
+			await _profileRepo.Received().SetLastPostID(user.UserID, 69);
 		}
 
 		[Fact]
 		public async Task PublishesNewTopicEvent()
 		{
 			var user = await DoUpNewTopic();
-			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewTopic, false), Times.Once());
+			await _eventPublisher.Received().ProcessEvent(Arg.Any<string>(), user, EventDefinitionService.StaticEventIDs.NewTopic, false);
 		}
 
 		[Fact]
 		public async Task PublishesNewPostEvent()
 		{
 			var user = await DoUpNewTopic();
-			_eventPublisher.Verify(x => x.ProcessEvent(String.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
+			await _eventPublisher.Received().ProcessEvent(String.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
 		}
 
 		[Fact]
 		public async Task CallsBroker()
 		{
 			await DoUpNewTopic();
-			_broker.Verify(x => x.NotifyForumUpdate(It.IsAny<Forum>()), Times.Once());
-			_broker.Verify(x => x.NotifyTopicUpdate(It.IsAny<Topic>(), It.IsAny<Forum>(), It.IsAny<string>()), Times.Once());
+			_broker.Received().NotifyForumUpdate(Arg.Any<Forum>());
+			_broker.Received().NotifyTopicUpdate(Arg.Any<Topic>(), Arg.Any<Forum>(), Arg.Any<string>());
 		}
 
 		[Fact]
 		public async Task QueuesTopicForIndexing()
 		{
 			await DoUpNewTopic();
-			_tenantService.Setup(x => x.GetTenant()).Returns("");
-			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			_tenantService.GetTenant().Returns("");
+			await _searchIndexQueueRepo.Received().Enqueue(Arg.Any<SearchIndexPayload>());
 		}
 
 		[Fact]
@@ -395,18 +393,18 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost { Title = title, FullText = text, ItemID = 1 };
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string> { "Admin" });
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(2);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string> { "Admin" }));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("parsed text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_topicRepo.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title").Returns(Task.FromResult(2));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
-			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), It.IsAny<User>(), EventDefinitionService.StaticEventIDs.NewTopic, true), Times.Once());
+			await _eventPublisher.Received().ProcessEvent(Arg.Any<string>(), Arg.Any<User>(), EventDefinitionService.StaticEventIDs.NewTopic, true);
 		}
 
 		[Fact]
@@ -419,16 +417,16 @@ public class PostMasterServiceTests
 			const string text = "mah text";
 			var newPost = new NewPost {Title = title, FullText = text, ItemID = 1};
 			var topicService = GetService();
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(forum.ForumID)).ReturnsAsync(new List<string>());
-			_topicRepo.Setup(t => t.GetUrlNamesThatStartWith("parsed-title")).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("mah text")).Returns("parsed text");
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_topicRepo.Setup(t => t.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, It.IsAny<DateTime>(), false, false, false, "parsed-title")).ReturnsAsync(2);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(forum.ForumID).Returns(Task.FromResult(new List<string>()));
+			_topicRepo.GetUrlNamesThatStartWith("parsed-title").Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("mah text").Returns("parsed text");
+			_textParser.Censor("mah title").Returns("parsed title");
+			_topicRepo.Create(forum.ForumID, "parsed title", 0, 0, user.UserID, user.Name, user.UserID, user.Name, Arg.Any<DateTime>(), false, false, false, "parsed-title").Returns(Task.FromResult(2));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanModerate = false, UserCanPost = true, UserCanView = true }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			var result = await topicService.PostNewTopic(user, newPost, ip, It.IsAny<string>(), x => "", x => "");
+			var result = await topicService.PostNewTopic(user, newPost, ip, default, x => "", x => "");
 
 			Assert.Equal(2, result.Data.TopicID);
 			Assert.Equal(forum.ForumID, result.Data.ForumID);
@@ -462,7 +460,7 @@ public class PostMasterServiceTests
 		public async Task NoTopicReturnsFalseIsSuccessful()
 		{
 			var service = GetService();
-			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Topic) null);
+			_topicRepo.Get(Arg.Any<int>()).Returns((Topic) null);
 
 			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
@@ -474,8 +472,8 @@ public class PostMasterServiceTests
 		public async Task NoForumThrows()
 		{
 			var service = GetService();
-			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(new Topic());
-			_forumRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync((Forum) null);
+			_topicRepo.Get(Arg.Any<int>()).Returns(Task.FromResult(new Topic()));
+			_forumRepo.Get(Arg.Any<int>()).Returns((Forum) null);
 
 			await Assert.ThrowsAsync<Exception>(async () => await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue, (t) => "", "", x => "", x => ""));
 		}
@@ -488,9 +486,9 @@ public class PostMasterServiceTests
 			var forum = new Forum {ForumID = 1};
 			var topic = new Topic {ForumID = forum.ForumID};
 			var newPost = new NewPost {ItemID = topic.TopicID};
-			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(topic);
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext {UserCanView = false, UserCanPost = true});
+			_topicRepo.Get(Arg.Any<int>()).Returns(Task.FromResult(topic));
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext {UserCanView = false, UserCanPost = true}));
 
 			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
@@ -506,9 +504,9 @@ public class PostMasterServiceTests
 			var forum = new Forum { ForumID = 1 };
 			var topic = new Topic { ForumID = forum.ForumID };
 			var newPost = new NewPost { ItemID = topic.TopicID };
-			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(topic);
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanView = true, UserCanPost = false });
+			_topicRepo.Get(Arg.Any<int>()).Returns(Task.FromResult(topic));
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanView = true, UserCanPost = false }));
 
 			var result = await service.PostReply(user, 0, "", false, newPost, DateTime.MaxValue, (t) => "", "", x => "", x => "");
 
@@ -520,7 +518,7 @@ public class PostMasterServiceTests
 		public async Task ClosedTopicReturnsFalseIsSuccessful()
 		{
 			var service = GetService();
-			_topicRepo.Setup(x => x.Get(It.IsAny<int>())).ReturnsAsync(new Topic{IsClosed = true});
+			_topicRepo.Get(Arg.Any<int>()).Returns(Task.FromResult(new Topic{IsClosed = true}));
 
 			var result = await service.PostReply(GetUser(), 0, "", false, new NewPost(), DateTime.MaxValue,(t) => "", "", x => "", x => "");
 
@@ -536,18 +534,18 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ForumCodeToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ForumCodeToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = true };
-			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_textParser.Censor(newPost.Title).Returns("parsed title");
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			await _postRepo.Received().Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0);
 		}
 
 		[Fact]
@@ -558,18 +556,18 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
-			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
+			_textParser.Censor(newPost.Title).Returns("parsed title");
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			await _postRepo.Received().Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0);
 		}
 
 		[Fact]
@@ -580,14 +578,14 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
-			_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post {FullText = "parsed text", PostTime = DateTime.MinValue});
-			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetLastPostID(user.UserID).Returns(654);
+			_postRepo.Get(654).Returns(Task.FromResult(new Post {FullText = "parsed text", PostTime = DateTime.MinValue}));
+			_settingsManager.Current.MinimumSecondsBetweenPosts.Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
@@ -604,14 +602,14 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("oihf text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
-			_postRepo.Setup(x => x.Get(654)).ReturnsAsync(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow });
-			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("oihf text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetLastPostID(user.UserID).Returns(654);
+			_postRepo.Get(654).Returns(Task.FromResult(new Post { FullText = "parsed text", PostTime = DateTime.UtcNow }));
+			_settingsManager.Current.MinimumSecondsBetweenPosts.Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
@@ -628,13 +626,13 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetLastPostID(user.UserID)).ReturnsAsync(654);
-			_settingsManager.Setup(x => x.Current.MinimumSecondsBetweenPosts).Returns(9);
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetLastPostID(user.UserID).Returns(654);
+			_settingsManager.Current.MinimumSecondsBetweenPosts.Returns(9);
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, IsPlainText = false };
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
@@ -651,18 +649,18 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-			_textParser.Setup(t => t.Censor(newPost.Title)).Returns("parsed title");
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_textParser.Censor(newPost.Title).Returns("parsed title");
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
-			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
+			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (_) => "", "", x => "", x => "");
 
-			_postRepo.Verify(p => p.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0));
+			await _postRepo.Received().Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", postTime, false, user.Name, null, false, 0);
 		}
 
 		[Fact]
@@ -674,18 +672,18 @@ public class PostMasterServiceTests
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
 			var tenandID = "cb";
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
-			_tenantService.Setup(x => x.GetTenant()).Returns(tenandID);
+			_tenantService.GetTenant().Returns(tenandID);
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_subscribedTopicsService.Verify(s => s.NotifySubscribers(topic, user, tenandID), Times.Once());
+			await _subscribedTopicsService.Received().NotifySubscribers(topic, user, tenandID);
 		}
 
 		[Fact]
@@ -697,17 +695,17 @@ public class PostMasterServiceTests
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
 			var profile = new Profile {UserID = user.UserID, IsAutoFollowOnReply = true};
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(profile);
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_subscribedTopicsService.Verify(s => s.AddSubscribedTopic(user.UserID, topic.TopicID), Times.Once);
+			await _subscribedTopicsService.Received().AddSubscribedTopic(user.UserID, topic.TopicID);
 		}
 
 		[Fact]
@@ -718,17 +716,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_topicRepo.Verify(t => t.IncrementReplyCount(1));
+			await _topicRepo.Received().IncrementReplyCount(1);
 		}
 
 		[Fact]
@@ -739,17 +737,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_forumRepo.Verify(f => f.IncrementPostCount(2));
+			await _forumRepo.Received().IncrementPostCount(2);
 		}
 
 		[Fact]
@@ -760,17 +758,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_topicRepo.Verify(t => t.UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime));
+			await _topicRepo.Received().UpdateLastTimeAndUser(topic.TopicID, user.UserID, user.Name, postTime);
 		}
 
 		[Fact]
@@ -781,17 +779,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_forumRepo.Verify(f => f.UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name));
+			await _forumRepo.Received().UpdateLastTimeAndUser(topic.ForumID, postTime, user.Name);
 		}
 
 		[Fact]
@@ -802,18 +800,18 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum {ForumID = topic.ForumID};
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext {UserCanPost = true, UserCanView = true});
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_tenantService.Setup(x => x.GetTenant()).Returns("");
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext {UserCanPost = true, UserCanView = true}));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_tenantService.GetTenant().Returns("");
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,(t) => "", "", x => "", x => "");
 
-			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			await _searchIndexQueueRepo.Received().Enqueue(Arg.Any<SearchIndexPayload>());
 		}
 
 		[Fact]
@@ -823,22 +821,22 @@ public class PostMasterServiceTests
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.Get(topic.ForumID)).ReturnsAsync(forum);
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.Get(topic.ForumID).Returns(Task.FromResult(forum));
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_broker.Verify(x => x.NotifyForumUpdate(forum), Times.Once());
-			_broker.Verify(x => x.NotifyTopicUpdate(topic, forum, It.IsAny<string>()), Times.Once());
-			_broker.Verify(x => x.NotifyNewPost(topic, It.IsAny<int>()), Times.Once());
+			_broker.Received().NotifyForumUpdate(forum);
+			_broker.Received().NotifyTopicUpdate(topic, forum, Arg.Any<string>());
+			_broker.Received().NotifyNewPost(topic, Arg.Any<int>());
 		}
 
 		[Fact]
@@ -849,17 +847,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_profileRepo.Verify(p => p.SetLastPostID(user.UserID, result.Data.PostID), Times.Once);
+			await _profileRepo.Received().SetLastPostID(user.UserID, result.Data.PostID);
 		}
 
 		[Fact]
@@ -871,17 +869,17 @@ public class PostMasterServiceTests
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
 			var postImageIDs = new string[] {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID, PostImageIDs = postImageIDs};
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_postImageService.Verify(x => x.DeleteTempRecords(postImageIDs, newPost.FullText), Times.Once);
+			await _postImageService.Received().DeleteTempRecords(postImageIDs, newPost.FullText);
 		}
 
 		[Fact]
@@ -892,17 +890,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime,  (t) => "", "", x => "", x => "");
 
-			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false), Times.Once());
+			await _eventPublisher.Received().ProcessEvent(Arg.Any<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, false);
 		}
 
 		[Fact]
@@ -913,17 +911,17 @@ public class PostMasterServiceTests
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
 			var forum = new Forum {ForumID = topic.ForumID};
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string> { "Admin" });
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string> { "Admin" }));
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
 
-			_eventPublisher.Verify(x => x.ProcessEvent(It.IsAny<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true), Times.Once());
+			await _eventPublisher.Received().ProcessEvent(Arg.Any<string>(), user, EventDefinitionService.StaticEventIDs.NewPost, true);
 		}
 
 		[Fact]
@@ -933,15 +931,15 @@ public class PostMasterServiceTests
 			var user = GetUser();
 			var postTime = DateTime.UtcNow;
 			var service = GetService();
-			_forumRepo.Setup(x => x.GetForumViewRoles(It.IsAny<int>())).ReturnsAsync(new List<string>());
-			_postRepo.Setup(p => p.Create(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), false, true, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), false, It.IsAny<string>(), null, false, 0)).ReturnsAsync(123);
+			_forumRepo.GetForumViewRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+			_postRepo.Create(topic.TopicID, 0, "127.0.0.1", false, true, user.UserID, user.Name, "parsed title", "parsed text", Arg.Any<DateTime>(), false, Arg.Any<string>(), null, false, 0).Returns(Task.FromResult(123));
 			var forum = new Forum { ForumID = topic.ForumID };
-			_topicRepo.Setup(x => x.Get(topic.TopicID)).ReturnsAsync(topic);
-			_forumPermissionService.Setup(x => x.GetPermissionContext(forum, user)).ReturnsAsync(new ForumPermissionContext { UserCanPost = true, UserCanView = true });
-			_textParser.Setup(x => x.ClientHtmlToHtml(It.IsAny<string>())).Returns("parsed text");
-			_forumRepo.Setup(x => x.Get(forum.ForumID)).ReturnsAsync(forum);
-			_textParser.Setup(t => t.Censor("mah title")).Returns("parsed title");
-			_profileRepo.Setup(x => x.GetProfile(user.UserID)).ReturnsAsync(new Profile());
+			_topicRepo.Get(topic.TopicID).Returns(Task.FromResult(topic));
+			_forumPermissionService.GetPermissionContext(forum, user).Returns(Task.FromResult(new ForumPermissionContext { UserCanPost = true, UserCanView = true }));
+			_textParser.ClientHtmlToHtml(Arg.Any<string>()).Returns("parsed text");
+			_forumRepo.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_textParser.Censor("mah title").Returns("parsed title");
+			_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(new Profile()));
 			var newPost = new NewPost { FullText = "mah text", Title = "mah title", IncludeSignature = true, ItemID = topic.TopicID };
 
 			var result = await service.PostReply(user, 0, "127.0.0.1", false, newPost, postTime, (t) => "", "", x => "", x => "");
@@ -975,7 +973,7 @@ public class PostMasterServiceTests
 		public async Task FailsBecauseNoUserMatch()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post {UserID = 789});
+			_postRepo.Get(456).Returns(Task.FromResult(new Post {UserID = 789}));
 
 			var result = await service.EditPost(456, new PostEdit(), new User {UserID = 111, Roles = new List<string>()}, x => "");
 
@@ -987,45 +985,45 @@ public class PostMasterServiceTests
 		public async Task CensorsTitle()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123 }));
 			await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
-			_textParser.Verify(t => t.Censor("blah"), Times.Exactly(1));
+			_textParser.Received(1).Censor("blah");
 		}
 
 		[Fact]
 		public async Task NoTitleUpdateWhenNotFirstPostInTopic()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = false, Title = "blah" });
-			_textParser.Setup(x => x.Censor("blah")).Returns("changed");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123, IsFirstInTopic = false, Title = "blah" }));
+			_textParser.Censor("blah").Returns("changed");
 
 			await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 
-			_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			await _topicRepo.DidNotReceive().UpdateTitleAndForum(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]
 		public async Task NoTitleUpdateWhenTitleHasNotChanged()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" });
-			_textParser.Setup(x => x.Censor("blah")).Returns("blah");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" }));
+			_textParser.Censor("blah").Returns("blah");
 
 			await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 
-			_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			await _topicRepo.DidNotReceive().UpdateTitleAndForum(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]
 		public async Task NoEditWhenTitleIsEmpty()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" });
-			_textParser.Setup(x => x.Censor("blah")).Returns("");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true, Title = "blah" }));
+			_textParser.Censor("blah").Returns("");
 
 			var result = await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 
-			_topicRepo.Verify(x => x.UpdateTitleAndForum(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			await _topicRepo.DidNotReceive().UpdateTitleAndForum(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());
 			Assert.False(result.IsSuccessful);
 		}
 
@@ -1033,35 +1031,35 @@ public class PostMasterServiceTests
 		public async Task TitleUpdateWhenFirstPostInTopicAndTitleChanged()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, TopicID = 222, UserID = 123, IsFirstInTopic = true, Title = "blah" });
-			_topicRepo.Setup(x => x.Get(222)).ReturnsAsync(new Topic {TopicID = 222, ForumID = 111});
-			_forumRepo.Setup(x => x.Get(111)).ReturnsAsync(new Forum {ForumID = 111});
-			_textParser.Setup(x => x.Censor("blah")).Returns("changed");
-			_topicRepo.Setup(x => x.GetUrlNamesThatStartWith("changed")).ReturnsAsync(new List<string>());
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, TopicID = 222, UserID = 123, IsFirstInTopic = true, Title = "blah" }));
+			_topicRepo.Get(222).Returns(Task.FromResult(new Topic {TopicID = 222, ForumID = 111}));
+			_forumRepo.Get(111).Returns(Task.FromResult(new Forum {ForumID = 111}));
+			_textParser.Censor("blah").Returns("changed");
+			_topicRepo.GetUrlNamesThatStartWith("changed").Returns(Task.FromResult(new List<string>()));
 
 			await service.EditPost(456, new PostEdit { Title = "blah" }, GetUser(), x => "");
 
-			_topicRepo.Verify(x => x.UpdateTitleAndForum(222, 111, "changed", "changed"), Times.Once);
+			await _topicRepo.Received().UpdateTitleAndForum(222, 111, "changed", "changed");
 		}
 
 		[Fact]
 		public async Task PlainTextParsed()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123 }));
 			await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = true }, GetUser(), x => "");
-			_textParser.Verify(t => t.ForumCodeToHtml("blah"), Times.Exactly(1));
+			_textParser.Received(1).ForumCodeToHtml("blah");
 		}
 
 		[Fact]
 		public async Task RichTextParsed()
 		{
 			var service = GetService();
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123 }));
 
 			await service.EditPost(456, new PostEdit { FullText = "blah", IsPlainText = false }, GetUser(), x => "");
 
-			_textParser.Verify(t => t.ClientHtmlToHtml("blah"), Times.Exactly(1));
+			_textParser.Received(1).ClientHtmlToHtml("blah");
 		}
 
 		[Fact]
@@ -1069,13 +1067,13 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var post = new Post { PostID = 67, IsFirstInTopic = true };
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true });
-			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
-			_topicRepo.Setup(x => x.Get(post.TopicID)).ReturnsAsync(new Topic {ForumID = 333});
-			_forumRepo.Setup(x => x.Get(333)).ReturnsAsync(new Forum {ForumID = 333});
-			_topicRepo.Setup(x => x.GetUrlNamesThatStartWith(It.IsAny<string>())).ReturnsAsync(new List<string>());
-			_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123, IsFirstInTopic = true }));
+			await _postRepo.Update(Arg.Do<Post>(p => post = p));
+			_topicRepo.Get(post.TopicID).Returns(Task.FromResult(new Topic {ForumID = 333}));
+			_forumRepo.Get(333).Returns(Task.FromResult(new Forum {ForumID = 333}));
+			_topicRepo.GetUrlNamesThatStartWith(Arg.Any<string>()).Returns(Task.FromResult(new List<string>()));
+			_textParser.ClientHtmlToHtml("blah").Returns("new");
+			_textParser.Censor("unparsed title").Returns("new title");
 
 			var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, IsFirstInTopic = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>()}, x => "");
 
@@ -1094,14 +1092,14 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var user = new User { UserID = 123, Name = "dude", Roles = new List<string>()};
-			_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"});
+			_textParser.ClientHtmlToHtml("blah").Returns("new");
+			_textParser.Censor("unparsed title").Returns("new title");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post{PostID = 456, UserID = user.UserID, FullText = "old text"}));
 
 			var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
 			Assert.True(result.IsSuccessful);
-			_moderationLogService.Verify(m => m.LogPost(user, ModerationType.PostEdit, It.IsAny<Post>(), "mah comment", "old text"), Times.Exactly(1));
+			await _moderationLogService.Received(1).LogPost(user, ModerationType.PostEdit, Arg.Any<Post>(), "mah comment", "old text");
 		}
 
 		[Fact]
@@ -1110,13 +1108,13 @@ public class PostMasterServiceTests
 			var service = GetService();
 			var user = new User { UserID = 123, Name = "dude", Roles = new List<string>() };
 			var post = new Post { PostID = 456, ShowSig = false, FullText = "old text", TopicID = 999, UserID = user.UserID };
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(post);
-			_tenantService.Setup(x => x.GetTenant()).Returns("");
+			_postRepo.Get(456).Returns(Task.FromResult(post));
+			_tenantService.GetTenant().Returns("");
 
 			var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true, Comment = "mah comment" }, user, x => "");
 
 			Assert.True(result.IsSuccessful);
-			_searchIndexQueueRepo.Verify(x => x.Enqueue(It.IsAny<SearchIndexPayload>()), Times.Once);
+			await _searchIndexQueueRepo.Received().Enqueue(Arg.Any<SearchIndexPayload>());
 		}
 
 		[Fact]
@@ -1124,15 +1122,15 @@ public class PostMasterServiceTests
 		{
 			var service = GetService();
 			var post = new Post { PostID = 67 };
-			_postRepo.Setup(x => x.Get(456)).ReturnsAsync(new Post { PostID = 456, UserID = 123 });
-			_postRepo.Setup(p => p.Update(It.IsAny<Post>())).Callback<Post>(p => post = p);
-			_textParser.Setup(t => t.ClientHtmlToHtml("blah")).Returns("new");
-			_textParser.Setup(t => t.Censor("unparsed title")).Returns("new title");
+			_postRepo.Get(456).Returns(Task.FromResult(new Post { PostID = 456, UserID = 123 }));
+			await _postRepo.Update(Arg.Do<Post>(x => post = x));
+			_textParser.ClientHtmlToHtml("blah").Returns("new");
+			_textParser.Censor("unparsed title").Returns("new title");
 
 			var result = await service.EditPost(456, new PostEdit { FullText = "blah", Title = "unparsed title", IsPlainText = false, ShowSig = true }, new User { UserID = 123, Name = "dude", Roles = new List<string>(new []{PermanentRoles.Moderator})}, x => "");
 
 			Assert.True(result.IsSuccessful);
-			_postRepo.Verify(x => x.Update(It.IsAny<Post>()), Times.Once);
+			await _postRepo.Received().Update(Arg.Any<Post>());
 		}
 	}
 }

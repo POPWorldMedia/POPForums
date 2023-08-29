@@ -2,20 +2,20 @@
 
 public class PostImageServiceTests
 {
-	private Mock<IImageService> _imageService;
-	private Mock<IPostImageRepository> _postImageRepository;
-	private Mock<IPostImageTempRepository> _postImageTempRepository;
-	private Mock<ISettingsManager> _settingsManager;
-	private Mock<ITenantService> _tenantService;
+	private IImageService _imageService;
+	private IPostImageRepository _postImageRepository;
+	private IPostImageTempRepository _postImageTempRepository;
+	private ISettingsManager _settingsManager;
+	private ITenantService _tenantService;
 
 	protected PostImageService GetService()
 	{
-		_imageService = new Mock<IImageService>();
-		_postImageRepository = new Mock<IPostImageRepository>();
-		_postImageTempRepository = new Mock<IPostImageTempRepository>();
-		_settingsManager = new Mock<ISettingsManager>();
-		_tenantService = new Mock<ITenantService>();
-		return new PostImageService(_imageService.Object, _postImageRepository.Object, _postImageTempRepository.Object, _settingsManager.Object, _tenantService.Object);
+		_imageService = Substitute.For<IImageService>();
+		_postImageRepository = Substitute.For<IPostImageRepository>();
+		_postImageTempRepository = Substitute.For<IPostImageTempRepository>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_tenantService = Substitute.For<ITenantService>();
+		return new PostImageService(_imageService, _postImageRepository, _postImageTempRepository, _settingsManager, _tenantService);
 	}
 
 	public class ProcessImageIsOk : PostImageServiceTests
@@ -24,35 +24,35 @@ public class PostImageServiceTests
 		public void ImageIsTooBig()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			var array = new byte[1025];
 			var contentType = "blah";
 
 			var result = service.ProcessImageIsOk(array, contentType);
 
 			Assert.False(result);
-			_imageService.Verify(x => x.ConstrainResize(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), false), Times.Never);
+			_imageService.DidNotReceive().ConstrainResize(Arg.Any<byte[]>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), false);
 		}
 
 		[Fact]
 		public void ImageIsBadContentType()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			var array = new byte[1024];
 			var contentType = "blah";
 
 			var result = service.ProcessImageIsOk(array, contentType);
 
 			Assert.False(result);
-			_imageService.Verify(x => x.ConstrainResize(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), false), Times.Never);
+			_imageService.DidNotReceive().ConstrainResize(Arg.Any<byte[]>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), false);
 		}
 
 		[Fact]
 		public void ImageIsRightSizeJpeg()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			var array = new byte[1024];
 			var contentType = "image/jpeg";
 
@@ -66,7 +66,7 @@ public class PostImageServiceTests
 		public void ImageIsRightSizeGif()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			var array = new byte[1024];
 			var contentType = "image/gif";
 
@@ -81,16 +81,16 @@ public class PostImageServiceTests
 			var height = 100;
 			var width = 200;
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
-			_settingsManager.Setup(x => x.Current.PostImageMaxHeight).Returns(height);
-			_settingsManager.Setup(x => x.Current.PostImageMaxWidth).Returns(width);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
+			_settingsManager.Current.PostImageMaxHeight.Returns(height);
+			_settingsManager.Current.PostImageMaxWidth.Returns(width);
 			var array = new byte[1];
 			var contentType = "image/jpeg";
 
 			var result = service.ProcessImageIsOk(array, contentType);
 
 			Assert.True(result);
-			_imageService.Verify(x => x.ConstrainResize(array, width, height, 60, false), Times.Once);
+			_imageService.Received().ConstrainResize(array, width, height, 60, false);
 		}
 	}
 
@@ -100,7 +100,7 @@ public class PostImageServiceTests
 		public void ThrowsWithNoContentType()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1], "");
 
 			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
@@ -110,7 +110,7 @@ public class PostImageServiceTests
 		public void ThrowsWhenNotOkContentType()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1], "blah");
 
 			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
@@ -120,7 +120,7 @@ public class PostImageServiceTests
 		public void ThrowsWhenNotOkBytes()
 		{
 			var service = GetService();
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1025], "image/jpeg");
 
 			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
@@ -131,20 +131,20 @@ public class PostImageServiceTests
 		{
 			var service = GetService();
 			var tenantID = "pop";
-			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
-			_settingsManager.Setup(x => x.Current.PostImageMaxkBytes).Returns(1);
+			_tenantService.GetTenant().Returns(tenantID);
+			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			var array = new byte[1];
-			_imageService.Setup(x => x.ConstrainResize(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), false)).Returns(array);
+			_imageService.ConstrainResize(Arg.Any<byte[]>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), false).Returns(array);
 			var guid = Guid.NewGuid();
 			var id = guid.ToString();
 			var payload = new PostImagePersistPayload {ID = id, Url = "neat"};
-			_postImageRepository.Setup(x => x.Persist(It.IsAny<byte[]>(), "image/jpeg")).ReturnsAsync(payload);
+			_postImageRepository.Persist(Arg.Any<byte[]>(), "image/jpeg").Returns(Task.FromResult(payload));
 			service.ProcessImageIsOk(new byte[1], "image/jpeg");
 
 			var result = await service.PersistAndGetPayload();
 
-			_postImageRepository.Verify(x => x.Persist(array, "image/jpeg"), Times.Once);
-			_postImageTempRepository.Verify(x => x.Save(guid, It.IsAny<DateTime>(), tenantID), Times.Once);
+			await _postImageRepository.Received().Persist(array, "image/jpeg");
+			await _postImageTempRepository.Received().Save(guid, Arg.Any<DateTime>(), tenantID);
 			Assert.Same(payload, result);
 		}
 	}
@@ -160,7 +160,7 @@ public class PostImageServiceTests
 
 			await service.DeleteTempRecord(id);
 
-			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
+			await _postImageTempRepository.Received().Delete(guid);
 		}
 	}
 
@@ -181,8 +181,8 @@ public class PostImageServiceTests
 
 			await service.DeleteTempRecords(array, text);
 
-			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
-			_postImageTempRepository.Verify(x => x.Delete(guid2), Times.Once);
+			await _postImageTempRepository.Received().Delete(guid);
+			await _postImageTempRepository.Received().Delete(guid2);
 		}
 
 		[Fact]
@@ -200,9 +200,9 @@ public class PostImageServiceTests
 
 			await service.DeleteTempRecords(array, text);
 
-			_postImageTempRepository.Verify(x => x.Delete(guid), Times.Once);
-			_postImageTempRepository.Verify(x => x.Delete(guid2), Times.Never);
-			_postImageTempRepository.Verify(x => x.Delete(guid3), Times.Once);
+			await _postImageTempRepository.Received().Delete(guid);
+			await _postImageTempRepository.DidNotReceive().Delete(guid2);
+			await _postImageTempRepository.Received().Delete(guid3);
 		}
 	}
 
@@ -214,13 +214,13 @@ public class PostImageServiceTests
 			var service = GetService();
 			var tenantID = "pop";
 			var ids = new List<Guid> {Guid.NewGuid(), Guid.NewGuid()};
-			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
-			_postImageTempRepository.Setup(x => x.GetOld(It.IsAny<DateTime>())).ReturnsAsync(ids);
+			_tenantService.GetTenant().Returns(tenantID);
+			_postImageTempRepository.GetOld(Arg.Any<DateTime>()).Returns(Task.FromResult(ids));
 
 			await service.DeleteOldPostImages();
 
-			_postImageRepository.Verify(x => x.DeletePostImageData(ids[0].ToString(), tenantID), Times.Once);
-			_postImageRepository.Verify(x => x.DeletePostImageData(ids[1].ToString(), tenantID), Times.Once);
+			await _postImageRepository.Received().DeletePostImageData(ids[0].ToString(), tenantID);
+			await _postImageRepository.Received().DeletePostImageData(ids[1].ToString(), tenantID);
 		}
 
 		[Fact]
@@ -229,13 +229,13 @@ public class PostImageServiceTests
 			var service = GetService();
 			var tenantID = "pop";
 			var ids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
-			_tenantService.Setup(x => x.GetTenant()).Returns(tenantID);
-			_postImageTempRepository.Setup(x => x.GetOld(It.IsAny<DateTime>())).ReturnsAsync(ids);
+			_tenantService.GetTenant().Returns(tenantID);
+			_postImageTempRepository.GetOld(Arg.Any<DateTime>()).Returns(Task.FromResult(ids));
 
 			await service.DeleteOldPostImages();
 
-			_postImageTempRepository.Verify(x => x.Delete(ids[0]), Times.Once);
-			_postImageTempRepository.Verify(x => x.Delete(ids[1]), Times.Once);
+			await _postImageTempRepository.Received().Delete(ids[0]);
+			await _postImageTempRepository.Received().Delete(ids[1]);
 		}
 	}
 }

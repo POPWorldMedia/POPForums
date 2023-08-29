@@ -39,8 +39,8 @@
 	}
 	@foreach (var category in Model.CategoryDictionary)
 	{
-		<tr class="bg-primary text-light">
-			<td colspan="2">@category.Key.Title</td>
+		<tr>
+			<td colspan="2" class="bg-primary text-light">@category.Key.Title</td>
 		</tr>
 		foreach (var forum in category.Value)
 		{

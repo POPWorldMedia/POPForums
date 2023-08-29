@@ -2,12 +2,12 @@ namespace PopForums.Test.Services;
 
 public class UserNameReconcilerTests
 {
-	private Mock<IUserRepository> _userRepo;
+	private IUserRepository _userRepo;
 
 	private UserNameReconciler GetService()
 	{
-		_userRepo = new Mock<IUserRepository>();
-		return new UserNameReconciler(_userRepo.Object);
+		_userRepo = Substitute.For<IUserRepository>();
+		return new UserNameReconciler(_userRepo);
 	}
 
 	public class GetUniqueNameForNewUser : UserNameReconcilerTests
@@ -17,7 +17,7 @@ public class UserNameReconcilerTests
 		{
 			var name = "Jeff P";
 			var service = GetService();
-			_userRepo.Setup(x => x.GetUserNamesThatStartWith(name)).ReturnsAsync(new string[]{});
+			_userRepo.GetUserNamesThatStartWith(name).Returns(new string[]{});
 
 			var result = await service.GetUniqueNameForUser(name);
 			
@@ -29,7 +29,7 @@ public class UserNameReconcilerTests
 		{
 			var name = "Jeff P";
 			var service = GetService();
-			_userRepo.Setup(x => x.GetUserNamesThatStartWith(name)).ReturnsAsync(new []{ name });
+			_userRepo.GetUserNamesThatStartWith(name).Returns(new []{ name });
 
 			var result = await service.GetUniqueNameForUser(name);
 			
@@ -41,7 +41,7 @@ public class UserNameReconcilerTests
 		{
 			var name = "Jeff P";
 			var service = GetService();
-			_userRepo.Setup(x => x.GetUserNamesThatStartWith(name)).ReturnsAsync(new []{ "Jeff P", "Jeff P-2", "Jeff P-3" });
+			_userRepo.GetUserNamesThatStartWith(name).Returns(new []{ "Jeff P", "Jeff P-2", "Jeff P-3" });
 
 			var result = await service.GetUniqueNameForUser(name);
 			
@@ -53,7 +53,7 @@ public class UserNameReconcilerTests
 		{
 			var name = "Jeff P";
 			var service = GetService();
-			_userRepo.Setup(x => x.GetUserNamesThatStartWith(name)).ReturnsAsync(new []{ "Jeff P", "Jeff Peterson", "Jeff P-2" });
+			_userRepo.GetUserNamesThatStartWith(name).Returns(new []{ "Jeff P", "Jeff Peterson", "Jeff P-2" });
 
 			var result = await service.GetUniqueNameForUser(name);
 			

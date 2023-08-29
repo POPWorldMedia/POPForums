@@ -2,12 +2,12 @@
 
 public class BanServiceTests
 {
-	private Mock<IBanRepository> _banRepo;
+	private IBanRepository _banRepo;
 
 	private IBanService GetService()
 	{
-		_banRepo = new Mock<IBanRepository>();
-		return new BanService(_banRepo.Object);
+		_banRepo = Substitute.For<IBanRepository>();
+		return new BanService(_banRepo);
 	}
 
 	[Fact]
@@ -15,7 +15,7 @@ public class BanServiceTests
 	{
 		var service = GetService();
 		await service.BanIP("  1.1.1.1  ");
-		_banRepo.Verify(x => x.BanIP("1.1.1.1"), Times.Once());
+		await _banRepo.Received().BanIP("1.1.1.1");
 	}
 
 	[Fact]
@@ -23,6 +23,6 @@ public class BanServiceTests
 	{
 		var service = GetService();
 		await service.BanEmail("  a@b.com  ");
-		_banRepo.Verify(x => x.BanEmail("a@b.com"), Times.Once());
+		await _banRepo.Received().BanEmail("a@b.com");
 	}
 }

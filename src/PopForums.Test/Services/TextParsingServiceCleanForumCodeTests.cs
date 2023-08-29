@@ -4,13 +4,13 @@ public class TextParsingServiceCleanForumCodeTests
 {
 	private TextParsingService GetService()
 	{
-		_mockSettingsManager = new Mock<ISettingsManager>();
+		_mockSettingsManager = Substitute.For<ISettingsManager>();
 		_settings = new Settings();
-		_mockSettingsManager.Setup(s => s.Current).Returns(_settings);
-		return new TextParsingService(_mockSettingsManager.Object);
+		_mockSettingsManager.Current.Returns(_settings);
+		return new TextParsingService(_mockSettingsManager);
 	}
 
-	private Mock<ISettingsManager> _mockSettingsManager;
+	private ISettingsManager _mockSettingsManager;
 	private Settings _settings;
 
 	[Fact]

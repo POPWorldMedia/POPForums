@@ -65,6 +65,7 @@ public static class Strings
 
 	public static string ToUniqueName(this string name, List<string> matchingStartsWith)
 	{
+		name = Regex.Escape(name).Replace("\\ ", " ");
 		var originalName = name;
 		var matchTest = name.Replace("-", @"\-");
 		var count = matchingStartsWith.Count(m => Regex.IsMatch(m, @"^(" + matchTest + @")(\-\d)?$"));

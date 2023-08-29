@@ -7,46 +7,46 @@ namespace PopForums.Test.Mvc.Controllers;
 
 public class AccountControllerTests
 {
-	private Mock<IUserService> _userService;
-	private Mock<IProfileService> _profileService;
-	private Mock<ISettingsManager> _settingsManager;
-	private Mock<INewAccountMailer> _newAccountMailer;
-	private Mock<IPostService> _postService;
-	private Mock<ITopicService> _topicService;
-	private Mock<IForumService> _forumService;
-	private Mock<ILastReadService> _lastReadService;
-	private Mock<IImageService> _imageService;
-	private Mock<IFeedService> _feedService;
-	private Mock<IUserAwardService> _userAwardService;
-	private Mock<IExternalUserAssociationManager> _externalUserAssocManager;
-	private Mock<IUserRetrievalShim> _userRetrievalShim;
-	private Mock<IExternalLoginRoutingService> _externalLoginRoutingService;
-	private Mock<IExternalLoginTempService> _externalLoginTempService;
-	private Mock<IConfig> _config;
-	private Mock<IReCaptchaService> _recaptchaService;
-	private Mock<IOAuthOnlyService> _oAuthOnlyService;
+	private IUserService _userService;
+	private IProfileService _profileService;
+	private ISettingsManager _settingsManager;
+	private INewAccountMailer _newAccountMailer;
+	private IPostService _postService;
+	private ITopicService _topicService;
+	private IForumService _forumService;
+	private ILastReadService _lastReadService;
+	private IImageService _imageService;
+	private IFeedService _feedService;
+	private IUserAwardService _userAwardService;
+	private IExternalUserAssociationManager _externalUserAssocManager;
+	private IUserRetrievalShim _userRetrievalShim;
+	private IExternalLoginRoutingService _externalLoginRoutingService;
+	private IExternalLoginTempService _externalLoginTempService;
+	private IConfig _config;
+	private IReCaptchaService _recaptchaService;
+	private IOAuthOnlyService _oAuthOnlyService;
 
 	private AccountController GetController()
 	{
-		_userService = new Mock<IUserService>();
-		_profileService = new Mock<IProfileService>();
-		_settingsManager = new Mock<ISettingsManager>();
-		_newAccountMailer = new Mock<INewAccountMailer>();
-		_postService = new Mock<IPostService>();
-		_topicService = new Mock<ITopicService>();
-		_forumService = new Mock<IForumService>();
-		_lastReadService = new Mock<ILastReadService>();
-		_imageService = new Mock<IImageService>();
-		_feedService = new Mock<IFeedService>();
-		_userAwardService = new Mock<IUserAwardService>();
-		_externalUserAssocManager = new Mock<IExternalUserAssociationManager>();
-		_userRetrievalShim = new Mock<IUserRetrievalShim>();
-		_externalLoginRoutingService = new Mock<IExternalLoginRoutingService>();
-		_externalLoginTempService = new Mock<IExternalLoginTempService>();
-		_config = new Mock<IConfig>();
-		_recaptchaService = new Mock<IReCaptchaService>();
-		_oAuthOnlyService = new Mock<IOAuthOnlyService>();
-		var controller = new AccountController(_userService.Object, _profileService.Object, _newAccountMailer.Object, _settingsManager.Object, _postService.Object, _topicService.Object, _forumService.Object, _lastReadService.Object, _imageService.Object, _feedService.Object, _userAwardService.Object, _externalUserAssocManager.Object, _userRetrievalShim.Object, _externalLoginRoutingService.Object, _externalLoginTempService.Object, _config.Object, _recaptchaService.Object, _oAuthOnlyService.Object);
+		_userService = Substitute.For<IUserService>();
+		_profileService = Substitute.For<IProfileService>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_newAccountMailer = Substitute.For<INewAccountMailer>();
+		_postService = Substitute.For<IPostService>();
+		_topicService = Substitute.For<ITopicService>();
+		_forumService = Substitute.For<IForumService>();
+		_lastReadService = Substitute.For<ILastReadService>();
+		_imageService = Substitute.For<IImageService>();
+		_feedService = Substitute.For<IFeedService>();
+		_userAwardService = Substitute.For<IUserAwardService>();
+		_externalUserAssocManager = Substitute.For<IExternalUserAssociationManager>();
+		_userRetrievalShim = Substitute.For<IUserRetrievalShim>();
+		_externalLoginRoutingService = Substitute.For<IExternalLoginRoutingService>();
+		_externalLoginTempService = Substitute.For<IExternalLoginTempService>();
+		_config = Substitute.For<IConfig>();
+		_recaptchaService = Substitute.For<IReCaptchaService>();
+		_oAuthOnlyService = Substitute.For<IOAuthOnlyService>();
+		var controller = new AccountController(_userService, _profileService, _newAccountMailer, _settingsManager, _postService, _topicService, _forumService, _lastReadService, _imageService, _feedService, _userAwardService, _externalUserAssocManager, _userRetrievalShim, _externalLoginRoutingService, _externalLoginTempService, _config, _recaptchaService, _oAuthOnlyService);
 		controller.ControllerContext = new ControllerContext
 		{
 			HttpContext = new DefaultHttpContext()
@@ -61,7 +61,7 @@ public class AccountControllerTests
 		public void PopulatesDefaultValues()
 		{
 			var controller = GetController();
-			_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
+			_settingsManager.Current.TermsOfService.Returns("tos");
 
 			var result = controller.Create();
 			
@@ -72,7 +72,7 @@ public class AccountControllerTests
 		public void PopulatesValuesFromExternalLogin()
 		{
 			var controller = GetController();
-			_settingsManager.Setup(x => x.Current.TermsOfService).Returns("tos");
+			_settingsManager.Current.TermsOfService.Returns("tos");
 			var externalLoginState = new ExternalLoginState
 			{
 				ResultData = new ResultData
@@ -81,7 +81,7 @@ public class AccountControllerTests
 					Name = "Diana"
 				}
 			};
-			_externalLoginTempService.Setup(x => x.Read()).Returns(externalLoginState);
+			_externalLoginTempService.Read().Returns(externalLoginState);
 
 			var result = controller.Create();
 
@@ -118,7 +118,7 @@ public class AccountControllerTests
 		public async Task ReturnVerifyFailViewWhenGuidMatchesNoUser()
 		{
 			var controller = GetController();
-			_userService.Setup(x => x.VerifyAuthorizationCode(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync((User)null);
+			_userService.VerifyAuthorizationCode(Arg.Any<Guid>(), Arg.Any<string>()).Returns((User)null);
 
 			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
 			
@@ -130,7 +130,7 @@ public class AccountControllerTests
 		{
 			var controller = GetController();
 			var user = new User();
-			_userService.Setup(x => x.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), It.IsAny<string>())).ReturnsAsync(user);
+			_userService.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), Arg.Any<string>()).Returns(Task.FromResult(user));
 
 			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
 			
@@ -143,11 +143,11 @@ public class AccountControllerTests
 		{
 			var controller = GetController();
 			var user = new User();
-			_userService.Setup(x => x.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), It.IsAny<string>())).ReturnsAsync(user);
+			_userService.VerifyAuthorizationCode(Guid.Parse("920A89D6-CE1B-4EBE-B758-50DB514B0ABF"), Arg.Any<string>()).Returns(Task.FromResult(user));
 
 			var result = await controller.Verify("920A89D6-CE1B-4EBE-B758-50DB514B0ABF");
 			
-			_userService.Verify(x => x.Login(user, It.IsAny<string>()), Times.Once);
+			await _userService.Received().Login(user, Arg.Any<string>());
 		}
 	}
 	
