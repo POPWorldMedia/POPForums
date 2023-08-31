@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 using Elastic.Transport;
 using PopForums.Configuration;
 using PopForums.Models;
@@ -34,7 +35,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		// TODO: rewrite ES setting
 		var settings = new ElasticsearchClientSettings(node)
 			.DefaultIndex(IndexName).DisableDirectStreaming()
-			.CertificateFingerprint("c1c8caa3b7123b6e6281918cf2d2f421b0c8c1c1e91de74a5954fc50c52fbdff")
+			//.CertificateFingerprint("c1c8caa3b7123b6e6281918cf2d2f421b0c8c1c1e91de74a5954fc50c52fbdff")
 			.Authentication(new BasicAuthentication("elastic","1+GhSZd-+ActqOHZLkAL"));
 		// if (!string.IsNullOrEmpty(config.SearchKey))
 		// {
@@ -72,7 +73,6 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 				break;
 			case SearchType.Name:
 				sortSelector.Field(sort => sort.StartedByName, config => config.Order(SortOrder.Asc));
-				sortSelector.Score(config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Replies:
 				sortSelector.Field(sort => sort.Replies, config => config.Order(SortOrder.Desc));
@@ -91,11 +91,24 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		startRow--;
 		var searchResponse = _client.Search<SearchTopic>(s => s
 			.Query(q => q
-				.Bool(bb => bb.Filter(ff => ff.Term(field => field.TenantID, tenantID)))
-				.Bool(bb => hiddenForums.ForEach(forumID => bb.MustNot(ff => ff.Term(field => field.ForumID, forumID))))
-				.MultiMatch(m => m.Query(searchTerm)
-					.Fields(new [] { "title^10", "firstPost^5", "posts" })
-					.Fuzziness(new Fuzziness("auto"))))
+				.Bool(bb => bb
+					.Must(ff => ff
+						.MultiMatch(m => m
+							.Query(searchTerm)
+							.Fields(new [] { "title^10", "firstPost^5", "posts" })
+							.Fuzziness(new Fuzziness("auto")))
+					)
+					.MustNot(ff => ff
+						.Terms(m => m
+							.Field(f => f.ForumID)
+								.Terms(new TermsQueryField(hiddenForums.Select(s => (FieldValue)s).ToArray())))
+					)
+					 .Filter(ff => ff
+					 	.Term(t => t
+					 		.Field(f => f.TenantID).Value(tenantID))
+					)
+				)
+			)
 			.SourceIncludes(new []{"topicID"})
 			.Sort(sortSelector)
 			.From(startRow)
