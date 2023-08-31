@@ -34,15 +34,13 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		var node = new Uri(config.SearchUrl);
 		// TODO: rewrite ES setting
 		var settings = new ElasticsearchClientSettings(node)
-			.DefaultIndex(IndexName).DisableDirectStreaming()
-			//.CertificateFingerprint("c1c8caa3b7123b6e6281918cf2d2f421b0c8c1c1e91de74a5954fc50c52fbdff")
-			.Authentication(new BasicAuthentication("elastic","1+GhSZd-+ActqOHZLkAL"));
-		// if (!string.IsNullOrEmpty(config.SearchKey))
-		// {
-		// 	var pair = config.SearchKey.Split("|");
-		// 	if (pair.Length == 2)
-		// 		settings.Authentication(new BasicAuthentication(pair[0], pair[1]));
-		// }
+			.DefaultIndex(IndexName).DisableDirectStreaming();
+		if (!string.IsNullOrEmpty(config.SearchKey))
+		{
+			var pair = config.SearchKey.Split("|");
+			if (pair.Length == 2)
+				settings.Authentication(new BasicAuthentication(pair[0], pair[1]));
+		}
 		_client = new ElasticsearchClient(settings);
 	}
 
@@ -78,7 +76,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 				sortSelector.Field(sort => sort.Replies, config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Title:
-				sortSelector.Field(sort => sort.Title, config => config.Order(SortOrder.Desc));
+				sortSelector.Field(sort => sort.Title, config => config.Order(SortOrder.Asc));
 				break;
 			default:
 				sortSelector.Score(config => config.Order(SortOrder.Desc));
@@ -122,8 +120,6 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 			topicCount = 0;
 			return result;
 		}
-		// TODO: remove this
-		Console.WriteLine(searchResponse.DebugInformation);
 		var ids = searchResponse.Documents.Select(d => d.TopicID);
 		topicCount = (int)searchResponse.Total;
 		result = new Response<IEnumerable<int>>(ids);
