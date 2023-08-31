@@ -31,16 +31,27 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	{
 		_errorLog = errorLog;
 		_tenantService = tenantService;
-		var node = new Uri(config.SearchUrl);
-		// TODO: rewrite ES setting
-		var settings = new ElasticsearchClientSettings(node)
-			.DefaultIndex(IndexName).DisableDirectStreaming();
-		if (!string.IsNullOrEmpty(config.SearchKey))
+		ElasticsearchClientSettings settings;
+		var pair = config.SearchKey.Split("|");
+		if (pair.Length != 2)
+			throw new NotSupportedException($"{nameof(ElasticSearchClientWrapper)} requires that the PopForums.Search.Key configuration value has two values separated by a pipe (\"|\" character. For search provider 'elasticsearch', this is basic authentication, an API ID followed by a key. For 'elasticcloud', this is the cloud ID followed by the API key.");
+		switch (config.SearchProvider.ToLower())
 		{
-			var pair = config.SearchKey.Split("|");
-			if (pair.Length == 2)
+			case "elasticsearch":
+				settings = new ElasticsearchClientSettings(new Uri(config.SearchUrl))
+					.DefaultIndex(IndexName).DisableDirectStreaming();
 				settings.Authentication(new BasicAuthentication(pair[0], pair[1]));
+				break;
+			case "elasticcloud":
+				settings = new ElasticsearchClientSettings(pair[0], new ApiKey(pair[1]))
+						.DefaultIndex(IndexName).DisableDirectStreaming();
+				break;
+			default:
+				settings = new ElasticsearchClientSettings()
+					.DefaultIndex(IndexName).DisableDirectStreaming();
+				break;
 		}
+		
 		_client = new ElasticsearchClient(settings);
 	}
 

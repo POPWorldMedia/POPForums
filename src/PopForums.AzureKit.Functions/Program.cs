@@ -45,6 +45,7 @@ var host = new HostBuilder()
 		switch (config.SearchProvider.ToLower())
 		{
 			case "elasticsearch":
+			case "elasticcloud":
 				s.AddPopForumsElasticSearch();
 				break;
 			case "azuresearch":
