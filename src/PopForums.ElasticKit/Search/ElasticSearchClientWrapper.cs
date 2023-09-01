@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nest;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
+using Elastic.Transport;
 using PopForums.Configuration;
 using PopForums.Models;
 using PopForums.Services;
+using SearchType = PopForums.Models.SearchType;
 
 namespace PopForums.ElasticKit.Search;
 
@@ -20,7 +23,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 {
 	private readonly IErrorLog _errorLog;
 	private readonly ITenantService _tenantService;
-	private readonly ElasticClient _client;
+	private readonly ElasticsearchClient _client;
 
 	private const string IndexName = "topicindex";
 
@@ -28,16 +31,28 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	{
 		_errorLog = errorLog;
 		_tenantService = tenantService;
-		var node = new Uri(config.SearchUrl);
-		var settings = new ConnectionSettings(node)
-			.DefaultIndex(IndexName).DisableDirectStreaming();
-		if (!string.IsNullOrEmpty(config.SearchKey))
+		ElasticsearchClientSettings settings;
+		var pair = config.SearchKey.Split("|");
+		if (pair.Length != 2)
+			throw new NotSupportedException($"{nameof(ElasticSearchClientWrapper)} requires that the PopForums.Search.Key configuration value has two values separated by a pipe (\"|\" character. For search provider 'elasticsearch', this is basic authentication, an API ID followed by a key. For 'elasticcloud', this is the cloud ID followed by the API key.");
+		switch (config.SearchProvider.ToLower())
 		{
-			var pair = config.SearchKey.Split("|");
-			if (pair.Length == 2)
-				settings.ApiKeyAuthentication(pair[0], pair[1]);
+			case "elasticsearch":
+				settings = new ElasticsearchClientSettings(new Uri(config.SearchUrl))
+					.DefaultIndex(IndexName).DisableDirectStreaming();
+				settings.Authentication(new BasicAuthentication(pair[0], pair[1]));
+				break;
+			case "elasticcloud":
+				settings = new ElasticsearchClientSettings(pair[0], new ApiKey(pair[1]))
+						.DefaultIndex(IndexName).DisableDirectStreaming();
+				break;
+			default:
+				settings = new ElasticsearchClientSettings()
+					.DefaultIndex(IndexName).DisableDirectStreaming();
+				break;
 		}
-		_client = new ElasticClient(settings);
+		
+		_client = new ElasticsearchClient(settings);
 	}
 
 	public IndexResponse IndexTopic(SearchTopic searchTopic)
@@ -46,7 +61,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		if (string.IsNullOrWhiteSpace(tenantID))
 			tenantID = "-";
 		searchTopic.TenantID = tenantID;
-		var indexResult = _client.IndexDocument(searchTopic);
+		var indexResult = _client.Index(searchTopic);
 		return indexResult;
 	}
 
@@ -59,23 +74,23 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 
 	public Response<IEnumerable<int>> SearchTopicsWithIDs(string searchTerm, List<int> hiddenForums, SearchType searchType, int startRow, int pageSize, out int topicCount)
 	{
-		Func<SortDescriptor<SearchTopic>, IPromise<IList<ISort>>> sortSelector;
+		var sortSelector = new SortOptionsDescriptor<SearchTopic>();
 		switch (searchType)
 		{
 			case SearchType.Date:
-				sortSelector = sort => sort.Descending(d => d.LastPostTime);
+				sortSelector.Field(sort => sort.LastPostTime, config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Name:
-				sortSelector = sort => sort.Ascending(d => d.StartedByName).Descending(SortSpecialField.Score);
+				sortSelector.Field(sort => sort.StartedByName, config => config.Order(SortOrder.Asc));
 				break;
 			case SearchType.Replies:
-				sortSelector = sort => sort.Descending(d => d.Replies);
+				sortSelector.Field(sort => sort.Replies, config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Title:
-				sortSelector = sort => sort.Ascending(d => d.Title);
+				sortSelector.Field(sort => sort.Title, config => config.Order(SortOrder.Asc));
 				break;
 			default:
-				sortSelector = sort => sort.Descending(SortSpecialField.Score);
+				sortSelector.Score(config => config.Order(SortOrder.Desc));
 				break;
 		}
 
@@ -83,27 +98,36 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 		if (string.IsNullOrWhiteSpace(tenantID))
 			tenantID = "-";
 		startRow--;
-		var filters = new List<Func<QueryContainerDescriptor<SearchTopic>, QueryContainer>>();
-		filters.Add(tt => tt.Term(ff => ff.TenantID, tenantID));
 		var searchResponse = _client.Search<SearchTopic>(s => s
-			.Source(sf => sf.Includes(i => i.Fields(f => f.TopicID)))
-			.Query(q => 
-				!q.Terms(set => set.Field(field => field.ForumID).Terms(hiddenForums)) &&
-				+q.Bool(bb => bb.Filter(filters)) &&
-				q.MultiMatch(m => m.Query(searchTerm)
-					.Fields(f => f
-						.Field(x => x.Title, boost: 10)
-						.Field(x => x.FirstPost, boost: 5)
-						.Field(x => x.Posts))
-					.Fuzziness(Fuzziness.Auto)))
+			.Query(q => q
+				.Bool(bb => bb
+					.Must(ff => ff
+						.MultiMatch(m => m
+							.Query(searchTerm)
+							.Fields(new [] { "title^10", "firstPost^5", "posts" })
+							.Fuzziness(new Fuzziness("auto")))
+					)
+					.MustNot(ff => ff
+						.Terms(m => m
+							.Field(f => f.ForumID)
+								.Terms(new TermsQueryField(hiddenForums.Select(s => (FieldValue)s).ToArray())))
+					)
+					 .Filter(ff => ff
+					 	.Term(t => t
+					 		.Field(f => f.TenantID).Value(tenantID))
+					)
+				)
+			)
+			.SourceIncludes(new []{"topicID"})
 			.Sort(sortSelector)
-			.Take(pageSize)
-			.Skip(startRow));
+			.From(startRow)
+			.Size(pageSize));
 		Response<IEnumerable<int>> result;
-		if (!searchResponse.IsValid)
+		if (!searchResponse.IsValidResponse)
 		{
-			_errorLog.Log(searchResponse.OriginalException, ErrorSeverity.Error, $"Debugging info: {searchResponse.DebugInformation}");
-			result = new Response<IEnumerable<int>>(null, false, searchResponse.OriginalException, searchResponse.DebugInformation);
+			searchResponse.TryGetOriginalException(out var exception);
+			_errorLog.Log(exception, ErrorSeverity.Error, $"Debugging info: {searchResponse.DebugInformation}");
+			result = new Response<IEnumerable<int>>(null, false, exception, searchResponse.DebugInformation);
 			topicCount = 0;
 			return result;
 		}
@@ -115,7 +139,7 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 
 	public void VerifyIndexCreate()
 	{
-		var isExists = _client.Indices.Exists(new IndexExistsRequest(IndexName)).Exists;
+		var isExists = _client.Indices.Exists(Indices.Index(IndexName)).Exists;
 		if (isExists)
 			return;
 		var createIndexResponse = _client.Indices.Create(IndexName, c => c
@@ -123,38 +147,24 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 				.Analysis(a => a
 					.Analyzers(aa => aa
 						.Standard("standard_english", sa => sa
-							.StopWords("_english_")
+							.Stopwords(new List<string> { "_english_" })
 						)
 					)
 				)
 			)
-			.Map<SearchTopic>(mm => mm
-				.Properties(p => p
-					.Text(t => t
-						.Name(n => n.Posts)
-						.Analyzer("standard_english")
-					)
-					.Text(t => t
-						.Name(n => n.FirstPost)
-						.Analyzer("standard_english")
-					)
-					.Text(t => t
-						.Name(n => n.Title)
-						.Analyzer("standard_english")
-						.Fielddata(true)
-					)
-					.Text(t => t
-						.Name(n => n.StartedByName)
-						.Fielddata(true)
-					)
-					.Keyword(t => t.Name(n => n.TenantID))
-				)
+			.Mappings(mm => mm
+				.Properties<SearchTopic>(p => p
+					.Text(t => t.Posts)
+					.Text(t => t.FirstPost)
+					.Text(t => t.Title, tp => tp.Fielddata())
+					.Text(t => t.StartedByName, tp => tp.Fielddata())
+					.Keyword(t => t.TenantID))
 			)
 		);
-		if (!createIndexResponse.IsValid)
+		if (!createIndexResponse.IsValidResponse)
 		{
-			_errorLog.Log(createIndexResponse.OriginalException, ErrorSeverity.Error,
-				createIndexResponse.DebugInformation);
+			createIndexResponse.TryGetOriginalException(out var exception);
+			_errorLog.Log(exception, ErrorSeverity.Error, createIndexResponse.DebugInformation);
 		}
 	}
 }

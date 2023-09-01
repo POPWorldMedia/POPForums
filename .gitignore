@@ -22,3 +22,4 @@ src/PopForums.Mvc/node_modules
 
 src/PopForums.Web/Areas/Forums
 /src/PopForums.Web/appsettings.development.json
+/src/PopForums.AzureKit.Functions/local.settings.dev.json

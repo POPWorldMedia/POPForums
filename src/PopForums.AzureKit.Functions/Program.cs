@@ -16,6 +16,7 @@ using NotificationTunnel = PopForums.AzureKit.Functions.NotificationTunnel;
 var configuration = new ConfigurationBuilder()
 	.SetBasePath(Environment.CurrentDirectory)
 	.AddJsonFile("local.settings.json", true)
+	.AddJsonFile("local.settings.dev.json", true)
 	.AddEnvironmentVariables()
 	.Build();
 var config = new Config(configuration);
@@ -45,6 +46,7 @@ var host = new HostBuilder()
 		switch (config.SearchProvider.ToLower())
 		{
 			case "elasticsearch":
+			case "elasticcloud":
 				s.AddPopForumsElasticSearch();
 				break;
 			case "azuresearch":

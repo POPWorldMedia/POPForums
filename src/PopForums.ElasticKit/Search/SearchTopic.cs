@@ -1,5 +1,4 @@
 ﻿using System;
-using Nest;
 
 namespace PopForums.ElasticKit.Search;
 
