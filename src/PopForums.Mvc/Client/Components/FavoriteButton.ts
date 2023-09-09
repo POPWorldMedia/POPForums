@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class FavoriteButton extends ElementBase {
+    export class FavoriteButton extends ElementBase<TopicState> {
     constructor() {
         super();
     }
@@ -44,7 +44,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "isFavorite"];
     }
 

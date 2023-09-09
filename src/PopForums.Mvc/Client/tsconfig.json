@@ -7,7 +7,6 @@
     "outFile": "../wwwroot/PopForums.js",
     "experimentalDecorators": true,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "Node"
   }
 }

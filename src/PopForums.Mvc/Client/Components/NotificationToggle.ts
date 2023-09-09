@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class NotificationToggle extends ElementBase {
+    export class NotificationToggle extends ElementBase<UserState> {
     constructor() {
         super();
         this.userState = PopForums.userState;
@@ -47,7 +47,7 @@ namespace PopForums {
         this.userState.list.addEventListener("scroll", this.userState.ScrollLoad);
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [UserState, string] {
         return [PopForums.userState, "notificationCount"];
     }
 

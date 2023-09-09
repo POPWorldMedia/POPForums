@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class TopicButton extends ElementBase {
+    export class TopicButton extends ElementBase<ForumState> {
     constructor() {
         super();
     }
@@ -29,7 +29,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [ForumState, string] {
         return [PopForums.currentForumState, "isNewTopicLoaded"];
     }
     

@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class AnswerButton extends ElementBase {
+    export class AnswerButton extends ElementBase<TopicState> {
         constructor() {
             super();
         }
@@ -46,7 +46,7 @@ namespace PopForums {
             super.connectedCallback();
         }
 
-        getDependentReference(): [StateBase, string] {
+        getDependentReference(): [TopicState, string] {
             return [PopForums.currentTopicState, "answerPostID"];
         }
         

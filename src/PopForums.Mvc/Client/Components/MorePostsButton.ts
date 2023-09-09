@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class MorePostsButton extends ElementBase {
+    export class MorePostsButton extends ElementBase<TopicState> {
     constructor() {
         super();
     }
@@ -24,7 +24,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "highPage"];
     }
     

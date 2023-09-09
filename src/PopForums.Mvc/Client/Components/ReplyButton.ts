@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class ReplyButton extends ElementBase {
+    export class ReplyButton extends ElementBase<TopicState> {
     constructor() {
         super();
     }
@@ -39,7 +39,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "isReplyLoaded"];
     }
     
