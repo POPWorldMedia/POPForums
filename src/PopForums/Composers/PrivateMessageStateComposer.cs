@@ -25,6 +25,8 @@ public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 		var clientMessages = ClientPrivateMessagePost.MapForClient(messages);
 		state.Messages = clientMessages;
 		state.Users = pm.Users;
+		var isUserNotFound = await _privateMessageService.IsUserNotFound(pm.PMID);
+		state.IsUserNotFound = isUserNotFound;
 		return state;
 	}
 }

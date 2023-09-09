@@ -1,4 +1,5 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
+@using PopForums
 @model PrivateMessageView
 @{
 	var user = UserRetrievalShim.GetUser();
@@ -29,12 +30,19 @@
     <div id="PostStream"></div>
 </div>
 
-<div>
-	<pf-pmform></pf-pmform>
+	<div>
+		@if (Model.State.IsUserNotFound)
+		{
+			<p>@Resources.UserNotFound</p>
+		}
+		else
+		{
+			<pf-pmform></pf-pmform>
+		}
 
-	<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
-		<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary" /></p>
-	</form>
-</div>
+		<form asp-action="ArchivePM" asp-route-id="@Model.PrivateMessage.PMID">
+			<p><input type="submit" value="@PopForums.Resources.Archive" class="btn btn-primary"/></p>
+		</form>
+	</div>
 
 </div>

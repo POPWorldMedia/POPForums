@@ -6,4 +6,5 @@ public class PrivateMessageState
 	public JsonElement Users { get; set; }
 	public ClientPrivateMessagePost[] Messages { get; set; }
 	public int? NewestPostID { get; set; }
+	public bool IsUserNotFound { get; set; }
 }

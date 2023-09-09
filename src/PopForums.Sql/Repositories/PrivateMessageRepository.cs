@@ -178,4 +178,15 @@ SET ROWCOUNT 0";
 			pmPostID = connection.QueryFirstOrDefaultAsync<int?>("SELECT TOP 1 PMPostID FROM pf_PrivateMessagePost WHERE PostTime > @lastReadTime AND PMID = @pmID ORDER BY PostTime", new { lastReadTime, pmID }));
 		return await pmPostID;
 	}
+
+	public async Task<bool> IsUserNotFound(int pmID)
+	{
+		Task<int> pmUserCount = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+			pmUserCount = connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pf_PrivateMessageUser WHERE PMID = @pmID", new { pmID }));
+		Task<int> pmUserMessageCount = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+			pmUserMessageCount = connection.ExecuteScalarAsync<int>("SELECT COUNT(DISTINCT UserID) FROM pf_PrivateMessagePost WHERE PMID = @pmID", new { pmID }));
+		return pmUserCount.Result != pmUserMessageCount.Result;
+	}
 }

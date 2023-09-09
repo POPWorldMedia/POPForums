@@ -17,4 +17,5 @@ public interface IPrivateMessageRepository
 	Task UpdateLastPostTime(int pmID, DateTime lastPostTime);
 	Task<int> GetExistingFromIDs(List<int> ids);
 	Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastReadTime);
+	Task<bool> IsUserNotFound(int pmID);
 }
