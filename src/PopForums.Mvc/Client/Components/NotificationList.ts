@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class NotificationList extends ElementBase {
+    export class NotificationList extends ElementBase<UserState> {
     constructor() {
         super();
     }
@@ -9,7 +9,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [UserState, string] {
         return [PopForums.userState, "notifications"];
     }
 

@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class FullText extends ElementBase {
+    export class FullText extends ElementBase<TopicState> {
     constructor() {
         super();
     }
@@ -135,7 +135,7 @@ namespace PopForums {
             super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "nextQuote"];
     }
 

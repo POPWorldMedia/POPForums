@@ -1,6 +1,6 @@
 namespace PopForums {
 
-    export class MorePostsBeforeReplyButton extends ElementBase {
+    export class MorePostsBeforeReplyButton extends ElementBase<TopicState> {
     constructor() {
         super();
     }
@@ -24,7 +24,7 @@ namespace PopForums {
         super.connectedCallback();
     }
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "isNewerPostsAvailable"];
     }
     

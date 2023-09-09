@@ -41,7 +41,7 @@
         this.onclick = (e: MouseEvent) => {
             // get this from topic state's callback/ready method, because iOS loses selection when you touch quote button
             let fragment = PopForums.currentTopicState.documentFragment;
-            let ancestor = PopForums.currentTopicState.selectionAncestor;
+            let ancestor = PopForums.currentTopicState.selectionAncestor as Element;
             if (!fragment) {
                 let selection = document.getSelection();
                 if (!selection || selection.rangeCount === 0 || selection.getRangeAt(0).toString().length === 0) {
@@ -51,16 +51,16 @@
                     return;
                 }
                 let range = selection.getRangeAt(0);
-                ancestor = range.commonAncestorContainer;
+                ancestor = range.commonAncestorContainer as Element;
                 fragment = range.cloneContents();
             }
             let div = document.createElement("div");
             div.appendChild(fragment);
             // is selection in the container?
-            while (ancestor['id'] !== this.containerid && ancestor.parentElement !== null) {
+            while (ancestor.id !== this.containerid && ancestor.parentElement !== null) {
                 ancestor = ancestor.parentElement;
             }
-            let isInText = ancestor['id'] === this.containerid;
+            let isInText = ancestor.id === this.containerid;
             // if not, is it partially in the container?
             if (!isInText) {
                 let container = div.querySelector("#" + this.containerid);

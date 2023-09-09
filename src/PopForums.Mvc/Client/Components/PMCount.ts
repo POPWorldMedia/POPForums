@@ -1,6 +1,6 @@
 ﻿namespace PopForums {
 
-export class PMCount extends ElementBase {
+export class PMCount extends ElementBase<UserState> {
     constructor() {
         super();
         this.isInit = false;
@@ -8,7 +8,7 @@ export class PMCount extends ElementBase {
     
     private isInit: boolean;
 
-    getDependentReference(): [StateBase, string] {
+    getDependentReference(): [UserState, string] {
         return [PopForums.userState, "newPmCount"];
     }
 
