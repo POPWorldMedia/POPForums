@@ -14,11 +14,11 @@ public class CacheHelper : ICacheHelper
 	private readonly ITenantService _tenantService;
 	private readonly IConfig _config;
 	private readonly ICacheTelemetry _cacheTelemetry;
+	private readonly RedisChannel _removeChannel = RedisChannel.Literal("pf.cache.remove");
 	private static ConnectionMultiplexer _cacheConnection;
 	private static ConnectionMultiplexer _messageConnection;
 	private static IMemoryCache _cache;
 	private static readonly object SyncRoot = new object();
-	private const string RemoveChannel = "pf.cache.remove";
 
 	private static class CacheTelemetryNames
 	{
@@ -57,7 +57,7 @@ public class CacheHelper : ICacheHelper
 			{
 				_messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
 				var db = _messageConnection.GetSubscriber();
-				db.Subscribe(RemoveChannel, (channel, value) =>
+				db.Subscribe(_removeChannel, (_, value) =>
 				{
 					if (_cache == null)
 						return;
@@ -157,7 +157,7 @@ public class CacheHelper : ICacheHelper
 			var db = _cacheConnection.GetDatabase();
 			db.KeyDelete(key);
 			var bus = _messageConnection.GetDatabase();
-			bus.Publish(RemoveChannel, key, CommandFlags.FireAndForget);
+			bus.Publish(_removeChannel, key, CommandFlags.FireAndForget);
 		}
 		catch (Exception exc)
 		{
