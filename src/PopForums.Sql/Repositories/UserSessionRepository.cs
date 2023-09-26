@@ -32,9 +32,9 @@ public class UserSessionRepository : IUserSessionRepository
 
 	public async Task<bool> IsSessionAnonymous(int sessionID)
 	{
-		Task<IEnumerable<int>> result = null;
+		Task<IEnumerable<int?>> result = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			result = connection.QueryAsync<int>("SELECT UserID FROM pf_UserSession WHERE SessionID = @SessionID AND UserID IS NULL", new { SessionID = sessionID }));
+			result = connection.QueryAsync<int?>("SELECT UserID FROM pf_UserSession WHERE SessionID = @SessionID AND UserID IS NULL", new { SessionID = sessionID }));
 		return result.Result.Any();
 	}
 
