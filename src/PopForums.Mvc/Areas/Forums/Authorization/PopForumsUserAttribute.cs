@@ -1,6 +1,6 @@
 ﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
 
-public class PopForumsUserAttribute : IAuthorizationFilter, IActionFilter
+public class PopForumsUserAttribute : IAuthorizationFilter, IAsyncActionFilter
 {
 	public PopForumsUserAttribute(IUserSessionService userSessionService)
 	{
@@ -35,27 +35,33 @@ public class PopForumsUserAttribute : IAuthorizationFilter, IActionFilter
 		_ignore = false;
 	}
 
-	public void OnActionExecuting(ActionExecutingContext filterContext)
+	public async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)
 	{
 		if (_ignore)
+		{
+			await next.Invoke();
 			return;
+		}
 
 		var userAgents = filterContext.HttpContext.Request.Headers.UserAgent;
 		if (userAgents.Count > 0 && (userAgents[0].ToLower().Contains("bot") || userAgents[0].ToLower().Contains("crawl")))
+		{
+			await next.Invoke();
 			return;
+		}
 
 		if (filterContext.HttpContext.Response.StatusCode == StatusCodes.Status301MovedPermanently || filterContext.HttpContext.Response.StatusCode == StatusCodes.Status302Found)
+		{
+			await next.Invoke();
 			return;
+		}
 		int.TryParse(filterContext.HttpContext.Request.Cookies[UserSessionService._sessionIDCookieName], out var cookieSessionID);
 		var sessionID = cookieSessionID == 0 ? (int?)null : cookieSessionID;
 		var user = filterContext.HttpContext.Items["PopForumsUser"] as User;
-		_userSessionService.ProcessUserRequest(user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
+		await _userSessionService.ProcessUserRequest(user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
 			() => filterContext.HttpContext.Response.Cookies.Delete(UserSessionService._sessionIDCookieName), 
 			s => filterContext.HttpContext.Response.Cookies.Append(UserSessionService._sessionIDCookieName, s.ToString()));
-	}
-
-	public void OnActionExecuted(ActionExecutedContext filterContext)
-	{
+		await next.Invoke();
 	}
 
 	private bool IsValidToRunOnController(TypeInfo controllerType)
