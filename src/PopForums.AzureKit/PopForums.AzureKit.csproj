@@ -4,7 +4,7 @@
 	  <Description>PopForums AzureKit Class Library</Description>
 	  <VersionPrefix>20.0.0-alpha1</VersionPrefix>
 	  <Authors>Jeff Putz</Authors>
-	  <TargetFramework>net7.0</TargetFramework>
+	  <TargetFramework>net8.0</TargetFramework>
 	  <AssemblyName>PopForums.AzureKit</AssemblyName>
 	  <PackageId>PopForums.AzureKit</PackageId>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -25,11 +25,11 @@
     <PackageReference Include="Azure.Search.Documents" Version="11.4.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.17.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.15.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="7.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.0-rc.1.23421.29" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
-    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
   </ItemGroup>
 
 </Project>
