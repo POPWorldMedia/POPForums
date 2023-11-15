@@ -3,7 +3,7 @@
 		<Description>PopForums AzureKit Functions</Description>
 		<VersionPrefix>20.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 		<PackageId>PopForums.AzureKit.Functions</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -14,12 +14,12 @@
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage" Version="6.2.0" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.2.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.0" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.1.0" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.14.1" OutputItemType="Analyzer" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.19.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.16.2" OutputItemType="Analyzer" />
+		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />

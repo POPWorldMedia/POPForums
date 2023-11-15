@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Elastic.Clients.Elasticsearch;
 using Polly;
+using Polly.Retry;
 using PopForums.Configuration;
 using PopForums.Services;
 
@@ -71,18 +73,30 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 
 		try
 		{
-			var policy = Polly.Policy.HandleResult<IndexResponse>(x => !x.IsValidResponse)
-				.WaitAndRetry(new[]
+			var pipeline = new ResiliencePipelineBuilder<IndexResponse>()
+				.AddRetry(new RetryStrategyOptions<IndexResponse>
 				{
-					TimeSpan.FromSeconds(1),
-					TimeSpan.FromSeconds(5),
-					TimeSpan.FromSeconds(30)
-				}, (result, timeSpan) =>
-				{
-					result.Result.TryGetOriginalException(out var exc);
-					_errorLog.Log(exc, ErrorSeverity.Error, $"Retry after {timeSpan.Seconds}: {result.Result.DebugInformation}");
-				});
-			policy.Execute(() =>
+					ShouldHandle = new PredicateBuilder<IndexResponse>()
+						.HandleResult(static result => !result.IsValidResponse),
+					DelayGenerator = static args =>
+					{
+						var delay = args.AttemptNumber switch
+						{
+							0 => TimeSpan.FromSeconds(1),
+							1 => TimeSpan.FromSeconds(5),
+							_ => TimeSpan.FromSeconds(30)
+						};
+						return new ValueTask<TimeSpan?>(delay);
+					},
+					OnRetry = responseArgs =>
+					{
+						_errorLog.Log(responseArgs.Outcome.Exception, ErrorSeverity.Error,
+							$"Retry after {responseArgs.Duration.Seconds}: {responseArgs.Outcome.Result?.DebugInformation}");
+						return default;
+					}
+				}).Build();
+			
+			pipeline.Execute(() =>
 			{
 				var indexResult = _elasticSearchClientWrapper.IndexTopic(searchTopic);
 				return indexResult;

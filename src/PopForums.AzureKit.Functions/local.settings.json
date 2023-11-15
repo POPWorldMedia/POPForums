@@ -12,7 +12,7 @@
     "Search": {
       "Url": "https://localhost:9200",
       "Key": "elastic|1+GhSZd-+ActqOHZLkAL",
-      "Provider": "elasticsearch"
+      "Provider": ""
     },
     "Queue": {
       "ConnectionString": "UseDevelopmentStorage=true"

@@ -48,84 +48,89 @@ public class UserServiceTests
 	}
 
 	[Fact]
-	public void CheckPassword()
+	public async Task CheckPassword()
 	{
 		var userService = GetMockedUserService();
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("0M/C5TGbgs3HGjOHPoJsk9fuETY/iskcT6Oiz80ihuU=", (Guid?)null)));
 		
-		var result = userService.CheckPassword(String.Empty, "fred").Result.Item1;
+		var result = await userService.CheckPassword(String.Empty, "fred");
 
-		Assert.True(result);
+		Assert.True(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordFail()
+	public async Task CheckPasswordFail()
 	{
 		var userService = GetMockedUserService();
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create("VwqQv7+MfqtdxdTiaDLVsQ==", (Guid?)null)));
 
-		var result = userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf").Result.Item1;
+		var result = await userService.CheckPassword(String.Empty, "fsdfsdfsdfsdf");
 
-		Assert.False(result);
+		Assert.False(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordHasSalt()
+	public async Task CheckPasswordHasSalt()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
-		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
+		var result = await userService.CheckPassword(String.Empty, "fred");
+		Assert.True(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordHasSaltFail()
+	public async Task CheckPasswordHasSaltFail()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetSHA256Hash(salt.Value);
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
-		Assert.False(userService.CheckPassword(String.Empty, "dsfsdfsdfsdf").Result.Item1);
+		 var result = await userService.CheckPassword(String.Empty, "dsfsdfsdfsdf");
+		Assert.False(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordPassesWithoutSaltOnMD5Fallback()
+	public async Task CheckPasswordPassesWithoutSaltOnMD5Fallback()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = null;
 		var hashedPassword = "fred".GetMD5Hash();
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
-		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
+		var result = await userService.CheckPassword(String.Empty, "fred");
+		Assert.True(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordPassesWithSaltOnMD5Fallback()
+	public async Task  CheckPasswordPassesWithSaltOnMD5Fallback()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
-		Assert.True(userService.CheckPassword(String.Empty, "fred").Result.Item1);
+		var result = await userService.CheckPassword(String.Empty, "fred");
+		Assert.True(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordFailsOnMD5FallbackNoMatch()
+	public async Task CheckPasswordFailsOnMD5FallbackNoMatch()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
 		var hashedPassword = "fred".GetMD5Hash(salt.Value);
 		_mockUserRepo.GetHashedPasswordByEmail(string.Empty).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 
-		Assert.False(userService.CheckPassword(String.Empty, "blah").Result.Item1);
+		var result = await userService.CheckPassword(String.Empty, "blah");
+		Assert.False(result.Item1);
 	}
 
 	[Fact]
-	public void CheckPasswordFailsMD5FallbackDoesNotCallUpdate()
+	public async Task CheckPasswordFailsMD5FallbackDoesNotCallUpdate()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
@@ -135,12 +140,13 @@ public class UserServiceTests
 		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
-		Assert.False(userService.CheckPassword(email, "abc").Result.Item1);
-		_mockUserRepo.DidNotReceive().SetHashedPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<Guid>());
+		var result = await userService.CheckPassword(email, "blah");
+		Assert.False(result.Item1);
+		await _mockUserRepo.DidNotReceive().SetHashedPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]
-	public void CheckPasswordPassesWithSaltOnMD5FallbackCallsUpdate()
+	public async Task CheckPasswordPassesWithSaltOnMD5FallbackCallsUpdate()
 	{
 		var userService = GetMockedUserService();
 		Guid? salt = Guid.NewGuid();
@@ -150,8 +156,9 @@ public class UserServiceTests
 		_mockUserRepo.GetHashedPasswordByEmail(email).Returns(Task.FromResult(Tuple.Create(hashedPassword, salt)));
 		_mockUserRepo.GetUserByEmail(email).Returns(Task.FromResult(user));
 
-		Assert.True(userService.CheckPassword(email, "fred").Result.Item1);
-		_mockUserRepo.Received().SetHashedPassword(user, Arg.Any<string>(), Arg.Any<Guid>());
+		var result = await userService.CheckPassword(email, "fred");
+		Assert.True(result.Item1);
+		await _mockUserRepo.Received().SetHashedPassword(user, Arg.Any<string>(), Arg.Any<Guid>());
 	}
 
 	[Fact]

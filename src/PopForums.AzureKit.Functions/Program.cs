@@ -48,9 +48,14 @@ var host = new HostBuilder()
 			case "elasticsearch":
 			case "elasticcloud":
 				s.AddPopForumsElasticSearch();
+				Console.WriteLine("ElasticSearch provider configured.");
 				break;
 			case "azuresearch":
 				s.AddPopForumsAzureSearch();
+				Console.WriteLine("Azure Search provider configured.");
+				break;
+			default:
+				Console.WriteLine("Default SQL based search provider configured.");
 				break;
 		}
 	})
