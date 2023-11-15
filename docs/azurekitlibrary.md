@@ -188,7 +188,7 @@ You'll also need to setup the right configuration values:
 ```
 * `Url`: The URL for Azure Search, typically `https://{nameOfSearchService}.search.windows.net` with the name set in the Azure portal
 * `Key`: A key provisioned by the portal to connect to Azure Search
-* `Provider`: This is only used in `PopForums.AzureKit.Functions`, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library
+* `Provider`: This is only used in `PopForums.AzureKit.Functions`, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library. _Important: If the value is left blank, the Azure Functions will use the SQL-based search provider._
 
 ## Using Azure storage for hosting uploaded images in posts
 The default implementation for uploading images into forum posts is to upload them into the database. While this is convenient and super portable, it may not be the least expensive option, since database storage is typically more expensive than other means. To that end, you can use `AzureKit` to upload and host the images in an Azure storage container.
