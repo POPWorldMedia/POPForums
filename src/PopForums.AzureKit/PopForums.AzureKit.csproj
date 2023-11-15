@@ -25,11 +25,11 @@
     <PackageReference Include="Azure.Search.Documents" Version="11.4.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.17.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.15.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.0-rc.1.23421.29" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
