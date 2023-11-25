@@ -26,8 +26,8 @@ gulp.task("copies", function () {
 		gulp.src(nodeRoot + "bootstrap/dist/css/bootstrap.min.css.map").pipe(gulp.dest(targetPath + "/bootstrap/dist/css")),
 		gulp.src(nodeRoot + "@microsoft/signalr/dist/browser/**/*").pipe(gulp.dest(targetPath + "/signalr/dist")),
 		gulp.src(nodeRoot + "tinymce/**/*").pipe(gulp.dest(targetPath + "/tinymce")),
-		gulp.src(nodeRoot + "vue/dist/vue.global.prod.js").pipe(gulp.dest(targetPath + "/vue/dist")),
-		gulp.src(nodeRoot + "vue-router/dist/vue-router.global.prod.js").pipe(gulp.dest(targetPath + "/vue-router/dist")),
+		gulp.src(nodeRoot + "vue/dist/vue.global.*").pipe(gulp.dest(targetPath + "/vue/dist")),
+		gulp.src(nodeRoot + "vue-router/dist/vue-router.global.*").pipe(gulp.dest(targetPath + "/vue-router/dist")),
 		gulp.src(nodeRoot + "axios/dist/**/*").pipe(gulp.dest(targetPath + "/axios/dist")),
 		gulp.src("./wwwroot/Fonts/**/*").pipe(gulp.dest(targetPath + "/PopForums/dist/Fonts"))
 	];

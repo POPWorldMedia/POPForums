@@ -10,11 +10,17 @@
 <head>
 	<meta name="viewport" content="width=device-width" />
 	<title>@PopForums.Resources.PopForumsAdmin</title>
-    <script src="~/PopForums/lib/vue/dist/vue.global.prod.js" asp-append-version="true"></script>
-	<script src="~/PopForums/lib/vue-router/dist/vue-router.global.prod.js" asp-append-version="true"></script>
+	<environment include="Development">
+	    <script src="~/PopForums/lib/vue/dist/vue.global.js" asp-append-version="true"></script>
+		<script src="~/PopForums/lib/vue-router/dist/vue-router.global.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+	    <script src="~/PopForums/lib/vue/dist/vue.global.prod.js" asp-append-version="true"></script>
+		<script src="~/PopForums/lib/vue-router/dist/vue-router.global.prod.js" asp-append-version="true"></script>
+    </environment>
 	<script src="~/PopForums/lib/axios/dist/axios.min.js" asp-append-version="true"></script>
 	<script src="~/PopForums/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <link href="~/PopForums/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+	<link href="~/PopForums/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
 	<style>
 		.fade-enter-active, .fade-leave-active {
 			transition: opacity .5s;
