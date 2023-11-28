@@ -63,9 +63,9 @@ You can also use your own Bootstrap build and go crazy with customization on the
 To use your own Bootstrap build from any of the methods above, first you have to turn off the rendering of the default Bootstrap included in the `PopForums.Mvc` package. To do so, you'll need to change the `appsettings.json`:
 ```
 {
-	"PopForums": { 
-        "RenderBootstrap": false, 
-        ...
+  "PopForums": { 
+    "RenderBootstrap": false, 
+    ...
 ```
 With that taken care of, considering the template above, add references to your built Bootstrap CSS _and_ script _before_ you render the header content:
 ```
@@ -77,7 +77,7 @@ With that taken care of, considering the template above, add references to your 
 
 ## Forum adapters
 
-The MVC project has an interface called `IForumAdapter`, which allows you to generate your own view model for a topic, typically with new or augmented data. When a forum adapter is configured in the admin of the app, it uses the code in that configured adapter to render a specific view (typically in the `Views/Shared` folder of your app) and the model the adapter specifies. Consider the following:
+The MVC project has an interface called `IForumAdapter`, which allows you to generate your own view model for a topic, typically with new or augmented data. When a forum adapter is configured in the admin of the app (on a per-forum basis), it uses the code in that configured adapter to render a specific view (typically in the `Views/Shared` folder of your app) and the model the adapter specifies. Consider the following:
 ```
 public class TestAdapter : IForumAdapter
 {

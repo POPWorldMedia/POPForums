@@ -11,9 +11,9 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-v19 includes substantial architectural changes. The biggest change is that the front-end code, including Javascript and CSS, is delivered with the `PopForums.Mvc` package or project. The front-end parts are now written in TypeScript, and utilize plain vanilla web components (the admin still uses Vue.js). Private messages have been converted into real-time chat.
+v20 does not have substantial architectural changes compared to v19.
 
-This version has big data changes. If you need to upgrade from v16.x, v.17x or v18.x, run the `PopForums16to19.sql` script against your database, which is found in the `PopForums.Sql` project. It's safe to run this script more than once. IMPORTANT: Because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
+This version has data changes. From v19.x, run the `PopForums19to20.sql` script included in the `PopForums.Sql` project. If you need to upgrade from v16.x, v.17x or v18.x, _first_ run the `PopForums16to19.sql` script against your database, which is found in the `PopForums.Sql` project. It's safe to run this script more than once. IMPORTANT: Because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
@@ -27,7 +27,7 @@ You'll need the following locally:
 
 ## Build vs. reference
 
-You should definitely get to know the installation information below to understand the project structure, but understand that you can also use POP Forums by way of Nuget package references. The [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project shows how you can do this without having to build this project, and it's literally adding a Nuget package reference and adding some config stuff.
+You should definitely get to know the installation information below to understand the project structure, but understand that you can also use POP Forums by way of Nuget package references. The [POPWorldMedia/POPForums.Sample](https://github.com/POPWorldMedia/POPForums.Sample) project shows how you can do this without having to build this project, and it's literally adding a Nuget package reference and adding some config stuff in `Program.cs`.
 
 ## Reference
 
@@ -46,8 +46,8 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 ## Build
 
 * Download the latest source code from GitHub, or use the production packages as described above. Build it.
-* The project files require an up-to-date version of Visual Studio 2022 or later. It also appears to build in Visual Studio for Mac and Jetbrains' Rider.
-* This project is built on ASP.NET v6. Make sure you have the required SDK installed (v6.0.401).
+* The project files require an up-to-date version of Visual Studio 2022 or later. It also works great with Jetbrains' Rider on Mac or Windows.
+* This project is built on ASP.NET v8. Make sure you have the required SDK installed (v8.0.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
 * The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
 
