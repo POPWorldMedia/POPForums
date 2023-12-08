@@ -69,7 +69,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
             "ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
         },
         "Database": {
-            "ConnectionString": "server=localhost;Database=popforums14;Trusted_Connection=True;TrustServerCertificate=True;"
+            "ConnectionString": "server=localhost;Database=popforums20;Trusted_Connection=True;TrustServerCertificate=True;"
         },
         "Cache": {
             "Seconds": 180,
@@ -98,7 +98,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
     }
 }
 ```
-* Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums19`.
+* Attempt to run the app locally via Kestrel, and go to the URL /Forums to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums20`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to /Forums/Setup now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 > If you're running in OAuth-Only Mode, there is no setup for the fields below. The forum will attempt to set up the database, and that's it. That mode has no email functionality, and user creation and roles are delegated to the external identity provider. See [OAuth-Only Mode](oauthonly.md) for more information.
