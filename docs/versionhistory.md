@@ -7,7 +7,7 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version v20.0.0 (xx/xx/xx)
+## Version v20.0.0 (12/8/23)
 * Allow option to rely entirely on 3rd-party OAuth2 and OIDC for sign-in #183
 * Vote up buttons need an interim state during call #334
 * Update ElasticKit to use v8.x #335
