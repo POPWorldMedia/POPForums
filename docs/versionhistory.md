@@ -7,6 +7,35 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v20.0.0 (12/8/23)
+* Allow option to rely entirely on 3rd-party OAuth2 and OIDC for sign-in #183
+* Vote up buttons need an interim state during call #334
+* Update ElasticKit to use v8.x #335
+* Updating to TypeScript 5.x requires accommodation of suppressImplicitAnyIndexErrors deprecation #345
+* Animate notification and PM count so you see it #327
+* Reduce size of trimmed URL's to fit in mobile situations #323
+* Delete queued email messages after send #145
+* Update to .NET v8 #348
+* Update Polly to v8.x (in ElasticKit) #352
+* Replace Moq with NSubstitute #340
+* User creation should be atomic with profile, not sourced in a controller #328
+* Refactor out the old FullUrlHelper #326
+* PopForumsUserAttribute needs to be refactored to async #347
+* BUG: Fix regex not escaping special characters #342
+* BUG: Close private chat if the other user is deleted #321
+* BUG: Chromium 114 causes element property name conflict #336
+* BUG: Associate external login failing #324
+* BUG: Load more before reply chokes when only one page of posts #319
+* BUG: Images uploaded in post edit are flagged for deletion #316
+
+## Version v19.0.2 (6/6/23)
+* BUG: Chromium 114 causes element property name conflict #336
+
+## Version v19.0.1 (1/29/23)
+* BUG: Images uploaded in edit are flagged for deletion #316
+* BUG: Load more before reply chokes when only one page of posts #319
+* BUG: Associate external login failing #324
+
 ## Version v19.0.0 (10/9/22)
 * Image upload in posts #109
 * Create notification system #265
@@ -41,9 +70,6 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * BUG: Scroll to newest misses target because of inline images loading #290
 * BUG: Infinite scroll repositions back to hash when more posts load #257
 * BUG: New topic or reply fails if using Azure queues and they fail #284
-
-# Known issues
-None.
 
 ## Version v18.0.2 (5/28/22)
 * BUG: Fix bug in newer version of SqlClient when running setup script. #288

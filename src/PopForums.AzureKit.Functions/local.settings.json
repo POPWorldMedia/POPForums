@@ -7,7 +7,7 @@
   "PopForums": {
     "WebAppUrlAndArea": "https://localhost:5091/Forums",
     "Database": {
-      "ConnectionString": "server=localhost;Database=popforums19;Trusted_Connection=True;TrustServerCertificate=True;"
+      "ConnectionString": "server=localhost;Database=popforums20;Trusted_Connection=True;TrustServerCertificate=True;"
     },
     "Search": {
       "Url": "https://localhost:9200",

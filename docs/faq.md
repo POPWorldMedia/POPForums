@@ -32,16 +32,16 @@ One of the requirements back in the day was to simply work with the existing dat
 Look, when almost all of your methods are async with no synchronous version what's the point? The only place I use it is when there are both synchronous and asynchronous methods. Your fancy IDE knows what the return type is, and the compiler lets you know when you're not awaiting. You'll be fine.
 
 ## What external frameworks are you using, and why?
-I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, Moq for test mocking, and xUnit for unit testing. On the front end, the main app uses vanilla web components written in TypeScript, along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
+I wanted to keep external binaries to a minimum, but I'm using MailKit for email functions, ImageSharp for photo resizing, NSubstitute for test mocking, and xUnit for unit testing. On the front end, the main app uses vanilla web components written in TypeScript, along with Bootstrap and TinyMCE. The admin area uses Vue.js. Github has that handy dependency graph now that you can look at for more information.
 
 ## What? You're not using React?
-Here's the thing about a forum... it's mostly walls of text. I can tell you from the 60,000+ topics I have indexed on a couple of sites that it's super SEO friendly. To that end, the functionality of a forum is mostly making posts, which doesn't require a big library to do. That's why there are little web components spread around on little islands, and not an all-in effort to React. Heck, the admin area uses Vue.js, but even that works by way of a simple script reference.
+Here's the thing about a forum... it's mostly walls of text. I can tell you from the 60,000+ topics I have indexed on a couple of sites that it's super SEO friendly. To that end, the functionality of a forum is mostly making posts, which doesn't require a big library to do. That's why there are little web components spread around on little islands, and not an all-in effort to React. Heck, the admin area uses Vue.js, but even that works by way of a simple script reference, and no transpiling or bundling.
 
 ## The unit tests suck.
 That's not a question. In porting to Core, much of the controller-level unit testing didn't come along, and it needs a lot of refactoring. Ideally, there shouldn't be so much logic in the controllers, but there is still a lot there.
 
 ## What's the release roadmap?
-It has generally been my intention to keep up with the latest .NET framework versions. You can check the issue tracker for stuff currently in flight. The app needs a fair amount of refactoring, so that will happen over time, and hopefully enable more unit tests. I expect refinement after all of the new features of v19 get some reasonable use.
+It has generally been my intention to keep up with the latest .NET framework versions, which are now reliably annual. You can check the issue tracker for stuff currently in flight. I expect refinement after all of the new features of v19 get some reasonable use, and fewer big bang features.
 
 ## Can I contribute?
 I very much welcome translations of the `.resx` files, so send a pull request for those immediately! If someone really digs into the source code and understands it in a non-trivial way, then yes, I'll happily accept pull requests. If you can find a bug to squish from the issue log, that would be a great PR to see!

@@ -142,12 +142,12 @@ services.AddPopForumsAzureFunctionsAndQueues();
 
 It's important to _not_ have `services.AddPopForumsBackgroundServices();` in your `Program.cs`, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
 
-You'll also need to add a connection string and web app service base to your Azure Storage account:
+You'll also need to add a connection string to your Azure Storage account and web app service base. These values must appear in the configuration of your web app _and_ Azure Functions.
 
 ```
 {
   "PopForums": {
-	"WebAppUrlAndArea": "https://somehost/Forums",
+    "WebAppUrlAndArea": "https://somehost/Forums",
     "Queue": {
       "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=youraccountname;AccountKey=xxxYourAccountKeyxxx=="
 ...

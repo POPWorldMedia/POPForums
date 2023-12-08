@@ -9,7 +9,7 @@ nav_order: 2.7
 >
 > External logins are great for public forums. For corporate or private forums coupled exlcusively to an external identity platform, use OAuth-Only Mode.
 
-Starting in v20, POP Forums has an OAuth-only mode, which means that user authenticaton is handled entirely by a third party. Examples include OAuth providers of corporate identity systems, like Azure Active Directory, Okta and Auth0. In this mode, users can't create an account in the forum, they can only come in via  the external identity provider. The assignment of moderator and admin roles are mapped from claims issued by the identity provider.
+Starting in v20, POP Forums has an OAuth-only mode, which means that user authenticaton is handled entirely by a third party. Examples include OAuth providers of corporate identity systems, like Azure Active Directory, Keycloak, Okta and Auth0. In this mode, users can't create an account in the forum, they can only come in via  the external identity provider. The assignment of moderator and admin roles are mapped from claims issued by the identity provider.
 
 > This mode is set at the configuration level (`appsettings.json` locally, or the typical environment variables in regular environments). There are consequences for changing this setting to `true` in an established instance of the forum. Existing users would not be mapped to identities from the external provider. Going the other direction would be possible, though each user would need to reset their password with the email address used by the identity system.
 

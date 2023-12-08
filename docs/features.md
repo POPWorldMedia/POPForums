@@ -9,12 +9,12 @@ nav_order: 1.5
 * Categories, forums, topics, oh my!
 * Optional Q&A-style threading
 * Direct message, real-time chat between users
-* Upload photos
+* Upload photos or embed external images
 * Automatically embed YouTube videos
 * Selectively quote previous posts
 * Real-time notifications in-app
 * Rich text editing
-* Avatars and signatures, mutable by users
+* Avatars and signatures, mutable by users ("hide vanity")
 * Recent topics across all forums
 * User profiles with links to social networks
 * Save your favorite topics, subscribe automatically to new post notifications
@@ -24,8 +24,6 @@ nav_order: 1.5
 * Continuous scroll topics
 * Vote up and recognize posts
 * Automatic adjustments to display local times
-* Vote-up the good posts
-* Continuous scroll long threads
 * Private forums
 * Restrict posts to certain roles by forum
 * Edit posts
@@ -37,8 +35,9 @@ nav_order: 1.5
 * Restrict size of uploaded images and YouTube video size
 * Automatically close topics after days of inactivity
 * External (social) logins
+* External identity (All-OAuth mode) that relies on your OAuth/OIDC provider, ideal for enterprise.
 * View detailed security logs
-* Limit posts by interval in seconds
+* Limit posts by time interval in seconds
 * View all recent user sign-ups
 * Error logging and viewing
 * Monitor last run of background services
