@@ -97,33 +97,33 @@ public class PostImageServiceTests
 	public class PersistAndGetPayload : PostImageServiceTests
 	{
 		[Fact]
-		public void ThrowsWithNoContentType()
+		public async Task ThrowsWithNoContentType()
 		{
 			var service = GetService();
 			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1], "");
 
-			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
+			await Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
 		}
 
 		[Fact]
-		public void ThrowsWhenNotOkContentType()
+		public async Task ThrowsWhenNotOkContentType()
 		{
 			var service = GetService();
 			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1], "blah");
 
-			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
+			await Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
 		}
 
 		[Fact]
-		public void ThrowsWhenNotOkBytes()
+		public async Task ThrowsWhenNotOkBytes()
 		{
 			var service = GetService();
 			_settingsManager.Current.PostImageMaxkBytes.Returns(1);
 			service.ProcessImageIsOk(new byte[1025], "image/jpeg");
 
-			Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
+			await Assert.ThrowsAsync<Exception>(() => service.PersistAndGetPayload());
 		}
 
 		[Fact]
