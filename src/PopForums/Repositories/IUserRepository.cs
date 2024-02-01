@@ -91,7 +91,7 @@ public interface IUserRepository
 	Task DeleteUser(User user);
 	Task<List<User>> GetUsersFromIDs(IList<int> ids);
 	Task<int> GetTotalUsers();
-	Dictionary<User, int> GetUsersByPointTotals(int top);
+	Dictionary<int, (User, int)> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
 	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
 	Task UpdateRefreshToken(User user, string refreshToken);

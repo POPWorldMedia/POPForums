@@ -233,19 +233,19 @@ public class UserRepository : IUserRepository
 		return list.Result.ToList();
 	}
 
-	public Dictionary<User, int> GetUsersByPointTotals(int top)
+	public Dictionary<int, (User, int)> GetUsersByPointTotals(int top)
 	{
 		var key = CacheKeys.PointTotals + top;
-		var cacheObject = _cacheHelper.GetCacheObject<Dictionary<User, int>>(key);
+		var cacheObject = _cacheHelper.GetCacheObject<Dictionary<int, (User, int)>>(key);
 		if (cacheObject != null)
 			return cacheObject;
-		var list = new Dictionary<User, int>();
+		var list = new Dictionary<int, (User, int)>();
 		_sqlObjectFactory.GetConnection().Using(connection =>
 			connection.Query<User, int, User>(
 				$"SELECT TOP {top} {PopForumsUserColumns}, pf_Profile.Points FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID ORDER BY pf_Profile.Points DESC",
 				(user, points) =>
 				{
-					list.Add(user, points);
+					list.Add(user.UserID, (user, points));
 					return user;
 				}, splitOn: "Points"));
 		_cacheHelper.SetCacheObject(key, list, 60);

@@ -42,7 +42,7 @@ public interface IUserService
 	Task<List<User>> GetUsersFromIDs(IList<int> ids);
 	Task<int> GetTotalUsers();
 	Task<List<User>> GetSubscribedUsers();
-	Dictionary<User, int> GetUsersByPointTotals(int top);
+	Dictionary<int, (User, int)> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
 	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
 	Task UpdateRefreshToken(User user, string refreshToken);
@@ -529,7 +529,7 @@ public class UserService : IUserService
 		return await _userRepository.GetSubscribedUsers();
 	}
 
-	public Dictionary<User, int> GetUsersByPointTotals(int top)
+	public Dictionary<int, (User, int)> GetUsersByPointTotals(int top)
 	{
 		return _userRepository.GetUsersByPointTotals(top);
 	}
