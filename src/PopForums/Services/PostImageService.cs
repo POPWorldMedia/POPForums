@@ -7,7 +7,9 @@ public interface IPostImageService
 	bool ProcessImageIsOk(byte[] bytes, string contentType);
 	Task<PostImagePersistPayload> PersistAndGetPayload();
 	Task<PostImage> GetWithoutData(string id);
+	[Obsolete("Use the combination of GetWithoutData(int) and GetImageStream(int) instead.")]
 	Task<PostImage> Get(string id);
+	Task<IStreamResponse> GetImageStream(string id);
 	Task DeleteTempRecord(string id);
 	Task DeleteTempRecords(string[] ids, string fullText);
 	Task DeleteOldPostImages();
@@ -77,10 +79,16 @@ public class PostImageService : IPostImageService
 		return postImageSansData;
 	}
 
+	[Obsolete("Use the combination of GetWithoutData(int) and GetImageStream(int) instead.")]
 	public async Task<PostImage> Get(string id)
 	{
 		var postImageSansData = await _postImageRepository.Get(id);
 		return postImageSansData;
+	}
+
+	public async Task<IStreamResponse> GetImageStream(string id)
+	{
+		return await _postImageRepository.GetImageStream(id);
 	}
 
 	public async Task DeleteTempRecord(string id)

@@ -51,7 +51,7 @@ public class PostImageRepository : IPostImageRepository
 		await container.DeleteBlobAsync(path, DeleteSnapshotsOption.IncludeSnapshots);
 	}
 
-	// The next two methods are not used when fetching images from Azure storage. The
+	// The next three methods are not used when fetching images from Azure storage. The
 	// default SQL implementation does use these.
 
 	public Task<Models.PostImage> GetWithoutData(string id)
@@ -60,6 +60,11 @@ public class PostImageRepository : IPostImageRepository
 	}
 
 	public Task<Models.PostImage> Get(string id)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<IStreamResponse> GetImageStream(string id)
 	{
 		throw new NotImplementedException();
 	}

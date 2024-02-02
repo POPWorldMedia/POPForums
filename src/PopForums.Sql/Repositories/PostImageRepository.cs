@@ -44,11 +44,28 @@ public class PostImageRepository : IPostImageRepository
 		return await image;
 	}
 
+	[Obsolete("Use the combination of GetWithoutData(int) and GetImageStream(int) instead.")]
 	public async Task<PostImage> Get(string id)
 	{
 		Task<PostImage> image = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			image = connection.QuerySingleOrDefaultAsync<PostImage>("SELECT * FROM pf_PostImage WHERE ID = @id", new {id}));
 		return await image;
+	}
+
+	public async Task<IStreamResponse> GetImageStream(string id)
+	{
+		var connection = (SqlConnection)_sqlObjectFactory.GetConnection();
+		var command = new SqlCommand("SELECT ImageData FROM pf_PostImage WHERE ID = @id", connection);
+		command.Parameters.AddWithValue("id", id);
+		connection.Open();
+		var reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+		if (await reader.ReadAsync() && !await reader.IsDBNullAsync(0))
+		{
+			var stream = reader.GetStream(0);
+			var streamResponse = new StreamResponse(stream, connection, reader);
+			return streamResponse;
+		}
+		return default;
 	}
 }

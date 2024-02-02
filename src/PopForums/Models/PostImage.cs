@@ -2,10 +2,10 @@
 
 public class PostImage
 {
-	public string ID { get; set; }
-	public DateTime TimeStamp { get; set; }
-	public string TenantID { get; set; }
-	public string ContentType { get; set; }
-	public byte[] ImageData { get; set; }
+	public string ID { get; init; }
+	public DateTime TimeStamp { get; init; }
+	public string TenantID { get; init; }
+	public string ContentType { get; init; }
+	public byte[] ImageData { get; init; }
 
 }

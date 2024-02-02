@@ -72,9 +72,12 @@ public class ImageController : Controller
 				return Content(string.Empty);
 			}
 		}
-		var fullPostImage = await _postImageService.Get(id);
-		var stream = new MemoryStream(fullPostImage.ImageData);
-		return File(stream, "image/jpeg");
+		
+		var streamResponse = await _postImageService.GetImageStream(id);
+		if (streamResponse == null)
+			return NotFound();
+		Response.RegisterForDispose(streamResponse);
+		return File(streamResponse.Stream, postImageSansData.ContentType);
 	}
 
 	[HttpPost]
