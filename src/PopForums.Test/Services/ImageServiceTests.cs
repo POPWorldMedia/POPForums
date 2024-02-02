@@ -22,23 +22,23 @@ public class ImageServiceTests
 	public async Task GetAvatar()
 	{
 		var service = GetService();
-		var bytes = new byte[] {};
-		_avatarRepo.GetImageData(1).Returns(Task.FromResult(bytes));
+		var streamResponse = Substitute.For<IStreamResponse>();
+		_avatarRepo.GetImageStream(1).Returns(Task.FromResult(streamResponse));
 
-		var result = await service.GetAvatarImageData(1);
+		var result = await service.GetAvatarImageStream(1);
 
-		Assert.Same(bytes, result);
+		Assert.Same(streamResponse, result);
 	}
 
 	[Fact]
 	public async Task GetUserImage()
 	{
 		var service = GetService();
-		var bytes = new byte[] { };
-		_imageRepo.GetImageData(1).Returns(Task.FromResult(bytes));
+		var streamResponse = Substitute.For<IStreamResponse>();
+		_imageRepo.GetImageStream(1).Returns(Task.FromResult(streamResponse));
 
-		var result = await service.GetUserImageData(1);
+		var result = await service.GetUserImageStream(1);
 
-		Assert.Same(bytes, result);
+		Assert.Same(streamResponse, result);
 	}
 }

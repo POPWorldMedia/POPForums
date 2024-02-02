@@ -9,12 +9,29 @@ public class UserImageRepository : IUserImageRepository
 
 	private readonly ISqlObjectFactory _sqlObjectFactory;
 
+	[Obsolete("Use GetImageStream(int) instead.")]
 	public async Task<byte[]> GetImageData(int userImageID)
 	{
 		Task<byte[]> data = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			data = connection.ExecuteScalarAsync<byte[]>("SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID", new { UserImageID = userImageID }));
 		return await data;
+	}
+
+	public async Task<IStreamResponse> GetImageStream(int userImageID)
+	{
+		var connection = (SqlConnection)_sqlObjectFactory.GetConnection();
+		var command = new SqlCommand("SELECT ImageData FROM pf_UserImages WHERE UserImageID = @UserImageID", connection);
+		command.Parameters.AddWithValue("UserImageID", userImageID);
+		connection.Open();
+		var reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+		if (await reader.ReadAsync() && !await reader.IsDBNullAsync(0))
+		{
+			var stream = reader.GetStream(0);
+			var streamResponse = new StreamResponse(stream, connection, reader);
+			return streamResponse;
+		}
+		return default;
 	}
 
 	public async Task<List<UserImage>> GetUserImages(int userID)

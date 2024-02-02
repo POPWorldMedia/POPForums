@@ -8,8 +8,12 @@ namespace PopForums.Services;
 public interface IImageService
 {
 	Task<bool?> IsUserImageApproved(int userImageID);
+	[Obsolete("Use GetAvatarImageStream(int) instead.")]
 	Task<byte[]> GetAvatarImageData(int userAvatarID);
+	Task<IStreamResponse> GetAvatarImageStream(int userAvatarID);
+	[Obsolete("Use GetUserImageStream(int) instead.")]
 	Task<byte[]> GetUserImageData(int userImageID);
+	Task<IStreamResponse> GetUserImageStream(int userImageID);
 	Task<DateTime?> GetAvatarImageLastModification(int userAvatarID);
 	Task<DateTime?> GetUserImageLastModifcation(int userImageID);
 	byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel, bool cropInsteadOfConstrain);
@@ -60,14 +64,26 @@ public class ImageService : IImageService
 		await _userImageRepository.DeleteUserImage(userImageID);
 	}
 
+	[Obsolete("Use GetAvatarImageStream(int) instead.")]
 	public async Task<byte[]> GetAvatarImageData(int userAvatarID)
 	{
 		return await _userAvatarRepository.GetImageData(userAvatarID);
 	}
+	
+	public async Task<IStreamResponse> GetAvatarImageStream(int userAvatarID)
+	{
+		return await _userAvatarRepository.GetImageStream(userAvatarID);
+	}
 
+	[Obsolete("Use GetUserImageStream(int) instead.")]
 	public async Task<byte[]> GetUserImageData(int userImageID)
 	{
 		return await _userImageRepository.GetImageData(userImageID);
+	}
+
+	public async Task<IStreamResponse> GetUserImageStream(int userImageID)
+	{
+		return await _userImageRepository.GetImageStream(userImageID);
 	}
 
 	public async Task<List<UserImage>> GetUnapprovedUserImages()

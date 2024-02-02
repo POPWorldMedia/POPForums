@@ -22,16 +22,16 @@ public class ImageController : Controller
 	[PopForumsAuthorizationIgnore]
 	public async Task<ActionResult> Avatar(int id)
 	{
-		return await SetupImageResult(_imageService.GetAvatarImageData, _imageService.GetAvatarImageLastModification, id);
+		return await SetupImageResult(_imageService.GetAvatarImageStream, _imageService.GetAvatarImageLastModification, id);
 	}
 
 	[PopForumsAuthorizationIgnore]
 	public async Task<ActionResult> UserImage(int id)
 	{
-		return await SetupImageResult(_imageService.GetUserImageData, _imageService.GetUserImageLastModifcation, id);
+		return await SetupImageResult(_imageService.GetUserImageStream, _imageService.GetUserImageLastModifcation, id);
 	}
 
-	private async Task<ActionResult> SetupImageResult(Func<int, Task<byte[]>> imageDataFetch, Func<int, Task<DateTime?>> imageLastMod, int id)
+	private async Task<ActionResult> SetupImageResult(Func<int, Task<IStreamResponse>> imageStreamFetch, Func<int, Task<DateTime?>> imageLastMod, int id)
 	{
 		var timeStamp = await imageLastMod(id);
 		if (!timeStamp.HasValue)
@@ -48,8 +48,11 @@ public class ImageController : Controller
 				return Content(string.Empty);
 			}
 		}
-		var stream = new MemoryStream(await imageDataFetch(id));
-		return File(stream, "image/jpeg");
+		var streamResponse = await imageStreamFetch(id);
+		if (streamResponse == null)
+			return NotFound();
+		Response.RegisterForDispose(streamResponse);
+		return File(streamResponse.Stream, "image/jpeg");
 	}
 
 	public async Task<ActionResult> PostImage(string id)

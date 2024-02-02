@@ -2,7 +2,9 @@
 
 public interface IUserImageRepository
 {
+	[Obsolete("Use GetImageStream instead.")]
 	Task<byte[]> GetImageData(int userImageID);
+	Task<IStreamResponse> GetImageStream(int userImageID);
 	Task<List<UserImage>> GetUserImages(int userID);
 	Task<int> SaveNewImage(int userID, int sortOrder, bool isApproved, byte[] imageData, DateTime timeStamp);
 	Task DeleteImagesByUserID(int userID);
