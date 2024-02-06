@@ -116,7 +116,6 @@ public class PrivateMessageStateComposerTests
 			var pm = new PrivateMessage { LastViewDate = DateTime.UtcNow, PMID = 123, Users = jsonUsers};
 			_privateMessageService.GetMostRecentPosts(pm.PMID, pm.LastViewDate).Returns(new List<PrivateMessagePost>());
 			_privateMessageService.GetPosts(pm.PMID, pm.LastViewDate).Returns(new List<PrivateMessagePost>());
-			_privateMessageService.IsUserNotFound(pm.PMID).Returns(true);
 			_privateMessageService.GetUsers(pm.PMID).Returns([
 				new PrivateMessageUser { PMID = pm.PMID, UserID = 2 },
 				new PrivateMessageUser { PMID = pm.PMID, UserID = 3 },
@@ -136,7 +135,6 @@ public class PrivateMessageStateComposerTests
 			var pm = new PrivateMessage { LastViewDate = DateTime.UtcNow, PMID = 123, Users = jsonUsers};
 			_privateMessageService.GetMostRecentPosts(pm.PMID, pm.LastViewDate).Returns(new List<PrivateMessagePost>());
 			_privateMessageService.GetPosts(pm.PMID, pm.LastViewDate).Returns(new List<PrivateMessagePost>());
-			_privateMessageService.IsUserNotFound(pm.PMID).Returns(true);
 			_privateMessageService.GetUsers(pm.PMID).Returns([
 				new PrivateMessageUser { PMID = pm.PMID, UserID = 2 },
 				new PrivateMessageUser { PMID = pm.PMID, UserID = 4 }
