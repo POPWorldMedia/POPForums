@@ -25,9 +25,9 @@ public class PrivateMessageStateComposer : IPrivateMessageStateComposer
 		var clientMessages = ClientPrivateMessagePost.MapForClient(messages);
 		state.Messages = clientMessages;
 		state.Users = pm.Users;
-		var pmUsersFromPMRecord = pm.Users.EnumerateArray();
+		var pmUsersFromPMRecord = pm.Users.Deserialize<List<object>>();
 		var pmUsers = await _privateMessageService.GetUsers(pm.PMID);
-		var isUserNotFound = pmUsers.Count != pmUsersFromPMRecord.Count();
+		var isUserNotFound = pmUsers.Count != pmUsersFromPMRecord.Count;
 		state.IsUserNotFound = isUserNotFound;
 		return state;
 	}
