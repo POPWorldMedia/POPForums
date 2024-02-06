@@ -15,6 +15,7 @@ public interface IPrivateMessageService
 	Task Unarchive(User user, PrivateMessage pm);
 	Task<int?> GetFirstUnreadPostID(int pmID, DateTime lastViewDate);
 	Task<bool> IsUserNotFound(int pmID);
+	Task<List<PrivateMessageUser>> GetUsers(int pmID);
 }
 
 public class PrivateMessageService : IPrivateMessageService
@@ -176,5 +177,10 @@ public class PrivateMessageService : IPrivateMessageService
 	public async Task<bool> IsUserNotFound(int pmID)
 	{
 		return await _privateMessageRepository.IsUserNotFound(pmID);
+	}
+
+	public async Task<List<PrivateMessageUser>> GetUsers(int pmID)
+	{
+		return await _privateMessageRepository.GetUsers(pmID);
 	}
 }
