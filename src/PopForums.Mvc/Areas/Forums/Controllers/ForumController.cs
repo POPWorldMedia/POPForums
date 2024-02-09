@@ -61,7 +61,7 @@ public class ForumController : Controller
 		var adapter = new ForumAdapterFactory(forum);
 		if (adapter.IsAdapterEnabled)
 		{
-			adapter.ForumAdapter.AdaptForum(this, container);
+			await adapter.ForumAdapter.AdaptForum(this, container);
 			if (string.IsNullOrWhiteSpace(adapter.ForumAdapter.ViewName))
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
@@ -191,7 +191,7 @@ public class ForumController : Controller
 		container.TopicState = topicState;
 		if (adapter.IsAdapterEnabled)
 		{
-			adapter.ForumAdapter.AdaptTopic(this, container);
+			await adapter.ForumAdapter.AdaptTopic(this, container);
 			if (string.IsNullOrWhiteSpace(adapter.ForumAdapter.ViewName))
 				return View(adapter.ForumAdapter.Model);
 			return View(adapter.ForumAdapter.ViewName, adapter.ForumAdapter.Model);
@@ -363,7 +363,7 @@ public class ForumController : Controller
 		var adapter = new ForumAdapterFactory(forum);
 		if (adapter.IsAdapterEnabled)
 		{
-			var result = adapter.ForumAdapter.AdaptPostLink(this, post, topic, forum);
+			var result = await adapter.ForumAdapter.AdaptPostLink(this, post, topic, forum);
 			if (result != null)
 				return result;
 		}
