@@ -44,7 +44,7 @@ public static class Strings
 
 	public static bool IsEmailAddress(this string text)
 	{
-		return Regex.IsMatch(text, @"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", RegexOptions.IgnoreCase);
+		return Regex.IsMatch(text, @"^\S+?@([a-z0-9\-\.])+?\.([a-z0-9\-\.])+$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 	}
 
 	public static string ToUrlName(this string text)
