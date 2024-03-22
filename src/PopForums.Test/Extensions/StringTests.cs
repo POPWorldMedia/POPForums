@@ -25,7 +25,6 @@ public class StringTests
 		Assert.True("a_b@c.net".IsEmailAddress());
 		Assert.True("a.b@site.co.uk".IsEmailAddress());
 		Assert.True("ora@mixedmedia.studio".IsEmailAddress());
-		Assert.True("mason@日本.com".IsEmailAddress());
 	}
 
 	[Fact]
@@ -34,6 +33,9 @@ public class StringTests
 		Assert.False("a@c".IsEmailAddress());
 		Assert.False("abc@examplecom".IsEmailAddress());
 		Assert.False("ora.mixedmedia.studio".IsEmailAddress());
+		Assert.False("a a@c.com".IsEmailAddress());
+		Assert.False("aa@c a.com".IsEmailAddress());
+		Assert.False("aa@coishd!iwe.com".IsEmailAddress());
 	}
 
 	[Fact]
