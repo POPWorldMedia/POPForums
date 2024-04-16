@@ -1,4 +1,6 @@
-﻿namespace PopForums.ExternalLogin;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.ExternalLogin;
 
 public interface IExternalUserAssociationManager
 {

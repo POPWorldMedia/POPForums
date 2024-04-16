@@ -3,6 +3,7 @@
 public class CloseAgedTopicsWorker
 {
 	private static readonly object _syncRoot = new object();
+	private static CloseAgedTopicsWorker _instance;
 
 	private CloseAgedTopicsWorker()
 	{
@@ -10,8 +11,12 @@ public class CloseAgedTopicsWorker
 
 	public void CloseOldTopics(ITopicService topicService, IErrorLog errorLog)
 	{
-		if (!Monitor.TryEnter(_syncRoot)) return;
-		try
+		if (!Monitor.TryEnter(_syncRoot))
+        {
+            return;
+        }
+
+        try
 		{
 			topicService.CloseAgedTopics();
 		}
@@ -25,15 +30,11 @@ public class CloseAgedTopicsWorker
 		}
 	}
 
-	private static CloseAgedTopicsWorker _instance;
 	public static CloseAgedTopicsWorker Instance
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				_instance = new CloseAgedTopicsWorker();
-			}
+			_instance ??= new CloseAgedTopicsWorker();
 			return _instance;
 		}
 	}

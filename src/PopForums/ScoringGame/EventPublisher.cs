@@ -1,4 +1,6 @@
-﻿namespace PopForums.ScoringGame;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.ScoringGame;
 
 public interface IEventPublisher
 {

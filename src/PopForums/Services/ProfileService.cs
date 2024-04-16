@@ -1,19 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IProfileService
-{
-	Task<Profile> GetProfile(User user);
-	Task Create(Profile profile);
-	Task Update(Profile profile);
-	Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false);
-	Task EditUserProfile(User user, UserEditProfile userEditProfile);
-	Task<Dictionary<int, string>> GetSignatures(List<Post> posts);
-	Task<Dictionary<int, int>> GetAvatars(List<Post> posts);
-	Task SetCurrentImageIDToNull(int userID);
-	string GetUnsubscribeHash(User user);
-	Task<bool> Unsubscribe(User user, string hash);
-	Task UpdatePointTotal(User user);
-}
+namespace PopForums.Services;
 
 public class ProfileService : IProfileService
 {
@@ -21,7 +8,10 @@ public class ProfileService : IProfileService
 	private readonly ITextParsingService _textParsingService;
 	private readonly IPointLedgerRepository _pointLedgerRepository;
 
-	public ProfileService(IProfileRepository profileRepository, ITextParsingService textParsingService, IPointLedgerRepository pointLedgerRepository)
+	public ProfileService(
+		IProfileRepository profileRepository,
+		ITextParsingService textParsingService,
+		IPointLedgerRepository pointLedgerRepository)
 	{
 		_profileRepository = profileRepository;
 		_textParsingService = textParsingService;
@@ -30,24 +20,25 @@ public class ProfileService : IProfileService
 
 	public async Task<Profile> GetProfile(User user)
 	{
-		if (user == null)
-			return null;
-		return await _profileRepository.GetProfile(user.UserID);
-	}
+        return user == null ? null : await _profileRepository.GetProfile(user.UserID);
+    }
 
-	public async Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false)
+    public async Task<Profile> GetProfileForEdit(User user, bool forcePlainText = false)
 	{
 		var profile = await _profileRepository.GetProfile(user.UserID);
 		var userEditProfile = new Profile();
+
 		if (string.IsNullOrWhiteSpace(profile.Signature))
-			userEditProfile.Signature = string.Empty;
-		else
+        {
+            userEditProfile.Signature = string.Empty;
+        }
+        else
 		{
-			if (profile.IsPlainText || forcePlainText) 
-				userEditProfile.Signature = _textParsingService.HtmlToForumCode(profile.Signature);
-			else
-				userEditProfile.Signature = _textParsingService.HtmlToClientHtml(profile.Signature);
-		}
+			userEditProfile.Signature = profile.IsPlainText || forcePlainText
+                ? _textParsingService.HtmlToForumCode(profile.Signature)
+                : _textParsingService.HtmlToClientHtml(profile.Signature);
+        }
+
 		userEditProfile.IsSubscribed = profile.IsSubscribed;
 		userEditProfile.ShowDetails = profile.ShowDetails;
 		userEditProfile.IsPlainText = profile.IsPlainText;
@@ -59,19 +50,24 @@ public class ProfileService : IProfileService
 		userEditProfile.Facebook = profile.Facebook;
 		userEditProfile.Twitter = profile.Twitter;
 		userEditProfile.IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
+
 		return userEditProfile;
 	}
 
 	public async Task EditUserProfile(User user, UserEditProfile userEditProfile)
 	{
 		var profile = await _profileRepository.GetProfile(user.UserID);
+
 		if (profile == null)
-			throw new Exception($"No profile found for UserID {user.UserID}");
-		if (profile.IsPlainText)
-			profile.Signature = _textParsingService.ForumCodeToHtml(userEditProfile.Signature);
-		else
-			profile.Signature = _textParsingService.ClientHtmlToHtml(userEditProfile.Signature);
-		profile.IsSubscribed = userEditProfile.IsSubscribed;
+        {
+            throw new Exception($"No profile found for UserID {user.UserID}");
+        }
+
+        profile.Signature = profile.IsPlainText
+            ? _textParsingService.ForumCodeToHtml(userEditProfile.Signature)
+            : _textParsingService.ClientHtmlToHtml(userEditProfile.Signature);
+
+        profile.IsSubscribed = userEditProfile.IsSubscribed;
 		profile.ShowDetails = userEditProfile.ShowDetails;
 		profile.IsPlainText = userEditProfile.IsPlainText;
 		profile.HideVanity = userEditProfile.HideVanity;
@@ -82,22 +78,29 @@ public class ProfileService : IProfileService
 		profile.Facebook = userEditProfile.Facebook;
 		profile.Twitter = userEditProfile.Twitter;
 		profile.IsAutoFollowOnReply = userEditProfile.IsAutoFollowOnReply;
+
 		await _profileRepository.Update(profile);
 	}
 
 	public async Task Create(Profile profile)
 	{
 		if (profile.UserID == 0)
-			throw new Exception("Can't create a profile not associated with a valid UserID");
-		await _profileRepository.Create(profile);
+        {
+            throw new Exception("Can't create a profile not associated with a valid UserID");
+        }
+
+        await _profileRepository.Create(profile);
 	}
 
 	public async Task Update(Profile profile)
 	{
 		profile.Signature = profile.Signature.Trim();
+
 		if (await _profileRepository.Update(profile) == false)
-			throw new Exception($"Profile with UserID {profile.UserID} does not exist.");
-	}
+        {
+            throw new Exception($"Profile with UserID {profile.UserID} does not exist.");
+        }
+    }
 
 	public async Task<Dictionary<int, string>> GetSignatures(List<Post> posts)
 	{
@@ -125,11 +128,16 @@ public class ProfileService : IProfileService
 	public async Task<bool> Unsubscribe(User user, string hash)
 	{
 		var calculatedHash = GetUnsubscribeHash(user);
+
 		if (calculatedHash != hash)
-			return false;
-		var profile = await GetProfile(user);
+        {
+            return false;
+        }
+
+        var profile = await GetProfile(user);
 		profile.IsSubscribed = false;
 		await Update(profile);
+
 		return true;
 	}
 

@@ -1,9 +1,6 @@
-namespace PopForums.Services;
+using PopForums.Services.Interfaces;
 
-public interface IUserEmailReconciler
-{
-	Task<string> GetUniqueEmail(string email, string externalID);
-}
+namespace PopForums.Services;
 
 /// <summary>
 /// Checks for existing email addresses from an external identity provider. If a match is found, it mangles the address
@@ -21,10 +18,14 @@ public class UserEmailReconciler : IUserEmailReconciler
 	public async Task<string> GetUniqueEmail(string email, string externalID)
 	{
 		var match = await _userRepository.GetUserByEmail(email);
+
 		if (match is null)
-			return email;
-		
-		var uniqueEmail = $"{email.Replace("@","-at-")}@{externalID}.example.com";
+        {
+            return email;
+        }
+
+        var uniqueEmail = $"{email.Replace("@","-at-")}@{externalID}.example.com";
+
 		return uniqueEmail;
 	}
 }

@@ -1,20 +1,15 @@
 ﻿using PopForums.Models;
+using PopForums.Services.Interfaces;
 
 namespace PopForums.Services;
 
-public interface ISubscribedTopicsService
-{
-	Task AddSubscribedTopic(int userID, int topicID);
-	Task RemoveSubscribedTopic(User user, Topic topic);
-	Task TryRemoveSubscribedTopic(User user, Topic topic);
-	Task NotifySubscribers(Topic topic, User postingUser, string tenantID);
-	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
-	Task<bool> IsTopicSubscribed(int userID, int topicID);
-	Task<List<int>> GetSubscribedUserIDs(int topicID);
-}
-
 public class SubscribedTopicsService : ISubscribedTopicsService
 {
+	private readonly ISubscribedTopicsRepository _subscribedTopicsRepository;
+	private readonly ISettingsManager _settingsManager;
+	private readonly INotificationAdapter _notificationAdapter;
+	private readonly ISubscribeNotificationRepository _subscribeNotificationRepository;
+
 	public SubscribedTopicsService(ISubscribedTopicsRepository subscribedTopicsRepository, ISettingsManager settingsManager, INotificationAdapter notificationAdapter, ISubscribeNotificationRepository subscribeNotificationRepository)
 	{
 		_subscribedTopicsRepository = subscribedTopicsRepository;
@@ -23,17 +18,15 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 		_subscribeNotificationRepository = subscribeNotificationRepository;
 	}
 
-	private readonly ISubscribedTopicsRepository _subscribedTopicsRepository;
-	private readonly ISettingsManager _settingsManager;
-	private readonly INotificationAdapter _notificationAdapter;
-	private readonly ISubscribeNotificationRepository _subscribeNotificationRepository;
-
 	public async Task AddSubscribedTopic(int userID, int topicID)
 	{
 		var isSubscribed = await _subscribedTopicsRepository.IsTopicSubscribed(userID, topicID);
+
 		if (!isSubscribed)
-			await _subscribedTopicsRepository.AddSubscribedTopic(userID, topicID);
-	}
+        {
+            await _subscribedTopicsRepository.AddSubscribedTopic(userID, topicID);
+        }
+    }
 
 	public async Task RemoveSubscribedTopic(User user, Topic topic)
 	{
@@ -43,8 +36,10 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 	public async Task TryRemoveSubscribedTopic(User user, Topic topic)
 	{
 		if (user != null && topic != null)
-			await RemoveSubscribedTopic(user, topic);
-	}
+        {
+            await RemoveSubscribedTopic(user, topic);
+        }
+    }
 	
 	public async Task NotifySubscribers(Topic topic, User postingUser, string tenantID)
 	{
@@ -56,6 +51,7 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 			PostingUserName = postingUser.Name,
 			TenantID = tenantID
 		};
+
 		await _subscribeNotificationRepository.Enqueue(payload);
 	}
 
@@ -67,6 +63,7 @@ public class SubscribedTopicsService : ISubscribedTopicsService
 		var topicCount = await _subscribedTopicsRepository.GetSubscribedTopicCount(user.UserID);
 		var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
 		var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+		
 		return Tuple.Create(topics, pagerContext);
 	}
 

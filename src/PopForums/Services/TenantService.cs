@@ -1,10 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface ITenantService
-{
-	void SetTenant(string tenantID);
-	string GetTenant();
-}
+namespace PopForums.Services;
 
 public class TenantService : ITenantService
 {

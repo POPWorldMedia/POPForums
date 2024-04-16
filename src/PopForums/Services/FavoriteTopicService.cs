@@ -1,23 +1,17 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IFavoriteTopicService
-{
-	Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex);
-	Task<bool> IsTopicFavorite(int userID, int topicID);
-	Task AddFavoriteTopic(User user, Topic topic);
-	Task RemoveFavoriteTopic(User user, Topic topic);
-}
+namespace PopForums.Services;
 
 public class FavoriteTopicService : IFavoriteTopicService
 {
+	private readonly ISettingsManager _settingsManager;
+	private readonly IFavoriteTopicsRepository _favoriteTopicRepository;
+
 	public FavoriteTopicService(ISettingsManager settingsManager, IFavoriteTopicsRepository favoriteTopicRepository)
 	{
 		_settingsManager = settingsManager;
 		_favoriteTopicRepository = favoriteTopicRepository;
 	}
-
-	private readonly ISettingsManager _settingsManager;
-	private readonly IFavoriteTopicsRepository _favoriteTopicRepository;
 
 	public async Task<Tuple<List<Topic>, PagerContext>> GetTopics(User user, int pageIndex)
 	{
@@ -27,6 +21,7 @@ public class FavoriteTopicService : IFavoriteTopicService
 		var topicCount = await _favoriteTopicRepository.GetFavoriteTopicCount(user.UserID);
 		var totalPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(topicCount) / Convert.ToDouble(pageSize)));
 		var pagerContext = new PagerContext { PageCount = totalPages, PageIndex = pageIndex, PageSize = pageSize };
+
 		return Tuple.Create(topics, pagerContext);
 	}
 

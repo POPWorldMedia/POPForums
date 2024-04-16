@@ -2,15 +2,15 @@
 
 public class CloseAgedTopicsApplicationService : ApplicationServiceBase
 {
+	private ITopicService _topicService;
+	private IErrorLog _errorLog;
+
 	public override void Start(IServiceProvider serviceProvider)
 	{
 		_topicService = serviceProvider.GetService<ITopicService>();
 		_errorLog = serviceProvider.GetService<IErrorLog>();
 		base.Start(serviceProvider);
 	}
-
-	private ITopicService _topicService;
-	private IErrorLog _errorLog;
 
 	protected override void ServiceAction()
 	{

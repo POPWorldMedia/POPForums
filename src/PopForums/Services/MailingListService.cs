@@ -1,12 +1,14 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IMailingListService
-{
-	void MailUsers(string subject, string body, string htmlBody, Func<User, string> unsubscribeLinkGenerator);
-}
+namespace PopForums.Services;
 
 public class MailingListService : IMailingListService
 {
+	private readonly IUserService _userService;
+	private readonly IMailingListComposer _mailingListComposer;
+	private readonly IErrorLog _errorLog;
+	private static Thread _mailWorker;
+
 	public MailingListService(IUserService userService, IMailingListComposer mailingListComposer, IErrorLog errorLog)
 	{
 		_userService = userService;
@@ -14,19 +16,16 @@ public class MailingListService : IMailingListService
 		_errorLog = errorLog;
 	}
 
-	private readonly IUserService _userService;
-	private readonly IMailingListComposer _mailingListComposer;
-	private readonly IErrorLog _errorLog;
-	private static Thread _mailWorker;
-
 	public void MailUsers(string subject, string body, string htmlBody, Func<User, string> unsubscribeLinkGenerator)
 	{
 		_mailWorker = new Thread(() =>
 		{
 			var users = _userService.GetSubscribedUsers().Result;
+
 			foreach (var user in users)
 			{
 				var unsubLink = unsubscribeLinkGenerator(user);
+
 				try
 				{
 					_mailingListComposer.ComposeAndQueue(user, subject, body, htmlBody, unsubLink);
@@ -37,6 +36,7 @@ public class MailingListService : IMailingListService
 				}
 			}
 		});
+
 		_mailWorker.Start();
 	}
 }

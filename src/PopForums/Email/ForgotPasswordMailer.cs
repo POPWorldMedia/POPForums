@@ -1,3 +1,5 @@
+using PopForums.Services.Interfaces;
+
 namespace PopForums.Email;
 
 public interface IForgotPasswordMailer

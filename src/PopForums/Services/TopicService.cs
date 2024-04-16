@@ -1,3 +1,5 @@
+using PopForums.Services.Interfaces;
+
 namespace PopForums.Services;
 
 public interface ITopicService

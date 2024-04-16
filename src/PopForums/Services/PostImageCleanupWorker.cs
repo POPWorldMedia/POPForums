@@ -3,6 +3,7 @@
 public class PostImageCleanupWorker
 {
 	private static readonly object SyncRoot = new object();
+	private static PostImageCleanupWorker _instance;
 
 	private PostImageCleanupWorker()
 	{
@@ -10,7 +11,11 @@ public class PostImageCleanupWorker
 
 	public void DeleteOldPostImages(IPostImageService postImageService, IErrorLog errorLog)
 	{
-		if (!Monitor.TryEnter(SyncRoot)) return;
+		if (!Monitor.TryEnter(SyncRoot))
+		{
+			return;
+		}
+
 		try
 		{
 			postImageService.DeleteOldPostImages();
@@ -25,15 +30,11 @@ public class PostImageCleanupWorker
 		}
 	}
 
-	private static PostImageCleanupWorker _instance;
 	public static PostImageCleanupWorker Instance
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				_instance = new PostImageCleanupWorker();
-			}
+			_instance ??= new PostImageCleanupWorker();
 			return _instance;
 		}
 	}

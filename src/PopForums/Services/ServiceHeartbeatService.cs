@@ -1,11 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IServiceHeartbeatService
-{
-	Task RecordHeartbeat(string serviceName, string machineName);
-	Task<List<ServiceHeartbeat>> GetAll();
-	Task ClearAll();
-}
+namespace PopForums.Services;
 
 public class ServiceHeartbeatService : IServiceHeartbeatService
 {

@@ -1,7 +1,14 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.Services;
 
 public class SearchIndexApplicationService : ApplicationServiceBase
 {
+	private ISettingsManager _settingsManager;
+	private ISearchIndexSubsystem _searchIndexSubsystem;
+	private ISearchService _searchService;
+	private ITenantService _tenantService;
+
 	public override void Start(IServiceProvider serviceProvider)
 	{
 		_settingsManager = serviceProvider.GetService<ISettingsManager>();
@@ -10,11 +17,6 @@ public class SearchIndexApplicationService : ApplicationServiceBase
 		_tenantService = serviceProvider.GetService<ITenantService>();
 		base.Start(serviceProvider);
 	}
-		
-	private ISettingsManager _settingsManager;
-	private ISearchIndexSubsystem _searchIndexSubsystem;
-	private ISearchService _searchService;
-	private ITenantService _tenantService;
 
 	protected override void ServiceAction()
 	{

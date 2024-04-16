@@ -1,4 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.Services;
 
 public interface IPostService
 {

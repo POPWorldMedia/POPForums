@@ -1,4 +1,6 @@
-﻿namespace PopForums.Email;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.Email;
 
 public interface IMailingListComposer
 {

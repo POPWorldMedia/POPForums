@@ -2,13 +2,13 @@
 
 public class UserSessionApplicationService : ApplicationServiceBase
 {
+	private IUserSessionService _userSessionService;
+
 	public override void Start(IServiceProvider serviceProvider)
 	{
 		_userSessionService = serviceProvider.GetService<IUserSessionService>();
 		base.Start(serviceProvider);
 	}
-
-	private IUserSessionService _userSessionService;
 
 	protected override void ServiceAction()
 	{

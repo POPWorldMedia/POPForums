@@ -1,10 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface ISearchIndexSubsystem
-{
-	void DoIndex(int topicID, string tenantID, bool isForRemoval);
-	void RemoveIndex(int topicID, string tenantID);
-}
+namespace PopForums.Services;
 
 /// <summary>
 /// Implementation for in-database searching. Does not support multi-tenancy.
@@ -25,14 +21,20 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 	public void DoIndex(int topicID, string tenantID, bool isForRemoval)
 	{
 		_searchService.DeleteAllIndexedWordsForTopic(topicID);
-		if (isForRemoval)
-			return;
 
-		var topic = _topicService.Get(topicID).Result;
+		if (isForRemoval)
+        {
+            return;
+        }
+
+        var topic = _topicService.Get(topicID).Result;
+
 		if (topic == null)
-			return;
-			
-		var junkList = _searchService.GetJunkWords().Result;
+        {
+            return;
+        }
+
+        var junkList = _searchService.GetJunkWords().Result;
 		var wordList = new List<SearchWord>();
 		var alphaNum = SearchService.SearchWordPattern;
 		var posts = _postService.GetPosts(topic, false).Result;
@@ -40,8 +42,14 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 		foreach (var post in posts)
 		{
 			var firstPostMultiplier = 1;
-			if (post.IsFirstInTopic) firstPostMultiplier = 2;
-			var postWords = post.FullText.Split(new[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+			if (post.IsFirstInTopic)
+            {
+                firstPostMultiplier = 2;
+            }
+
+            var postWords = post.FullText.Split(new[] { " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
 			if (postWords.Length > 0)
 			{
 				for (var x = 0; x < postWords.Length; x++)
@@ -52,6 +60,7 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 					}
 				}
 			}
+
 			// index the name
 			foreach (Match match in alphaNum.Matches(post.Name))
 			{
@@ -78,16 +87,24 @@ public class SearchIndexSubsystem : ISearchIndexSubsystem
 	private void TestForIndex(Topic topic, string testWord, int increment, int multiplier, bool cap, List<SearchWord> wordList, List<String> junkList)
 	{
 		testWord = testWord.ToLower();
+
 		if (junkList.IndexOf(testWord) < 0)
 		{
 			var foundWord = wordList.Find(w => w.Word == testWord);
 			if (foundWord != null)
 			{
 				foundWord.Rank += increment * multiplier;
+
 				// cap the word frequency score
-				if (cap && foundWord.Rank > 120) foundWord.Rank = 120;
-			}
-			else wordList.Add(new SearchWord { Rank = 1, TopicID = topic.TopicID, Word = testWord });
-		}
+				if (cap && foundWord.Rank > 120)
+                {
+                    foundWord.Rank = 120;
+                }
+            }
+			else
+            {
+                wordList.Add(new SearchWord { Rank = 1, TopicID = topic.TopicID, Word = testWord });
+            }
+        }
 	}
 }

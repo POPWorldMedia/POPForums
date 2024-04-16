@@ -2,15 +2,15 @@
 
 public class PostImageCleanupService : ApplicationServiceBase
 {
+	private IPostImageService _postImageService;
+	private IErrorLog _errorLog;
+
 	public override void Start(IServiceProvider serviceProvider)
 	{
 		_postImageService = serviceProvider.GetService<IPostImageService>();
 		_errorLog = serviceProvider.GetService<IErrorLog>();
 		base.Start(serviceProvider);
 	}
-
-	private IPostImageService _postImageService;
-	private IErrorLog _errorLog;
 
 	protected override void ServiceAction()
 	{

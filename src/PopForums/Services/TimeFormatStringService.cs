@@ -1,10 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface ITimeFormatStringService
-{
-	TimeFormats GeTimeFormats();
-	string GetTimeFormatsAsJson();
-}
+namespace PopForums.Services;
 
 public class TimeFormatStringService : ITimeFormatStringService
 {
@@ -18,6 +14,7 @@ public class TimeFormatStringService : ITimeFormatStringService
 			OneMinuteAgo = Resources.OneMinuteAgo,
 			LessThanMinute = Resources.LessThanMinute
 		};
+
 		return formats;
 	}
 
@@ -25,6 +22,7 @@ public class TimeFormatStringService : ITimeFormatStringService
 	{
 		var formats = GeTimeFormats();
 		var serialized = JsonSerializer.Serialize(formats, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+		
 		return serialized;
 	}
 }

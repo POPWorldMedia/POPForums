@@ -1,11 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface ISitemapService
-{
-	Task<string> GenerateIndex(Func<int, string> pageLinkGenerator);
-	Task<int> GetSitemapPageCount();
-	Task<string> GeneratePage(Func<string, string> topicLinkGenerator, int page);
-}
+namespace PopForums.Services;
 
 public class SitemapService : ISitemapService
 {
@@ -32,8 +27,10 @@ public class SitemapService : ISitemapService
 			s.Append(pageLinkGenerator(p));
 			s.Append("</loc>\r\n\t</sitemap>\r\n");
 		}
+
 		s.Append("</sitemapindex>");
 		var result = s.ToString();
+
 		return result;
 	}
 
@@ -47,6 +44,7 @@ public class SitemapService : ISitemapService
 		var s = new StringBuilder(@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">
 ");
+		
 		foreach (var item in namesAndDates)
 		{
 			s.Append("\t<url>\r\n\t\t<loc>");
@@ -55,8 +53,10 @@ public class SitemapService : ISitemapService
 			s.Append(item.Item2.ToString("yyyy-MM-ddThh:mmzzz"));
 			s.Append("</lastmod>\r\n\t\t<changefreq>daily</changefreq>\r\n\t</url>\r\n");
 		}
+
 		s.Append("</urlset>");
 		var result = s.ToString();
+
 		return result;
 	}
 
@@ -66,9 +66,14 @@ public class SitemapService : ISitemapService
 		// any forum with a role attached isn't viewable, shouldn't appear in sitemap
 		var nonViewableForumIDs = nonViewableForumGraph.Where(x => x.Value.Count > 0).Select(x => x.Key).ToList();
 		var topicCount = await _topicRepository.GetTopicCount(false, nonViewableForumIDs);
+		
 		if (topicCount < _pageSize)
-			return 1;
-		var result = Math.Ceiling(topicCount / _pageSize);
+        {
+            return 1;
+        }
+
+        var result = Math.Ceiling(topicCount / _pageSize);
+
 		return Convert.ToInt32(result);
 	}
 }

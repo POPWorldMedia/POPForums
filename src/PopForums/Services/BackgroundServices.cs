@@ -2,11 +2,23 @@
 
 public class BackgroundServices
 {
+	private static EmailApplicationService _emailService;
+	private static UserSessionApplicationService _userSessionService;
+	private static SearchIndexApplicationService _searchIndexService;
+	private static AwardCalculatorApplicationService _awardCalcService;
+	private static CloseAgedTopicsApplicationService _closeAgedTopicsService;
+	private static PostImageCleanupService _postImageCleanupService;
+	private static SubscribeNotificationApplicationService _subscribeNotificationApplicationService;
+
 	public static void SetupServices(IServiceProvider serviceProvider)
 	{
 		var setupService = serviceProvider.GetService<ISetupService>();
+
 		if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
+		{
 			return;
+		}
+
 		_emailService = new EmailApplicationService();
 		_userSessionService = new UserSessionApplicationService();
 		_searchIndexService = new SearchIndexApplicationService();
@@ -29,14 +41,6 @@ public class BackgroundServices
 		ApplicationServices.Add(_postImageCleanupService);
 		ApplicationServices.Add(_subscribeNotificationApplicationService);
 	}
-
-	private static EmailApplicationService _emailService;
-	private static UserSessionApplicationService _userSessionService;
-	private static SearchIndexApplicationService _searchIndexService;
-	private static AwardCalculatorApplicationService _awardCalcService;
-	private static CloseAgedTopicsApplicationService _closeAgedTopicsService;
-	private static PostImageCleanupService _postImageCleanupService;
-	private static SubscribeNotificationApplicationService _subscribeNotificationApplicationService;
 
 	public static readonly List<ApplicationServiceBase> ApplicationServices = new List<ApplicationServiceBase>();
 }

@@ -1,9 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IReCaptchaService
-{
-	Task<ReCaptchaResponse> VerifyToken(string token, string ip);
-}
+namespace PopForums.Services;
 
 public class ReCaptchaService : IReCaptchaService
 {
@@ -25,7 +22,9 @@ public class ReCaptchaService : IReCaptchaService
 			{"response", token},
 			{"ip", ip}
 		};
+
 		HttpResponseMessage httpResult;
+
 		using (var client = new HttpClient())
 		{
 			try
@@ -37,11 +36,16 @@ public class ReCaptchaService : IReCaptchaService
 				return new ReCaptchaResponse {IsSuccess = false, ErrorCodes = new[] { "HttpRequestException" } };
 			}
 		}
+
 		var content = await httpResult.Content.ReadAsStringAsync();
 		var verifyResult = JsonSerializer.Deserialize<ReCaptchaResponse>(content);
+
 		if (!verifyResult.IsSuccess)
-			await _securityLogService.CreateLogEntry((User) null, null, ip, string.Empty, SecurityLogType.ReCaptchaFailed);
-		return verifyResult;
+        {
+            await _securityLogService.CreateLogEntry((User) null, null, ip, string.Empty, SecurityLogType.ReCaptchaFailed);
+        }
+
+        return verifyResult;
 	}
 }
 

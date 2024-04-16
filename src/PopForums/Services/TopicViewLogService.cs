@@ -1,9 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface ITopicViewLogService
-{
-	Task LogView(int? userID, int topicID);
-}
+namespace PopForums.Services;
 
 public class TopicViewLogService : ITopicViewLogService
 {
@@ -19,8 +16,12 @@ public class TopicViewLogService : ITopicViewLogService
 	public async Task LogView(int? userID, int topicID)
 	{
 		if (!_config.LogTopicViews)
-			return;
-		var timeStamp = DateTime.UtcNow;
+        {
+            return;
+        }
+
+        var timeStamp = DateTime.UtcNow;
+
 		await _topicViewLogRepository.Log(userID, topicID, timeStamp);
 	}
 }

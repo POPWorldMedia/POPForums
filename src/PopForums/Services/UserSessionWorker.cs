@@ -3,6 +3,7 @@
 public class UserSessionWorker
 {
 	private static readonly object _syncRoot = new Object();
+	private static UserSessionWorker _instance;
 
 	private UserSessionWorker()
 	{
@@ -11,8 +12,12 @@ public class UserSessionWorker
 
 	public void CleanUpExpiredSessions(IUserSessionService sessionService, IErrorLog errorLog)
 	{
-		if (!Monitor.TryEnter(_syncRoot)) return;
-		try
+		if (!Monitor.TryEnter(_syncRoot))
+        {
+            return;
+        }
+
+        try
 		{
 			sessionService.CleanUpExpiredSessions();
 		}
@@ -26,15 +31,11 @@ public class UserSessionWorker
 		}
 	}
 
-	private static UserSessionWorker _instance;
 	public static UserSessionWorker Instance
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				_instance = new UserSessionWorker();
-			}
+			_instance ??= new UserSessionWorker();
 			return _instance;
 		}
 	}

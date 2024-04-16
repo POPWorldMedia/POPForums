@@ -1,10 +1,6 @@
-﻿namespace PopForums.Services;
+﻿using PopForums.Services.Interfaces;
 
-public interface IForumPermissionService
-{
-	Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user);
-	Task<ForumPermissionContext> GetPermissionContext(Forum forum, User user, Topic topic);
-}
+namespace PopForums.Services;
 
 public class ForumPermissionService : IForumPermissionService
 {
@@ -28,13 +24,18 @@ public class ForumPermissionService : IForumPermissionService
 
 		// view
 		if (viewRestrictionRoles.Count == 0)
-			context.UserCanView = true;
-		else
+        {
+            context.UserCanView = true;
+        }
+        else
 		{
 			context.UserCanView = false;
+
 			if (user != null && viewRestrictionRoles.Where(user.IsInRole).Any())
-				context.UserCanView = true;
-		}
+            {
+                context.UserCanView = true;
+            }
+        }
 
 		// post
 		if (user == null || !context.UserCanView)
@@ -51,12 +52,16 @@ public class ForumPermissionService : IForumPermissionService
 		else
 		{
 			if (postRestrictionRoles.Count == 0)
-				context.UserCanPost = true;
-			else
+            {
+                context.UserCanPost = true;
+            }
+            else
 			{
 				if (postRestrictionRoles.Where(user.IsInRole).Any())
-					context.UserCanPost = true;
-				else
+                {
+                    context.UserCanPost = true;
+                }
+                else
 				{
 					context.DenialReason += Resources.ForumNoPost + ". ";
 					context.UserCanPost = false;
@@ -73,8 +78,11 @@ public class ForumPermissionService : IForumPermissionService
 		if (topic != null && topic.IsDeleted)
 		{
 			if (user == null || !user.IsInRole(PermanentRoles.Moderator))
-				context.UserCanView = false;
-			context.DenialReason += "Topic is deleted. ";
+            {
+                context.UserCanView = false;
+            }
+
+            context.DenialReason += "Topic is deleted. ";
 		}
 
 		if (forum.IsArchived)
@@ -86,8 +94,10 @@ public class ForumPermissionService : IForumPermissionService
 		// moderate
 		context.UserCanModerate = false;
 		if (user != null && (user.IsInRole(PermanentRoles.Admin) || user.IsInRole(PermanentRoles.Moderator)))
-			context.UserCanModerate = true;
+        {
+            context.UserCanModerate = true;
+        }
 
-		return context;
+        return context;
 	}
 }

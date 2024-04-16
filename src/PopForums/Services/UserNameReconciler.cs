@@ -1,9 +1,6 @@
-namespace PopForums.Services;
+using PopForums.Services.Interfaces;
 
-public interface IUserNameReconciler
-{
-	Task<string> GetUniqueNameForUser(string name);
-}
+namespace PopForums.Services;
 
 /// <summary>
 /// Used to make sure that incoming names from an external identity provider are unique. In other words, if there's
@@ -22,6 +19,7 @@ public class UserNameReconciler : IUserNameReconciler
 	{
 		var existingMatches = await _userRepository.GetUserNamesThatStartWith(name);
 		var uniqueName = name.ToUniqueName(existingMatches.ToList());
+
 		return uniqueName;
 	}
 }

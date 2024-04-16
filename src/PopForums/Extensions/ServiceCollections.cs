@@ -1,4 +1,6 @@
-﻿namespace PopForums.Extensions;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.Extensions;
 
 public static class ServiceCollections
 {

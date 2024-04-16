@@ -1,4 +1,6 @@
-﻿namespace PopForums.Composers;
+﻿using PopForums.Services.Interfaces;
+
+namespace PopForums.Composers;
 
 public interface IPrivateMessageStateComposer
 {
