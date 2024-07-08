@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using PopForums.AzureKit;
@@ -12,11 +11,7 @@ using PopForums.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using PopForums.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -88,10 +83,6 @@ services.Configure<GzipCompressionProviderOptions>(options => options.Level = Co
 services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
 
-// temporary for https://github.com/dotnet/aspnetcore/discussions/56205
-services.RemoveAll<IAuthenticationSchemeProvider>();
-services.AddSingleton<IAuthenticationSchemeProvider, LoggingAuthSchemeProvider>();
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -134,22 +125,3 @@ app.MapControllerRoute(
 	"{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-
-// temporary for https://github.com/dotnet/aspnetcore/discussions/56205
-
-public class LoggingAuthSchemeProvider(IOptions<AuthenticationOptions> options, IErrorLog logger)
-	: AuthenticationSchemeProvider(options)
-{
-	public override bool TryAddScheme(AuthenticationScheme scheme)
-	{
-		logger.Log(null, ErrorSeverity.Information, $"Adding scheme '{scheme.Name}'.");
-		return base.TryAddScheme(scheme);
-	}
-
-	public override void RemoveScheme(string name)
-	{
-		logger.Log(null, ErrorSeverity.Critical, $"Removing scheme '{name}'!!!{Environment.StackTrace}");
-		base.RemoveScheme(name);
-	}
-}
