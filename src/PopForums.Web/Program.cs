@@ -11,10 +11,21 @@ using PopForums.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
+// the following block is for use when you have multiple nodes running
+// (think Azure App Services) so they can all decode the auth cookie
+var configuration = builder.Configuration;
+if (configuration["DataProtectBlobConnectionString"] != null)
+{
+	services.AddDataProtection()
+		.SetApplicationName("popforumsdev")
+		.PersistKeysToAzureBlobStorage(configuration["DataProtectBlobConnectionString"], "keys", "antiforge");
+}
 
 services.AddControllersWithViews();
 services.AddRazorPages();
