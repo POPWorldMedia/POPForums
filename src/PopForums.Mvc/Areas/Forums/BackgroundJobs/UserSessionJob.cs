@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace PopForums.Mvc.Areas.Forums.BackgroundJobs;
 
-public class UserSessionJob(ISettingsManager settingsManager, IServiceHeartbeatService serviceHeartbeatService, IUserSessionWorker userSessionWorker) : BackgroundService
+public class UserSessionJob(IServiceHeartbeatService serviceHeartbeatService, IUserSessionWorker userSessionWorker) : BackgroundService
 {
 	private const double IntervalValue = 10000;
 	private readonly PeriodicTimer _timer = new(TimeSpan.FromMilliseconds(IntervalValue));

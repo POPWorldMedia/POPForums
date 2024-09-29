@@ -64,6 +64,7 @@ public static class ServiceCollections
 	{
 		services.AddHostedService<EmailJob>();
 		services.AddHostedService<UserSessionJob>();
+		services.AddHostedService<SearchIndexJob>();
 		return services;
 	}
 }

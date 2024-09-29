@@ -74,6 +74,7 @@ public static class ServiceCollections
 		services.AddTransient<IUserNameReconciler, UserNameReconciler>();
 		services.AddTransient<IUserEmailReconciler, UserEmailReconciler>();
 		services.AddTransient<IUserSessionWorker, UserSessionWorker>();
+		services.AddTransient<ISearchIndexWorker, SearchIndexWorker>();
 	}
 
 	public static void AddPopForumsBackgroundServices(this IServiceCollection services)
