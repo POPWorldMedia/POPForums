@@ -1,40 +1,21 @@
 ﻿namespace PopForums.Services;
 
-public class PostImageCleanupWorker
+public interface IPostImageCleanupWorker
 {
-	private static readonly object SyncRoot = new object();
+	void Execute();
+}
 
-	private PostImageCleanupWorker()
+public class PostImageCleanupWorker(IPostImageService postImageService, IErrorLog errorLog) : IPostImageCleanupWorker
+{
+	public async void Execute()
 	{
-	}
-
-	public void DeleteOldPostImages(IPostImageService postImageService, IErrorLog errorLog)
-	{
-		if (!Monitor.TryEnter(SyncRoot)) return;
 		try
 		{
-			postImageService.DeleteOldPostImages();
+			await postImageService.DeleteOldPostImages();
 		}
 		catch (Exception exc)
 		{
 			errorLog.Log(exc, ErrorSeverity.Error);
-		}
-		finally
-		{
-			Monitor.Exit(SyncRoot);
-		}
-	}
-
-	private static PostImageCleanupWorker _instance;
-	public static PostImageCleanupWorker Instance
-	{
-		get
-		{
-			if (_instance == null)
-			{
-				_instance = new PostImageCleanupWorker();
-			}
-			return _instance;
 		}
 	}
 }

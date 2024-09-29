@@ -73,15 +73,15 @@ services.AddSignalR();
 //services.AddPopForumsElasticSearch();
 
 // use Azure Functions queues for POP Forums using AzureKit for background tasks...
-// do NOT call AddPopForumsBackgroundServices()
+// do NOT call AddPopForumsBackgroundJobs()
 services.AddPopForumsAzureFunctionsAndQueues();
 
 // persist image uploads to Azure blob storage, see configuration
 services.AddPopForumsAzureBlobStorageForPostImages();
 
 // creates an instance of the background services for POP Forums... call this last in forum setup,
-// but don't use if you're running these in functions
-//services.AddPopForumsBackgroundServices();
+// but don't use if you're running these in functions with AddPopForumsAzureFunctionsAndQueues()
+//services.AddPopForumsBackgroundJobs();
 
 // send fewer bits
 services.AddResponseCompression(options =>

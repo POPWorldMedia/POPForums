@@ -1,13 +1,13 @@
 ﻿namespace PopForums.ScoringGame;
 
-public class AwardCalculatorWorker
+public interface IAwardCalculatorWorker
 {
-	private AwardCalculatorWorker()
-	{
-		// only allow Instance to create a new instance
-	}
+	void Execute();
+}
 
-	public async Task ProcessCalculation(IAwardCalculator calculator, IAwardCalculationQueueRepository awardCalculationQueueRepository, IErrorLog errorLog)
+public class AwardCalculatorWorker(IAwardCalculator calculator, IAwardCalculationQueueRepository awardCalculationQueueRepository, IErrorLog errorLog) : IAwardCalculatorWorker
+{
+	public async void Execute()
 	{
 		try
 		{
@@ -19,19 +19,6 @@ public class AwardCalculatorWorker
 		catch (Exception exc)
 		{
 			errorLog.Log(exc, ErrorSeverity.Error);
-		}
-	}
-
-	private static AwardCalculatorWorker _instance;
-	public static AwardCalculatorWorker Instance
-	{
-		get
-		{
-			if (_instance == null)
-			{
-				_instance = new AwardCalculatorWorker();
-			}
-			return _instance;
 		}
 	}
 }

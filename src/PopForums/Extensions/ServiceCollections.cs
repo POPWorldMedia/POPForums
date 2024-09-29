@@ -75,12 +75,9 @@ public static class ServiceCollections
 		services.AddTransient<IUserEmailReconciler, UserEmailReconciler>();
 		services.AddTransient<IUserSessionWorker, UserSessionWorker>();
 		services.AddTransient<ISearchIndexWorker, SearchIndexWorker>();
+		services.AddTransient<IAwardCalculatorWorker, AwardCalculatorWorker>();
+		services.AddTransient<ICloseAgedTopicsWorker, CloseAgedTopicsWorker>();
+		services.AddTransient<IPostImageCleanupWorker, PostImageCleanupWorker>();
+		services.AddTransient<ISubscribeNotificationWorker, SubscribeNotificationWorker>();
 	}
-
-	public static void AddPopForumsBackgroundServices(this IServiceCollection services)
-	{
-		var serviceProvider = services.BuildServiceProvider();
-		BackgroundServices.SetupServices(serviceProvider);
-	}
-
 }

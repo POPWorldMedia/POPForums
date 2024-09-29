@@ -65,6 +65,10 @@ public static class ServiceCollections
 		services.AddHostedService<EmailJob>();
 		services.AddHostedService<UserSessionJob>();
 		services.AddHostedService<SearchIndexJob>();
+		services.AddHostedService<AwardCalculatorJob>();
+		services.AddHostedService<CloseAgedTopicsJob>();
+		services.AddHostedService<PostImageCleanupJob>();
+		services.AddHostedService<SubscribeNotificationJob>();
 		return services;
 	}
 }
