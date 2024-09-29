@@ -154,7 +154,15 @@ docker volume create sqldata
 ```
 Then fire up the container and associate it with the volume, and tell it to use that volume for all of the data.
 ```
-docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -e 'MSSQL_DATA_DIR=/DATA' -p 1433:1433 --name sqledge -v sqldata:/DATA  -d mcr.microsoft.com/azure-sql-edge
+docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sqledge -v sqldata:/DATA -d mcr.microsoft.com/azure-sql-edge
+```
+If you would like to host the data files in your own file system, you can start the container like this, replacing the approprirate paths to your local spots, where `<host directory>` is your spot:
+```
+docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sql2022 -v <host directory>:/var/opt/mssql  -d mcr.microsoft.com/mssql/server:2022-latest
+```
+And if you need to copy files out of an existing container, you can do that too. `~/sqlvolumes` in this case points to a folder in my user folders on a Mac:
+```
+docker cp containerID3bed54c7734b:/var/opt/mssql ~/sqlvolumes
 ```
 
 ## Running Azure Functions on a Mac
