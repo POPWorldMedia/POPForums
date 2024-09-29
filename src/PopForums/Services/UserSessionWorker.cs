@@ -1,41 +1,21 @@
 ﻿namespace PopForums.Services;
 
-public class UserSessionWorker
+public interface IUserSessionWorker
 {
-	private static readonly object _syncRoot = new Object();
+	void Execute();
+}
 
-	private UserSessionWorker()
+public class UserSessionWorker(IUserSessionService sessionService, IErrorLog errorLog) : IUserSessionWorker
+{
+	public async void Execute()
 	{
-		// only allow Instance to create a new instance
-	}
-
-	public void CleanUpExpiredSessions(IUserSessionService sessionService, IErrorLog errorLog)
-	{
-		if (!Monitor.TryEnter(_syncRoot)) return;
 		try
 		{
-			sessionService.CleanUpExpiredSessions();
+			await sessionService.CleanUpExpiredSessions();
 		}
 		catch (Exception exc)
 		{
 			errorLog.Log(exc, ErrorSeverity.Error);
-		}
-		finally
-		{
-			Monitor.Exit(_syncRoot);
-		}
-	}
-
-	private static UserSessionWorker _instance;
-	public static UserSessionWorker Instance
-	{
-		get
-		{
-			if (_instance == null)
-			{
-				_instance = new UserSessionWorker();
-			}
-			return _instance;
 		}
 	}
 }

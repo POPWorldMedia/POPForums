@@ -63,6 +63,7 @@ public static class ServiceCollections
 	public static IServiceCollection AddPopForumsBackgroundJobs(this IServiceCollection services)
 	{
 		services.AddHostedService<EmailJob>();
+		services.AddHostedService<UserSessionJob>();
 		return services;
 	}
 }
