@@ -1,4 +1,5 @@
-﻿using PopIdentity.Extensions;
+﻿using PopForums.Mvc.Areas.Forums.BackgroundJobs;
+using PopIdentity.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Extensions;
 
@@ -56,6 +57,12 @@ public static class ServiceCollections
 				};
 			});
 
+		return services;
+	}
+
+	public static IServiceCollection AddPopForumsBackgroundJobs(this IServiceCollection services)
+	{
+		services.AddHostedService<EmailJob>();
 		return services;
 	}
 }

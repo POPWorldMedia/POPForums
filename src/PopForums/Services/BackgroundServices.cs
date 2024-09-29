@@ -7,21 +7,21 @@ public class BackgroundServices
 		var setupService = serviceProvider.GetService<ISetupService>();
 		if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
 			return;
-		_emailService = new EmailApplicationService();
+		//_emailService = new EmailApplicationService();
 		_userSessionService = new UserSessionApplicationService();
 		_searchIndexService = new SearchIndexApplicationService();
 		_awardCalcService = new AwardCalculatorApplicationService();
 		_closeAgedTopicsService = new CloseAgedTopicsApplicationService();
 		_postImageCleanupService = new PostImageCleanupService();
 		_subscribeNotificationApplicationService = new SubscribeNotificationApplicationService();
-		_emailService.Start(serviceProvider);
+		//_emailService.Start(serviceProvider);
 		_userSessionService.Start(serviceProvider);
 		_searchIndexService.Start(serviceProvider);
 		_awardCalcService.Start(serviceProvider);
 		_closeAgedTopicsService.Start(serviceProvider);
 		_postImageCleanupService.Start(serviceProvider);
 		_subscribeNotificationApplicationService.Start(serviceProvider);
-		ApplicationServices.Add(_emailService);
+		//ApplicationServices.Add(_emailService);
 		ApplicationServices.Add(_userSessionService);
 		ApplicationServices.Add(_searchIndexService);
 		ApplicationServices.Add(_awardCalcService);
@@ -30,7 +30,7 @@ public class BackgroundServices
 		ApplicationServices.Add(_subscribeNotificationApplicationService);
 	}
 
-	private static EmailApplicationService _emailService;
+	//private static EmailApplicationService _emailService;
 	private static UserSessionApplicationService _userSessionService;
 	private static SearchIndexApplicationService _searchIndexService;
 	private static AwardCalculatorApplicationService _awardCalcService;
