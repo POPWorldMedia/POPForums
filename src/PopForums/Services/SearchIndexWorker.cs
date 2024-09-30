@@ -1,20 +1,17 @@
 ﻿namespace PopForums.Services;
 
-public class SearchIndexWorker
+public interface ISearchIndexWorker
 {
-	private static readonly object _syncRoot = new object();
+	void Execute();
+}
 
-	private SearchIndexWorker()
+public class SearchIndexWorker(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem, ISearchService searchService) : ISearchIndexWorker
+{
+	public async void Execute()
 	{
-		// only allow Instance to create a new instance
-	}
-
-	public void IndexNextTopic(IErrorLog errorLog, ISearchIndexSubsystem searchIndexSubsystem, ISearchService searchService, ITenantService tenantService)
-	{
-		if (!Monitor.TryEnter(_syncRoot, 5000)) return;
 		try
 		{
-			var payload = searchService.GetNextTopicForIndexing().Result;
+			var payload = await searchService.GetNextTopicForIndexing();
 			if (payload == null)
 				return;
 			searchIndexSubsystem.DoIndex(payload.TopicID, payload.TenantID, payload.IsForRemoval);
@@ -22,23 +19,6 @@ public class SearchIndexWorker
 		catch (Exception exc)
 		{
 			errorLog.Log(exc, ErrorSeverity.Error);
-		}
-		finally
-		{
-			Monitor.Exit(_syncRoot);
-		}
-	}
-
-	private static SearchIndexWorker _instance;
-	public static SearchIndexWorker Instance
-	{
-		get
-		{
-			if (_instance == null)
-			{
-				_instance = new SearchIndexWorker();
-			}
-			return _instance;
 		}
 	}
 }

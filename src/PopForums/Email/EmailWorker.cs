@@ -1,31 +1,25 @@
-﻿namespace PopForums.Email;
+namespace PopForums.Email;
 
-public class MailWorker
+public interface IEmailWorker
 {
-	private static readonly object SyncRoot = new object();
+	Task Execute();
+}
 
-	private MailWorker()
+public class EmailWorker(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailMessageRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog) : IEmailWorker
+{
+	public async Task Execute()
 	{
-		// only allow Instance to create a new instance
-	}
-
-	public void SendQueuedMessages(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog)
-	{
-		if (!Monitor.TryEnter(SyncRoot))
-		{
-			return;
-		}
 		try
 		{
 			var messageGroup = new List<QueuedEmailMessage>();
 			for (var i = 1; i <= settingsManager.Current.MailerQuantity; i++)
 			{
-				var payload = emailQueueRepository.Dequeue().Result;
+				var payload = await emailQueueRepository.Dequeue();
 				if (payload == null)
 					break;
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.DeleteMassMessage)
 					throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
-				var queuedMessage = queuedEmailRepository.GetMessage(payload.MessageID).Result;
+				var queuedMessage = await queuedEmailMessageRepository.GetMessage(payload.MessageID);
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
 				{
 					queuedMessage.ToEmail = payload.ToEmail;
@@ -34,7 +28,7 @@ public class MailWorker
 				if (queuedMessage == null)
 					break;
 				messageGroup.Add(queuedMessage);
-				queuedEmailRepository.DeleteMessage(queuedMessage.MessageID);
+				await queuedEmailMessageRepository.DeleteMessage(queuedMessage.MessageID);
 			}
 			Parallel.ForEach(messageGroup, message =>
 			{
@@ -54,19 +48,6 @@ public class MailWorker
 		catch (Exception exc)
 		{
 			errorLog.Log(exc, ErrorSeverity.Error);
-		}
-		finally
-		{
-			Monitor.Exit(SyncRoot);
-		}
-	}
-
-	private static readonly MailWorker _instance = new MailWorker();
-	public static MailWorker Instance
-	{
-		get
-		{
-			return _instance;
 		}
 	}
 }
