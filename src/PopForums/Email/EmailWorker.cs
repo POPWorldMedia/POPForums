@@ -2,24 +2,24 @@ namespace PopForums.Email;
 
 public interface IEmailWorker
 {
-	void Execute();
+	Task Execute();
 }
 
 public class EmailWorker(ISettingsManager settingsManager, ISmtpWrapper smtpWrapper, IQueuedEmailMessageRepository queuedEmailMessageRepository, IEmailQueueRepository emailQueueRepository, IErrorLog errorLog) : IEmailWorker
 {
-	public async void Execute()
+	public async Task Execute()
 	{
 		try
 		{
 			var messageGroup = new List<QueuedEmailMessage>();
 			for (var i = 1; i <= settingsManager.Current.MailerQuantity; i++)
 			{
-				var payload = emailQueueRepository.Dequeue().Result;
+				var payload = await emailQueueRepository.Dequeue();
 				if (payload == null)
 					break;
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.DeleteMassMessage)
 					throw new NotImplementedException($"EmailQueuePayloadType {payload.EmailQueuePayloadType} not implemented.");
-				var queuedMessage = queuedEmailMessageRepository.GetMessage(payload.MessageID).Result;
+				var queuedMessage = await queuedEmailMessageRepository.GetMessage(payload.MessageID);
 				if (payload.EmailQueuePayloadType == EmailQueuePayloadType.MassMessage)
 				{
 					queuedMessage.ToEmail = payload.ToEmail;
