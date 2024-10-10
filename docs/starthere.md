@@ -158,7 +158,7 @@ docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --nam
 ```
 If you would like to host the data files in your own file system, you can start the container like this, replacing the approprirate paths to your local spots, where `<host directory>` is your spot:
 ```
-docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sql2022 -v <host directory>:/var/opt/mssql  -d mcr.microsoft.com/mssql/server:2022-latest
+docker run -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sql2022 -v <host directory>:/var/opt/mssql/data -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 And if you need to copy files out of an existing container, you can do that too. `~/sqlvolumes` in this case points to a folder in my user folders on a Mac:
 ```
