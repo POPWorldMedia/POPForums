@@ -13,19 +13,21 @@ public class SettingsManager : ISettingsManager
 	{
 		_settingsRepository = settingsRepository;
 		_errorLog = errorLog;
+		_settingsRepository.OnSettingsInvalidated += () =>
+		{
+			_settings = null;
+		};
 	}
 
 	private readonly ISettingsRepository _settingsRepository;
 	private readonly IErrorLog _errorLog;
-	private static DateTime _lastLoad;
-	private static readonly object SyncRoot = new object();
 	private Settings _settings;
 
 	public Settings Current
 	{
 		get
 		{
-			if (_settings == null || _settingsRepository.IsStale(_lastLoad))
+			if (_settings == null)
 				LoadSettings();
 			return _settings;
 		}
@@ -67,7 +69,6 @@ public class SettingsManager : ISettingsManager
 			}
 		}
 		_settings = settings;
-		_lastLoad = DateTime.UtcNow;
 	}
 
 	public void Save(Settings settings)
@@ -79,14 +80,11 @@ public class SettingsManager : ISettingsManager
 	public void SaveCurrent()
 	{
 		var dictionary = new Dictionary<string, object>();
-		lock (SyncRoot)
+		var properties = Current.GetType().GetProperties();
+		foreach (var property in properties)
 		{
-			var properties = Current.GetType().GetProperties();
-			foreach (var property in properties)
-			{
-				dictionary.Add(property.Name, property.GetValue(Current, null));
-			}
-			_settingsRepository.Save(dictionary);
+			dictionary.Add(property.Name, property.GetValue(Current, null));
 		}
+		_settingsRepository.Save(dictionary);
 	}
 }

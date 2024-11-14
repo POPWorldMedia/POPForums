@@ -83,4 +83,10 @@ public class CacheHelper : ICacheHelper
 	}
 
 	public event Action<string> OnRemoveCacheKey;
+	
+	public string GetEffectiveCacheKey(string key)
+	{
+		var effectiveKey = PrefixTenantOnKey(key);
+		return effectiveKey;
+	}
 }

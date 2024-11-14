@@ -54,4 +54,6 @@ public interface ICacheHelper
 	/// Implementations of ICacheHelper should call this event whenever they invalidate a cached object.
 	/// </remarks>
 	event Action<string> OnRemoveCacheKey;
+
+	string GetEffectiveCacheKey(string key);
 }

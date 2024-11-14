@@ -71,12 +71,12 @@ public class SettingsTests
 	{
 		var settingsRepo = Substitute.For<ISettingsRepository>();
 		settingsRepo.Get().Returns(new Dictionary<string, string>());
-		settingsRepo.IsStale(Arg.Any<DateTime>()).Returns(true);
 		var errorLog = Substitute.For<IErrorLog>();
 		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
-		var settings = settingsManager.Current;
-		settings = settingsManager.Current;
+		_ = settingsManager.Current;
+		settingsRepo.OnSettingsInvalidated += Raise.Event<Action>();
+		_ = settingsManager.Current;
 		settingsRepo.Received(2).Get();
 	}
 
@@ -85,13 +85,12 @@ public class SettingsTests
 	{
 		var settingsRepo = Substitute.For<ISettingsRepository>();
 		settingsRepo.Get().Returns(new Dictionary<string, string>());
-		settingsRepo.IsStale(Arg.Any<DateTime>()).Returns(false);
 		var errorLog = Substitute.For<IErrorLog>();
 		var settingsManager = new SettingsManager(settingsRepo, errorLog);
 
-		var settings = settingsManager.Current;
-		settings = settingsManager.Current;
-		settingsRepo.Received().Get();
+		_ = settingsManager.Current;
+		_ = settingsManager.Current;
+		settingsRepo.Received(1).Get();
 	}
 
 	[Fact]

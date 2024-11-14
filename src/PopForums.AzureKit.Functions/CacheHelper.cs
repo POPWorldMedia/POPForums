@@ -37,4 +37,9 @@ public class CacheHelper : ICacheHelper
 	}
 
 	public event Action<string> OnRemoveCacheKey;
+	
+	public string GetEffectiveCacheKey(string key)
+	{
+		return key;
+	}
 }
