@@ -61,11 +61,15 @@ public class CacheHelper : ICacheHelper
 				{
 					if (_cache == null)
 						return;
-					_cache.Remove(value.ToString());
+					var valueString = value.ToString();
+					_cache.Remove(valueString);
+					OnRemoveCacheKey?.Invoke(valueString);
 				});
 			}
 		}
 	}
+	
+	public event Action<string>? OnRemoveCacheKey;
 
 	private string PrefixTenantOnKey(string key)
 	{

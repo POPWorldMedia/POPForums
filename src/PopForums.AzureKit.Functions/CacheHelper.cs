@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PopForums.Configuration;
 
 namespace PopForums.AzureKit.Functions;
@@ -34,4 +35,6 @@ public class CacheHelper : ICacheHelper
 	{
 		return null;
 	}
+
+	public event Action<string> OnRemoveCacheKey;
 }

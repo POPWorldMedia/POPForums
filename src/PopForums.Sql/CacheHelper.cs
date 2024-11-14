@@ -61,6 +61,7 @@ public class CacheHelper : ICacheHelper
 	{
 		key = PrefixTenantOnKey(key);
 		_cache.Remove(key);
+		OnRemoveCacheKey?.Invoke(key);
 	}
 
 	public T GetCacheObject<T>(string key)
@@ -80,4 +81,6 @@ public class CacheHelper : ICacheHelper
 			return rootPages[page];
 		return null;
 	}
+
+	public event Action<string> OnRemoveCacheKey;
 }
