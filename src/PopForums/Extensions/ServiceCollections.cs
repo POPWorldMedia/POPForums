@@ -7,7 +7,7 @@ public static class ServiceCollections
 		// config
 		services.AddTransient<IConfig, Config>();
 		services.AddTransient<IErrorLog, ErrorLog>();
-		services.AddTransient<ISettingsManager, SettingsManager>();
+		services.AddSingleton<ISettingsManager, SettingsManager>();
 		services.AddTransient<ITenantService, TenantService>();
 
 		// composers

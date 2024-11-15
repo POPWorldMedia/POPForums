@@ -6,9 +6,9 @@ public class SettingsRepository : ISettingsRepository
 	{
 		_sqlObjectFactory = sqlObjectFactory;
 		_cacheHelper = cacheHelper;
-		var effectiveCacheKey = _cacheHelper.GetEffectiveCacheKey(CacheKey);
 		_cacheHelper.OnRemoveCacheKey += key =>
 		{
+			var effectiveCacheKey = _cacheHelper.GetEffectiveCacheKey(CacheKey);
 			if (key == effectiveCacheKey)
 				OnSettingsInvalidated?.Invoke();
 		};
