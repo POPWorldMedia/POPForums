@@ -6,11 +6,19 @@ public class SettingsRepository : ISettingsRepository
 	{
 		_sqlObjectFactory = sqlObjectFactory;
 		_cacheHelper = cacheHelper;
+		_cacheHelper.OnRemoveCacheKey += key =>
+		{
+			var effectiveCacheKey = _cacheHelper.GetEffectiveCacheKey(CacheKey);
+			if (key == effectiveCacheKey)
+				OnSettingsInvalidated?.Invoke();
+		};
 	}
 
 	private readonly ISqlObjectFactory _sqlObjectFactory;
 	private readonly ICacheHelper _cacheHelper;
 	private const string CacheKey = "pf.settings";
+
+	public event Action OnSettingsInvalidated;
 
 	public Dictionary<string, string> Get()
 	{
@@ -33,10 +41,5 @@ public class SettingsRepository : ISettingsRepository
 				connection.Execute("INSERT INTO pf_Setting (Setting, [Value]) VALUES (@Setting, @Value)", new { Setting = key.Key, Value = key.Value == null ? string.Empty : key.Value.ToString()});
 		});
 		_cacheHelper.RemoveCacheObject(CacheKey);
-	}
-
-	public bool IsStale(DateTime lastLoad)
-	{
-		return false;
 	}
 }

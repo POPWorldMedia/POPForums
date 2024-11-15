@@ -61,13 +61,17 @@ public class CacheHelper : ICacheHelper
 				{
 					if (_cache == null)
 						return;
-					_cache.Remove(value.ToString());
+					var valueString = value.ToString();
+					_cache.Remove(valueString);
+					OnRemoveCacheKey?.Invoke(valueString);
 				});
 			}
 		}
 	}
+	
+	public event Action<string> OnRemoveCacheKey;
 
-	private string PrefixTenantOnKey(string key)
+	public string GetEffectiveCacheKey(string key)
 	{
 		var tenantID = _tenantService.GetTenant();
 		return $"{tenantID}:{key}";
@@ -89,7 +93,7 @@ public class CacheHelper : ICacheHelper
 
 	public void SetCacheObject(string key, object value, double seconds)
 	{
-		key = PrefixTenantOnKey(key);
+		key = GetEffectiveCacheKey(key);
 		var timeSpan = TimeSpan.FromSeconds(seconds);
 		var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
 		_cacheTelemetry.Start();
@@ -112,7 +116,7 @@ public class CacheHelper : ICacheHelper
 
 	public void SetLongTermCacheObject(string key, object value)
 	{
-		key = PrefixTenantOnKey(key);
+		key = GetEffectiveCacheKey(key);
 		var options = new MemoryCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(60) };
 		_cacheTelemetry.Start();
 		_cache.Set(key, value, options);
@@ -134,7 +138,7 @@ public class CacheHelper : ICacheHelper
 
 	public void SetPagedListCacheObject<T>(string rootKey, int page, List<T> value)
 	{
-		rootKey = PrefixTenantOnKey(rootKey);
+		rootKey = GetEffectiveCacheKey(rootKey);
 		_cache.TryGetValue(rootKey, out Dictionary<int, List<T>> rootPages);
 		if (rootPages == null)
 			rootPages = new Dictionary<int, List<T>>();
@@ -150,7 +154,7 @@ public class CacheHelper : ICacheHelper
 
 	public void RemoveCacheObject(string key)
 	{
-		key = PrefixTenantOnKey(key);
+		key = GetEffectiveCacheKey(key);
 		_cache.Remove(key);
 		try
 		{
@@ -167,7 +171,7 @@ public class CacheHelper : ICacheHelper
 
 	public T GetCacheObject<T>(string key)
 	{
-		key = PrefixTenantOnKey(key);
+		key = GetEffectiveCacheKey(key);
 		_cacheTelemetry.Start();
 		var cacheObject = _cache.Get(key);
 		if (cacheObject != null)
@@ -205,7 +209,7 @@ public class CacheHelper : ICacheHelper
 
 	public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
 	{
-		rootKey = PrefixTenantOnKey(rootKey);
+		rootKey = GetEffectiveCacheKey(rootKey);
 		_cacheTelemetry.Start();
 		_cache.TryGetValue(rootKey, out Dictionary<int, List<T>> rootPages);
 		if (rootPages == null)

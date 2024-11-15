@@ -37,12 +37,23 @@ public interface ICacheHelper
 	/// <param name="key"></param>
 	void RemoveCacheObject(string key);
 	/// <summary>
-	/// Get an object from cache.
+	/// Removes an object from cache.
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="key"></param>
-	/// <returns></returns>
+	/// <param name="key">Key of the cache item to remove.</param>
+	/// <remarks>
+	/// Implementations of this method should call the <see cref="OnRemoveCacheKey"/> event.
+	/// </remarks>
 	T GetCacheObject<T>(string key);
 
 	List<T> GetPagedListCacheObject<T>(string rootKey, int page);
+	
+	/// <summary>
+	/// Can be used as a notification mechanism for downstream actions when cache is invalidated.
+	/// </summary>
+	/// <remarks>
+	/// Implementations of ICacheHelper should call this event whenever they invalidate a cached object.
+	/// </remarks>
+	event Action<string> OnRemoveCacheKey;
+
+	string GetEffectiveCacheKey(string key);
 }

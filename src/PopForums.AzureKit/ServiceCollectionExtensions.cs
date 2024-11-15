@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
 		var config = serviceProvider.GetService<IConfig>();
 		if (config.ForceLocalOnly)
 			return services;
-		services.Replace(ServiceDescriptor.Transient<ICacheHelper, PopForums.AzureKit.Redis.CacheHelper>());
+		services.Replace(ServiceDescriptor.Singleton<ICacheHelper, PopForums.AzureKit.Redis.CacheHelper>());
 		return services;
 	}
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PopForums.Configuration;
 
 namespace PopForums.AzureKit.Functions;
@@ -33,5 +34,12 @@ public class CacheHelper : ICacheHelper
 	public List<T> GetPagedListCacheObject<T>(string rootKey, int page)
 	{
 		return null;
+	}
+
+	public event Action<string> OnRemoveCacheKey;
+	
+	public string GetEffectiveCacheKey(string key)
+	{
+		return key;
 	}
 }
