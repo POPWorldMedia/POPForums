@@ -17,7 +17,7 @@ public class ClaimsToRoleMapperTests
 	public class MapRoles : ClaimsToRoleMapperTests
 	{
 		[Fact]
-		public async void NoMappingWithNoClaims()
+		public async Task NoMappingWithNoClaims()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns((string)null);
@@ -33,7 +33,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void NoMappingWithNoMatchingClaims()
+		public async Task NoMappingWithNoMatchingClaims()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns("iowfhwe");
@@ -44,7 +44,6 @@ public class ClaimsToRoleMapperTests
 			var claims = new List<Claim>();
 			var savedRoles = Array.Empty<string>();
 			await _roleRepo.ReplaceUserRoles(user.UserID, Arg.Do<string[]>(x => savedRoles = x));
-            ;
 
 			await service.MapRoles(user, claims);
 
@@ -52,7 +51,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void NoMappingWithNoMatchingClaimsValues()
+		public async Task NoMappingWithNoMatchingClaimsValues()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns("admin");
@@ -74,7 +73,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void AdminNameNoValueMapsAdminRole()
+		public async Task AdminNameNoValueMapsAdminRole()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns("adminclaim");
@@ -93,7 +92,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void AdminNameWithValueMapsAdminRole()
+		public async Task AdminNameWithValueMapsAdminRole()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns("adminclaim");
@@ -112,7 +111,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void ModNameNoValueMapsModRole()
+		public async Task ModNameNoValueMapsModRole()
 		{
 			var service = GetService();
 			_config.OAuthModeratorClaimType.Returns("modclaim");
@@ -131,7 +130,7 @@ public class ClaimsToRoleMapperTests
 		}
 		
 		[Fact]
-		public async void ModNameWithValueMapsModRole()
+		public async Task ModNameWithValueMapsModRole()
 		{
 			var service = GetService();
 			_config.OAuthAdminClaimType.Returns("modclaim");
