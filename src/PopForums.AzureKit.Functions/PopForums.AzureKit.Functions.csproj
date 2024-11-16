@@ -3,7 +3,7 @@
 		<Description>PopForums AzureKit Functions</Description>
 		<VersionPrefix>21.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 		<PackageId>PopForums.AzureKit.Functions</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>

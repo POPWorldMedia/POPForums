@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<VersionPrefix>21.0.0-alpha1</VersionPrefix>
 		<AssemblyName>PopForums.Web</AssemblyName>
 		<PackageId>PopForums.Web</PackageId>

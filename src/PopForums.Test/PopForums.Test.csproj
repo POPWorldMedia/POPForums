@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<VersionPrefix>21.0.0-alpha1</VersionPrefix>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyName>PopForums.Test</AssemblyName>
 		<PackageId>PopForums.Test</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
