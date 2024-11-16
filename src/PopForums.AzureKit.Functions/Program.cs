@@ -22,6 +22,11 @@ var configuration = new ConfigurationBuilder()
 var config = new Config(configuration);
 
 var host = new HostBuilder()
+	.UseDefaultServiceProvider((_, options) =>
+	{
+		// there are types not used in functions in core library, so don't choke on them
+		options.ValidateOnBuild = false;
+	})
 	.ConfigureFunctionsWorkerDefaults()
 	.ConfigureAppConfiguration(c =>
 	{
