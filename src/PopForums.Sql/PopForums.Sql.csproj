@@ -4,7 +4,7 @@
 		<Description>PopForums.Data.Sql Class Library</Description>
 		<VersionPrefix>21.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyName>PopForums.Sql</AssemblyName>
 		<PackageId>PopForums.Sql</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -25,7 +25,7 @@
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
 		<PackageReference Include="System.Data.Common" Version="4.3.0" />
 	</ItemGroup>
 

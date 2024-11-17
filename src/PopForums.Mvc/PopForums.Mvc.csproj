@@ -4,7 +4,7 @@
 		<Description>PopForums Mvc Class Library</Description>
 		<VersionPrefix>21.0.0-alpha1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<AssemblyName>PopForums.Mvc</AssemblyName>
 		<PackageId>PopForums.Mvc</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -24,7 +24,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="PopIdentity" Version="4.4.0" />
+		<PackageReference Include="PopIdentity" Version="4.5.0" />
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 	</ItemGroup>
 

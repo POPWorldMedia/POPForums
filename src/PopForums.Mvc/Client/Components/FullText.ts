@@ -160,13 +160,14 @@ namespace PopForums {
     }
     
         private static editorCSS = "/PopForums/lib/bootstrap/dist/css/bootstrap.min.css,/PopForums/lib/PopForums/dist/Editor.min.css";
-    private static postNoImageToolbar = "cut copy paste | bold italic | bullist numlist blockquote removeformat | link";
+    private static postNoImageToolbar = "bold italic | bullist numlist blockquote removeformat | link";
     editorSettings = {
+        license_key: 'gpl',
         target: null as HTMLElement,
         plugins: "lists image link",
         content_css: FullText.editorCSS,
         menubar: false,
-        toolbar: "cut copy paste | bold italic | bullist numlist blockquote removeformat | link | image imageup",
+        toolbar: "bold italic | bullist numlist blockquote removeformat | link | image imageup",
         statusbar: false,
         link_target_list: false,
         link_title: false,

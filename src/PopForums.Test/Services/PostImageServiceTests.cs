@@ -127,7 +127,7 @@ public class PostImageServiceTests
 		}
 
 		[Fact]
-		public async void PersistsImageAndTempRecordAndReturnsPayload()
+		public async Task PersistsImageAndTempRecordAndReturnsPayload()
 		{
 			var service = GetService();
 			var tenantID = "pop";
@@ -152,7 +152,7 @@ public class PostImageServiceTests
 	public class DeleteTempRecord : PostImageServiceTests
 	{
 		[Fact]
-		public async void TempRepoCalledWithGuid()
+		public async Task TempRepoCalledWithGuid()
 		{
 			var service = GetService();
 			var guid = Guid.NewGuid();
@@ -167,7 +167,7 @@ public class PostImageServiceTests
 	public class DeleteTempRecords : PostImageServiceTests
 	{
 		[Fact]
-		public async void TempRepoCalledWithGuidsFoundInText()
+		public async Task TempRepoCalledWithGuidsFoundInText()
 		{
 			var service = GetService();
 			var guid = Guid.NewGuid();
@@ -186,7 +186,7 @@ public class PostImageServiceTests
 		}
 
 		[Fact]
-		public async void TempRepoCalledExcludingGuidsNotFoundInText()
+		public async Task TempRepoCalledExcludingGuidsNotFoundInText()
 		{
 			var service = GetService();
 			var guid = Guid.NewGuid();
@@ -209,7 +209,7 @@ public class PostImageServiceTests
 	public class DeleteOldPostImages : PostImageServiceTests
 	{
 		[Fact]
-		public async void PostImageRepoCalledForEachEntry()
+		public async Task PostImageRepoCalledForEachEntry()
 		{
 			var service = GetService();
 			var tenantID = "pop";
@@ -224,7 +224,7 @@ public class PostImageServiceTests
 		}
 
 		[Fact]
-		public async void PostImageTempRepoCalledForEachEntry()
+		public async Task PostImageTempRepoCalledForEachEntry()
 		{
 			var service = GetService();
 			var tenantID = "pop";

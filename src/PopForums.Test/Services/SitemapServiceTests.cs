@@ -15,7 +15,7 @@ public class SitemapServiceTests
 	public class GetSitemapPageCount : SitemapServiceTests
 	{
 		[Fact]
-		public async void ZeroTopicsReturns1()
+		public async Task ZeroTopicsReturns1()
 		{
 			var service = GetService();
 			var list = new Dictionary<int, List<string>>();
@@ -28,7 +28,7 @@ public class SitemapServiceTests
 		}
 			
 		[Fact]
-		public async void MaxTopicsReturns1()
+		public async Task MaxTopicsReturns1()
 		{
 			var service = GetService();
 			var list = new Dictionary<int, List<string>>();
@@ -41,7 +41,7 @@ public class SitemapServiceTests
 		}
 			
 		[Fact]
-		public async void MaxPlusOneTopicsReturns2()
+		public async Task MaxPlusOneTopicsReturns2()
 		{
 			var service = GetService();
 			var list = new Dictionary<int, List<string>>();
@@ -54,7 +54,7 @@ public class SitemapServiceTests
 		}
 			
 		[Fact]
-		public async void NonViewableListPassedToTopicRepoForCount()
+		public async Task NonViewableListPassedToTopicRepoForCount()
 		{
 			var service = GetService();
 			var list = new Dictionary<int, List<string>>
