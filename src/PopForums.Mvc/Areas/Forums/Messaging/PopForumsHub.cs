@@ -68,7 +68,7 @@ public class PopForumsHub : Hub
 
 	private int GetUserID()
 	{
-		var userIDstring = Context.User?.Claims.Single(x => x.Type == PopForumsAuthenticationDefaults.ForumsUserIDType);
+		var userIDstring = Context.User?.Claims.FirstOrDefault(x => x.Type == PopForumsAuthenticationDefaults.ForumsUserIDType);
 		if (userIDstring == null)
 			throw new Exception("No forum user ID claim found in hub context of User");
 		var userID = Convert.ToInt32(userIDstring.Value);
