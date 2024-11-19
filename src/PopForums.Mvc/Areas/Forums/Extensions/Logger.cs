@@ -1,4 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Extensions;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+
+namespace PopForums.Mvc.Areas.Forums.Extensions;
 
 public class Logger : ILogger
 {
@@ -30,7 +32,7 @@ public class Logger : ILogger
 					var s = new StringBuilder();
 					var user =
 						context.User.Identities.SingleOrDefault(
-							x => x.AuthenticationType == PopForumsAuthorizationDefaults.AuthenticationScheme);
+							x => x.AuthenticationType == PopForumsAuthenticationDefaults.AuthenticationScheme);
 					if (user != null)
 					{
 						s.Append("User: ");

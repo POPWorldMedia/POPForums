@@ -1,4 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Extensions;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+
+namespace PopForums.Mvc.Areas.Forums.Extensions;
 
 public static class AuthorizationOptionsExtensions
 {
@@ -8,7 +10,7 @@ public static class AuthorizationOptionsExtensions
 	/// <param name="options"></param>
 	public static void AddPopForumsPolicies(this AuthorizationOptions options)
 	{
-		options.AddPolicy(PermanentRoles.Admin, policy => policy.RequireClaim(PopForumsAuthorizationDefaults.ForumsClaimType, PermanentRoles.Admin));
-		options.AddPolicy(PermanentRoles.Moderator, policy => policy.RequireClaim(PopForumsAuthorizationDefaults.ForumsClaimType, PermanentRoles.Moderator));
+		options.AddPolicy(PermanentRoles.Admin, policy => policy.RequireClaim(PopForumsAuthenticationDefaults.ForumsClaimType, PermanentRoles.Admin));
+		options.AddPolicy(PermanentRoles.Moderator, policy => policy.RequireClaim(PopForumsAuthenticationDefaults.ForumsClaimType, PermanentRoles.Moderator));
 	}
 }

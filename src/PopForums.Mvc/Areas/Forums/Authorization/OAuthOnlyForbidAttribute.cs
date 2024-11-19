@@ -1,17 +1,10 @@
 namespace PopForums.Mvc.Areas.Forums.Authorization;
 
-public class OAuthOnlyForbidAttribute : Attribute, IResourceFilter
+public class OAuthOnlyForbidAttribute(IConfig config) : Attribute, IResourceFilter
 {
-	private readonly IConfig _config;
-
-	public OAuthOnlyForbidAttribute(IConfig config)
-	{
-		_config = config;
-	}
-
 	public void OnResourceExecuting(ResourceExecutingContext context)
 	{
-		if (_config.IsOAuthOnly)
+		if (config.IsOAuthOnly)
 			context.Result = new ForbidResult();
 	}
 

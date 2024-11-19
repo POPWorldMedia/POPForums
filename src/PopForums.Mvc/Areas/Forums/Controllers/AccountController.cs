@@ -1,4 +1,5 @@
-﻿using PopIdentity;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+using PopIdentity;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
@@ -50,7 +51,7 @@ public class AccountController : Controller
 	private readonly IReCaptchaService _reCaptchaService;
 	private readonly IOAuthOnlyService _oAuthOnlyService;
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public IActionResult Create()
 	{
@@ -75,7 +76,7 @@ public class AccountController : Controller
 		ViewData[TosKey] = _settingsManager.Current.TermsOfService;
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> Create(SignupData signupData)
@@ -146,7 +147,7 @@ public class AccountController : Controller
 			modelState.AddModelError("Email", Resources.IPBanned);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> Verify(string id)
 	{
@@ -163,7 +164,7 @@ public class AccountController : Controller
 		return View();
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public RedirectToActionResult VerifyCode(string authorizationCode)
@@ -171,7 +172,7 @@ public class AccountController : Controller
 		return RedirectToAction("Verify", new { id = authorizationCode });
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> RequestCode(string email)
 	{
@@ -190,13 +191,13 @@ public class AccountController : Controller
 		return View("Verify", new { id = String.Empty });
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public ViewResult Forgot()
 	{
 		return View();
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> Forgot(string email)
@@ -215,7 +216,7 @@ public class AccountController : Controller
 		return View();
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> ResetPassword(string id)
 	{
@@ -231,7 +232,7 @@ public class AccountController : Controller
 		return View(container);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
@@ -253,7 +254,7 @@ public class AccountController : Controller
 		return RedirectToAction("ResetPasswordSuccess");
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ActionResult ResetPasswordSuccess()
 	{
@@ -430,7 +431,7 @@ public class AccountController : Controller
 		return View(container);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public ActionResult Login()
 	{
 		if (_config.IsOAuthOnly)
@@ -454,7 +455,7 @@ public class AccountController : Controller
 		return View(externalLoginList);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public IActionResult OAuthLogin()
 	{
 		if (_config.IsOAuthOnly)
@@ -469,7 +470,7 @@ public class AccountController : Controller
 		return RedirectToAction("Login");
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public async Task<ViewResult> Unsubscribe(int id, string key)
 	{
 		var user = await _userService.GetUser(id);

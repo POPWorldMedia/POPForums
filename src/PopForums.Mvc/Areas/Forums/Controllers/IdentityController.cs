@@ -1,4 +1,5 @@
 ﻿using System.Security.Authentication;
+using PopForums.Mvc.Areas.Forums.Authentication;
 using PopIdentity;
 using PopIdentity.Providers.Facebook;
 using PopIdentity.Providers.Google;
@@ -51,7 +52,7 @@ public class IdentityController : Controller
 		public string Password { get; set; }
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> Login([FromBody] Credentials credentials)
@@ -80,7 +81,7 @@ public class IdentityController : Controller
 		}
 		var user = _userRetrievalShim.GetUser();
 		await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress?.ToString());
-		await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+		await HttpContext.SignOutAsync(PopForumsAuthenticationDefaults.AuthenticationScheme);
 		return Redirect(link);
 	}
 
@@ -89,11 +90,11 @@ public class IdentityController : Controller
 	{
 		var user = _userRetrievalShim.GetUser();
 		await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress?.ToString());
-		await HttpContext.SignOutAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
+		await HttpContext.SignOutAsync(PopForumsAuthenticationDefaults.AuthenticationScheme);
 		return Json(new BasicJsonMessage { Result = true });
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public IActionResult ExternalLogin(string provider, string returnUrl)
@@ -133,7 +134,7 @@ public class IdentityController : Controller
 		return Redirect(redirect);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null)
 	{
 		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -165,7 +166,7 @@ public class IdentityController : Controller
 		return View();
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<IActionResult> LoginAndAssociate([FromBody] Credentials credentials)
@@ -214,11 +215,11 @@ public class IdentityController : Controller
 			ExpiresUtc = expiration
 		};
 
-		var id = new ClaimsIdentity(claims, PopForumsAuthorizationDefaults.AuthenticationScheme);
-		await httpContext.SignInAsync(PopForumsAuthorizationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
+		var id = new ClaimsIdentity(claims, PopForumsAuthenticationDefaults.AuthenticationScheme);
+		await httpContext.SignInAsync(PopForumsAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id), props);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public async Task<IActionResult> CallbackHandler()
 	{
 		var loginState = _externalLoginTempService.Read();

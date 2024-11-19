@@ -1,4 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Extensions;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+
+namespace PopForums.Mvc.Areas.Forums.Extensions;
 
 public static class ApplicationBuilders
 {

@@ -1,4 +1,5 @@
-﻿using PopForums.Mvc.Areas.Forums.BackgroundJobs;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+using PopForums.Mvc.Areas.Forums.BackgroundJobs;
 using PopIdentity.Extensions;
 
 namespace PopForums.Mvc.Areas.Forums.Extensions;
@@ -45,7 +46,7 @@ public static class ServiceCollections
 			return services;
 
 		services.AddAuthentication()
-			.AddCookie(PopForumsAuthorizationDefaults.AuthenticationScheme, option =>
+			.AddCookie(PopForumsAuthenticationDefaults.AuthenticationScheme, option =>
 			{
 				option.ExpireTimeSpan = new TimeSpan(365, 0, 0, 0);
 				option.LoginPath = "/Forums/Account/Login";

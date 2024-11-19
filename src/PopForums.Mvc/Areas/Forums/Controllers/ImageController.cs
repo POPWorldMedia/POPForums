@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using PopForums.Mvc.Areas.Forums.Authentication;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
@@ -19,13 +20,13 @@ public class ImageController : Controller
 	private readonly IPostImageService _postImageService;
 	private readonly ISettingsManager _settingsManager;
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public async Task<ActionResult> Avatar(int id)
 	{
 		return await SetupImageResult(_imageService.GetAvatarImageStream, _imageService.GetAvatarImageLastModification, id);
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public async Task<ActionResult> UserImage(int id)
 	{
 		return await SetupImageResult(_imageService.GetUserImageStream, _imageService.GetUserImageLastModifcation, id);

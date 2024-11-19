@@ -1,4 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+
+namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
 public class SetupController : Controller
@@ -14,7 +16,7 @@ public class SetupController : Controller
 
 	public static string Name = "Setup";
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	public ActionResult Index()
 	{
 		if (_config.IsOAuthOnly)
@@ -42,7 +44,7 @@ public class SetupController : Controller
 		return View("Success");
 	}
 
-	[PopForumsAuthorizationIgnore]
+	[PopForumsAuthenticationIgnore]
 	[HttpPost]
 	public async Task<ActionResult> Index(SetupVariables setupVariables)
 	{

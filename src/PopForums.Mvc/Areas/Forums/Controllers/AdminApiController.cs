@@ -1,6 +1,8 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
 
-[Authorize(Policy = PermanentRoles.Admin, AuthenticationSchemes = PopForumsAuthorizationDefaults.AuthenticationScheme)]
+namespace PopForums.Mvc.Areas.Forums.Controllers;
+
+[Authorize(Policy = PermanentRoles.Admin, AuthenticationSchemes = PopForumsAuthenticationDefaults.AuthenticationScheme)]
 [Area("Forums")]
 [Produces("application/json")]
 [ApiController]

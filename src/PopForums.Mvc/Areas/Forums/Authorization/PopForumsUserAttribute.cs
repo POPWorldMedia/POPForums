@@ -1,4 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
+
+namespace PopForums.Mvc.Areas.Forums.Authorization;
 
 /// <summary>
 /// This attribute, typically applied globally, is used to track sessions for all users (authenticated or not)
@@ -24,7 +26,7 @@ public class PopForumsUserAttribute(IUserSessionService userSessionService) : IA
 			_ignore = true;
 			return;
 		}
-		var attributes = controllerActionDescriptor.MethodInfo.GetCustomAttributes(typeof(PopForumsAuthorizationIgnoreAttribute), false);
+		var attributes = controllerActionDescriptor.MethodInfo.GetCustomAttributes(typeof(PopForumsAuthenticationIgnoreAttribute), false);
 		if (attributes.Any())
 		{
 			_ignore = true;

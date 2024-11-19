@@ -1,6 +1,6 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
+﻿namespace PopForums.Mvc.Areas.Forums.Authentication;
 
-public static class PopForumsAuthorizationDefaults
+public static class PopForumsAuthenticationDefaults
 {
 	public const string AuthenticationScheme = "PopForumsAuthScheme";
 	public const string ForumsClaimType = "http://popforums.com/forumclaims";
