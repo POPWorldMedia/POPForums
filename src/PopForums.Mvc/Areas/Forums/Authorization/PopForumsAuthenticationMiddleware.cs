@@ -1,22 +1,23 @@
 ﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
 
-public class PopForumsAuthorizationMiddleware
+public class PopForumsAuthenticationMiddleware(RequestDelegate next)
 {
-	private readonly RequestDelegate _next;
-
-	public PopForumsAuthorizationMiddleware(RequestDelegate next)
-	{
-		_next = next;
-	}
-
 	public async Task InvokeAsync(HttpContext context, IUserService userService, IProfileService profileService, ISetupService setupService, IConfig config, IOAuthOnlyService oAuthOnlyService)
 	{
 		var isSetupAndConnectionGood = setupService.IsRuntimeConnectionAndSetupGood();
 		if (!isSetupAndConnectionGood)
 		{
-			await _next.Invoke(context);
+			await next.Invoke(context);
 			return;
 		}
+
+		var endpoint = context.GetEndpoint();
+		if (endpoint?.Metadata.GetMetadata<PopForumsAuthorizationIgnoreAttribute>() is not null)
+		{
+			await next.Invoke(context);
+			return;
+		}
+		
 		var authResult = await context.AuthenticateAsync(PopForumsAuthorizationDefaults.AuthenticationScheme);
 		if (authResult.Principal?.Identity is ClaimsIdentity identity)
 		{
@@ -38,6 +39,6 @@ public class PopForumsAuthorizationMiddleware
 				}
 			}
 		}
-		await _next.Invoke(context);
+		await next.Invoke(context);
 	}
 }

@@ -114,13 +114,15 @@ app.UseStaticFiles();
 // Not unique to POP Forums, but required. Call before UsePopForumsAuth().
 app.UseAuthentication();
 
-// Populate the POP Forums identity in every request.
-app.UsePopForumsAuth();
-
 app.UseDeveloperExceptionPage();
 
 // Add MVC to the request pipeline. The order of the next three lines matters:
 app.UseRouting();
+
+// Populate the POP Forums identity in every request.
+// Possible breaking change starting in v21. This must be called after UseRouting()
+// but before UseAuthorization() and endpoint mapping.
+app.UsePopForumsAuth();
 
 app.UseAuthorization();
 

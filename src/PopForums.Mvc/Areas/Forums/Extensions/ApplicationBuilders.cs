@@ -7,7 +7,7 @@ public static class ApplicationBuilders
 	/// </summary>
 	public static IApplicationBuilder UsePopForumsAuth(this IApplicationBuilder app)
 	{
-		app.UseMiddleware<PopForumsAuthorizationMiddleware>();
+		app.UseMiddleware<PopForumsAuthenticationMiddleware>();
 		return app;
 	}
 

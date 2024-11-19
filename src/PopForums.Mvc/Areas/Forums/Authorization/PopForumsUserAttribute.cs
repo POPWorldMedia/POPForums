@@ -1,14 +1,12 @@
 ﻿namespace PopForums.Mvc.Areas.Forums.Authorization;
 
-public class PopForumsUserAttribute : IAuthorizationFilter, IAsyncActionFilter
+/// <summary>
+/// This attribute, typically applied globally, is used to track sessions for all users (authenticated or not)
+/// and drive the "currently online" list and user count.
+/// </summary>
+/// <param name="userSessionService"></param>
+public class PopForumsUserAttribute(IUserSessionService userSessionService) : IAuthorizationFilter, IAsyncActionFilter
 {
-	public PopForumsUserAttribute(IUserSessionService userSessionService)
-	{
-		_userSessionService = userSessionService;
-	}
-		
-	private readonly IUserSessionService _userSessionService;
-
 	private bool _ignore;
 
 	protected virtual bool IsGlobalFilter()
@@ -58,7 +56,7 @@ public class PopForumsUserAttribute : IAuthorizationFilter, IAsyncActionFilter
 		int.TryParse(filterContext.HttpContext.Request.Cookies[UserSessionService._sessionIDCookieName], out var cookieSessionID);
 		var sessionID = cookieSessionID == 0 ? (int?)null : cookieSessionID;
 		var user = filterContext.HttpContext.Items["PopForumsUser"] as User;
-		await _userSessionService.ProcessUserRequest(user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
+		await userSessionService.ProcessUserRequest(user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
 			() => filterContext.HttpContext.Response.Cookies.Delete(UserSessionService._sessionIDCookieName), 
 			s => filterContext.HttpContext.Response.Cookies.Append(UserSessionService._sessionIDCookieName, s.ToString()));
 		await next.Invoke();
