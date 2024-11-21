@@ -63,12 +63,12 @@ public class TextParsingService : ITextParsingService
 	private readonly ISettingsManager _settingsManager;
 
 	public static string[] AllowedCloseableTags = { "b", "i", "code", "pre", "ul", "ol", "li", "url", "quote", "img" };
-	private static readonly Regex TagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+	private static readonly Regex TagPattern = new Regex(@"\[[\w""\?=&/;\+%\*\:~,\!\.\-\$\|@#\(\)]+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 	private static readonly Regex TagID = new Regex(@"\[/?(\w+)\=*.*?\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-	private static readonly Regex ProtocolPattern = new Regex(@"(?<![\]""\>=/\w])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-	private static readonly Regex WwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+	private static readonly Regex ProtocolPattern = new Regex(@"(?<![\]""\>=/\w])(((news|(ht|f)tp(s?))\://)[\w\-\*]+(\.[\w\-/~\*]+)*/?)([\w\?=&/;\+%\*\:~,\.\-\$\|@#\(\)])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+	private static readonly Regex WwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#\(\)])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 	private static readonly Regex EmailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-	private static readonly Regex YouTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+	private static readonly Regex YouTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))([\w\?=&/;\+%\*\:~,\.\-\$\|@#\(\)])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 	/// <summary>
 	/// Converts forum code from the browser to HTML for storage. This method wraps <see cref="CleanForumCode(string)"/> and <see cref="ForumCodeToHtml(string)"/>, and censors the text.

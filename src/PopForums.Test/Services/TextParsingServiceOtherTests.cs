@@ -89,4 +89,13 @@ public class TextParsingServiceOtherTests
 		var result = service.ForumCodeToHtml("");
 		Assert.Equal(String.Empty, result);
 	}
+
+	[Fact]
+	public void ParsedUrlWithParenthesesUnparsed()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.HtmlToClientHtml("<p>blah <a href=\"https://blahblah.com/test(test)test\" target=\"_blank\">https://blahblah.com/test(test)test</a> blah</p>");
+		Assert.Equal("<p>blah <a href=\"https://blahblah.com/test(test)test\">https://blahblah.com/test(test)test</a> blah</p>", result);
+	}
 }

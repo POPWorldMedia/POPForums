@@ -396,6 +396,14 @@ public class TextParsingServiceForumCodeToHtmlTests
 		var result = service.ForumCodeToHtml("(and [url=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\"]'millennium' is spelled with two n's[/url] regardless of whether the new one starts in 2000 or 2001.)");
 		Assert.Equal("<p>(and <a href=\"https://groups.google.com/forum/#!original/rec.roller-coaster/iwTIvU2IXKI/hKB_D9uRbaEJ\" target=\"_blank\">'millennium' is spelled with two n's</a> regardless of whether the new one starts in 2000 or 2001.)</p>", result);
 	}
+	
+	[Fact]
+	public void UrlWithParenthesesParsesCorrectly()
+	{
+		var service = GetService();
+		var result = service.ForumCodeToHtml("(and [url=\"https://blahblah.com/test(test)test\"]'millennium' is spelled with two n's[/url] regardless of whether the new one starts in 2000 or 2001.)");
+		Assert.Equal("<p>(and <a href=\"https://blahblah.com/test(test)test\" target=\"_blank\">'millennium' is spelled with two n's</a> regardless of whether the new one starts in 2000 or 2001.)</p>", result);
+	}
 
 	[Fact]
 	public void DontParagraphAnEmptyString()
@@ -403,5 +411,14 @@ public class TextParsingServiceForumCodeToHtmlTests
 		var service = GetService();
 		var result = service.CleanForumCodeToHtml(string.Empty);
 		Assert.Equal(result, string.Empty);
+	}
+
+	[Fact]
+	public void UrlWithParenthesesParsed()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.ForumCodeToHtml("blah https://blahblah.com/test(test)test blah");
+		Assert.Equal("<p>blah <a href=\"https://blahblah.com/test(test)test\" target=\"_blank\">https://blahblah.com/test(test)test</a> blah</p>", result);
 	}
 }
