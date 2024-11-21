@@ -24,8 +24,9 @@ public class PopForumsAuthenticationMiddleware(RequestDelegate next)
 			var user = await userService.GetUserByName(identity.Name);
 			if (user != null)
 			{
-				foreach (var role in user.Roles)
-					identity.AddClaim(new Claim(PopForumsAuthenticationDefaults.ForumsClaimType, role));
+				if (user.Roles != null && user.Roles.Any())
+					foreach (var role in user.Roles)
+						identity.AddClaim(new Claim(PopForumsAuthenticationDefaults.ForumsClaimType, role));
 				identity.AddClaim(new Claim(PopForumsAuthenticationDefaults.ForumsUserIDType, user.UserID.ToString()));
 				context.Items["PopForumsUser"] = user;
 				var profile = await profileService.GetProfile(user);
