@@ -106,10 +106,10 @@ if (!app.Environment.IsDevelopment())
 var loggerFactory = app.Services.GetService<ILoggerFactory>();
 loggerFactory.AddPopForumsLogger(app);
 
+app.UseStaticFiles();
+
 // Enables languages
 app.UsePopForumsCultures();
-
-app.UseStaticFiles();
 
 // Not unique to POP Forums, but required. Call before UsePopForumsAuth().
 app.UseAuthentication();
