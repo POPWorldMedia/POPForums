@@ -416,7 +416,6 @@ public class UserService : IUserService
 		profile.Web = userEdit.Web;
 		profile.Instagram = userEdit.Instagram;
 		profile.Facebook = userEdit.Facebook;
-		profile.Twitter = userEdit.Twitter;
 		profile.IsAutoFollowOnReply = userEdit.IsAutoFollowOnReply;
 		if (removeAvatar)
 			profile.AvatarID = null;

@@ -12,7 +12,6 @@ public class DisplayProfile
 		Web = profile.Web;
 		Instagram = profile.Instagram;
 		Facebook = profile.Facebook;
-		Twitter = profile.Twitter;
 		AvatarID = profile.AvatarID;
 		ImageID = profile.ImageID;
 		ShowDetails = profile.ShowDetails;
@@ -31,7 +30,6 @@ public class DisplayProfile
 	public string Web { get; set; }
 	public string Instagram { get; set; }
 	public string Facebook { get; set; }
-	public string Twitter { get; set; }
 	public int? AvatarID { get; set; }
 	public int? ImageID { get; set; }
 	public bool ShowDetails { get; set; }

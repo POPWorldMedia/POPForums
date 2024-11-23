@@ -27,7 +27,7 @@ public class ProfileRepository : IProfileRepository
 			return cachedItem;
 		Task<Profile> profile = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			profile = connection.QuerySingleOrDefaultAsync<Profile>("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, Facebook, Twitter, Instagram, IsTos, AvatarID, ImageID, HideVanity, LastPostID, Points, IsAutoFollowOnReply FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
+			profile = connection.QuerySingleOrDefaultAsync<Profile>("SELECT UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, Facebook, Instagram, IsTos, AvatarID, ImageID, HideVanity, LastPostID, Points, IsAutoFollowOnReply FROM pf_Profile WHERE UserID = @UserID", new { UserID = userID }));
 		if (profile.Result != null)
 			_cacheHelper.SetCacheObject(key, profile.Result);
 		return await profile;
@@ -36,14 +36,14 @@ public class ProfileRepository : IProfileRepository
 	public async Task Create(Profile profile)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			connection.ExecuteAsync("INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, Facebook, Twitter, Instagram, IsTos, AvatarID, ImageID, HideVanity, LastPostID, Points, IsAutoFollowOnReply) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @Facebook, @Twitter, @Instagram, @IsTos, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points, @IsAutoFollowOnReply)", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), Instagram =  profile.Instagram.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), Twitter = profile.Twitter.NullToEmpty(), profile.IsTos, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points, profile.IsAutoFollowOnReply }));
+			connection.ExecuteAsync("INSERT INTO pf_Profile (UserID, IsSubscribed, Signature, ShowDetails, Location, IsPlainText, DOB, Web, Facebook, Instagram, IsTos, AvatarID, ImageID, HideVanity, LastPostID, Points, IsAutoFollowOnReply) VALUES (@UserID, @IsSubscribed, @Signature, @ShowDetails, @Location, @IsPlainText, @DOB, @Web, @Facebook, @Instagram, @IsTos, @AvatarID, @ImageID, @HideVanity, @LastPostID, @Points, @IsAutoFollowOnReply)", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), Instagram =  profile.Instagram.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), profile.IsTos, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points, profile.IsAutoFollowOnReply }));
 	}
 
 	public async Task<bool> Update(Profile profile)
 	{
 		Task<int> success = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			success = connection.ExecuteAsync("UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, Facebook = @Facebook, Twitter = @Twitter, Instagram = @Instagram, IsTos = @IsTos, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points, IsAutoFollowOnReply = @IsAutoFollowOnReply WHERE UserID = @UserID", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), Instagram = profile.Instagram.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), Twitter = profile.Twitter.NullToEmpty(), profile.IsTos, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points, profile.IsAutoFollowOnReply }));
+			success = connection.ExecuteAsync("UPDATE pf_Profile SET IsSubscribed = @IsSubscribed, Signature = @Signature, ShowDetails = @ShowDetails, Location = @Location, IsPlainText = @IsPlainText, DOB = @DOB, Web = @Web, Facebook = @Facebook, Instagram = @Instagram, IsTos = @IsTos, AvatarID = @AvatarID, ImageID = @ImageID, HideVanity = @HideVanity, LastPostID = @LastPostID, Points = @Points, IsAutoFollowOnReply = @IsAutoFollowOnReply WHERE UserID = @UserID", new { profile.UserID, profile.IsSubscribed, Signature = profile.Signature.NullToEmpty(), profile.ShowDetails, Location = profile.Location.NullToEmpty(), profile.IsPlainText, profile.Dob, Web = profile.Web.NullToEmpty(), Instagram = profile.Instagram.NullToEmpty(), Facebook = profile.Facebook.NullToEmpty(), IsTos = profile.IsTos, profile.AvatarID, profile.ImageID, profile.HideVanity, profile.LastPostID, profile.Points, profile.IsAutoFollowOnReply }));
 		_cacheHelper.RemoveCacheObject(CacheKeys.UserProfile(profile.UserID));
 		return success.Result == 1;
 	}

@@ -57,7 +57,6 @@ public class ProfileService : IProfileService
 		userEditProfile.Web = profile.Web;
 		userEditProfile.Instagram = profile.Instagram;
 		userEditProfile.Facebook = profile.Facebook;
-		userEditProfile.Twitter = profile.Twitter;
 		userEditProfile.IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
 		return userEditProfile;
 	}
@@ -80,7 +79,6 @@ public class ProfileService : IProfileService
 		profile.Web = userEditProfile.Web;
 		profile.Instagram = userEditProfile.Instagram;
 		profile.Facebook = userEditProfile.Facebook;
-		profile.Twitter = userEditProfile.Twitter;
 		profile.IsAutoFollowOnReply = userEditProfile.IsAutoFollowOnReply;
 		await _profileRepository.Update(profile);
 	}

@@ -30,7 +30,6 @@ CREATE TABLE [dbo].[pf_Profile](
 	[DOB] [datetime] NULL,
 	[Web] [nvarchar](256) NOT NULL,
 	[Facebook] [nvarchar](256) NULL,
-	[Twitter] [nvarchar](256) NULL,
 	[Instagram] [nvarchar](256) NULL,
 	[IsTos] [bit] NOT NULL DEFAULT ((0)),
 	[AvatarID] [int] NULL,

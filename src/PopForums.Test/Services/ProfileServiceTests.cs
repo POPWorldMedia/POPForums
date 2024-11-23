@@ -82,7 +82,6 @@ public class ProfileServiceTests
 			IsSubscribed = true,
 			Location = "l",
 			Facebook = "fb",
-			Twitter = "tw",
 			ShowDetails = true,
 			Signature = "s",
 			Web = "w",
@@ -100,7 +99,6 @@ public class ProfileServiceTests
 		Assert.True(profile.IsAutoFollowOnReply);
 		Assert.Equal("l", profile.Location);
 		Assert.Equal("fb", profile.Facebook);
-		Assert.Equal("tw", profile.Twitter);
 		Assert.True(profile.ShowDetails);
 		Assert.Equal("parsed", profile.Signature);
 		Assert.Equal("w", profile.Web);
@@ -126,7 +124,6 @@ public class ProfileServiceTests
 			IsSubscribed = true,
 			Location = "l",
 			Facebook = "fb",
-			Twitter = "tw",
 			ShowDetails = true,
 			Signature = "s",
 			Web = "w"

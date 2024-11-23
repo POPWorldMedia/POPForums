@@ -15,7 +15,6 @@ public class UserEditProfile
 		Web = profile.Web;
 		Instagram = profile.Instagram;
 		Facebook = profile.Facebook;
-		Twitter = profile.Twitter;
 		HideVanity = profile.HideVanity;
 		IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
 	}
@@ -29,7 +28,6 @@ public class UserEditProfile
 	public string Web { get; set; }
 	public string Instagram { get; set; }
 	public string Facebook { get; set; }
-	public string Twitter { get; set; }
 	public bool HideVanity { get; set; }
 	public bool IsAutoFollowOnReply { get; set; }
 }

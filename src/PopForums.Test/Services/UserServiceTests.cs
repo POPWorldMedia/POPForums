@@ -813,7 +813,6 @@ public class UserServiceTests
 			Web = userEdit.Web,
 			Instagram = userEdit.Instagram,
 			Facebook = userEdit.Facebook,
-			Twitter = userEdit.Twitter
 		};
 	}
 

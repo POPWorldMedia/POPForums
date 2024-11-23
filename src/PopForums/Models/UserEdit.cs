@@ -19,7 +19,6 @@ public class UserEdit
 		Web = profile.Web;
 		Instagram = profile.Instagram;
 		Facebook = profile.Facebook;
-		Twitter = profile.Twitter;
 		HideVanity = profile.HideVanity;
 		Roles = user.Roles.ToArray();
 		AvatarID = profile.AvatarID;
@@ -42,7 +41,6 @@ public class UserEdit
 	public string Web { get; set; }
 	public string Instagram { get; set; }
 	public string Facebook { get; set; }
-	public string Twitter { get; set; }
 	public bool HideVanity { get; set; }
 	public string[] Roles { get; set; }
 	public int? AvatarID { get; set; }
