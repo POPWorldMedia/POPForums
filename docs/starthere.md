@@ -69,7 +69,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
             "ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
         },
         "Database": {
-            "ConnectionString": "server=localhost;Database=popforums20;Trusted_Connection=True;TrustServerCertificate=True;"
+            "ConnectionString": "server=localhost;Database=popforums21;Trusted_Connection=True;TrustServerCertificate=True;"
         },
         "Cache": {
             "Seconds": 180,
