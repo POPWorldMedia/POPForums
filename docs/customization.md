@@ -81,13 +81,14 @@ The MVC project has an interface called `IForumAdapter`, which allows you to gen
 ```
 public class TestAdapter : IForumAdapter
 {
-    public void AdaptForum(Controller controller, ForumTopicContainer forumTopicContainer)
+    public Task AdaptForum(Controller controller, ForumTopicContainer forumTopicContainer)
     {
         // not changing anything in the forum (topic list), just set the model as the existing container
         Model = forumTopicContainer;
+        return Task.CompletedTask;
     }
 
-    public void AdaptTopic(Controller controller, TopicContainer topicContainer)
+    public async Task AdaptTopic(Controller controller, TopicContainer topicContainer)
     {
         // for the topic (thread) view, let's use the existing model, but add something to the `ViewBag` for the view
         Model = topicContainer;

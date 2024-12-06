@@ -5,7 +5,7 @@ nav_order: 5
 ---
 # External Login Configuration
 
->Important: External logins are not the same as OAuth-Only Mode. These are simply a shortcut so your users don't need to remember their forum-specific credentials. They still create an account in the forum. [OAuth-Only Mode](oauthonly.md) relies entirely on an external identity provider and provisions accounts through it.
+>Important: External logins are not the same as OAuth-Only Mode. Sometimes referred to as "social logins," these are simply a shortcut so your users don't need to remember their forum-specific credentials. They still create an account in the forum. [OAuth-Only Mode](oauthonly.md) relies entirely on an external identity provider and provisions accounts through it.
 > 
 > External logins are great for public forums. For corporate or private forums coupled exclusively to an external identity platform, use OAuth-Only Mode.
 
