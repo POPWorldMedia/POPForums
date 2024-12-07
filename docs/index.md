@@ -5,11 +5,11 @@ nav_order: 1
 ---
 ![POP Forums logo](https://avatars2.githubusercontent.com/u/8217691?s=200&v=4)
 
-POP Forums v20 is a forum app for ASP.NET (formerly known as Core), used as the base for several sites maintained by the author, as well as a commercial, cloud hosted product. It's a long-term commitment to great community. If you're looking for the commercial hosted product and support for it, go to [popforums.com](https://popforums.com/).
+POP Forums v21 is a forum app for ASP.NET (formerly known as Core), used as the base for several sites maintained by the author, as well as a commercial, cloud hosted product. It's a long-term commitment to great community. If you're looking for the commercial hosted product and support for it, go to [popforums.com](https://popforums.com/).
 
 _This documentation is for the open source POP Forums project. For documentation about the commercial hosted product, visit [support.popforums.com](https://support.popforums.com/)._
 
-_If you're working with a version that isn't v20, check the `/docs` folder in the source branch that matches the version you're using._
+_If you're working with a version that isn't v21, check the `/docs` folder in the source branch that matches the version you're using._
 
 Get a load of [all the features](features.md).
 

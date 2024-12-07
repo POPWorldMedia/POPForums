@@ -28,6 +28,7 @@ nav_order: 1.5
 * Restrict posts to certain roles by forum
 * Edit posts
 * Localized for English, Spanish, German, Dutch, Ukranian and Taiwanese Mandarin
+* Fast page rendering, average 20ms on Azure App Service P0v3 and SQL elastic pool at 50 eDTUs and 900k posts.
 
 ## Administration
 * Your own terms of service

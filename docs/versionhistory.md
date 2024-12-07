@@ -7,6 +7,22 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v21.0.0 (12/x/24)
+* Update IForumAdapter to use async methods (breaking change) #361
+* Clean up naming and organization of Authorization and Authentication bits #377
+* Remove Twitter from profiles #372
+* Migrate to .Net 9 and new libraries #371
+* Refactor in-process background services to run on IHostedService #357
+* Use streams when reading image data from SQL #359
+* Refactor settings caching to make it simple #370
+* BUG: Valid emails are being rejected #367
+* BUG: PopForumsAuthorizationIgnoreAttribute doesn't actually cause middleware to skip user hydration #376
+* BUG: GetUsersByPointTotals won't serialize for caching #358
+* BUG: New PM incorrectly shows as "user not found" #360
+* BUG: URL ending in closing parentheses breaks links #375
+* BUG: Duplicate ForumsUserIDType claim being added to identity in SignalR hub #378
+* BUG: Sequence contains no elements exception thrown in middleware #379
+
 ## Version v20.0.0 (12/8/23)
 * Allow option to rely entirely on 3rd-party OAuth2 and OIDC for sign-in #183
 * Vote up buttons need an interim state during call #334
