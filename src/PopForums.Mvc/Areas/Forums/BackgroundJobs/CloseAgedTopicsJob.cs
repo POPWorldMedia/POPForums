@@ -5,8 +5,8 @@ namespace PopForums.Mvc.Areas.Forums.BackgroundJobs;
 
 public class CloseAgedTopicsJob(IServiceHeartbeatService serviceHeartbeatService, ICloseAgedTopicsWorker closeAgedTopicsWorker) : BackgroundService
 {
-	private const int IntervalValue = 43200;
-	private readonly PeriodicTimer _timer = new(TimeSpan.FromMilliseconds(IntervalValue));
+	private const int IntervalValue = 12;
+	private readonly PeriodicTimer _timer = new(TimeSpan.FromHours(IntervalValue));
 	
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{

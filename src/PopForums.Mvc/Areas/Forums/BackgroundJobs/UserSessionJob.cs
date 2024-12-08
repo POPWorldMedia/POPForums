@@ -5,8 +5,8 @@ namespace PopForums.Mvc.Areas.Forums.BackgroundJobs;
 
 public class UserSessionJob(IServiceHeartbeatService serviceHeartbeatService, IUserSessionWorker userSessionWorker) : BackgroundService
 {
-	private const double IntervalValue = 10000;
-	private readonly PeriodicTimer _timer = new(TimeSpan.FromMilliseconds(IntervalValue));
+	private const double IntervalValue = 1;
+	private readonly PeriodicTimer _timer = new(TimeSpan.FromMinutes(IntervalValue));
 	
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
