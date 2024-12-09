@@ -98,7 +98,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
     }
 }
 ```
-> IMPORTANT: Starting in v21.x, the app uses ASP.NET's `IHostedService` infrastructure when you use `services.AddPopForumsBackgroundJobs();` in startup. The problem is that it tries to immediately run the jobs when the database tables haven't been set up. Comment out this line if you're using in-process backup jobs (as opposed to those in Azure Functions). This will be addressed in a later release.
+
 * Attempt to run the app locally via Kestrel, and go to the URL `/Forums` to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums21`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to `/Forums/Setup` now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
