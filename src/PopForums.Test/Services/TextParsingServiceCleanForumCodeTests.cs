@@ -255,6 +255,24 @@ public class TextParsingServiceCleanForumCodeTests
 	}
 
 	[Fact]
+	public void YouTubeDoesntEmbedWhenUrlIsForShorts()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.CleanForumCode("blah https://youtube.com/shorts/0c-5EGX6B2E?si=8OoYCc7x5x_rHiVM blah");
+		Assert.Equal("blah [url=https://youtube.com/shorts/0c-5EGX6B2E?si=8OoYCc7x5x_rHiVM]https://youtube.com/shorts/...7x5x_rHiVM[/url] blah", result);
+	}
+
+	[Fact]
+	public void YouTubeDoesntEmbedWhenUrlIsForChannel()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.CleanForumCode("blah https://www.youtube.com/@sillynonsense blah");
+		Assert.Equal("blah [url=https://www.youtube.com/@sillynonsense]https://www.youtube.com/@sillynonsense[/url] blah", result);
+	}
+
+	[Fact]
 	public void YouTubeLinkParsedToLinkWithImagesOff()
 	{
 		var service = GetService();
