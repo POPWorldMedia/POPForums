@@ -13,16 +13,13 @@ v21 is another iterative release, leaning hard into refactoring and a few perfor
 For the latest information and documentation, and how to get started, check the pages (also in markdown in `/docs` of source):  
 https://popworldmedia.github.io/POPForums/
 
-Try it out and make test posts here:  
-https://meta.popforums.com/Forums
-
 CI build of main runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
 [![Build status](https://dev.azure.com/popw/POP%20Forums/_apis/build/status/popforumsdev)](https://dev.azure.com/popw/POP%20Forums/_build/latest?definitionId=13)
 
 Latest release:  
-https://github.com/POPWorldMedia/POPForums/releases/tag/v20.0.0  
+https://github.com/POPWorldMedia/POPForums/releases/tag/v21.0.1  
 Packages available on NuGet.
 
 The latest CI build packages can be found with these feeds on MyGet:  
