@@ -7,7 +7,11 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version v21.0.0 (12/x/24)
+## Version v21.0.1 (12/8/24)
+* BUG: Hosted service failure in startup will prevent app start #381
+* BUG: In process hosted jobs run at silly intervals #383
+
+## Version v21.0.0 (12/7/24)
 * Update IForumAdapter to use async methods (breaking change) #361
 * Clean up naming and organization of Authorization and Authentication bits #377
 * Remove Twitter from profiles #372
