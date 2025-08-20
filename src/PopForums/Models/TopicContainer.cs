@@ -12,4 +12,5 @@ public class TopicContainer
 	public List<int> VotedPostIDs { get; set; }
 	public DateTime? LastReadTime { get; set; }
 	public TopicState TopicState { get; set; }
+	public List<int> IgnoreUserIDs { get; set; }
 }
