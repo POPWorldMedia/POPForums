@@ -16,9 +16,15 @@
 	var isLoggedIn = user != null;
 	var isAuthor = user?.UserID == Model.Post.UserID;
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
+	var isIgnored = Model.IgnoreUserIDs.Contains(Model.Post.UserID);
 }
 
-<div class="@(Model.Post.IsDeleted ? "bg-warning " : "")postItem my-3" data-postID="@Model.Post.PostID">
+@if (isIgnored)
+{
+	<a class="d-block my-2 alert alert-secondary" data-bs-toggle="collapse" href="#post@(Model.Post.PostID)" aria-expanded="false" aria-controls="post@(Model.Post.PostID)">ignored</a>
+}
+
+<div id="post@(Model.Post.PostID)" class="@(Model.Post.IsDeleted ? "bg-warning " : "")@(isIgnored ? "collapse " : "")postItem my-3" data-postID="@Model.Post.PostID">
 	<div class="postUserData bg-primary rounded mb-3 px-3 py-1">
 		<pf-postminiprofile username="@Model.Post.Name" userid="@Model.Post.UserID" miniprofileboxclass="miniProfileBox bg-light text-dark rounded" usernameclass="text-light"></pf-postminiprofile>
 		<small class="postTime text-end text-light text-secondary">

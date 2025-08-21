@@ -9,4 +9,5 @@ public class PostItemContainer
 	public User User { get; set; }
 	public Profile Profile { get; set; }
 	public Topic Topic { get; set; }
+	public List<int> IgnoreUserIDs { get; set; }
 }
