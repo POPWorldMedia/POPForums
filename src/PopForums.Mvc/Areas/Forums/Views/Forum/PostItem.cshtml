@@ -1,4 +1,5 @@
 ﻿@inject IUserRetrievalShim UserRetrievalShim
+@using PopForums
 @model PostItemContainer
 @{
 	var user = UserRetrievalShim.GetUser();
@@ -19,9 +20,10 @@
 	var isIgnored = Model.IgnoreUserIDs.Contains(Model.Post.UserID);
 }
 
+<div class="@(isIgnored ? "bg-light p-2 my-3" : "")">
 @if (isIgnored)
 {
-	<a class="d-block my-2 alert alert-secondary" data-bs-toggle="collapse" href="#post@(Model.Post.PostID)" aria-expanded="false" aria-controls="post@(Model.Post.PostID)">ignored</a>
+	<a class="d-block btn btn-scondary" data-bs-toggle="collapse" href="#post@(Model.Post.PostID)" aria-expanded="false" aria-controls="post@(Model.Post.PostID)">@Resources.Ignored</a>
 }
 
 <div id="post@(Model.Post.PostID)" class="@(Model.Post.IsDeleted ? "bg-warning " : "")@(isIgnored ? "collapse " : "")postItem my-3" data-postID="@Model.Post.PostID">
@@ -90,4 +92,5 @@
 			<pf-postmoderationlogbutton buttonclass="btn-link" buttontext="@PopForums.Resources.ModerationLog" postid="@Model.Post.PostID" parentselectortoappendto=".postItem"></pf-postmoderationlogbutton>
 		</div>
 	}
+</div>
 </div>

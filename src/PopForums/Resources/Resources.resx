@@ -1284,4 +1284,7 @@
   <data name="UploadImage" xml:space="preserve">
 	  <value>Upload Image</value>
   </data>
+  <data name="Ignored" xml:space="preserve">
+	  <value>Ignored</value>
+  </data>
 </root>

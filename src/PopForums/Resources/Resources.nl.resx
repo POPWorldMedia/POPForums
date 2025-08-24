@@ -1266,4 +1266,7 @@
   <data name="UploadImage" xml:space="preserve">
 	  <value>Afbeelding uploaden</value>
   </data>
+  <data name="Ignored" xml:space="preserve">
+	  <value>Genegeerd</value>
+  </data>
 </root>

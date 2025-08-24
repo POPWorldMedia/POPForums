@@ -1260,4 +1260,7 @@
   <data name="UploadImage" xml:space="preserve">
 	  <value>上传图片</value>
   </data>
+  <data name="Ignored" xml:space="preserve">
+	  <value>被忽略</value>
+  </data>
 </root>

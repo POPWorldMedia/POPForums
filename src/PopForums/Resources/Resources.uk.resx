@@ -1281,4 +1281,7 @@
   <data name="UploadImage" xml:space="preserve">
 	  <value>Завантажити зображення</value>
   </data>
+  <data name="Ignored" xml:space="preserve">
+	  <value>Ігнорується</value>
+  </data>
 </root>
