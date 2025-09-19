@@ -969,6 +969,16 @@ CREATE NONCLUSTERED INDEX [IX_pf_PostImageTemp_TimeStamp] ON [dbo].[pf_PostImage
 
 
 
+CREATE TABLE [dbo].[pf_Ignore](
+    [UserID] [int] NOT NULL,
+    [IgnoreUserID] [int] NOT NULL
+);
+ALTER TABLE [dbo].[pf_Ignore] WITH CHECK ADD CONSTRAINT [FK_pf_Ignore_UserID] FOREIGN KEY([UserID])
+    REFERENCES [dbo].[pf_PopForumsUser] ([UserID])
+    ON DELETE CASCADE;
+CREATE CLUSTERED INDEX IX_pf_Ignore_UserID ON pf_Ignore (UserID, IgnoreUserID);
+
+
 
 
 

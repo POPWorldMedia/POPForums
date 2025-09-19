@@ -1281,4 +1281,13 @@
   <data name="UploadImage" xml:space="preserve">
 	  <value>Cargar imagen</value>
   </data>
+  <data name="Ignored" xml:space="preserve">
+	  <value>Ignorada</value>
+  </data>
+  <data name="IgnoreList" xml:space="preserve">
+	  <value>Lista de ignorados</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+	  <value>Ignorar</value>
+  </data>
 </root>

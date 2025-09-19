@@ -103,6 +103,11 @@ public static class WebApplications
 			"Forums/Subscription/Unsubscribe/{topicID}/{authKey}",
 			new { controller = SubscriptionController.Name, action = "Unsubscribe", Area = "Forums" }
 		);
+		app.MapControllerRoute(
+          "pfignore",
+          "Forums/Ignore/{action}",
+          new { controller = IgnoreController.Name, Area = "Forums" }
+        );
 		return app;
 	}
 }

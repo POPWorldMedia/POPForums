@@ -79,5 +79,6 @@ public static class ServiceCollections
 		services.AddTransient<ICloseAgedTopicsWorker, CloseAgedTopicsWorker>();
 		services.AddTransient<IPostImageCleanupWorker, PostImageCleanupWorker>();
 		services.AddTransient<ISubscribeNotificationWorker, SubscribeNotificationWorker>();
+		services.AddTransient<IIgnoreService, IgnoreService>();
 	}
 }
