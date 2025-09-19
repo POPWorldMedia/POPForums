@@ -1268,4 +1268,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="Ignored" xml:space="preserve">
 	  <value>Ignoriert</value>
   </data>
+  <data name="IgnoreList" xml:space="preserve">
+	  <value>Ignorierliste</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+	  <value>Ignorieren</value>
+  </data>
 </root>

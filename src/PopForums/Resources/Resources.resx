@@ -1287,4 +1287,10 @@
   <data name="Ignored" xml:space="preserve">
 	  <value>Ignored</value>
   </data>
+  <data name="Ignore" xml:space="preserve">
+	  <value>Ignore</value>
+  </data>
+  <data name="IgnoreList" xml:space="preserve">
+	  <value>Ignore List</value>
+  </data>
 </root>

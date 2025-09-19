@@ -2336,5 +2336,17 @@ namespace PopForums {
                 return ResourceManager.GetString("Ignored", resourceCulture);
             }
         }
+        
+        public static string Ignore {
+            get {
+                return ResourceManager.GetString("Ignore", resourceCulture);
+            }
+        }
+        
+        public static string IgnoreList {
+            get {
+                return ResourceManager.GetString("IgnoreList", resourceCulture);
+            }
+        }
     }
 }

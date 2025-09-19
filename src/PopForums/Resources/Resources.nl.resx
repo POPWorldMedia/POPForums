@@ -1269,4 +1269,10 @@
   <data name="Ignored" xml:space="preserve">
 	  <value>Genegeerd</value>
   </data>
+  <data name="IgnoreList" xml:space="preserve">
+	  <value>Lijst negeren</value>
+  </data>
+  <data name="Ignore" xml:space="preserve">
+	  <value>Negeren</value>
+  </data>
 </root>
