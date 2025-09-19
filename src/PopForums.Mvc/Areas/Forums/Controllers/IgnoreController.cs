@@ -24,4 +24,23 @@ public class IgnoreController(IIgnoreService ignoreService, IUserRetrievalShim u
 		await ignoreService.DeleteIgnore(user.UserID, userID);
 		return RedirectToAction("PostLink", "Forum", new { id = postID });
 	}
+	
+	[HttpPost]
+	public async Task<IActionResult> RemoveFromList(int id)
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return Forbid();
+		await ignoreService.DeleteIgnore(user.UserID, id);
+		return RedirectToAction("List");
+	}
+
+	public async Task<IActionResult> List()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View(null);
+		var list = await ignoreService.GetIgnoreList(user.UserID);
+		return View(list);
+	}
 }

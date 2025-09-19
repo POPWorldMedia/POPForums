@@ -1,0 +1,43 @@
+﻿@model IEnumerable<IgnoreWithName>
+@inject IUserRetrievalShim UserRetrievalShim
+@{
+	ViewBag.Title = PopForums.Resources.IgnoreList;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var user = UserRetrievalShim.GetUser();
+}
+
+<h1>@PopForums.Resources.IgnoreList</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item active">@PopForums.Resources.IgnoreList</li>
+</ul>
+
+@if (user == null)
+{
+	<p>@PopForums.Resources.NotLoggedIn</p>
+}
+else
+{
+	if (Model == null || !Model.Any())
+	{
+		<p>@PopForums.Resources.NoResults</p>
+	}
+	
+	<table class="table mt-3 w-auto table-borderless">
+		@foreach (var name in Model)
+		{
+			<tr>
+				<td>
+					<form method="post" asp-action="RemoveFromList" asp-route-id="@name.IgnoreUserID">
+						<button type="submit" class="btn btn-primary">@PopForums.Resources.Remove</button>
+					</form>
+				</td>
+				<td class="align-middle">
+					@name.Name
+				</td>
+			</tr>
+		}
+	</table>
+}

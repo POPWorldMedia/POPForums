@@ -42,6 +42,7 @@
 							<a asp-controller="@AccountController.Name" asp-action="ViewProfile" asp-route-id="@user.UserID" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Profile</a>
 							<a asp-controller="@SubscriptionController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
 							<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
+							<a asp-controller="@IgnoreController.Name" asp-action="List" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.IgnoreList</a>
 							<div class="dropdown-divider"></div>
 							<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
 							@if (!Config.IsOAuthOnly)
