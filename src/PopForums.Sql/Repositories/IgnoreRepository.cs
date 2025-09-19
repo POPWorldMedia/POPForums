@@ -26,7 +26,7 @@ public class IgnoreRepository(ISqlObjectFactory sqlObjectFactory) : IIgnoreRepos
     {
 	    Task<IEnumerable<IgnoreWithName>> result = null;
 	    await sqlObjectFactory.GetConnection().UsingAsync(connection =>
-		    result = connection.QueryAsync<IgnoreWithName>("SELECT I.UserID, IgnoreUserID, Name FROM pf_Ignore I JOIN pf_PopForumsUser U ON I.UserID = U.UserID WHERE I.UserID = @UserID", new { UserID = userID }));
+		    result = connection.QueryAsync<IgnoreWithName>("SELECT I.UserID, IgnoreUserID, Name FROM pf_Ignore I JOIN pf_PopForumsUser U ON IgnoreUserID = U.UserID WHERE I.UserID = @UserID", new { UserID = userID }));
 	    return result.Result.ToList();
     }
     
