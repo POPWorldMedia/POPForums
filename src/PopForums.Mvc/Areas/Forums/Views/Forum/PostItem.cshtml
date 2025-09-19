@@ -70,21 +70,38 @@
 		{
 			<div class="toolButton"><a asp-controller="Forum" asp-action="Edit" asp-route-id="@Model.Post.PostID" title="@PopForums.Resources.Edit"><span class="icon icon-pencil-square"></span></a></div>
 		}
-		@if (Model.User.IsPostEditable(Model.Post))
-		{
-			@if (Model.Post.IsDeleted)
+		<div class="ms-auto d-flex">
+			@if (user != null)
 			{
-				<div class="toolButton ms-auto">
-					<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Undelete" class="btn-link"><span class="icon icon-recycle"></span></button></form>
-				</div>
+				@if (isIgnored)
+				{
+					<div class="toolButton">
+						<form method="post" asp-action="Remove" asp-controller="Ignore" asp-antiforgery="false" asp-route-userID="@Model.Post.UserID" asp-route-postID="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Ignore" class="btn-link"><span class="icon icon-hand-thumbs-down-fill"></span></button></form>
+					</div>
+				}
+				else
+				{
+					<div class="toolButton">
+						<form method="post" asp-action="Add" asp-controller="Ignore" asp-antiforgery="false" asp-route-userid="@Model.Post.UserID" asp-route-postID="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Ignore" class="btn-link"><span class="icon icon-hand-thumbs-down"></span></button></form>
+					</div>
+				}
 			}
-			else
+			@if (Model.User.IsPostEditable(Model.Post))
 			{
-				<div class="toolButton ms-auto">
-					<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@deleteLink" class="btn-link"><span class="icon icon-trash3-fill"></span></button></form>
-				</div>
+				@if (Model.Post.IsDeleted)
+				{
+					<div class="toolButton">
+						<form asp-action="UndeletePost" asp-controller="Moderator" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@PopForums.Resources.Undelete" class="btn-link"><span class="icon icon-recycle"></span></button></form>
+					</div>
+				}
+				else
+				{
+					<div class="toolButton">
+						<form asp-action="DeletePost" asp-controller="Forum" asp-antiforgery="false" asp-route-id="@Model.Post.PostID" class="deletePostForm d-inline-block"><button type="submit" title="@deleteLink" class="btn-link"><span class="icon icon-trash3-fill"></span></button></form>
+					</div>
+				}
 			}
-		}
+		</div>
 	</div>
 	@if (Model.Post.IsEdited && Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
 	{
