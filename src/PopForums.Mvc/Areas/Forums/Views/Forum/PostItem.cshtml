@@ -20,7 +20,7 @@
 	var isIgnored = Model.IgnoreUserIDs.Contains(Model.Post.UserID);
 }
 
-<div class="@(isIgnored ? "bg-light p-2 my-3" : "")">
+<div class="@(isIgnored ? "bg-light p-2 my-3" : "")" data-postID="@Model.Post.PostID">
 @if (isIgnored)
 {
 	<a class="d-block btn btn-scondary" data-bs-toggle="collapse" href="#post@(Model.Post.PostID)" aria-expanded="false" aria-controls="post@(Model.Post.PostID)">@Resources.Ignored</a>
