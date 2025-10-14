@@ -45,7 +45,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 
 ## Build
 
-* Clone the latest source code from GitHub, or use the production packages as described above. Build it.
+* Clone the latest source code from GitHub, or use the production packages as described above. Build it. If your IDE doesn't automatically build Javascript or Typescript, be sure to `npm install` in the `PopForums.Mvc` project, and then run the `gulpfile.js`.
 * The project files require an up-to-date version of Visual Studio 2022 or later. It also works great with Jetbrains' Rider on Mac or Windows.
 * This project is built on ASP.NET v9. Make sure you have the required SDK installed (v9.0.101).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
