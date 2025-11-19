@@ -191,7 +191,7 @@ public class CacheHelper : ICacheHelper
 				return default;
 			}
 			_cacheTelemetry.End(CacheTelemetryNames.GetRedisHit, key);
-			var deserialized = JsonSerializer.Deserialize<T>(result);
+			var deserialized = JsonSerializer.Deserialize<T>(result.ToString());
 			var timeSpan = TimeSpan.FromSeconds(_config.CacheSeconds);
 			var options = new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = timeSpan };
 			_cacheTelemetry.Start();
