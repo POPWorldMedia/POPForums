@@ -15,6 +15,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<!--This is an important line to trigger the hot reload:-->
 		<AssignTargetPathsDependsOn>CompileTypeScript;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
+		<DefineStaticWebAssetsDependsOn>CompileTypeScript;$(DefineStaticWebAssetsDependsOn)</DefineStaticWebAssetsDependsOn>
+		<ResolveStaticWebAssetsInputsDependsOn>CompileTypeScript;$(ResolveStaticWebAssetsInputsDependsOn)</ResolveStaticWebAssetsInputsDependsOn>
 		<StaticWebAssetBasePath>/PopForums</StaticWebAssetBasePath>
 	</PropertyGroup>
 
@@ -24,6 +26,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
 		<PackageReference Include="PopIdentity" Version="4.5.0" />
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 	</ItemGroup>
@@ -37,6 +40,12 @@
 		<Content Remove="Client\tsconfig.json" />
 		<Content Remove="package-lock.json" />
 		<Content Remove="package.json" />
+		<Content Remove="wwwroot\PopForums.js" />
+	</ItemGroup>
+
+	<!--Include generated TypeScript output after compilation-->
+	<ItemGroup>
+		<Content Include="wwwroot\PopForums.js" Condition="Exists('wwwroot\PopForums.js')" />
 	</ItemGroup>
 
 	<ItemGroup>
