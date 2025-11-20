@@ -4,7 +4,7 @@
 		<Description>PopForums Mvc Class Library</Description>
 		<VersionPrefix>21.0.1</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<AssemblyName>PopForums.Mvc</AssemblyName>
 		<PackageId>PopForums.Mvc</PackageId>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
@@ -15,12 +15,14 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<!--This is an important line to trigger the hot reload:-->
 		<AssignTargetPathsDependsOn>CompileTypeScript;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
+		<DefineStaticWebAssetsDependsOn>CompileTypeScript;$(DefineStaticWebAssetsDependsOn)</DefineStaticWebAssetsDependsOn>
+		<ResolveStaticWebAssetsInputsDependsOn>CompileTypeScript;$(ResolveStaticWebAssetsInputsDependsOn)</ResolveStaticWebAssetsInputsDependsOn>
 		<StaticWebAssetBasePath>/PopForums</StaticWebAssetBasePath>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.6.2">
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -37,6 +39,12 @@
 		<Content Remove="Client\tsconfig.json" />
 		<Content Remove="package-lock.json" />
 		<Content Remove="package.json" />
+		<Content Remove="wwwroot\PopForums.js" />
+	</ItemGroup>
+
+	<!--Include generated TypeScript output after compilation-->
+	<ItemGroup>
+		<Content Include="wwwroot\PopForums.js" Condition="Exists('wwwroot\PopForums.js')" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -6,7 +6,7 @@ public static class Streams
 	{
 		var length = (int)stream.Length;
 		var bytes = new byte[length];
-		stream.Read(bytes, 0, length);
+		stream.ReadExactly(bytes, 0, length);
 		return bytes;
 	}
 }
