@@ -34,8 +34,8 @@ gulp.task("copies", function () {
 	return merge(streams);
 });
 
-gulp.task("js", function() {
-	return gulp.src("./wwwroot/*.js")
+function jsTask() {
+	return gulp.src("./wwwroot/*.js", { allowEmpty: true })
         .pipe(gulp.dest(targetPath + "/PopForums/dist"))
 		.pipe(sourcemaps.init({ loadMaps: true }))
 		.pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
@@ -43,16 +43,19 @@ gulp.task("js", function() {
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(sourcemaps.write("./"))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
-});
+}
 
-gulp.task("css", function () {
-	return gulp.src("./wwwroot/*.css")
+function cssTask() {
+	return gulp.src("./wwwroot/*.css", { allowEmpty: true })
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"))
         .pipe(sourcemaps.init())
 		.pipe(cleancss())
 		.pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write("./"))
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
-});
+}
+
+gulp.task("js", jsTask);
+gulp.task("css", cssTask);
 
 gulp.task("default", gulp.series(["ts","copies","js","css"]));
