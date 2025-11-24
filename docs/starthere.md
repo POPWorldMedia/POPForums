@@ -11,15 +11,13 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-v21 has breaking changes for using `IForumAdapter`. See [Cusstomization](customization.md) for more information.
-
-This version has data changes. From v20.x, run the `PopForums20to21.sql` script included in the `PopForums.Sql` project. If you need to upgrade from v16.x to v20.x, _first_ run the `PopForums16to20.sql` script against your database, which is found in the `PopForums.Sql` project. It's safe to run this script more than once. IMPORTANT: Going from v18 forward, because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
+This version has data changes. From v21.x, run the `PopForums21to22.sql` script included in the `PopForums.Sql` project. If you need to upgrade from v16.x to v20.x, _first_ run the `PopForums16to20.sql` script against your database, which is found in the `PopForums.Sql` project. It's safe to run this script more than once. IMPORTANT: Going from v18 forward, because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
 ## Prerequisites
 You'll need the following locally:
-* Visual Studio 2022 or later, with the Azure workload (community version is fine), Visual Studio for Mac or Jetbrains Rider
+* Visual Studio 2026 or later, with the Azure workload (community version is fine), Visual Studio for Mac or Jetbrains Rider
 * Node.js (comes with npm)
 * SQL Server Developer, or SQL Server running in a Docker container
 * A mail sending service that supports SMTP
@@ -46,8 +44,8 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 ## Build
 
 * Clone the latest source code from GitHub, or use the production packages as described above. Build it. If your IDE doesn't automatically build Javascript or Typescript, be sure to `npm install` in the `PopForums.Mvc` project, and then run the `gulpfile.js`.
-* The project files require an up-to-date version of Visual Studio 2022 or later. It also works great with Jetbrains' Rider on Mac or Windows.
-* This project is built on ASP.NET v9. Make sure you have the required SDK installed (v9.0.101).
+* The project files require an up-to-date version of Visual Studio 2026 or later, but it also works great with Jetbrains' Rider on Mac or Windows. I prefer it.
+* This project is built on ASP.NET v10. Make sure you have the required SDK installed (v10.0.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
 * The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
 
