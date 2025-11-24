@@ -54,7 +54,7 @@ All of the web app code is contained in the `PopForums.Mvc` project, which also 
 
 The app leverages ASP.NET's SignalR for real-time communication with the server via web sockets, including notifications of new posts, updating the forum and topic grids, new private messages, etc.
 
-In accordance with the simple design philosophy, the web app does not use any specific front-end library, aside from Vue.js, which is used for the admin interface. Again, the intent is to produce search engine friendly markup without a web of dependencies and npm packages. That doesn't mean that there isn't any rich interactivity, because a number of small, raw elements are written in TypeScript. They live in `PopForums.Mvc/Client`. Along with a few small service classes and a simple stage engine, "reactive" elements are updated when a notification comes in via web sockets.
+In accordance with the simple design philosophy, the web app does not use any specific front-end library, aside from Vue.js, which is used for the admin interface. Again, the intent is to produce search engine friendly markup without a web of dependencies and npm packages. That doesn't mean that there isn't any rich interactivity, because a number of small, raw elements are written in TypeScript. They live in `PopForums.Mvc/Client`. Along with a few small service classes and a simple state engine, "reactive" elements are updated when a notification comes in via web sockets.
 
 While server-side localization is straight forward enough, the client-side bits use a small JSON payload apply the right language to the interface. For example, the use of time words varies by language, so the `FormattedTime.ts` component uses those strings for "5 minutes ago" or whatever the right variant is. 
 
