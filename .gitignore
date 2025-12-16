@@ -6,6 +6,7 @@ packages
 .idea
 .idea/.idea.PopForums/.idea
 .idea/.idea.PopForums/riderModule.iml
+.DS_Store
 
 bin
 obj
