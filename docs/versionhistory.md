@@ -7,13 +7,16 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v21.1.0 (PopForums.ElasticKit only, 12/16/25)
+* The ElasticSearch key value in the configuration should simply be the API key, which is a more modern convention used in Elastic's cloud service.
+
 ## Version v22.0.0 (11/24/25)
 * Implement an ignore feature #318
 * BUG: YouTube short links throwing exception on submit #386
 * BUG: Hosted service failure in startup will prevent app start #381
 * BUG: In process hosted jobs run at silly intervals #383
 
-## Version v21.0.1 (12/8/24)
+## Version v21.0.1 (PopForums.Mvc only, 12/8/24)
 * BUG: Hosted service failure in startup will prevent app start #381
 * BUG: In process hosted jobs run at silly intervals #383
 
