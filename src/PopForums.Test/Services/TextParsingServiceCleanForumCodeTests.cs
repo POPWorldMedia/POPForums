@@ -273,6 +273,15 @@ public class TextParsingServiceCleanForumCodeTests
 	}
 
 	[Fact]
+	public void YouTubeDoesntEmbedWhenUrlIsForPost()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.CleanForumCode("blah https://www.youtube.com/post/Ugkx-hR1fdEJqSWSGTwzpoU4GcT_4ktnY_Qy blah");
+		Assert.Equal("blah [url=https://www.youtube.com/post/Ugkx-hR1fdEJqSWSGTwzpoU4GcT_4ktnY_Qy]https://www.youtube.com/pos...T_4ktnY_Qy[/url] blah", result);
+	}
+
+	[Fact]
 	public void YouTubeLinkParsedToLinkWithImagesOff()
 	{
 		var service = GetService();
