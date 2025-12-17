@@ -390,6 +390,17 @@ public class TextParsingServiceForumCodeToHtmlTests
 	}
 
 	[Fact]
+	public void YouTubePostUrlParsedAsRegularLink()
+	{
+		var service = GetService();
+		_settings.YouTubeHeight = 123;
+		_settings.YouTubeWidth = 456;
+		_settings.AllowImages = true;
+		var result = service.ForumCodeToHtml("test https://www.youtube.com/post/Ugkx-hR1fdEJqSWSGTwzpoU4GcT_4ktnY_Qy text");
+		Assert.Equal("<p>test <a href=\"https://www.youtube.com/post/Ugkx-hR1fdEJqSWSGTwzpoU4GcT_4ktnY_Qy\" target=\"_blank\">https://www.youtube.com/pos...T_4ktnY_Qy</a> text</p>", result);
+	}
+
+	[Fact]
 	public void UrlWithBangParsesCorrectly()
 	{
 		var service = GetService();
