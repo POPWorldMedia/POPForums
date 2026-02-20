@@ -145,7 +145,7 @@ If you want to run locally with some of the "kits" described in the documentatio
 * Redis, for distributed cache and SignalR backplane  
 `docker run --name some-redis -p 6379:6379 -d redis`  
 * ElasticSearch, for better search  
-`docker run --name es-01 -p 9200:9200 -e discovery.type=single-node -it docker.elastic.co/elasticsearch/elasticsearch:8.11.1`  
+`docker run --name es-9 -p 9200:9200 -e discovery.type=single-node -it docker.elastic.co/elasticsearch/elasticsearch:9.3.0`  
 
 You may want to have your databases be more durable in the event you trash the SQL container or update to a new one. To do that, first create a new volume, either in Docker Desktop or on the command line:
 ```
