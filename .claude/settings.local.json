@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet test:*)"
+      "Bash(dotnet test:*)",
+      "Bash(find /Users/jeffy/Desktop/dev/PopForums -maxdepth 3 -name \"*.md\" 2>/dev/null | head -20)"
     ]
   }
 }
