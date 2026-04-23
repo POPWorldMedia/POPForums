@@ -46,7 +46,12 @@ declare namespace bootstrap {
 }
 
 declare namespace signalR {
+    enum HttpTransportType {
+        WebSockets = 1,
+        ServerSentEvents = 2,
+        LongPolling = 4
+    }
     class HubConnectionBuilder {
-        withUrl(url: string): any;
+        withUrl(url: string, options?: { skipNegotiation?: boolean; transport?: HttpTransportType }): any;
     }
 }
