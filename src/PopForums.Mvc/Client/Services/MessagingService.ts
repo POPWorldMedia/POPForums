@@ -17,7 +17,10 @@
 		connection: any;
 
 		private async start() {
-			this.connection = new signalR.HubConnectionBuilder().withUrl("/PopForumsHub").withAutomaticReconnect().build();
+			this.connection = new signalR.HubConnectionBuilder()
+				.withUrl("/PopForumsHub", { skipNegotiation: true, transport: signalR.HttpTransportType.WebSockets })
+				.withAutomaticReconnect()
+				.build();
 			await this.connection.start();
 		}
 	}

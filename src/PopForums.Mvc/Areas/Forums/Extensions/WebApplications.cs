@@ -9,7 +9,10 @@ public static class WebApplications
 	/// <returns></returns>
 	public static WebApplication AddPopForumsEndpoints(this WebApplication app)
 	{
-		app.MapHub<PopForumsHub>("/PopForumsHub");
+		app.MapHub<PopForumsHub>("/PopForumsHub", options =>
+		{
+			options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
+		});
 
 		app.MapControllerRoute(
 			"pfadmin",
