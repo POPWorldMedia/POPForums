@@ -35,8 +35,10 @@ public class CacheHelper : ICacheHelper
 	{
 		return null;
 	}
-
+	
+#pragma warning disable CS0067	
 	public event Action<string> OnRemoveCacheKey;
+#pragma warning restore CS0067
 	
 	public string GetEffectiveCacheKey(string key)
 	{
