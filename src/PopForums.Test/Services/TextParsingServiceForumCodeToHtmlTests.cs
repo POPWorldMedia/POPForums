@@ -62,6 +62,22 @@ public class TextParsingServiceForumCodeToHtmlTests
 	}
 
 	[Fact]
+	public void DitchNaughtyJavascriptLinkUpperCase()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=JAVASCRIPT:alert('blah')]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void DitchNaughtyJavascriptLinkMixedCase()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=Javascript:alert('blah')]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
 	public void ReplaceImageTagsWithQuotes()
 	{
 		var service = GetService();

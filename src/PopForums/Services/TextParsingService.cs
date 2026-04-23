@@ -335,7 +335,7 @@ public class TextParsingService : ITextParsingService
 		text = Regex.Replace(text, @"(\[url=""?)(\S+?)(""?\])", "<a href=\"$2\" target=\"_blank\">", RegexOptions.IgnoreCase);
 		text = Regex.Replace(text, @"(<a href=\""mailto:)(\S+?)(\"" target=\""_blank\"">)", "<a href=\"mailto:$2\">", RegexOptions.IgnoreCase);
 		text = text.Replace("[/url]", "</a>");
-		text = Regex.Replace(text, @"<(?=a)\b[^>]*>", match => match.Value.Replace("javascript:", String.Empty), RegexOptions.IgnoreCase);
+		text = Regex.Replace(text, @"<(?=a)\b[^>]*>", match => match.Value.Replace("javascript:", String.Empty, StringComparison.OrdinalIgnoreCase), RegexOptions.IgnoreCase);
 
 		// replace image tags
 		if (_settingsManager.Current.AllowImages)
