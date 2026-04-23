@@ -312,7 +312,8 @@ public class ForumController : Controller
 		ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 		if (user != null)
 			await _lastReadService.MarkTopicRead(user, topic);
-		return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user });
+		var ignoreUserIDs = await _ignoreService.GetIgnoredUserIdsInList(user, postList);
+		return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user, IgnoreUserIDs = ignoreUserIDs });
 	}
 		
 	public async Task<ViewResult> Recent(int pageNumber = 1)
