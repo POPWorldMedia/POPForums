@@ -72,7 +72,7 @@ public class PostMasterService : IPostMasterService
 		var topic = new Topic { TopicID = topicID, ForumID = forum.ForumID, IsClosed = false, IsDeleted = false, IsPinned = false, LastPostName = user.Name, LastPostTime = timeStamp, LastPostUserID = user.UserID, ReplyCount = 0, StartedByName = user.Name, StartedByUserID = user.UserID, Title = newPost.Title, UrlName = urlName, ViewCount = 0 };
 		// <a href="{0}">{1}</a> started a new topic: <a href="{2}">{3}</a>
 		var topicLink = topicLinkGenerator(topic);
-		var message = string.Format(Resources.NewPostPublishMessage, userUrl, user.Name, topicLink, topic.Title);
+		var message = string.Format(Resources.NewPostPublishMessage, userUrl, HtmlEncoder.Default.Encode(user.Name ?? string.Empty), topicLink, HtmlEncoder.Default.Encode(topic.Title ?? string.Empty));
 		var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(forum.ForumID).Result.Count > 0;
 		await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewTopic, forumHasViewRestrictions);
 		await _eventPublisher.ProcessEvent(string.Empty, user, EventDefinitionService.StaticEventIDs.NewPost, true);
@@ -160,7 +160,7 @@ public class PostMasterService : IPostMasterService
 		var tenantID = _tenantService.GetTenant();
 		await _subscribedTopicsService.NotifySubscribers(topic, user, tenantID);
 		// <a href="{0}">{1}</a> made a post in the topic: <a href="{2}">{3}</a>
-		var message = string.Format(Resources.NewReplyPublishMessage, userUrl, user.Name, postLinkGenerator(post), topic.Title);
+		var message = string.Format(Resources.NewReplyPublishMessage, userUrl, HtmlEncoder.Default.Encode(user.Name ?? string.Empty), postLinkGenerator(post), HtmlEncoder.Default.Encode(topic.Title ?? string.Empty));
 		var forumHasViewRestrictions = _forumRepository.GetForumViewRoles(topic.ForumID).Result.Count > 0;
 		await _eventPublisher.ProcessEvent(message, user, EventDefinitionService.StaticEventIDs.NewPost, forumHasViewRestrictions);
 		topic = await _topicRepository.Get(topic.TopicID);

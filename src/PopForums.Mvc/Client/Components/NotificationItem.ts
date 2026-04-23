@@ -8,30 +8,34 @@ namespace PopForums {
 
     notification: Notification;
 
+    private escapeHtml(s: string): string {
+        return (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
     connectedCallback() {
         let markup: string;
         let link: string;
         switch (this.notification.notificationType) {
             case 3: // Award
-                markup = `${PopForums.localizations.award}: <b>${this.notification.data.title}</b>`;
+                markup = `${PopForums.localizations.award}: <b>${this.escapeHtml(this.notification.data.title)}</b>`;
                 link = "/Forums/Account/ViewProfile/" + this.notification.userID + "#Awards";
                 break;
             case 2: // QuestionAnswered
                 markup = PopForums.localizations.questionAnsweredNotification
-                    .replace("{0}", this.notification.data.askerName)
-                    .replace("{1}", this.notification.data.title);
+                    .replace("{0}", this.escapeHtml(this.notification.data.askerName))
+                    .replace("{1}", this.escapeHtml(this.notification.data.title));
                 link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
             case 0: // NewReply
                 markup = PopForums.localizations.newReplyNotification
-                    .replace("{0}", this.notification.data.postName)
-                    .replace("{1}", this.notification.data.title);
+                    .replace("{0}", this.escapeHtml(this.notification.data.postName))
+                    .replace("{1}", this.escapeHtml(this.notification.data.title));
                 link = "/Forums/Forum/GoToNewestPost/" + this.notification.data.topicID;
                 break;
             case 1: // VoteUp
                 markup = PopForums.localizations.voteUpNotification
-                    .replace("{0}", this.notification.data.voterName)
-                    .replace("{1}", this.notification.data.title);
+                    .replace("{0}", this.escapeHtml(this.notification.data.voterName))
+                    .replace("{1}", this.escapeHtml(this.notification.data.title));
                 link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
             default:

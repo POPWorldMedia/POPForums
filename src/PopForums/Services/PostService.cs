@@ -255,13 +255,13 @@ public class PostService : IPostService
 			if (isVoted)
 			{
 				// <a href="{0}">{1}</a> voted for a post in the topic: <a href="{2}">{3}</a>
-				var message = string.Format(Resources.VoteUpPublishMessage, userUrl, user.Name, topicUrl, topicTitle);
+				var message = string.Format(Resources.VoteUpPublishMessage, userUrl, HtmlEncoder.Default.Encode(user.Name ?? string.Empty), topicUrl, HtmlEncoder.Default.Encode(topicTitle ?? string.Empty));
 				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVote, false);
 				await _notificationAdapter.Vote(user.Name, topicTitle, post.PostID, votedUpUser.UserID);
 			}
 			else
 			{
-				var message = $"<a href=\"{userUrl}\">{user.Name}</a> -1: <a href=\"{topicUrl}\">{topicTitle}</a>";
+				var message = $"<a href=\"{userUrl}\">{HtmlEncoder.Default.Encode(user.Name ?? string.Empty)}</a> -1: <a href=\"{topicUrl}\">{HtmlEncoder.Default.Encode(topicTitle ?? string.Empty)}</a>";
 				await _eventPublisher.ProcessEvent(message, votedUpUser, EventDefinitionService.StaticEventIDs.PostVoteUndo, false);
 			}
 		}

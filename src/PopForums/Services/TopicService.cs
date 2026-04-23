@@ -242,7 +242,7 @@ public class TopicService : ITopicService
 		    topic.StartedByUserID != post.UserID) // the answer isn't coming from the question asker
 		{
 			// <a href="{0}">{1}</a> chose an answer for the question: <a href="{2}">{3}</a>
-			var message = String.Format(Resources.QuestionAnswered, userUrl, user.Name, topicUrl, topic.Title);
+			var message = String.Format(Resources.QuestionAnswered, userUrl, HtmlEncoder.Default.Encode(user.Name ?? string.Empty), topicUrl, HtmlEncoder.Default.Encode(topic.Title ?? string.Empty));
 			await _eventPublisher.ProcessEvent(message, answerUser, EventDefinitionService.StaticEventIDs.QuestionAnswered, false);
 		}
 		await _topicRepository.UpdateAnswerPostID(topic.TopicID, post.PostID);
