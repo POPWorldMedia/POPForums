@@ -439,15 +439,8 @@ public class AccountController : Controller
 			return Redirect("OAuthLogin");
 		}
 		
-		string link;
-		if (string.IsNullOrWhiteSpace(Request.Headers.Referer))
-			link = Url.Action("Index", HomeController.Name);
-		else
-		{
-			link = Request.Headers.Referer;
-			if (!link.Contains(Request.Host.Value))
-				link = Url.Action("Index", HomeController.Name);
-		}
+		var referer = Request.Headers.Referer.ToString();
+		var link = Url.IsLocalUrl(referer) ? referer : Url.Action("Index", HomeController.Name);
 		ViewBag.Referrer = link;
 
 		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();

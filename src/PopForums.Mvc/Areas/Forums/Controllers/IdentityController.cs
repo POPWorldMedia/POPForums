@@ -154,7 +154,7 @@ public class IdentityController : Controller
 				await PerformSignInAsync(matchResult.User, HttpContext, DateTime.UtcNow.AddMinutes(_config.OAuthRefreshExpirationMinutes));
 			else
 				await PerformSignInAsync(matchResult.User, HttpContext);
-			if (string.IsNullOrEmpty(returnUrl))
+			if (!Url.IsLocalUrl(returnUrl))
 				returnUrl = Url.Action(nameof(HomeController.Index), HomeController.Name);
 			return Redirect(returnUrl);
 		}
