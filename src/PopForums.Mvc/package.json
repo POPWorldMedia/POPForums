@@ -2,11 +2,11 @@
   "scripts": {},
   "dependencies": {
     "@microsoft/signalr": "10.0.0",
-    "axios": "1.15.0",
+    "axios": "1.15.2",
     "bootstrap": "5.3.8",
-    "tinymce": "8.2.2",
-    "vue": "3.5.24",
-    "vue-router": "4.6.3"
+    "tinymce": "8.4.0",
+    "vue": "3.5.33",
+    "vue-router": "5.0.6"
   },
   "devDependencies": {
     "typescript": "6.0.3",
