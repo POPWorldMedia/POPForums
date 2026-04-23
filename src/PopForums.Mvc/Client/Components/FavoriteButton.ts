@@ -6,19 +6,19 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
 
     get makefavoritetext(): string {
-        return this.getAttribute("makefavoritetext");
+        return this.getAttribute("makefavoritetext")!;
     }
     get removefavoritetext(): string {
-        return this.getAttribute("removefavoritetext");
+        return this.getAttribute("removefavoritetext")!;
     }
 
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
-        let button: HTMLButtonElement = this.querySelector("button");
+        let button: HTMLButtonElement = this.querySelector("button")!;
         this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", () => {
             fetch(PopForums.AreaPath + "/Favorites/ToggleFavorite/" + PopForums.currentTopicState.topicID, {
@@ -49,7 +49,7 @@ namespace PopForums {
     }
 
     updateUI(data: boolean): void {
-        let button = this.querySelector("button");
+        let button = this.querySelector("button")!;
         if (data) {
             button.title = this.removefavoritetext;
             button.classList.remove("icon-star", "text-muted");

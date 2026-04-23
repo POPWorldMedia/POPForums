@@ -9,16 +9,16 @@ namespace PopForums {
             return this.getAttribute("templateid");
         }
 
-        private button: HTMLInputElement;
+        private button!: HTMLInputElement;
 
         connectedCallback() {
-            let template = document.getElementById(this.templateID) as HTMLTemplateElement;
+            let template = document.getElementById(this.templateID!) as HTMLTemplateElement;
             if (!template) {
                 console.error(`Can't find templateID ${this.templateID} to make reply form.`);
                 return;
             }
             this.append(template.content.cloneNode(true));
-            this.button = this.querySelector("#SubmitReply");
+            this.button = this.querySelector("#SubmitReply")!;
             this.button.addEventListener("click", () => {
                 this.submitReply();
             });
@@ -68,6 +68,6 @@ namespace PopForums {
                 });
         };
     }
-    
+
     customElements.define('pf-replyform', ReplyForm);
 }

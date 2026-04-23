@@ -6,31 +6,31 @@ namespace PopForums {
         }
 
         get answerstatusclass(): string {
-            return this.getAttribute("answerstatusclass");
+            return this.getAttribute("answerstatusclass")!;
         }
         get chooseanswertext(): string {
-            return this.getAttribute("chooseanswertext");
+            return this.getAttribute("chooseanswertext")!;
         }
         get topicid(): string {
-            return this.getAttribute("topicid");
+            return this.getAttribute("topicid")!;
         }
         get postid(): string {
-            return this.getAttribute("postid");
+            return this.getAttribute("postid")!;
         }
         get answerpostid(): string {
-            return this.getAttribute("answerpostid");
+            return this.getAttribute("answerpostid")!;
         }
         get userid(): string {
-            return this.getAttribute("userid");
+            return this.getAttribute("userid")!;
         }
         get startedbyuserid(): string {
-            return this.getAttribute("startedbyuserid");
+            return this.getAttribute("startedbyuserid")!;
         }
         get isfirstintopic(): string {
-            return this.getAttribute("isfirstintopic");
+            return this.getAttribute("isfirstintopic")!;
         }
 
-        private button: HTMLElement;
+        private button!: HTMLElement;
 
         connectedCallback() {
             this.button = document.createElement("p");
@@ -49,7 +49,7 @@ namespace PopForums {
         getDependentReference(): [TopicState, string] {
             return [PopForums.currentTopicState, "answerPostID"];
         }
-        
+
         updateUI(answerPostID: number): void {
             if (this.isfirstintopic.toLowerCase() === "false" && this.userid === this.startedbyuserid) {
                 // this is question author

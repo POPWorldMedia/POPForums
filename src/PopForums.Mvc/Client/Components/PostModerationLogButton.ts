@@ -6,24 +6,24 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
 
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
 
     get postid(): string {
-        return this.getAttribute("postid");
+        return this.getAttribute("postid")!;
     }
 
     get parentSelectorToAppendTo(): string {
-        return this.getAttribute("parentselectortoappendto");
+        return this.getAttribute("parentselectortoappendto")!;
     }
 
     connectedCallback() {
         this.innerHTML = PostModerationLogButton.template;
-        let button = this.querySelector("input");
+        let button = this.querySelector("input")!;
         button.value = this.buttontext;
         let classes = this.buttonclass;
         if (classes?.length > 0)

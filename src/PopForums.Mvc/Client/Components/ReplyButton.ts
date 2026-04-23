@@ -6,23 +6,23 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
 
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
-    
+
     get topicid(): string {
-        return this.getAttribute("topicid");
+        return this.getAttribute("topicid")!;
     }
-    
+
     get postid(): string {
-        return this.getAttribute("postid");
+        return this.getAttribute("postid")!;
     }
-    
+
     get overridedisplay(): string {
-        return this.getAttribute("overridedisplay");
+        return this.getAttribute("overridedisplay")!;
     }
 
     connectedCallback() {
@@ -42,7 +42,7 @@ namespace PopForums {
     getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "isReplyLoaded"];
     }
-    
+
     updateUI(data: boolean): void {
         if (this.overridedisplay?.toLowerCase() === "true")
             return;

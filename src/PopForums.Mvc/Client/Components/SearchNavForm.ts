@@ -15,23 +15,23 @@ namespace PopForums {
             return this.getAttribute("dropdownid");
         }
 
-        private searchBox: HTMLInputElement;
-        private dropdown: HTMLElement;
+        private searchBox!: HTMLInputElement;
+        private dropdown!: HTMLElement;
 
         connectedCallback() {
-            let template = document.getElementById(this.templateid) as HTMLTemplateElement;
+            let template = document.getElementById(this.templateid!) as HTMLTemplateElement;
             if (!template) {
                 console.error(`Can't find templateID ${this.templateid} to make search form.`);
                 return;
             }
             this.append(template.content.cloneNode(true));
-            this.searchBox = this.querySelector("#" + this.textboxid);
-            this.dropdown = this.querySelector("#" + this.dropdownid);
+            this.searchBox = this.querySelector("#" + this.textboxid)!;
+            this.dropdown = this.querySelector("#" + this.dropdownid)!;
             this.dropdown.addEventListener("shown.bs.dropdown", () => {
                 this.searchBox.focus();
             });
         }
     }
-    
+
     customElements.define('pf-searchnavform', SearchNavForm);
 }

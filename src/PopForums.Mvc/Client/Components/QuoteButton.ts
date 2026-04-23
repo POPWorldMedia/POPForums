@@ -1,4 +1,4 @@
-﻿namespace PopForums {
+namespace PopForums {
 
     export class QuoteButton extends HTMLElement {
     constructor() {
@@ -6,33 +6,33 @@
     }
 
     get name(): string {
-        return this.getAttribute("name");
+        return this.getAttribute("name")!;
     }
     get containerid(): string {
-        return this.getAttribute("containerid");
+        return this.getAttribute("containerid")!;
     }
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
     get tip(): string {
-        return this.getAttribute("tip");
+        return this.getAttribute("tip")!;
     }
     get postID(): string {
-        return this.getAttribute("postid");
+        return this.getAttribute("postid")!;
     }
 
     private _tip: any;
 
     connectedCallback() {
-        let targetText = document.getElementById(this.containerid);
+        let targetText = document.getElementById(this.containerid)!;
         this.innerHTML = QuoteButton.template;
-        let button = this.querySelector("button");
+        let button = this.querySelector("button")!;
         button.title = this.tip;
-        ["mousedown","touchstart"].forEach((e:string) => 
-            targetText.addEventListener(e, () => 
+        ["mousedown","touchstart"].forEach((e:string) =>
+            targetText.addEventListener(e, () =>
                 { if (this._tip) this._tip.hide() }));
         button.value = this.buttontext;
         let classes = this.buttonclass;

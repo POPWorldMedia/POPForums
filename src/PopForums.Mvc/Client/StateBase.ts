@@ -11,7 +11,7 @@ export class StateBase {
     subscribe(propertyName: string, eventHandler: Function) {
         if (!this._subs.has(propertyName))
             this._subs.set(propertyName, new Array<Function>());
-        const callbacks = this._subs.get(propertyName);
+        const callbacks = this._subs.get(propertyName)!;
         callbacks.push(eventHandler);
         eventHandler();
     }

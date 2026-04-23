@@ -6,55 +6,55 @@ namespace PopForums {
     }
 
     get votes(): string {
-        return this.getAttribute("votes");
+        return this.getAttribute("votes")!;
     }
     set votes(value:string) {
         this.setAttribute("votes", value);
     }
 
     get postid(): string {
-        return this.getAttribute("postid");
+        return this.getAttribute("postid")!;
     }
 
     get containerclass(): string {
-        return this.getAttribute("containerclass");
+        return this.getAttribute("containerclass")!;
     }
 
     get votescontainerclass(): string {
-        return this.getAttribute("votescontainerclass");
+        return this.getAttribute("votescontainerclass")!;
     }
 
     get badgeclass(): string {
-        return this.getAttribute("badgeclass");
+        return this.getAttribute("badgeclass")!;
     }
 
     get votebuttonclass(): string {
-        return this.getAttribute("votebuttonclass");
+        return this.getAttribute("votebuttonclass")!;
     }
 
     get isloggedin(): string {
-        return this.getAttribute("isloggedin").toLowerCase();
+        return this.getAttribute("isloggedin")!.toLowerCase();
     }
 
     get isauthor(): string {
-        return this.getAttribute("isauthor").toLowerCase();
+        return this.getAttribute("isauthor")!.toLowerCase();
     }
 
     get isvoted(): string {
-        return this.getAttribute("isvoted").toLowerCase();
+        return this.getAttribute("isvoted")!.toLowerCase();
     }
 
-    private badge: HTMLElement;
-    private voterContainer: HTMLElement;
-    private popOver: bootstrap.Popover;
-    private popoverEventHander: EventListenerOrEventListenerObject;
+    private badge!: HTMLElement;
+    private voterContainer!: HTMLElement;
+    private popOver!: bootstrap.Popover;
+    private popoverEventHander!: EventListenerOrEventListenerObject;
 
     connectedCallback() {
         this.innerHTML = VoteCount.template;
-        let topContainer = this.querySelector("div");
+        let topContainer = this.querySelector("div")!;
         if (this.containerclass?.length > 0)
             this.containerclass.split(" ").forEach((c) => topContainer.classList.add(c));
-        this.badge = this.querySelector("div > div");
+        this.badge = this.querySelector("div > div")!;
         this.badge.innerHTML = "+" + this.votes;
         if (this.badgeclass?.length > 0)
             this.badgeclass.split(" ").forEach((c) => this.badge.classList.add(c));
@@ -62,7 +62,7 @@ namespace PopForums {
         if (statusHtml != "") {
             let status = document.createElement("template");
             status.innerHTML = this.buttonGenerator();
-            this.firstElementChild.append(status.content.firstChild);
+            this.firstElementChild!.append(status.content.firstChild!);
         }
         let voteButton = this.querySelector("span");
         if (voteButton) {
@@ -110,7 +110,7 @@ namespace PopForums {
                     let t = document.createElement("template");
                     t.innerHTML = text.trim();
                     this.voterContainer.innerHTML = "";
-                    this.voterContainer.appendChild(t.content.firstChild);
+                    this.voterContainer.appendChild(t.content.firstChild!);
                 }));
         };
         this.badge.addEventListener("shown.bs.popover", this.popoverEventHander);

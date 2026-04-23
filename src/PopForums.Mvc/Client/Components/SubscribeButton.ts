@@ -6,19 +6,19 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
-    
+
     get subscribetext(): string {
-        return this.getAttribute("subscribetext");
+        return this.getAttribute("subscribetext")!;
     }
     get unsubscribetext(): string {
-        return this.getAttribute("unsubscribetext");
+        return this.getAttribute("unsubscribetext")!;
     }
 
     connectedCallback() {
         this.innerHTML = SubscribeButton.template;
-        let button: HTMLButtonElement = this.querySelector("button");
+        let button: HTMLButtonElement = this.querySelector("button")!;
         this.buttonclass.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", () => {
             fetch(PopForums.AreaPath + "/Subscription/ToggleSubscription/" + PopForums.currentTopicState.topicID, {
@@ -49,7 +49,7 @@ namespace PopForums {
     }
 
     updateUI(data: boolean): void {
-        let button = this.querySelector("button");
+        let button = this.querySelector("button")!;
         if (data) {
             button.title = this.unsubscribetext;
             button.classList.remove("icon-bell-slash", "text-muted");

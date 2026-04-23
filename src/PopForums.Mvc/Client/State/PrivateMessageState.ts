@@ -6,18 +6,18 @@ export class PrivateMessageState extends StateBase {
         this.isStart = false;
     }
 
-    pmID: number;
-    users: PrivateMessageUser[];
-    messages: PrivateMessage[];
-    newestPostID: number;
+    pmID!: number;
+    users!: PrivateMessageUser[];
+    messages!: PrivateMessage[];
+    newestPostID!: number;
 
-    private postStream: HTMLElement;
+    private postStream!: HTMLElement;
     private connection: any;
     private isStart: boolean;
 
     setupPm() {
         PopForums.Ready(async () => {
-            this.postStream = document.getElementById("PostStream");
+            this.postStream = document.getElementById("PostStream")!;
             this.messages.forEach(x => {
                 let messageRow = this.populateMessage(x);
                 this.postStream.append(messageRow);
@@ -29,7 +29,7 @@ export class PrivateMessageState extends StateBase {
             let self = this;
             this.connection.on("addMessage", function(message: PrivateMessage) {
                 let messageRow = self.populateMessage(message);
-                let parent = self.postStream.parentElement;
+                let parent = self.postStream.parentElement!;
                 let isBottom = parent.scrollHeight - parent.scrollTop - parent.clientHeight < 200;
                 self.postStream.append(messageRow);
                 if (isBottom)
@@ -49,10 +49,10 @@ export class PrivateMessageState extends StateBase {
                 this.scrollToElement("p" + this.newestPostID)
             }
             else {
-                this.postStream.parentElement.scrollTop = this.postStream.parentElement.scrollHeight;
+                this.postStream.parentElement!.scrollTop = this.postStream.parentElement!.scrollHeight;
             }
             await this.LoadCheck();
-            this.postStream.parentElement.addEventListener("scroll", this.ScrollLoad);
+            this.postStream.parentElement!.addEventListener("scroll", this.ScrollLoad);
         });
     }
 
@@ -61,7 +61,7 @@ export class PrivateMessageState extends StateBase {
     }
 
     async LoadCheck() {
-        let box = this.postStream.parentElement;
+        let box = this.postStream.parentElement!;
         if (!this.isStart && box.scrollTop < 250) {
             const posts = await this.GetPosts();
             let isStart = true;
@@ -96,22 +96,22 @@ export class PrivateMessageState extends StateBase {
         template.innerHTML = PrivateMessageState.template;
         let messageRow = template.content.cloneNode(true) as HTMLElement;
 
-        let body = messageRow.querySelector("div > div");
+        let body = messageRow.querySelector("div > div")!;
         body.innerHTML = data.fullText;
         if (data.userID === PopForums.userState.userID) {
             body.classList.add("alert-secondary");
-            messageRow.querySelector("div").classList.add("ms-auto");
+            messageRow.querySelector("div")!.classList.add("ms-auto");
         }
         else
             body.classList.add("alert-primary");
 
-        let timeStamp = messageRow.querySelector("pf-formattedtime");
+        let timeStamp = messageRow.querySelector("pf-formattedtime")!;
         timeStamp.setAttribute("utctime", data.postTime.toString());
 
-        let name = messageRow.querySelector(".messageName");
+        let name = messageRow.querySelector(".messageName")!;
         name.innerHTML = data.name;
 
-        body.parentElement.id = "p" + data.pmPostID;
+        body.parentElement!.id = "p" + data.pmPostID;
 
         return messageRow;
     };
@@ -121,7 +121,7 @@ export class PrivateMessageState extends StateBase {
         e.scrollIntoView();
     };
 
-    static template: string = 
+    static template: string =
 `<div class="w-75 mb-3">
     <span class="d-flex">
         <small class="messageName me-3"></small>

@@ -4,12 +4,12 @@ namespace PopForums {
         constructor() {
             super();
         }
-    
-        forumID: number;
-        pageSize: number;
-        pageIndex: number;
+
+        forumID!: number;
+        pageSize!: number;
+        pageIndex!: number;
         @WatchProperty
-        isNewTopicLoaded: boolean;
+        isNewTopicLoaded!: boolean;
 
         setupForum() {
             PopForums.Ready(async () => {
@@ -48,7 +48,7 @@ namespace PopForums {
                 }
                 let row = self.populateTopicRow(data);
                 row.classList.remove("hidden");
-                document.querySelector("#TopicList tbody").prepend(row);
+                document.querySelector("#TopicList tbody")!.prepend(row);
             });
             await connection.invoke("listenToForum", self.forumID);
         }
@@ -68,25 +68,25 @@ namespace PopForums {
                 }
                 var row = self.populateTopicRow(data);
                 row.classList.remove("hidden");
-                document.querySelector("#TopicList tbody").prepend(row);
+                document.querySelector("#TopicList tbody")!.prepend(row);
             });
             connection.invoke("listenRecent");
         }
 
         populateTopicRow = function (data: any) {
-            let row = document.querySelector("#TopicTemplate").cloneNode(true) as HTMLElement;
+            let row = document.querySelector("#TopicTemplate")!.cloneNode(true) as HTMLElement;
             row.setAttribute("data-topicid", data.topicID);
             row.removeAttribute("id");
-            row.querySelector(".startedByName").textContent = data.startedByName;
-            row.querySelector(".indicatorLink").setAttribute("href", data.link);
-            row.querySelector(".titleLink").textContent = data.title;
-            row.querySelector(".titleLink").setAttribute("href", data.link);
+            row.querySelector(".startedByName")!.textContent = data.startedByName;
+            row.querySelector(".indicatorLink")!.setAttribute("href", data.link);
+            row.querySelector(".titleLink")!.textContent = data.title;
+            row.querySelector(".titleLink")!.setAttribute("href", data.link);
             var forumTitle = row.querySelector(".forumTitle");
             if (forumTitle) forumTitle.textContent = data.forumTitle;
-            row.querySelector(".viewCount").innerHTML = data.viewCount;
-            row.querySelector(".replyCount").innerHTML = data.replyCount;
-            row.querySelector(".lastPostName").textContent = data.lastPostName;
-            row.querySelector("pf-formattedtime").setAttribute("utctime", data.utc);
+            row.querySelector(".viewCount")!.innerHTML = data.viewCount;
+            row.querySelector(".replyCount")!.innerHTML = data.replyCount;
+            row.querySelector(".lastPostName")!.textContent = data.lastPostName;
+            row.querySelector("pf-formattedtime")!.setAttribute("utctime", data.utc);
             return row;
         };
     }

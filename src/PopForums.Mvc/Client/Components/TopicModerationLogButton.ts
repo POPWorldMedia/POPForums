@@ -6,26 +6,26 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
 
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
 
     get topicid(): string {
-        return this.getAttribute("topicid");
+        return this.getAttribute("topicid")!;
     }
 
     connectedCallback() {
         this.innerHTML = TopicModerationLogButton.template;
-        let button = this.querySelector("input");
+        let button = this.querySelector("input")!;
         button.value = this.buttontext;
         let classes = this.buttonclass;
         if (classes?.length > 0)
             classes.split(" ").forEach((c) => button.classList.add(c));
         button.addEventListener("click", () => {
-            let container = this.querySelector("div");
+            let container = this.querySelector("div")!;
             if (container.style.display !== "block")
                 fetch(PopForums.AreaPath + "/Moderator/TopicModerationLog/" + this.topicid)
                     .then(response => response.text()

@@ -6,15 +6,15 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
 
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
 
     get forumid(): string {
-        return this.getAttribute("forumid");
+        return this.getAttribute("forumid")!;
     }
 
     connectedCallback() {
@@ -32,7 +32,7 @@ namespace PopForums {
     getDependentReference(): [ForumState, string] {
         return [PopForums.currentForumState, "isNewTopicLoaded"];
     }
-    
+
     updateUI(data: boolean): void {
         if (data)
             this.style.display = "none";

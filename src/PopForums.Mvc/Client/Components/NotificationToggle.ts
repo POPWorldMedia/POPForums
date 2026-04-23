@@ -6,19 +6,19 @@ namespace PopForums {
         this.userState = PopForums.userState;
         this.isInit = false;
     }
-    
+
     get panelid(): string {
-        return this.getAttribute("panelid");
+        return this.getAttribute("panelid")!;
     }
-    
+
     get notificationlistid(): string {
-        return this.getAttribute("notificationlistid");
+        return this.getAttribute("notificationlistid")!;
     }
-    
+
     private userState: UserState;
-    private isReady: boolean;
-    private panel: HTMLElement;
-    private offCanvas: bootstrap.Offcanvas;
+    private isReady!: boolean;
+    private panel!: HTMLElement;
+    private offCanvas!: bootstrap.Offcanvas;
     private isInit: boolean;
 
     connectedCallback() {
@@ -31,10 +31,10 @@ namespace PopForums {
 
     ready() {
         this.title = PopForums.localizations.notifications;
-        this.panel = document.getElementById(this.panelid);
+        this.panel = document.getElementById(this.panelid)!;
         this.offCanvas = new bootstrap.Offcanvas(this.panel);
         this.addEventListener("click", this.show);
-        let list = document.getElementById(this.notificationlistid);
+        let list = document.getElementById(this.notificationlistid)!;
         this.userState.list = list;
     }
 

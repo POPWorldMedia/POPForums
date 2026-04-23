@@ -12,8 +12,8 @@ export abstract class ElementBase<B extends StateBase> extends HTMLElement {
         this.state.subscribe(this.propertyToWatch, delegate);
     }
 
-    private state: B;
-    private propertyToWatch: string;
+    private state!: B;
+    private propertyToWatch!: string;
 
     update() {
         const externalValue = this.state[this.propertyToWatch as keyof B];

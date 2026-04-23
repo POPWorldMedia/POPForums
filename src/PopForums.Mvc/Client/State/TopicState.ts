@@ -5,33 +5,33 @@ export class TopicState extends StateBase {
         super();
     }
 
-    topicID: number;
-    isImageEnabled: boolean;
+    topicID!: number;
+    isImageEnabled!: boolean;
     @WatchProperty
-    isReplyLoaded: boolean;
+    isReplyLoaded!: boolean;
     @WatchProperty
-    answerPostID: number;
+    answerPostID!: number;
     @WatchProperty
-	lowPage:number;
+	lowPage!:number;
     @WatchProperty
-	highPage: number;
-	lastVisiblePostID: number;
+	highPage!: number;
+	lastVisiblePostID!: number;
     @WatchProperty
-    isNewerPostsAvailable: boolean;
-    pageIndex: number;
-	pageCount: number;
+    isNewerPostsAvailable!: boolean;
+    pageIndex!: number;
+	pageCount!: number;
 	loadingPosts: boolean = false;
 	isScrollAdjusted: boolean = false;
     @WatchProperty
-    commentReplyID: number;
+    commentReplyID!: number;
     @WatchProperty
-    nextQuote: string;
+    nextQuote!: string;
     @WatchProperty
-    isSubscribed: boolean;
+    isSubscribed!: boolean;
     @WatchProperty
-    isFavorite: boolean;
-    documentFragment: DocumentFragment;
-    selectionAncestor: Node;
+    isFavorite!: boolean;
+    documentFragment!: DocumentFragment;
+    selectionAncestor!: Node;
 
     setupTopic() {
         PopForums.Ready(async () => {
@@ -52,7 +52,7 @@ export class TopicState extends StateBase {
                             .then(text => {
                                 var t = document.createElement("template");
                                 t.innerHTML = text.trim();
-                                document.querySelector("#PostStream").appendChild(t.content.firstChild);
+                                document.querySelector("#PostStream")!.appendChild(t.content.firstChild!);
                             }));
                     self.lastVisiblePostID = postID;
                 }
@@ -92,16 +92,16 @@ export class TopicState extends StateBase {
         if (replyID != null) {
             path += "?replyID=" + replyID;
         }
-    
+
         fetch(path)
             .then(response => response.text()
                 .then(text => {
                     let n = document.querySelector("#NewReply") as HTMLElement;
-                    n.innerHTML = text;
-                    n.style.display = "block";
+                    n!.innerHTML = text;
+                    n!.style.display = "block";
                     this.scrollToElement("NewReply");
                     this.isReplyLoaded = true;
-    
+
                     if (setupMorePosts) {
                         let self = this;
                         this.connection.invoke("getLastPostID", this.topicID)
@@ -124,14 +124,14 @@ export class TopicState extends StateBase {
     loadComment(topicID: number, replyID: number): void {
         var n = document.querySelector("[data-postid*='" + replyID + "'] .commentHolder");
         const boxid = "commentbox";
-        n.id = boxid;
+        n!.id = boxid;
         var path = PopForums.AreaPath + "/Forum/PostReply/" + topicID + "?replyID=" + replyID;
         this.commentReplyID = replyID;
         this.isReplyLoaded = true;
         fetch(path)
             .then(response => response.text()
                 .then(text => {
-                    n.innerHTML = text;
+                    n!.innerHTML = text;
                     this.scrollToElement(boxid);
                 }));
     };
@@ -160,9 +160,9 @@ export class TopicState extends StateBase {
                     stuff.removeChild(newPageCount);
                     this.lastVisiblePostID = Number(lastPostID.value);
                     this.pageCount = Number(newPageCount.value);
-                    let postStream = document.querySelector("#PostStream");
+                    let postStream = document.querySelector("#PostStream")!;
                     postStream.append(stuff);
-                    document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
+                    document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links!.cloneNode(true)));
                     document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
                     if (this.highPage == this.pageCount && this.lowPage == 1) {
                         document.querySelectorAll(".pagerLinks").forEach(x => x.remove());
@@ -190,9 +190,9 @@ export class TopicState extends StateBase {
                     let t = document.createElement("template");
                     t.innerHTML = text.trim();
                     var stuff = t.content.firstChild as HTMLElement;
-                    var links = stuff.querySelector(".pagerLinks");
+                    var links = stuff.querySelector(".pagerLinks") as Element;
                     stuff.removeChild(links);
-                    var postStream = document.querySelector("#PostStream");
+                    var postStream = document.querySelector("#PostStream")!;
                     postStream.prepend(stuff);
                     document.querySelectorAll(".pagerLinks").forEach(x => x.replaceWith(links.cloneNode(true)));
                     document.querySelectorAll(".postItem img:not(.avatar)").forEach(x => x.classList.add("postImage"));
@@ -243,9 +243,9 @@ export class TopicState extends StateBase {
                         let tag = document.querySelector("div[data-postID='" + hash + "']");
                         if (tag) {
                             let tagPosition = tag.getBoundingClientRect().top;
-                            let crumb = document.querySelector("#ForumContainer #TopBreadcrumb");
+                            let crumb = document.querySelector("#ForumContainer #TopBreadcrumb")!;
                             let crumbHeight = crumb.getBoundingClientRect().height;
-                            let e = getComputedStyle(document.querySelector(".postItem"));
+                            let e = getComputedStyle(document.querySelector(".postItem") as Element);
                             let margin = parseFloat(e.marginTop);
                             let newPosition = tagPosition - crumbHeight - margin;
                             window.scrollBy({ top: newPosition, behavior: 'auto' });

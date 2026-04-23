@@ -6,13 +6,13 @@ namespace PopForums {
     }
 
     get utctime(): string {
-        return this.getAttribute("utctime");
+        return this.getAttribute("utctime")!;
     }
 
-    private utcTime: number;
-    private utcTimeAsDate: Date;
+    private utcTime!: number;
+    private utcTimeAsDate!: Date;
     private static dayInMs = 86400000;
-    private isReady: boolean;
+    private isReady!: boolean;
 
     connectedCallback() {
         const delegate = this.ready.bind(this);
@@ -40,7 +40,7 @@ namespace PopForums {
         this.utcTime = Date.parse(baseTime);
         this.utcTimeAsDate = new Date(baseTime);
     }
-    
+
     private UpdateTimer(): void {
         setTimeout(() => {
             this.UpdateTimer();

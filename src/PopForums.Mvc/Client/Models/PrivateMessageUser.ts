@@ -1,6 +1,6 @@
 namespace PopForums {
     export class PrivateMessageUser {
-        userID: number;
-        name: string;
+        userID!: number;
+        name!: string;
     }
 }

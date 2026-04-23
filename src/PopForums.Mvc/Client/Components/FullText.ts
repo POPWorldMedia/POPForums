@@ -6,15 +6,15 @@ namespace PopForums {
     }
 
     get overridelistener(): string {
-        return this.getAttribute("overridelistener");
+        return this.getAttribute("overridelistener")!;
     }
 
     get forcenoimage(): string {
-        return this.getAttribute("forcenoimage");
+        return this.getAttribute("forcenoimage")!;
     }
 
     get isshort(): string {
-        return this.getAttribute("isshort");
+        return this.getAttribute("isshort")!;
     }
 
     get formID() { return this.getAttribute("formid") };
@@ -22,12 +22,12 @@ namespace PopForums {
     get value() { return this._value;}
     set value(v: string) { this._value = v; }
 
-    _value: string;
+    _value!: string;
 
     static formAssociated = true;
 
-    private textBox: HTMLElement;
-    private externalFormElement: HTMLElement;
+    private textBox!: HTMLElement;
+    private externalFormElement!: HTMLElement;
 
     connectedCallback() {
         var initialValue = this.getAttribute("value");
@@ -35,8 +35,8 @@ namespace PopForums {
             this.value = initialValue;
         if (userState.isPlainText) {
             this.externalFormElement = document.createElement("textarea");
-            this.externalFormElement.id = this.formID;
-            this.externalFormElement.setAttribute("name", this.formID);
+            this.externalFormElement.id = this.formID!;
+            this.externalFormElement.setAttribute("name", this.formID!);
             this.externalFormElement.classList.add("form-control");
             if (this.value)
             (this.externalFormElement as HTMLTextAreaElement).value = this.value;
@@ -55,8 +55,8 @@ namespace PopForums {
         let template = document.createElement("template");
         template.innerHTML = FullText.template;
         this.attachShadow({ mode: "open" });
-        this.shadowRoot.append(template.content.cloneNode(true));
-        this.textBox = this.shadowRoot.querySelector("#editor");
+        this.shadowRoot!.append(template.content.cloneNode(true));
+        this.textBox = this.shadowRoot!.querySelector("#editor")!;
         if (this.value)
             (this.textBox as HTMLTextAreaElement).innerText = this.value;
         this.editorSettings.target = this.textBox;
@@ -66,7 +66,7 @@ namespace PopForums {
             this.editorSettings.height = "200";
         var self = this;
         this.editorSettings.setup = function (editor: any) {
-            editor.on("init", function () {
+            editor.on("init", function (this: any) {
               this.on("focusout", function(e: any) {
                 editor.save();
                 self.value = (self.textBox as HTMLInputElement).value;
@@ -81,13 +81,13 @@ namespace PopForums {
               self.value = (self.textBox as HTMLInputElement).value;
               (self.externalFormElement as any).value = self.value;
             });
-            
+
             function InstantImageUpload() {
                 const input = document.createElement("input");
                 input.setAttribute("type", "file");
                 input.setAttribute("accept", "image/jpeg,image/gif,image/png");
                 input.addEventListener("change", (e) => {
-                    const file = input.files[0];
+                    const file = input.files![0];
                     let url = "/Forums/Image/UploadPostImage";
                     let form = new FormData();
                     form.append("file", file);
@@ -114,7 +114,7 @@ namespace PopForums {
                         });
                 });
                 input.style.display = "none";
-                document.getElementById("ForumContainer").append(input);
+                document.getElementById("ForumContainer")!.append(input);
                 input.click();
             };
 
@@ -127,8 +127,8 @@ namespace PopForums {
         };
         tinymce.init(this.editorSettings);
         this.externalFormElement = document.createElement("input") as HTMLInputElement;
-        this.externalFormElement.id = this.formID;
-        this.externalFormElement.setAttribute("name", this.formID);
+        this.externalFormElement.id = this.formID!;
+        this.externalFormElement.setAttribute("name", this.formID!);
         (this.externalFormElement as HTMLInputElement).type = "hidden";
         this.appendChild(this.externalFormElement);
         if (this.overridelistener?.toLowerCase() !== "true")
@@ -158,12 +158,12 @@ namespace PopForums {
             }
         }
     }
-    
+
         private static editorCSS = "/PopForums/lib/bootstrap/dist/css/bootstrap.min.css,/PopForums/lib/PopForums/dist/Editor.min.css";
     private static postNoImageToolbar = "bold italic | bullist numlist blockquote removeformat | link";
     editorSettings = {
         license_key: 'gpl',
-        target: null as HTMLElement,
+        target: null as unknown as HTMLElement,
         plugins: "lists image link",
         content_css: FullText.editorCSS,
         menubar: false,
@@ -184,8 +184,8 @@ namespace PopForums {
         contextmenu: "",
         paste_as_text: true,
         paste_data_images: false,
-        setup: null as Function,
-        height: null as string
+        setup: null as unknown as Function,
+        height: null as unknown as string
     };
 
     static id: string = "FullText";

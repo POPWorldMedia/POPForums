@@ -13,8 +13,8 @@ namespace PopForums {
     }
 
     connectedCallback() {
-        let markup: string;
-        let link: string;
+        let markup: string = "";
+        let link: string = "";
         switch (this.notification.notificationType) {
             case 3: // Award
                 markup = `${PopForums.localizations.award}: <b>${this.escapeHtml(this.notification.data.title)}</b>`;
@@ -55,10 +55,10 @@ namespace PopForums {
         this.innerHTML = template;
         let timeStamp = new FormattedTime();
         timeStamp.setAttribute("utctime", this.notification.timeStamp.toString());
-        let footer = this.querySelector(".card-footer");
+        let footer = this.querySelector(".card-footer")!;
         footer.append(timeStamp);
 
-        this.querySelector("a").addEventListener("click", (e) => {
+        this.querySelector("a")!.addEventListener("click", (e) => {
             PopForums.userState.MarkRead(this.notification.contextID, this.notification.notificationType);
         });
     }

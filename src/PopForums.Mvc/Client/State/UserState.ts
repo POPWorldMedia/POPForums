@@ -1,28 +1,28 @@
-﻿namespace PopForums {
+namespace PopForums {
 
 export class UserState extends StateBase {
     constructor() {
         super();
     }
 
-    private notificationService: NotificationService;
-    private isLoadingNotifications: boolean;
+    private notificationService!: NotificationService;
+    private isLoadingNotifications!: boolean;
 
-    isPlainText: boolean;
-    isImageEnabled: boolean;
-    postImageIds: Array<string>;
-    userID: number;
-    lastNotificationDate: Date;
-    isNotificationEnd: boolean;
+    isPlainText!: boolean;
+    isImageEnabled!: boolean;
+    postImageIds!: Array<string>;
+    userID!: number;
+    lastNotificationDate!: Date;
+    isNotificationEnd!: boolean;
 
     @WatchProperty
-    newPmCount: number;
+    newPmCount!: number;
     @WatchProperty
-    notificationCount: number;
+    notificationCount!: number;
     @WatchProperty
-    notifications: Array<Notification>;
+    notifications!: Array<Notification>;
 
-    list: HTMLElement;
+    list!: HTMLElement;
 
     async initialize(): Promise<void> {
         this.postImageIds = new Array<string>();

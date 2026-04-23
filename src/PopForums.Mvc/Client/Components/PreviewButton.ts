@@ -6,22 +6,22 @@ namespace PopForums {
     }
 
     get labelText(): string {
-        return this.getAttribute("labeltext");
+        return this.getAttribute("labeltext")!;
     }
     get textSourceSelector(): string {
-        return this.getAttribute("textsourceselector");
+        return this.getAttribute("textsourceselector")!;
     }
     get isPlainTextSelector(): string {
-        return this.getAttribute("isplaintextselector");
+        return this.getAttribute("isplaintextselector")!;
     }
 
     connectedCallback() {
         this.innerHTML = PreviewButton.template;
-        let button = this.querySelector("input") as HTMLButtonElement;
+        let button = this.querySelector("input")!;
         button.value = this.labelText;
         let headText = this.querySelector("h4") as HTMLHeadElement;
         headText.innerText = this.labelText;
-        var modal = this.querySelector(".modal");
+        var modal = this.querySelector(".modal")!;
         modal.addEventListener("shown.bs.modal", () => {
             this.openModal();
         });

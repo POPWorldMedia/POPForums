@@ -6,22 +6,22 @@ namespace PopForums {
     }
 
     get username(): string {
-        return this.getAttribute("username");
+        return this.getAttribute("username")!;
     }
     get usernameclass(): string {
-        return this.getAttribute("usernameclass");
+        return this.getAttribute("usernameclass")!;
     }
     get userid(): string {
-        return this.getAttribute("userid");
+        return this.getAttribute("userid")!;
     }
     get miniProfileBoxClass(): string {
-        return this.getAttribute("miniprofileboxclass");
+        return this.getAttribute("miniprofileboxclass")!;
     }
 
-    private isOpen: boolean;
-    private box: HTMLElement;
-    private boxHeight: string;
-    private isLoaded: boolean;
+    private isOpen!: boolean;
+    private box!: HTMLElement;
+    private boxHeight!: string;
+    private isLoaded!: boolean;
 
     connectedCallback() {
         this.isLoaded = false;
@@ -32,7 +32,7 @@ namespace PopForums {
         nameHeader.addEventListener("click", () => {
             this.toggle();
         });
-        this.box = this.querySelector("div");
+        this.box = this.querySelector("div")!;
         this.miniProfileBoxClass.split(" ").forEach((c) => this.box.classList.add(c));
     }
 
@@ -41,7 +41,7 @@ namespace PopForums {
             fetch(PopForums.AreaPath + "/Account/MiniProfile/" + this.userid)
                 .then(response => response.text()
                     .then(text => {
-                        let sub = this.box.querySelector("div");
+                        let sub = this.box.querySelector("div")!;
                         sub.innerHTML = text;
                         const height = sub.getBoundingClientRect().height;
                         this.boxHeight = `${height}px`;

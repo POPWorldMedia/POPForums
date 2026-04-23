@@ -6,10 +6,10 @@ namespace PopForums {
     }
 
     get buttonclass(): string {
-        return this.getAttribute("buttonclass");
+        return this.getAttribute("buttonclass")!;
     }
     get buttontext(): string {
-        return this.getAttribute("buttontext");
+        return this.getAttribute("buttontext")!;
     }
 
     connectedCallback() {
@@ -27,9 +27,9 @@ namespace PopForums {
     getDependentReference(): [TopicState, string] {
         return [PopForums.currentTopicState, "highPage"];
     }
-    
+
     updateUI(data: number): void {
-        let button = this.querySelector("input");
+        let button = this.querySelector("input")!;
         if (PopForums.currentTopicState.pageCount === 1 || data === PopForums.currentTopicState.pageCount)
             button.style.visibility = "hidden";
         else

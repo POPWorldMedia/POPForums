@@ -6,19 +6,19 @@ namespace PopForums {
         }
 
         get buttonclass(): string {
-            return this.getAttribute("buttonclass");
+            return this.getAttribute("buttonclass")!;
         }
 
         get buttontext(): string {
-            return this.getAttribute("buttontext");
+            return this.getAttribute("buttontext")!;
         }
-        
+
         get topicid(): string {
-            return this.getAttribute("topicid");
+            return this.getAttribute("topicid")!;
         }
-        
+
         get postid(): string {
-            return this.getAttribute("postid");
+            return this.getAttribute("postid")!;
         }
 
         connectedCallback() {
@@ -38,9 +38,9 @@ namespace PopForums {
         getDependentReference(): [TopicState, string] {
             return [PopForums.currentTopicState, "commentReplyID"];
         }
-        
+
         updateUI(data: number): void {
-            let button = this.querySelector("button");
+            let button = this.querySelector("button")!;
             if (data !== undefined) {
                 button.disabled = true;
                 button.style.cursor = "default";
