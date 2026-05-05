@@ -24,7 +24,7 @@ public class ExternalLoginTempService : IExternalLoginTempService
 		var protector = _dataProtectionProvider.CreateProtector(nameof(ExternalLoginTempService));
 		var serializedResult = JsonSerializer.Serialize(externalLoginState);
 		var encryptedResult = protector.Protect(serializedResult);
-		_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult, new CookieOptions { HttpOnly = true });
+		_httpContextAccessor.HttpContext.Response.Cookies.Append(CookieKey, encryptedResult, new CookieOptions { HttpOnly = true, Secure = true });
 	}
 
 	public ExternalLoginState Read()

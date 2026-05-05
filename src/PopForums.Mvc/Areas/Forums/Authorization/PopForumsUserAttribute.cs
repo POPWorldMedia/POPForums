@@ -60,7 +60,7 @@ public class PopForumsUserAttribute(IUserSessionService userSessionService) : IA
 		var user = filterContext.HttpContext.Items["PopForumsUser"] as User;
 		await userSessionService.ProcessUserRequest(user, sessionID, filterContext.HttpContext.Connection.RemoteIpAddress.ToString(), 
 			() => filterContext.HttpContext.Response.Cookies.Delete(UserSessionService._sessionIDCookieName), 
-			s => filterContext.HttpContext.Response.Cookies.Append(UserSessionService._sessionIDCookieName, s.ToString(), new CookieOptions { HttpOnly = true }));
+			s => filterContext.HttpContext.Response.Cookies.Append(UserSessionService._sessionIDCookieName, s.ToString(), new CookieOptions { HttpOnly = true, Secure = true }));
 		await next.Invoke();
 	}
 

@@ -30,6 +30,6 @@ public class TopicViewCountService : ITopicViewCountService
 
 	public void SetViewedTopic(Topic topic)
 	{
-		_httpContextAccessor?.HttpContext?.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString());
+		_httpContextAccessor?.HttpContext?.Response?.Cookies?.Append(CookieKey, topic.TopicID.ToString(), new CookieOptions { HttpOnly = true, Secure = true });
 	}
 }
