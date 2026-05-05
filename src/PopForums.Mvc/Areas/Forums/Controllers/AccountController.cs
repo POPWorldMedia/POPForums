@@ -440,7 +440,11 @@ public class AccountController : Controller
 		}
 		
 		var referer = Request.Headers.Referer.ToString();
-		var link = Url.IsLocalUrl(referer) ? referer : Url.Action("Index", HomeController.Name);
+		string link;
+		if (Uri.TryCreate(referer, UriKind.Absolute, out var refererUri) && refererUri.Host == Request.Host.Host)
+			link = refererUri.PathAndQuery;
+		else
+			link = Url.Action("Index", HomeController.Name);
 		ViewBag.Referrer = link;
 
 		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();

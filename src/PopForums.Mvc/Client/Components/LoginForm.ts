@@ -55,11 +55,16 @@ namespace PopForums {
                     switch (result.result) {
                     case true:
                         let destination = (document.querySelector("#Referrer") as HTMLInputElement).value;
-                        location.href = destination;
+                        try {
+                            const url = new URL(destination, location.origin);
+                            location.href = url.origin === location.origin ? url.href : "/";
+                        } catch {
+                            location.href = "/";
+                        }
                         break;
                     default:
                         let loginResult = document.querySelector("#LoginResult")!;
-                        loginResult.innerHTML = result.message;
+                        loginResult.textContent = result.message;
                         loginResult.classList.remove("d-none");
                     }
             })
