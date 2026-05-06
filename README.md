@@ -22,8 +22,8 @@ Latest release:
 https://github.com/POPWorldMedia/POPForums/releases/tag/v22.0.0  
 Packages available on NuGet.
 
-The latest CI build packages can be found with these feeds on MyGet:  
-https://www.myget.org/F/popforums/api/v3/index.json   
+The latest CI build packages can be found with these feeds (requires GitHub auth):  
+https://nuget.pkg.github.com/POPWorldMedia/index.json   
 
 Sample app using only the packages:  
 https://github.com/POPWorldMedia/POPForums.Sample  
