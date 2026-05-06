@@ -13,7 +13,7 @@
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
 		<ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
 		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
-		<PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.5.1" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.5.2" />
 	</ItemGroup>
 
 	<ItemGroup>
