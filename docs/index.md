@@ -19,7 +19,7 @@ The project goals include:
 * Keep the project open source.
 * Be the best and fastest ASP.NET Core-based forum.
 * Not duplicate UBB's 1998 UI for the Nth time.
-* Localize: Now available in English, Spanish, German, Ukrainian, Dutch and Taiwanese Mandarin.
+* Localize: Now available in English, Spanish, French, German, Ukrainian, Dutch and Taiwanese Mandarin.
 
 More information: 
 * [FAQ](faq.md)
