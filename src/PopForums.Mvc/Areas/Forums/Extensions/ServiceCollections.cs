@@ -40,11 +40,6 @@ public static class ServiceCollections
 		services.AddTransient<IUserIdProvider, PopForumsUserIdProvider>();
 		services.AddTransient<IOAuthOnlyService, OAuthOnlyService>();
 			
-		var serviceProvider = services.BuildServiceProvider();
-		var setupService = serviceProvider.GetService<ISetupService>();
-		if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
-			return services;
-
 		services.AddAuthentication()
 			.AddCookie(PopForumsAuthenticationDefaults.AuthenticationScheme, option =>
 			{
@@ -57,6 +52,11 @@ public static class ServiceCollections
 					return Task.CompletedTask;
 				};
 			});
+
+		var serviceProvider = services.BuildServiceProvider();
+		var setupService = serviceProvider.GetService<ISetupService>();
+		if (!setupService.IsConnectionPossible() || !setupService.IsDatabaseSetup())
+			return services;
 
 		return services;
 	}
