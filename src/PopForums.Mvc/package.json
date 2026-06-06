@@ -4,7 +4,7 @@
     "@microsoft/signalr": "10.0.0",
     "axios": "1.15.2",
     "bootstrap": "5.3.8",
-    "tinymce": "8.4.0",
+    "tinymce": "8.5.1",
     "vue": "3.5.33",
     "vue-router": "5.0.6"
   },
