@@ -114,6 +114,22 @@ namespace PopForums {
                 }));
         };
         this.badge.addEventListener("shown.bs.popover", this.popoverEventHander);
+
+        this.badge.addEventListener("shown.bs.popover", () => {
+            const outsideClickHandler = (e: Event) => {
+                const popoverId = this.badge.getAttribute("aria-describedby");
+                const popoverEl = popoverId ? document.getElementById(popoverId) : null;
+                if (!this.badge.contains(e.target as Node) && (!popoverEl || !popoverEl.contains(e.target as Node))) {
+                    this.popOver.hide();
+                }
+            };
+            document.addEventListener("click", outsideClickHandler, true);
+            document.addEventListener("touchend", outsideClickHandler, true);
+            this.badge.addEventListener("hidden.bs.popover", () => {
+                document.removeEventListener("click", outsideClickHandler, true);
+                document.removeEventListener("touchend", outsideClickHandler, true);
+            }, { once: true });
+        });
     }
 
     private applyPopover(): void {
