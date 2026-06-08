@@ -38,6 +38,7 @@ declare namespace bootstrap {
         constructor(el: Element, options:any);
         enable(): void;
         disable(): void;
+        hide(): void;
     }
     class Offcanvas extends HTMLElement {
         constructor(el: Element);
