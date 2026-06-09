@@ -23,7 +23,7 @@ public interface IPostService
 
 public class PostService : IPostService
 {
-	public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, INotificationAdapter notificationAdapter)
+	public PostService(IPostRepository postRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, ITopicService topicService, ITextParsingService textParsingService, IModerationLogService moderationLogService, IForumService forumService, IEventPublisher eventPublisher, IUserService userService, ISearchIndexQueueRepository searchIndexQueueRepository, ITenantService tenantService, INotificationAdapter notificationAdapter, IBroker broker)
 	{
 		_postRepository = postRepository;
 		_profileRepository = profileRepository;
@@ -37,6 +37,7 @@ public class PostService : IPostService
 		_searchIndexQueueRepository = searchIndexQueueRepository;
 		_tenantService = tenantService;
 		_notificationAdapter = notificationAdapter;
+		_broker = broker;
 	}
 
 	private readonly IPostRepository _postRepository;
@@ -51,6 +52,7 @@ public class PostService : IPostService
 	private readonly ISearchIndexQueueRepository _searchIndexQueueRepository;
 	private readonly ITenantService _tenantService;
 	private readonly INotificationAdapter _notificationAdapter;
+	private readonly IBroker _broker;
 
 	public async Task<Tuple<List<Post>, PagerContext>> GetPosts(Topic topic, bool includeDeleted, int pageIndex)
 	{
@@ -249,6 +251,7 @@ public class PostService : IPostService
 		}
 		var votes = await _postRepository.CalculateVoteCount(post.PostID);
 		await _postRepository.SetVoteCount(post.PostID, votes);
+		_broker.NotifyVoteUpdate(post.TopicID, post.PostID, votes);
 		var votedUpUser = await _userService.GetUser(post.UserID);
 		if (votedUpUser != null)
 		{

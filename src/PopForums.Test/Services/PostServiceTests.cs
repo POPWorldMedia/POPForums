@@ -15,6 +15,7 @@ public class PostServiceTests
 	private ISearchIndexQueueRepository _searchIndexQueue;
 	private ITenantService _tenantService;
 	private INotificationAdapter _notificationAdapter;
+	private IBroker _broker;
 
 	private PostService GetService()
 	{
@@ -31,8 +32,9 @@ public class PostServiceTests
 		_searchIndexQueue = Substitute.For<ISearchIndexQueueRepository>();
 		_tenantService = Substitute.For<ITenantService>();
 		_notificationAdapter = Substitute.For<INotificationAdapter>();
+		_broker = Substitute.For<IBroker>();
 		_settingsManager.Current.Returns(_settings);
-		return new PostService(_postRepo, _profileRepo, _settingsManager, _topicService, _textParsingService, _modLogService, _forumService, _eventPub, _userService, _searchIndexQueue, _tenantService, _notificationAdapter);
+		return new PostService(_postRepo, _profileRepo, _settingsManager, _topicService, _textParsingService, _modLogService, _forumService, _eventPub, _userService, _searchIndexQueue, _tenantService, _notificationAdapter, _broker);
 	}
 
 	[Fact]
@@ -495,6 +497,19 @@ public class PostServiceTests
 		_postRepo.GetVotes(Arg.Any<int>()).Returns(Task.FromResult(new Dictionary<int, string>()));
 		await service.ToggleVoteReturnCountAndIsVoted(new Post { PostID = 123, UserID = voteUpUser.UserID }, new User { UserID = 456 }, "", "", "");
 		await _eventPub.DidNotReceive().ProcessEvent(Arg.Any<string>(), Arg.Any<User>(), EventDefinitionService.StaticEventIDs.PostVote, false);
+	}
+
+	[Fact]
+	public async Task ToggleVoteNotifiesBrokerWithTopicPostAndCount()
+	{
+		var service = GetService();
+		var post = new Post { PostID = 1, TopicID = 99 };
+		var user = new User { UserID = 2 };
+		const int votes = 7;
+		_postRepo.GetVotes(post.PostID).Returns(Task.FromResult(new Dictionary<int, string>()));
+		_postRepo.CalculateVoteCount(post.PostID).Returns(Task.FromResult(votes));
+		await service.ToggleVoteReturnCountAndIsVoted(post, user, "abc", "def", "ghi");
+		_broker.Received().NotifyVoteUpdate(post.TopicID, post.PostID, votes);
 	}
 
 	[Fact]

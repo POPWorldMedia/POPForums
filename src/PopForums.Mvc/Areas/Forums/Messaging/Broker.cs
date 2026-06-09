@@ -74,6 +74,12 @@ public class Broker : IBroker
 		await _popForumsHubContext.Clients.User(userIDString).SendAsync("notify", notification);
 	}
 
+	public void NotifyVoteUpdate(int topicID, int postID, int votes)
+	{
+		var tenant = _tenantService.GetTenant();
+		_popForumsHubContext.Clients.Group($"{tenant}:topic:{topicID}").SendAsync("updateVote", new { postID, votes });
+	}
+
 	public async void SendPMMessage(PrivateMessagePost post)
 	{
 		var message = ClientPrivateMessagePost.MapForClient(post);

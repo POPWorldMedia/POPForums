@@ -132,6 +132,15 @@ namespace PopForums {
         });
     }
 
+    updateVotesFromServer(votes: number): void {
+        this.votes = votes.toString();
+        this.badge.innerHTML = "+" + votes;
+        this.applyPopover();
+        this.badge.classList.remove("explode");
+        void this.badge.offsetWidth;
+        this.badge.classList.add("explode");
+    }
+
     private applyPopover(): void {
         if (this.votes === "0") {
             this.badge.style.cursor = "default";

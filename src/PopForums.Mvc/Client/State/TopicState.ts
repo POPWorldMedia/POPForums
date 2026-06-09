@@ -61,6 +61,10 @@ export class TopicState extends StateBase {
             connection.on("notifyNewPosts", function (theLastPostID: number) {
                 self.setMorePostsAvailable(theLastPostID);
             });
+            connection.on("updateVote", function (payload: { postID: number; votes: number }) {
+                let el = document.querySelector(`pf-votecount[postid="${payload.postID}"]`) as VoteCount;
+                if (el) el.updateVotesFromServer(payload.votes);
+            });
             connection.invoke("listenToTopic", this.topicID);
             this.connection = connection;
 

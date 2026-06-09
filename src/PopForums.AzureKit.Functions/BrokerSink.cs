@@ -44,4 +44,9 @@ public class BrokerSink : IBroker
 	{
 		throw new System.NotImplementedException();
 	}
+
+	public void NotifyVoteUpdate(int topicID, int postID, int votes)
+	{
+		throw new System.NotImplementedException();
+	}
 }
