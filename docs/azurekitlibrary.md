@@ -42,7 +42,7 @@ Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("es");
 ```
 
 ## Using Redis for caching
-Redis is a great tool for caching data for a stand-alone instance of the app or between many nodes. The default caching provided by the `PopForms.Sql` implementation uses in-memory cache in the app instance itself, which doesn't work when you have many nodes (that is, several web heads running behind a load balancer, like a scaled-out Azure App Service). Redis helps by caching data in a "neutral" location between these nodes.
+Redis is a great tool for caching data for a stand-alone instance of the app or between many nodes. The default caching provided by the `PopForums.Sql` implementation uses in-memory cache in the app instance itself, which doesn't work when you have many nodes (that is, several web heads running behind a load balancer, like a scaled-out Azure App Service). Redis helps by caching data in a "neutral" location between these nodes.
 
 To use Redis (which is available all over the place, and _not_ just in Azure), use the following configuration lines in your ASP.NET `Program.cs`:
 
@@ -140,7 +140,7 @@ services.AddPopForumsAzureFunctionsAndQueues();
 ...
 ```
 
-It's important to _not_ have `services.AddPopForumsBackgroundServices();` in your `Program.cs`, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
+It's important to _not_ have `services.AddPopForumsBackgroundJobs();` in your `Program.cs`, because this would run the background services in the context of the web app. You don't want that, because you're going to run them in Azure Functions.
 
 You'll also need to add a connection string to your Azure Storage account and web app service base. These values must appear in the configuration of your web app _and_ Azure Functions.
 

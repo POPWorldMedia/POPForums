@@ -20,7 +20,7 @@ Yes, I sometimes feel cursed to rewrite it for all eternity. The Webforms versio
 Yes, it's the very same code, though obviously decorated with additional code to facilitate multi-tenancy and provisioning.
 
 ## What languages are supported?
-Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW) and German (de). If you'd like to translate, the .resx file has around 400 entries. Open an issue to learn more, and we can talk about a pull request to add another language.
+Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW), German (de) and French (fr). If you'd like to translate, the .resx file has around 400 entries. Open an issue to learn more, and we can talk about a pull request to add another language.
 
 ## You used to work on the forums for MSDN and TechNet. Is this that forum?
 Not at all. That app served a great many different functions and was integrated with Microsoft ID's, a centralized profiling system, etc. It was/is huge. This app has its roots in the web sites I've been running for fun and profit for years, to the extent that you can find old posts on those sites from the turn of the century with all kinds of formatting failures. Those were the ASP.old days.

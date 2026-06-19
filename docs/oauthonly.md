@@ -9,7 +9,7 @@ nav_order: 2.7
 >
 > External logins are great for public forums. For corporate or private forums coupled exlcusively to an external identity platform, use OAuth-Only Mode.
 
-Starting in v20, POP Forums has an OAuth-only mode, which means that user authenticaton is handled entirely by a third party. Examples include OAuth providers of corporate identity systems, like Azure Active Directory, Keycloak, Okta and Auth0. In this mode, users can't create an account in the forum, they can only come in via  the external identity provider. The assignment of moderator and admin roles are mapped from claims issued by the identity provider.
+Starting in v20, POP Forums has an OAuth-only mode, which means that user authentication is handled entirely by a third party. Examples include OAuth providers of corporate identity systems, like Microsoft Entra ID (formerly Azure Active Directory), Keycloak, Okta and Auth0. In this mode, users can't create an account in the forum, they can only come in via  the external identity provider. The assignment of moderator and admin roles are mapped from claims issued by the identity provider.
 
 > This mode is set at the configuration level (`appsettings.json` locally, or the typical environment variables in regular environments). There are consequences for changing this setting to `true` in an established instance of the forum. Existing users would not be mapped to identities from the external provider. Going the other direction would be possible, though each user would need to reset their password with the email address used by the identity system.
 
@@ -17,8 +17,8 @@ If you don't have a basic understanding of how OAuth works, now's a good time to
 * The user can only access a page with a single login button.
 * Clicking that button sends the user to the external identity provider.
 * The user enters credentials with the provider if they aren't already logged in. You've likely done this before with "social" logins like Google or Facebook.
-* The identity provider redirects the user back to the forum, with a JWT token.
-* The forum calls the identity provider's token endpoint with the provided token and verifies its authenticity.
+* The identity provider redirects the user back to the forum with an authorization code.
+* The forum calls the identity provider's token endpoint with that code to exchange it for a JWT, and verifies its authenticity.
 * In return, the identity provider returns information about the user called _claims_.
 * The forum checks to see if there's a user account associated with the unique identifier from the provider (given in the `sub` claim). If there is no account, it's created with the provided name and email, otherwise it uses the existing one.
 * The claims are compared to those configured in the forum for moderators and admins, and those roles are assigned to the user if they match.
@@ -32,7 +32,7 @@ This mode uses OpenID Connect (OIDC) claims. The identity provider, in addition 
 
 The amount of access and configuration that you have in your identity provider varies a ton. At the very least, the provider should have OIDC enabled, and return `email` and `name` claims. Beyond that, it should return specific claims for forum admins and moderators. The forum can assign these roles based on just the presence of a claim, or by the claim and a specific value.
 
->In Azure Active Directory, for example, you can create a group and assign members to it. In an app registration, you can configure tokens to return groups as claims. The claims will all be named `roles`, with values that are guids that identify the groups' object ID's. So if a group called "Forum Admins" has an object ID of `978efeac-3baf-4e61-a519-9b06eb26a0bf`, the token will have a claim called `roles` with that guid as a value. With other identity providers, it may be possible to simply assign a claim called `ForumAdmin` with no value to represent a forum administrator.
+>In Microsoft Entra ID, for example, you can create a group and assign members to it. In an app registration, you can configure tokens to return groups as claims. The claims will all be named `roles`, with values that are guids that identify the groups' object ID's. So if a group called "Forum Admins" has an object ID of `978efeac-3baf-4e61-a519-9b06eb26a0bf`, the token will have a claim called `roles` with that guid as a value. With other identity providers, it may be possible to simply assign a claim called `ForumAdmin` with no value to represent a forum administrator.
 
 Find out what _scopes_ are required to make sure you're getting the `name` and `email` claims, as well as those that identify your moderators and admins. The typical scope you'll specify, as it relates to the OIDC standard, is:
 ```
@@ -77,7 +77,7 @@ Here's what these do:
 * `OAuthAdminClaimType`: This is the name of the claim that identifies a user as a forum administrator.
 * `OAuthAdminClaimValue`: This is the value of the above named claim that identifies a user as a forum administrator. If not set, the presence of a `OAuthAdminClaimType` claim with any or no value designates the user as a forum administrator.
 * `OAuthModeratorClaimType`: This is the name of the claim that identifies a user as a forum moderator.
-* `OAuthModeratorClaimValue`: This is the value of the above named claim that identifies a user as a forum moderator. If not set, the presence of a `OAuthModeratorClaimType` claim with any or no value designates the user as a forum administrator.
+* `OAuthModeratorClaimValue`: This is the value of the above named claim that identifies a user as a forum moderator. If not set, the presence of a `OAuthModeratorClaimType` claim with any or no value designates the user as a forum moderator.
 * `OAuthScopes`: The scopes to get from the identity provider so that it returns the `sub`, `name` and `email` claims. This is often how you tell the service to return a refresh token as well. Typically, this setting will use `openid email profile offline_access`.
 * `OAuthRefreshExpirationMinutes`: The number of minutes that should pass until the forum asks the identity provider's token endpoint for an updated refresh token. If the user is no longer valid, they will be logged out on their next request. Use a value that is short enough to cause revoked accounts to be shut out, but long enough that every forum request isn't slowed by fetching a refresh token.
 

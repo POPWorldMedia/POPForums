@@ -34,6 +34,6 @@ To set it up, check the installation instructions in the [Start Here](starthere.
 
 POP Forums v13 for ASP.NET MVC 5 is also available as a previous release.
 
-Do you speak English and another language? We want to make POP Forums globally useful. Since v9.2, the app is easily localized. Volunteers have translated to Spanish, Dutch, Ukrainian, Taiwanese Mandarin and German, and we'd love help for additional languages. Drop Jeff an e-mail to jeff@popw.com for more information.
+Do you speak English and another language? We want to make POP Forums globally useful. Since v9.2, the app is easily localized. Volunteers have translated to Spanish, Dutch, Ukrainian, Taiwanese Mandarin, German and French, and we'd love help for additional languages. Drop Jeff an e-mail to jeff@popw.com for more information.
 
 Found a bug? Add it to the issue tracker.

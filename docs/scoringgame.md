@@ -16,12 +16,12 @@ Process Event –> Publish to user profile (optional) –> Get associated awards
 To use the system, you only need only a few lines of code. Use the dependency injection to get the implementation of `PopForums.ScoringGame.IEventPublisher`. If you're using the typical constructor injection, you'll probably have a reference to it in your class called `_eventPublisher`. The user can be obtained from an instance of `PopForums.Mvc.Areas.Forums.Services.IUserRetrievalShim` in the controller layer.
 
 ```c#
-_eventPublisher.ProcessEvent("message for feed", user, "TestEventID", false);
+await _eventPublisher.ProcessEvent("message for feed", user, "TestEventID", false);
 ```
 
 Pretty simple, eh? The first string is the text that will be published to the user’s feed (if the event is set to publish), the second is the `PopForums.Models.User` object to associate with the event, and the third is the actual event ID. Event definitions are really simple.
 
-There are three events that are static, permanently built into the system. These are wired into the post voting, and the creation of new topics and posts. So for example, when someone votes up a post, a string of HTML is passed in to the ProcessEvent() method, with the user object associated with the post, and the event ID PostVote.
+There are five events that are static, permanently built into the system: `PostVote`, `PostVoteUndo`, `NewPost`, `NewTopic`, and `QuestionAnswered`. These are wired into post voting, the creation of new topics and posts, and marking a question as answered. So for example, when someone votes up a post, a string of HTML is passed in to the ProcessEvent() method, with the user object associated with the post, and the event ID PostVote.
 
 Events don’t have to be published to the user’s profile, and they don’t even need to assign points. New posts and topic events fall into this category. So what’s the point then? Awards! POP Forums leaves that up to you. Award definitions are super simple as well. We can assign any combination of events to the award.
 

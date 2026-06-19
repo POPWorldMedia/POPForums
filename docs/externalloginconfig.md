@@ -16,7 +16,7 @@ We spun off the [PopIdentity](https://github.com/POPWorldMedia/POPIdentity) proj
 In POP Forums, you can go to the External Logins page of the admin area and configure Google, Facebook, Microsoft and any generic OAuth2 provider that returns JWT's. Check the box, fill in the client ID and secret from the providers. For each, you'll need to specify the callback URL. These are configured:
 * In Facebook's developer administration, under the "Facebook Login" and "Products" navigation at left.
 * In the Google Cloud Console, drill down to "Credentials" under "API's and Services."
-* In Microsoft's Azure portal, search for "Azure Active Directory," choose "App Registrations," choose or create your app, then under "Authentication" enter your redirect URL.
+* In Microsoft's Azure portal, search for "Microsoft Entra ID," choose "App Registrations," choose or create your app, then under "Authentication" enter your redirect URL.
 
 The format for the URL is this, substituting in your domain: `https://whateveryourdomainis/Forums/Identity/CallbackHandler`
 

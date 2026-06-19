@@ -47,7 +47,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * The project files require an up-to-date version of Visual Studio 2026 or later, but it also works great with Jetbrains' Rider on Mac or Windows. I prefer it.
 * This project is built on ASP.NET v10. Make sure you have the required SDK installed (v10.0.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
-* The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundServices()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
+* The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundJobs()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
 
 > Running the background services in the web context can cause some wild variations in CPU and RAM usage on a busy forum, especially in the code associated with updating the search index. If you are running in Azure, using Functions is a much better choice for consistent and predictable app performance.
 
@@ -75,9 +75,8 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
             "ForceLocalOnly": false // used for Redis cache in AzureKit
         },
         "Search": { // used for Elastic or Azure Search (see docs)
-            "Url": "popforumsdev",
-            "Key": "99011A70D3D50D251B0A6141A97B40E7",
-            "Provider": ""
+            "Url": "https://localhost:9200", // ElasticSearch URL, or Azure Search service name
+            "Key": "99011A70D3D50D251B0A6141A97B40E7"
         },
         "Queue": { // used for queues with Azure Functions
             "ConnectionString": "UseDevelopmentStorage=true"
@@ -88,7 +87,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
             "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
             "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
         },
-        "WebAppUrlAndArea": "https://somehost/forums", // used only by Azure Functions to find endpoint of your web app
+        "WebAppUrlAndArea": "https://somehost/forums", // required only when running Azure Functions; not needed for in-process background jobs
         "RenderBootstrap": true, // optional, defaults to true, put false here if your host page will have its own build of Bootstrap CSS
         "OAuthOnly": {
             // this section is detailed in the OAuth-Only Mode section
@@ -101,7 +100,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to `/Forums/Setup` now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 > If you're running in OAuth-Only Mode, there is no setup for the fields below. The forum will attempt to set up the database, and that's it. That mode has no email functionality, and user creation and roles are delegated to the external identity provider. See [OAuth-Only Mode](oauthonly.md) for more information.
-* The `PopForums.Mvc` package includes Bootstrap, which is used as the base style for the entire app. To give it your own look, you can add your own CSS to override Bootstrap in your `_Layout.cshtml`, or do your own build of Bootstrap with whatever variables you like. If you prefer your own build, make sure _both_ the Javascript and CSS tags appear _before_ the `RenderSection` in your header, and set the `RenderBootstrap` setting in `appconfig.json` to `false`. Learn more in [customization](customization.md).
+* The `PopForums.Mvc` package includes Bootstrap, which is used as the base style for the entire app. To give it your own look, you can add your own CSS to override Bootstrap in your `_Layout.cshtml`, or do your own build of Bootstrap with whatever variables you like. If you prefer your own build, make sure _both_ the Javascript and CSS tags appear _before_ the `RenderSection` in your header, and set the `RenderBootstrap` setting in `appsettings.json` to `false`. Learn more in [customization](customization.md).
 * If you're using Azure functions in the background, instead of embedding the background work in the web app (see [Using AzureKit](azurekitlibrary.md)), you'll want to run multiple startup projects, specifically the `PopForums.Web` and `PopForums.AzureKit.Functions`.
 
 Here’s what each field on the setup page does: 
@@ -136,11 +135,11 @@ The easiest way to integrate with an existing set of users is to connect via an 
 
 ## Running third-party services in Docker containers
 
-If you want to run locally with some of the "kits" described in the documentation, you'll need to fire them up using Docker. Here are the commands for the most common things. These sometimes change, because of new names, versions and such, but they're current as of early 2023.  
+If you want to run locally with some of the "kits" described in the documentation, you'll need to fire them up using Docker. Here are the commands for the most common things. These sometimes change because of new names, versions and such.  
   
-* SQL Server (keep in mind that `mcr.microsoft.com/azure-sql-edge` is the ARM versoin of SQL)  
+* SQL Server (keep in mind that `mcr.microsoft.com/azure-sql-edge` is the ARM version of SQL)  
 `docker run --cap-add SYS_PTRACE -e 'ACCEPT_EULA=1' -e 'MSSQL_SA_PASSWORD=P@ssw0rd' -p 1433:1433 --name sqledge -d mcr.microsoft.com/azure-sql-edge`  
-* Azureite, for storage and queues  
+* Azurite, for storage and queues  
 `docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite`  
 * Redis, for distributed cache and SignalR backplane  
 `docker run --name some-redis -p 6379:6379 -d redis`  
