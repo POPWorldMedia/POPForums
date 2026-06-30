@@ -8,14 +8,18 @@ public class CacheHelper : ICacheHelper
 		_tenantService = tenantService;
 		if (_cache == null)
 		{
-			var options = new MemoryCacheOptions();
-			_cache = new MemoryCache(options);
+			lock (_cacheLock)
+			{
+				if (_cache == null)
+					_cache = new MemoryCache(new MemoryCacheOptions());
+			}
 		}
 	}
 
 	private readonly IConfig _config;
 	private readonly ITenantService _tenantService;
 	private static IMemoryCache _cache;
+	private static readonly object _cacheLock = new object();
 
 	private string PrefixTenantOnKey(string key)
 	{

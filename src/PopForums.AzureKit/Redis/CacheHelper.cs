@@ -18,7 +18,9 @@ public class CacheHelper : ICacheHelper
 	private static ConnectionMultiplexer _cacheConnection;
 	private static ConnectionMultiplexer _messageConnection;
 	private static IMemoryCache _cache;
-	private static readonly object SyncRoot = new object();
+	private static readonly object _cacheConnectionLock = new object();
+	private static readonly object _messageConnectionLock = new object();
+	private static readonly object _cacheLock = new object();
 
 	private static class CacheTelemetryNames
 	{
@@ -41,7 +43,7 @@ public class CacheHelper : ICacheHelper
 		// Redis cache
 		if (_cacheConnection == null)
 		{
-			lock (SyncRoot)
+			lock (_cacheConnectionLock)
 			{
 				if (_cacheConnection == null)
 					_cacheConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
@@ -49,22 +51,31 @@ public class CacheHelper : ICacheHelper
 		}
 		// Local cache
 		if (_cache == null)
-			SetupLocalCache();
+		{
+			lock (_cacheLock)
+			{
+				if (_cache == null)
+					_cache = new MemoryCache(new MemoryCacheOptions());
+			}
+		}
 		// Redis messaging to invalidate local cache entries
 		if (_messageConnection == null)
 		{
-			lock (SyncRoot)
+			lock (_messageConnectionLock)
 			{
-				_messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
-				var db = _messageConnection.GetSubscriber();
-				db.Subscribe(_removeChannel, (_, value) =>
+				if (_messageConnection == null)
 				{
-					if (_cache == null)
-						return;
-					var valueString = value.ToString();
-					_cache.Remove(valueString);
-					OnRemoveCacheKey?.Invoke(valueString);
-				});
+					_messageConnection = ConnectionMultiplexer.Connect(_config.CacheConnectionString);
+					var db = _messageConnection.GetSubscriber();
+					db.Subscribe(_removeChannel, (_, value) =>
+					{
+						if (_cache == null)
+							return;
+						var valueString = value.ToString();
+						_cache.Remove(valueString);
+						OnRemoveCacheKey?.Invoke(valueString);
+					});
+				}
 			}
 		}
 	}
@@ -77,14 +88,6 @@ public class CacheHelper : ICacheHelper
 		return $"{tenantID}:{key}";
 	}
 
-	private static void SetupLocalCache()
-	{
-		lock (SyncRoot)
-		{
-			var options = new MemoryCacheOptions();
-			_cache = new MemoryCache(options);
-		}
-	}
 
 	public void SetCacheObject(string key, object value)
 	{
