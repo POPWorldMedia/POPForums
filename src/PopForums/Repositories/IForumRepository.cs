@@ -59,7 +59,7 @@ public interface IForumRepository
 	/// </summary>
 	/// <remarks>This should generally be cached, as it's used as a lookup for URL routing on every request.</remarks>
 	/// <returns>An enumerable object of strings.</returns>
-	Task<IEnumerable<string>> GetAllForumUrlNames();
+	IEnumerable<string> GetAllForumUrlNames();
 
 	Dictionary<int, string> GetAllForumTitles();
 	Task<int> GetAggregateTopicCount();

@@ -259,16 +259,16 @@ public class ForumRepository : IForumRepository
 		_cacheHelper.RemoveCacheObject(CacheKeys.ForumViewRoleRestrictions);
 	}
 
-	public async Task<IEnumerable<string>> GetAllForumUrlNames()
+	public IEnumerable<string> GetAllForumUrlNames()
 	{
 		var cacheObject = _cacheHelper.GetCacheObject<IEnumerable<string>>(CacheKeys.ForumUrlNames);
 		if (cacheObject != null)
 			return cacheObject;
-		Task<IEnumerable<string>> urlNames = null;
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
-			urlNames = connection.QueryAsync<string>("SELECT UrlName FROM pf_Forum"));
-		_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumUrlNames, urlNames.Result);
-		return urlNames.Result;
+		IEnumerable<string> urlNames = null;
+		_sqlObjectFactory.GetConnection().Using(connection =>
+			urlNames = connection.Query<string>("SELECT UrlName FROM pf_Forum"));
+		_cacheHelper.SetLongTermCacheObject(CacheKeys.ForumUrlNames, urlNames);
+		return urlNames;
 	}
 
 	public Dictionary<int, string> GetAllForumTitles()

@@ -14,17 +14,7 @@ public class ForumRouteConstraint : IRouteConstraint
 	{
 		if (!values.Keys.Contains("urlName"))
 			return false;
-		IEnumerable<String> forumUrlNames;
-		try
-		{
-			forumUrlNames = _forumRepository.GetAllForumUrlNames().Result;
-		}
-		catch (Exception exc)
-		{
-			throw new Exception("Can't read forum URL names from data store.", exc);
-		}
-		if (forumUrlNames.Contains(values["urlName"]))
-			return true;
-		return false;
+		var forumUrlNames = _forumRepository.GetAllForumUrlNames();
+		return forumUrlNames.Contains(values["urlName"]);
 	}
 }
