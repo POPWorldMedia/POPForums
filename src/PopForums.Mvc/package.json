@@ -11,7 +11,7 @@
   "devDependencies": {
     "typescript": "6.0.3",
     "gulp-typescript": "5.0.1",
-    "@babel/core": "7.28.5",
+    "@babel/core": "7.29.6",
     "@babel/preset-env": "7.28.5",
     "gulp": "4.0.2",
     "gulp-babel": "8.0.0",
