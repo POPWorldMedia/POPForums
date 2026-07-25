@@ -1,6 +1,8 @@
-﻿namespace PopForums.Mvc.Areas.Forums.Controllers;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
 
-[Authorize(Policy = PermanentRoles.Moderator)]
+namespace PopForums.Mvc.Areas.Forums.Controllers;
+
+[Authorize(Policy = PermanentRoles.Moderator, AuthenticationSchemes = PopForumsAuthenticationDefaults.AuthenticationScheme)]
 [Area("Forums")]
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ModeratorController : Controller
