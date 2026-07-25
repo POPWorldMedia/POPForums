@@ -31,7 +31,9 @@ public class PopForumsAuthenticationMiddleware(RequestDelegate next)
 				context.Items["PopForumsUser"] = user;
 				var profile = await profileService.GetProfile(user);
 				context.Items["PopForumsProfile"] = profile;
-				context.User = new ClaimsPrincipal(identity);
+				// Add rather than replace context.User: when hosted inside a larger app, this preserves
+				// whatever identity/claims the host's own auth already put on the principal.
+				context.User.AddIdentity(identity);
 				if (config.IsOAuthOnly && user.TokenExpiration < DateTime.UtcNow)
 				{
 					var isSuccess = await oAuthOnlyService.AttemptTokenRefresh(user);
