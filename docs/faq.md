@@ -8,16 +8,13 @@ nav_order: 3
 These are a few of the questions people ask me about the project. Feel free to ask other questions in the [GitHub discussions](https://github.com/POPWorldMedia/POPForums/discussions). If you're thinking it, you're probably not the only one! If you find a defect or want to request a feature, use the issue tracker on GitHub for that, please.
 
 ## Do I have to pay for this or not?
-Not. POP Forums is an open source software project hosted on GitHub for use under the MIT license. There is a commercially hosted version available at [PopForums.com](https://popforums.com/), yes, for people who don't write code or don't want to mess with managing their own software. Everything on GitHub continues to be open source.
+Not. POP Forums is an open source software project hosted on GitHub for use under the MIT license.
 
 ## Another forum app? For real?
 Yeah, I know. I'd like to think that this one is a little different, because it doesn't exist to fit some generalized needs, it exists to fit the needs of real communities, like [CoasterBuzz](https://coasterbuzz.com/). The design goal of the app, from its early days in 1999, has always been to design for users, and not be a science project. This app lives because it has been required for sites like CoasterBuzz for more than two decades, and it will continue to evolve because those sites will evolve. It just makes sense to share it with others.
 
 ## Sounds like you've been doing this a long time.
 Yes, I sometimes feel cursed to rewrite it for all eternity. The Webforms versions were really kind of a mess, and no version was a true rewrite. Once MVC came along, it gave me great incentive to start fresh. Dotnet Core and the evolving front-end frameworks give plenty of new opportunities for refactoring.
-
-## Is this project the basis for the commercial hosted product?
-Yes, it's the very same code, though obviously decorated with additional code to facilitate multi-tenancy and provisioning.
 
 ## What languages are supported?
 Currently we have English, Spanish (es), Dutch (nl), Ukrainian (uk), Taiwanese Mandarin (zh-TW), German (de) and French (fr). If you'd like to translate, the .resx file has around 400 entries. Open an issue to learn more, and we can talk about a pull request to add another language.

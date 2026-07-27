@@ -5,7 +5,7 @@ nav_order: 8
 ---
 # Multi-tenant options
 
-POP Forums has some plumbing for multi-tenancy, originally created to facilitate the [cloud-hosted version of POP Forums](https://popforums.com/). However, there are some tricks here that you can rely on for shared resource scenarios.
+POP Forums has some plumbing for multi-tenancy, originally created to facilitate a previous hosted version of the software. There are some tricks here that you can rely on for shared resource scenarios.
 
 # Using `ITenantService`
 

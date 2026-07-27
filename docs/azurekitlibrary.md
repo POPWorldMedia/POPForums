@@ -91,7 +91,7 @@ void Start();
 void End(string eventName, string key);
 ```
 
-The Redis implementation of `CacheHelper` wraps each call to the memory cache and Redis with the above methods. It includes the cache key and the type of event (`SetRedis`, `GetRedisHit`, `GetRedisMiss`, etc.) for you to persist in whatever your monitoring solution is. In the [hosted forums](https://popforums.com/), we use the following to write the events to Azure Insights. The `TelemetryClient` comes in via dependency injection:
+The Redis implementation of `CacheHelper` wraps each call to the memory cache and Redis with the above methods. It includes the cache key and the type of event (`SetRedis`, `GetRedisHit`, `GetRedisMiss`, etc.) for you to persist in whatever your monitoring solution is. The `TelemetryClient` comes in via dependency injection:
 
 ```
 public class WebCacheTelemetry : ICacheTelemetry
