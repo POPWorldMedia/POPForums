@@ -8,6 +8,11 @@ IF COL_LENGTH('dbo.pf_Profile', 'IsAutoRenewal') IS NULL
         ALTER TABLE pf_Profile ADD [IsAutoRenewal] [bit] NOT NULL DEFAULT(0);
     END
 
+IF COL_LENGTH('dbo.pf_Profile', 'LastFour') IS NULL
+    BEGIN
+        ALTER TABLE pf_Profile ADD [LastFour] [nvarchar](50) NULL;
+    END
+
 IF OBJECT_ID('pf_Sku', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[pf_Sku](

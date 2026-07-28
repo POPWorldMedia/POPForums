@@ -20,4 +20,5 @@ public class Profile
 	public int Points { get; set; }
 	public bool IsAutoFollowOnReply { get; set; }
 	public bool IsAutoRenewal { get; set; }
+	public string LastFour { get; set; }
 }
