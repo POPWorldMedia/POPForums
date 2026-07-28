@@ -40,7 +40,7 @@ CREATE TABLE [dbo].[pf_Profile](
 	[Points] [int] NOT NULL DEFAULT (0),
 	[IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1),
 	[IsAutoRenewal] [bit] NOT NULL DEFAULT(0),
-	[LastFour] [nvarchar](50) NULL
+	[Last4] [nvarchar](50) NULL
 );
 
 
