@@ -9,7 +9,8 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 	[Password] [nvarchar](256) NOT NULL,
 	[AuthorizationKey] [uniqueidentifier] NOT NULL DEFAULT ('00000000-0000-0000-0000-000000000000'),
 	[Salt] [uniqueidentifier] NULL,
-    [TokenExpiration] [datetime] NULL
+    [TokenExpiration] [datetime] NULL,
+    [SubscriptionExpiration] [datetime] NULL
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name]);
@@ -37,7 +38,8 @@ CREATE TABLE [dbo].[pf_Profile](
 	[HideVanity] [bit] NOT NULL DEFAULT ((0)),
 	[LastPostID] [int] NULL,
 	[Points] [int] NOT NULL DEFAULT (0),
-	[IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1)
+	[IsAutoFollowOnReply] [bit] NOT NULL DEFAULT(1),
+	[IsAutoRenewal] [bit] NOT NULL DEFAULT(0)
 );
 
 
@@ -920,7 +922,7 @@ CREATE CLUSTERED INDEX [IX_pf_TopicViewLog] ON [dbo].[pf_TopicViewLog]
 );
 
 
-
+-- ***************************** [pf_Notifications]
 
 CREATE TABLE [dbo].[pf_Notifications]
 (
@@ -946,6 +948,8 @@ CREATE INDEX [IX_pf_Notifications_Context] ON [dbo].[pf_Notifications]
 
 
 
+-- ***************************** [pf_PostImage]
+
 CREATE TABLE [dbo].[pf_PostImage]
 (
 	[ID] NVARCHAR(50) NOT NULL PRIMARY KEY, 
@@ -957,6 +961,7 @@ CREATE TABLE [dbo].[pf_PostImage]
 
 CREATE INDEX [IX_pf_PostImage_TenantID] ON [dbo].[pf_PostImage] ([TenantID]);
 
+-- ***************************** [pf_PostImageTemp]
 
 CREATE TABLE [dbo].[pf_PostImageTemp](
 	[PostImageTempID] [uniqueidentifier] NOT NULL PRIMARY KEY,
@@ -967,7 +972,7 @@ CREATE NONCLUSTERED INDEX [IX_pf_PostImageTemp_TimeStamp] ON [dbo].[pf_PostImage
 
 
 
-
+-- ***************************** [pf_Ignore]
 
 CREATE TABLE [dbo].[pf_Ignore](
     [UserID] [int] NOT NULL,
@@ -979,6 +984,48 @@ ALTER TABLE [dbo].[pf_Ignore] WITH CHECK ADD CONSTRAINT [FK_pf_Ignore_UserID] FO
 CREATE CLUSTERED INDEX IX_pf_Ignore_UserID ON pf_Ignore (UserID, IgnoreUserID);
 
 
+
+-- ***************************** [pf_Sku]
+
+CREATE TABLE [dbo].[pf_Sku](
+    [SkuID] [nvarchar](256) NOT NULL PRIMARY KEY CLUSTERED,
+    [Name] [nvarchar](256) NOT NULL,
+    [Description] [nvarchar](MAX) NOT NULL,
+    [Price] [decimal](18, 2) NOT NULL,
+    [IsActive] [bit] NOT NULL,
+    [Months] [smallint] NOT NULL
+);
+
+
+-- ***************************** [pf_Transaction]
+
+CREATE TABLE [dbo].[pf_Transaction](
+    [TransactionID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+    [ProcessorID] [nvarchar](256) NOT NULL,
+    [CustomerID] [nvarchar](256) NOT NULL,
+    [Status] [nvarchar](256) NOT NULL,
+    [Raw] [nvarchar](MAX) NOT NULL,
+    [Last4] [nvarchar](50) NOT NULL,
+    [UserID] [int] NOT NULL,
+    [TimeStamp] [datetime] NOT NULL,
+    [SkuID] [nvarchar](256) NOT NULL,
+    [Amount] [decimal](18, 2) NOT NULL
+);
+
+CREATE NONCLUSTERED INDEX IX_pf_Transaction_UserID ON pf_Transaction (UserID, TimeStamp);
+
+
+-- ***************************** [pf_SubscriptionHistory]
+
+CREATE TABLE [dbo].[pf_SubscriptionHistory](
+    [SubscriptionHistoryID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+    [UserID] [int] NOT NULL,
+    [TimeStamp] [datetime] NOT NULL,
+    [SkuID] [nvarchar](256) NOT NULL,
+    [Message] [nvarchar](MAX) NOT NULL
+);
+
+CREATE NONCLUSTERED INDEX IX_pf_SubscriptionHistory_UserID ON pf_SubscriptionHistory (UserID, TimeStamp);
 
 
 
@@ -1066,3 +1113,4 @@ INSERT INTO pf_JunkWords (JunkWord) VALUES ('with');
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('would');
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('you');
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('your');
+

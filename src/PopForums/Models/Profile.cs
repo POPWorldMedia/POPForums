@@ -19,4 +19,5 @@ public class Profile
 	public int? LastPostID { get; set; }
 	public int Points { get; set; }
 	public bool IsAutoFollowOnReply { get; set; }
+	public bool IsAutoRenewal { get; set; }
 }

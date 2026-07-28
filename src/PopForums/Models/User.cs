@@ -10,6 +10,7 @@ public class User
 	public bool IsApproved { get; set; }
 	public DateTime? TokenExpiration { get; set; }
 	public List<string> Roles { get; set; }
+	public DateTime? SubscriptionExpiration { get; set; }
 
 	public bool IsInRole(string role)
 	{

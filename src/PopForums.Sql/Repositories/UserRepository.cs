@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
 		public const string PointTotals = "PopForums.Users.Points.";
 	}
 
-	public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey, pf_PopForumsUser.TokenExpiration";
+	public const string PopForumsUserColumns = "pf_PopForumsUser.UserID, pf_PopForumsUser.Name, pf_PopForumsUser.Email, pf_PopForumsUser.CreationDate, pf_PopForumsUser.IsApproved, pf_PopForumsUser.AuthorizationKey, pf_PopForumsUser.TokenExpiration, pf_PopForumsUser.SubscriptionExpiration";
 
 	private void CacheUser(User user)
 	{
@@ -192,6 +192,15 @@ public class UserRepository : IUserRepository
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_PopForumsUser SET TokenExpiration = @tokenExpiration WHERE UserID = @UserID", new { tokenExpiration, user.UserID }));
 		RemoveCacheUser(user.Name);
+	}
+
+	public async Task UpdateSubscriptionExpiration(int userID, DateTime? subscriptionExpiration)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("UPDATE pf_PopForumsUser SET SubscriptionExpiration = @subscriptionExpiration WHERE UserID = @UserID", new { subscriptionExpiration, UserID = userID }));
+		var user = await GetUser(userID);
+		if (user != null)
+			RemoveCacheUser(user.Name);
 	}
 
 	public async Task<List<User>> SearchByEmail(string email)

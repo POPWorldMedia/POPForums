@@ -78,9 +78,12 @@ public static class Extensions
 		services.AddTransient<ISecurityLogRepository, SecurityLogRepository>();
 		services.AddTransient<ISettingsRepository, SettingsRepository>();
 		services.AddTransient<ISetupRepository, SetupRepository>();
+		services.AddTransient<ISkuRepository, SkuRepository>();
 		services.AddTransient<ISubscribedTopicsRepository, SubscribedTopicsRepository>();
+		services.AddTransient<ISubscriptionHistoryRepository, SubscriptionHistoryRepository>();
 		services.AddTransient<ITopicRepository, TopicRepository>();
 		services.AddTransient<ITopicViewLogRepository, TopicViewLogRepository>();
+		services.AddTransient<ITransactionRepository, TransactionRepository>();
 		services.AddTransient<IUserAvatarRepository, UserAvatarRepository>();
 		services.AddTransient<IUserAwardRepository, UserAwardRepository>();
 		services.AddTransient<IUserImageRepository, UserImageRepository>();
