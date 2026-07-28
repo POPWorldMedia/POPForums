@@ -37,6 +37,7 @@ public static class ServiceCollections
 
 		// services
 		services.AddTransient<IBanService, BanService>();
+		services.AddTransient<IBuyService, BuyService>();
 		services.AddTransient<ICategoryService, CategoryService>();
 		services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
 		services.AddTransient<IForumService, ForumService>();
@@ -49,6 +50,8 @@ public static class ServiceCollections
 		services.AddTransient<IPrivateMessageService, PrivateMessageService>();
 		services.AddTransient<IProfileService, ProfileService>();
 		services.AddTransient<IQueuedEmailService, QueuedEmailService>();
+		services.AddTransient<IRenewalOrchestrationService, RenewalOrchestrationService>();
+		services.AddTransient<IRenewalService, RenewalService>();
 		services.AddTransient<ISearchService, SearchService>();
 		services.AddTransient<ISecurityLogService, SecurityLogService>();
 		services.AddTransient<ISetupService, SetupService>();

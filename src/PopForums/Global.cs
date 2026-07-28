@@ -29,3 +29,4 @@ global using PopForums.Models.Subscriptions;
 global using PopForums.Repositories;
 global using PopForums.ScoringGame;
 global using PopForums.Services;
+global using PopForums.Services.Subscriptions;
