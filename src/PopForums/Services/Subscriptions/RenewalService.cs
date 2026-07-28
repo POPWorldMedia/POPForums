@@ -3,17 +3,17 @@ namespace PopForums.Services.Subscriptions;
 public interface IRenewalService
 {
 	Task<IEnumerable<int>> GetUserIDsForRenewal();
-	Task<TransactionResult> ChargeAndRecordRenewal(string userID);
+	Task<BasicServiceResponse<Transaction>> ChargeAndRecordRenewal(string userID);
 }
 
-public class RenewalService : IRenewalService
+public class RenewalService(IUserRepository userRepository) : IRenewalService
 {
 	public async Task<IEnumerable<int>> GetUserIDsForRenewal()
 	{
 		throw new NotImplementedException();
 	}
 	
-	public async Task<TransactionResult> ChargeAndRecordRenewal(string userID)
+	public async Task<BasicServiceResponse<Transaction>> ChargeAndRecordRenewal(string userID)
 	{
 		throw new NotImplementedException();
 	}

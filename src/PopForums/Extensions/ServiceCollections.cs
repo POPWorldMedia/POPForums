@@ -1,4 +1,6 @@
-﻿namespace PopForums.Extensions;
+﻿using PopForums.Repositories.Subscriptions;
+
+namespace PopForums.Extensions;
 
 public static class ServiceCollections
 {
@@ -83,5 +85,8 @@ public static class ServiceCollections
 		services.AddTransient<IPostImageCleanupWorker, PostImageCleanupWorker>();
 		services.AddTransient<ISubscribeNotificationWorker, SubscribeNotificationWorker>();
 		services.AddTransient<IIgnoreService, IgnoreService>();
+		
+		// repos
+		services.AddTransient<IBankChargeRepository, BankChargeRepository>();
 	}
 }

@@ -13,6 +13,16 @@ IF COL_LENGTH('dbo.pf_Profile', 'Last4') IS NULL
         ALTER TABLE pf_Profile ADD [Last4] [nvarchar](50) NULL;
     END
 
+IF COL_LENGTH('dbo.pf_Profile', 'CustomerID') IS NULL
+    BEGIN
+        ALTER TABLE pf_Profile ADD [CustomerID] [nvarchar](256) NULL;
+    END
+
+IF COL_LENGTH('dbo.pf_Profile', 'SkuID') IS NULL
+    BEGIN
+        ALTER TABLE pf_Profile ADD [SkuID] [nvarchar](256) NULL;
+    END
+
 IF OBJECT_ID('pf_Sku', 'U') IS NULL
     BEGIN
         CREATE TABLE [dbo].[pf_Sku](
