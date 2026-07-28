@@ -194,7 +194,7 @@ public class UserRepository : IUserRepository
 		RemoveCacheUser(user.Name);
 	}
 
-	public async Task UpdateSubscriptionExpiration(int userID, DateTime? subscriptionExpiration)
+	public async Task UpdateSubscriptionExpiration(int userID, DateOnly? subscriptionExpiration)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			connection.ExecuteAsync("UPDATE pf_PopForumsUser SET SubscriptionExpiration = @subscriptionExpiration WHERE UserID = @UserID", new { subscriptionExpiration, UserID = userID }));

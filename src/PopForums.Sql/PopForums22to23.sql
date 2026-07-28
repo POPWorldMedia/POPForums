@@ -1,6 +1,6 @@
 IF COL_LENGTH('dbo.pf_PopForumsUser', 'SubscriptionExpiration') IS NULL
     BEGIN
-        ALTER TABLE pf_PopForumsUser ADD [SubscriptionExpiration] [datetime] NULL;
+        ALTER TABLE pf_PopForumsUser ADD [SubscriptionExpiration] [date] NULL;
     END
 
 IF COL_LENGTH('dbo.pf_Profile', 'IsAutoRenewal') IS NULL

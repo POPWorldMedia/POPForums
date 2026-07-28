@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 	[AuthorizationKey] [uniqueidentifier] NOT NULL DEFAULT ('00000000-0000-0000-0000-000000000000'),
 	[Salt] [uniqueidentifier] NULL,
     [TokenExpiration] [datetime] NULL,
-    [SubscriptionExpiration] [datetime] NULL
+    [SubscriptionExpiration] [date] NULL
 );
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name]);
