@@ -69,3 +69,12 @@ IF INDEXPROPERTY(Object_Id('pf_SubscriptionHistory'), 'IX_pf_SubscriptionHistory
     BEGIN
         CREATE NONCLUSTERED INDEX IX_pf_SubscriptionHistory_UserID ON pf_SubscriptionHistory (UserID, TimeStamp);
     END
+
+IF OBJECT_ID('pf_RenewalQueue', 'U') IS NULL
+    BEGIN
+        CREATE TABLE [dbo].[pf_RenewalQueue](
+          [Id] [int] IDENTITY(1,1) NOT NULL,
+          [Payload] [nvarchar](256) NOT NULL
+        );
+        CREATE CLUSTERED INDEX IX_pf_RenewalQueue_Id ON pf_RenewalQueue (Id);
+    END

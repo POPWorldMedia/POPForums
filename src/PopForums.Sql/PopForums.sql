@@ -902,6 +902,13 @@ CREATE TABLE [dbo].[pf_SubNotifyQueue](
 
 CREATE CLUSTERED INDEX IX_pf_SubNotifyQueue_ID ON pf_SubNotifyQueue (ID);
 
+CREATE TABLE [dbo].[pf_RenewalQueue](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Payload] [nvarchar](256) NOT NULL
+);
+
+CREATE CLUSTERED INDEX IX_pf_RenewalQueue_Id ON pf_RenewalQueue (Id);
+
 
 
 CREATE TABLE [dbo].[pf_ServiceHeartbeat](

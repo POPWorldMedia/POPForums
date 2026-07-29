@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
 		services.Replace(ServiceDescriptor.Transient<IAwardCalculationQueueRepository, PopForums.AzureKit.Queue.AwardCalculationQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<ISearchIndexQueueRepository, PopForums.AzureKit.Queue.SearchIndexQueueRepository>());
 		services.Replace(ServiceDescriptor.Transient<ISubscribeNotificationRepository, PopForums.AzureKit.Queue.SubscribeNotificationRepository>());
+		services.Replace(ServiceDescriptor.Transient<IRenewalQueueRepository, PopForums.AzureKit.Queue.RenewalQueueRepository>());
 		return services;
 	}
 
