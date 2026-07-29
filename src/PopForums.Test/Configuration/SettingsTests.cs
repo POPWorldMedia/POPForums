@@ -157,6 +157,8 @@ public class SettingsTests
 		const int postImageMaxkBytes = 631;
 		const int renewalWorkerInterval = 481;
 		const bool isSubscriptionEnabled = true;
+		const string stripeSecretKey = "sk_test_123";
+		const string stripePublishableKey = "pk_test_456";
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -219,7 +221,9 @@ public class SettingsTests
 			{"PostImageMaxWidth", postImageMaxWidth},
 			{"PostImageMaxkBytes", postImageMaxkBytes},
 			{"RenewalWorkerInterval", renewalWorkerInterval},
-			{"IsSubscriptionEnabled", isSubscriptionEnabled}
+			{"IsSubscriptionEnabled", isSubscriptionEnabled},
+			{"StripeSecretKey", stripeSecretKey},
+			{"StripePublishableKey", stripePublishableKey}
 		};
 
 		var settingsRepo = Substitute.For<ISettingsRepository>();
@@ -289,6 +293,8 @@ public class SettingsTests
 		settings.PostImageMaxkBytes = postImageMaxkBytes;
 		settings.RenewalWorkerInterval = renewalWorkerInterval;
 		settings.IsSubscriptionEnabled = isSubscriptionEnabled;
+		settings.StripeSecretKey = stripeSecretKey;
+		settings.StripePublishableKey = stripePublishableKey;
 		settingsManager.SaveCurrent();
 
 		settingsRepo.Received().Save(Arg.Is<Dictionary<string, object>>(x => x.SequenceEqual(dictionary)));

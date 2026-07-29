@@ -1302,4 +1302,10 @@
   <data name="Unfollow" xml:space="preserve">
     <value>取消追蹤</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe 私密金鑰</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe 可公開金鑰</value>
+  </data>
 </root>

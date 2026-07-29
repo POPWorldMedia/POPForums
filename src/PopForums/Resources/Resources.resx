@@ -1326,4 +1326,10 @@
   <data name="Unfollow" xml:space="preserve">
     <value>Unfollow</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe Secret Key</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe Publishable Key</value>
+  </data>
 </root>

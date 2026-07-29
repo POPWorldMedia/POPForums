@@ -85,7 +85,7 @@ public class BuyServiceTests
 
 			Assert.False(result.IsSuccessful);
 			Assert.Equal("card declined", result.Message);
-			await _bankChargeRepository.DidNotReceive().ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>());
+			await _bankChargeRepository.DidNotReceive().ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]
@@ -98,7 +98,7 @@ public class BuyServiceTests
 			_userRepository.GetUser(UserID).Returns(Task.FromResult(user));
 			_bankChargeRepository.CreateCustomer(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>())
 				.Returns(Task.FromResult(BasicServiceResponse<CreateCustomerResult>.Success(new CreateCustomerResult { CustomerID = "cust1", Last4 = "1234" })));
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Failed("charge failed")));
 			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok" };
 
@@ -121,7 +121,7 @@ public class BuyServiceTests
 			_bankChargeRepository.CreateCustomer(Arg.Any<string>(), user.Email, UserID)
 				.Returns(Task.FromResult(BasicServiceResponse<CreateCustomerResult>.Success(new CreateCustomerResult { CustomerID = "cust1", Last4 = "4242" })));
 			var transaction = new Transaction { CustomerID = "cust1", Last4 = "4242", UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer("cust1", UserID, sku.Price, Arg.Any<DateTime>(), SkuID, user.Email)
+			_bankChargeRepository.ChargeCustomer("cust1", UserID, sku.Price, Arg.Any<DateTime>(), SkuID, sku.Name, user.Email)
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(new Profile { UserID = UserID }));
 			Profile updatedProfile = null;
@@ -163,7 +163,7 @@ public class BuyServiceTests
 			_bankChargeRepository.CreateCustomer(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>())
 				.Returns(Task.FromResult(BasicServiceResponse<CreateCustomerResult>.Success(new CreateCustomerResult { CustomerID = "cust1", Last4 = "4242" })));
 			var transaction = new Transaction { CustomerID = "cust1", Last4 = "4242", UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(new Profile { UserID = UserID }));
 			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok" };
@@ -186,7 +186,7 @@ public class BuyServiceTests
 			_bankChargeRepository.CreateCustomer(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>())
 				.Returns(Task.FromResult(BasicServiceResponse<CreateCustomerResult>.Success(new CreateCustomerResult { CustomerID = "cust1", Last4 = "4242" })));
 			var transaction = new Transaction { CustomerID = "cust1", Last4 = "4242", UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(new Profile { UserID = UserID }));
 			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok" };

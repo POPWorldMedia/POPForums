@@ -1308,4 +1308,10 @@
   <data name="Unfollow" xml:space="preserve">
     <value>Niet meer volgen</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe geheime sleutel</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe publiceerbare sleutel</value>
+  </data>
 </root>

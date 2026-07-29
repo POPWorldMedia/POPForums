@@ -1307,4 +1307,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="Unfollow" xml:space="preserve">
     <value>Nicht mehr folgen</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe-Geheimschlüssel</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe-Veröffentlichungsschlüssel</value>
+  </data>
 </root>

@@ -29,7 +29,7 @@ public class RenewalService(IUserRepository userRepository, ISkuRepository skuRe
 			throw new Exception($"SKU {profile.SkuID} not found for user {userID} during renewal.");
 
 		// charge existing customer
-		var transactionResult = await bankChargeRepository.ChargeCustomer(profile.CustomerID, userID, sku.Price, now, sku.SkuID, user.Email);
+		var transactionResult = await bankChargeRepository.ChargeCustomer(profile.CustomerID, userID, sku.Price, now, sku.SkuID, sku.Name, user.Email);
 		if (!transactionResult.IsSuccessful)
 		{
 			var failedTransactionResult = BasicServiceResponse<Transaction>.Failed(transactionResult.Message);

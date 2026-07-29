@@ -1407,6 +1407,14 @@
 			<label>@PopForums.Resources.RenewalInterval (@PopForums.Resources.Millseconds)</label>
 			<input type="text" v-model="settings.renewalWorkerInterval" class="form-control" />
 		</div>
+		<div class="mb-3">
+			<label for="StripeSecretKey">@PopForums.Resources.StripeSecretKey</label>
+			<input type="password" v-model="settings.stripeSecretKey" id="StripeSecretKey" class="form-control" />
+		</div>
+		<div class="mb-3">
+			<label for="StripePublishableKey">@PopForums.Resources.StripePublishableKey</label>
+			<input type="text" v-model="settings.stripePublishableKey" id="StripePublishableKey" class="form-control" />
+		</div>
 		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 	</main>

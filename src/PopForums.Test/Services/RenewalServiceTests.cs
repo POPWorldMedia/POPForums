@@ -71,7 +71,7 @@ public class RenewalServiceTests
 
 			await Assert.ThrowsAsync<Exception>(() => service.ChargeAndRecordRenewal(UserID));
 
-			await _bankChargeRepository.DidNotReceive().ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>());
+			await _bankChargeRepository.DidNotReceive().ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]
@@ -84,7 +84,7 @@ public class RenewalServiceTests
 			var sku = GetSku(isActive: false);
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = "cust1", Last4 = "4242", UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			var result = await service.ChargeAndRecordRenewal(UserID);
@@ -99,7 +99,7 @@ public class RenewalServiceTests
 			_userRepository.GetUser(UserID).Returns(Task.FromResult(GetUser()));
 			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(GetProfile()));
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(GetSku()));
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Failed("charge failed")));
 
 			var result = await service.ChargeAndRecordRenewal(UserID);
@@ -120,7 +120,7 @@ public class RenewalServiceTests
 			var sku = GetSku();
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(profile.CustomerID, UserID, sku.Price, Arg.Any<DateTime>(), SkuID, "a@b.com")
+			_bankChargeRepository.ChargeCustomer(profile.CustomerID, UserID, sku.Price, Arg.Any<DateTime>(), SkuID, sku.Name, "a@b.com")
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			await service.ChargeAndRecordRenewal(UserID);
@@ -138,7 +138,7 @@ public class RenewalServiceTests
 			var sku = GetSku();
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			var result = await service.ChargeAndRecordRenewal(UserID);
@@ -160,7 +160,7 @@ public class RenewalServiceTests
 			var sku = GetSku(3);
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			await service.ChargeAndRecordRenewal(UserID);
@@ -179,7 +179,7 @@ public class RenewalServiceTests
 			var sku = GetSku(2);
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			await service.ChargeAndRecordRenewal(UserID);
@@ -198,7 +198,7 @@ public class RenewalServiceTests
 			var sku = GetSku();
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
 			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
-			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>())
+			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 			SubscriptionHistory history = null;
 			await _subscriptionHistoryRepository.Create(Arg.Do<SubscriptionHistory>(x => history = x));

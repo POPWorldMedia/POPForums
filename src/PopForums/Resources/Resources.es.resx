@@ -1323,4 +1323,10 @@
   <data name="Unfollow" xml:space="preserve">
     <value>Dejar de seguir</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Clave secreta de Stripe</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Clave publicable de Stripe</value>
+  </data>
 </root>

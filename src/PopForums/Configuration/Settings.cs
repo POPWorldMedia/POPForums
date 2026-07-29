@@ -65,6 +65,8 @@ public class Settings
 		PostImageMaxkBytes = 5000;
 		RenewalWorkerInterval = 60000;
 		IsSubscriptionEnabled = false;
+		StripeSecretKey = string.Empty;
+		StripePublishableKey = string.Empty;
 	}
 
 	public virtual string TermsOfService { get; set; }
@@ -128,4 +130,6 @@ public class Settings
 	public virtual int PostImageMaxkBytes { get; set; }
 	public virtual int RenewalWorkerInterval { get; set; }
 	public virtual bool IsSubscriptionEnabled { get; set; }
+	public virtual string StripeSecretKey { get; set; }
+	public virtual string StripePublishableKey { get; set; }
 }

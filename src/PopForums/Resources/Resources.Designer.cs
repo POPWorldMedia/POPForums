@@ -2414,5 +2414,17 @@ namespace PopForums {
                 return ResourceManager.GetString("Unfollow", resourceCulture);
             }
         }
+
+        public static string StripeSecretKey {
+            get {
+                return ResourceManager.GetString("StripeSecretKey", resourceCulture);
+            }
+        }
+
+        public static string StripePublishableKey {
+            get {
+                return ResourceManager.GetString("StripePublishableKey", resourceCulture);
+            }
+        }
     }
 }

@@ -1323,4 +1323,10 @@
   <data name="Unfollow" xml:space="preserve">
     <value>Перестати стежити</value>
   </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Секретний ключ Stripe</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Публікований ключ Stripe</value>
+  </data>
 </root>

@@ -38,7 +38,7 @@ public class BuyService(ISkuRepository skuRepository, IUserRepository userReposi
 		}
 		var customerID = createCustomerResult.Data.CustomerID;
 
-		var transactionResult = await bankChargeRepository.ChargeCustomer(customerID, user.UserID, sku.Price, now, sku.SkuID, user.Email);
+		var transactionResult = await bankChargeRepository.ChargeCustomer(customerID, user.UserID, sku.Price, now, sku.SkuID, sku.Name, user.Email);
 		if (!transactionResult.IsSuccessful)
 		{
 			var failedTransactionResult = BasicServiceResponse<Transaction>.Failed(transactionResult.Message);
