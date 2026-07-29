@@ -31,7 +31,7 @@ public class Logger : ILogger
 				{
 					var s = new StringBuilder();
 					var user =
-						context.User.Identities.SingleOrDefault(
+						context.User.Identities.FirstOrDefault(
 							x => x.AuthenticationType == PopForumsAuthenticationDefaults.AuthenticationScheme);
 					if (user != null)
 					{
