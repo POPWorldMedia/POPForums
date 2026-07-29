@@ -12,13 +12,13 @@ public class SkuRepository : ISkuRepository
 	public async Task Create(Sku sku)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("INSERT INTO pf_Sku (SkuID, Name, Description, Price, IsActive, Months) VALUES (@SkuID, @Name, @Description, @Price, @IsActive, @Months)", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, sku.Months }));
+			connection.ExecuteAsync("INSERT INTO pf_Sku (SkuID, Name, Description, Price, IsActive, Months) VALUES (@SkuID, @Name, @Description, @Price, @IsActive, @Months)", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, Months = (short)sku.Months }));
 	}
 
 	public async Task Update(Sku sku)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("UPDATE pf_Sku SET Name = @Name, Description = @Description, Price = @Price, IsActive = @IsActive, Months = @Months WHERE SkuID = @SkuID", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, sku.Months }));
+			connection.ExecuteAsync("UPDATE pf_Sku SET Name = @Name, Description = @Description, Price = @Price, IsActive = @IsActive, Months = @Months WHERE SkuID = @SkuID", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, Months = (short)sku.Months }));
 	}
 
 	public async Task<Sku> Get(string skuID)

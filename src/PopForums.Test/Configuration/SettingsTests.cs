@@ -156,6 +156,7 @@ public class SettingsTests
 		const int postImageMaxWidth = 980;
 		const int postImageMaxkBytes = 631;
 		const int renewalWorkerInterval = 481;
+		const bool isSubscriptionEnabled = true;
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -217,7 +218,8 @@ public class SettingsTests
 			{"PostImageMaxHeight", postImageMaxHeight},
 			{"PostImageMaxWidth", postImageMaxWidth},
 			{"PostImageMaxkBytes", postImageMaxkBytes},
-			{"RenewalWorkerInterval", renewalWorkerInterval}
+			{"RenewalWorkerInterval", renewalWorkerInterval},
+			{"IsSubscriptionEnabled", isSubscriptionEnabled}
 		};
 
 		var settingsRepo = Substitute.For<ISettingsRepository>();
@@ -286,6 +288,7 @@ public class SettingsTests
 		settings.PostImageMaxWidth = postImageMaxWidth;
 		settings.PostImageMaxkBytes = postImageMaxkBytes;
 		settings.RenewalWorkerInterval = renewalWorkerInterval;
+		settings.IsSubscriptionEnabled = isSubscriptionEnabled;
 		settingsManager.SaveCurrent();
 
 		settingsRepo.Received().Save(Arg.Is<Dictionary<string, object>>(x => x.SequenceEqual(dictionary)));

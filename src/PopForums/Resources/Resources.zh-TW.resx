@@ -1023,8 +1023,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>設定您的第一個用戶（將被授予管理員和主持人權）</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>訂閱主題</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>已追蹤的主題</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>您必須先登入才能查看訂閱的主題。</value>
@@ -1268,5 +1268,38 @@
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>忽略</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>訂閱設定</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>訂閱 SKU</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>啟用訂閱</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>續訂間隔</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>新增 SKU</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU 編號</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>價格</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>月數</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>啟用中</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>追蹤</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>取消追蹤</value>
   </data>
 </root>

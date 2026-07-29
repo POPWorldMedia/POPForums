@@ -973,8 +973,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Configurez votre premier utilisateur (se verra accorder les droits d'administrateur et de modérateur)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Sujets abonnés</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Sujets suivis</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Vous devez être connecté pour voir les sujets auxquels vous êtes abonné.</value>
@@ -1232,5 +1232,38 @@
   </data>
   <data name="IgnoreList" xml:space="preserve">
 	  <value>Liste d'ignorés</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Configuration des abonnements</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>SKU d'abonnement</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Abonnements activés</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Intervalle de renouvellement</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>Ajouter un SKU</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>ID du SKU</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prix</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Mois</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Suivre</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Ne plus suivre</value>
   </data>
 </root>

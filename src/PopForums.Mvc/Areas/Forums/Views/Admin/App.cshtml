@@ -77,6 +77,9 @@
 					<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
 				}
 				<div class="dropdown-divider"></div>
+				<router-link to="/subscriptionconfig" class="dropdown-item">@PopForums.Resources.SubscriptionConfig</router-link>
+				<router-link to="/subscriptionskus" class="dropdown-item">@PopForums.Resources.SubscriptionSkus</router-link>
+				<div class="dropdown-divider"></div>
 				<router-link to="/scoringgame" class="dropdown-item">@PopForums.Resources.ScoringGame</router-link>
 				<router-link to="/eventdefinitions" class="dropdown-item">@PopForums.Resources.EventDefinitions</router-link>
 				<router-link to="/awarddefinitions" class="dropdown-item">@PopForums.Resources.AwardDefinitions</router-link>
@@ -1390,6 +1393,93 @@
 				</tr>
 			</tbody>
 		</table>
+	</main>
+</script>
+
+<script type="x-templates" id="SubscriptionConfig">
+	<main>
+		<h2>@PopForums.Resources.SubscriptionConfig</h2>
+
+		<div class="mb-3">
+			<label for="IsSubscriptionEnabled"><input type="checkbox" v-model="settings.isSubscriptionEnabled" id="IsSubscriptionEnabled" class="form-check-input" /> @PopForums.Resources.SubscriptionsEnabled</label>
+		</div>
+		<div class="mb-3">
+			<label>@PopForums.Resources.RenewalInterval (@PopForums.Resources.Millseconds)</label>
+			<input type="text" v-model="settings.renewalWorkerInterval" class="form-control" />
+		</div>
+		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
+		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
+	</main>
+</script>
+
+<script type="x-templates" id="SubscriptionSkus">
+	<main>
+		<h2>@PopForums.Resources.SubscriptionSkus</h2>
+
+		<p><input type="button" class="btn btn-primary" v-on:click="newSku" value="@PopForums.Resources.AddSku" /></p>
+
+		<table class="table table-sm mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.ID</th>
+					<th>@PopForums.Resources.Title</th>
+					<th>@PopForums.Resources.Price</th>
+					<th>@PopForums.Resources.Months</th>
+					<th>@PopForums.Resources.Active</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="sku in skus">
+					<td>{{sku.skuID}}</td>
+					<td>{{sku.name}}</td>
+					<td>{{sku.price}}</td>
+					<td>{{sku.months}}</td>
+					<td><input type="checkbox" v-model="sku.isActive" disabled class="form-check-input" /></td>
+					<td><input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ms-3" v-on:click="editSku(sku)" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3 row">
+							<label for="skuID" class="col-sm-3 col-form-label">@PopForums.Resources.SkuID</label>
+							<div class="col-sm-9"><input type="text" v-model="editingSku.skuID" class="form-control" id="skuID" :disabled="!isNewSku" /></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="name" class="col-sm-3 col-form-label">@PopForums.Resources.Title</label>
+							<div class="col-sm-9"><input type="text" v-model="editingSku.name" class="form-control" id="name" /></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="description" class="col-sm-3 col-form-label">@PopForums.Resources.Description</label>
+							<div class="col-sm-9"><textarea v-model="editingSku.description" class="form-control" id="description" rows="3"></textarea></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="price" class="col-sm-3 col-form-label">@PopForums.Resources.Price</label>
+							<div class="col-sm-9"><input type="text" v-model="editingSku.price" class="form-control" id="price" /></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="months" class="col-sm-3 col-form-label">@PopForums.Resources.Months</label>
+							<div class="col-sm-9"><input type="text" v-model="editingSku.months" class="form-control" id="months" /></div>
+						</div>
+						<div class="mb-3 row">
+							<div class="col-sm-9 offset-sm-3">
+								<label for="isActive"><input type="checkbox" v-model="editingSku.isActive" id="isActive" class="form-check-input" /> @PopForums.Resources.Active</label>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveSku" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </script>
 

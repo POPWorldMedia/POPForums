@@ -1857,9 +1857,9 @@ namespace PopForums {
             }
         }
         
-        public static string SubscribedTopics {
+        public static string FollowedTopics {
             get {
-                return ResourceManager.GetString("SubscribedTopics", resourceCulture);
+                return ResourceManager.GetString("FollowedTopics", resourceCulture);
             }
         }
         
@@ -2346,6 +2346,72 @@ namespace PopForums {
         public static string IgnoreList {
             get {
                 return ResourceManager.GetString("IgnoreList", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionConfig {
+            get {
+                return ResourceManager.GetString("SubscriptionConfig", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionSkus {
+            get {
+                return ResourceManager.GetString("SubscriptionSkus", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionsEnabled {
+            get {
+                return ResourceManager.GetString("SubscriptionsEnabled", resourceCulture);
+            }
+        }
+
+        public static string RenewalInterval {
+            get {
+                return ResourceManager.GetString("RenewalInterval", resourceCulture);
+            }
+        }
+
+        public static string AddSku {
+            get {
+                return ResourceManager.GetString("AddSku", resourceCulture);
+            }
+        }
+
+        public static string SkuID {
+            get {
+                return ResourceManager.GetString("SkuID", resourceCulture);
+            }
+        }
+
+        public static string Price {
+            get {
+                return ResourceManager.GetString("Price", resourceCulture);
+            }
+        }
+
+        public static string Months {
+            get {
+                return ResourceManager.GetString("Months", resourceCulture);
+            }
+        }
+
+        public static string Active {
+            get {
+                return ResourceManager.GetString("Active", resourceCulture);
+            }
+        }
+
+        public static string Follow {
+            get {
+                return ResourceManager.GetString("Follow", resourceCulture);
+            }
+        }
+
+        public static string Unfollow {
+            get {
+                return ResourceManager.GetString("Unfollow", resourceCulture);
             }
         }
     }

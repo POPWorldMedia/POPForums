@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Setup das erste Mitglied des Forms (wird Admin- und Moderator-Rechte bewilligen) Setup your first user (will be granted admin and moderator rights)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Abbonierte Themen</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Verfolgte Themen</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Sie müssen eingeloggt sein um abbonierte Themen zu sehen.</value>
@@ -1273,5 +1273,38 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>Ignorieren</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Abonnementkonfiguration</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>Abonnement-SKUs</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Abonnements aktiviert</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Verlängerungsintervall</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>SKU hinzufügen</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU-ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Preis</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Monate</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Folgen</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Nicht mehr folgen</value>
   </data>
 </root>

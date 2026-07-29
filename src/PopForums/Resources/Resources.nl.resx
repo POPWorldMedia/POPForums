@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Maak je eerste gebruiker aan (die zal beheer- en moderatorrechten krijgen)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Aangemelde Topics</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Gevolgde Topics</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Je moet ingelogd zijn om aangemelde topics te kunnen zien.</value>
@@ -1274,5 +1274,38 @@
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>Negeren</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Abonnementconfiguratie</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>Abonnement-SKU's</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Abonnementen ingeschakeld</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Verlengingsinterval</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>SKU toevoegen</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU-ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prijs</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Maanden</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Actief</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Volgen</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Niet meer volgen</value>
   </data>
 </root>

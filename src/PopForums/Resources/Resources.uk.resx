@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Налаштуйте вашого першого користувача (який буде наділаний привілегіями адміна і модератора)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Підписані теми</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Відстежувані теми</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Ви повинні увійти в систему для перегляду підписаних тем.</value>
@@ -1289,5 +1289,38 @@
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>Ігнорувати</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Налаштування підписки</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>SKU підписки</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Підписки увімкнено</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Інтервал поновлення</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>Додати SKU</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Ціна</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Місяці</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Стежити</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Перестати стежити</value>
   </data>
 </root>
