@@ -909,6 +909,12 @@ CREATE TABLE [dbo].[pf_RenewalQueue](
 
 CREATE CLUSTERED INDEX IX_pf_RenewalQueue_Id ON pf_RenewalQueue (Id);
 
+CREATE TABLE [dbo].[pf_RenewalEnqueueClaim](
+	[ClaimDate] [date] NOT NULL
+);
+
+INSERT INTO pf_RenewalEnqueueClaim (ClaimDate) VALUES ('1900-01-01');
+
 
 
 CREATE TABLE [dbo].[pf_ServiceHeartbeat](

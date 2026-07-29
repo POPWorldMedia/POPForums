@@ -72,6 +72,7 @@ public static class Extensions
 		services.AddTransient<IPrivateMessageRepository, PrivateMessageRepository>();
 		services.AddTransient<IProfileRepository, ProfileRepository>();
 		services.AddTransient<IQueuedEmailMessageRepository, QueuedEmailMessageRepository>();
+		services.AddTransient<IRenewalEnqueueClaimRepository, RenewalEnqueueClaimRepository>();
 		services.AddTransient<IRenewalQueueRepository, RenewalQueueRepository>();
 		services.AddTransient<IRoleRepository, RoleRepository>();
 		services.AddTransient<ISearchIndexQueueRepository, SearchIndexQueueRepository>();

@@ -54,6 +54,7 @@ public static class ServiceCollections
 		services.AddTransient<IQueuedEmailService, QueuedEmailService>();
 		services.AddTransient<IRenewalOrchestrationService, RenewalOrchestrationService>();
 		services.AddTransient<IRenewalService, RenewalService>();
+		services.AddTransient<IRenewalWorker, RenewalWorker>();
 		services.AddTransient<ISearchService, SearchService>();
 		services.AddTransient<ISecurityLogService, SecurityLogService>();
 		services.AddTransient<ISetupService, SetupService>();

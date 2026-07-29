@@ -78,3 +78,11 @@ IF OBJECT_ID('pf_RenewalQueue', 'U') IS NULL
         );
         CREATE CLUSTERED INDEX IX_pf_RenewalQueue_Id ON pf_RenewalQueue (Id);
     END
+
+IF OBJECT_ID('pf_RenewalEnqueueClaim', 'U') IS NULL
+    BEGIN
+        CREATE TABLE [dbo].[pf_RenewalEnqueueClaim](
+          [ClaimDate] [date] NOT NULL
+        );
+        INSERT INTO pf_RenewalEnqueueClaim (ClaimDate) VALUES ('1900-01-01');
+    END
