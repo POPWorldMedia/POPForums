@@ -203,6 +203,14 @@ public class UserRepository : IUserRepository
 			RemoveCacheUser(user.Name);
 	}
 
+	public async Task<List<int>> GetUserIDsBySubscriptionExpiration(DateOnly date)
+	{
+		Task<IEnumerable<int>> list = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			list = connection.QueryAsync<int>("SELECT UserID FROM pf_PopForumsUser WHERE SubscriptionExpiration = @date", new { date }));
+		return list.Result.ToList();
+	}
+
 	public async Task<List<User>> SearchByEmail(string email)
 	{
 		var list = await GetList("SELECT " + PopForumsUserColumns + " FROM pf_PopForumsUser WHERE Email LIKE '%' + @Email + '%'", new { Email = email });
