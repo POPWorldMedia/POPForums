@@ -31,7 +31,7 @@ public class RenewalEnqueueProcessor
 
 		try
 		{
-			await _renewalOrchestrationService.EnqueueTenantsForRenewal();
+			await _renewalOrchestrationService.EnqueueUsersForRenewal();
 		}
 		catch (Exception exc)
 		{

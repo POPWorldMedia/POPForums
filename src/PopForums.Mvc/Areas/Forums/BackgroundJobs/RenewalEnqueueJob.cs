@@ -18,7 +18,7 @@ public class RenewalEnqueueJob(IServiceHeartbeatService serviceHeartbeatService,
 					break;
 				var today = DateOnly.FromDateTime(DateTime.UtcNow);
 				if (await renewalEnqueueClaimRepository.TryClaim(today))
-					await renewalOrchestrationService.EnqueueTenantsForRenewal();
+					await renewalOrchestrationService.EnqueueUsersForRenewal();
 				await serviceHeartbeatService.RecordHeartbeat(GetType().FullName, Environment.MachineName);
 			}
 			catch (Exception ex)

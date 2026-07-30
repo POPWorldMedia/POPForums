@@ -22,7 +22,7 @@ public class RenewalOrchestrationServiceTests
 		return new RenewalOrchestrationService(_renewalService, _renewalQueueRepository, _tenantService, _errorLog);
 	}
 
-	public class EnqueueTenantsForRenewalTests : RenewalOrchestrationServiceTests
+	public class EnqueueUsersForRenewalTests : RenewalOrchestrationServiceTests
 	{
 		[Fact]
 		public async Task EnqueuesPayloadForEachUserIDWithTenantID()
@@ -31,7 +31,7 @@ public class RenewalOrchestrationServiceTests
 			var userIDs = new List<int> { 1, 2, 3 };
 			_renewalService.GetUserIDsForRenewal().Returns(Task.FromResult<IEnumerable<int>>(userIDs));
 
-			await service.EnqueueTenantsForRenewal();
+			await service.EnqueueUsersForRenewal();
 
 			await _renewalQueueRepository.Received().Enqueue(Arg.Is<RenewalQueuePayload>(x => x.UserID == 1 && x.TenantID == TenantID));
 			await _renewalQueueRepository.Received().Enqueue(Arg.Is<RenewalQueuePayload>(x => x.UserID == 2 && x.TenantID == TenantID));
@@ -44,7 +44,7 @@ public class RenewalOrchestrationServiceTests
 			var service = GetService();
 			_renewalService.GetUserIDsForRenewal().Returns(Task.FromResult<IEnumerable<int>>(new List<int>()));
 
-			await service.EnqueueTenantsForRenewal();
+			await service.EnqueueUsersForRenewal();
 
 			await _renewalQueueRepository.DidNotReceive().Enqueue(Arg.Any<RenewalQueuePayload>());
 		}

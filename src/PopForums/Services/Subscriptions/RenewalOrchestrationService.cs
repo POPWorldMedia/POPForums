@@ -2,13 +2,13 @@ namespace PopForums.Services.Subscriptions;
 
 public interface IRenewalOrchestrationService
 {
-	Task EnqueueTenantsForRenewal();
+	Task EnqueueUsersForRenewal();
 	Task ProcessRenewal(int userID);
 }
 
 public class RenewalOrchestrationService(IRenewalService renewalService, IRenewalQueueRepository renewalQueueRepository, ITenantService tenantService, IErrorLog errorLog) : IRenewalOrchestrationService
 {
-	public async Task EnqueueTenantsForRenewal()
+	public async Task EnqueueUsersForRenewal()
 	{
 		var tenantID = tenantService.GetTenant();
 		var userIDs = await renewalService.GetUserIDsForRenewal();
