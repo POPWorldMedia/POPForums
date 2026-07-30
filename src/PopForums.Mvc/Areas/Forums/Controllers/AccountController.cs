@@ -270,8 +270,12 @@ public class AccountController(
 
 	public async Task<ViewResult> BuySubscription()
 	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
 		var skus = await skuService.GetAllActive();
-		return View(skus);
+		var model = new BuySubscriptionViewModel { Skus = skus, Expiration = user.SubscriptionExpiration };
+		return View(model);
 	}
 
 	[HttpPost]
@@ -285,7 +289,8 @@ public class AccountController(
 		{
 			ViewBag.ErrorMessage = result.Message;
 			var skus = await skuService.GetAllActive();
-			return View(skus);
+			var model = new BuySubscriptionViewModel { Skus = skus, Expiration = user.SubscriptionExpiration };
+			return View(model);
 		}
 		return RedirectToAction("Subscriptions");
 	}

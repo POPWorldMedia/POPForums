@@ -30,18 +30,21 @@
 	}
 	else
 	{
-		<div>
-			@PopForums.Resources.Expires @(Model.Expiration.HasValue ? Model.Expiration.Value.ToString("D") : string.Empty)<br/>
-			@PopForums.Resources.CurrentSubscription: @Model.SkuName - @Model.Months @PopForums.Resources.Months<br/>
-			@PopForums.Resources.CardNumber: &bull;&bull;&bull;&bull; @Model.Last4 <a asp-action="SubscriptionCardUpdate">(@PopForums.Resources.UpdateCard)</a><br/>
-			@PopForums.Resources.AutoRenewal: @(Model.IsAutoRenewal ? PopForums.Resources.On : PopForums.Resources.Off)
+		<div class="my-3">
+			<strong>@PopForums.Resources.Expires:</strong> @(Model.Expiration.HasValue ? Model.Expiration.Value.ToString("D") : string.Empty)<br/>
+			<strong>@PopForums.Resources.CurrentSubscription:</strong> @Model.SkuName - @Model.Months @PopForums.Resources.Months<br/>
+			<strong>@PopForums.Resources.CardNumber:</strong> &bull;&bull;&bull;&bull; @Model.Last4 <a asp-action="SubscriptionCardUpdate">(@PopForums.Resources.UpdateCard)</a><br/>
+			<strong>@PopForums.Resources.AutoRenewal:</strong> @(Model.IsAutoRenewal ? PopForums.Resources.On : PopForums.Resources.Off)
 			<form asp-action="ToggleAutoRenewal" method="post" class="d-inline ms-2">
 				<button type="submit" class="btn btn-link p-0 align-baseline">(@(Model.IsAutoRenewal ? PopForums.Resources.TurnOff : PopForums.Resources.TurnOn))</button>
 			</form>
 		</div>
 	}
 
-	<p><a asp-action="BuySubscription" class="btn btn-primary my-3">@PopForums.Resources.BuySubscription</a></p>
+	@if (!Model.Expiration.HasValue || Model.Expiration.Value <= DateOnly.FromDateTime(DateTime.UtcNow))
+	{
+		<p><a asp-action="BuySubscription" class="btn btn-primary my-5">@PopForums.Resources.BuySubscription</a></p>
+	}
 
 	<p><a asp-action="SubscriptionHistory">@PopForums.Resources.ViewSubscriptionHistory</a></p>
 }
