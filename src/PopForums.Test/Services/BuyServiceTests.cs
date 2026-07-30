@@ -15,6 +15,7 @@ public class BuyServiceTests
 	private ITransactionRepository _transactionRepository;
 	private IProfileRepository _profileRepository;
 	private ISubscriptionHistoryRepository _subscriptionHistoryRepository;
+	private ISettingsManager _settingsManager;
 
 	private BuyService GetService()
 	{
@@ -24,7 +25,9 @@ public class BuyServiceTests
 		_transactionRepository = Substitute.For<ITransactionRepository>();
 		_profileRepository = Substitute.For<IProfileRepository>();
 		_subscriptionHistoryRepository = Substitute.For<ISubscriptionHistoryRepository>();
-		return new BuyService(_skuRepository, _userRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository);
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_settingsManager.Current.Returns(new Settings());
+		return new BuyService(_skuRepository, _userRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository, _settingsManager);
 	}
 
 	private static Sku GetActiveSku(int months = 1)

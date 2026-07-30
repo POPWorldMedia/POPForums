@@ -8,7 +8,7 @@ public interface IBuyService
 	Task<BasicServiceResponse<string>> UpdatePaymentMethod(int userID, string token);
 }
 
-public class BuyService(ISkuRepository skuRepository, IUserRepository userRepository, IBankChargeRepository bankChargeRepository, ITransactionRepository transactionRepository, IProfileRepository profileRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository) : IBuyService
+public class BuyService(ISkuRepository skuRepository, IUserRepository userRepository, IBankChargeRepository bankChargeRepository, ITransactionRepository transactionRepository, IProfileRepository profileRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository, ISettingsManager settingsManager) : IBuyService
 {
 	public async Task<BasicServiceResponse<Transaction>> BuyNew(BuyModel buyModel, int userID)
 	{
@@ -71,7 +71,7 @@ public class BuyService(ISkuRepository skuRepository, IUserRepository userReposi
 			UserID = userID,
 			TimeStamp = now,
 			SkuID = sku.SkuID,
-			Message = $"Charge: {sku.Name} - {sku.Price:C} - card: {createCustomerResult.Data.Last4} - exp: {newExpiration}"
+			Message = $"Charge: {sku.Name} - {sku.Price.ToCurrencyString(settingsManager.Current.Currency)} - card: {createCustomerResult.Data.Last4} - exp: {newExpiration}"
 		};
 		await subscriptionHistoryRepository.Create(subscriptionHistory);
 

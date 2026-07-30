@@ -1311,4 +1311,52 @@
   <data name="Currency" xml:space="preserve">
     <value>貨幣</value>
   </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>目前的訂閱</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>您尚未訂閱。</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>到期</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>自動續訂</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>購買訂閱</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>檢視訂閱紀錄</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>訂閱功能尚未啟用。</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>選擇訂閱方案</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>自動續訂此訂閱</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>請選擇一個訂閱方案。</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>訂閱紀錄</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>沒有訂閱紀錄。</value>
+  </data>
 </root>

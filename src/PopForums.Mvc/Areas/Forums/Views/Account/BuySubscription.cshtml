@@ -10,11 +10,11 @@
 	<script src="https://js.stripe.com/v3/"></script>
 }
 
-<h1>Buy Subscription</h1>
+<h1>@PopForums.Resources.BuySubscription</h1>
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	<li class="breadcrumb-item">@PopForums.Resources.Subscriptions</li>
+	<li class="breadcrumb-item"><a asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a></li>
 </ul>
 
 @if (ViewBag.ErrorMessage != null)
@@ -22,9 +22,9 @@
 	<div class="alert alert-danger">@ViewBag.ErrorMessage</div>
 }
 
-<p>Choose a subscription:</p>
+<p>@PopForums.Resources.ChooseASubscription:</p>
 
-<form asp-action="BuySubscription" method="post" id="buySubscriptionForm">
+<form asp-action="BuySubscription" method="post" id="buySubscriptionForm" data-choose-message="@PopForums.Resources.PleaseChooseASubscription">
 	<ul class="list-group-flush">
 		@foreach (var item in Model)
 		{
@@ -40,7 +40,7 @@
 
 	<div class="mb-3 form-check">
 		<input type="checkbox" name="IsAutoRenewal" id="IsAutoRenewal" class="form-check-input" value="true" checked />
-		<label for="IsAutoRenewal" class="form-check-label">Automatically renew this subscription</label>
+		<label for="IsAutoRenewal" class="form-check-label">@PopForums.Resources.AutomaticallyRenewSubscription</label>
 	</div>
 
 	<div class="my-3">
@@ -49,7 +49,7 @@
 		<input type="hidden" name="Token" id="Token" />
 	</div>
 
-	<input type="submit" value="Buy Subscription" class="btn btn-primary my-3" id="buySubscriptionSubmit" />
+	<input type="submit" value="@PopForums.Resources.BuySubscription" class="btn btn-primary my-3" id="buySubscriptionSubmit" />
 </form>
 
 <script>
@@ -73,7 +73,7 @@
 			var skuSelected = form.querySelector('input[name="skuID"]:checked');
 			if (!skuSelected) {
 				errorDiv.style.display = 'block';
-				errorDiv.textContent = 'Please choose a subscription.';
+				errorDiv.textContent = form.dataset.chooseMessage;
 				return;
 			}
 			submitButton.disabled = true;

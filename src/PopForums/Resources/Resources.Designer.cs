@@ -2432,5 +2432,101 @@ namespace PopForums {
                 return ResourceManager.GetString("Currency", resourceCulture);
             }
         }
+
+        public static string CurrentSubscription {
+            get {
+                return ResourceManager.GetString("CurrentSubscription", resourceCulture);
+            }
+        }
+
+        public static string NotSubscribed {
+            get {
+                return ResourceManager.GetString("NotSubscribed", resourceCulture);
+            }
+        }
+
+        public static string Expires {
+            get {
+                return ResourceManager.GetString("Expires", resourceCulture);
+            }
+        }
+
+        public static string AutoRenewal {
+            get {
+                return ResourceManager.GetString("AutoRenewal", resourceCulture);
+            }
+        }
+
+        public static string On {
+            get {
+                return ResourceManager.GetString("On", resourceCulture);
+            }
+        }
+
+        public static string Off {
+            get {
+                return ResourceManager.GetString("Off", resourceCulture);
+            }
+        }
+
+        public static string TurnOff {
+            get {
+                return ResourceManager.GetString("TurnOff", resourceCulture);
+            }
+        }
+
+        public static string TurnOn {
+            get {
+                return ResourceManager.GetString("TurnOn", resourceCulture);
+            }
+        }
+
+        public static string BuySubscription {
+            get {
+                return ResourceManager.GetString("BuySubscription", resourceCulture);
+            }
+        }
+
+        public static string ViewSubscriptionHistory {
+            get {
+                return ResourceManager.GetString("ViewSubscriptionHistory", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionsNotEnabled {
+            get {
+                return ResourceManager.GetString("SubscriptionsNotEnabled", resourceCulture);
+            }
+        }
+
+        public static string ChooseASubscription {
+            get {
+                return ResourceManager.GetString("ChooseASubscription", resourceCulture);
+            }
+        }
+
+        public static string AutomaticallyRenewSubscription {
+            get {
+                return ResourceManager.GetString("AutomaticallyRenewSubscription", resourceCulture);
+            }
+        }
+
+        public static string PleaseChooseASubscription {
+            get {
+                return ResourceManager.GetString("PleaseChooseASubscription", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionHistory {
+            get {
+                return ResourceManager.GetString("SubscriptionHistory", resourceCulture);
+            }
+        }
+
+        public static string NoSubscriptionHistory {
+            get {
+                return ResourceManager.GetString("NoSubscriptionHistory", resourceCulture);
+            }
+        }
     }
 }

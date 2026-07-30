@@ -5,25 +5,17 @@
 }
 
 <h1>@PopForums.Resources.Account - @PopForums.Resources.Subscriptions</h1>
+
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	<li class="breadcrumb-item">@PopForums.Resources.Account</li>
-	<li class="breadcrumb-item dropdown">
-		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.Subscriptions</a>
-		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
-			<a class="dropdown-item" asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a>
-			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
-			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
-			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
-		</div>
-	</li>
+	<li class="breadcrumb-item"><a asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a></li>
 </ul>
 
-<h2>Subscription History</h2>
+<h2>@PopForums.Resources.SubscriptionHistory</h2>
 
 @if (Model.Count == 0)
 {
-	<div class="alert alert-info">No subscription history.</div>
+	<div class="alert alert-info">@PopForums.Resources.NoSubscriptionHistory</div>
 }
 else
 {
@@ -38,7 +30,7 @@ else
 			@foreach (var item in Model)
 			{
 				<tr>
-					<td class="text-nowrap">@item.TimeStamp.ToString("g")</td>
+					<td class="text-nowrap"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></td>
 					<td>@item.Message</td>
 				</tr>
 			}

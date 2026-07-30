@@ -21,32 +21,32 @@
 
 @if (SettingsManager.Current.IsSubscriptionEnabled)
 {
-	<h2>Current Subscription</h2>
+	<h2>@PopForums.Resources.CurrentSubscription</h2>
 	@if (!Model.IsSubscriber)
 	{
 		<div class="alert alert-info">
-			You are not subscribed.
+			@PopForums.Resources.NotSubscribed
 		</div>
 	}
 	else
 	{
 		<div>
-			Expires @(Model.Expiration.HasValue ? Model.Expiration.Value.ToString("D") : string.Empty)<br/>
-			Current subscription: @Model.SkuName - @Model.Months months<br/>
-			Auto-renewal: @(Model.IsAutoRenewal ? "On" : "Off")
+			@PopForums.Resources.Expires @(Model.Expiration.HasValue ? Model.Expiration.Value.ToString("D") : string.Empty)<br/>
+			@PopForums.Resources.CurrentSubscription: @Model.SkuName - @Model.Months @PopForums.Resources.Months<br/>
+			@PopForums.Resources.AutoRenewal: @(Model.IsAutoRenewal ? PopForums.Resources.On : PopForums.Resources.Off)
 			<form asp-action="ToggleAutoRenewal" method="post" class="d-inline ms-2">
-				<button type="submit" class="btn btn-link p-0 align-baseline">(turn @(Model.IsAutoRenewal ? "off" : "on"))</button>
+				<button type="submit" class="btn btn-link p-0 align-baseline">(@(Model.IsAutoRenewal ? PopForums.Resources.TurnOff : PopForums.Resources.TurnOn))</button>
 			</form>
 		</div>
 	}
 
-	<p><a asp-action="BuySubscription" class="btn btn-primary my-3">Buy Subscription</a></p>
-	
-	<p><a asp-action="SubscriptionHistory">View subscription history</a></p>
+	<p><a asp-action="BuySubscription" class="btn btn-primary my-3">@PopForums.Resources.BuySubscription</a></p>
+
+	<p><a asp-action="SubscriptionHistory">@PopForums.Resources.ViewSubscriptionHistory</a></p>
 }
 else
 {
 	<div class="alert alert-warning">
-		Subscriptions not enabled.
+		@PopForums.Resources.SubscriptionsNotEnabled
 	</div>
 }

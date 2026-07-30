@@ -8,7 +8,7 @@ public interface IRenewalService
 	Task<BasicServiceResponse<Transaction>> ChargeAndRecordRenewal(int userID);
 }
 
-public class RenewalService(IUserRepository userRepository, ISkuRepository skuRepository, IBankChargeRepository bankChargeRepository, ITransactionRepository transactionRepository, IProfileRepository profileRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository) : IRenewalService
+public class RenewalService(IUserRepository userRepository, ISkuRepository skuRepository, IBankChargeRepository bankChargeRepository, ITransactionRepository transactionRepository, IProfileRepository profileRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository, ISettingsManager settingsManager) : IRenewalService
 {
 	public async Task<IEnumerable<int>> GetUserIDsForRenewal()
 	{
@@ -51,7 +51,7 @@ public class RenewalService(IUserRepository userRepository, ISkuRepository skuRe
 			UserID = userID,
 			TimeStamp = now,
 			SkuID = sku.SkuID,
-			Message = $"Renewal charge: {sku.Name} - {sku.Price:C} - card: {transaction.Last4} - exp: {newExpiration}"
+			Message = $"Renewal charge: {sku.Name} - {sku.Price.ToCurrencyString(settingsManager.Current.Currency)} - card: {transaction.Last4} - exp: {newExpiration}"
 		};
 		await subscriptionHistoryRepository.Create(subscriptionHistory);
 

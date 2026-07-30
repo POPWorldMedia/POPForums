@@ -15,6 +15,7 @@ public class RenewalServiceTests
 	private ITransactionRepository _transactionRepository;
 	private IProfileRepository _profileRepository;
 	private ISubscriptionHistoryRepository _subscriptionHistoryRepository;
+	private ISettingsManager _settingsManager;
 
 	private RenewalService GetService()
 	{
@@ -24,7 +25,9 @@ public class RenewalServiceTests
 		_transactionRepository = Substitute.For<ITransactionRepository>();
 		_profileRepository = Substitute.For<IProfileRepository>();
 		_subscriptionHistoryRepository = Substitute.For<ISubscriptionHistoryRepository>();
-		return new RenewalService(_userRepository, _skuRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository);
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_settingsManager.Current.Returns(new Settings());
+		return new RenewalService(_userRepository, _skuRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository, _settingsManager);
 	}
 
 	private static Sku GetSku(int months = 1, bool isActive = true)

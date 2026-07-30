@@ -1316,4 +1316,52 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="Currency" xml:space="preserve">
     <value>Währung</value>
   </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>Aktuelles Abonnement</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Sie sind nicht abonniert.</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Läuft ab</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>Automatische Verlängerung</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>An</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Ausschalten</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Einschalten</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>Abonnement kaufen</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>Abonnementverlauf anzeigen</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>Abonnements sind nicht aktiviert.</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>Wählen Sie ein Abonnement</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>Dieses Abonnement automatisch verlängern</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>Bitte wählen Sie ein Abonnement.</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>Abonnementverlauf</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>Kein Abonnementverlauf.</value>
+  </data>
 </root>
