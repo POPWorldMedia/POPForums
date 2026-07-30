@@ -1,0 +1,88 @@
+@model List<PopForums.Models.Subscriptions.Sku>
+@inject ISettingsManager SettingsManager
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.Subscriptions;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script src="https://js.stripe.com/v3/"></script>
+}
+
+<h1>Buy Subscription</h1>
+
+@if (ViewBag.ErrorMessage != null)
+{
+	<div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<p>Choose a subscription:</p>
+
+<form asp-action="BuySubscription" method="post" id="buySubscriptionForm">
+	<ul class="list-group-flush">
+		@foreach (var item in Model)
+		{
+			<li class="mb-3 form-check">
+				<input type="radio" name="skuID" id="sku_@item.SkuID" value="@item.SkuID" class="form-check-input" />
+				<label for="sku_@item.SkuID">
+					<div><strong>@item.Name - @item.Price.ToCurrencyString(SettingsManager.Current.Currency)</strong></div>
+					<div>@item.Description</div>
+				</label>
+			</li>
+		}
+	</ul>
+
+	<div class="mb-3 form-check">
+		<input type="checkbox" name="IsAutoRenewal" id="IsAutoRenewal" class="form-check-input" value="true" checked />
+		<label for="IsAutoRenewal" class="form-check-label">Automatically renew this subscription</label>
+	</div>
+
+	<div class="my-3">
+		<div id="card-element" class="form-control"></div>
+		<div id="card-errors" class="alert alert-danger mt-2" style="display:none;"></div>
+		<input type="hidden" name="Token" id="Token" />
+	</div>
+
+	<input type="submit" value="Buy Subscription" class="btn btn-primary my-3" id="buySubscriptionSubmit" />
+</form>
+
+<script>
+	(function () {
+		var stripe = Stripe('@SettingsManager.Current.StripePublishableKey');
+		var elements = stripe.elements();
+		var cardElement = elements.create('card');
+		cardElement.mount('#card-element');
+
+		var form = document.getElementById('buySubscriptionForm');
+		var errorDiv = document.getElementById('card-errors');
+		var submitButton = document.getElementById('buySubscriptionSubmit');
+
+		cardElement.on('change', function (event) {
+			errorDiv.style.display = event.error ? 'block' : 'none';
+			errorDiv.textContent = event.error ? event.error.message : '';
+		});
+
+		form.addEventListener('submit', function (event) {
+			event.preventDefault();
+			var skuSelected = form.querySelector('input[name="skuID"]:checked');
+			if (!skuSelected) {
+				errorDiv.style.display = 'block';
+				errorDiv.textContent = 'Please choose a subscription.';
+				return;
+			}
+			submitButton.disabled = true;
+			stripe.createToken(cardElement).then(function (result) {
+				if (result.error) {
+					errorDiv.style.display = 'block';
+					errorDiv.textContent = result.error.message;
+					submitButton.disabled = false;
+				}
+				else {
+					document.getElementById('Token').value = result.token.id;
+					form.submit();
+				}
+			});
+		});
+	})();
+</script>

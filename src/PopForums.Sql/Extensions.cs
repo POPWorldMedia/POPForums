@@ -51,6 +51,7 @@ public static class Extensions
 
 	public static void AddPopForumsSql(this IServiceCollection services)
 	{
+		SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
 		services.AddTransient<ICacheHelper, CacheHelper>();
 		services.AddTransient<ISqlObjectFactory, SqlObjectFactory>();
 		services.AddTransient<IAwardCalculationQueueRepository, AwardCalculationQueueRepository>();

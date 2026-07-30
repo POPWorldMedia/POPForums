@@ -1314,4 +1314,7 @@
   <data name="StripePublishableKey" xml:space="preserve">
     <value>Stripe publiceerbare sleutel</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Valuta</value>
+  </data>
 </root>

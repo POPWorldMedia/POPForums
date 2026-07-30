@@ -128,7 +128,7 @@ public class BuyServiceTests
 			await _profileRepository.Update(Arg.Do<Profile>(x => updatedProfile = x));
 			SubscriptionHistory history = null;
 			await _subscriptionHistoryRepository.Create(Arg.Do<SubscriptionHistory>(x => history = x));
-			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok" };
+			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok", IsAutoRenewal = true };
 
 			var result = await service.BuyNew(buyModel, UserID);
 
@@ -140,6 +140,7 @@ public class BuyServiceTests
 			Assert.Equal("4242", updatedProfile.Last4);
 			Assert.Equal("cust1", updatedProfile.CustomerID);
 			Assert.Equal(SkuID, updatedProfile.SkuID);
+			Assert.True(updatedProfile.IsAutoRenewal);
 
 			var expectedExpiration = DateOnly.FromDateTime(DateTime.UtcNow).AddMonths(3);
 			await _userRepository.Received().UpdateSubscriptionExpiration(UserID, expectedExpiration);

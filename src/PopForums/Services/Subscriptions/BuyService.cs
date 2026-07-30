@@ -54,6 +54,7 @@ public class BuyService(ISkuRepository skuRepository, IUserRepository userReposi
 		profile.Last4 = transaction.Last4;
 		profile.CustomerID = customerID;
 		profile.SkuID = sku.SkuID;
+		profile.IsAutoRenewal = buyModel.IsAutoRenewal;
 		await profileRepository.Update(profile);
 
 		// expiration is either sku.Months + now, date only, or if expiration is after now, sku.Months + current expiration

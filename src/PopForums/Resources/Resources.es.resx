@@ -1329,4 +1329,7 @@
   <data name="StripePublishableKey" xml:space="preserve">
     <value>Clave publicable de Stripe</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Moneda</value>
+  </data>
 </root>

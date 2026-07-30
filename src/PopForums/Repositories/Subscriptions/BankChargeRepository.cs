@@ -47,7 +47,7 @@ public class BankChargeRepository(IErrorLog errorLog, ISettingsManager settingsM
 		var chargeOptions = new ChargeCreateOptions
 		{
 			Amount = (long)amount * 100,
-			Currency = "usd",
+			Currency = settingsManager.Current.Currency,
 			Customer = customerID,
 			Description = skuName,
 			ReceiptEmail = email

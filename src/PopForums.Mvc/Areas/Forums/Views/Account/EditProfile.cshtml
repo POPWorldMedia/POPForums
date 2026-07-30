@@ -1,6 +1,7 @@
 ﻿@model UserEditProfile
 @inject IUserRetrievalShim UserRetrievalShim
 @inject IConfig Config
+@inject ISettingsManager SettingsManager
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.EditProfile;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -27,6 +28,10 @@
 			@if (!Config.IsOAuthOnly)
 			{
 				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			}
+			@if (SettingsManager.Current.IsSubscriptionEnabled)
+			{
+				<a class="dropdown-item" asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a>
 			}
 		</div>
 	</li>

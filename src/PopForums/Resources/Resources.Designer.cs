@@ -2426,5 +2426,11 @@ namespace PopForums {
                 return ResourceManager.GetString("StripePublishableKey", resourceCulture);
             }
         }
+
+        public static string Currency {
+            get {
+                return ResourceManager.GetString("Currency", resourceCulture);
+            }
+        }
     }
 }

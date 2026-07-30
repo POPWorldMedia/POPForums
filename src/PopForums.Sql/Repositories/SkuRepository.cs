@@ -36,4 +36,12 @@ public class SkuRepository : ISkuRepository
 			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months FROM pf_Sku ORDER BY SkuID"));
 		return result.Result.ToList();
 	}
+
+	public async Task<List<Sku>> GetAllActive()
+	{
+		Task<IEnumerable<Sku>> result = null;
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months FROM pf_Sku WHERE IsActive = 1 ORDER BY SkuID"));
+		return result.Result.ToList();
+	}
 }

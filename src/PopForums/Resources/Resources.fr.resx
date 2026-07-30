@@ -1272,4 +1272,7 @@
   <data name="StripePublishableKey" xml:space="preserve">
     <value>Clé publiable Stripe</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Devise</value>
+  </data>
 </root>

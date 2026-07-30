@@ -1,5 +1,6 @@
 ﻿@model UserEditPhoto
 @inject IConfig Config
+@inject ISettingsManager SettingsManager
 
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
@@ -18,6 +19,10 @@
 			{
 				<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
 				<a class="dropdown-item" asp-action="ExternalLogins">@PopForums.Resources.ExternalLogins</a>
+			}
+			@if (SettingsManager.Current.IsSubscriptionEnabled)
+			{
+				<a class="dropdown-item" asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a>
 			}
 		</div>
 	</li>

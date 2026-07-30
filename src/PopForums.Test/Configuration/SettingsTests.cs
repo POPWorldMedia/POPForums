@@ -159,6 +159,7 @@ public class SettingsTests
 		const bool isSubscriptionEnabled = true;
 		const string stripeSecretKey = "sk_test_123";
 		const string stripePublishableKey = "pk_test_456";
+		const string currency = "eur";
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -223,7 +224,8 @@ public class SettingsTests
 			{"RenewalWorkerInterval", renewalWorkerInterval},
 			{"IsSubscriptionEnabled", isSubscriptionEnabled},
 			{"StripeSecretKey", stripeSecretKey},
-			{"StripePublishableKey", stripePublishableKey}
+			{"StripePublishableKey", stripePublishableKey},
+			{"Currency", currency}
 		};
 
 		var settingsRepo = Substitute.For<ISettingsRepository>();
@@ -295,6 +297,7 @@ public class SettingsTests
 		settings.IsSubscriptionEnabled = isSubscriptionEnabled;
 		settings.StripeSecretKey = stripeSecretKey;
 		settings.StripePublishableKey = stripePublishableKey;
+		settings.Currency = currency;
 		settingsManager.SaveCurrent();
 
 		settingsRepo.Received().Save(Arg.Is<Dictionary<string, object>>(x => x.SequenceEqual(dictionary)));

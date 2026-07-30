@@ -44,6 +44,10 @@
 							<a asp-controller="@FavoritesController.Name" asp-action="Topics" asp-route-pageNumber="" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Favorites</a>
 							<a asp-controller="@IgnoreController.Name" asp-action="List" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.IgnoreList</a>
 							<div class="dropdown-divider"></div>
+							@if (SettingsManager.Current.IsSubscriptionEnabled)
+							{
+								<a asp-controller="@AccountController.Name" asp-action="Subscriptions" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.Subscriptions</a>
+							}
 							<a asp-controller="@AccountController.Name" asp-action="EditProfile" asp-route-area="Forums" class="dropdown-item">@PopForums.Resources.EditProfile</a>
 							@if (!Config.IsOAuthOnly)
 							{

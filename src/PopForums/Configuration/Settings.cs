@@ -67,6 +67,7 @@ public class Settings
 		IsSubscriptionEnabled = false;
 		StripeSecretKey = string.Empty;
 		StripePublishableKey = string.Empty;
+		Currency = "usd";
 	}
 
 	public virtual string TermsOfService { get; set; }
@@ -132,4 +133,5 @@ public class Settings
 	public virtual bool IsSubscriptionEnabled { get; set; }
 	public virtual string StripeSecretKey { get; set; }
 	public virtual string StripePublishableKey { get; set; }
+	public virtual string Currency { get; set; }
 }

@@ -1308,4 +1308,7 @@
   <data name="StripePublishableKey" xml:space="preserve">
     <value>Stripe 可公開金鑰</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>貨幣</value>
+  </data>
 </root>

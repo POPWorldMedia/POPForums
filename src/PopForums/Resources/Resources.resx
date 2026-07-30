@@ -1332,4 +1332,7 @@
   <data name="StripePublishableKey" xml:space="preserve">
     <value>Stripe Publishable Key</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
 </root>

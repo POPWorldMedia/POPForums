@@ -1415,6 +1415,10 @@
 			<label for="StripePublishableKey">@PopForums.Resources.StripePublishableKey</label>
 			<input type="text" v-model="settings.stripePublishableKey" id="StripePublishableKey" class="form-control" />
 		</div>
+		<div class="mb-3">
+			<label for="Currency">@PopForums.Resources.Currency</label>
+			<input type="text" v-model="settings.currency" id="Currency" class="form-control" style="max-width: 6em;" />
+		</div>
 		<input type="button" v-on:click="save('@PopForums.Resources.SettingsSaved')" :disabled="loading" value="@PopForums.Resources.Save" class="btn btn-primary" />
 		<transition name="fade"><span v-show="alert" class="alert alert-success ms-3">{{message}}</span></transition>
 	</main>
