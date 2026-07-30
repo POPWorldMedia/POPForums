@@ -59,6 +59,7 @@ public static class ServiceCollections
 		services.AddTransient<ISecurityLogService, SecurityLogService>();
 		services.AddTransient<ISetupService, SetupService>();
 		services.AddTransient<ISkuService, SkuService>();
+		services.AddTransient<ISubscriptionHistoryService, SubscriptionHistoryService>();
 		services.AddTransient<ISubscribedTopicsService, SubscribedTopicsService>();
 		services.AddTransient<ITextParsingService, TextParsingService>();
 		services.AddTransient<ITopicService, TopicService>();

@@ -25,7 +25,8 @@ public class AccountController(
 	IReCaptchaService reCaptchaService,
 	IOAuthOnlyService oAuthOnlyService,
 	ISkuService skuService,
-	IBuyService buyService)
+	IBuyService buyService,
+	ISubscriptionHistoryService subscriptionHistoryService)
 	: Controller
 {
 	public static string Name = "Account";
@@ -299,6 +300,15 @@ public class AccountController(
 			await profileService.Update(profile);
 		}
 		return RedirectToAction("Subscriptions");
+	}
+
+	public async Task<ViewResult> SubscriptionHistory()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var history = await subscriptionHistoryService.GetByUserID(user.UserID);
+		return View(history);
 	}
 
 	public async Task<ViewResult> EditProfile()

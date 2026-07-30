@@ -1,5 +1,4 @@
-@model SubscriptionsViewModel
-@inject ISettingsManager SettingsManager
+@model List<PopForums.Models.Subscriptions.SubscriptionHistory>
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.Subscriptions;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -12,6 +11,7 @@
 	<li class="breadcrumb-item dropdown">
 		<a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" id="SubProfileMenu">@PopForums.Resources.Subscriptions</a>
 		<div class="dropdown-menu" aria-labelledby="SubProfileMenu">
+			<a class="dropdown-item" asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a>
 			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
 			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
 			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
@@ -19,34 +19,29 @@
 	</li>
 </ul>
 
-@if (SettingsManager.Current.IsSubscriptionEnabled)
-{
-	<h2>Current Subscription</h2>
-	@if (!Model.IsSubscriber)
-	{
-		<div class="alert alert-info">
-			You are not subscribed.
-		</div>
-	}
-	else
-	{
-		<div>
-			Expires @(Model.Expiration.HasValue ? Model.Expiration.Value.ToString("D") : string.Empty)<br/>
-			Current subscription: @Model.SkuName - @Model.Months months<br/>
-			Auto-renewal: @(Model.IsAutoRenewal ? "On" : "Off")
-			<form asp-action="ToggleAutoRenewal" method="post" class="d-inline ms-2">
-				<button type="submit" class="btn btn-link p-0 align-baseline">(turn @(Model.IsAutoRenewal ? "off" : "on"))</button>
-			</form>
-		</div>
-	}
+<h2>Subscription History</h2>
 
-	<p><a asp-action="BuySubscription" class="btn btn-primary my-3">Buy Subscription</a></p>
-	
-	<p><a asp-action="SubscriptionHistory">View subscription history</a></p>
+@if (Model.Count == 0)
+{
+	<div class="alert alert-info">No subscription history.</div>
 }
 else
 {
-	<div class="alert alert-warning">
-		Subscriptions not enabled.
-	</div>
+	<table class="table table-hover mt-3">
+		<thead>
+			<tr>
+				<th>@PopForums.Resources.EventTime</th>
+				<th>@PopForums.Resources.Message</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td class="text-nowrap">@item.TimeStamp.ToString("g")</td>
+					<td>@item.Message</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
