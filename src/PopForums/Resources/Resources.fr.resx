@@ -1323,4 +1323,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>Aucun historique d'abonnement.</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Numéro de carte</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Mettre à jour la carte</value>
+  </data>
 </root>

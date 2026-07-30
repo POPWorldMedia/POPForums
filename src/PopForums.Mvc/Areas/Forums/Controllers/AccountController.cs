@@ -253,7 +253,8 @@ public class AccountController(
 		{
 			IsSubscriber = user.IsSubscriber(),
 			Expiration = user.SubscriptionExpiration,
-			IsAutoRenewal = profile.IsAutoRenewal
+			IsAutoRenewal = profile.IsAutoRenewal,
+			Last4 = profile.Last4
 		};
 		if (!string.IsNullOrEmpty(profile.SkuID))
 		{
@@ -309,6 +310,29 @@ public class AccountController(
 			return View("EditAccountNoUser");
 		var history = await subscriptionHistoryService.GetByUserID(user.UserID);
 		return View(history);
+	}
+
+	public ViewResult SubscriptionCardUpdate()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		return View();
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> SubscriptionCardUpdate(string token)
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var result = await buyService.UpdatePaymentMethod(user.UserID, token);
+		if (!result.IsSuccessful)
+		{
+			ViewBag.ErrorMessage = result.Message;
+			return View();
+		}
+		return RedirectToAction("Subscriptions");
 	}
 
 	public async Task<ViewResult> EditProfile()

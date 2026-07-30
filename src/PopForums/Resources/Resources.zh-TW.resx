@@ -1359,4 +1359,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>沒有訂閱紀錄。</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>卡號</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>更新卡片</value>
+  </data>
 </root>

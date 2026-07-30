@@ -1380,4 +1380,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>Історія підписки відсутня.</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Номер картки</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Оновити картку</value>
+  </data>
 </root>

@@ -1365,4 +1365,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>Geen abonnementsgeschiedenis.</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Kaartnummer</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Kaart bijwerken</value>
+  </data>
 </root>

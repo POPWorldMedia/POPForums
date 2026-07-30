@@ -7,4 +7,5 @@ public class SubscriptionsViewModel
 	public string SkuName { get; set; }
 	public int Months { get; set; }
 	public bool IsAutoRenewal { get; set; }
+	public string Last4 { get; set; }
 }

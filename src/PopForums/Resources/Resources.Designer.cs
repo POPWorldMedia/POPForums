@@ -2528,5 +2528,17 @@ namespace PopForums {
                 return ResourceManager.GetString("NoSubscriptionHistory", resourceCulture);
             }
         }
+
+        public static string CardNumber {
+            get {
+                return ResourceManager.GetString("CardNumber", resourceCulture);
+            }
+        }
+
+        public static string UpdateCard {
+            get {
+                return ResourceManager.GetString("UpdateCard", resourceCulture);
+            }
+        }
     }
 }

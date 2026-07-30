@@ -1383,4 +1383,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>No subscription history.</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Card number</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Update card</value>
+  </data>
 </root>

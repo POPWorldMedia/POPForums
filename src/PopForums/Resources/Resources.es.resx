@@ -1380,4 +1380,10 @@
   <data name="NoSubscriptionHistory" xml:space="preserve">
     <value>No hay historial de suscripción.</value>
   </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Número de tarjeta</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Actualizar tarjeta</value>
+  </data>
 </root>
