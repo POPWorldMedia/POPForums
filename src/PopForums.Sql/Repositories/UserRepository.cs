@@ -203,11 +203,11 @@ public class UserRepository : IUserRepository
 			RemoveCacheUser(user.Name);
 	}
 
-	public async Task<List<int>> GetUserIDsBySubscriptionExpiration(DateOnly date)
+	public async Task<List<int>> GetUserIDsBySubscriptionExpirationAndProfileRenewal(DateOnly date)
 	{
 		Task<IEnumerable<int>> list = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			list = connection.QueryAsync<int>("SELECT UserID FROM pf_PopForumsUser WHERE SubscriptionExpiration = @date", new { date }));
+			list = connection.QueryAsync<int>("SELECT pf_PopForumsUser.UserID FROM pf_PopForumsUser JOIN pf_Profile ON pf_PopForumsUser.UserID = pf_Profile.UserID WHERE pf_PopForumsUser.SubscriptionExpiration = @date AND pf_Profile.IsAutoRenewal = 1", new { date }));
 		return list.Result.ToList();
 	}
 

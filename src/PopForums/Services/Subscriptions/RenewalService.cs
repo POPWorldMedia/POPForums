@@ -13,7 +13,7 @@ public class RenewalService(IUserRepository userRepository, ISkuRepository skuRe
 	public async Task<IEnumerable<int>> GetUserIDsForRenewal()
 	{
 		var today = DateOnly.FromDateTime(DateTime.UtcNow);
-		return await userRepository.GetUserIDsBySubscriptionExpiration(today);
+		return await userRepository.GetUserIDsBySubscriptionExpirationAndProfileRenewal(today);
 	}
 
 	public async Task<BasicServiceResponse<Transaction>> ChargeAndRecordRenewal(int userID)

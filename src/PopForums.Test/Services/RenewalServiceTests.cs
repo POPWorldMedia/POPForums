@@ -53,12 +53,12 @@ public class RenewalServiceTests
 			var service = GetService();
 			var today = DateOnly.FromDateTime(DateTime.UtcNow);
 			var ids = new List<int> { 1, 2, 3 };
-			_userRepository.GetUserIDsBySubscriptionExpiration(today).Returns(Task.FromResult(ids));
+			_userRepository.GetUserIDsBySubscriptionExpirationAndProfileRenewal(today).Returns(Task.FromResult(ids));
 
 			var result = await service.GetUserIDsForRenewal();
 
 			Assert.Equal(ids, result);
-			await _userRepository.Received().GetUserIDsBySubscriptionExpiration(today);
+			await _userRepository.Received().GetUserIDsBySubscriptionExpirationAndProfileRenewal(today);
 		}
 	}
 
