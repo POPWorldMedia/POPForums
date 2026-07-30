@@ -171,7 +171,8 @@ public class UserService : IUserService
 		if (user != null)
 		{
 			user.Roles = await _roleRepository.GetUserRoles(user.UserID);
-			if (user.SubscriptionExpiration.HasValue && user.SubscriptionExpiration.Value > DateOnly.FromDateTime(DateTime.UtcNow))
+			// grace period of one day beyond expiration, since renewal doesn't fire until 12:01pm UTC on the expiration date and may not process immediately
+			if (user.SubscriptionExpiration.HasValue && user.SubscriptionExpiration.Value.AddDays(1) >= DateOnly.FromDateTime(DateTime.UtcNow))
 				user.Roles.Add(PermanentRoles.Subscriber);
 		}
 	}

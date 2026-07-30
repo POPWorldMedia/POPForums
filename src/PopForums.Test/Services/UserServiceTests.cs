@@ -219,13 +219,47 @@ public class UserServiceTests
 	}
 
 	[Fact]
-	public async Task GetUserByNameDoesNotAddSubscriberRoleWhenSubscriptionIsExpired()
+	public async Task GetUserByNameAddsSubscriberRoleOnExpirationDay()
+	{
+		const string name = "Jeff";
+		const string email = "a@b.com";
+		var roles = new List<string> { "blah" };
+		var dummyUser = GetDummyUser(name, email);
+		dummyUser.SubscriptionExpiration = DateOnly.FromDateTime(DateTime.UtcNow);
+		var userService = GetMockedUserService();
+		_mockUserRepo.GetUserByName(name.ToLower()).Returns(Task.FromResult(dummyUser));
+		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
+
+		var user = await userService.GetUserByName(name);
+
+		Assert.Contains(PermanentRoles.Subscriber, user.Roles);
+	}
+
+	[Fact]
+	public async Task GetUserByNameAddsSubscriberRoleWithinGracePeriodAfterExpiration()
 	{
 		const string name = "Jeff";
 		const string email = "a@b.com";
 		var roles = new List<string> { "blah" };
 		var dummyUser = GetDummyUser(name, email);
 		dummyUser.SubscriptionExpiration = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1);
+		var userService = GetMockedUserService();
+		_mockUserRepo.GetUserByName(name.ToLower()).Returns(Task.FromResult(dummyUser));
+		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
+
+		var user = await userService.GetUserByName(name);
+
+		Assert.Contains(PermanentRoles.Subscriber, user.Roles);
+	}
+
+	[Fact]
+	public async Task GetUserByNameDoesNotAddSubscriberRoleWhenSubscriptionIsExpiredPastGracePeriod()
+	{
+		const string name = "Jeff";
+		const string email = "a@b.com";
+		var roles = new List<string> { "blah" };
+		var dummyUser = GetDummyUser(name, email);
+		dummyUser.SubscriptionExpiration = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-2);
 		var userService = GetMockedUserService();
 		_mockUserRepo.GetUserByName(name.ToLower()).Returns(Task.FromResult(dummyUser));
 		_mockRoleRepo.GetUserRoles(dummyUser.UserID).Returns(Task.FromResult(roles));
