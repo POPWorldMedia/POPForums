@@ -303,6 +303,7 @@ public class AdminApiController(
 	public async Task<ActionResult<IEnumerable<string>>> GetAllRoles()
 	{
 		var roles = await userService.GetAllRoles();
+		roles.Remove(PermanentRoles.Subscriber);
 		return roles;
 	}
 
@@ -320,7 +321,7 @@ public class AdminApiController(
 	[HttpPost("/Forums/AdminApi/DeleteRole/{role}")]
 	public async Task<ActionResult> DeleteRole(string role)
 	{
-		if (role == PermanentRoles.Admin || role == PermanentRoles.Moderator)
+		if (role == PermanentRoles.Admin || role == PermanentRoles.Moderator || role == PermanentRoles.Subscriber)
 			return NoContent();
 		var user = userRetrievalShim.GetUser();
 		var ip = HttpContext.Connection.RemoteIpAddress.ToString();

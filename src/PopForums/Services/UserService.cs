@@ -169,7 +169,11 @@ public class UserService : IUserService
 	private async Task PopulateRoles(User user)
 	{
 		if (user != null)
+		{
 			user.Roles = await _roleRepository.GetUserRoles(user.UserID);
+			if (user.SubscriptionExpiration.HasValue && user.SubscriptionExpiration.Value > DateOnly.FromDateTime(DateTime.UtcNow))
+				user.Roles.Add(PermanentRoles.Subscriber);
+		}
 	}
 
 	public async Task<bool> IsNameInUse(string name)

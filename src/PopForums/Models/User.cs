@@ -18,4 +18,11 @@ public class User
 			throw new Exception("Roles not set for user.");
 		return Roles.Contains(role);
 	}
+
+	public bool IsSubscriber()
+	{
+		if (Roles != null)
+			return Roles.Contains(PermanentRoles.Subscriber);
+		return false;
+	}
 }

@@ -86,3 +86,8 @@ IF OBJECT_ID('pf_RenewalEnqueueClaim', 'U') IS NULL
         );
         INSERT INTO pf_RenewalEnqueueClaim (ClaimDate) VALUES ('1900-01-01');
     END
+
+IF NOT EXISTS (SELECT 1 FROM pf_Role WHERE Role = 'Subscriber')
+    BEGIN
+        INSERT INTO pf_Role (Role) VALUES ('Subscriber');
+    END

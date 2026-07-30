@@ -128,6 +128,8 @@ INSERT INTO pf_Role (Role) VALUES ('Admin');
 
 INSERT INTO pf_Role (Role) VALUES ('Moderator');
 
+INSERT INTO pf_Role (Role) VALUES ('Subscriber');
+
 
 -- ******************************************************** pf_SecurityLog
 
