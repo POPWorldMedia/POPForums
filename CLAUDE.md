@@ -95,7 +95,7 @@ Each library exposes extension methods on `IServiceCollection`:
 All forum routes are under the `Forums` area. Controllers live in `src/PopForums.Mvc/Areas/Forums/Controllers/`. The area is mapped via `app.AddPopForumsEndpoints()`.
 
 ### Background jobs
-Background tasks (email, search indexing, award calculation, session cleanup, etc.) are implemented as `BackgroundService` derivatives. In production, these run as Azure Functions via `PopForums.AzureKit.Functions`. In-process mode is available for single-node or local use.
+Background tasks (email, search indexing, award calculation, session cleanup, etc.) are implemented as `BackgroundService` derivatives. In production, these run as Azure Functions, deployed via `PopForums.FunctionsHost` (the trigger classes themselves live in `PopForums.AzureKit.Functions`, a plain class library). In-process mode is available for single-node or local use.
 
 ### Front-end
 - No SPA framework for the main forum UI — raw TypeScript components in `Client/Components/`
