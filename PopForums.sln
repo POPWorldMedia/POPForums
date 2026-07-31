@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.config = NuGet.config
 		README.md = README.md
 		CLAUDE.md = CLAUDE.md
+		azure-pipelines.yml = azure-pipelines.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.Web", "src\PopForums.Web\PopForums.Web.csproj", "{78900BC9-3B9B-42C1-9112-8412A7AACFB7}"
@@ -32,6 +33,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.FunctionsHost", "src\PopForums.FunctionsHost\PopForums.FunctionsHost.csproj", "{66A2292B-82C2-4B04-8811-EED29F1CC466}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.FunctionsHost", "src\PopForums.FunctionsHost\PopForums.FunctionsHost.csproj", "{F115BA62-EDAF-4FB0-9956-92C99D15C89E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
