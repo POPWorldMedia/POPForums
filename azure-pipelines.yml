@@ -136,7 +136,8 @@ stages:
             displayName: 'Deploy to Azure Function App'
             inputs:
               azureSubscription: '$(azureServiceConnection)'
-              appType: 'functionApp'
+              appType: 'functionAppLinux'
+              isFlexConsumption: true
               appName: '$(functionAppName)'
               package: '$(Build.ArtifactStagingDirectory)/functionshost/**/*.zip'
 
