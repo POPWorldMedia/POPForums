@@ -26,7 +26,7 @@ public class BuyServiceTests
 		_profileRepository = Substitute.For<IProfileRepository>();
 		_subscriptionHistoryRepository = Substitute.For<ISubscriptionHistoryRepository>();
 		_settingsManager = Substitute.For<ISettingsManager>();
-		_settingsManager.Current.Returns(new Settings());
+		_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = true });
 		return new BuyService(_skuRepository, _userRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository, _settingsManager);
 	}
 
@@ -42,6 +42,19 @@ public class BuyServiceTests
 
 	public class BuyNewTests : BuyServiceTests
 	{
+		[Fact]
+		public async Task ReturnsFailureWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+			var buyModel = new BuyModel { SkuID = SkuID, Token = "tok" };
+
+			var result = await service.BuyNew(buyModel, UserID);
+
+			Assert.False(result.IsSuccessful);
+			await _skuRepository.DidNotReceive().Get(Arg.Any<string>());
+		}
+
 		[Fact]
 		public async Task ReturnsFailureWhenSkuIsNull()
 		{
@@ -204,6 +217,18 @@ public class BuyServiceTests
 
 	public class UpdatePaymentMethodTests : BuyServiceTests
 	{
+		[Fact]
+		public async Task ReturnsFailureWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+
+			var result = await service.UpdatePaymentMethod(UserID, "tok");
+
+			Assert.False(result.IsSuccessful);
+			await _userRepository.DidNotReceive().GetUser(Arg.Any<int>());
+		}
+
 		[Fact]
 		public async Task ReturnsFailureWhenCreateCustomerFails()
 		{

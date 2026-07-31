@@ -12,9 +12,12 @@ public class BuyService(ISkuRepository skuRepository, IUserRepository userReposi
 {
 	public async Task<BasicServiceResponse<Transaction>> BuyNew(BuyModel buyModel, int userID)
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return BasicServiceResponse<Transaction>.Failed("Subscriptions are not enabled.");
+
 		var errors = string.Empty;
 		var now = DateTime.UtcNow;
-		
+
 		// check for valid sku
 		var sku = await skuRepository.Get(buyModel.SkuID);
 		if (sku == null || !sku.IsActive)
@@ -80,6 +83,9 @@ public class BuyService(ISkuRepository skuRepository, IUserRepository userReposi
 
 	public async Task<BasicServiceResponse<string>> UpdatePaymentMethod(int userID, string token)
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return BasicServiceResponse<string>.Failed("Subscriptions are not enabled.");
+
 		// get the user
 		var user = await userRepository.GetUser(userID);
 
