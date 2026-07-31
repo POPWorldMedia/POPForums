@@ -26,6 +26,25 @@ stages:
         variables:
           - group: popforums-github-packages
         steps:
+          # Must run before "dotnet build": ASP.NET Core's static web assets embedding
+          # scans wwwroot during build itself, so Mvc's lib/css assets have to already be
+          # in place before that build step runs, or they're silently missing from the
+          # static assets manifest even though the files exist on disk afterward.
+          - task: UseNode@1
+            displayName: 'Use Node.js'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              version: '20.x'
+
+          - script: |
+              set -e
+              npm install
+              npx gulp copies
+              npx gulp css
+            displayName: 'Build Mvc front-end assets'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            workingDirectory: 'src/PopForums.Mvc'
+
           - task: UseDotNet@2
             displayName: 'Use .NET $(dotnetVersion)'
             inputs:
@@ -50,22 +69,6 @@ stages:
               command: 'test'
               projects: 'src/PopForums.Test/PopForums.Test.csproj'
               arguments: '--configuration $(buildConfiguration) --no-build'
-
-          # Everything below only matters for a deployable/publishable main build.
-          - task: UseNode@1
-            displayName: 'Use Node.js'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-            inputs:
-              version: '20.x'
-
-          - script: |
-              set -e
-              npm install
-              npx gulp copies
-              npx gulp css
-            displayName: 'Build Mvc front-end assets'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-            workingDirectory: 'src/PopForums.Mvc'
 
           - script: |
               set -e
@@ -103,16 +106,6 @@ stages:
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - task: DotNetCoreCLI@2
-            displayName: 'dotnet publish PopForums.FunctionsHost (no rebuild)'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-            inputs:
-              command: 'publish'
-              projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
-              publishWebProjects: false
-              arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/functionshost'
-              zipAfterPublish: true
-
-          - task: DotNetCoreCLI@2
             displayName: 'dotnet publish PopForums.Web (no rebuild)'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
@@ -122,14 +115,24 @@ stages:
               arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/web'
               zipAfterPublish: true
 
-          - publish: '$(Build.ArtifactStagingDirectory)/functionshost'
-            artifact: functionshost
-            displayName: 'Publish functionshost artifact'
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet publish PopForums.FunctionsHost (no rebuild)'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              command: 'publish'
+              projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
+              publishWebProjects: false
+              arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/functionshost'
+              zipAfterPublish: true
 
           - publish: '$(Build.ArtifactStagingDirectory)/web'
             artifact: web
             displayName: 'Publish web artifact'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+          - publish: '$(Build.ArtifactStagingDirectory)/functionshost'
+            artifact: functionshost
+            displayName: 'Publish functionshost artifact'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   - stage: DeployFunctions
