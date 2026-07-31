@@ -1,4 +1,6 @@
-﻿namespace PopForums.Test.Mvc.Controllers;
+﻿using PopForums.Services.Subscriptions;
+
+namespace PopForums.Test.Mvc.Controllers;
 
 public class AdminApiControllerTests
 {
@@ -20,6 +22,7 @@ public class AdminApiControllerTests
 	private IModerationLogService _moderationLogService;
 	private IErrorLog _errorLog;
 	private IServiceHeartbeatService _serviceHeartbeatService;
+	private ISkuService _skuService;
 
 	private AdminApiController GetController()
 	{
@@ -41,7 +44,8 @@ public class AdminApiControllerTests
 		_moderationLogService = Substitute.For<IModerationLogService>();
 		_errorLog = Substitute.For<IErrorLog>();
 		_serviceHeartbeatService = Substitute.For<IServiceHeartbeatService>();
-		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService);
+		_skuService = Substitute.For<ISkuService>();
+		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService, _skuService);
 	}
 
 	public class SaveForum : AdminApiControllerTests

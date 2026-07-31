@@ -42,6 +42,7 @@ global using PopForums.Models;
 global using PopForums.Repositories;
 global using PopForums.ScoringGame;
 global using PopForums.Services;
+global using PopForums.Services.Subscriptions;
 
 global using PopForums.Mvc.Areas.Forums.Authorization;
 global using PopForums.Mvc.Areas.Forums.Controllers;

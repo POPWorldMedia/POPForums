@@ -1023,8 +1023,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>設定您的第一個用戶（將被授予管理員和主持人權）</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>訂閱主題</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>已追蹤的主題</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>您必須先登入才能查看訂閱的主題。</value>
@@ -1268,5 +1268,107 @@
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>忽略</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>訂閱設定</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>訂閱 SKU</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>啟用訂閱</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>續訂間隔</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>新增 SKU</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU 編號</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>價格</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>月數</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>啟用中</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>追蹤</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>取消追蹤</value>
+  </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe 私密金鑰</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe 可公開金鑰</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>貨幣</value>
+  </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>目前的訂閱</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>您尚未訂閱。</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>到期</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>自動續訂</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>購買訂閱</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>檢視訂閱紀錄</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>訂閱功能尚未啟用。</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>選擇訂閱方案</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>自動續訂此訂閱</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>請選擇一個訂閱方案。</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>訂閱紀錄</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>沒有訂閱紀錄。</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>卡號</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>更新卡片</value>
+  </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>您的「{0}」續訂成功。</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>您的「{0}」續訂失敗。</value>
   </data>
 </root>

@@ -9,6 +9,8 @@ public interface INotificationAdapter
 	Task QuestionAnswer(string askerName, string title, int postID, int userID);
 	Task Award(string title, int userID);
 	Task Award(string title, int userID, string tenantID);
+	Task SubscriptionRenewed(int userID, string skuName, string tenantID);
+	Task SubscriptionRenewalFailed(int userID, string skuName, string tenantID);
 }
 
 public class NotificationAdapter : INotificationAdapter
@@ -66,5 +68,25 @@ public class NotificationAdapter : INotificationAdapter
 		};
 		var sequentialContext = DateTime.UtcNow.Ticks;
 		await _notificationManager.ProcessNotification(userID, NotificationType.Award, sequentialContext, awardData, tenantID);
+	}
+
+	public async Task SubscriptionRenewed(int userID, string skuName, string tenantID)
+	{
+		var renewalData = new RenewalData
+		{
+			SkuName = skuName
+		};
+		var sequentialContext = DateTime.UtcNow.Ticks;
+		await _notificationManager.ProcessNotification(userID, NotificationType.SubscriptionRenewed, sequentialContext, renewalData, tenantID);
+	}
+
+	public async Task SubscriptionRenewalFailed(int userID, string skuName, string tenantID)
+	{
+		var renewalFailedData = new RenewalFailedData
+		{
+			SkuName = skuName
+		};
+		var sequentialContext = DateTime.UtcNow.Ticks;
+		await _notificationManager.ProcessNotification(userID, NotificationType.SubscriptionRenewalFailed, sequentialContext, renewalFailedData, tenantID);
 	}
 }

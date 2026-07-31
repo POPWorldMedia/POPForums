@@ -1,0 +1,39 @@
+@model List<PopForums.Models.Subscriptions.SubscriptionHistory>
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.Subscriptions;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+<h1>@PopForums.Resources.Account - @PopForums.Resources.Subscriptions</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a></li>
+</ul>
+
+<h2>@PopForums.Resources.SubscriptionHistory</h2>
+
+@if (Model.Count == 0)
+{
+	<div class="alert alert-info">@PopForums.Resources.NoSubscriptionHistory</div>
+}
+else
+{
+	<table class="table table-hover mt-3">
+		<thead>
+			<tr>
+				<th>@PopForums.Resources.EventTime</th>
+				<th>@PopForums.Resources.Message</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td class="text-nowrap"><pf-formattedtime utctime="@item.TimeStamp.ToString("o")"></pf-formattedtime></td>
+					<td>@item.Message</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

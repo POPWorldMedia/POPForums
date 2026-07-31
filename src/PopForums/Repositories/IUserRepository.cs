@@ -94,6 +94,8 @@ public interface IUserRepository
 	Dictionary<int, (User, int)> GetUsersByPointTotals(int top);
 	Task<List<UserResult>> GetRecentUsers();
 	Task UpdateTokenExpiration(User user, DateTime? tokenExpiration);
+	Task UpdateSubscriptionExpiration(int userID, DateOnly? subscriptionExpiration);
+	Task<List<int>> GetUserIDsBySubscriptionExpirationAndProfileRenewal(DateOnly date);
 	Task UpdateRefreshToken(User user, string refreshToken);
 	Task<string> GetRefreshToken(User user);
 	Task<IEnumerable<string>> GetUserNamesThatStartWith(string startingName);

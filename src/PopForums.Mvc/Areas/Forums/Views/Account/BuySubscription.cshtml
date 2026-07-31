@@ -1,0 +1,100 @@
+@model BuySubscriptionViewModel
+@inject ISettingsManager SettingsManager
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.Subscriptions;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script src="https://js.stripe.com/v3/"></script>
+}
+
+<h1>@PopForums.Resources.BuySubscription</h1>
+
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a></li>
+</ul>
+
+@if (ViewBag.ErrorMessage != null)
+{
+	<div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+@if (Model.Expiration.HasValue && Model.Expiration.Value > DateOnly.FromDateTime(DateTime.UtcNow))
+{
+	<p>@PopForums.Resources.Expires: @Model.Expiration.Value.ToString("D")</p>
+}
+else
+{
+	<p>@PopForums.Resources.ChooseASubscription:</p>
+
+	<form asp-action="BuySubscription" method="post" id="buySubscriptionForm" data-choose-message="@PopForums.Resources.PleaseChooseASubscription">
+		<ul class="list-group-flush">
+			@foreach (var item in Model.Skus)
+			{
+				<li class="mb-3 form-check">
+					<input type="radio" name="skuID" id="sku_@item.SkuID" value="@item.SkuID" class="form-check-input" />
+					<label for="sku_@item.SkuID">
+						<div><strong>@item.Name - @item.Price.ToCurrencyString(SettingsManager.Current.Currency)</strong></div>
+						<div>@item.Description</div>
+					</label>
+				</li>
+			}
+		</ul>
+
+		<div class="mb-3 form-check">
+			<input type="checkbox" name="IsAutoRenewal" id="IsAutoRenewal" class="form-check-input" value="true" checked />
+			<label for="IsAutoRenewal" class="form-check-label">@PopForums.Resources.AutomaticallyRenewSubscription</label>
+		</div>
+
+		<div class="my-3">
+			<div id="card-element" class="form-control"></div>
+			<div id="card-errors" class="alert alert-danger mt-2" style="display:none;"></div>
+			<input type="hidden" name="Token" id="Token" />
+		</div>
+
+		<input type="submit" value="@PopForums.Resources.BuySubscription" class="btn btn-primary my-3" id="buySubscriptionSubmit" />
+	</form>
+
+	<script>
+		(function () {
+			var stripe = Stripe('@SettingsManager.Current.StripePublishableKey');
+			var elements = stripe.elements();
+			var cardElement = elements.create('card');
+			cardElement.mount('#card-element');
+
+			var form = document.getElementById('buySubscriptionForm');
+			var errorDiv = document.getElementById('card-errors');
+			var submitButton = document.getElementById('buySubscriptionSubmit');
+
+			cardElement.on('change', function (event) {
+				errorDiv.style.display = event.error ? 'block' : 'none';
+				errorDiv.textContent = event.error ? event.error.message : '';
+			});
+
+			form.addEventListener('submit', function (event) {
+				event.preventDefault();
+				var skuSelected = form.querySelector('input[name="skuID"]:checked');
+				if (!skuSelected) {
+					errorDiv.style.display = 'block';
+					errorDiv.textContent = form.dataset.chooseMessage;
+					return;
+				}
+				submitButton.disabled = true;
+				stripe.createToken(cardElement).then(function (result) {
+					if (result.error) {
+						errorDiv.style.display = 'block';
+						errorDiv.textContent = result.error.message;
+						submitButton.disabled = false;
+					}
+					else {
+						document.getElementById('Token').value = result.token.id;
+						form.submit();
+					}
+				});
+			});
+		})();
+	</script>
+}

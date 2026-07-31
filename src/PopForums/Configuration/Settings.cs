@@ -63,6 +63,11 @@ public class Settings
 		PostImageMaxHeight = 1000;
 		PostImageMaxWidth = 1000;
 		PostImageMaxkBytes = 5000;
+		RenewalWorkerInterval = 60000;
+		IsSubscriptionEnabled = false;
+		StripeSecretKey = string.Empty;
+		StripePublishableKey = string.Empty;
+		Currency = "usd";
 	}
 
 	public virtual string TermsOfService { get; set; }
@@ -124,4 +129,9 @@ public class Settings
 	public virtual int PostImageMaxHeight { get; set; }
 	public virtual int PostImageMaxWidth { get; set; }
 	public virtual int PostImageMaxkBytes { get; set; }
+	public virtual int RenewalWorkerInterval { get; set; }
+	public virtual bool IsSubscriptionEnabled { get; set; }
+	public virtual string StripeSecretKey { get; set; }
+	public virtual string StripePublishableKey { get; set; }
+	public virtual string Currency { get; set; }
 }

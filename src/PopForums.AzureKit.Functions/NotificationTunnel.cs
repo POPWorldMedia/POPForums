@@ -43,6 +43,30 @@ public class NotificationTunnel : INotificationTunnel
 		SendMessage(url, payload);
 	}
 
+	public void SendNotificationForSubscriptionRenewed(int userID, string skuName, string tenantID)
+	{
+		var payload = new RenewalPayload
+		{
+			UserID = userID,
+			SkuName = skuName,
+			TenantID = tenantID
+		};
+		var url = _config.WebAppUrlAndArea + "/api/notifyrenewal";
+		SendMessage(url, payload);
+	}
+
+	public void SendNotificationForSubscriptionRenewalFailed(int userID, string skuName, string tenantID)
+	{
+		var payload = new RenewalPayload
+		{
+			UserID = userID,
+			SkuName = skuName,
+			TenantID = tenantID
+		};
+		var url = _config.WebAppUrlAndArea + "/api/notifyrenewalfailed";
+		SendMessage(url, payload);
+	}
+
 	private void SendMessage(string url, object payload)
 	{
 		var authHash = _config.QueueConnectionString.GetSHA256Hash();

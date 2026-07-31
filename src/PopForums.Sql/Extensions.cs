@@ -51,6 +51,7 @@ public static class Extensions
 
 	public static void AddPopForumsSql(this IServiceCollection services)
 	{
+		SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
 		services.AddTransient<ICacheHelper, CacheHelper>();
 		services.AddTransient<ISqlObjectFactory, SqlObjectFactory>();
 		services.AddTransient<IAwardCalculationQueueRepository, AwardCalculationQueueRepository>();
@@ -72,15 +73,20 @@ public static class Extensions
 		services.AddTransient<IPrivateMessageRepository, PrivateMessageRepository>();
 		services.AddTransient<IProfileRepository, ProfileRepository>();
 		services.AddTransient<IQueuedEmailMessageRepository, QueuedEmailMessageRepository>();
+		services.AddTransient<IRenewalEnqueueClaimRepository, RenewalEnqueueClaimRepository>();
+		services.AddTransient<IRenewalQueueRepository, RenewalQueueRepository>();
 		services.AddTransient<IRoleRepository, RoleRepository>();
 		services.AddTransient<ISearchIndexQueueRepository, SearchIndexQueueRepository>();
 		services.AddTransient<ISearchRepository, SearchRepository>();
 		services.AddTransient<ISecurityLogRepository, SecurityLogRepository>();
 		services.AddTransient<ISettingsRepository, SettingsRepository>();
 		services.AddTransient<ISetupRepository, SetupRepository>();
+		services.AddTransient<ISkuRepository, SkuRepository>();
 		services.AddTransient<ISubscribedTopicsRepository, SubscribedTopicsRepository>();
+		services.AddTransient<ISubscriptionHistoryRepository, SubscriptionHistoryRepository>();
 		services.AddTransient<ITopicRepository, TopicRepository>();
 		services.AddTransient<ITopicViewLogRepository, TopicViewLogRepository>();
+		services.AddTransient<ITransactionRepository, TransactionRepository>();
 		services.AddTransient<IUserAvatarRepository, UserAvatarRepository>();
 		services.AddTransient<IUserAwardRepository, UserAwardRepository>();
 		services.AddTransient<IUserImageRepository, UserImageRepository>();

@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Setup das erste Mitglied des Forms (wird Admin- und Moderator-Rechte bewilligen) Setup your first user (will be granted admin and moderator rights)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Abbonierte Themen</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Verfolgte Themen</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Sie müssen eingeloggt sein um abbonierte Themen zu sehen.</value>
@@ -1273,5 +1273,107 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>Ignorieren</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Abonnementkonfiguration</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>Abonnement-SKUs</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Abonnements aktiviert</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Verlängerungsintervall</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>SKU hinzufügen</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU-ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Preis</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Monate</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Folgen</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Nicht mehr folgen</value>
+  </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe-Geheimschlüssel</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe-Veröffentlichungsschlüssel</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Währung</value>
+  </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>Aktuelles Abonnement</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Sie sind nicht abonniert.</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Läuft ab</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>Automatische Verlängerung</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>An</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Ausschalten</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Einschalten</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>Abonnement kaufen</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>Abonnementverlauf anzeigen</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>Abonnements sind nicht aktiviert.</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>Wählen Sie ein Abonnement</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>Dieses Abonnement automatisch verlängern</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>Bitte wählen Sie ein Abonnement.</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>Abonnementverlauf</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>Kein Abonnementverlauf.</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Kartennummer</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Karte aktualisieren</value>
+  </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Die Verlängerung von „{0}" war erfolgreich.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Die Verlängerung von „{0}" ist fehlgeschlagen.</value>
   </data>
 </root>

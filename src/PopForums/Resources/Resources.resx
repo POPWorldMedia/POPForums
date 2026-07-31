@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Setup your first user (will be granted admin and moderator rights)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Subscribed Topics</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Followed Topics</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>You must be logged in to view subscribed topics.</value>
@@ -1292,5 +1292,107 @@
   </data>
   <data name="IgnoreList" xml:space="preserve">
 	  <value>Ignore List</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Subscription Config</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>Subscription Skus</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Subscriptions Enabled</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Renewal Interval</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>Add Sku</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Follow</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Unfollow</value>
+  </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe Secret Key</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe Publishable Key</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>Current Subscription</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>You are not subscribed.</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>Auto-renewal</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Turn off</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Turn on</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>Buy Subscription</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>View subscription history</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>Subscriptions not enabled.</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>Choose a subscription</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>Automatically renew this subscription</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>Please choose a subscription.</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>Subscription History</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>No subscription history.</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Card number</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Update card</value>
+  </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Your '{0}' renewal succeeded.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Your '{0}' renewal failed.</value>
   </data>
 </root>

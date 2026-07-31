@@ -1,4 +1,6 @@
-﻿namespace PopForums.Extensions;
+﻿using PopForums.Repositories.Subscriptions;
+
+namespace PopForums.Extensions;
 
 public static class ServiceCollections
 {
@@ -37,6 +39,7 @@ public static class ServiceCollections
 
 		// services
 		services.AddTransient<IBanService, BanService>();
+		services.AddTransient<IBuyService, BuyService>();
 		services.AddTransient<ICategoryService, CategoryService>();
 		services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
 		services.AddTransient<IForumService, ForumService>();
@@ -49,9 +52,14 @@ public static class ServiceCollections
 		services.AddTransient<IPrivateMessageService, PrivateMessageService>();
 		services.AddTransient<IProfileService, ProfileService>();
 		services.AddTransient<IQueuedEmailService, QueuedEmailService>();
+		services.AddTransient<IRenewalOrchestrationService, RenewalOrchestrationService>();
+		services.AddTransient<IRenewalService, RenewalService>();
+		services.AddTransient<IRenewalWorker, RenewalWorker>();
 		services.AddTransient<ISearchService, SearchService>();
 		services.AddTransient<ISecurityLogService, SecurityLogService>();
 		services.AddTransient<ISetupService, SetupService>();
+		services.AddTransient<ISkuService, SkuService>();
+		services.AddTransient<ISubscriptionHistoryService, SubscriptionHistoryService>();
 		services.AddTransient<ISubscribedTopicsService, SubscribedTopicsService>();
 		services.AddTransient<ITextParsingService, TextParsingService>();
 		services.AddTransient<ITopicService, TopicService>();
@@ -80,5 +88,8 @@ public static class ServiceCollections
 		services.AddTransient<IPostImageCleanupWorker, PostImageCleanupWorker>();
 		services.AddTransient<ISubscribeNotificationWorker, SubscribeNotificationWorker>();
 		services.AddTransient<IIgnoreService, IgnoreService>();
+		
+		// repos
+		services.AddTransient<IBankChargeRepository, BankChargeRepository>();
 	}
 }

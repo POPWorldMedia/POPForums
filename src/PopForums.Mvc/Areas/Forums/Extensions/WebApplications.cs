@@ -73,12 +73,12 @@ public static class WebApplications
 		);
 		app.MapControllerRoute(
 			"pfsubtopics1",
-			"Forums/Subscription/Topics",
+			"Forums/Followed/Topics",
 			new { controller = SubscriptionController.Name, action = "Topics", pageNumber = 1, Area = "Forums" }
 		);
 		app.MapControllerRoute(
 			"pfsubtopics",
-			"Forums/Subscription/Topics/{pageNumber}",
+			"Forums/Followed/Topics/{pageNumber}",
 			new { controller = SubscriptionController.Name, action = "Topics", Area = "Forums" }
 		);
 		app.MapControllerRoute(

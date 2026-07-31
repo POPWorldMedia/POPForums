@@ -1032,8 +1032,8 @@
   <data name="SetupFirstUser" xml:space="preserve">
     <value>Maak je eerste gebruiker aan (die zal beheer- en moderatorrechten krijgen)</value>
   </data>
-  <data name="SubscribedTopics" xml:space="preserve">
-    <value>Aangemelde Topics</value>
+  <data name="FollowedTopics" xml:space="preserve">
+    <value>Gevolgde Topics</value>
   </data>
   <data name="SubscribeLoggedIn" xml:space="preserve">
     <value>Je moet ingelogd zijn om aangemelde topics te kunnen zien.</value>
@@ -1274,5 +1274,107 @@
   </data>
   <data name="Ignore" xml:space="preserve">
 	  <value>Negeren</value>
+  </data>
+  <data name="SubscriptionConfig" xml:space="preserve">
+    <value>Abonnementconfiguratie</value>
+  </data>
+  <data name="SubscriptionSkus" xml:space="preserve">
+    <value>Abonnement-SKU's</value>
+  </data>
+  <data name="SubscriptionsEnabled" xml:space="preserve">
+    <value>Abonnementen ingeschakeld</value>
+  </data>
+  <data name="RenewalInterval" xml:space="preserve">
+    <value>Verlengingsinterval</value>
+  </data>
+  <data name="AddSku" xml:space="preserve">
+    <value>SKU toevoegen</value>
+  </data>
+  <data name="SkuID" xml:space="preserve">
+    <value>SKU-ID</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prijs</value>
+  </data>
+  <data name="Months" xml:space="preserve">
+    <value>Maanden</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Actief</value>
+  </data>
+  <data name="Follow" xml:space="preserve">
+    <value>Volgen</value>
+  </data>
+  <data name="Unfollow" xml:space="preserve">
+    <value>Niet meer volgen</value>
+  </data>
+  <data name="StripeSecretKey" xml:space="preserve">
+    <value>Stripe geheime sleutel</value>
+  </data>
+  <data name="StripePublishableKey" xml:space="preserve">
+    <value>Stripe publiceerbare sleutel</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Valuta</value>
+  </data>
+  <data name="CurrentSubscription" xml:space="preserve">
+    <value>Huidig abonnement</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Je bent niet geabonneerd.</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Verloopt</value>
+  </data>
+  <data name="AutoRenewal" xml:space="preserve">
+    <value>Automatische verlenging</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Aan</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Uit</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Uitschakelen</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Inschakelen</value>
+  </data>
+  <data name="BuySubscription" xml:space="preserve">
+    <value>Abonnement kopen</value>
+  </data>
+  <data name="ViewSubscriptionHistory" xml:space="preserve">
+    <value>Bekijk abonnementsgeschiedenis</value>
+  </data>
+  <data name="SubscriptionsNotEnabled" xml:space="preserve">
+    <value>Abonnementen zijn niet ingeschakeld.</value>
+  </data>
+  <data name="ChooseASubscription" xml:space="preserve">
+    <value>Kies een abonnement</value>
+  </data>
+  <data name="AutomaticallyRenewSubscription" xml:space="preserve">
+    <value>Dit abonnement automatisch verlengen</value>
+  </data>
+  <data name="PleaseChooseASubscription" xml:space="preserve">
+    <value>Kies alstublieft een abonnement.</value>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>Abonnementsgeschiedenis</value>
+  </data>
+  <data name="NoSubscriptionHistory" xml:space="preserve">
+    <value>Geen abonnementsgeschiedenis.</value>
+  </data>
+  <data name="CardNumber" xml:space="preserve">
+    <value>Kaartnummer</value>
+  </data>
+  <data name="UpdateCard" xml:space="preserve">
+    <value>Kaart bijwerken</value>
+  </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>De verlenging van uw '{0}' is gelukt.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>De verlenging van uw '{0}' is mislukt.</value>
   </data>
 </root>

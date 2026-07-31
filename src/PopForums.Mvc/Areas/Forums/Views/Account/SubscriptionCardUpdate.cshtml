@@ -1,0 +1,66 @@
+@inject ISettingsManager SettingsManager
+@{
+	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.UpdateCard;
+	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+}
+
+@section HeaderContent
+{
+	<script src="https://js.stripe.com/v3/"></script>
+}
+
+<h1>@PopForums.Resources.Account - @PopForums.Resources.UpdateCard</h1>
+<ul id="TopBreadcrumb" class="breadcrumb sticky-top">
+	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
+	<li class="breadcrumb-item"><a asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a></li>
+</ul>
+
+@if (ViewBag.ErrorMessage != null)
+{
+	<div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<form asp-action="SubscriptionCardUpdate" method="post" id="cardUpdateForm">
+	<div class="my-3">
+		<div id="card-element" class="form-control"></div>
+		<div id="card-errors" class="alert alert-danger mt-2" style="display:none;"></div>
+		<input type="hidden" name="token" id="Token" />
+	</div>
+
+	<input type="submit" value="@PopForums.Resources.UpdateCard" class="btn btn-primary my-3" id="cardUpdateSubmit" />
+</form>
+
+<script>
+	(function () {
+		var stripe = Stripe('@SettingsManager.Current.StripePublishableKey');
+		var elements = stripe.elements();
+		var cardElement = elements.create('card');
+		cardElement.mount('#card-element');
+
+		var form = document.getElementById('cardUpdateForm');
+		var errorDiv = document.getElementById('card-errors');
+		var submitButton = document.getElementById('cardUpdateSubmit');
+
+		cardElement.on('change', function (event) {
+			errorDiv.style.display = event.error ? 'block' : 'none';
+			errorDiv.textContent = event.error ? event.error.message : '';
+		});
+
+		form.addEventListener('submit', function (event) {
+			event.preventDefault();
+			submitButton.disabled = true;
+			stripe.createToken(cardElement).then(function (result) {
+				if (result.error) {
+					errorDiv.style.display = 'block';
+					errorDiv.textContent = result.error.message;
+					submitButton.disabled = false;
+				}
+				else {
+					document.getElementById('Token').value = result.token.id;
+					form.submit();
+				}
+			});
+		});
+	})();
+</script>
+

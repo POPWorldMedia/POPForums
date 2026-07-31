@@ -10,11 +10,19 @@ public class User
 	public bool IsApproved { get; set; }
 	public DateTime? TokenExpiration { get; set; }
 	public List<string> Roles { get; set; }
+	public DateOnly? SubscriptionExpiration { get; set; }
 
 	public bool IsInRole(string role)
 	{
 		if (Roles == null)
 			throw new Exception("Roles not set for user.");
 		return Roles.Contains(role);
+	}
+
+	public bool IsSubscriber()
+	{
+		if (Roles != null)
+			return Roles.Contains(PermanentRoles.Subscriber);
+		return false;
 	}
 }

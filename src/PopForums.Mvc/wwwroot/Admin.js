@@ -1022,6 +1022,60 @@ const Services = {
 	}
 }
 
+const SubscriptionConfig = {
+	mixins: [settingsMixin, loadingMixin],
+	template: "#SubscriptionConfig"
+}
+
+const SubscriptionSkus = {
+	mixins: [loadingMixin],
+	template: "#SubscriptionSkus",
+	data() {
+		return {
+			skus: [],
+			editingSku: null,
+			isNewSku: true
+		}
+	},
+	created: function () {
+		this.startLoad();
+		axios.get(basePath + "GetSkus").then(response => {
+			this.skus = response.data;
+			this.endLoad();
+		})
+			.catch(error => this.errorAlert());
+		this.resetSku();
+	},
+	methods: {
+		editSku: function (sku) {
+			this.editingSku = sku;
+			this.isNewSku = false;
+			const e = this.$refs.modal;
+			var modal = new bootstrap.Modal(e);
+			modal.show();
+		},
+		resetSku: function () {
+			this.editingSku = { skuID: "", name: "", description: "", price: 0, months: 1, isActive: true };
+		},
+		newSku: function () {
+			this.resetSku();
+			this.isNewSku = true;
+			const e = this.$refs.modal;
+			var modal = new bootstrap.Modal(e);
+			modal.show();
+		},
+		saveSku: function () {
+			this.startLoad();
+			axios.post(basePath + "SaveSku", this.editingSku)
+				.then(response => {
+					this.skus = response.data;
+					this.endLoad();
+				})
+				.catch(error => this.errorAlert());
+		}
+	}
+}
+
 const routes = [
 	{
 		path: "/", component: Top, redirect: "/general",
@@ -1049,7 +1103,9 @@ const routes = [
 			{ path: "/securitylog", component: SecurityLog },
 			{ path: "/moderationlog", component: ModerationLog },
 			{ path: "/errorlog", component: ErrorLog },
-			{ path: "/services", component: Services }
+			{ path: "/services", component: Services },
+			{ path: "/subscriptionconfig", component: SubscriptionConfig },
+			{ path: "/subscriptionskus", component: SubscriptionSkus }
 		]
 	},
 	{ path: "/:pathMatch(.*)*", redirect: "/general" }

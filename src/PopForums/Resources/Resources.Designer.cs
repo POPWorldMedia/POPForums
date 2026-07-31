@@ -1857,9 +1857,9 @@ namespace PopForums {
             }
         }
         
-        public static string SubscribedTopics {
+        public static string FollowedTopics {
             get {
-                return ResourceManager.GetString("SubscribedTopics", resourceCulture);
+                return ResourceManager.GetString("FollowedTopics", resourceCulture);
             }
         }
         
@@ -2346,6 +2346,210 @@ namespace PopForums {
         public static string IgnoreList {
             get {
                 return ResourceManager.GetString("IgnoreList", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionConfig {
+            get {
+                return ResourceManager.GetString("SubscriptionConfig", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionSkus {
+            get {
+                return ResourceManager.GetString("SubscriptionSkus", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionsEnabled {
+            get {
+                return ResourceManager.GetString("SubscriptionsEnabled", resourceCulture);
+            }
+        }
+
+        public static string RenewalInterval {
+            get {
+                return ResourceManager.GetString("RenewalInterval", resourceCulture);
+            }
+        }
+
+        public static string AddSku {
+            get {
+                return ResourceManager.GetString("AddSku", resourceCulture);
+            }
+        }
+
+        public static string SkuID {
+            get {
+                return ResourceManager.GetString("SkuID", resourceCulture);
+            }
+        }
+
+        public static string Price {
+            get {
+                return ResourceManager.GetString("Price", resourceCulture);
+            }
+        }
+
+        public static string Months {
+            get {
+                return ResourceManager.GetString("Months", resourceCulture);
+            }
+        }
+
+        public static string Active {
+            get {
+                return ResourceManager.GetString("Active", resourceCulture);
+            }
+        }
+
+        public static string Follow {
+            get {
+                return ResourceManager.GetString("Follow", resourceCulture);
+            }
+        }
+
+        public static string Unfollow {
+            get {
+                return ResourceManager.GetString("Unfollow", resourceCulture);
+            }
+        }
+
+        public static string StripeSecretKey {
+            get {
+                return ResourceManager.GetString("StripeSecretKey", resourceCulture);
+            }
+        }
+
+        public static string StripePublishableKey {
+            get {
+                return ResourceManager.GetString("StripePublishableKey", resourceCulture);
+            }
+        }
+
+        public static string Currency {
+            get {
+                return ResourceManager.GetString("Currency", resourceCulture);
+            }
+        }
+
+        public static string CurrentSubscription {
+            get {
+                return ResourceManager.GetString("CurrentSubscription", resourceCulture);
+            }
+        }
+
+        public static string NotSubscribed {
+            get {
+                return ResourceManager.GetString("NotSubscribed", resourceCulture);
+            }
+        }
+
+        public static string Expires {
+            get {
+                return ResourceManager.GetString("Expires", resourceCulture);
+            }
+        }
+
+        public static string AutoRenewal {
+            get {
+                return ResourceManager.GetString("AutoRenewal", resourceCulture);
+            }
+        }
+
+        public static string On {
+            get {
+                return ResourceManager.GetString("On", resourceCulture);
+            }
+        }
+
+        public static string Off {
+            get {
+                return ResourceManager.GetString("Off", resourceCulture);
+            }
+        }
+
+        public static string TurnOff {
+            get {
+                return ResourceManager.GetString("TurnOff", resourceCulture);
+            }
+        }
+
+        public static string TurnOn {
+            get {
+                return ResourceManager.GetString("TurnOn", resourceCulture);
+            }
+        }
+
+        public static string BuySubscription {
+            get {
+                return ResourceManager.GetString("BuySubscription", resourceCulture);
+            }
+        }
+
+        public static string ViewSubscriptionHistory {
+            get {
+                return ResourceManager.GetString("ViewSubscriptionHistory", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionsNotEnabled {
+            get {
+                return ResourceManager.GetString("SubscriptionsNotEnabled", resourceCulture);
+            }
+        }
+
+        public static string ChooseASubscription {
+            get {
+                return ResourceManager.GetString("ChooseASubscription", resourceCulture);
+            }
+        }
+
+        public static string AutomaticallyRenewSubscription {
+            get {
+                return ResourceManager.GetString("AutomaticallyRenewSubscription", resourceCulture);
+            }
+        }
+
+        public static string PleaseChooseASubscription {
+            get {
+                return ResourceManager.GetString("PleaseChooseASubscription", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionHistory {
+            get {
+                return ResourceManager.GetString("SubscriptionHistory", resourceCulture);
+            }
+        }
+
+        public static string NoSubscriptionHistory {
+            get {
+                return ResourceManager.GetString("NoSubscriptionHistory", resourceCulture);
+            }
+        }
+
+        public static string CardNumber {
+            get {
+                return ResourceManager.GetString("CardNumber", resourceCulture);
+            }
+        }
+
+        public static string UpdateCard {
+            get {
+                return ResourceManager.GetString("UpdateCard", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionRenewedNotification {
+            get {
+                return ResourceManager.GetString("SubscriptionRenewedNotification", resourceCulture);
+            }
+        }
+
+        public static string SubscriptionRenewalFailedNotification {
+            get {
+                return ResourceManager.GetString("SubscriptionRenewalFailedNotification", resourceCulture);
             }
         }
     }

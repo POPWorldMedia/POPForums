@@ -20,6 +20,7 @@ global using PopForums.Configuration;
 global using PopForums.Email;
 global using PopForums.ExternalLogin;
 global using PopForums.Models;
+global using PopForums.Models.Subscriptions;
 global using PopForums.Repositories;
 global using PopForums.ScoringGame;
 global using PopForums.Services;

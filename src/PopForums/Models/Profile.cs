@@ -19,4 +19,8 @@ public class Profile
 	public int? LastPostID { get; set; }
 	public int Points { get; set; }
 	public bool IsAutoFollowOnReply { get; set; }
+	public bool IsAutoRenewal { get; set; }
+	public string Last4 { get; set; }
+	public string CustomerID { get; set; }
+	public string SkuID { get; set; }
 }

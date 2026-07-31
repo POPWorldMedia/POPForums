@@ -22,6 +22,8 @@ public class ResourceComposer : IResourceComposer
 			Award = Resources.Award,
 			VoteUpNotification = Resources.VoteUpNotification,
 			QuestionAnsweredNotification = Resources.QuestionAnsweredNotification,
+			SubscriptionRenewedNotification = Resources.SubscriptionRenewedNotification,
+			SubscriptionRenewalFailedNotification = Resources.SubscriptionRenewalFailedNotification,
 			Send = Resources.Send,
 
 			UploadImage = Resources.UploadImage

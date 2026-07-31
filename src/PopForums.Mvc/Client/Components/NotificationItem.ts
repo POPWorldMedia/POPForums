@@ -38,6 +38,16 @@ namespace PopForums {
                     .replace("{1}", this.escapeHtml(this.notification.data.title));
                 link = "/Forums/PostLink/" + this.notification.data.postID;
                 break;
+            case 4: // SubscriptionRenewed
+                markup = PopForums.localizations.subscriptionRenewedNotification
+                    .replace("{0}", this.escapeHtml(this.notification.data.skuName));
+                link = "/Forums/Account/SubscriptionHistory";
+                break;
+            case 5: // SubscriptionRenewalFailed
+                markup = PopForums.localizations.subscriptionRenewalFailedNotification
+                    .replace("{0}", this.escapeHtml(this.notification.data.skuName));
+                link = "/Forums/Account/SubscriptionHistory";
+                break;
             default:
                 console.log(`Unknown notification type: ${this.notification.notificationType}`);
         }

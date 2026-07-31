@@ -1,17 +1,17 @@
 ﻿@model PagedTopicContainer
 @inject IUserRetrievalShim UserRetrievalShim
 @{
-	ViewBag.Title = PopForums.Resources.SubscribedTopics;
+	ViewBag.Title = PopForums.Resources.FollowedTopics;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
 	var user = UserRetrievalShim.GetUser();
 }
 
-<h1>@PopForums.Resources.SubscribedTopics</h1>
+<h1>@PopForums.Resources.FollowedTopics</h1>
 
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@ForumController.Name" asp-action="Recent" asp-route-pageNumber="">@PopForums.Resources.Recent</a></li>
 	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>
-	<li class="breadcrumb-item active">@PopForums.Resources.SubscribedTopics</li>
+	<li class="breadcrumb-item active">@PopForums.Resources.FollowedTopics</li>
 </ul>
 
 @if (Model == null)
@@ -35,7 +35,7 @@ else
 				<td class="text-center">
 					<form asp-action="Unsubscribe" asp-controller="Subscription" asp-antiforgery="false">
 						<input name="id" id="id" type="hidden" value="@topic.TopicID" />
-						<button type="submit" class="btn btn-primary"><span class="icon icon-bell-fill text-warning"></span> @PopForums.Resources.Unsubscribe</button>
+						<button type="submit" class="btn btn-primary"><span class="icon icon-bell-fill text-warning"></span> @PopForums.Resources.Unfollow</button>
 					</form>
 				</td>
 				<td>

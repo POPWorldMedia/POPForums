@@ -1,55 +1,37 @@
-﻿using PopForums.Mvc.Areas.Forums.Authentication;
+﻿using PopForums.Models.Subscriptions;
+using PopForums.Mvc.Areas.Forums.Authentication;
 using PopIdentity;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
 [Area("Forums")]
-public class AccountController : Controller
+public class AccountController(
+	IUserService userService,
+	IProfileService profileService,
+	INewAccountMailer newAccountMailer,
+	ISettingsManager settingsManager,
+	IPostService postService,
+	ITopicService topicService,
+	IForumService forumService,
+	ILastReadService lastReadService,
+	IImageService imageService,
+	IFeedService feedService,
+	IUserAwardService userAwardService,
+	IExternalUserAssociationManager externalUserAssociationManager,
+	IUserRetrievalShim userRetrievalShim,
+	IExternalLoginRoutingService externalLoginRoutingService,
+	IExternalLoginTempService externalLoginTempService,
+	IConfig config,
+	IReCaptchaService reCaptchaService,
+	IOAuthOnlyService oAuthOnlyService,
+	ISkuService skuService,
+	IBuyService buyService,
+	ISubscriptionHistoryService subscriptionHistoryService)
+	: Controller
 {
-	public AccountController(IUserService userService, IProfileService profileService, INewAccountMailer newAccountMailer, ISettingsManager settingsManager, IPostService postService, ITopicService topicService, IForumService forumService, ILastReadService lastReadService, IImageService imageService, IFeedService feedService, IUserAwardService userAwardService, IExternalUserAssociationManager externalUserAssociationManager, IUserRetrievalShim userRetrievalShim, IExternalLoginRoutingService externalLoginRoutingService, IExternalLoginTempService externalLoginTempService, IConfig config, IReCaptchaService reCaptchaService, IOAuthOnlyService oAuthOnlyService)
-	{
-		_userService = userService;
-		_settingsManager = settingsManager;
-		_profileService = profileService;
-		_newAccountMailer = newAccountMailer;
-		_postService = postService;
-		_topicService = topicService;
-		_forumService = forumService;
-		_lastReadService = lastReadService;
-		_imageService = imageService;
-		_feedService = feedService;
-		_userAwardService = userAwardService;
-		_externalUserAssociationManager = externalUserAssociationManager;
-		_userRetrievalShim = userRetrievalShim;
-		_externalLoginRoutingService = externalLoginRoutingService;
-		_externalLoginTempService = externalLoginTempService;
-		_config = config;
-		_reCaptchaService = reCaptchaService;
-		_oAuthOnlyService = oAuthOnlyService;
-	}
-
 	public static string Name = "Account";
 	public static string CoppaDateKey = "CoppaDateKey";
 	public static string TosKey = "TosKey";
-
-	private readonly IUserService _userService;
-	private readonly ISettingsManager _settingsManager;
-	private readonly IProfileService _profileService;
-	private readonly INewAccountMailer _newAccountMailer;
-	private readonly IPostService _postService;
-	private readonly ITopicService _topicService;
-	private readonly IForumService _forumService;
-	private readonly ILastReadService _lastReadService;
-	private readonly IImageService _imageService;
-	private readonly IFeedService _feedService;
-	private readonly IUserAwardService _userAwardService;
-	private readonly IExternalUserAssociationManager _externalUserAssociationManager;
-	private readonly IUserRetrievalShim _userRetrievalShim;
-	private readonly IExternalLoginRoutingService _externalLoginRoutingService;
-	private readonly IExternalLoginTempService _externalLoginTempService;
-	private readonly IConfig _config;
-	private readonly IReCaptchaService _reCaptchaService;
-	private readonly IOAuthOnlyService _oAuthOnlyService;
 
 	[PopForumsAuthenticationIgnore]
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
@@ -61,7 +43,7 @@ public class AccountController : Controller
 			IsSubscribed = true,
 			IsAutoFollowOnReply = true
 		};
-		var loginState = _externalLoginTempService.Read();
+		var loginState = externalLoginTempService.Read();
 		if (loginState?.ResultData != null)
 		{
 			signupData.Email = loginState.ResultData.Email;
@@ -73,7 +55,7 @@ public class AccountController : Controller
 	private void SetupCreateData()
 	{
 		ViewData[CoppaDateKey] = SignupData.GetCoppaDate();
-		ViewData[TosKey] = _settingsManager.Current.TermsOfService;
+		ViewData[TosKey] = settingsManager.Current.TermsOfService;
 	}
 
 	[PopForumsAuthenticationIgnore]
@@ -81,34 +63,34 @@ public class AccountController : Controller
 	[HttpPost]
 	public async Task<IActionResult> Create(SignupData signupData)
 	{
-		var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-		if (_config.UseReCaptcha)
+		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+		if (config.UseReCaptcha)
 		{
-			var reCaptchaResponse = await _reCaptchaService.VerifyToken(signupData.Token, ip);
+			var reCaptchaResponse = await reCaptchaService.VerifyToken(signupData.Token, ip);
 			if (!reCaptchaResponse.IsSuccess)
 				ModelState.AddModelError("Email", Resources.BotError);
 		}
 		await ValidateSignupData(signupData, ModelState, ip);
 		if (ModelState.IsValid)
 		{
-			var user = await _userService.CreateUserWithProfile(signupData, ip);
+			var user = await userService.CreateUserWithProfile(signupData, ip);
 			var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
-			var result = _newAccountMailer.Send(user, verifyUrl);
+			var result = newAccountMailer.Send(user, verifyUrl);
 			if (result != SmtpStatusCode.Ok)
 				ViewData["EmailProblem"] = Resources.EmailProblemAccount + (result?.ToString() ?? "App exception") + ".";
-			if (_settingsManager.Current.IsNewUserApproved)
+			if (settingsManager.Current.IsNewUserApproved)
 			{
 				ViewData["Result"] = Resources.AccountReady;
-				await _userService.Login(user, ip);
+				await userService.Login(user, ip);
 			}
 			else
 				ViewData["Result"] = Resources.AccountReadyCheckEmail;
 
-			var loginState = _externalLoginTempService.Read();
+			var loginState = externalLoginTempService.Read();
 			if (loginState != null)
 			{
 				var externalLoginInfo = new ExternalLoginInfo(loginState.ProviderType.ToString(), loginState.ResultData.ID, loginState.ResultData.Name);
-				await _externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
+				await externalUserAssociationManager.Associate(user, externalLoginInfo, ip);
 			}
 
 			await IdentityController.PerformSignInAsync(user, HttpContext);
@@ -125,25 +107,25 @@ public class AccountController : Controller
 			modelState.AddModelError("IsCoppa", Resources.MustBe13);
 		if (!signupData.IsTos)
 			modelState.AddModelError("IsTos", Resources.MustAcceptTOS);
-		var passwordValid = _userService.IsPasswordValid(signupData.Password, out var passwordError);
+		var passwordValid = userService.IsPasswordValid(signupData.Password, out var passwordError);
 		if (!passwordValid)
 			modelState.AddModelError("Password", passwordError);
 		if (signupData.Password != signupData.PasswordRetype)
 			modelState.AddModelError("PasswordRetype", Resources.RetypeYourPassword);
 		if (string.IsNullOrWhiteSpace(signupData.Name))
 			modelState.AddModelError("Name", Resources.NameRequired);
-		else if (await _userService.IsNameInUse(signupData.Name))
+		else if (await userService.IsNameInUse(signupData.Name))
 			modelState.AddModelError("Name", Resources.NameInUse);
 		if (string.IsNullOrWhiteSpace(signupData.Email))
 			modelState.AddModelError("Email", Resources.EmailRequired);
 		else
 		if (!signupData.Email.IsEmailAddress())
 			modelState.AddModelError("Email", Resources.ValidEmailAddressRequired);
-		else if (signupData.Email != null && await _userService.IsEmailInUse(signupData.Email))
+		else if (signupData.Email != null && await userService.IsEmailInUse(signupData.Email))
 			modelState.AddModelError("Email", Resources.EmailInUse);
-		if (signupData.Email != null && await _userService.IsEmailBanned(signupData.Email))
+		if (signupData.Email != null && await userService.IsEmailBanned(signupData.Email))
 			modelState.AddModelError("Email", Resources.EmailBanned);
-		if (await _userService.IsIPBanned(ip))
+		if (await userService.IsIPBanned(ip))
 			modelState.AddModelError("Email", Resources.IPBanned);
 	}
 
@@ -156,11 +138,11 @@ public class AccountController : Controller
 			return View("VerifyFail");
 		if (string.IsNullOrWhiteSpace(id))
 			return View();
-		var user = await _userService.VerifyAuthorizationCode(authKey, HttpContext.Connection.RemoteIpAddress.ToString());
+		var user = await userService.VerifyAuthorizationCode(authKey, HttpContext.Connection.RemoteIpAddress?.ToString());
 		if (user == null)
 			return View("VerifyFail");
 		ViewData["Result"] = Resources.AccountVerified;
-		await _userService.Login(user, HttpContext.Connection.RemoteIpAddress.ToString());
+		await userService.Login(user, HttpContext.Connection.RemoteIpAddress?.ToString());
 		return View();
 	}
 
@@ -176,14 +158,14 @@ public class AccountController : Controller
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> RequestCode(string email)
 	{
-		var user = await _userService.GetUserByEmail(email);
+		var user = await userService.GetUserByEmail(email);
 		if (user == null)
 		{
 			ViewData["Result"] = Resources.NoUserFoundWithEmail;
 			return View("Verify", new { id = String.Empty });
 		}
 		var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
-		var result = _newAccountMailer.Send(user, verifyUrl);
+		var result = newAccountMailer.Send(user, verifyUrl);
 		if (result != SmtpStatusCode.Ok)
 			ViewData["EmailProblem"] = Resources.EmailProblemAccount + result + ".";
 		else
@@ -202,7 +184,7 @@ public class AccountController : Controller
 	[HttpPost]
 	public async Task<ViewResult> Forgot(string email)
 	{
-		var user = await _userService.GetUserByEmail(email);
+		var user = await userService.GetUserByEmail(email);
 		if (user == null)
 		{
 			ViewBag.Result = Resources.EmailNotFound;
@@ -211,7 +193,7 @@ public class AccountController : Controller
 		{
 			ViewBag.Result = Resources.ForgotInstructionsSent;
 			var resetLink = Url.Action("ResetPassword", "Account", null, Request.Scheme);
-			await _userService.GeneratePasswordResetEmail(user, resetLink);
+			await userService.GeneratePasswordResetEmail(user, resetLink);
 		}
 		return View();
 	}
@@ -223,12 +205,9 @@ public class AccountController : Controller
 		var authKey = Guid.Empty;
 		if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 			return StatusCode(403);
-		var user = await _userService.GetUserByAuhtorizationKey(authKey);
+		var user = await userService.GetUserByAuhtorizationKey(authKey);
 		var container = new PasswordResetContainer();
-		if (user == null)
-			container.IsValidUser = false;
-		else
-			container.IsValidUser = true;
+		container.IsValidUser = user != null;
 		return View(container);
 	}
 
@@ -240,17 +219,17 @@ public class AccountController : Controller
 		var authKey = Guid.Empty;
 		if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
 			return StatusCode(403);
-		var user = await _userService.GetUserByAuhtorizationKey(authKey);
+		var user = await userService.GetUserByAuhtorizationKey(authKey);
 		resetContainer.IsValidUser = true;
 		if (resetContainer.Password != resetContainer.PasswordRetype)
 			ModelState.AddModelError("PasswordRetype", Resources.RetypePasswordMustMatch);
 		string errorMessage;
-		_userService.IsPasswordValid(resetContainer.Password, out errorMessage);
+		userService.IsPasswordValid(resetContainer.Password, out errorMessage);
 		if (!string.IsNullOrWhiteSpace(errorMessage))
 			ModelState.AddModelError("Password", errorMessage);
 		if (!ModelState.IsValid)
 			return View(resetContainer);
-		await _userService.ResetPassword(user, resetContainer.Password, HttpContext.Connection.RemoteIpAddress.ToString());
+		await userService.ResetPassword(user, resetContainer.Password, HttpContext.Connection.RemoteIpAddress?.ToString());
 		return RedirectToAction("ResetPasswordSuccess");
 	}
 
@@ -258,18 +237,115 @@ public class AccountController : Controller
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ActionResult ResetPasswordSuccess()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return RedirectToAction("Login");
 		return View();
 	}
 
-	public async Task<ViewResult> EditProfile()
+	public async Task<ViewResult> Subscriptions()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		var profile = await _profileService.GetProfileForEdit(user);
+		var profile = await profileService.GetProfile(user);
+		var model = new SubscriptionsViewModel
+		{
+			IsSubscriber = user.IsSubscriber(),
+			Expiration = user.SubscriptionExpiration,
+			IsAutoRenewal = profile.IsAutoRenewal,
+			Last4 = profile.Last4
+		};
+		if (!string.IsNullOrEmpty(profile.SkuID))
+		{
+			var sku = await skuService.Get(profile.SkuID);
+			if (sku != null)
+			{
+				model.SkuName = sku.Name;
+				model.Months = sku.Months;
+			}
+		}
+		return View(model);
+	}
+
+	public async Task<ViewResult> BuySubscription()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var skus = await skuService.GetAllActive();
+		var model = new BuySubscriptionViewModel { Skus = skus, Expiration = user.SubscriptionExpiration };
+		return View(model);
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> BuySubscription(BuyModel buyModel)
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var result = await buyService.BuyNew(buyModel, user.UserID);
+		if (!result.IsSuccessful)
+		{
+			ViewBag.ErrorMessage = result.Message;
+			var skus = await skuService.GetAllActive();
+			var model = new BuySubscriptionViewModel { Skus = skus, Expiration = user.SubscriptionExpiration };
+			return View(model);
+		}
+		return RedirectToAction("Subscriptions");
+	}
+
+	[HttpPost]
+	public async Task<RedirectToActionResult> ToggleAutoRenewal()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user != null)
+		{
+			var profile = await profileService.GetProfile(user);
+			profile.IsAutoRenewal = !profile.IsAutoRenewal;
+			await profileService.Update(profile);
+		}
+		return RedirectToAction("Subscriptions");
+	}
+
+	public async Task<ViewResult> SubscriptionHistory()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var history = await subscriptionHistoryService.GetByUserID(user.UserID);
+		return View(history);
+	}
+
+	public ViewResult SubscriptionCardUpdate()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		return View();
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> SubscriptionCardUpdate(string token)
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var result = await buyService.UpdatePaymentMethod(user.UserID, token);
+		if (!result.IsSuccessful)
+		{
+			ViewBag.ErrorMessage = result.Message;
+			return View();
+		}
+		return RedirectToAction("Subscriptions");
+	}
+
+	public async Task<ViewResult> EditProfile()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return View("EditAccountNoUser");
+		var profile = await profileService.GetProfileForEdit(user);
 		var userEdit = new UserEditProfile(profile);
 		return View(userEdit);
 	}
@@ -277,12 +353,12 @@ public class AccountController : Controller
 	[HttpPost]
 	public async Task<ViewResult> EditProfile(UserEditProfile userEdit)
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		await _profileService.EditUserProfile(user, userEdit);
+		await profileService.EditUserProfile(user, userEdit);
 		ViewBag.Result = Resources.ProfileUpdated;
-		var profile = await _profileService.GetProfileForEdit(user);
+		var profile = await profileService.GetProfileForEdit(user);
 		var newEdit = new UserEditProfile(profile);
 		return View(newEdit);
 	}
@@ -290,10 +366,10 @@ public class AccountController : Controller
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public ViewResult Security()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		var isNewUserApproved = _settingsManager.Current.IsNewUserApproved;
+		var isNewUserApproved = settingsManager.Current.IsNewUserApproved;
 		var userEdit = new UserEditSecurity(user, isNewUserApproved);
 		return View(userEdit);
 	}
@@ -302,70 +378,70 @@ public class AccountController : Controller
 	[HttpPost]
 	public async Task<ViewResult> ChangePassword(UserEditSecurity userEdit)
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		var (isPasswordPassed, _) = await _userService.CheckPassword(user.Email, userEdit.OldPassword);
+		var (isPasswordPassed, _) = await userService.CheckPassword(user.Email, userEdit.OldPassword);
 		if (!isPasswordPassed)
 			ViewBag.PasswordResult = Resources.OldPasswordIncorrect;
 		else if (!userEdit.NewPasswordsMatch())
 			ViewBag.PasswordResult = Resources.RetypePasswordMustMatch;
-		else if (!_userService.IsPasswordValid(userEdit.NewPassword, out var errorMessage))
+		else if (!userService.IsPasswordValid(userEdit.NewPassword, out var errorMessage))
 			ViewBag.PasswordResult = errorMessage;
 		else
 		{
-			await _userService.SetPassword(user, userEdit.NewPassword, HttpContext.Connection.RemoteIpAddress.ToString(), user);
+			await userService.SetPassword(user, userEdit.NewPassword, HttpContext.Connection.RemoteIpAddress?.ToString(), user);
 			ViewBag.PasswordResult = Resources.NewPasswordSaved;
 		}
-		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
+		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = settingsManager.Current.IsNewUserApproved });
 	}
 
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	[HttpPost]
 	public async Task<ViewResult> ChangeEmail(UserEditSecurity userEdit)
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
 		if (string.IsNullOrWhiteSpace(userEdit.NewEmail) || !userEdit.NewEmail.IsEmailAddress())
 			ViewBag.EmailResult = Resources.ValidEmailAddressRequired;
 		else if (userEdit.NewEmail != userEdit.NewEmailRetype)
 			ViewBag.EmailResult = Resources.EmailsMustMatch;
-		else if (await _userService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
+		else if (await userService.IsEmailInUseByDifferentUser(user, userEdit.NewEmail))
 			ViewBag.EmailResult = Resources.EmailInUse;
 		else
 		{
-			await _userService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Connection.RemoteIpAddress.ToString());
-			if (_settingsManager.Current.IsNewUserApproved)
+			await userService.ChangeEmail(user, userEdit.NewEmail, user, HttpContext.Connection.RemoteIpAddress?.ToString());
+			if (settingsManager.Current.IsNewUserApproved)
 				ViewBag.EmailResult = Resources.EmailChangeSuccess;
 			else
 			{
 				ViewBag.EmailResult = Resources.VerificationEmailSent;
 				var verifyUrl = Url.Action("Verify", "Account", null, Request.Scheme);
-				var result = _newAccountMailer.Send(user, verifyUrl);
+				var result = newAccountMailer.Send(user, verifyUrl);
 				if (result != SmtpStatusCode.Ok)
 					ViewBag.EmailResult = Resources.EmailProblemAccount + result;
 			}
 		}
-		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = _settingsManager.Current.IsNewUserApproved });
+		return View("Security", new UserEditSecurity { NewEmail = String.Empty, NewEmailRetype = String.Empty, IsNewUserApproved = settingsManager.Current.IsNewUserApproved });
 	}
 
 	public async Task<ViewResult> ManagePhotos()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		var profile = await _profileService.GetProfile(user);
+		var profile = await profileService.GetProfile(user);
 		var userEdit = new UserEditPhoto(profile);
 		if (profile.ImageID.HasValue)
-			userEdit.IsImageApproved = await _imageService.IsUserImageApproved(profile.ImageID.Value);
+			userEdit.IsImageApproved = await imageService.IsUserImageApproved(profile.ImageID.Value);
 		return View(userEdit);
 	}
 		
 	[HttpPost]
 	public async Task<ActionResult> ManagePhotos(UserEditPhoto userEdit)
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
 		byte[] avatarFile = null;
@@ -374,22 +450,22 @@ public class AccountController : Controller
 		byte[] photoFile = null;
 		if (userEdit.PhotoFile != null)
 			photoFile = userEdit.PhotoFile.OpenReadStream().ToBytes();
-		await _userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+		await userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
 		return RedirectToAction("ManagePhotos");
 	}
 
 	public async Task<ViewResult> MiniProfile(int id)
 	{
-		var user = await _userService.GetUser(id);
+		var user = await userService.GetUser(id);
 		if (user == null)
 			return View("MiniUserNotFound");
-		var profile = await _profileService.GetProfile(user);
+		var profile = await profileService.GetProfile(user);
 		UserImage userImage = null;
 		if (profile.ImageID.HasValue)
-			userImage = await _imageService.GetUserImage(profile.ImageID.Value);
+			userImage = await imageService.GetUserImage(profile.ImageID.Value);
 		var model = new DisplayProfile(user, profile, userImage);
-		model.PostCount = await _postService.GetPostCount(user);
-		var viewingUser = _userRetrievalShim.GetUser();
+		model.PostCount = await postService.GetPostCount(user);
+		var viewingUser = userRetrievalShim.GetUser();
 		if (viewingUser == null)
 			model.ShowDetails = false;
 		return View(model);
@@ -397,18 +473,18 @@ public class AccountController : Controller
 
 	public async Task<ActionResult> ViewProfile(int id)
 	{
-		var user = await _userService.GetUser(id);
+		var user = await userService.GetUser(id);
 		if (user == null)
 			return NotFound();
-		var profile = await _profileService.GetProfile(user);
+		var profile = await profileService.GetProfile(user);
 		UserImage userImage = null;
 		if (profile.ImageID.HasValue)
-			userImage = await _imageService.GetUserImage(profile.ImageID.Value);
+			userImage = await imageService.GetUserImage(profile.ImageID.Value);
 		var model = new DisplayProfile(user, profile, userImage);
-		model.PostCount = await _postService.GetPostCount(user);
-		model.Feed = await _feedService.GetFeed(user);
-		model.UserAwards = await _userAwardService.GetAwards(user);
-		var viewingUser = _userRetrievalShim.GetUser();
+		model.PostCount = await postService.GetPostCount(user);
+		model.Feed = await feedService.GetFeed(user);
+		model.UserAwards = await userAwardService.GetAwards(user);
+		var viewingUser = userRetrievalShim.GetUser();
 		if (viewingUser == null)
 			model.ShowDetails = false;
 		return View(model);
@@ -416,17 +492,17 @@ public class AccountController : Controller
 
 	public async Task<ActionResult> Posts(int id, int pageNumber = 1)
 	{
-		var postUser = await _userService.GetUser(id);
+		var postUser = await userService.GetUser(id);
 		if (postUser == null)
 			return NotFound();
 		var includeDeleted = false;
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user != null && user.IsInRole(PermanentRoles.Moderator))
 			includeDeleted = true;
-		var titles = _forumService.GetAllForumTitles();
-		var (topics, pagerContext) = await _topicService.GetTopics(user, postUser, includeDeleted, pageNumber);
+		var titles = forumService.GetAllForumTitles();
+		var (topics, pagerContext) = await topicService.GetTopics(user, postUser, includeDeleted, pageNumber);
 		var container = new PagedTopicContainer { ForumTitles = titles, PagerContext = pagerContext, Topics = topics };
-		await _lastReadService.GetTopicReadStatus(user, container);
+		await lastReadService.GetTopicReadStatus(user, container);
 		ViewBag.PostUserName = postUser.Name;
 		return View(container);
 	}
@@ -434,7 +510,7 @@ public class AccountController : Controller
 	[PopForumsAuthenticationIgnore]
 	public ActionResult Login()
 	{
-		if (_config.IsOAuthOnly)
+		if (config.IsOAuthOnly)
 		{
 			return Redirect("OAuthLogin");
 		}
@@ -447,7 +523,7 @@ public class AccountController : Controller
 			link = Url.Action("Index", HomeController.Name);
 		ViewBag.Referrer = link;
 
-		var externalLoginList = _externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();
+		var externalLoginList = externalLoginRoutingService.GetActiveProviderTypeAndNameDictionary();
 		
 		return View(externalLoginList);
 	}
@@ -455,12 +531,12 @@ public class AccountController : Controller
 	[PopForumsAuthenticationIgnore]
 	public IActionResult OAuthLogin()
 	{
-		if (_config.IsOAuthOnly)
+		if (config.IsOAuthOnly)
 		{
 			var identityProviderRedirectUrl = Url.Action(nameof(IdentityController.CallbackHandler), IdentityController.Name, null, Request.Scheme);
-			var redirect = _oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
+			var redirect = oAuthOnlyService.GetLoginUrl(identityProviderRedirectUrl);
 			var loginState = new ExternalLoginState {ProviderType = ProviderType.OAuthOnly, ReturnUrl = identityProviderRedirectUrl };
-			_externalLoginTempService.Persist(loginState);
+			externalLoginTempService.Persist(loginState);
 			return View("OAuthLogin", redirect);
 		}
 
@@ -470,8 +546,8 @@ public class AccountController : Controller
 	[PopForumsAuthenticationIgnore]
 	public async Task<ViewResult> Unsubscribe(int id, string key)
 	{
-		var user = await _userService.GetUser(id);
-		if (user == null || (await _profileService.Unsubscribe(user, key) == false))
+		var user = await userService.GetUser(id);
+		if (user == null || (await profileService.Unsubscribe(user, key) == false))
 			return View("UnsubscribeFailure");
 		return View();
 	}
@@ -479,10 +555,10 @@ public class AccountController : Controller
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ViewResult> ExternalLogins()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		var externalAssociations = await _externalUserAssociationManager.GetExternalUserAssociations(user);
+		var externalAssociations = await externalUserAssociationManager.GetExternalUserAssociations(user);
 		ViewBag.Referrer = Url.Action("ExternalLogins");
 		return View(externalAssociations);
 	}
@@ -490,16 +566,16 @@ public class AccountController : Controller
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> RemoveExternalLogin(int id)
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return View("EditAccountNoUser");
-		await _externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress.ToString());
+		await externalUserAssociationManager.RemoveAssociation(user, id, HttpContext.Connection.RemoteIpAddress?.ToString());
 		return RedirectToAction("ExternalLogins");
 	}
 
 	public RedirectToActionResult MyProfile()
 	{
-		var user = _userRetrievalShim.GetUser();
+		var user = userRetrievalShim.GetUser();
 		if (user == null)
 			return RedirectToAction("Create");
 		return RedirectToAction("ViewProfile", new {id = user.UserID});

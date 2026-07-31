@@ -5,5 +5,7 @@ public enum NotificationType
 	NewReply = 0,
 	VoteUp = 1,
 	QuestionAnswered = 2,
-	Award = 3
+	Award = 3,
+	SubscriptionRenewed = 4,
+	SubscriptionRenewalFailed = 5
 }

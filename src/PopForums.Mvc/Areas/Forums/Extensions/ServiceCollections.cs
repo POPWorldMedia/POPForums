@@ -70,6 +70,8 @@ public static class ServiceCollections
 		services.AddHostedService<CloseAgedTopicsJob>();
 		services.AddHostedService<PostImageCleanupJob>();
 		services.AddHostedService<SubscribeNotificationJob>();
+		services.AddHostedService<RenewalJob>();
+		services.AddHostedService<RenewalEnqueueJob>();
 		return services;
 	}
 }

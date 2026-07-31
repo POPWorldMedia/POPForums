@@ -1,4 +1,5 @@
 ﻿@model List<PopForums.ExternalLogin.ExternalUserAssociation>
+@inject ISettingsManager SettingsManager
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ExternalLogins;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
@@ -15,6 +16,10 @@
 			<a class="dropdown-item" asp-action="EditProfile">@PopForums.Resources.EditYourProfile</a>
 			<a class="dropdown-item" asp-action="Security">@PopForums.Resources.ChangeYourEmailPassword</a>
 			<a class="dropdown-item" asp-action="ManagePhotos">@PopForums.Resources.ManageYourPhotos</a>
+			@if (SettingsManager.Current.IsSubscriptionEnabled)
+			{
+				<a class="dropdown-item" asp-action="Subscriptions">@PopForums.Resources.Subscriptions</a>
+			}
 		</div>
 	</li>
 

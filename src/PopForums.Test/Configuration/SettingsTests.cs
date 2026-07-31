@@ -155,6 +155,11 @@ public class SettingsTests
 		const int postImageMaxHeight = 654;
 		const int postImageMaxWidth = 980;
 		const int postImageMaxkBytes = 631;
+		const int renewalWorkerInterval = 481;
+		const bool isSubscriptionEnabled = true;
+		const string stripeSecretKey = "sk_test_123";
+		const string stripePublishableKey = "pk_test_456";
+		const string currency = "eur";
 		var dictionary = new Dictionary<string, object>
 		{
 			{"TermsOfService", tos},
@@ -215,7 +220,12 @@ public class SettingsTests
 			{"IsPrivateForumInstance", isPrivateForumInstance},
 			{"PostImageMaxHeight", postImageMaxHeight},
 			{"PostImageMaxWidth", postImageMaxWidth},
-			{"PostImageMaxkBytes", postImageMaxkBytes}
+			{"PostImageMaxkBytes", postImageMaxkBytes},
+			{"RenewalWorkerInterval", renewalWorkerInterval},
+			{"IsSubscriptionEnabled", isSubscriptionEnabled},
+			{"StripeSecretKey", stripeSecretKey},
+			{"StripePublishableKey", stripePublishableKey},
+			{"Currency", currency}
 		};
 
 		var settingsRepo = Substitute.For<ISettingsRepository>();
@@ -283,6 +293,11 @@ public class SettingsTests
 		settings.PostImageMaxHeight = postImageMaxHeight;
 		settings.PostImageMaxWidth = postImageMaxWidth;
 		settings.PostImageMaxkBytes = postImageMaxkBytes;
+		settings.RenewalWorkerInterval = renewalWorkerInterval;
+		settings.IsSubscriptionEnabled = isSubscriptionEnabled;
+		settings.StripeSecretKey = stripeSecretKey;
+		settings.StripePublishableKey = stripePublishableKey;
+		settings.Currency = currency;
 		settingsManager.SaveCurrent();
 
 		settingsRepo.Received().Save(Arg.Is<Dictionary<string, object>>(x => x.SequenceEqual(dictionary)));
