@@ -12,12 +12,17 @@ public class RenewalService(IUserRepository userRepository, ISkuRepository skuRe
 {
 	public async Task<IEnumerable<int>> GetUserIDsForRenewal()
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return [];
 		var today = DateOnly.FromDateTime(DateTime.UtcNow);
 		return await userRepository.GetUserIDsBySubscriptionExpirationAndProfileRenewal(today);
 	}
 
 	public async Task<BasicServiceResponse<Transaction>> ChargeAndRecordRenewal(int userID)
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return BasicServiceResponse<Transaction>.Failed("Subscriptions are not enabled.");
+
 		var now = DateTime.UtcNow;
 
 		var user = await userRepository.GetUser(userID);

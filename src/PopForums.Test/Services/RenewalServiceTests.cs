@@ -26,7 +26,7 @@ public class RenewalServiceTests
 		_profileRepository = Substitute.For<IProfileRepository>();
 		_subscriptionHistoryRepository = Substitute.For<ISubscriptionHistoryRepository>();
 		_settingsManager = Substitute.For<ISettingsManager>();
-		_settingsManager.Current.Returns(new Settings());
+		_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = true });
 		return new RenewalService(_userRepository, _skuRepository, _bankChargeRepository, _transactionRepository, _profileRepository, _subscriptionHistoryRepository, _settingsManager);
 	}
 
@@ -60,10 +60,34 @@ public class RenewalServiceTests
 			Assert.Equal(ids, result);
 			await _userRepository.Received().GetUserIDsBySubscriptionExpirationAndProfileRenewal(today);
 		}
+
+		[Fact]
+		public async Task ReturnsEmptyWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+
+			var result = await service.GetUserIDsForRenewal();
+
+			Assert.Empty(result);
+			await _userRepository.DidNotReceive().GetUserIDsBySubscriptionExpirationAndProfileRenewal(Arg.Any<DateOnly>());
+		}
 	}
 
 	public class ChargeAndRecordRenewalTests : RenewalServiceTests
 	{
+		[Fact]
+		public async Task ReturnsFailureWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+
+			var result = await service.ChargeAndRecordRenewal(UserID);
+
+			Assert.False(result.IsSuccessful);
+			await _bankChargeRepository.DidNotReceive().ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>());
+		}
+
 		[Fact]
 		public async Task ThrowsWhenSkuIsNull()
 		{

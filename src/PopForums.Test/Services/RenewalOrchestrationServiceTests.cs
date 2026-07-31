@@ -11,6 +11,7 @@ public class RenewalOrchestrationServiceTests
 	private IRenewalQueueRepository _renewalQueueRepository;
 	private ITenantService _tenantService;
 	private IErrorLog _errorLog;
+	private ISettingsManager _settingsManager;
 
 	private RenewalOrchestrationService GetService()
 	{
@@ -18,8 +19,10 @@ public class RenewalOrchestrationServiceTests
 		_renewalQueueRepository = Substitute.For<IRenewalQueueRepository>();
 		_tenantService = Substitute.For<ITenantService>();
 		_errorLog = Substitute.For<IErrorLog>();
+		_settingsManager = Substitute.For<ISettingsManager>();
+		_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = true });
 		_tenantService.GetTenant().Returns(TenantID);
-		return new RenewalOrchestrationService(_renewalService, _renewalQueueRepository, _tenantService, _errorLog);
+		return new RenewalOrchestrationService(_renewalService, _renewalQueueRepository, _tenantService, _errorLog, _settingsManager);
 	}
 
 	public class EnqueueUsersForRenewalTests : RenewalOrchestrationServiceTests
@@ -46,6 +49,18 @@ public class RenewalOrchestrationServiceTests
 
 			await service.EnqueueUsersForRenewal();
 
+			await _renewalQueueRepository.DidNotReceive().Enqueue(Arg.Any<RenewalQueuePayload>());
+		}
+
+		[Fact]
+		public async Task DoesNothingWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+
+			await service.EnqueueUsersForRenewal();
+
+			await _renewalService.DidNotReceive().GetUserIDsForRenewal();
 			await _renewalQueueRepository.DidNotReceive().Enqueue(Arg.Any<RenewalQueuePayload>());
 		}
 	}
@@ -75,6 +90,17 @@ public class RenewalOrchestrationServiceTests
 			await service.ProcessRenewal(UserID);
 
 			_errorLog.DidNotReceive().Log(Arg.Any<Exception>(), Arg.Any<ErrorSeverity>(), Arg.Any<string>());
+		}
+
+		[Fact]
+		public async Task DoesNothingWhenSubscriptionsAreNotEnabled()
+		{
+			var service = GetService();
+			_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = false });
+
+			await service.ProcessRenewal(UserID);
+
+			await _renewalService.DidNotReceive().ChargeAndRecordRenewal(Arg.Any<int>());
 		}
 	}
 }

@@ -6,10 +6,13 @@ public interface IRenewalOrchestrationService
 	Task ProcessRenewal(int userID);
 }
 
-public class RenewalOrchestrationService(IRenewalService renewalService, IRenewalQueueRepository renewalQueueRepository, ITenantService tenantService, IErrorLog errorLog) : IRenewalOrchestrationService
+public class RenewalOrchestrationService(IRenewalService renewalService, IRenewalQueueRepository renewalQueueRepository, ITenantService tenantService, IErrorLog errorLog, ISettingsManager settingsManager) : IRenewalOrchestrationService
 {
 	public async Task EnqueueUsersForRenewal()
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return;
+
 		var tenantID = tenantService.GetTenant();
 		var userIDs = await renewalService.GetUserIDsForRenewal();
 		foreach (var userID in userIDs)
@@ -21,6 +24,9 @@ public class RenewalOrchestrationService(IRenewalService renewalService, IRenewa
 
 	public async Task ProcessRenewal(int userID)
 	{
+		if (!settingsManager.Current.IsSubscriptionEnabled)
+			return;
+
 		// this will be called by a worker and azure function
 		var result = await renewalService.ChargeAndRecordRenewal(userID);
 		if (!result.IsSuccessful)
