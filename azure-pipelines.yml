@@ -15,14 +15,17 @@ variables:
   functionAppName: 'popforumsdevfunctions'
   webAppName: 'popforumsdev'
   azureServiceConnection: 'popforums-azure'
+  isMain: eq(variables['Build.SourceBranch'], 'refs/heads/main')
 
 stages:
   - stage: Build
-    displayName: 'Build & test'
+    displayName: 'Build, test, pack & publish artifacts'
     jobs:
       - job: BuildAndTest
         pool:
           vmImage: 'ubuntu-latest'
+        variables:
+          - group: popforums-github-packages
         steps:
           - task: UseDotNet@2
             displayName: 'Use .NET $(dotnetVersion)'
@@ -49,24 +52,10 @@ stages:
               projects: 'src/PopForums.Test/PopForums.Test.csproj'
               arguments: '--configuration $(buildConfiguration) --no-build'
 
-  - stage: PackAndPublishPackages
-    displayName: 'Pack & publish NuGet packages'
-    dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-    jobs:
-      - job: PackAndPush
-        pool:
-          vmImage: 'ubuntu-latest'
-        variables:
-          - group: popforums-github-packages
-        steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET $(dotnetVersion)'
-            inputs:
-              version: '$(dotnetVersion)'
-
+          # Everything below only matters for a deployable/publishable main build.
           - task: NodeTool@0
             displayName: 'Use Node.js'
+            condition: and(succeeded(), $(isMain))
             inputs:
               versionSpec: '20.x'
 
@@ -76,6 +65,7 @@ stages:
               npx gulp copies
               npx gulp css
             displayName: 'Build Mvc front-end assets'
+            condition: and(succeeded(), $(isMain))
             workingDirectory: 'src/PopForums.Mvc'
 
           - script: |
@@ -91,9 +81,12 @@ stages:
                 dotnet pack "$PROJ" \
                   --configuration $(buildConfiguration) \
                   --output "$(Build.ArtifactStagingDirectory)/packages" \
-                  --version-suffix "$VERSION_SUFFIX"
+                  --version-suffix "$VERSION_SUFFIX" \
+                  --no-build \
+                  --no-restore
               done
-            displayName: 'dotnet pack (6 libraries)'
+            displayName: 'dotnet pack (6 libraries, no rebuild)'
+            condition: and(succeeded(), $(isMain))
 
           - script: |
               set -e
@@ -108,29 +101,51 @@ stages:
                 --api-key "$(GH_PACKAGES_TOKEN)" \
                 --skip-duplicate
             displayName: 'Push packages to GitHub Packages'
+            condition: and(succeeded(), $(isMain))
+
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet publish PopForums.FunctionsHost (no rebuild)'
+            condition: and(succeeded(), $(isMain))
+            inputs:
+              command: 'publish'
+              projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
+              publishWebProjects: false
+              arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/functionshost'
+              zipAfterPublish: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet publish PopForums.Web (no rebuild)'
+            condition: and(succeeded(), $(isMain))
+            inputs:
+              command: 'publish'
+              projects: 'src/PopForums.Web/PopForums.Web.csproj'
+              publishWebProjects: false
+              arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/web'
+              zipAfterPublish: true
+
+          - publish: '$(Build.ArtifactStagingDirectory)/functionshost'
+            artifact: functionshost
+            displayName: 'Publish functionshost artifact'
+            condition: and(succeeded(), $(isMain))
+
+          - publish: '$(Build.ArtifactStagingDirectory)/web'
+            artifact: web
+            displayName: 'Publish web artifact'
+            condition: and(succeeded(), $(isMain))
 
   - stage: DeployFunctions
     displayName: 'Deploy Functions host'
     dependsOn: Build
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
-      - job: PublishAndDeploy
+      - job: Deploy
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET $(dotnetVersion)'
-            inputs:
-              version: '$(dotnetVersion)'
+          - checkout: none
 
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet publish PopForums.FunctionsHost'
-            inputs:
-              command: 'publish'
-              projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
-              publishWebProjects: false
-              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/functionshost'
-              zipAfterPublish: true
+          - download: current
+            artifact: functionshost
 
           - task: AzureFunctionApp@2
             displayName: 'Deploy to Azure Function App'
@@ -139,43 +154,21 @@ stages:
               appType: 'functionAppLinux'
               isFlexConsumption: true
               appName: '$(functionAppName)'
-              package: '$(Build.ArtifactStagingDirectory)/functionshost/**/*.zip'
+              package: '$(Pipeline.Workspace)/functionshost/**/*.zip'
 
   - stage: DeployWeb
     displayName: 'Deploy web app'
-    dependsOn: Build
+    dependsOn: DeployFunctions
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
-      - job: PublishAndDeploy
+      - job: Deploy
         pool:
           vmImage: 'ubuntu-latest'
         steps:
-          - task: UseDotNet@2
-            displayName: 'Use .NET $(dotnetVersion)'
-            inputs:
-              version: '$(dotnetVersion)'
+          - checkout: none
 
-          - task: NodeTool@0
-            displayName: 'Use Node.js'
-            inputs:
-              versionSpec: '20.x'
-
-          - script: |
-              set -e
-              npm install
-              npx gulp copies
-              npx gulp css
-            displayName: 'Build Mvc front-end assets'
-            workingDirectory: 'src/PopForums.Mvc'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'dotnet publish PopForums.Web'
-            inputs:
-              command: 'publish'
-              projects: 'src/PopForums.Web/PopForums.Web.csproj'
-              publishWebProjects: false
-              arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/web'
-              zipAfterPublish: true
+          - download: current
+            artifact: web
 
           - task: AzureWebApp@1
             displayName: 'Deploy to Azure Web App'
@@ -183,4 +176,4 @@ stages:
               azureSubscription: '$(azureServiceConnection)'
               appType: 'webApp'
               appName: '$(webAppName)'
-              package: '$(Build.ArtifactStagingDirectory)/web/**/*.zip'
+              package: '$(Pipeline.Workspace)/web/**/*.zip'
