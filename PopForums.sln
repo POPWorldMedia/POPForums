@@ -30,11 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.ElasticKit", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PopForums.AzureKit.Functions", "src\PopForums.AzureKit.Functions\PopForums.AzureKit.Functions.csproj", "{D50E69CC-5070-41DD-A881-20D29B1913EE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.FunctionsHost", "src\PopForums.FunctionsHost\PopForums.FunctionsHost.csproj", "{66A2292B-82C2-4B04-8811-EED29F1CC466}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PopForums.FunctionsHost", "src\PopForums.FunctionsHost\PopForums.FunctionsHost.csproj", "{F115BA62-EDAF-4FB0-9956-92C99D15C89E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
