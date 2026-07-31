@@ -1386,4 +1386,10 @@
   <data name="UpdateCard" xml:space="preserve">
     <value>Оновити картку</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Поновлення вашої підписки «{0}» пройшло успішно.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Поновлення вашої підписки «{0}» не вдалося.</value>
+  </data>
 </root>

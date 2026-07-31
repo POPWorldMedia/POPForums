@@ -1371,4 +1371,10 @@
   <data name="UpdateCard" xml:space="preserve">
     <value>Kaart bijwerken</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>De verlenging van uw '{0}' is gelukt.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>De verlenging van uw '{0}' is mislukt.</value>
+  </data>
 </root>

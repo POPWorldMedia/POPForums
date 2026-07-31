@@ -40,4 +40,30 @@ public class ApiController : Controller
 		await _notificationAdapter.Reply(replyPayload.PostName, replyPayload.Title, replyPayload.TopicID, replyPayload.UserID, replyPayload.TenantID);
 		return Ok();
 	}
+
+	[HttpPost("/Forums/Api/NotifyRenewal")]
+	public async Task<IActionResult> NotifyRenewal(RenewalPayload renewalPayload)
+	{
+		var hash = _config.QueueConnectionString.GetSHA256Hash();
+		var result = HttpContext.Request.Headers.TryGetValue(NotificationTunnel.HeaderName, out var headerValue);
+		if (headerValue != hash)
+			return Unauthorized();
+		if (renewalPayload == null)
+			return BadRequest();
+		await _notificationAdapter.SubscriptionRenewed(renewalPayload.UserID, renewalPayload.SkuName, renewalPayload.TenantID);
+		return Ok();
+	}
+
+	[HttpPost("/Forums/Api/NotifyRenewalFailed")]
+	public async Task<IActionResult> NotifyRenewalFailed(RenewalPayload renewalPayload)
+	{
+		var hash = _config.QueueConnectionString.GetSHA256Hash();
+		var result = HttpContext.Request.Headers.TryGetValue(NotificationTunnel.HeaderName, out var headerValue);
+		if (headerValue != hash)
+			return Unauthorized();
+		if (renewalPayload == null)
+			return BadRequest();
+		await _notificationAdapter.SubscriptionRenewalFailed(renewalPayload.UserID, renewalPayload.SkuName, renewalPayload.TenantID);
+		return Ok();
+	}
 }

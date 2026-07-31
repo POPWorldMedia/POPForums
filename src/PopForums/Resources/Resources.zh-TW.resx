@@ -1365,4 +1365,10 @@
   <data name="UpdateCard" xml:space="preserve">
     <value>更新卡片</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>您的「{0}」續訂成功。</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>您的「{0}」續訂失敗。</value>
+  </data>
 </root>

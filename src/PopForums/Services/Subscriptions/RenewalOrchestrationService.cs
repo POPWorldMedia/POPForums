@@ -6,7 +6,7 @@ public interface IRenewalOrchestrationService
 	Task ProcessRenewal(int userID);
 }
 
-public class RenewalOrchestrationService(IRenewalService renewalService, IRenewalQueueRepository renewalQueueRepository, ITenantService tenantService, IErrorLog errorLog, ISettingsManager settingsManager) : IRenewalOrchestrationService
+public class RenewalOrchestrationService(IRenewalService renewalService, IRenewalQueueRepository renewalQueueRepository, ITenantService tenantService, IErrorLog errorLog, ISettingsManager settingsManager, INotificationTunnel notificationTunnel, IProfileRepository profileRepository, ISkuService skuService) : IRenewalOrchestrationService
 {
 	public async Task EnqueueUsersForRenewal()
 	{
@@ -28,8 +28,25 @@ public class RenewalOrchestrationService(IRenewalService renewalService, IRenewa
 			return;
 
 		// this will be called by a worker and azure function
+		var tenantID = tenantService.GetTenant();
+
+		string skuName = null;
+		var profile = await profileRepository.GetProfile(userID);
+		if (profile != null && !string.IsNullOrEmpty(profile.SkuID))
+		{
+			var sku = await skuService.Get(profile.SkuID);
+			skuName = sku?.Name;
+		}
+
 		var result = await renewalService.ChargeAndRecordRenewal(userID);
 		if (!result.IsSuccessful)
+		{
 			errorLog.Log(null, ErrorSeverity.Information, $"Renewal charge failed for user {userID}: {result.Message}");
+			notificationTunnel.SendNotificationForSubscriptionRenewalFailed(userID, skuName, tenantID);
+		}
+		else
+		{
+			notificationTunnel.SendNotificationForSubscriptionRenewed(userID, skuName, tenantID);
+		}
 	}
 }

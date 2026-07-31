@@ -1389,4 +1389,10 @@
   <data name="UpdateCard" xml:space="preserve">
     <value>Update card</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Your '{0}' renewal succeeded.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Your '{0}' renewal failed.</value>
+  </data>
 </root>

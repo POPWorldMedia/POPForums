@@ -6,12 +6,17 @@ namespace PopForums.Test.Services;
 public class RenewalOrchestrationServiceTests
 {
 	private const string TenantID = "tenant1";
+	private const string SkuID = "sku1";
+	private const string SkuName = "Gold Plan";
 
 	private IRenewalService _renewalService;
 	private IRenewalQueueRepository _renewalQueueRepository;
 	private ITenantService _tenantService;
 	private IErrorLog _errorLog;
 	private ISettingsManager _settingsManager;
+	private INotificationTunnel _notificationTunnel;
+	private IProfileRepository _profileRepository;
+	private ISkuService _skuService;
 
 	private RenewalOrchestrationService GetService()
 	{
@@ -21,8 +26,11 @@ public class RenewalOrchestrationServiceTests
 		_errorLog = Substitute.For<IErrorLog>();
 		_settingsManager = Substitute.For<ISettingsManager>();
 		_settingsManager.Current.Returns(new Settings { IsSubscriptionEnabled = true });
+		_notificationTunnel = Substitute.For<INotificationTunnel>();
+		_profileRepository = Substitute.For<IProfileRepository>();
+		_skuService = Substitute.For<ISkuService>();
 		_tenantService.GetTenant().Returns(TenantID);
-		return new RenewalOrchestrationService(_renewalService, _renewalQueueRepository, _tenantService, _errorLog, _settingsManager);
+		return new RenewalOrchestrationService(_renewalService, _renewalQueueRepository, _tenantService, _errorLog, _settingsManager, _notificationTunnel, _profileRepository, _skuService);
 	}
 
 	public class EnqueueUsersForRenewalTests : RenewalOrchestrationServiceTests
@@ -73,23 +81,31 @@ public class RenewalOrchestrationServiceTests
 		public async Task LogsInformationWhenChargeFails()
 		{
 			var service = GetService();
+			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(new Profile { UserID = UserID, SkuID = SkuID }));
+			_skuService.Get(SkuID).Returns(Task.FromResult(new Sku { SkuID = SkuID, Name = SkuName }));
 			_renewalService.ChargeAndRecordRenewal(UserID).Returns(Task.FromResult(BasicServiceResponse<Transaction>.Failed("card declined")));
 
 			await service.ProcessRenewal(UserID);
 
 			_errorLog.Received().Log(null, ErrorSeverity.Information, Arg.Is<string>(x => x.Contains("card declined") && x.Contains(UserID.ToString())));
+			_notificationTunnel.Received().SendNotificationForSubscriptionRenewalFailed(UserID, SkuName, TenantID);
+			_notificationTunnel.DidNotReceive().SendNotificationForSubscriptionRenewed(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]
 		public async Task DoesNotLogWhenChargeSucceeds()
 		{
 			var service = GetService();
+			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(new Profile { UserID = UserID, SkuID = SkuID }));
+			_skuService.Get(SkuID).Returns(Task.FromResult(new Sku { SkuID = SkuID, Name = SkuName }));
 			var transaction = new Transaction { UserID = UserID };
 			_renewalService.ChargeAndRecordRenewal(UserID).Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
 			await service.ProcessRenewal(UserID);
 
 			_errorLog.DidNotReceive().Log(Arg.Any<Exception>(), Arg.Any<ErrorSeverity>(), Arg.Any<string>());
+			_notificationTunnel.Received().SendNotificationForSubscriptionRenewed(UserID, SkuName, TenantID);
+			_notificationTunnel.DidNotReceive().SendNotificationForSubscriptionRenewalFailed(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());
 		}
 
 		[Fact]

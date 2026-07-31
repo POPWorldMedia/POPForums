@@ -1370,4 +1370,10 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="UpdateCard" xml:space="preserve">
     <value>Karte aktualisieren</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Die Verlängerung von „{0}" war erfolgreich.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Die Verlängerung von „{0}" ist fehlgeschlagen.</value>
+  </data>
 </root>

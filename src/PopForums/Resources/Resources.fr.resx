@@ -1329,4 +1329,10 @@
   <data name="UpdateCard" xml:space="preserve">
     <value>Mettre à jour la carte</value>
   </data>
+  <data name="SubscriptionRenewedNotification" xml:space="preserve">
+    <value>Le renouvellement de votre « {0} » a réussi.</value>
+  </data>
+  <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
+    <value>Le renouvellement de votre « {0} » a échoué.</value>
+  </data>
 </root>
