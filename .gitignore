@@ -18,7 +18,6 @@ src/PopForums.AzureKit.Functions/Properties/ServiceDependencies
 
 src/PopForums.Mvc/wwwroot/lib/*
 src/PopForums.Mvc/wwwroot/PopForums.js
-src/PopForums.Mvc/package-lock.json
 src/PopForums.Mvc/node_modules
 
 src/PopForums.Web/Areas/Forums
