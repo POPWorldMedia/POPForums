@@ -39,8 +39,7 @@ stages:
           - script: |
               set -e
               npm install
-              npx gulp copies
-              npx gulp css
+              npx gulp default
             displayName: 'Build Mvc front-end assets'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             workingDirectory: 'src/PopForums.Mvc'
