@@ -15,7 +15,8 @@ POP Forums is an ASP.NET Core forum and Q&A application targeting .NET 10. It us
 | `PopForums.Mvc` | ASP.NET MVC area (`/Forums`), controllers, views, TypeScript client, CSS |
 | `PopForums.Web` | Host app template — references above projects, contains `Program.cs` |
 | `PopForums.AzureKit` | Azure-specific implementations: Redis cache, Azure Search, Blob Storage, queues |
-| `PopForums.AzureKit.Functions` | Azure Functions implementations for background jobs |
+| `PopForums.AzureKit.Functions` | Class library holding the `[Function]`-attributed trigger classes for background jobs (not independently deployable) |
+| `PopForums.FunctionsHost` | The deployable isolated-worker Azure Functions app — thin host (`Program.cs`, `host.json`) referencing `PopForums.AzureKit.Functions` |
 | `PopForums.ElasticKit` | ElasticSearch search implementation |
 | `PopForums.Test` | xUnit tests using NSubstitute, covers services and some MVC code |
 
@@ -36,14 +37,17 @@ dotnet test src/PopForums.Test/PopForums.Test.csproj --filter "FullyQualifiedNam
 dotnet test src/PopForums.Test/PopForums.Test.csproj --filter "FullyQualifiedName~PostMasterServiceTests.SomeMethodName"
 ```
 
-### Front-end asset setup (run once from `src/PopForums.Mvc/`)
+### Front-end asset setup (from `src/PopForums.Mvc/`)
 ```bash
 npm install
-npx gulp copies   # copy node_modules assets (Bootstrap, SignalR, TinyMCE, Vue, etc.) to wwwroot/lib
-npx gulp css      # minify CSS
+npx gulp default   # runs the full series: ts, copies, js, css
 ```
 
-TypeScript compilation is handled automatically by `Microsoft.TypeScript.MSBuild` as part of the .NET build — no manual `tsc` or `gulp ts` needed. The Mvc project's static assets (JS, CSS, fonts) are embedded into the NuGet package and served to the host app via `StaticWebAssetBasePath=/PopForums`. The app itself is run from `PopForums.Web`, not `PopForums.Mvc`.
+`gulpfile.js` declares `/// <binding BeforeBuild="default" />`, so **Visual Studio's Task Runner Explorer runs this automatically before every local build** — that's the only reason a plain `dotnet build` from Visual Studio appears to "just work" without ever touching gulp by hand. Nothing else runs it for you. Any build path outside Visual Studio (command-line `dotnet build`, CI pipelines, another IDE) must run `npx gulp default` itself, and must do so **before** `dotnet build`, not after — ASP.NET Core's static web assets embedding scans `wwwroot` during that build step, so anything gulp produces afterward is silently excluded from the build/publish output even though the files exist on disk.
+
+`Microsoft.TypeScript.MSBuild` also compiles TypeScript automatically as part of `dotnet build` — so for the *main* Mvc build path, `gulp ts` is redundant with it (both write the same `wwwroot/PopForums.js`, harmless overlap). It is not redundant in general: `gulp js` (minifies `wwwroot/*.js` into `wwwroot/lib/PopForums/dist/*.min.js`, e.g. `Admin.min.js`, `PopForums.min.js`) depends on `wwwroot/PopForums.js` already existing, and views load these `.min.js` files unconditionally (not gated to a non-Development environment) — so skipping `gulp js`/`gulp ts` breaks the admin page and main forum layout, not just cosmetics. Run the full `default` series, not a hand-picked subset of its tasks.
+
+The Mvc project's static assets (JS, CSS, fonts) are embedded into the NuGet package and served to the host app via `StaticWebAssetBasePath=/PopForums`. The app itself is run from `PopForums.Web`, not `PopForums.Mvc`.
 
 ## Running Locally
 
