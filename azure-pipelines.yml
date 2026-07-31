@@ -151,6 +151,7 @@ stages:
             inputs:
               azureSubscription: '$(azureServiceConnection)'
               appType: 'functionAppLinux'
+              isFlexConsumption: true
               appName: '$(functionAppName)'
               package: '$(Pipeline.Workspace)/functionshost/*.zip'
 
