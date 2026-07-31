@@ -15,7 +15,6 @@ variables:
   functionAppName: 'popforumsdevfunctions'
   webAppName: 'popforumsdev'
   azureServiceConnection: 'popforums-azure'
-  isMain: eq(variables['Build.SourceBranch'], 'refs/heads/main')
 
 stages:
   - stage: Build
@@ -55,7 +54,7 @@ stages:
           # Everything below only matters for a deployable/publishable main build.
           - task: UseNode@1
             displayName: 'Use Node.js'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               version: '20.x'
 
@@ -65,7 +64,7 @@ stages:
               npx gulp copies
               npx gulp css
             displayName: 'Build Mvc front-end assets'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             workingDirectory: 'src/PopForums.Mvc'
 
           - script: |
@@ -86,7 +85,7 @@ stages:
                   --no-restore
               done
             displayName: 'dotnet pack (6 libraries, no rebuild)'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - script: |
               set -e
@@ -101,11 +100,11 @@ stages:
                 --api-key "$(GH_PACKAGES_TOKEN)" \
                 --skip-duplicate
             displayName: 'Push packages to GitHub Packages'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish PopForums.FunctionsHost (no rebuild)'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               command: 'publish'
               projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
@@ -115,7 +114,7 @@ stages:
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish PopForums.Web (no rebuild)'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               command: 'publish'
               projects: 'src/PopForums.Web/PopForums.Web.csproj'
@@ -126,12 +125,12 @@ stages:
           - publish: '$(Build.ArtifactStagingDirectory)/functionshost'
             artifact: functionshost
             displayName: 'Publish functionshost artifact'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - publish: '$(Build.ArtifactStagingDirectory)/web'
             artifact: web
             displayName: 'Publish web artifact'
-            condition: and(succeeded(), $(isMain))
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   - stage: DeployFunctions
     displayName: 'Deploy Functions host'
