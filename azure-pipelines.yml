@@ -15,6 +15,8 @@ variables:
   functionAppName: 'popforumsdevfunctions'
   webAppName: 'popforumsdev'
   azureServiceConnection: 'popforums-azure'
+  NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
+  npm_config_cache: '$(Pipeline.Workspace)/.npm'
 
 stages:
   - stage: Build
@@ -36,9 +38,18 @@ stages:
             inputs:
               version: '20.x'
 
+          - task: Cache@2
+            displayName: 'Cache npm packages'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              key: 'npm | "$(Agent.OS)" | src/PopForums.Mvc/package-lock.json'
+              restoreKeys: |
+                npm | "$(Agent.OS)"
+              path: '$(npm_config_cache)'
+
           - script: |
               set -e
-              npm install
+              npm ci
               npx gulp default
             displayName: 'Build Mvc front-end assets'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
@@ -48,6 +59,14 @@ stages:
             displayName: 'Use .NET $(dotnetVersion)'
             inputs:
               version: '$(dotnetVersion)'
+
+          - task: Cache@2
+            displayName: 'Cache NuGet packages'
+            inputs:
+              key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+              restoreKeys: |
+                nuget | "$(Agent.OS)"
+              path: '$(NUGET_PACKAGES)'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet restore'
