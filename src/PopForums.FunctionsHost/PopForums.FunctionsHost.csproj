@@ -1,27 +1,42 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Description>PopForums AzureKit Functions</Description>
+		<Description>PopForums Functions Host</Description>
 		<VersionPrefix>22.0.0</VersionPrefix>
 		<Authors>Jeff Putz</Authors>
 		<TargetFramework>net10.0</TargetFramework>
-		<AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
-		<PackageId>PopForums.AzureKit.Functions</PackageId>
+		<AssemblyName>PopForums.FunctionsHost</AssemblyName>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
 		<Copyright>2025, POP World Media, LLC</Copyright>
+		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage" Version="6.8.1" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.3.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" OutputItemType="Analyzer" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\PopForums.AzureKit.Functions\PopForums.AzureKit.Functions.csproj" />
 		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
 		<ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />
 		<ProjectReference Include="..\PopForums.Sql\PopForums.Sql.csproj" />
 		<ProjectReference Include="..\PopForums\PopForums.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.dev.json" Condition="Exists('local.settings.dev.json')">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
 	</ItemGroup>
 </Project>
