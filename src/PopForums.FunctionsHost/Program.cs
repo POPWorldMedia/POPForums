@@ -1,17 +1,12 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using PopForums.Extensions;
-using PopForums.Sql;
-using PopForums.Messaging;
 using PopForums.Configuration;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using PopForums.Extensions;
+using PopForums.Sql;
 using PopForums.AzureKit;
 using PopForums.AzureKit.Functions;
 using PopForums.ElasticKit;
-using PopForums.Repositories;
-using NotificationTunnel = PopForums.AzureKit.Functions.NotificationTunnel;
 
 var configuration = new ConfigurationBuilder()
 	.SetBasePath(Environment.CurrentDirectory)
@@ -34,16 +29,17 @@ var host = new HostBuilder()
 	})
 	.ConfigureServices(s =>
 	{
+		// set up the dependencies for the SQL library in POP Forums
 		s.AddPopForumsBase();
 		s.AddPopForumsSql();
+
+		// route background work to Azure queues, and wire up the broker/cache/notification
+		// tunnel needed to talk back to the web front end
 		s.AddPopForumsAzureFunctionsAndQueues();
-		s.AddSingleton<IBroker, BrokerSink>();
-		s.RemoveAll<ICacheHelper>();
-		s.AddSingleton<ICacheHelper, PopForums.AzureKit.Functions.CacheHelper>();
-		s.RemoveAll<INotificationTunnel>();
-		s.AddTransient<INotificationTunnel, NotificationTunnel>();
-		s.RemoveAll<IPostImageRepository>();
-		s.AddTransient<IPostImageRepository, PopForums.AzureKit.PostImage.PostImageRepository>();
+		s.AddPopForumsFunctionsHost();
+
+		// persist image uploads to Azure blob storage, see configuration
+		s.AddPopForumsAzureBlobStorageForPostImages();
 
 		// use Azure table storage for logging instead of database
 		//s.AddPopForumsTableStorageLogging();
