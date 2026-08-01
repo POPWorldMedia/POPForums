@@ -37,7 +37,7 @@ else
 				<li class="mb-3 form-check">
 					<input type="radio" name="skuID" id="sku_@item.SkuID" value="@item.SkuID" class="form-check-input" />
 					<label for="sku_@item.SkuID">
-						<div><strong>@item.Name - @item.Price.ToCurrencyString(SettingsManager.Current.Currency)</strong></div>
+						<div><strong>@item.Name - @item.Price.ToCurrencyString(SettingsManager.Current.Currency) - @item.Months @PopForums.Resources.Months</strong></div>
 						<div>@item.Description</div>
 					</label>
 				</li>
