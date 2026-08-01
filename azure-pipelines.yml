@@ -62,7 +62,11 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+              # Excludes obj/** because the Azure Functions Worker SDK regenerates a
+              # WorkerExtensions.csproj under obj/ during build (even with --no-restore,
+              # see Azure/azure-functions-dotnet-worker#3183), which otherwise changes
+              # the resolved key between the restore and save steps of this task.
+              key: 'nuget | "$(Agent.OS)" | **/*.csproj, !**/bin/**, !**/obj/**'
               restoreKeys: |
                 nuget | "$(Agent.OS)"
               path: '$(NUGET_PACKAGES)'
