@@ -56,6 +56,7 @@ The `PopForums.Web` project is the host application. Key setup steps:
 1. Set the connection string in `appsettings.json` under `PopForums:Database:ConnectionString` (default looks for a local SQL Server DB named `popforums21`)
 2. First run: navigate to `/Forums/Setup` to initialize the database and admin account (don't run the SQL script manually before this)
 3. Background jobs: by default `Program.cs` uses `AddPopForumsAzureFunctionsAndQueues()`. For local development without Azure, switch to `AddPopForumsBackgroundJobs()` (in-process)
+4. Caching: by default `Program.cs` also calls `AddPopForumsRedisCache()`, so a Redis instance must be running and reachable via `PopForums:Cache:ConnectionString`. This is required, not optional, whenever you run more than one node against the same database (e.g. two local `dotnet run` processes) — the plain `AddPopForumsSql()` cache is an in-process `MemoryCache` with no cross-node invalidation, so admin changes on one node (settings, forums, categories, etc.) won't be visible on another node until the local cache entry expires. Single-node-only setups can comment this line out.
 
 ### Docker services for local dev
 ```bash

@@ -58,7 +58,7 @@ services.AddPopForumsMvc();
 //services.AddPopForumsTableStorageLogging();
 
 // use Redis cache for POP Forums using AzureKit
-//services.AddPopForumsRedisCache();
+services.AddPopForumsRedisCache();
 
 // required for real-time updating of POP Forums
 services.AddSignalR();

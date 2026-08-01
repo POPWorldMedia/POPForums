@@ -21,7 +21,7 @@ You'll need the following locally:
 * Node.js (comes with npm)
 * SQL Server Developer, or SQL Server running in a Docker container
 * A mail sending service that supports SMTP
-* Optionally, Docker if you intend to run Azurite, Redis, ElasticSearch, etc. (instructions below)
+* Docker, to run Redis, since `PopForums.Web`'s `Program.cs` calls `services.AddPopForumsRedisCache()` by default (instructions below). Optionally, also Docker for Azurite, ElasticSearch, etc.
 
 ## Build vs. reference
 
@@ -50,6 +50,8 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundJobs()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
 
 > Running the background services in the web context can cause some wild variations in CPU and RAM usage on a busy forum, especially in the code associated with updating the search index. If you are running in Azure, using Functions is a much better choice for consistent and predictable app performance.
+
+* `Program.cs` also calls `services.AddPopForumsRedisCache()` by default. Without it, the built-in `AddPopForumsSql()` cache is an in-process `MemoryCache`, which has no way to invalidate the same key on another node — if you run more than one instance of the app (including two `dotnet run` processes locally against the same database), admin changes like settings, forums, or category edits won't be seen by other nodes until their local cache entry naturally expires (`PopForums:Cache:Seconds`). Run the Redis container described below and configure `PopForums:Cache:ConnectionString` so cache invalidation propagates across nodes. If you truly only ever run a single node, you can comment this line back out and rely on the in-memory cache.
 
 ## Installation
 
