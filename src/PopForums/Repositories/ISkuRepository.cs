@@ -7,4 +7,5 @@ public interface ISkuRepository
 	Task<Sku> Get(string skuID);
 	Task<List<Sku>> GetAll();
 	Task<List<Sku>> GetAllActive();
+	Task UpdateSortOrder(string skuID, int newSortOrder);
 }

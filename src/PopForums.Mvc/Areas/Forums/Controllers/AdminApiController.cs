@@ -615,4 +615,20 @@ public class AdminApiController(
 		var skus = await skuService.GetAll();
 		return skus;
 	}
+
+	[HttpPost("/Forums/AdminApi/MoveSkuUp/{id}")]
+	public async Task<ActionResult<List<Sku>>> MoveSkuUp(string id)
+	{
+		await skuService.MoveSkuUp(id);
+		var skus = await skuService.GetAll();
+		return skus;
+	}
+
+	[HttpPost("/Forums/AdminApi/MoveSkuDown/{id}")]
+	public async Task<ActionResult<List<Sku>>> MoveSkuDown(string id)
+	{
+		await skuService.MoveSkuDown(id);
+		var skus = await skuService.GetAll();
+		return skus;
+	}
 }

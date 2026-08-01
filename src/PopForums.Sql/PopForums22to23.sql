@@ -31,7 +31,8 @@ IF OBJECT_ID('pf_Sku', 'U') IS NULL
           [Description] [nvarchar](MAX) NOT NULL,
           [Price] [decimal](18, 2) NOT NULL,
           [IsActive] [bit] NOT NULL,
-          [Months] [smallint] NOT NULL
+          [Months] [smallint] NOT NULL,
+          [SortOrder] [int] NOT NULL DEFAULT(0)
         );
     END
 

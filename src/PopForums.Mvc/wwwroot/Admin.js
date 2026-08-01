@@ -1047,6 +1047,22 @@ const SubscriptionSkus = {
 		this.resetSku();
 	},
 	methods: {
+		up: function (sku) {
+			this.startLoad();
+			axios.post(basePath + "MoveSkuUp/" + sku.skuID).then(response => {
+				this.skus = response.data;
+				this.endLoad();
+			})
+				.catch(error => this.errorAlert());
+		},
+		down: function (sku) {
+			this.startLoad();
+			axios.post(basePath + "MoveSkuDown/" + sku.skuID).then(response => {
+				this.skus = response.data;
+				this.endLoad();
+			})
+				.catch(error => this.errorAlert());
+		},
 		editSku: function (sku) {
 			this.editingSku = sku;
 			this.isNewSku = false;

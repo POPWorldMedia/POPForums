@@ -12,7 +12,7 @@ public class SkuRepository : ISkuRepository
 	public async Task Create(Sku sku)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("INSERT INTO pf_Sku (SkuID, Name, Description, Price, IsActive, Months) VALUES (@SkuID, @Name, @Description, @Price, @IsActive, @Months)", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, Months = (short)sku.Months }));
+			connection.ExecuteAsync("INSERT INTO pf_Sku (SkuID, Name, Description, Price, IsActive, Months, SortOrder) VALUES (@SkuID, @Name, @Description, @Price, @IsActive, @Months, @SortOrder)", new { sku.SkuID, sku.Name, Description = sku.Description.NullToEmpty(), sku.Price, sku.IsActive, Months = (short)sku.Months, sku.SortOrder }));
 	}
 
 	public async Task Update(Sku sku)
@@ -25,7 +25,7 @@ public class SkuRepository : ISkuRepository
 	{
 		Task<Sku> sku = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			sku = connection.QuerySingleOrDefaultAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months FROM pf_Sku WHERE SkuID = @SkuID", new { SkuID = skuID }));
+			sku = connection.QuerySingleOrDefaultAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months, SortOrder FROM pf_Sku WHERE SkuID = @SkuID", new { SkuID = skuID }));
 		return await sku;
 	}
 
@@ -33,7 +33,7 @@ public class SkuRepository : ISkuRepository
 	{
 		Task<IEnumerable<Sku>> result = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months FROM pf_Sku ORDER BY SkuID"));
+			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months, SortOrder FROM pf_Sku ORDER BY SortOrder"));
 		return result.Result.ToList();
 	}
 
@@ -41,7 +41,13 @@ public class SkuRepository : ISkuRepository
 	{
 		Task<IEnumerable<Sku>> result = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months FROM pf_Sku WHERE IsActive = 1 ORDER BY SkuID"));
+			result = connection.QueryAsync<Sku>("SELECT SkuID, Name, Description, Price, IsActive, Months, SortOrder FROM pf_Sku WHERE IsActive = 1 ORDER BY SortOrder"));
 		return result.Result.ToList();
+	}
+
+	public async Task UpdateSortOrder(string skuID, int newSortOrder)
+	{
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
+			connection.ExecuteAsync("UPDATE pf_Sku SET SortOrder = @SortOrder WHERE SkuID = @SkuID", new { SortOrder = newSortOrder, SkuID = skuID }));
 	}
 }

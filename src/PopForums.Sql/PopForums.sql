@@ -1011,7 +1011,8 @@ CREATE TABLE [dbo].[pf_Sku](
     [Description] [nvarchar](MAX) NOT NULL,
     [Price] [decimal](18, 2) NOT NULL,
     [IsActive] [bit] NOT NULL,
-    [Months] [smallint] NOT NULL
+    [Months] [smallint] NOT NULL,
+    [SortOrder] [int] NOT NULL DEFAULT(0)
 );
 
 

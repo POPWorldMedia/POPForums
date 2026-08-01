@@ -1433,6 +1433,7 @@
 		<table class="table table-sm mt-3">
 			<thead>
 				<tr>
+					<th colspan="2">@PopForums.Resources.Move</th>
 					<th>@PopForums.Resources.ID</th>
 					<th>@PopForums.Resources.Name</th>
 					<th>@PopForums.Resources.Price</th>
@@ -1442,7 +1443,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr v-for="sku in skus">
+				<tr v-for="(sku, index) in skus">
+					<td class="text-right"><input type="button" value="@PopForums.Resources.Up" class="btn btn-secondary ms-3" v-on:click="up(sku)" v-if="index != 0" style="width:5em;" /></td>
+					<td class="text-left"><input type="button" value="@PopForums.Resources.Down" class="btn btn-secondary ms-3" v-on:click="down(sku)" v-if="index != skus.length-1" style="width:5em;" /></td>
 					<td>{{sku.skuID}}</td>
 					<td>{{sku.name}}</td>
 					<td>{{sku.price}}</td>

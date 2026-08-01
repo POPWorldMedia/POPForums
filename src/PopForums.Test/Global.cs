@@ -15,9 +15,11 @@ global using PopForums.ExternalLogin;
 global using PopForums.Feeds;
 global using PopForums.Messaging;
 global using PopForums.Models;
+global using PopForums.Models.Subscriptions;
 global using PopForums.Repositories;
 global using PopForums.ScoringGame;
 global using PopForums.Services;
+global using PopForums.Services.Subscriptions;
 
 global using PopForums.Mvc.Areas.Forums.Controllers;
 global using PopForums.Mvc.Areas.Forums.Services;
