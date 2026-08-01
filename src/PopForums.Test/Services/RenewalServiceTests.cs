@@ -156,7 +156,7 @@ public class RenewalServiceTests
 		}
 
 		[Fact]
-		public async Task SucceedsAndDoesNotUpdateProfile()
+		public async Task SucceedsAndUpdatesProfileLast4()
 		{
 			var service = GetService();
 			_userRepository.GetUser(UserID).Returns(Task.FromResult(GetUser()));
@@ -164,7 +164,7 @@ public class RenewalServiceTests
 			_profileRepository.GetProfile(UserID).Returns(Task.FromResult(profile));
 			var sku = GetSku();
 			_skuRepository.Get(SkuID).Returns(Task.FromResult(sku));
-			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = profile.Last4, UserID = UserID, SkuID = SkuID, Amount = sku.Price };
+			var transaction = new Transaction { CustomerID = profile.CustomerID, Last4 = "9999", UserID = UserID, SkuID = SkuID, Amount = sku.Price };
 			_bankChargeRepository.ChargeCustomer(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<decimal>(), Arg.Any<DateTime>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
 				.Returns(Task.FromResult(BasicServiceResponse<Transaction>.Success(transaction)));
 
@@ -173,7 +173,8 @@ public class RenewalServiceTests
 			Assert.True(result.IsSuccessful);
 			Assert.Equal(transaction, result.Data);
 			await _transactionRepository.Received().Create(transaction);
-			await _profileRepository.DidNotReceive().Update(Arg.Any<Profile>());
+			Assert.Equal("9999", profile.Last4);
+			await _profileRepository.Received().Update(profile);
 		}
 
 		[Fact]

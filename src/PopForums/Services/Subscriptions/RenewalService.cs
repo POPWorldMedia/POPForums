@@ -45,6 +45,10 @@ public class RenewalService(IUserRepository userRepository, ISkuRepository skuRe
 		var transaction = transactionResult.Data;
 		await transactionRepository.Create(transaction);
 
+		// update last4 on profile with the latest from the processor
+		profile.Last4 = transaction.Last4;
+		await profileRepository.Update(profile);
+
 		// renewal happens on the expiration date, so there's no time left to preserve; base off the current expiration, or today if none is set
 		var baseExpiration = user.SubscriptionExpiration ?? DateOnly.FromDateTime(now);
 		var newExpiration = baseExpiration.AddMonths(sku.Months);

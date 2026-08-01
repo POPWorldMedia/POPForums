@@ -51,6 +51,7 @@ public class BankChargeRepository(IErrorLog errorLog, ISettingsManager settingsM
 				ProcessorID = string.Empty,
 				CustomerID = customerID,
 				Status = "no_charge",
+				Last4 = "0000",
 				UserID = userID,
 				TimeStamp = timeStamp,
 				SkuID = skuID,
