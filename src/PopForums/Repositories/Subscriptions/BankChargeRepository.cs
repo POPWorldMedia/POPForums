@@ -44,6 +44,21 @@ public class BankChargeRepository(IErrorLog errorLog, ISettingsManager settingsM
 
 	public async Task<BasicServiceResponse<Transaction>> ChargeCustomer(string customerID, int userID, decimal amount, DateTime timeStamp, string skuID, string skuName, string email)
 	{
+		if (amount <= 0)
+		{
+			var freeTransaction = new Transaction
+			{
+				ProcessorID = string.Empty,
+				CustomerID = customerID,
+				Status = "no_charge",
+				UserID = userID,
+				TimeStamp = timeStamp,
+				SkuID = skuID,
+				Amount = amount
+			};
+			return BasicServiceResponse<Transaction>.Success(freeTransaction);
+		}
+
 		var chargeOptions = new ChargeCreateOptions
 		{
 			Amount = (long)amount * 100,
