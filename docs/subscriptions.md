@@ -51,8 +51,16 @@ SKUs are the purchasable subscription plans, managed from the admin console's **
 | SKU ID | A string key, set once at creation and immutable afterward — think of it as a slug, not an auto-incrementing ID. |
 | Name | Display name shown to users on the buy page and in subscription history messages. |
 | Description | Free text shown alongside the plan on the buy page. |
-| Price | Decimal amount, charged in whole units of the configured currency. |
+| Price | Decimal amount, charged in whole units of the configured currency. A price of `0` is allowed — see "Free SKUs" below. |
 | Months | How many months a successful charge extends `SubscriptionExpiration` by. |
 | Active | Whether the SKU can currently be purchased. |
 
-SKUs cannot be deleted, only marked inactive — since existing transactions, subscription history entries, and user profiles reference a SKU by ID, removing the row outright would orphan that history. Inactive SKUs are hidden from the buy page (`ISkuService.GetAllActive()`) but remain visible and editable  in the admin list, where active SKUs are always listed ahead of inactive ones. A renewal is still allowed to use an inactive SKU — only new purchases are restricted to active plans — so existing subscribers on a retired plan keep renewing normally until they change plans or cancel.
+SKUs cannot be deleted, only marked inactive — since existing transactions, subscription history entries, and user profiles reference a SKU by ID, removing the row outright would orphan that history. Inactive SKUs are hidden from the buy page (`ISkuService.GetAllActive()`) but remain visible and editable in the admin list. A renewal is still allowed to use an inactive SKU — only new purchases are restricted to active plans — so existing subscribers on a retired plan keep renewing normally until they change plans or cancel.
+
+### Ordering
+
+SKUs have a persisted `SortOrder`, managed the same way forum/category ordering works: Up/Down buttons on the admin Subscription Skus list, backed by `ISkuService.MoveSkuUp`/`MoveSkuDown`, which renumber the whole set (`0, 2, 4, ...`) rather than doing a simple swap. The buy page lists SKUs in this same order (`ISkuService.GetAllActive()` now sorts by `SortOrder`, not name). A newly created SKU is appended to the end of the order automatically.
+
+### Free SKUs
+
+A SKU priced at `0` can be purchased without ever hitting Stripe: `IBankChargeRepository.ChargeCustomer` short-circuits for `amount <= 0` and returns a synthetic successful `Transaction` (`Status = "no_charge"`, no `ProcessorID`) instead of calling Stripe's charge API. This exists because Stripe rejects zero-amount charges outright (its API requires the amount be at least 1 in the currency's smallest unit), which previously surfaced as a raw Stripe error ("This value must be greater than or equal to 1.") on the buy page. The same short-circuit covers the renewal path, since both `BuyService` and `RenewalService` charge through this one method.
