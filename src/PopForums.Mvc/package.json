@@ -1,5 +1,7 @@
 {
-  "scripts": {},
+  "scripts": {
+    "build": "node build.js"
+  },
   "dependencies": {
     "@microsoft/signalr": "10.0.0",
     "axios": "1.18.0",
@@ -10,19 +12,6 @@
   },
   "devDependencies": {
     "typescript": "6.0.3",
-    "gulp-typescript": "5.0.1",
-    "@babel/core": "7.29.6",
-    "@babel/preset-env": "7.28.5",
-    "gulp": "4.0.2",
-    "gulp-babel": "8.0.0",
-    "gulp-clean-css": "4.3.0",
-    "gulp-rename": "2.1.0",
-    "gulp-terser": "2.1.0",
-    "merge-stream": "2.0.0"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
+    "esbuild": "0.28.2"
   }
 }

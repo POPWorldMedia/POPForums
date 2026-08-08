@@ -49,7 +49,7 @@ stages:
           - script: |
               set -e
               npm ci
-              npx gulp default
+              npm run build
             displayName: 'Build Mvc front-end assets'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             workingDirectory: 'src/PopForums.Mvc'

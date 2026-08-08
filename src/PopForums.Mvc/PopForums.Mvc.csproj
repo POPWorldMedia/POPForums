@@ -14,11 +14,19 @@
 		<Copyright>2026, POP World Media, LLC</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<!--This is an important line to trigger the hot reload:-->
-		<AssignTargetPathsDependsOn>CompileTypeScript;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
-		<DefineStaticWebAssetsDependsOn>CompileTypeScript;$(DefineStaticWebAssetsDependsOn)</DefineStaticWebAssetsDependsOn>
-		<ResolveStaticWebAssetsInputsDependsOn>CompileTypeScript;$(ResolveStaticWebAssetsInputsDependsOn)</ResolveStaticWebAssetsInputsDependsOn>
+		<AssignTargetPathsDependsOn>CompileTypeScript;BuildFrontendAssets;$(AssignTargetPathsDependsOn)</AssignTargetPathsDependsOn>
+		<DefineStaticWebAssetsDependsOn>CompileTypeScript;BuildFrontendAssets;$(DefineStaticWebAssetsDependsOn)</DefineStaticWebAssetsDependsOn>
+		<ResolveStaticWebAssetsInputsDependsOn>CompileTypeScript;BuildFrontendAssets;$(ResolveStaticWebAssetsInputsDependsOn)</ResolveStaticWebAssetsInputsDependsOn>
 		<StaticWebAssetBasePath>/PopForums</StaticWebAssetBasePath>
 	</PropertyGroup>
+
+	<!--Minifies wwwroot/*.js and *.css and copies vendored node_modules assets into wwwroot/lib.
+	    Runs after CompileTypeScript (which produces wwwroot/PopForums.js) and before the static
+	    web assets are scanned, so it works identically under `dotnet build`, CI, and any IDE -
+	    no editor-specific task runner binding required. Requires `npm install` to have been run.-->
+	<Target Name="BuildFrontendAssets" DependsOnTargets="CompileTypeScript">
+		<Exec Command="node build.js" WorkingDirectory="$(MSBuildProjectDirectory)" />
+	</Target>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
