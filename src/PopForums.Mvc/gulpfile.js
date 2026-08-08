@@ -4,8 +4,7 @@ var gulp = require("gulp"),
 	merge = require("merge-stream"),
 	babel = require("gulp-babel"),
 	cleancss = require("gulp-clean-css"),
-	uglify = require("gulp-uglify"),
-	sourcemaps = require("gulp-sourcemaps"),
+	terser = require("gulp-terser"),
 	rename = require("gulp-rename"),
 	typescript = require("gulp-typescript");
 
@@ -35,24 +34,28 @@ gulp.task("copies", function () {
 });
 
 function jsTask() {
-	return gulp.src("./wwwroot/*.js", { allowEmpty: true })
-        .pipe(gulp.dest(targetPath + "/PopForums/dist"))
-		.pipe(sourcemaps.init({ loadMaps: true }))
-		.pipe(babel({ presets: ["@babel/preset-env"], sourceMap: true }))
-		.pipe(uglify())
-		.pipe(rename({ suffix: '.min' }))
-		.pipe(sourcemaps.write("./"))
+	var raw = gulp.src("./wwwroot/*.js", { allowEmpty: true })
 		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
+
+	var minified = gulp.src("./wwwroot/*.js", { allowEmpty: true, sourcemaps: true })
+		.pipe(babel({ presets: ["@babel/preset-env"] }))
+		.pipe(terser())
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest(targetPath + "/PopForums/dist", { sourcemaps: "." }));
+
+	return merge(raw, minified);
 }
 
 function cssTask() {
-	return gulp.src("./wwwroot/*.css", { allowEmpty: true })
-		.pipe(gulp.dest(targetPath + "/PopForums/dist"))
-        .pipe(sourcemaps.init())
+	var raw = gulp.src("./wwwroot/*.css", { allowEmpty: true })
+		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
+
+	var minified = gulp.src("./wwwroot/*.css", { allowEmpty: true, sourcemaps: true })
 		.pipe(cleancss())
 		.pipe(rename({ suffix: '.min' }))
-        .pipe(sourcemaps.write("./"))
-		.pipe(gulp.dest(targetPath + "/PopForums/dist"));
+		.pipe(gulp.dest(targetPath + "/PopForums/dist", { sourcemaps: "." }));
+
+	return merge(raw, minified);
 }
 
 gulp.task("js", jsTask);
