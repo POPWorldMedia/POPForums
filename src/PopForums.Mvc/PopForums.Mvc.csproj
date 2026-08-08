@@ -20,12 +20,23 @@
 		<StaticWebAssetBasePath>/PopForums</StaticWebAssetBasePath>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<FrontendAssetInput Include="Client\**\*.ts" />
+		<FrontendAssetInput Include="wwwroot\Admin.js" />
+		<FrontendAssetInput Include="wwwroot\*.css" />
+		<FrontendAssetInput Include="package.json" />
+	</ItemGroup>
+
 	<!--Minifies wwwroot/*.js and *.css and copies vendored node_modules assets into wwwroot/lib.
 	    Runs after CompileTypeScript (which produces wwwroot/PopForums.js) and before the static
 	    web assets are scanned, so it works identically under `dotnet build`, CI, and any IDE -
-	    no editor-specific task runner binding required. Requires `npm install` to have been run.-->
-	<Target Name="BuildFrontendAssets" DependsOnTargets="CompileTypeScript">
-		<Exec Command="node build.js" WorkingDirectory="$(MSBuildProjectDirectory)" />
+	    no editor-specific task runner binding required. Requires `npm install` to have been run.
+	    Inputs/Outputs make this a no-op when nothing relevant changed (e.g. a .cs-only edit),
+	    which matters because this is also wired into the hot-reload rebuild path below - without
+	    it, every keystroke-triggered rebuild would re-copy the full vendor asset set.-->
+	<Target Name="BuildFrontendAssets" DependsOnTargets="CompileTypeScript"
+	        Inputs="@(FrontendAssetInput)" Outputs="wwwroot\lib\PopForums\dist\PopForums.min.js">
+		<Exec Command="node build.js" WorkingDirectory="$(MSBuildProjectDirectory)" EnvironmentVariables="POPFORUMS_SKIP_TSC=1" />
 	</Target>
 
 	<ItemGroup>

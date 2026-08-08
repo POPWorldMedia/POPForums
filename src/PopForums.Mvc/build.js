@@ -1,15 +1,25 @@
-// Front-end asset build: minifies wwwroot/*.js and wwwroot/*.css (with sourcemaps)
-// and copies vendored node_modules assets into wwwroot/lib.
-// TypeScript compilation (Client/*.ts -> wwwroot/PopForums.js) is handled natively
-// by Microsoft.TypeScript.MSBuild as part of `dotnet build`, not here.
+// Front-end asset build: compiles Client/*.ts -> wwwroot/PopForums.js, minifies
+// wwwroot/*.js and wwwroot/*.css (with sourcemaps), and copies vendored node_modules
+// assets into wwwroot/lib. Must be fully self-sufficient and runnable before `dotnet
+// build` (e.g. in CI): Microsoft.TypeScript.MSBuild also compiles TypeScript as part
+// of `dotnet build`, but that's for local-dev hot reload convenience, not something
+// this script can depend on running first.
 const esbuild = require("esbuild");
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 const wwwroot = "wwwroot";
 const distPath = path.join(wwwroot, "lib", "PopForums", "dist");
 const libPath = path.join(wwwroot, "lib");
 const nodeRoot = "node_modules";
+
+// The MSBuild target that runs this script depends on CompileTypeScript, which already
+// compiled wwwroot/PopForums.js by the time we get here - skip the redundant recompile.
+// Standalone invocations (npm run build, CI) need it since nothing else will have.
+if (!process.env.POPFORUMS_SKIP_TSC) {
+	execFileSync(path.join(nodeRoot, ".bin", "tsc"), ["-p", path.join("Client", "tsconfig.json")], { stdio: "inherit" });
+}
 
 function copyFile(src, dest) {
 	fs.mkdirSync(path.dirname(dest), { recursive: true });
