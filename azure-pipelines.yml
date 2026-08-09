@@ -93,7 +93,7 @@ stages:
 
           - script: |
               set -e
-              VERSION_SUFFIX="ci.$(Build.BuildId)"
+              VERSION_SUFFIX="CI.$(Build.BuildId)"
               for PROJ in \
                 src/PopForums/PopForums.csproj \
                 src/PopForums.Sql/PopForums.Sql.csproj \
