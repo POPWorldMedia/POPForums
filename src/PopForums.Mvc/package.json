@@ -6,12 +6,13 @@
     "@microsoft/signalr": "10.0.0",
     "axios": "1.18.0",
     "bootstrap": "5.3.8",
+    "bootstrap-icons": "1.13.1",
     "tinymce": "8.5.1",
     "vue": "3.5.33",
     "vue-router": "5.0.6"
   },
   "devDependencies": {
-    "typescript": "6.0.3",
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "typescript": "6.0.3"
   }
 }

@@ -96,4 +96,3 @@ copyFiles(
 	path.join(libPath, "vue-router", "dist")
 );
 copyDir(path.join(nodeRoot, "axios", "dist"), path.join(libPath, "axios", "dist"));
-copyDir(path.join(wwwroot, "Fonts"), path.join(distPath, "Fonts"));
