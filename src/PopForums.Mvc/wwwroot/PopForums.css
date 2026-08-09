@@ -384,21 +384,22 @@ pf-votecount div span {
 #ForumContainer .topicIndicator {
 	font-size: 2em;
 	width: 40px;
+	white-space: nowrap;
 }
 
 #ForumContainer .topicIndicator .topicIndicatorBadge {
 	position: relative;
 	font-size: 60%;
-	text-shadow: -2px 0 white, 0 2px white, 2px 0 white, 0 -2px white;
+	top: 0.4em;
 }
 #ForumContainer .topicIndicator .soloLeftBadge {
 	left: -95%;
 }
 #ForumContainer .topicIndicator .firstBadge {
-	left: -25%;
+	left: -45%;
 }
 #ForumContainer .topicIndicator .secondBadge {
-	left: -145%;
+	left: -125%;
 }
 
 #ForumContainer #Profile div.row div {
