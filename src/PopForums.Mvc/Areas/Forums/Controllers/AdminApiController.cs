@@ -26,7 +26,9 @@ public class AdminApiController(
 	IModerationLogService moderationLogService,
 	IErrorLog errorLog,
 	IServiceHeartbeatService serviceHeartbeatService,
-	ISkuService skuService)
+	ISkuService skuService,
+	ISubscriptionHistoryService subscriptionHistoryService,
+	IManualSubscriptionService manualSubscriptionService)
 	: Controller
 {
 	// ********** settings
@@ -630,5 +632,42 @@ public class AdminApiController(
 		await skuService.MoveSkuDown(id);
 		var skus = await skuService.GetAll();
 		return skus;
+	}
+
+	// ********** update user subscription
+
+	[HttpGet("/Forums/AdminApi/GetUserSubscription/{id}")]
+	public async Task<ActionResult<UserSubscriptionEdit>> GetUserSubscription(int id)
+	{
+		var user = await userService.GetUser(id);
+		if (user == null)
+			return NotFound();
+		var profile = await profileService.GetProfile(user);
+		var model = new UserSubscriptionEdit
+		{
+			UserID = user.UserID,
+			Name = user.Name,
+			SkuID = profile.SkuID,
+			Expiration = user.SubscriptionExpiration
+		};
+		return model;
+	}
+
+	[HttpGet("/Forums/AdminApi/GetUserSubscriptionHistory/{id}")]
+	public async Task<ActionResult<List<SubscriptionHistory>>> GetUserSubscriptionHistory(int id)
+	{
+		var history = await subscriptionHistoryService.GetByUserID(id);
+		return history;
+	}
+
+	[HttpPost("/Forums/AdminApi/ApplyManualSubscriptionEdit")]
+	public async Task<ActionResult<SubscriptionHistory>> ApplyManualSubscriptionEdit([FromBody] UserSubscriptionEdit edit)
+	{
+		if (!edit.Expiration.HasValue)
+			return BadRequest("Expiration is required.");
+		var result = await manualSubscriptionService.Apply(edit.UserID, edit.SkuID, edit.Expiration.Value);
+		if (!result.IsSuccessful)
+			return BadRequest(result.Message);
+		return result.Data;
 	}
 }

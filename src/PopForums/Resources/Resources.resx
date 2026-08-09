@@ -596,6 +596,9 @@
   <data name="EditUser" xml:space="preserve">
     <value>Edit User</value>
   </data>
+  <data name="EditUserSub" xml:space="preserve">
+    <value>Edit User Sub</value>
+  </data>
   <data name="EmailBan" xml:space="preserve">
     <value>E-mail Ban</value>
   </data>
@@ -1298,6 +1301,15 @@
   </data>
   <data name="SubscriptionSkus" xml:space="preserve">
     <value>Subscription Skus</value>
+  </data>
+  <data name="UpdateUserSubscription" xml:space="preserve">
+    <value>Update User Subscription</value>
+  </data>
+  <data name="ManualTransaction" xml:space="preserve">
+    <value>Manual Transaction</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
   </data>
   <data name="SubscriptionsEnabled" xml:space="preserve">
     <value>Subscriptions Enabled</value>

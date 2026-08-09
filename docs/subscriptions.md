@@ -64,3 +64,19 @@ SKUs have a persisted `SortOrder`, managed the same way forum/category ordering 
 ### Free SKUs
 
 A SKU priced at `0` can be purchased without ever hitting Stripe: `IBankChargeRepository.ChargeCustomer` short-circuits for `amount <= 0` and returns a synthetic successful `Transaction` (`Status = "no_charge"`, no `ProcessorID`) instead of calling Stripe's charge API. This exists because Stripe rejects zero-amount charges outright (its API requires the amount be at least 1 in the currency's smallest unit), which previously surfaced as a raw Stripe error ("This value must be greater than or equal to 1.") on the buy page. The same short-circuit covers the renewal path, since both `BuyService` and `RenewalService` charge through this one method.
+
+## Managing a user's subscription
+
+The admin console has a two-page flow for looking up a user and acting on their subscription directly, separate from the SKU/settings pages above.
+
+**Edit User Sub** is the entry point — the same name/email/role search as the general **Edit User** page, but its results link to **Update User Subscription** instead of the general user editor.
+
+**Update User Subscription** shows two things for the selected user:
+- **Subscription History** — the same event list as the user's own account "Subscription History" page (`ISubscriptionHistoryService.GetByUserID`), read-only.
+- **Manual Transaction** — a SKU dropdown and an expiration date field, both prefilled with the user's current values, and an Apply button.
+
+Manual Transaction is a direct override, not a simulated purchase:
+- It sets `profile.SkuID` and `user.SubscriptionExpiration` to exactly the values submitted — there's no month-based math extending off the SKU's `Months` field the way a real purchase or renewal would.
+- It never talks to Stripe and never creates a `Transaction` row — there's no real charge to record. It does write a `SubscriptionHistory` entry, prefixed `Manual:`, showing the before/after SKU and expiration, so the change is visible in the user's history alongside real charges.
+- SKU and expiration are always submitted together — the form always sends both fields (prefilled from current state), so to change just one, leave the other field as-is rather than clearing it.
+- Refunds are explicitly out of scope for this tool — handle those directly in Stripe. Manual Transaction is for granting or correcting subscription state (e.g. comping a user with a `0`-price SKU, or fixing a wrong expiration date), not for reversing a real charge.

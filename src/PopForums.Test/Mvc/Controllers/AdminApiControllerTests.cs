@@ -1,4 +1,5 @@
-﻿using PopForums.Services.Subscriptions;
+﻿using PopForums.Mvc.Areas.Forums.Models;
+using PopForums.Services.Subscriptions;
 
 namespace PopForums.Test.Mvc.Controllers;
 
@@ -23,6 +24,8 @@ public class AdminApiControllerTests
 	private IErrorLog _errorLog;
 	private IServiceHeartbeatService _serviceHeartbeatService;
 	private ISkuService _skuService;
+	private ISubscriptionHistoryService _subscriptionHistoryService;
+	private IManualSubscriptionService _manualSubscriptionService;
 
 	private AdminApiController GetController()
 	{
@@ -45,7 +48,9 @@ public class AdminApiControllerTests
 		_errorLog = Substitute.For<IErrorLog>();
 		_serviceHeartbeatService = Substitute.For<IServiceHeartbeatService>();
 		_skuService = Substitute.For<ISkuService>();
-		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService, _skuService);
+		_subscriptionHistoryService = Substitute.For<ISubscriptionHistoryService>();
+		_manualSubscriptionService = Substitute.For<IManualSubscriptionService>();
+		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService, _skuService, _subscriptionHistoryService, _manualSubscriptionService);
 	}
 
 	public class SaveForum : AdminApiControllerTests
@@ -155,6 +160,93 @@ public class AdminApiControllerTests
 
 			await _userService.Received().SearchByRole(text);
 			Assert.Same(list, result.Value);
+		}
+	}
+
+	public class GetUserSubscriptionHistory : AdminApiControllerTests
+	{
+		[Fact]
+		public async Task ReturnsHistoryFromService()
+		{
+			var controller = GetController();
+			const int userID = 123;
+			var list = new List<SubscriptionHistory>();
+			_subscriptionHistoryService.GetByUserID(userID).Returns(Task.FromResult(list));
+
+			var result = await controller.GetUserSubscriptionHistory(userID);
+
+			Assert.Same(list, result.Value);
+		}
+	}
+
+	public class GetUserSubscription : AdminApiControllerTests
+	{
+		[Fact]
+		public async Task ReturnsUserSkuAndExpiration()
+		{
+			var controller = GetController();
+			var user = new User { UserID = 123, Name = "Bob", SubscriptionExpiration = new DateOnly(2027, 1, 1) };
+			var profile = new Profile { SkuID = "gold" };
+			_userService.GetUser(user.UserID).Returns(Task.FromResult(user));
+			_profileService.GetProfile(user).Returns(Task.FromResult(profile));
+
+			var result = await controller.GetUserSubscription(user.UserID);
+
+			Assert.Equal(user.UserID, result.Value.UserID);
+			Assert.Equal(user.Name, result.Value.Name);
+			Assert.Equal(profile.SkuID, result.Value.SkuID);
+			Assert.Equal(user.SubscriptionExpiration, result.Value.Expiration);
+		}
+
+		[Fact]
+		public async Task ReturnsNotFoundIfUserIsNotReal()
+		{
+			var controller = GetController();
+			_userService.GetUser(Arg.Any<int>()).Returns((User)null);
+
+			var result = await controller.GetUserSubscription(123);
+
+			Assert.IsType<NotFoundResult>(result.Result);
+		}
+	}
+
+	public class ApplyManualSubscriptionEdit : AdminApiControllerTests
+	{
+		[Fact]
+		public async Task ReturnsHistoryOnSuccess()
+		{
+			var controller = GetController();
+			var edit = new UserSubscriptionEdit { UserID = 123, SkuID = "gold", Expiration = new DateOnly(2027, 1, 1) };
+			var history = new SubscriptionHistory();
+			_manualSubscriptionService.Apply(edit.UserID, edit.SkuID, edit.Expiration.Value).Returns(Task.FromResult(BasicServiceResponse<SubscriptionHistory>.Success(history)));
+
+			var result = await controller.ApplyManualSubscriptionEdit(edit);
+
+			Assert.Same(history, result.Value);
+		}
+
+		[Fact]
+		public async Task ReturnsBadRequestIfExpirationIsMissing()
+		{
+			var controller = GetController();
+			var edit = new UserSubscriptionEdit { UserID = 123, SkuID = "gold", Expiration = null };
+
+			var result = await controller.ApplyManualSubscriptionEdit(edit);
+
+			Assert.IsType<BadRequestObjectResult>(result.Result);
+			await _manualSubscriptionService.DidNotReceive().Apply(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<DateOnly>());
+		}
+
+		[Fact]
+		public async Task ReturnsBadRequestIfServiceFails()
+		{
+			var controller = GetController();
+			var edit = new UserSubscriptionEdit { UserID = 123, SkuID = "bogus", Expiration = new DateOnly(2027, 1, 1) };
+			_manualSubscriptionService.Apply(edit.UserID, edit.SkuID, edit.Expiration.Value).Returns(Task.FromResult(BasicServiceResponse<SubscriptionHistory>.Failed("nope")));
+
+			var result = await controller.ApplyManualSubscriptionEdit(edit);
+
+			Assert.IsType<BadRequestObjectResult>(result.Result);
 		}
 	}
 }

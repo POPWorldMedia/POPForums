@@ -77,6 +77,7 @@
 					<router-link to="/emailusers" class="dropdown-item">@PopForums.Resources.EmailUsers</router-link>
 				}
 				<div class="dropdown-divider"></div>
+				<router-link to="/editusersub" class="dropdown-item">@PopForums.Resources.EditUserSub</router-link>
 				<router-link to="/subscriptionconfig" class="dropdown-item">@PopForums.Resources.SubscriptionConfig</router-link>
 				<router-link to="/subscriptionskus" class="dropdown-item">@PopForums.Resources.SubscriptionSkus</router-link>
 				<div class="dropdown-divider"></div>
@@ -1390,6 +1391,77 @@
 					<td>{{item.serviceName}}</td>
 					<td>{{item.machineName}}</td>
 					<td class="text-nowrap">{{item.lastRun}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</main>
+</script>
+
+<script type="x-templates" id="EditUserSub">
+	<main>
+		<h2>@PopForums.Resources.EditUserSub</h2>
+
+		<form v-on:submit.prevent="search">
+			<div class="row">
+				<div class="mb-3 col-sm-8"><input type="text" v-model="searchText" class="form-control" /></div>
+			</div>
+            <div class="row mb-3">
+                <div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="name" id="SubSearchName" v-model="searchType">
+						<label class="form-check-label" for="SubSearchName">Name</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="email" id="SubSearchEmail" v-model="searchType">
+						<label class="form-check-label" for="SubSearchEmail">Email</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="role" id="SubSearchRole" v-model="searchType">
+						<label class="form-check-label" for="SubSearchRole">Role</label>
+					</div>
+                </div>
+            </div>
+			<div class="row">
+				<div class="mb-3"><input type="button" v-on:click="search" value="@PopForums.Resources.Search" class="btn btn-primary" /></div>
+			</div>
+		</form>
+			<transition name="fade"><span v-show="searchAlert" class="alert alert-warning ms-3">@PopForums.Resources.NoResults</span></transition>
+			<div v-for="u in searchResults"><router-link :to="{path:'/updateusersubscription/'+u.userID}">{{u.name}}</router-link> - {{u.email}}</div>
+	</main>
+</script>
+
+<script type="x-templates" id="UpdateUserSubscription">
+	<main>
+		<h2 class="mb-3">@PopForums.Resources.UpdateUserSubscription: {{edit.name}}</h2>
+
+		<h3>@PopForums.Resources.ManualTransaction</h3>
+		<div class="row">
+			<div class="mb-3 col-sm-4">
+				<label>@PopForums.Resources.SkuID</label>
+				<select class="form-select" v-model="edit.skuID">
+					<option v-for="s in skus" v-bind:value="s.skuID">{{s.name}}</option>
+				</select>
+			</div>
+			<div class="mb-3 col-sm-4">
+				<label>@PopForums.Resources.Expires</label>
+				<input type="date" class="form-control" v-model="edit.expiration" />
+			</div>
+		</div>
+		<input type="button" value="@PopForums.Resources.Apply" class="btn btn-primary mb-3" v-on:click="apply" :disabled="loading" />
+
+		<h3>@PopForums.Resources.SubscriptionHistory</h3>
+		<div v-if="history.length === 0" class="alert alert-info">@PopForums.Resources.NoSubscriptionHistory</div>
+		<table v-else class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.EventTime</th>
+					<th>@PopForums.Resources.Message</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="item in history">
+					<td class="text-nowrap">{{item.timeStamp}}</td>
+					<td>{{item.message}}</td>
 				</tr>
 			</tbody>
 		</table>

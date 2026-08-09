@@ -111,6 +111,15 @@ Background tasks (email, search indexing, award calculation, session cleanup, et
 - Vue.js + Vue Router are used **only** for the admin interface
 - Localization on the client side uses a JSON payload from the server; see `FormattedTime.ts` for an example
 
+### Admin interface (Vue SPA)
+The entire admin app is two files, not a per-page/per-component file tree like the main forum's TS components:
+- `wwwroot/Admin.js` — hand-written plain JS (not TypeScript, not build-generated), containing every Vue component and the router's `routes` array for the whole SPA, one after another in the same file.
+- `Areas/Forums/Views/Admin/App.cshtml` — one Razor view containing a `<script type="x-templates" id="ComponentName">` block per component (Vue template source) plus the `Top` component's nav dropdown, which is where every page's menu link lives.
+
+To add a new admin page: add a component object to `Admin.js` (`mixins: [loadingMixin]` for loading-state helpers, `settingsMixin` if it's a settings-save form), add its matching `x-templates` block to `App.cshtml`, add `{ path: "/whatever", component: Whatever }` to the `routes` array near the bottom of `Admin.js`, and add a `<router-link>` in the `Top` template's dropdown. Backend endpoints live in the single `AdminApiController` (`Areas/Forums/Controllers/AdminApiController.cs`), grouped by feature with `// ********** section name` comments — new endpoints should call into existing services rather than duplicate logic, and go through `ISettingsManager`/existing service interfaces the same way the rest of the controller does.
+
+`wwwroot/Admin.js` is checked into git (unlike `wwwroot/PopForums.js`, which is TypeScript-compiled output and gitignored — see "Front-end asset setup" above) — it's source, edited directly, not generated.
+
 ### Testing
 - Tests are in `PopForums.Test`, mirroring the folder structure of the projects under test
 - Mocking via NSubstitute; test framework is xUnit

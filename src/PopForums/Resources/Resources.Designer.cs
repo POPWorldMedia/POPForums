@@ -992,7 +992,13 @@ namespace PopForums {
                 return ResourceManager.GetString("EditUser", resourceCulture);
             }
         }
-        
+
+        public static string EditUserSub {
+            get {
+                return ResourceManager.GetString("EditUserSub", resourceCulture);
+            }
+        }
+
         public static string EmailBan {
             get {
                 return ResourceManager.GetString("EmailBan", resourceCulture);
@@ -2358,6 +2364,24 @@ namespace PopForums {
         public static string SubscriptionSkus {
             get {
                 return ResourceManager.GetString("SubscriptionSkus", resourceCulture);
+            }
+        }
+
+        public static string UpdateUserSubscription {
+            get {
+                return ResourceManager.GetString("UpdateUserSubscription", resourceCulture);
+            }
+        }
+
+        public static string ManualTransaction {
+            get {
+                return ResourceManager.GetString("ManualTransaction", resourceCulture);
+            }
+        }
+
+        public static string Apply {
+            get {
+                return ResourceManager.GetString("Apply", resourceCulture);
             }
         }
 

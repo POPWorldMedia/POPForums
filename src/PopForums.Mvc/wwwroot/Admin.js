@@ -362,6 +362,34 @@ const EditUser = {
 	}
 }
 
+const EditUserSub = {
+	mixins: [loadingMixin],
+	template: "#EditUserSub",
+	data() {
+		return {
+			searchResults: [],
+			searchText: "",
+			searchType: "name",
+			searchAlert: false
+		}
+	},
+	methods: {
+		search: function () {
+			this.startLoad();
+			axios.post(basePath + "EditUserSearch", { searchType: this.searchType, searchText: this.searchText })
+				.then(response => {
+					this.searchResults = response.data;
+					this.endLoad();
+					if (this.searchResults.length === 0)
+						this.searchAlert = true;
+					else
+						this.searchAlert = false;
+				})
+				.catch(error => this.errorAlert());
+		}
+	}
+}
+
 const EditUserDetail = {
 	mixins: [loadingMixin],
 	template: "#EditUserDetail",
@@ -437,6 +465,48 @@ const EditUserDetail = {
 			})
 				.catch(error => this.errorAlert());
         }
+	}
+}
+
+const UpdateUserSubscription = {
+	mixins: [loadingMixin],
+	template: "#UpdateUserSubscription",
+	data() {
+		return {
+			edit: { userID: 0, name: "", skuID: "", expiration: "" },
+			skus: [],
+			history: []
+		}
+	},
+	created: function () {
+		var id = this.$route.params.id;
+		this.startLoad();
+		axios.get(basePath + "GetUserSubscription/" + id).then(response => {
+			this.edit = response.data;
+			this.endLoad();
+		})
+			.catch(error => this.errorAlert());
+		axios.get(basePath + "GetSkus").then(response => {
+			this.skus = response.data;
+		})
+			.catch(error => this.errorAlert());
+		this.refreshHistory();
+	},
+	methods: {
+		refreshHistory: function () {
+			axios.get(basePath + "GetUserSubscriptionHistory/" + this.$route.params.id).then(response => {
+				this.history = response.data;
+			})
+				.catch(error => this.errorAlert());
+		},
+		apply: function () {
+			this.startLoad();
+			axios.post(basePath + "ApplyManualSubscriptionEdit", this.edit).then(response => {
+				this.endLoad();
+				this.refreshHistory();
+			})
+				.catch(error => this.errorAlert());
+		}
 	}
 }
 
@@ -1120,6 +1190,8 @@ const routes = [
 			{ path: "/moderationlog", component: ModerationLog },
 			{ path: "/errorlog", component: ErrorLog },
 			{ path: "/services", component: Services },
+			{ path: "/editusersub", component: EditUserSub },
+			{ path: "/updateusersubscription/:id", component: UpdateUserSubscription },
 			{ path: "/subscriptionconfig", component: SubscriptionConfig },
 			{ path: "/subscriptionskus", component: SubscriptionSkus }
 		]

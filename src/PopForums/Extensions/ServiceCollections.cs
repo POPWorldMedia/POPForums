@@ -47,6 +47,7 @@ public static class ServiceCollections
 		services.AddTransient<IIPHistoryService, IPHistoryService>();
 		services.AddTransient<ILastReadService, LastReadService>();
 		services.AddTransient<IMailingListService, MailingListService>();
+		services.AddTransient<IManualSubscriptionService, ManualSubscriptionService>();
 		services.AddTransient<IModerationLogService, ModerationLogService>();
 		services.AddTransient<IPostService, PostService>();
 		services.AddTransient<IPrivateMessageService, PrivateMessageService>();
