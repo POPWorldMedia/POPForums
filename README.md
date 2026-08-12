@@ -16,7 +16,7 @@ https://popworldmedia.github.io/POPForums/
 CI build of main runs here:  
 https://popforumsdev.azurewebsites.net/Forums
 
-[![Build status](https://dev.azure.com/popw/POP%20Forums/_apis/build/status/popforumsdev)](https://dev.azure.com/popw/POP%20Forums/_build/latest?definitionId=13)
+[![Build Status](https://dev.azure.com/popw/POP%20Forums/_apis/build/status%2FPOPWorldMedia.POPForums?branchName=main)](https://dev.azure.com/popw/POP%20Forums/_build/latest?definitionId=19&branchName=main)
 
 Latest release:  
 https://github.com/POPWorldMedia/POPForums/releases/tag/v22.0.0  
