@@ -84,6 +84,15 @@ copyFiles(
 	path.join(libPath, "bootstrap", "dist", "css")
 );
 copyDir(path.join(nodeRoot, "@microsoft", "signalr", "dist", "browser"), path.join(libPath, "signalr", "dist"));
+esbuild.buildSync({
+	entryPoints: [path.join(nodeRoot, "nostics", "dist", "index.mjs")],
+	outfile: path.join(libPath, "nostics", "nostics.js"),
+	bundle: true,
+	format: "iife",
+	globalName: "nostics",
+	platform: "browser",
+	logLevel: "warning"
+});
 copyDir(path.join(nodeRoot, "tinymce"), path.join(libPath, "tinymce"));
 copyFiles(
 	path.join(nodeRoot, "vue", "dist"),
