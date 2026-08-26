@@ -3,13 +3,12 @@
     "build": "node build.js"
   },
   "dependencies": {
-    "@microsoft/signalr": "10.0.0",
+    "@microsoft/signalr": "10.0.11",
     "axios": "1.18.0",
     "bootstrap": "5.3.8",
-    "bootstrap-icons": "1.13.1",
-    "tinymce": "8.5.1",
-    "vue": "3.5.33",
-    "vue-router": "5.0.6"
+    "tinymce": "8.8.2",
+    "vue": "3.5.41",
+    "vue-router": "5.1.0"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
