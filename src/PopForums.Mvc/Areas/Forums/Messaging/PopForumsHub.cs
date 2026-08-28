@@ -10,8 +10,9 @@ public class PopForumsHub : Hub
 	private readonly ITopicService _topicService;
 	private readonly INotificationManager _notificationManager;
 	private readonly IPrivateMessageService _privateMessageService;
+	private readonly IForumPermissionService _forumPermissionService;
 
-	public PopForumsHub(ITenantService tenantService, IUserService userService, IForumService forumService, ITopicService topicService, INotificationManager notificationManager, IPrivateMessageService privateMessageService)
+	public PopForumsHub(ITenantService tenantService, IUserService userService, IForumService forumService, ITopicService topicService, INotificationManager notificationManager, IPrivateMessageService privateMessageService, IForumPermissionService forumPermissionService)
 	{
 		_tenantService = tenantService;
 		_userService = userService;
@@ -19,6 +20,15 @@ public class PopForumsHub : Hub
 		_topicService = topicService;
 		_notificationManager = notificationManager;
 		_privateMessageService = privateMessageService;
+		_forumPermissionService = forumPermissionService;
+	}
+
+	private async Task<bool> CanViewForum(Forum forum)
+	{
+		var name = Context.User?.Identity?.Name;
+		var user = string.IsNullOrEmpty(name) ? null : await _userService.GetUserByName(name);
+		var permission = await _forumPermissionService.GetPermissionContext(forum, user);
+		return permission.UserCanView;
 	}
 
 	// *** Forums
@@ -29,10 +39,13 @@ public class PopForumsHub : Hub
 		Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:forum:all");
 	}
 
-	public void ListenToForum(int forumID)
+	public async Task ListenToForum(int forumID)
 	{
+		var forum = await _forumService.Get(forumID);
+		if (forum == null || !await CanViewForum(forum))
+			return;
 		var tenant = _tenantService.GetTenant();
-		Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:forum:{forumID}");
+		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:forum:{forumID}");
 	}
 
 	// *** Recent
@@ -53,10 +66,16 @@ public class PopForumsHub : Hub
 
 	// *** Topics
 
-	public void ListenToTopic(int topicID)
+	public async Task ListenToTopic(int topicID)
 	{
+		var topic = await _topicService.Get(topicID);
+		if (topic == null)
+			return;
+		var forum = await _forumService.Get(topic.ForumID);
+		if (forum == null || !await CanViewForum(forum))
+			return;
 		var tenant = _tenantService.GetTenant();
-		Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:topic:{topicID}");
+		await Groups.AddToGroupAsync(Context.ConnectionId, $"{tenant}:topic:{topicID}");
 	}
 
 	public int GetLastPostID(int topicID)
