@@ -202,13 +202,8 @@ public class AccountController(
 	[TypeFilter(typeof(OAuthOnlyForbidAttribute))]
 	public async Task<ActionResult> ResetPassword(string id)
 	{
-		var authKey = Guid.Empty;
-		if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
-			return StatusCode(403);
-		var user = await userService.GetUserByAuhtorizationKey(authKey);
-		var container = new PasswordResetContainer();
-		container.IsValidUser = user != null;
-		return View(container);
+		var user = await GetUserForPasswordReset(id);
+		return View(new PasswordResetContainer { IsValidUser = user != null });
 	}
 
 	[PopForumsAuthenticationIgnore]
@@ -216,10 +211,9 @@ public class AccountController(
 	[HttpPost]
 	public async Task<ActionResult> ResetPassword(string id, PasswordResetContainer resetContainer)
 	{
-		var authKey = Guid.Empty;
-		if (!string.IsNullOrWhiteSpace(id) && !Guid.TryParse(id, out authKey))
+		var user = await GetUserForPasswordReset(id);
+		if (user == null)
 			return StatusCode(403);
-		var user = await userService.GetUserByAuhtorizationKey(authKey);
 		resetContainer.IsValidUser = true;
 		if (resetContainer.Password != resetContainer.PasswordRetype)
 			ModelState.AddModelError("PasswordRetype", Resources.RetypePasswordMustMatch);
@@ -231,6 +225,15 @@ public class AccountController(
 			return View(resetContainer);
 		await userService.ResetPassword(user, resetContainer.Password, HttpContext.Connection.RemoteIpAddress?.ToString());
 		return RedirectToAction("ResetPasswordSuccess");
+	}
+
+	// Resolves the account for a password-reset token. Returns null for a missing, malformed, or all-zero
+	// key so neither a blank URL segment nor an unset AuthorizationKey can match an account.
+	private async Task<User> GetUserForPasswordReset(string id)
+	{
+		if (!Guid.TryParse(id, out var authKey) || authKey == Guid.Empty)
+			return null;
+		return await userService.GetUserByAuhtorizationKey(authKey);
 	}
 
 	[PopForumsAuthenticationIgnore]

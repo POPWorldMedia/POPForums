@@ -173,4 +173,90 @@ public class AccountControllerTests
 			Assert.Equal(code, result.RouteValues?["id"]);
 		}
 	}
+
+	public class ResetPasswordGet : AccountControllerTests
+	{
+		private const string ValidKey = "920A89D6-CE1B-4EBE-B758-50DB514B0ABF";
+
+		[Fact]
+		public async Task ValidKeyRendersValidUser()
+		{
+			var controller = GetController();
+			_userService.GetUserByAuhtorizationKey(Guid.Parse(ValidKey)).Returns(Task.FromResult(new User()));
+
+			var result = await controller.ResetPassword(ValidKey);
+
+			var model = Assert.IsType<PasswordResetContainer>(Assert.IsType<ViewResult>(result).Model);
+			Assert.True(model.IsValidUser);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("   ")]
+		[InlineData("not-a-guid")]
+		[InlineData("00000000-0000-0000-0000-000000000000")]
+		public async Task MissingMalformedOrEmptyKeyRendersInvalidUser(string id)
+		{
+			var controller = GetController();
+			_userService.GetUserByAuhtorizationKey(Arg.Any<Guid>()).Returns(Task.FromResult(new User()));
+
+			var result = await controller.ResetPassword(id);
+
+			var model = Assert.IsType<PasswordResetContainer>(Assert.IsType<ViewResult>(result).Model);
+			Assert.False(model.IsValidUser);
+			await _userService.DidNotReceive().GetUserByAuhtorizationKey(Guid.Empty);
+		}
+	}
+
+	public class ResetPasswordPost : AccountControllerTests
+	{
+		private const string ValidKey = "920A89D6-CE1B-4EBE-B758-50DB514B0ABF";
+
+		private static PasswordResetContainer GoodContainer() =>
+			new() { Password = "bigLongPassword1", PasswordRetype = "bigLongPassword1" };
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("   ")]
+		[InlineData("not-a-guid")]
+		[InlineData("00000000-0000-0000-0000-000000000000")]
+		public async Task MissingMalformedOrEmptyKeyIsForbiddenAndDoesNotReset(string id)
+		{
+			var controller = GetController();
+			_userService.GetUserByAuhtorizationKey(Arg.Any<Guid>()).Returns(Task.FromResult(new User()));
+
+			var result = await controller.ResetPassword(id, GoodContainer());
+
+			Assert.Equal(403, Assert.IsType<StatusCodeResult>(result).StatusCode);
+			await _userService.DidNotReceive().ResetPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<string>());
+		}
+
+		[Fact]
+		public async Task ValidKeyButNoMatchingUserIsForbiddenAndDoesNotReset()
+		{
+			var controller = GetController();
+			_userService.GetUserByAuhtorizationKey(Guid.Parse(ValidKey)).Returns(Task.FromResult((User)null));
+
+			var result = await controller.ResetPassword(ValidKey, GoodContainer());
+
+			Assert.Equal(403, Assert.IsType<StatusCodeResult>(result).StatusCode);
+			await _userService.DidNotReceive().ResetPassword(Arg.Any<User>(), Arg.Any<string>(), Arg.Any<string>());
+		}
+
+		[Fact]
+		public async Task ValidKeyAndUserResetsPasswordAndRedirects()
+		{
+			var controller = GetController();
+			var user = new User();
+			_userService.GetUserByAuhtorizationKey(Guid.Parse(ValidKey)).Returns(Task.FromResult(user));
+			var container = GoodContainer();
+
+			var result = await controller.ResetPassword(ValidKey, container);
+
+			await _userService.Received().ResetPassword(user, container.Password, Arg.Any<string>());
+			Assert.Equal("ResetPasswordSuccess", Assert.IsType<RedirectToActionResult>(result).ActionName);
+		}
+	}
 }
