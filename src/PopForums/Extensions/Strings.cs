@@ -22,26 +22,6 @@ public static class Strings
 		return GetSHA256Hash(concatString);
 	}
 
-	public static string GetMD5Hash(this string text)
-	{
-		if (string.IsNullOrWhiteSpace(text))
-		{
-			return string.Empty;
-		}
-		var input = Encoding.UTF8.GetBytes(text);
-		using (var md5 = MD5.Create())
-		{
-			var output = md5.ComputeHash(input);
-			return Convert.ToBase64String(output);
-		}
-	}
-
-	public static string GetMD5Hash(this string text, Guid salt)
-	{
-		var concatString = text + salt;
-		return GetMD5Hash(concatString);
-	}
-
 	public static bool IsEmailAddress(this string text)
 	{
 		return Regex.IsMatch(text, @"^\S+?@([a-z0-9\-\.])+?\.([a-z0-9\-\.])+$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);

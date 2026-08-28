@@ -10,13 +10,6 @@ public class StringTests
 	}
 
 	[Fact]
-	public void GetMD5HashString()
-	{
-		var output = "fred".GetMD5Hash();
-		Assert.Equal("VwqQv7+MfqtdxdTiaDLVsQ==", output);
-	}
-
-	[Fact]
 	public void IsEmailTest()
 	{
 		Assert.True("a@b.com".IsEmailAddress());

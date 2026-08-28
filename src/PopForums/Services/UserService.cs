@@ -97,32 +97,7 @@ public class UserService : IUserService
 			hashedPassword = password.GetSHA256Hash(salt.Value);
 		else
 			hashedPassword = password.GetSHA256Hash();
-		if (storedHash == hashedPassword)
-			return Tuple.Create(true, salt);
-		// legacy check
-		var oldResult = await CheckOldHashedPassword(email, password, salt, storedHash);
-		return Tuple.Create(oldResult, salt);
-	}
-
-	/// <summary>
-	/// This method is used to maintain compatibility with really old and crusty instances of POP Forums
-	/// that used MD5 to hash passwords. It upgrades those passwords if they match.
-	/// </summary>
-	private async Task<bool> CheckOldHashedPassword(string email, string password, Guid? salt, string storedHash)
-	{
-		string hashedPassword;
-		if (salt.HasValue)
-			hashedPassword = password.GetMD5Hash(salt.Value);
-		else
-			hashedPassword = password.GetMD5Hash();
-		if (storedHash == hashedPassword)
-		{
-			// upgrade the password hash
-			var user = await _userRepository.GetUserByEmail(email);
-			await SetPassword(user, password, string.Empty, null);
-			return true;
-		}
-		return false;
+		return Tuple.Create(storedHash == hashedPassword, salt);
 	}
 
 	public async Task<User> GetUser(int userID)
