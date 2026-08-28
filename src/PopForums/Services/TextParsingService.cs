@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace PopForums.Services;
 
 public interface ITextParsingService
@@ -69,6 +71,8 @@ public class TextParsingService : ITextParsingService
 	private static readonly Regex WwwPattern = new Regex(@"(?<!(\]|""|//))(?<=\s|^)(w{3}(\.[\w\-/~\*]+)*/?)([\?\w=&;\+%\*\:~,\-\$\|@#\(\)])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 	private static readonly Regex EmailPattern = new Regex(@"(?<=\s|\])(?<!(mailto:|""\]))([\w\.\-_']+)@(([\w\-]+\.)+[\w\-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 	private static readonly Regex YouTubePattern = new Regex(@"(?<![\]""\>=])(((http(s?))\://)[w*\.]*(youtu\.be|youtube\.com+))(?!.*/shorts/)(?!.*/post/)(?!/@)([\w\?=&/;\+%\*\:~,\.\-\$\|@#\(\)])*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+	private static readonly string[] AllowedUrlSchemes = { "http", "https", "mailto", "ftp", "ftps", "news" };
+	private static readonly Regex SafeYouTubeIdPattern = new Regex(@"^[A-Za-z0-9_\-]{1,64}$", RegexOptions.Compiled);
 
 	/// <summary>
 	/// Converts forum code from the browser to HTML for storage. This method wraps <see cref="CleanForumCode(string)"/> and <see cref="ForumCodeToHtml(string)"/>, and censors the text.
@@ -322,6 +326,42 @@ public class TextParsingService : ITextParsingService
 	}
 
 	/// <summary>
+	/// Makes a user-supplied URL safe to drop into a double-quoted href/src attribute: rejects script-ish
+	/// schemes (javascript:, data:, vbscript:, ...) and encodes characters that could terminate the attribute
+	/// or open a new tag. Relative links (no scheme) and http/https/mailto/ftp/news links are preserved.
+	/// </summary>
+	private static string SanitizeUrl(string url)
+	{
+		if (string.IsNullOrWhiteSpace(url))
+			return "#";
+		// decode first so entity/percent tricks (java&#115;cript:, java&#9;script:) can't smuggle a scheme past the check
+		var decoded = WebUtility.HtmlDecode(url).Trim();
+		if (HasDisallowedScheme(decoded))
+			return "#";
+		// a real URL never contains an unencoded quote/angle bracket/backtick; its presence means this isn't a link
+		if (decoded.IndexOfAny(new[] { '"', '<', '>', '`' }) >= 0)
+			return "#";
+		return decoded
+			.Replace("&", "&amp;")
+			.Replace("\"", "&quot;")
+			.Replace("'", "&#39;")
+			.Replace("<", "&lt;")
+			.Replace(">", "&gt;");
+	}
+
+	private static bool HasDisallowedScheme(string url)
+	{
+		var colonIndex = url.IndexOf(':');
+		if (colonIndex < 0)
+			return false; // no scheme, treat as a relative link
+		var pathStartIndex = url.IndexOfAny(new[] { '/', '?', '#' });
+		if (pathStartIndex >= 0 && pathStartIndex < colonIndex)
+			return false; // the ':' is part of the path or query, not a scheme
+		var scheme = url.Substring(0, colonIndex).Trim().ToLowerInvariant();
+		return Array.IndexOf(AllowedUrlSchemes, scheme) < 0;
+	}
+
+	/// <summary>
 	/// Converts forum code to HTML for storage. Important: This method does NOT attempt to create valid HTML, as it assumes that the forum code is 
 	/// already well-formed. This method should generally not be called directly except for testing.
 	/// </summary>
@@ -331,8 +371,8 @@ public class TextParsingService : ITextParsingService
 	{
 		text = text.Trim();
 
-		// replace URL tags
-		text = Regex.Replace(text, @"(\[url=""?)(\S+?)(""?\])", "<a href=\"$2\" target=\"_blank\">", RegexOptions.IgnoreCase);
+		// replace URL tags (the captured target is sanitized so it can't break out of the attribute or use a script scheme)
+		text = Regex.Replace(text, @"(\[url=""?)(\S+?)(""?\])", m => $"<a href=\"{SanitizeUrl(m.Groups[2].Value)}\" target=\"_blank\">", RegexOptions.IgnoreCase);
 		text = Regex.Replace(text, @"(<a href=\""mailto:)(\S+?)(\"" target=\""_blank\"">)", "<a href=\"mailto:$2\">", RegexOptions.IgnoreCase);
 		text = text.Replace("[/url]", "</a>");
 		text = Regex.Replace(text, @"<(?=a)\b[^>]*>", match => match.Value.Replace("javascript:", String.Empty, StringComparison.OrdinalIgnoreCase), RegexOptions.IgnoreCase);
@@ -340,8 +380,8 @@ public class TextParsingService : ITextParsingService
 		// replace image tags
 		if (_settingsManager.Current.AllowImages)
 		{
-			text = Regex.Replace(text, @"(\[img\])(\S+?)(\[/img\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
-			text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", "<img src=\"$2\" />", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(\[img\])(\S+?)(\[/img\])", m => $"<img src=\"{SanitizeUrl(m.Groups[2].Value)}\" />", RegexOptions.IgnoreCase);
+			text = Regex.Replace(text, @"(\[image=""?)(\S+?)(""?\])", m => $"<img src=\"{SanitizeUrl(m.Groups[2].Value)}\" />", RegexOptions.IgnoreCase);
 			text = ParseYouTubeTags(text);
 		}
 		else
@@ -407,7 +447,7 @@ public class TextParsingService : ITextParsingService
 					continue;
 				var q = uri.Query.Remove(0, 1).Split('&').Where(x => x.Contains("=")).Select(x => new KeyValuePair<string, string>(x.Split('=')[0], x.Split('=')[1]));
 				var dictionary = q.ToDictionary(pair => pair.Key, pair => pair.Value);
-				if (dictionary.Any(x => x.Key == "v"))
+				if (dictionary.Any(x => x.Key == "v") && SafeYouTubeIdPattern.IsMatch(dictionary["v"]))
 				{
 					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", dictionary["v"], width, height));
 				}
@@ -415,7 +455,8 @@ public class TextParsingService : ITextParsingService
 			else if (uri.Host.Contains("youtu.be"))
 			{
 				var v = uri.Segments[1];
-				text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
+				if (SafeYouTubeIdPattern.IsMatch(v))
+					text = text.Replace(item.Value, String.Format(@"<iframe width=""{1}"" height=""{2}"" src=""https://www.youtube.com/embed/{0}"" frameborder=""0"" allowfullscreen></iframe>", v, width, height));
 			}
 		}
 		return text;

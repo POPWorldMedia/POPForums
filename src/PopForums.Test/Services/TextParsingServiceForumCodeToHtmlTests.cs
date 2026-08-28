@@ -50,7 +50,7 @@ public class TextParsingServiceForumCodeToHtmlTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCodeToHtml("this is [url=\"javascript:alert('blah')\"]my link[/url].");
-		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
 	}
 
 	[Fact]
@@ -58,7 +58,7 @@ public class TextParsingServiceForumCodeToHtmlTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCodeToHtml("this is [url=javascript:alert('blah')]my link[/url].");
-		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
 	}
 
 	[Fact]
@@ -66,7 +66,7 @@ public class TextParsingServiceForumCodeToHtmlTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCodeToHtml("this is [url=JAVASCRIPT:alert('blah')]my link[/url].");
-		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
 	}
 
 	[Fact]
@@ -74,7 +74,65 @@ public class TextParsingServiceForumCodeToHtmlTests
 	{
 		var service = GetService();
 		var result = service.CleanForumCodeToHtml("this is [url=Javascript:alert('blah')]my link[/url].");
-		Assert.Equal("<p>this is <a href=\"alert('blah')\" target=\"_blank\">my link</a>.</p>", result);
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void DitchAttributeBreakoutInUrlTag()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=x\"onmouseover=\"alert(1)]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void DitchAttributeBreakoutInImageTag()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.CleanForumCodeToHtml("[image=x\"onerror=\"alert(1)]");
+		Assert.Equal("<p><img src=\"#\" /></p>", result);
+	}
+
+	[Fact]
+	public void DitchAttributeBreakoutInImgTag()
+	{
+		var service = GetService();
+		_settings.AllowImages = true;
+		var result = service.CleanForumCodeToHtml("[img]x\"onerror=\"alert(1)[/img]");
+		Assert.Equal("<p><img src=\"#\" /></p>", result);
+	}
+
+	[Fact]
+	public void DitchNestedJavascriptSchemeBypass()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=jjavascript:avascript:alert(1)]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void DitchDataUriLink()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=data:text/html;base64,PHNjcmlwdD4=]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void DitchEntityEncodedJavascriptScheme()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=java&#115;cript:alert(1)]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"#\" target=\"_blank\">my link</a>.</p>", result);
+	}
+
+	[Fact]
+	public void RelativeLinkIsPreserved()
+	{
+		var service = GetService();
+		var result = service.CleanForumCodeToHtml("this is [url=/forums/thing]my link[/url].");
+		Assert.Equal("<p>this is <a href=\"/forums/thing\" target=\"_blank\">my link</a>.</p>", result);
 	}
 
 	[Fact]
