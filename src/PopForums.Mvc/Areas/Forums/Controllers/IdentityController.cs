@@ -70,15 +70,12 @@ public class IdentityController : Controller
 	[HttpGet]
 	public async Task<RedirectResult> Logout()
 	{
+		var referer = Request?.Headers.Referer.ToString();
 		string link;
-		if (Request == null || string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
-			link = Url.Action("Index", HomeController.Name);
+		if (Uri.TryCreate(referer, UriKind.Absolute, out var refererUri) && refererUri.Host == Request.Host.Host)
+			link = refererUri.PathAndQuery;
 		else
-		{
-			link = Request.Headers["Referer"];
-			if (!link.Contains(Request.Host.Value))
-				link = Url.Action("Index", HomeController.Name);
-		}
+			link = Url.Action("Index", HomeController.Name);
 		var user = _userRetrievalShim.GetUser();
 		await _userService.Logout(user, HttpContext.Connection.RemoteIpAddress?.ToString());
 		await HttpContext.SignOutAsync(PopForumsAuthenticationDefaults.AuthenticationScheme);
