@@ -7,6 +7,34 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
+## Version v23.0.0 (xx/xx/26)
+* Enable subscriptions with Stripe integration #426
+* Add French translation #414
+* Make upvotes update in real time #251
+* Put Azure Functions into a class library #430
+* Surface and fix pre-existing TypeScript type errors #411
+* Force websockets without fallback to enable non-sticky, multi-node use #412
+* Correct various security defects and vulnerabilities #413
+* Clear vote-up list when click/tap away from it #420
+* Refactor ForumRouteConstraint to make a sync call to database #422
+* Make CacheHelper thread safe #423
+* ModeratorController doesn't specify the POPForums AuthenticationScheme #428
+* Modernize client build stuff #436
+* Replace font-based icons with svg #419
+* Retire legacy MD5 password check #440
+* Forum/topic update listeners not gated by permissions #441
+* BUG: Forum auth middleware overwrites host app's ClaimsPrincipal instead of merging #427
+* BUG: Comment links from YouTube break parsing #398
+* BUG: Password reset potentially handles token validation wrong #439
+* BUG: Notification feed doesn't escape title data #406
+* BUG: Logout redirect is open #442
+* BUG: Real-time new post breaks when hidden #407
+* BUG: Insertion of new topic to list uses innerHTML instead of textContent #408
+* BUG: Text parser not case insensitive when sanitizing #409
+* BUG: Rare but potential race condition in app startup if db is not available #415
+* BUG: Text parser can persist naughty strings in PM's #438
+* BUG: Login not considering target of redirect #410
+
 ## Version v21.1.0 (PopForums.ElasticKit only, 12/16/25)
 * The ElasticSearch key value in the configuration should simply be the API key, which is a more modern convention used in Elastic's cloud service.
 
