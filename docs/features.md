@@ -29,6 +29,7 @@ nav_order: 1.5
 * Edit posts
 * Ignore users
 * Localized for English, Spanish, French, German, Dutch, Ukranian and Taiwanese Mandarin
+* Stripe integration to enable subscription payments
 * Fast page rendering, average 20ms on Azure App Service P0v3 and SQL elastic pool at 50 eDTUs and 900k posts.
 
 ## Administration
