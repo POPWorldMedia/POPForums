@@ -27,7 +27,8 @@ A number of different tasks are necessarily performed asynchronously:
 * Email
 * Post Image Cleanup
 * Search Indexing
-* Subscribe Notifications
+* Subscription Renewal Queuer and Processor
+* Followed Topic Notifications
 * User Session Cleanup
 
 The default implementation uses jobs registered as derivatives of `Microsoft.Extensions.Hosting.BackgroundService`. This works fine in a single-node environment, and most of the actions are not resource intensive, save for the search indexing (regardless of using the base search or Elastic).
@@ -56,7 +57,7 @@ The app leverages ASP.NET's SignalR for real-time communication with the server 
 
 In accordance with the simple design philosophy, the web app does not use any specific front-end library, aside from Vue.js, which is used for the admin interface. Again, the intent is to produce search engine friendly markup without a web of dependencies and npm packages. That doesn't mean that there isn't any rich interactivity, because a number of small, raw elements are written in TypeScript. They live in `PopForums.Mvc/Client`. Along with a few small service classes and a simple state engine, "reactive" elements are updated when a notification comes in via web sockets.
 
-While server-side localization is straight forward enough, the client-side bits use a small JSON payload apply the right language to the interface. For example, the use of time words varies by language, so the `FormattedTime.ts` component uses those strings for "5 minutes ago" or whatever the right variant is. 
+While server-side localization is straight forward enough, the client-side bits use a small JSON payload to apply the right language to the interface. For example, the use of time words varies by language, so the `FormattedTime.ts` component uses those strings for "5 minutes ago" or whatever the right variant is. 
 
 ## Unit Testing
 
