@@ -12,8 +12,6 @@ public class ConfigLoader
 		container.CacheForceLocalOnly = Convert.ToBoolean(configuration["PopForums:Cache:ForceLocalOnly"]);
 		container.SearchUrl = configuration["PopForums:Search:Url"];
 		container.SearchKey = configuration["PopForums:Search:Key"];
-		var searchProvider = configuration["PopForums:Search:Provider"];
-		container.SearchProvider = searchProvider ?? string.Empty;
 		container.QueueConnectionString = configuration["PopForums:Queue:ConnectionString"];
 		var logTopicViews = configuration["PopForums:LogTopicViews"];
 		container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);

@@ -31,19 +31,10 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	{
 		_errorLog = errorLog;
 		_tenantService = tenantService;
-		ElasticsearchClientSettings settings;
-		switch (config.SearchProvider.ToLower())
-		{
-			case "elasticsearch":
-				settings = new ElasticsearchClientSettings(new Uri(config.SearchUrl))
-					.DefaultIndex(IndexName).DisableDirectStreaming()
-					.Authentication(new ApiKey(config.SearchKey));
-				break;
-			default:
-				settings = new ElasticsearchClientSettings()
-					.DefaultIndex(IndexName).DisableDirectStreaming();
-				break;
-		}
+		var settings = new ElasticsearchClientSettings(new Uri(config.SearchUrl))
+			.DefaultIndex(IndexName).DisableDirectStreaming();
+		if (!string.IsNullOrEmpty(config.SearchKey))
+			settings.Authentication(new ApiKey(config.SearchKey));
 		
 		_client = new ElasticsearchClient(settings);
 	}

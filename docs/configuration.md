@@ -74,7 +74,7 @@ On a new install, the forum routes and the error logger only activate once the d
 
 When background work runs in Azure Functions, both hosts must make the same choices:
 * **Queues:** call `AddPopForumsAzureFunctionsAndQueues()` in both.
-* **Search:** use the same search provider in both.
+* **Search:** call the same search method in both (`AddPopForumsAzureSearch()`, `AddPopForumsElasticSearch()` or neither).
 * **Post images:** if one host uses blob storage, both must.
 * **Error logging:** use table storage logging in both or in neither.
 
@@ -136,7 +136,6 @@ As environment variables, the keys use colons to show the hierarchy, for example
       "ForceLocalOnly": false
     },
     "Search": {
-      "Provider": "elasticsearch",
       "Url": "https://localhost:9200",
       "Key": "99011A70D3D50D251B0A6141A97B40E7"
     },
@@ -175,9 +174,8 @@ All keys are under `PopForums:`.
 | `Cache:Seconds` | Optional | `90` | How long cached data is kept. |
 | `Cache:ConnectionString` | Using `AddPopForumsRedisCache()` or `AddRedisBackplaneForPopForums()` | — | The Redis instance. |
 | `Cache:ForceLocalOnly` | Optional, with the Redis cache | `false` | Set it to `true` to cache in local memory only and ignore Redis. This is useful if you scale down to one node and don't want to redeploy. Don't use it with more than one node. |
-| `Search:Provider` | Using ElasticSearch, or using Azure AI Search in the reference functions host | — | `elasticsearch` or `azuresearch`. ElasticSearch ignores `Url` and `Key` unless this is `elasticsearch`. The reference functions host uses it to choose its search provider. |
 | `Search:Url` | Using Azure AI Search or ElasticSearch | — | The search service's endpoint URL. |
-| `Search:Key` | Using Azure AI Search or ElasticSearch | — | The search service's API key. |
+| `Search:Key` | Using Azure AI Search, or ElasticSearch with authentication | — | The search service's API key. |
 | `Queue:ConnectionString` | Using `AddPopForumsAzureFunctionsAndQueues()` | — | The Azure Storage account for the background work queues. It also secures the notifications that the functions send to the web app, so it must be identical in both hosts. |
 | `WebAppUrlAndArea` | Functions host | — | The forum's base URL, including the area (for example `https://example.com/Forums`). The functions use it to send notifications to the web app. |
 | `Storage:ConnectionString` | Using `AddPopForumsAzureBlobStorageForPostImages()` or `AddPopForumsTableStorageLogging()` | — | The Azure Storage account for post images or error logs. It's often the same account as the queues. |

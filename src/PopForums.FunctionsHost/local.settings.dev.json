@@ -11,8 +11,7 @@
     },
     "Search": {
       "Url": "https://localhost:9200",
-      "Key": "elastic|1+GhSZd-+ActqOHZLkAL",
-      "Provider": ""
+      "Key": "elastic|1+GhSZd-+ActqOHZLkAL"
     },
     "Queue": {
       "ConnectionString": "UseDevelopmentStorage=true"

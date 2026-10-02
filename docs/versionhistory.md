@@ -8,6 +8,11 @@ nav_order: 4
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
 ## Version v23.0.0 (xx/xx/26)
+
+### Breaking changes
+* Remove the `PopForums:Search:Provider` setting (breaking change). The functions host now chooses its search provider by calling `AddPopForumsAzureSearch()` or `AddPopForumsElasticSearch()` in `Program.cs`, the same as the web app. If you use either one with Functions, add that call to the functions host, or it falls back to SQL search. ElasticSearch now always uses `Search:Url`, and uses `Search:Key` only when it's set.
+
+### Change log
 * Enable subscriptions with Stripe integration #426
 * Add French translation #414
 * Make upvotes update in real time #251

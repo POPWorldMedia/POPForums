@@ -9,7 +9,6 @@ public interface IConfig
 	string SearchUrl { get; }
 	string SearchKey { get; }
 	string QueueConnectionString { get; }
-	string SearchProvider { get; }
 	bool LogTopicViews { get; }
 	bool UseReCaptcha { get; }
 	string ReCaptchaSiteKey { get; }
@@ -52,7 +51,6 @@ public class Config : IConfig
 	public string SearchUrl => _configContainer.SearchUrl;
 	public string SearchKey => _configContainer.SearchKey;
 	public string QueueConnectionString => _configContainer.QueueConnectionString;
-	public string SearchProvider => _configContainer.SearchProvider;
 	public bool LogTopicViews => _configContainer.LogTopicViews;
 	public bool UseReCaptcha => _configContainer.UseReCaptcha;
 	public string ReCaptchaSiteKey => _configContainer.ReCaptchaSiteKey;

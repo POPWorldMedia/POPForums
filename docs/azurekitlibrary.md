@@ -162,7 +162,7 @@ The connection string for using the local Azure storage emulator is `UseDevelopm
 
 _Note: v18+ breaks compatibility with previous indexes using Azure Search._
 
-Use this in your `Program.cs` configuration if you're using web in-process search indexing:
+Add this to your `Program.cs`:
 
 ```
 var builder = WebApplication.CreateBuilder(args);
@@ -173,22 +173,20 @@ services.AddPopForumsAzureSearch();
 ```
 Under the hood, this replaces the `PopForums.Sql` implementation of the search interfaces with those used for Azure Search.
 
-For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` (or `PopForums__Search__Provider` if it's Linux-based) setting in the portal blade for the functions to `azuresearch`.
+If you run background work in Azure Functions, add the same line to the functions host's `Program.cs`, because the functions build the search index.
 
-You'll also need to setup the right configuration values:
+You'll also need to set these configuration values in both hosts:
 
 ```
 {
   "PopForums": {
     "Search": {
       "Url": "https://somesearchservice.search.windows.net",
-      "Key": "99011A70D3D50D251B0A6141A97B40E7",
-      "Provider": ""
+      "Key": "99011A70D3D50D251B0A6141A97B40E7"
     },
 ```
 * `Url`: The URL for Azure Search, typically `https://{nameOfSearchService}.search.windows.net` with the name set in the Azure portal
 * `Key`: A key provisioned by the portal to connect to Azure Search
-* `Provider`: This is only used in `PopForums.AzureKit.Functions`, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library. _Important: If the value is left blank, the Azure Functions will use the SQL-based search provider._
 
 ## Using Azure storage for hosting uploaded images in posts
 The default implementation for uploading images into forum posts is to upload them into the database. While this is convenient and super portable, it may not be the least expensive option, since database storage is typically more expensive than other means. To that end, you can use `AzureKit` to upload and host the images in an Azure storage container.

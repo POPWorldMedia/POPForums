@@ -9,7 +9,6 @@ public class ConfigContainer
 	public string SearchUrl { get; set; }
 	public string SearchKey { get; set; }
 	public string QueueConnectionString { get; set; }
-	public string SearchProvider { get; set; }
 	public bool LogTopicViews { get; set; }
 	public bool UseReCaptcha { get; set; }
 	public string ReCaptchaSiteKey { get; set; }

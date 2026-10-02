@@ -18,7 +18,7 @@ The POP Forums configuration system uses the `appsettings.json` file, but adhere
 * In search: The search indexing interval only reacts when something is queued for in-Web processing, not Azure Functions. Furthermore, if you use ElasticSearch, the junk words no longer apply, as these indexing strategies are handled by ES.
 
 ## Using ElasticSearch for search
-ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, you'll need to configure this line in your `Program.cs` if you're using web in-process search processing:
+ElasticSearch is a search engine you can run on your own or in managed services from AWS, Elastic and others. To use this service instead of the internal POP Forums search indexing, add this line to your `Program.cs`:
 
 ```
 using PopForums.ElasticKit;
@@ -29,21 +29,19 @@ namespace YourWebApp;
 services.AddPopForumsElasticSearch();
 ```
 
-For use in the Azure functions, you'll need to set the `PopForums:Search:Provider` (or `PopForums__Search__Provider` on a Linux instance) setting in the portal blade for the functions to `elasticsearch` (see `Provider` config below).
+If you run background work in Azure Functions, add the same line to the functions host's `Program.cs`, because the functions build the search index.
 
-You'll also need to setup the right configuration values if you're running web in-process:
+You'll also need to set these configuration values in both hosts:
 
 ```
 {
   "PopForums": {
     "Search": {
       "Url": "https://myelasticsearchindex",
-      "Key": "",
-      "Provider": ""
+      "Key": ""
     },
 ```
 * `Url`: The base URL for the ElasticSearch endpoints. If you're using managed ES from Elastic, this is the "ElasticSearch Copy endpoint" result in the portal.
-* `Key`: This is the API key.
-* `Provider`: This is optional in the web app and not actually implemented anywhere other than in our Azure Functions example project, where it's used to switch between `elasticsearch`, `azuresearch` and the default bits in the `PopForums.Sql` library.
+* `Key`: This is the API key. Leave it blank if your ElasticSearch instance doesn't require authentication.
 
 Configuring ElasticSearch and setting up security rules for it are beyond the scope of this wiki.

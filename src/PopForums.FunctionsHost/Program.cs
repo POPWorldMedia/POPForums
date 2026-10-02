@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.Hosting;
-using PopForums.Configuration;
 using Microsoft.Extensions.Configuration;
 using PopForums.Extensions;
 using PopForums.Sql;
@@ -14,7 +13,6 @@ var configuration = new ConfigurationBuilder()
 	.AddJsonFile("local.settings.dev.json", true)
 	.AddEnvironmentVariables()
 	.Build();
-var config = new Config(configuration);
 
 var host = new HostBuilder()
 	.UseDefaultServiceProvider((_, options) =>
@@ -44,21 +42,11 @@ var host = new HostBuilder()
 		// use Azure table storage for logging instead of database
 		//s.AddPopForumsTableStorageLogging();
 
-		switch (config.SearchProvider.ToLower())
-		{
-			case "elasticsearch":
-			case "elasticcloud":
-				s.AddPopForumsElasticSearch();
-				Console.WriteLine("ElasticSearch provider configured.");
-				break;
-			case "azuresearch":
-				s.AddPopForumsAzureSearch();
-				Console.WriteLine("Azure Search provider configured.");
-				break;
-			default:
-				Console.WriteLine("Default SQL based search provider configured.");
-				break;
-		}
+		// use Azure Search for POP Forums using AzureKit (match the web app)
+		//s.AddPopForumsAzureSearch();
+
+		// use ElasticSearch for POP Forums using ElasticKit (match the web app)
+		//s.AddPopForumsElasticSearch();
 	})
 	.Build();
 
