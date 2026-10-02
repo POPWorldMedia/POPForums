@@ -47,76 +47,58 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * The project files require an up-to-date version of Visual Studio 2026 or later, but it also works great with Jetbrains' Rider on Mac or Windows. I prefer it.
 * This project is built on ASP.NET v10. Make sure you have the required SDK installed (v10.0.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
-* The `main` branch is using Azure Functions by default to run background processes. Run the [Azurite](https://github.com/azure/azurite) container in Docker (works on Windows and Mac). If not, you can run the background things in-process by uncommenting `services.AddPopForumsBackgroundJobs()` in `Program.cs` and commenting out or removing `services.AddPopForumsAzureFunctionsAndQueues()`. This causes all of the background things to run in the context of the web app itself.
+* The default `Program.cs` runs background work in Azure Functions and caches data in Redis, so run the Azurite and Redis containers described [below](#running-third-party-services-in-docker-containers). For a single node without them, switch to in-process background jobs and remove the Redis cache. See [Service component registration](configuration.md#service-component-registration) for what each option does.
 
 > Running the background services in the web context can cause some wild variations in CPU and RAM usage on a busy forum, especially in the code associated with updating the search index. If you are running in Azure, using Functions is a much better choice for consistent and predictable app performance.
-
-* `Program.cs` also calls `services.AddPopForumsRedisCache()` by default. Without it, the built-in `AddPopForumsSql()` cache is an in-process `MemoryCache`, which has no way to invalidate the same key on another node — if you run more than one instance of the app (including two `dotnet run` processes locally against the same database), admin changes like settings, forums, or category edits won't be seen by other nodes until their local cache entry naturally expires (`PopForums:Cache:Seconds`). Run the Redis container described below and configure `PopForums:Cache:ConnectionString` so cache invalidation propagates across nodes. If you truly only ever run a single node, you can comment this line back out and rely on the in-memory cache.
 
 ## Installation
 
 * Once you've completed one of the above scenarios, reference or build, it's time to fire it up, starting with the configuration file.
-* `appsettings.json`, in the root of the web project, is the basic configuration file for POP Forums. It works like any other config file in ASP.NET Core, so when you're running in Azure, you can use the colon notation in the App Service application settings to set these values (i.e., `PopForums:Cache:Seconds` as the key).
+* `appsettings.json`, in the root of the web project, holds the POP Forums settings. With the default `Program.cs`, these are the ones you need:
 
-> If you run the app in a Linux App Service or container, your settings notation should replace `:` with a double underscore, `__`. So the above would be `PopForums__Cache__Seconds`.
-
-```js
+```json
 {
-    "PopForums": {
-        "IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}", // used on Recent Users screen of admin to lookup IP addresses
-        "BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1", // if using AzureKit to host images, points to the base URL of images uploaded to blob storage (you should really alias the storage to a domain you own)
-        "Storage": {
-            "ConnectionString": "UseDevelopmentStorage=true" // if using AzureKit to host images, typically the same as the Queue:ConnectionString, but the place where images are uploaded to blob storage
-        },
-        "Database": {
-            "ConnectionString": "server=localhost;Database=popforums21;Trusted_Connection=True;TrustServerCertificate=True;"
-        },
-        "Cache": {
-            "Seconds": 180,
-            "ConnectionString": "127.0.0.1:6379,abortConnect=false", // used for Redis cache in AzureKit
-            "ForceLocalOnly": false // used for Redis cache in AzureKit
-        },
-        "Search": { // used for Elastic or Azure Search (see docs)
-            "Url": "https://localhost:9200", // ElasticSearch URL, or Azure Search service name
-            "Key": "99011A70D3D50D251B0A6141A97B40E7"
-        },
-        "Queue": { // used for queues with Azure Functions
-            "ConnectionString": "UseDevelopmentStorage=true"
-        },
-        "LogTopicViews": true, // optional, records topic views for future analytics
-        "ReCaptcha": { // Google ReCaptcha on signup (the key/secret below works on localhost)
-            "UseReCaptcha": true,
-            "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
-            "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
-        },
-        "WebAppUrlAndArea": "https://somehost/forums", // required only when running Azure Functions; not needed for in-process background jobs
-        "RenderBootstrap": true, // optional, defaults to true, put false here if your host page will have its own build of Bootstrap CSS
-        "OAuthOnly": {
-            // this section is detailed in the OAuth-Only Mode section
-        }
-    }
+  "PopForums": {
+    "Database": {
+      "ConnectionString": "server=localhost;Database=popforums21;Trusted_Connection=True;TrustServerCertificate=True;"
+    },
+    "Cache": {
+      "ConnectionString": "127.0.0.1:6379,abortConnect=false"
+    },
+    "Queue": {
+      "ConnectionString": "UseDevelopmentStorage=true"
+    },
+    "Storage": {
+      "ConnectionString": "UseDevelopmentStorage=true"
+    },
+    "BaseImageBlobUrl": "http://127.0.0.1:10000/devstoreaccount1"
+  }
 }
 ```
 
+* The values in `PopForums.Web` already point at the local Docker containers, so locally you may only need to change the database connection string. When you deploy the functions host, set `WebAppUrlAndArea` to your forum's URL. See [Configuration](configuration.md) for every setting, and for how to set them as environment variables in Azure.
 * Attempt to run the app locally via Kestrel, and go to the URL `/Forums` to see an error page about not finding the settings table. It will fail either because the database isn’t set up, or because it can’t connect to it. The biggest reason for failure is an incorrect connection string. If you change nothing locally, by default it's looking for a local database on the default SQL Server instance called `popforums21`.
 * If you want to use the setup page (and you should), don’t run the SQL script. Once the POP Forums tables exist in the database, the setup page will tell you that you’re prohibited from going there.
 * Point the browser to `/Forums/Setup` now, and if your connection string is correct, you should see a page with some of the basic fields to set up.
 > If you're running in OAuth-Only Mode, there is no setup for the fields below. The forum will attempt to set up the database, and that's it. That mode has no email functionality, and user creation and roles are delegated to the external identity provider. See [OAuth-Only Mode](oauthonly.md) for more information.
 * The `PopForums.Mvc` package includes Bootstrap, which is used as the base style for the entire app. To give it your own look, you can add your own CSS to override Bootstrap in your `_Layout.cshtml`, or do your own build of Bootstrap with whatever variables you like. If you prefer your own build, make sure _both_ the Javascript and CSS tags appear _before_ the `RenderSection` in your header, and set the `RenderBootstrap` setting in `appsettings.json` to `false`. Learn more in [customization](customization.md).
-* If you're using Azure functions in the background, instead of embedding the background work in the web app (see [Using AzureKit](azurekitlibrary.md)), you'll want to run multiple startup projects, specifically the `PopForums.Web` and `PopForums.AzureKit.Functions`.
+* If you're using Azure functions in the background, instead of embedding the background work in the web app (see [Using AzureKit](azurekitlibrary.md)), you'll want to run multiple startup projects, specifically `PopForums.Web` and `PopForums.FunctionsHost`.
 
-Here’s what each field on the setup page does: 
-* **Forum title:** This is what your forum will be called at the root, in an h1 tag. You can edit this (and everything else) later.
-* **SMTP Server:** The host name of the server you’ll connect to for sending e-mail. Enabling this functionality on your server is beyond the scope of this document, but we usually use SendGrid to send email.
-* **Port:** Typically 25, though some services (like Gmail) use others.
-* **From e-mail address:** When a user receives e-mail from the forum, it will be “from” this address.
-* **Use SSL:** Check if your server uses or requires SSL.
-* **Use ESMTP for credentials:** Check this box if you have to authenticate with your server (this is almost always the case). Checking this makes the two boxes below it editable.
-* **SMTP User:** User name (often the e-mail address) to authenticate with. Not editable unless the “Use ESMTP” box is checked.
-* **SMTP Password:** Password to authenticate with. Not editable unless the “Use ESMTP” box is checked.
-* **Display name:** How you want your name to appear in the forum.
-* **E-mail:** The e-mail address you’ll use to login with.
-* **Password:** The password you’ll use to login with.
+Here’s what each field on the setup page does:
+
+| Field | What it does |
+|---|---|
+| Forum title | What your forum is called at the root, in an h1 tag. You can edit this (and everything else) later. |
+| SMTP Server | The host name of the server you’ll connect to for sending e-mail. Enabling this functionality on your server is beyond the scope of this document, but we usually use SendGrid to send email. |
+| Port | Typically 25, though some services (like Gmail) use others. |
+| From e-mail address | When a user receives e-mail from the forum, it will be “from” this address. |
+| Use SSL | Check if your server uses or requires SSL. |
+| Use ESMTP for credentials | Check this box if you have to authenticate with your server (this is almost always the case). Checking it makes the two fields below it editable. |
+| SMTP User | The user name (often the e-mail address) to authenticate with. Not editable unless “Use ESMTP” is checked. |
+| SMTP Password | The password to authenticate with. Not editable unless “Use ESMTP” is checked. |
+| Display name | How you want your name to appear in the forum. |
+| E-mail | The e-mail address you’ll use to log in. |
+| Password | The password you’ll use to log in. |
 
 You're almost there!
 
