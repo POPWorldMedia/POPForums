@@ -14,6 +14,33 @@ POP Forums has three layers of configuration:
 
 POP Forums is wired up through a set of extension methods. The reference implementations are `src/PopForums.Web/Program.cs` and `src/PopForums.FunctionsHost/Program.cs`.
 
+### Framework setup that POP Forums depends on
+
+Alongside the POP Forums extension methods, both reference `Program.cs` files configure some standard ASP.NET Core and Azure Functions features that the forum relies on.
+
+Web app:
+
+| Setup | Required? | Why |
+|---|---|---|
+| `services.AddControllersWithViews()` | Yes | The forum is an MVC area with Razor views. (The template also calls `AddRazorPages()`, which the forum doesn't need.) |
+| `services.AddMvc(options => options.Filters.Add(typeof(PopForumsUserAttribute)))` | Yes | Tracks visitor sessions, which drive the "who's online" list and user counts. It only runs on POP Forums controllers. To track sessions on your own pages too, subclass it and override `IsGlobalFilter()` to return `true`. |
+| `services.AddControllers().AddJsonOptions(...)` with `JsonStringEnumConverter` and `PropertyNameCaseInsensitive = true` | Yes | The admin app sends some enum values as strings, like the user search type. `PropertyNameCaseInsensitive` is already the ASP.NET Core default for MVC, so it's there for clarity. |
+| `services.AddSignalR()` | Yes | Real-time updates, like new posts and notifications. Chain `AddRedisBackplaneForPopForums()` onto it when you run more than one node. |
+| `services.AddDataProtection()` with persisted keys | With more than one node, or with Azure deployment slots | Keeps the auth cookie and anti-forgery tokens valid across nodes and slot swaps. Without it, people get logged out and forms fail. The template persists the keys to blob storage when `DataProtectBlobConnectionString` is set (see [below](#outside-the-popforums-section)), but any persistence mechanism that Data Protection supports works. |
+| `app.UseStaticFiles()` | Yes | Serves the forum's scripts, styles and images, which are embedded in `PopForums.Mvc`. |
+| `app.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}")` | Yes | `AddPopForumsEndpoints()` maps only the forum's special routes. The rest of the forum's pages, like sign-in and profiles, use this standard area route. |
+| `services.AddResponseCompression()` / `app.UseResponseCompression()` | No | Smaller responses. The template enables compression outside of Development. |
+
+`UseAuthentication()`, `UseRouting()` and `UseAuthorization()` are required too, in the order shown under [Web app request pipeline](#web-app-request-pipeline).
+
+Functions host:
+
+| Setup | Required? | Why |
+|---|---|---|
+| `ConfigureFunctionsWorkerDefaults()` | Yes | Standard setup for the isolated worker model of Azure Functions. |
+| A `ConfigurationBuilder` that reads `local.settings.json`, `local.settings.dev.json` and environment variables, passed to `ConfigureAppConfiguration` | Yes | Locally, Functions only load the `Values` section of `local.settings.json`, so the host reads the file itself to pick up the `PopForums` section. In Azure, the environment variables (application settings) supply the values. |
+| `UseDefaultServiceProvider(... options.ValidateOnBuild = false)` | Yes | The core services include some that only the web app uses. Their dependencies aren't registered in the functions host, so service validation would fail at startup. |
+
 ### General ordering rule
 
 Register the required defaults first, then the optional features. The optional features override the defaults, so a default registered after one of them would undo it.

@@ -10,7 +10,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 ## Version v23.0.0 (xx/xx/26)
 
 ### Breaking changes
-* Remove the `PopForums:Search:Provider` setting (breaking change). The functions host now chooses its search provider by calling `AddPopForumsAzureSearch()` or `AddPopForumsElasticSearch()` in `Program.cs`, the same as the web app. If you use either one with Functions, add that call to the functions host, or it falls back to SQL search. ElasticSearch now always uses `Search:Url`, and uses `Search:Key` only when it's set.
+* Removed the `PopForums:Search:Provider` setting. The functions host now chooses its search provider by calling `AddPopForumsAzureSearch()` or `AddPopForumsElasticSearch()` in `Program.cs`, the same as the web app. Use one of these if you're using the associated search provider. ElasticSearch now always uses `Search:Url`, and uses `Search:Key` only when it's set. Previously, the functions host used a config value to choose the provider.
 
 ### Change log
 * Enable subscriptions with Stripe integration #426
