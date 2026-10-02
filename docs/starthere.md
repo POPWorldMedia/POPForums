@@ -21,7 +21,7 @@ You'll need the following locally:
 * Node.js (comes with npm)
 * SQL Server Developer, or SQL Server running in a Docker container
 * A mail sending service that supports SMTP
-* Docker, to run Redis, since `PopForums.Web`'s `Program.cs` calls `services.AddPopForumsRedisCache()` by default (instructions below). Optionally, also Docker for Azurite, ElasticSearch, etc.
+* Docker, to run the Azurite, Redis or ElasticSearch containers as needed (instructions below). The default `Program.cs` uses Redis, but a single local node can skip it (see [Build](#build)).
 
 ## Build vs. reference
 
@@ -47,7 +47,7 @@ For the bleeding edge, latest build from `main`, the CI build packages can be ob
 * The project files require an up-to-date version of Visual Studio 2026 or later, but it also works great with Jetbrains' Rider on Mac or Windows. I prefer it.
 * This project is built on ASP.NET v10. Make sure you have the required SDK installed (v10.0.100).
 * The `PopForums.Web` project is the template to use to include the forum in your app. It references `PopForums.Mvc`, which contains all of the web app-specific code, including script and CSS. `PopForums.Sql` concerns itself only with data, while `PopForums` works entirely with business logic and defines interfaces used in the upstream projects. `PopForums.AzureKit` contains a number of items to facilitate using various Azure services. `PopForums.ElasticKit` contains an ElasticSearch implementation. `PopForums.AzureKit.Functions` is an implementation of functions, used if you're not using in-app context background services (see below).
-* The default `Program.cs` runs background work in Azure Functions and caches data in Redis, so run the Azurite and Redis containers described [below](#running-third-party-services-in-docker-containers). For a single node without them, switch to in-process background jobs and remove the Redis cache. See [Service component registration](configuration.md#service-component-registration) for what each option does.
+* The default `Program.cs` runs background work in Azure Functions and caches data in Redis, so run the Azurite and Redis containers described [below](#running-third-party-services-in-docker-containers). For a single node without them, switch to in-process background jobs and remove the Redis cache. Redis is on by default because the project's CI build runs on two nodes, and the in-memory cache can't keep separate nodes in sync. Locally, a single node doesn't need it. Instead of changing `Program.cs`, you can set `PopForums:Cache:ForceLocalOnly` to `true` in your `appsettings.development.json`. See [Service component registration](configuration.md#service-component-registration) for what each option does.
 
 > Running the background services in the web context can cause some wild variations in CPU and RAM usage on a busy forum, especially in the code associated with updating the search index. If you are running in Azure, using Functions is a much better choice for consistent and predictable app performance.
 
