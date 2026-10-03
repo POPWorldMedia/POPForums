@@ -131,7 +131,7 @@ Then, to wire up this new implementation, we swap out the event sink for our cod
 ## Using Azure Storage queues and Functions
 Azure Storage queues can be used instead of using SQL tables. Using SQL for this is not inherently bad, and honestly the volume of queued things in POP Forums probably never gets huge even on a busy forum, but with queues you get some of the magic of triggering Azure Functions, for example. These are most logically used when you have functions.
 
-To enable queue usage, use this in your `Program.cs` config:
+To enable queue usage, use this in your `Program.cs` for your web app:
 
 ```
 var builder = WebApplication.CreateBuilder(args);
@@ -158,6 +158,8 @@ Look at the Azure documentation to see how to provision and deploy Azure Functio
 The `WebAppUrlAndArea` is used to point the functions back at your web app to notify them as necessary and have them in turn notify users in real-time. The URL should end without a slash, and probably ends in `/Forums` unless you changed the name of the area throughout the code. Behind the scenes, the award calculator uses this to call an endpoint on the web app and let it know that a user has received an award. For security, it uses a hash of the queue connection string, _which must be the same for the web app and the functions_.
 
 The connection string for using the local Azure storage emulator is `UseDevelopmentStorage=true`.
+
+Starting in v23, the functions are contained in the `PopForums.AzureKit.Functions` Nuget package, and the source project here. You'll need to reference this package or project in an Azure Functions host project, like the one in `PopForums.FunctionHost`. 
 
 ## Using Azure Search
 
