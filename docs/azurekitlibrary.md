@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Using Azure Kit Library
+title: Using AzureKit Library
 nav_order: 6
 ---
 # Using AzureKit Library
@@ -36,9 +36,10 @@ You can almost run everything in this stack locally. Here's the breakdown:
 ## Setting locale in Azure Functions
 Since Azure Functions do not run as a normal web app, listening to the locale of the user's web browser, it defaults to whatever Azure decides is default, probably `en-US` in a lot of places. For some of the functions that are generating notifications, this matters, because you might be serving a Spanish-speaking audience and want them to get notifications in that language.
 
-To set the language in a function, add the following to those function methods in one of the supported languages:
+Since the function classes live in the `PopForums.AzureKit.Functions` package, you can't edit them directly. Instead, set the default culture for the whole process in the `Program.cs` of your functions host (`PopForums.FunctionsHost` in this repo, which has these lines commented out), before the host is built, using one of the supported languages:
 ```
-Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("es");
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("es");
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("es");
 ```
 
 ## Using Redis for caching
