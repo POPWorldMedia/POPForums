@@ -35,7 +35,7 @@ You should definitely get to know the installation information below to understa
 * You'll need a layout view for the forum to live in.
 * Set up the various options in `Program.cs` as described in its comments and this documentation.
 * `appsettings.json` will have your forum configuration.
-* There is no package for the Azure Functions, because it's currently hard to make them work from a shared library in certain situations. However, you can deploy the project from the main repo with ease given the tooling in VS or Azure DevOps Pipelines. Just be sure to set the right values up in the application configuration in the Azure portal.
+* v23 introduced the `PopForums.AzureKit.Functions` package, encapsulating the Azure Functions bits. These need to be hosted in a functions host, much like the one included here.
 * POP Forums uses ASP.NET Data Protection in multi-node or external login scenarios. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your `Program.cs`, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things. If you use slots in Azure App Services, you'll also want the Data Protection setup, otherwise the swap will cause everyone to be logged out.
 
 For the bleeding edge, latest build from `main`, the CI build packages can be obtained by a MyGet feed:
@@ -149,7 +149,7 @@ docker cp containerID3bed54c7734b:/var/opt/mssql ~/sqlvolumes
 
 ## Running Azure Functions on a Mac
 
-This isn't the most straightfoward thing, and it's hard to find the information, but you need to install the Azure Functions Core tools via Homebrew. [Microsoft explains how to do this.](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Cmacos%2Ccsharp%2Cportal%2Cbash#install-the-azure-functions-core-tools)
+This isn't the most straightfoward thing, and it's hard to find the information, but you need to install the Azure Functions Core tools via Homebrew. [Microsoft explains how to do this.](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=v4%2Cmacos%2Ccsharp%2Cportal%2Cbash#install-the-azure-functions-core-tools) JetBrains' Rider has an Azurite runner built-in to its tooling.
 
 ## Customization
 

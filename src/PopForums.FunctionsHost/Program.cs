@@ -32,7 +32,8 @@ var host = new HostBuilder()
 		s.AddPopForumsSql();
 
 		// route background work to Azure queues, and wire up the broker/cache/notification
-		// tunnel needed to talk back to the web front end
+		// tunnel needed to talk back to the web front end (which is specified in the
+		// PopForums:WebAppUrlAndArea value)
 		s.AddPopForumsAzureFunctionsAndQueues();
 		s.AddPopForumsFunctionsHost();
 
