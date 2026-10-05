@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[pf_PopForumsUser](
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_UserName] ON [dbo].[pf_PopForumsUser]([Name]);
 CREATE UNIQUE NONCLUSTERED INDEX [IX_PopForumsUser_Email] ON [dbo].[pf_PopForumsUser]([Email]);
+CREATE NONCLUSTERED INDEX [IX_PopForumsUser_CreationDate] ON [dbo].[pf_PopForumsUser]([CreationDate] DESC) INCLUDE ([Name], [Email]);
 
 
 

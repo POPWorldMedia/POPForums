@@ -92,3 +92,8 @@ IF NOT EXISTS (SELECT 1 FROM pf_Role WHERE Role = 'Subscriber')
     BEGIN
         INSERT INTO pf_Role (Role) VALUES ('Subscriber');
     END
+
+IF INDEXPROPERTY(Object_Id('pf_PopForumsUser'), 'IX_PopForumsUser_CreationDate', 'IndexID') IS NULL
+    BEGIN
+        CREATE NONCLUSTERED INDEX IX_PopForumsUser_CreationDate ON pf_PopForumsUser (CreationDate DESC) INCLUDE ([Name], Email);
+    END
