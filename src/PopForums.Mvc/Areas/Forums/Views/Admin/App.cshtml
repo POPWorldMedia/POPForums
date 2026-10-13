@@ -818,13 +818,13 @@
 
 		<hr />
 		<h3>@PopForums.Resources.Avatar</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" class="form-control mb-3">
+		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" data-error="@PopForums.Resources.ImageProcessFailed" class="form-control mb-3">
 		<div><img v-if="user.avatarID" v-bind:src="'/Forums/Image/Avatar/' + user.avatarID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeAvatar" v-show="user.avatarID" value="@PopForums.Resources.AvatarDelete" /></p>
 
 		<hr />
 		<h3>@PopForums.Resources.Photo</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control mb-3">
+		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" data-error="@PopForums.Resources.ImageProcessFailed" class="form-control mb-3">
 		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
 		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
 

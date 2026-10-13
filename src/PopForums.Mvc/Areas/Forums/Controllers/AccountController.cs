@@ -453,7 +453,12 @@ public class AccountController(
 		byte[] photoFile = null;
 		if (userEdit.PhotoFile != null)
 			photoFile = userEdit.PhotoFile.OpenReadStream().ToBytes();
-		await userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+		var errors = await userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
+		if (errors.Count > 0)
+		{
+			ViewBag.ImageErrors = errors;
+			return await ManagePhotos();
+		}
 		return RedirectToAction("ManagePhotos");
 	}
 

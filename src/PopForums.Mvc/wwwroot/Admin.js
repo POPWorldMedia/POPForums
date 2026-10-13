@@ -390,16 +390,139 @@ const EditUserSub = {
 	}
 }
 
+// Plain JS copy of Client/Services/ImageResizer.ts (admin doesn't load PopForums.js), keep the two in sync.
+// Images are resized in the browser before upload, and the server only checks the header of what it receives.
+const imageResizer = {
+	// Already within limits, these upload untouched: GIF keeps its animation, PNG stays sharp.
+	passThroughTypes: ["image/png", "image/gif"],
+	minQuality: 0.4,
+
+	prepare: async function (file, limits, errorMessage) {
+		const maxBytes = limits.maxkBytes * 1024;
+		const url = URL.createObjectURL(file);
+		const image = new Image();
+		image.src = url;
+		try {
+			await image.decode();
+		}
+		catch {
+			throw new Error(errorMessage);
+		}
+		finally {
+			URL.revokeObjectURL(url);
+		}
+		const width = image.naturalWidth;
+		const height = image.naturalHeight;
+		if (this.passThroughTypes.includes(file.type) && file.size <= maxBytes && width <= limits.maxWidth && height <= limits.maxHeight)
+			return file;
+
+		// JPEGs always get re-encoded so EXIF data is stripped and the rotation is baked in
+		const target = this.getTarget(width, height, limits);
+		const canvas = this.draw(image, target);
+		// only sharpen what was actually scaled down, not a JPEG that was just re-encoded or trimmed
+		if (target.dw < target.sw || target.dh < target.sh)
+			this.sharpen(canvas);
+		for (let quality = limits.quality; quality >= this.minQuality - 0.01; quality -= 0.1) {
+			const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+			if (!blob)
+				throw new Error(errorMessage);
+			if (blob.size <= maxBytes)
+				return new File([blob], file.name.replace(/\.[^.]*$/, "") + ".jpg", { type: "image/jpeg" });
+		}
+		throw new Error(errorMessage);
+	},
+
+	getTarget: function (width, height, limits) {
+		if (!limits.isCrop) {
+			const scale = Math.min(1, limits.maxWidth / width, limits.maxHeight / height);
+			return { sx: 0, sy: 0, sw: width, sh: height, dw: Math.max(1, Math.round(width * scale)), dh: Math.max(1, Math.round(height * scale)) };
+		}
+		const scale = Math.min(1, Math.max(limits.maxWidth / width, limits.maxHeight / height));
+		const dw = Math.max(1, Math.min(limits.maxWidth, Math.round(width * scale)));
+		const dh = Math.max(1, Math.min(limits.maxHeight, Math.round(height * scale)));
+		const sw = Math.min(width, dw / scale);
+		const sh = Math.min(height, dh / scale);
+		return { sx: (width - sw) / 2, sy: (height - sh) / 2, sw: sw, sh: sh, dw: dw, dh: dh };
+	},
+
+	draw: function (image, target) {
+		let source = image;
+		let { sx, sy, sw, sh } = target;
+		while (sw / 2 >= target.dw && sh / 2 >= target.dh) {
+			const step = this.createCanvas(Math.round(sw / 2), Math.round(sh / 2));
+			step.getContext("2d").drawImage(source, sx, sy, sw, sh, 0, 0, step.width, step.height);
+			source = step;
+			sx = 0;
+			sy = 0;
+			sw = step.width;
+			sh = step.height;
+		}
+		const canvas = this.createCanvas(target.dw, target.dh);
+		const context = canvas.getContext("2d");
+		context.fillStyle = "#fff";
+		context.fillRect(0, 0, canvas.width, canvas.height);
+		context.drawImage(source, sx, sy, sw, sh, 0, 0, target.dw, target.dh);
+		return canvas;
+	},
+
+	// Matches the light GaussianSharpen(0.5) the server used to apply: twice the original minus a Gaussian blur, rows then columns
+	sharpen: function (canvas) {
+		const context = canvas.getContext("2d");
+		const { width, height } = canvas;
+		const image = context.getImageData(0, 0, width, height);
+		const data = image.data;
+		const sigma = 0.5;
+		const side = Math.exp(-1 / (2 * sigma * sigma));
+		const edge = -side / (1 + 2 * side);
+		const center = 1 - 2 * edge;
+		const rows = new Float32Array(data.length);
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				const i = (y * width + x) * 4;
+				const left = (y * width + Math.max(x - 1, 0)) * 4;
+				const right = (y * width + Math.min(x + 1, width - 1)) * 4;
+				for (let c = 0; c < 3; c++)
+					rows[i + c] = center * data[i + c] + edge * (data[left + c] + data[right + c]);
+			}
+		}
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
+				const i = (y * width + x) * 4;
+				const up = (Math.max(y - 1, 0) * width + x) * 4;
+				const down = (Math.min(y + 1, height - 1) * width + x) * 4;
+				for (let c = 0; c < 3; c++)
+					data[i + c] = center * rows[i + c] + edge * (rows[up + c] + rows[down + c]);
+			}
+		}
+		context.putImageData(image, 0, 0);
+	},
+
+	createCanvas: function (width, height) {
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		const context = canvas.getContext("2d");
+		context.imageSmoothingEnabled = true;
+		context.imageSmoothingQuality = "high";
+		return canvas;
+	}
+}
+
 const EditUserDetail = {
 	mixins: [loadingMixin],
 	template: "#EditUserDetail",
 	data() {
 		return {
 			user: { newEmail: "", newPassword: "" },
-			roles: []
+			roles: [],
+			imageSettings: {}
 		}
 	},
 	created: function () {
+		axios.get(basePath + "GetSettings").then(response => {
+			this.imageSettings = response.data;
+		})
+			.catch(error => this.errorAlert());
 		var u = basePath + "GetUser/" + this.$route.params.id;
 		axios.get(u).then(response => {
 			this.user = response.data;
@@ -421,15 +544,18 @@ const EditUserDetail = {
 				alert(error);
 			});
 		},
-		uploadAvatar: function (target) {
+		uploadAvatar: async function (target) {
+			const s = this.imageSettings;
+			const file = await this.prepareImage(target, { maxWidth: s.userAvatarMaxWidth, maxHeight: s.userAvatarMaxHeight, maxkBytes: s.userAvatarMaxkBytes, isCrop: true, quality: 0.7 });
+			if (!file)
+				return;
 			const formData = new FormData();
-			var files = target.files;
-			formData.append("avatarFile", files[0], files[0].name);
+			formData.append("avatarFile", file, file.name);
 			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, formData).then(response => {
 				this.user.avatarID = response.data.avatarID;
 				target.value = "";
 			})
-				.catch(error => this.errorAlert());
+				.catch(error => this.imageErrorAlert(error));
 		},
 		removeAvatar: function () {
 			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, null).then(response => {
@@ -437,15 +563,35 @@ const EditUserDetail = {
 			})
 				.catch(error => this.errorAlert());
 		},
-		uploadImage: function (target) {
+		uploadImage: async function (target) {
+			const s = this.imageSettings;
+			const file = await this.prepareImage(target, { maxWidth: s.userImageMaxWidth, maxHeight: s.userImageMaxHeight, maxkBytes: s.userImageMaxkBytes, isCrop: false, quality: 0.7 });
+			if (!file)
+				return;
 			const formData = new FormData();
-			var files = target.files;
-			formData.append("imageFile", files[0], files[0].name);
+			formData.append("imageFile", file, file.name);
 			axios.post(basePath + "UpdateUserImage/" + this.user.userID, formData).then(response => {
 				this.user.imageID = response.data.imageID;
 				target.value = "";
 			})
-				.catch(error => this.errorAlert());
+				.catch(error => this.imageErrorAlert(error));
+		},
+		prepareImage: async function (target, limits) {
+			try {
+				return await imageResizer.prepare(target.files[0], limits, target.dataset.error);
+			}
+			catch (error) {
+				target.value = "";
+				alert(error.message);
+				return null;
+			}
+		},
+		imageErrorAlert: function (error) {
+			// validation failures come back as a 400 with the reason as text
+			if (error.response?.status === 400 && typeof error.response.data === "string")
+				alert(error.response.data);
+			else
+				this.errorAlert();
 		},
 		removeImage: function () {
 			axios.post(basePath + "UpdateUserImage/" + this.user.userID, null).then(response => {

@@ -44,6 +44,7 @@ public static class ServiceCollections
 		services.AddTransient<IFavoriteTopicService, FavoriteTopicService>();
 		services.AddTransient<IForumService, ForumService>();
 		services.AddTransient<IImageService, ImageService>();
+		services.AddTransient<IImageInspector, ImageInspector>();
 		services.AddTransient<IIPHistoryService, IPHistoryService>();
 		services.AddTransient<ILastReadService, LastReadService>();
 		services.AddTransient<IMailingListService, MailingListService>();

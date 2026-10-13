@@ -1392,4 +1392,13 @@
   <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
     <value>Поновлення вашої підписки «{0}» не вдалося.</value>
   </data>
+  <data name="ImageInvalid" xml:space="preserve">
+    <value>Файл має бути зображенням у форматі JPEG, PNG або GIF.</value>
+  </data>
+  <data name="ImageTooLarge" xml:space="preserve">
+    <value>Зображення завелике. Максимальний розмір — {0} x {1} пікселів і {2} КБ.</value>
+  </data>
+  <data name="ImageProcessFailed" xml:space="preserve">
+    <value>Не вдалося обробити це зображення. Спробуйте менше зображення або інший формат.</value>
+  </data>
 </root>

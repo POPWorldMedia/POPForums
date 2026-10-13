@@ -3,6 +3,9 @@
 public class UserState
 {
 	public bool IsImageEnabled { get; set; }
+	public int PostImageMaxWidth { get; set; }
+	public int PostImageMaxHeight { get; set; }
+	public int PostImageMaxkBytes { get; set; }
 	public bool IsPlainText { get; set; }
 	public int NewPmCount { get; set; }
 	public int NotificationCount { get; set; }

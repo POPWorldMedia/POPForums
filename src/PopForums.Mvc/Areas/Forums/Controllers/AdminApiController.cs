@@ -243,7 +243,9 @@ public class AdminApiController(
 			return new {AvatarID = (int?)null};
 		}
 		var file = Request.Form.Files[0];
-		await userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
+		var errors = await userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
+		if (errors.Count > 0)
+			return BadRequest(string.Join(" ", errors));
 		var profile = await profileService.GetProfileForEdit(user, true);
 		return new {profile.AvatarID};
 	}
@@ -260,7 +262,9 @@ public class AdminApiController(
 			return new { ImageID = (int?)null };
 		}
 		var file = Request.Form.Files[0];
-		await userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
+		var errors = await userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
+		if (errors.Count > 0)
+			return BadRequest(string.Join(" ", errors));
 		var profile = await profileService.GetProfile(user);
 		return new { profile.ImageID };
 	}

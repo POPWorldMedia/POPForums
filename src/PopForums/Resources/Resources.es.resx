@@ -1392,4 +1392,13 @@
   <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
     <value>La renovación de tu '{0}' falló.</value>
   </data>
+  <data name="ImageInvalid" xml:space="preserve">
+    <value>El archivo debe ser una imagen JPEG, PNG o GIF.</value>
+  </data>
+  <data name="ImageTooLarge" xml:space="preserve">
+    <value>La imagen es demasiado grande. Puede tener como máximo {0} x {1} píxeles y {2} KB.</value>
+  </data>
+  <data name="ImageProcessFailed" xml:space="preserve">
+    <value>No se pudo procesar esta imagen. Pruebe con una imagen más pequeña o con otro formato.</value>
+  </data>
 </root>

@@ -1377,4 +1377,13 @@
   <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
     <value>De verlenging van uw '{0}' is mislukt.</value>
   </data>
+  <data name="ImageInvalid" xml:space="preserve">
+    <value>Het bestand moet een JPEG-, PNG- of GIF-afbeelding zijn.</value>
+  </data>
+  <data name="ImageTooLarge" xml:space="preserve">
+    <value>De afbeelding is te groot. Deze mag maximaal {0} x {1} pixels en {2} KB zijn.</value>
+  </data>
+  <data name="ImageProcessFailed" xml:space="preserve">
+    <value>Deze afbeelding kon niet worden verwerkt. Probeer een kleinere afbeelding of een ander formaat.</value>
+  </data>
 </root>

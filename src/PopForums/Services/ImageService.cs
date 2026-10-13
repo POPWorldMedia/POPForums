@@ -1,9 +1,4 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
-
-namespace PopForums.Services;
+﻿namespace PopForums.Services;
 
 public interface IImageService
 {
@@ -16,7 +11,6 @@ public interface IImageService
 	Task<IStreamResponse> GetUserImageStream(int userImageID);
 	Task<DateTime?> GetAvatarImageLastModification(int userAvatarID);
 	Task<DateTime?> GetUserImageLastModifcation(int userImageID);
-	byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel, bool cropInsteadOfConstrain);
 	Task<List<UserImage>> GetUnapprovedUserImages();
 	Task ApproveUserImage(int userImageID);
 	Task DeleteUserImage(int userImageID);
@@ -99,29 +93,6 @@ public class ImageService : IImageService
 	public async Task<DateTime?> GetUserImageLastModifcation(int userImageID)
 	{
 		return await _userImageRepository.GetLastModificationDate(userImageID);
-	}
-
-	public byte[] ConstrainResize(byte[] bytes, int maxWidth, int maxHeight, int qualityLevel, bool cropInsteadOfConstrain)
-	{
-		if (bytes == null)
-			throw new Exception("Bytes parameter is null.");
-		using (var stream = new MemoryStream(bytes))
-		using (var image = Image.Load<Rgba32>(stream))
-		using (var output = new MemoryStream())
-		{
-			if (image.Height <= maxHeight && image.Width <= maxWidth)
-				return bytes;
-			var options = new ResizeOptions
-			{
-				Size = new Size(maxWidth, maxHeight),
-				Mode = cropInsteadOfConstrain ? ResizeMode.Crop : ResizeMode.Max
-			};
-			image.Mutate(x => x
-				.Resize(options)
-				.GaussianSharpen(0.5f));
-			image.Save(output, new JpegEncoder { Quality = qualityLevel });
-			return output.ToArray();
-		}
 	}
 
 	public async Task<UserImageApprovalContainer> GetUnapprovedUserImageContainer()

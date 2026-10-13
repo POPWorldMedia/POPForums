@@ -1,4 +1,3 @@
-using SixLabors.ImageSharp;
 
 namespace PopForums.Test.Services;
 

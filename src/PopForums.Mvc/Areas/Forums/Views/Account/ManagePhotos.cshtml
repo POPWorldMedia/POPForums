@@ -5,6 +5,16 @@
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var settings = SettingsManager.Current;
+}
+
+@section HeaderContent
+{
+	<script>
+		PopForums.Ready(() => {
+			document.querySelectorAll("input[data-image-max-width]").forEach(x => PopForums.ImageResizer.attachToInput(x));
+		});
+	</script>
 }
 
 <h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
@@ -29,9 +39,17 @@
 </ul>
 
 <form asp-action="ManagePhotos" method="post" enctype="multipart/form-data" role="form">
+	@if (ViewBag.ImageErrors is List<string> imageErrors)
+	{
+		foreach (var error in imageErrors)
+		{
+			<p class="alert alert-danger">@error</p>
+		}
+	}
 	<h2>@PopForums.Resources.Avatar</h2>
 	<div class="mb-3">
-		<input type="file" class="form-control" id="avatarFile" name="avatarFile">
+		<input type="file" class="form-control" id="avatarFile" name="avatarFile" accept="image/*"
+			   data-image-max-width="@settings.UserAvatarMaxWidth" data-image-max-height="@settings.UserAvatarMaxHeight" data-image-max-kbytes="@settings.UserAvatarMaxkBytes" data-image-crop="true" data-image-quality="0.7">
 	</div>
 	@if (Model.AvatarID.HasValue)
 	{
@@ -44,7 +62,8 @@
 
 	<h2>@PopForums.Resources.Photo</h2>
 	<div class="mb-3">
-		<input type="file" class="form-control" id="photoFile" name="photoFile">
+		<input type="file" class="form-control" id="photoFile" name="photoFile" accept="image/*"
+			   data-image-max-width="@settings.UserImageMaxWidth" data-image-max-height="@settings.UserImageMaxHeight" data-image-max-kbytes="@settings.UserImageMaxkBytes" data-image-crop="false" data-image-quality="0.7">
 	</div>
 	@if (Model.ImageID.HasValue)
 	{

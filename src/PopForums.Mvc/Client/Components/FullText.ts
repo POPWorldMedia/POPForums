@@ -85,13 +85,29 @@ namespace PopForums {
             function InstantImageUpload() {
                 const input = document.createElement("input");
                 input.setAttribute("type", "file");
-                input.setAttribute("accept", "image/jpeg,image/gif,image/png");
-                input.addEventListener("change", (e) => {
-                    const file = input.files![0];
+                // WebP is fine here, it gets converted to JPEG before upload
+                input.setAttribute("accept", "image/jpeg,image/gif,image/png,image/webp");
+                input.addEventListener("change", async (e) => {
+                    editor.setProgressState(true);
+                    let file: File;
+                    try {
+                        file = await ImageResizer.prepare(input.files![0], {
+                            maxWidth: userState.postImageMaxWidth,
+                            maxHeight: userState.postImageMaxHeight,
+                            maxkBytes: userState.postImageMaxkBytes,
+                            isCrop: false,
+                            quality: 0.6
+                        });
+                    }
+                    catch (error) {
+                        alert((error as Error).message);
+                        editor.setProgressState(false);
+                        input.remove();
+                        return;
+                    }
                     let url = "/Forums/Image/UploadPostImage";
                     let form = new FormData();
                     form.append("file", file);
-                    editor.setProgressState(true);
                     fetch(url, {
                         method: "POST",
                         body: form
