@@ -266,6 +266,9 @@ public class AdminApiController(
 		if (errors.Count > 0)
 			return BadRequest(string.Join(" ", errors));
 		var profile = await profileService.GetProfile(user);
+		// an admin uploading it is approval enough, regardless of the new-image approval setting
+		if (profile.ImageID.HasValue)
+			await imageService.ApproveUserImage(profile.ImageID.Value);
 		return new { profile.ImageID };
 	}
 

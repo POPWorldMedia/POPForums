@@ -58,6 +58,8 @@ public class ProfileService : IProfileService
 		userEditProfile.Instagram = profile.Instagram;
 		userEditProfile.Facebook = profile.Facebook;
 		userEditProfile.IsAutoFollowOnReply = profile.IsAutoFollowOnReply;
+		userEditProfile.AvatarID = profile.AvatarID;
+		userEditProfile.ImageID = profile.ImageID;
 		return userEditProfile;
 	}
 

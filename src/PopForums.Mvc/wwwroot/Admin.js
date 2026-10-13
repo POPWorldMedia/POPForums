@@ -515,7 +515,9 @@ const EditUserDetail = {
 		return {
 			user: { newEmail: "", newPassword: "" },
 			roles: [],
-			imageSettings: {}
+			imageSettings: {},
+			avatarUpload: { busy: false, error: "", success: false },
+			photoUpload: { busy: false, error: "", success: false }
 		}
 	},
 	created: function () {
@@ -544,60 +546,71 @@ const EditUserDetail = {
 				alert(error);
 			});
 		},
-		uploadAvatar: async function (target) {
+		// Like the public ManagePhotos page: images upload as soon as they're picked and delete as soon as
+		// the button is clicked. Posting with no file is how the API deletes.
+		uploadAvatar: function (target) {
 			const s = this.imageSettings;
-			const file = await this.prepareImage(target, { maxWidth: s.userAvatarMaxWidth, maxHeight: s.userAvatarMaxHeight, maxkBytes: s.userAvatarMaxkBytes, isCrop: true, quality: 0.7 });
-			if (!file)
-				return;
-			const formData = new FormData();
-			formData.append("avatarFile", file, file.name);
-			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, formData).then(response => {
-				this.user.avatarID = response.data.avatarID;
-				target.value = "";
-			})
-				.catch(error => this.imageErrorAlert(error));
+			this.uploadProfileImage(target, this.avatarUpload, "UpdateUserAvatar/", "avatarFile",
+				{ maxWidth: s.userAvatarMaxWidth, maxHeight: s.userAvatarMaxHeight, maxkBytes: s.userAvatarMaxkBytes, isCrop: true, quality: 0.7 },
+				data => this.user.avatarID = data.avatarID);
 		},
-		removeAvatar: function () {
-			axios.post(basePath + "UpdateUserAvatar/" + this.user.userID, null).then(response => {
-				this.user.avatarID = response.data.avatarID;
-			})
-				.catch(error => this.errorAlert());
+		removeAvatar: function (target) {
+			this.removeProfileImage(target, this.avatarUpload, "UpdateUserAvatar/", data => this.user.avatarID = data.avatarID);
 		},
-		uploadImage: async function (target) {
+		uploadImage: function (target) {
 			const s = this.imageSettings;
-			const file = await this.prepareImage(target, { maxWidth: s.userImageMaxWidth, maxHeight: s.userImageMaxHeight, maxkBytes: s.userImageMaxkBytes, isCrop: false, quality: 0.7 });
-			if (!file)
-				return;
-			const formData = new FormData();
-			formData.append("imageFile", file, file.name);
-			axios.post(basePath + "UpdateUserImage/" + this.user.userID, formData).then(response => {
-				this.user.imageID = response.data.imageID;
-				target.value = "";
-			})
-				.catch(error => this.imageErrorAlert(error));
+			this.uploadProfileImage(target, this.photoUpload, "UpdateUserImage/", "imageFile",
+				{ maxWidth: s.userImageMaxWidth, maxHeight: s.userImageMaxHeight, maxkBytes: s.userImageMaxkBytes, isCrop: false, quality: 0.7 },
+				data => this.user.imageID = data.imageID);
 		},
-		prepareImage: async function (target, limits) {
+		removeImage: function (target) {
+			this.removeProfileImage(target, this.photoUpload, "UpdateUserImage/", data => this.user.imageID = data.imageID);
+		},
+		uploadProfileImage: async function (target, state, path, field, limits, onSaved) {
+			if (!target.files.length)
+				return;
+			state.error = "";
+			state.success = false;
+			state.busy = true;
 			try {
-				return await imageResizer.prepare(target.files[0], limits, target.dataset.error);
+				let file;
+				try {
+					file = await imageResizer.prepare(target.files[0], limits, target.dataset.error);
+				}
+				catch (error) {
+					state.error = error.message;
+					return;
+				}
+				const formData = new FormData();
+				formData.append(field, file, file.name);
+				const response = await axios.post(basePath + path + this.user.userID, formData);
+				onSaved(response.data);
+				state.success = true;
 			}
 			catch (error) {
+				// validation failures come back as a 400 with the reason as text
+				state.error = error.response?.status === 400 && typeof error.response.data === "string" ? error.response.data : target.dataset.failed;
+			}
+			finally {
+				// so picking the same file again still triggers an upload
 				target.value = "";
-				alert(error.message);
-				return null;
+				state.busy = false;
 			}
 		},
-		imageErrorAlert: function (error) {
-			// validation failures come back as a 400 with the reason as text
-			if (error.response?.status === 400 && typeof error.response.data === "string")
-				alert(error.response.data);
-			else
-				this.errorAlert();
-		},
-		removeImage: function () {
-			axios.post(basePath + "UpdateUserImage/" + this.user.userID, null).then(response => {
-				this.user.imageID = response.data.imageID;
-			})
-				.catch(error => this.errorAlert());
+		removeProfileImage: async function (target, state, path, onSaved) {
+			state.error = "";
+			state.success = false;
+			state.busy = true;
+			try {
+				const response = await axios.post(basePath + path + this.user.userID, null);
+				onSaved(response.data);
+			}
+			catch {
+				state.error = target.dataset.failed;
+			}
+			finally {
+				state.busy = false;
+			}
         },
         deleteUser: function () {
             axios.post(basePath + "DeleteUser/" + this.user.userID, null).then(response => {
