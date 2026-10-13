@@ -31,8 +31,8 @@ stages:
           # scans wwwroot during build itself, so Mvc's lib/css assets have to already be
           # in place before that build step runs, or they're silently missing from the
           # static assets manifest even though the files exist on disk afterward.
-          # These run on every branch, not just main, because the Mvc project's own
-          # BuildFrontendAssets target runs "node build.js" and needs node_modules.
+          # The Mvc project's own BuildFrontendAssets target also runs "node build.js"
+          # during "dotnet build", so node_modules has to exist by then regardless.
           - task: UseNode@1
             displayName: 'Use Node.js'
             inputs:
@@ -108,7 +108,6 @@ stages:
                   --no-restore
               done
             displayName: 'dotnet pack (6 libraries, no rebuild)'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - script: |
               set -e
@@ -123,11 +122,9 @@ stages:
                 --api-key "$(GH_PACKAGES_TOKEN)" \
                 --skip-duplicate
             displayName: 'Push packages to GitHub Packages'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish PopForums.Web (no rebuild)'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               command: 'publish'
               projects: 'src/PopForums.Web/PopForums.Web.csproj'
@@ -137,7 +134,6 @@ stages:
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish PopForums.FunctionsHost (no rebuild)'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               command: 'publish'
               projects: 'src/PopForums.FunctionsHost/PopForums.FunctionsHost.csproj'
@@ -148,17 +144,14 @@ stages:
           - publish: '$(Build.ArtifactStagingDirectory)/web'
             artifact: web
             displayName: 'Publish web artifact'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
           - publish: '$(Build.ArtifactStagingDirectory)/functionshost'
             artifact: functionshost
             displayName: 'Publish functionshost artifact'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   - stage: DeployFunctions
     displayName: 'Deploy Functions host'
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - job: Deploy
         pool:
@@ -181,7 +174,6 @@ stages:
   - stage: DeployWeb
     displayName: 'Deploy web app'
     dependsOn: DeployFunctions
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - job: Deploy
         pool:
