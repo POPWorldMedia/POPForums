@@ -1416,4 +1416,16 @@
   <data name="ImageProcessFailed" xml:space="preserve">
     <value>This image couldn't be processed. Try a smaller image or a different format.</value>
   </data>
+  <data name="AvatarUploaded" xml:space="preserve">
+    <value>Your avatar has been updated.</value>
+  </data>
+  <data name="PhotoUploaded" xml:space="preserve">
+    <value>Your photo has been updated.</value>
+  </data>
+  <data name="UploadFailed" xml:space="preserve">
+    <value>The upload failed. Please try again.</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Uploading…</value>
+  </data>
 </root>

@@ -1385,4 +1385,16 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="ImageProcessFailed" xml:space="preserve">
     <value>Dieses Bild konnte nicht verarbeitet werden. Versuchen Sie ein kleineres Bild oder ein anderes Format.</value>
   </data>
+  <data name="AvatarUploaded" xml:space="preserve">
+    <value>Ihr Avatar wurde aktualisiert.</value>
+  </data>
+  <data name="PhotoUploaded" xml:space="preserve">
+    <value>Ihr Foto wurde aktualisiert.</value>
+  </data>
+  <data name="UploadFailed" xml:space="preserve">
+    <value>Der Upload ist fehlgeschlagen. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Wird hochgeladen…</value>
+  </data>
 </root>

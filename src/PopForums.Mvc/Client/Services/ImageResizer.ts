@@ -149,51 +149,5 @@ namespace PopForums {
         private static errorMessage(): string {
             return PopForums.localizations?.imageProcessFailed ?? "This image couldn't be processed.";
         }
-
-        // Resizes the file chosen in an input in place, using limits from its data-image-* attributes, and
-        // holds the form's submit buttons until it's done.
-        static attachToInput(input: HTMLInputElement): void {
-            const limits: ImageLimits = {
-                maxWidth: Number(input.dataset.imageMaxWidth),
-                maxHeight: Number(input.dataset.imageMaxHeight),
-                maxkBytes: Number(input.dataset.imageMaxKbytes),
-                isCrop: input.dataset.imageCrop === "true",
-                quality: Number(input.dataset.imageQuality)
-            };
-            input.addEventListener("change", async () => {
-                ImageResizer.showError(input, null);
-                const file = input.files?.[0];
-                if (!file)
-                    return;
-                const buttons = input.form ? Array.from(input.form.querySelectorAll<HTMLInputElement | HTMLButtonElement>("[type=submit]")) : [];
-                buttons.forEach(x => x.disabled = true);
-                try {
-                    const prepared = await ImageResizer.prepare(file, limits);
-                    if (prepared !== file) {
-                        const transfer = new DataTransfer();
-                        transfer.items.add(prepared);
-                        input.files = transfer.files;
-                    }
-                }
-                catch (error) {
-                    input.value = "";
-                    ImageResizer.showError(input, (error as Error).message);
-                }
-                finally {
-                    buttons.forEach(x => x.disabled = false);
-                }
-            });
-        }
-
-        private static showError(input: HTMLInputElement, message: string | null): void {
-            let feedback = input.nextElementSibling as HTMLElement | null;
-            if (!feedback?.classList.contains("invalid-feedback")) {
-                feedback = document.createElement("div");
-                feedback.className = "invalid-feedback";
-                input.after(feedback);
-            }
-            feedback.textContent = message ?? "";
-            input.classList.toggle("is-invalid", !!message);
-        }
     }
 }

@@ -1380,4 +1380,16 @@
   <data name="ImageProcessFailed" xml:space="preserve">
     <value>無法處理此圖片。請嘗試較小的圖片或其他格式。</value>
   </data>
+  <data name="AvatarUploaded" xml:space="preserve">
+    <value>已更新您的頭像。</value>
+  </data>
+  <data name="PhotoUploaded" xml:space="preserve">
+    <value>已更新您的相片。</value>
+  </data>
+  <data name="UploadFailed" xml:space="preserve">
+    <value>上傳失敗，請再試一次。</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>上傳中…</value>
+  </data>
 </root>

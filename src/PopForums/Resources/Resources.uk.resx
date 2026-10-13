@@ -1401,4 +1401,16 @@
   <data name="ImageProcessFailed" xml:space="preserve">
     <value>Не вдалося обробити це зображення. Спробуйте менше зображення або інший формат.</value>
   </data>
+  <data name="AvatarUploaded" xml:space="preserve">
+    <value>Ваш аватар оновлено.</value>
+  </data>
+  <data name="PhotoUploaded" xml:space="preserve">
+    <value>Ваше фото оновлено.</value>
+  </data>
+  <data name="UploadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити. Спробуйте ще раз.</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Завантаження…</value>
+  </data>
 </root>
