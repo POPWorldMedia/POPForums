@@ -34,6 +34,8 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Retire legacy MD5 password check #440
 * Forum/topic update listeners not gated by permissions #441
 * User table lacks index to look up most recent users #445
+* Use client-side image resize before upload #387
+* Refactor photo upload page to act on file selection #446
 * BUG: Forum auth middleware overwrites host app's ClaimsPrincipal instead of merging #427
 * BUG: Comment links from YouTube break parsing #398
 * BUG: Password reset potentially handles token validation wrong #439
