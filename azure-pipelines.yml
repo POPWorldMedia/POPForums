@@ -31,15 +31,15 @@ stages:
           # scans wwwroot during build itself, so Mvc's lib/css assets have to already be
           # in place before that build step runs, or they're silently missing from the
           # static assets manifest even though the files exist on disk afterward.
+          # These run on every branch, not just main, because the Mvc project's own
+          # BuildFrontendAssets target runs "node build.js" and needs node_modules.
           - task: UseNode@1
             displayName: 'Use Node.js'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
-              version: '20.x'
+              version: '24.x'
 
           - task: Cache@2
             displayName: 'Cache npm packages'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             inputs:
               key: 'npm | "$(Agent.OS)" | src/PopForums.Mvc/package-lock.json'
               restoreKeys: |
@@ -51,7 +51,6 @@ stages:
               npm ci
               npm run build
             displayName: 'Build Mvc front-end assets'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
             workingDirectory: 'src/PopForums.Mvc'
 
           - task: UseDotNet@2
