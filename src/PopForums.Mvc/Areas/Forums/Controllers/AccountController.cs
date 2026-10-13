@@ -441,20 +441,58 @@ public class AccountController(
 		return View(userEdit);
 	}
 		
+	// The ManagePhotos page uploads and deletes as soon as the user acts, so these return JSON (or the
+	// validation message as text with a 400) instead of redirecting. Both uploads return the same
+	// { id, isApproved } shape, so one client component handles either.
 	[HttpPost]
-	public async Task<ActionResult> ManagePhotos(UserEditPhoto userEdit)
+	public async Task<ActionResult> UploadAvatar(IFormFile file)
 	{
 		var user = userRetrievalShim.GetUser();
 		if (user == null)
-			return View("EditAccountNoUser");
-		byte[] avatarFile = null;
-		if (userEdit.AvatarFile != null)
-			avatarFile = userEdit.AvatarFile.OpenReadStream().ToBytes();
-		byte[] photoFile = null;
-		if (userEdit.PhotoFile != null)
-			photoFile = userEdit.PhotoFile.OpenReadStream().ToBytes();
-		await userService.EditUserProfileImages(user, userEdit.DeleteAvatar, userEdit.DeleteImage, avatarFile, photoFile);
-		return RedirectToAction("ManagePhotos");
+			return Unauthorized();
+		if (file == null)
+			return BadRequest();
+		var errors = await userService.EditUserProfileImages(user, false, false, file.OpenReadStream().ToBytes(), null);
+		if (errors.Count > 0)
+			return BadRequest(string.Join(" ", errors));
+		var profile = await profileService.GetProfile(user);
+		return Json(new { ID = profile.AvatarID, IsApproved = true });
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> UploadPhoto(IFormFile file)
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return Unauthorized();
+		if (file == null)
+			return BadRequest();
+		var errors = await userService.EditUserProfileImages(user, false, false, null, file.OpenReadStream().ToBytes());
+		if (errors.Count > 0)
+			return BadRequest(string.Join(" ", errors));
+		var profile = await profileService.GetProfile(user);
+		var isImageApproved = profile.ImageID.HasValue && (await imageService.IsUserImageApproved(profile.ImageID.Value) ?? false);
+		return Json(new { ID = profile.ImageID, IsApproved = isImageApproved });
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> DeleteAvatar()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return Unauthorized();
+		await userService.EditUserProfileImages(user, true, false, null, null);
+		return Ok();
+	}
+
+	[HttpPost]
+	public async Task<ActionResult> DeletePhoto()
+	{
+		var user = userRetrievalShim.GetUser();
+		if (user == null)
+			return Unauthorized();
+		await userService.EditUserProfileImages(user, false, true, null, null);
+		return Ok();
 	}
 
 	public async Task<ViewResult> MiniProfile(int id)

@@ -11,6 +11,11 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 
 ### Breaking changes
 * Removed the `PopForums:Search:Provider` setting. The functions host now chooses its search provider by calling `AddPopForumsAzureSearch()` or `AddPopForumsElasticSearch()` in `Program.cs`, the same as the web app. Use one of these if you're using the associated search provider. ElasticSearch now always uses `Search:Url`, and uses `Search:Key` only when it's set. Previously, the functions host used a config value to choose the provider.
+* Removed the dependency on SixLabors.ImageSharp. Avatars, profile photos and post images are now resized in the browser before upload, and the server only reads the image header to check the format (JPEG, PNG or GIF) and the size limits, without decoding the image. Uploads that are over the limits are rejected instead of resized, so anything that uploads without the forum's own front end must resize first. The avatar and photo KB limits are now enforced, too.
+  * `IImageService.ConstrainResize()` is gone. Use the new `IImageInspector.Validate()` to check an image. It's registered in DI like the other services, so you can replace it, e.g. to accept other formats.
+  * `IPostImageService.ProcessImageIsOk()` takes only the bytes. The stored content type now comes from the image itself rather than what the browser sent.
+  * `IUserService.EditUserProfileImages()` returns a list of error messages, and changes nothing when the list isn't empty.
+  * `UserService` no longer takes an `IImageService` in its constructor, and both `UserService` and `PostImageService` now take an `IImageInspector`.
 
 ### Change log
 * Enable subscriptions with Stripe integration #426

@@ -5,6 +5,7 @@
 @{
 	ViewBag.Title = PopForums.Resources.Account + " - " + PopForums.Resources.ManagePhotos;
 	Layout = "~/Areas/Forums/Views/Shared/PopForumsMaster.cshtml";
+	var settings = SettingsManager.Current;
 }
 
 <h1>@PopForums.Resources.Account - @PopForums.Resources.ManagePhotos</h1>
@@ -28,36 +29,16 @@
 	</li>
 </ul>
 
-<form asp-action="ManagePhotos" method="post" enctype="multipart/form-data" role="form">
-	<h2>@PopForums.Resources.Avatar</h2>
-	<div class="mb-3">
-		<input type="file" class="form-control" id="avatarFile" name="avatarFile">
-	</div>
-	@if (Model.AvatarID.HasValue)
-	{
-		<p><img src="@Url.Action("Avatar", "Image", new {id = Model.AvatarID})" alt="Avatar image" /></p>
-		<div class="mb-3">
-			<input type="checkbox" asp-for="DeleteAvatar" class="form-check-input" />
-			<label for="DeleteAvatar" class="form-check-label">@PopForums.Resources.AvatarDelete</label>
-		</div>
-	}
+<h2>@PopForums.Resources.Avatar</h2>
+<pf-profileimageupload uploadurl="@Url.Action("UploadAvatar")" deleteurl="@Url.Action("DeleteAvatar")"
+	imageurl="@Url.Action("Avatar", "Image")/" imageid="@Model.AvatarID"
+	maxwidth="@settings.UserAvatarMaxWidth" maxheight="@settings.UserAvatarMaxHeight" maxkbytes="@settings.UserAvatarMaxkBytes" crop="true" quality="0.7"
+	alttext="Avatar image" deletelabel="@PopForums.Resources.AvatarDelete" successmessage="@PopForums.Resources.AvatarUploaded"
+	uploadingmessage="@PopForums.Resources.Uploading" failedmessage="@PopForums.Resources.UploadFailed"></pf-profileimageupload>
 
-	<h2>@PopForums.Resources.Photo</h2>
-	<div class="mb-3">
-		<input type="file" class="form-control" id="photoFile" name="photoFile">
-	</div>
-	@if (Model.ImageID.HasValue)
-	{
-		<p><img src="@Url.Action("UserImage", "Image", new {id = Model.ImageID})" alt="User image" /></p>
-		<div class="mb-3">
-			<input type="checkbox" asp-for="DeleteImage" class="form-check-input" />
-			<label for="DeleteImage" class="form-check-label"> @PopForums.Resources.PhotoDelete</label>
-		</div>
-		if (Model.IsImageApproved.HasValue && !Model.IsImageApproved.Value)
-		{
-			<p class="alert alert-warning">@PopForums.Resources.PhotoNotApproved</p>
-		}
-	}
-
-	<input type="submit" value="@PopForums.Resources.Save" class="btn btn-primary my-3" />
-</form>
+<h2>@PopForums.Resources.Photo</h2>
+<pf-profileimageupload uploadurl="@Url.Action("UploadPhoto")" deleteurl="@Url.Action("DeletePhoto")"
+	imageurl="@Url.Action("UserImage", "Image")/" imageid="@Model.ImageID" isapproved="@((Model.IsImageApproved ?? true).ToString().ToLower())"
+	maxwidth="@settings.UserImageMaxWidth" maxheight="@settings.UserImageMaxHeight" maxkbytes="@settings.UserImageMaxkBytes" crop="false" quality="0.7"
+	alttext="User image" deletelabel="@PopForums.Resources.PhotoDelete" successmessage="@PopForums.Resources.PhotoUploaded" pendingmessage="@PopForums.Resources.PhotoNotApproved"
+	uploadingmessage="@PopForums.Resources.Uploading" failedmessage="@PopForums.Resources.UploadFailed"></pf-profileimageupload>

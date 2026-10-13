@@ -1335,4 +1335,25 @@
   <data name="SubscriptionRenewalFailedNotification" xml:space="preserve">
     <value>Le renouvellement de votre « {0} » a échoué.</value>
   </data>
+  <data name="ImageInvalid" xml:space="preserve">
+    <value>Le fichier doit être une image JPEG, PNG ou GIF.</value>
+  </data>
+  <data name="ImageTooLarge" xml:space="preserve">
+    <value>L'image est trop grande. Elle peut faire au maximum {0} x {1} pixels et {2} Ko.</value>
+  </data>
+  <data name="ImageProcessFailed" xml:space="preserve">
+    <value>Cette image n'a pas pu être traitée. Essayez une image plus petite ou un autre format.</value>
+  </data>
+  <data name="AvatarUploaded" xml:space="preserve">
+    <value>Votre avatar a été mis à jour.</value>
+  </data>
+  <data name="PhotoUploaded" xml:space="preserve">
+    <value>Votre photo a été mise à jour.</value>
+  </data>
+  <data name="UploadFailed" xml:space="preserve">
+    <value>L'envoi a échoué. Veuillez réessayer.</value>
+  </data>
+  <data name="Uploading" xml:space="preserve">
+    <value>Envoi en cours…</value>
+  </data>
 </root>

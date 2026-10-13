@@ -30,7 +30,7 @@ public interface IUserService
 	Task<List<User>> SearchByName(string name);
 	Task<List<User>> SearchByRole(string role);
 	Task EditUser(User targetUser, UserEdit userEdit, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile, string ip, User user);
-	Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
+	Task<List<string>> EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile);
 	Task<UserEdit> GetUserEdit(User user);
 	bool IsPasswordValid(string password, out string errorMessage);
 	Task<bool> IsEmailInUseByDifferentUser(User user, string email);
@@ -61,11 +61,10 @@ public class UserService : IUserService
 	private readonly ITextParsingService _textParsingService;
 	private readonly IBanRepository _banRepository;
 	private readonly IForgotPasswordMailer _forgotPasswordMailer;
-	private readonly IImageService _imageService;
 	private readonly IConfig _config;
+	private readonly IImageInspector _imageInspector;
 
-	// TODO: Dependencies on imageservice
-	public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IImageService imageService, IConfig config)
+	public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IProfileRepository profileRepository, ISettingsManager settingsManager, IUserAvatarRepository userAvatarRepository, IUserImageRepository userImageRepository, ISecurityLogService securityLogService, ITextParsingService textParsingService, IBanRepository banRepository, IForgotPasswordMailer forgotPasswordMailer, IConfig config, IImageInspector imageInspector)
 	{
 		_userRepository = userRepository;
 		_roleRepository = roleRepository;
@@ -77,8 +76,8 @@ public class UserService : IUserService
 		_textParsingService = textParsingService;
 		_banRepository = banRepository;
 		_forgotPasswordMailer = forgotPasswordMailer;
-		_imageService = imageService;
 		_config = config;
+		_imageInspector = imageInspector;
 	}
 
 	public async Task SetPassword(User targetUser, string password, string ip, User user)
@@ -430,8 +429,28 @@ public class UserService : IUserService
 		}
 	}
 
-	public async Task EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile)
+	/// <returns>Error messages for any image that failed validation. When there are errors, nothing is changed.</returns>
+	public async Task<List<string>> EditUserProfileImages(User user, bool removeAvatar, bool removePhoto, byte[] avatarFile, byte[] photoFile)
 	{
+		var settings = _settingsManager.Current;
+		var hasAvatar = avatarFile != null && avatarFile.Length > 0;
+		var hasPhoto = photoFile != null && photoFile.Length > 0;
+		var errors = new List<string>();
+		if (hasAvatar)
+		{
+			var result = _imageInspector.Validate(avatarFile, settings.UserAvatarMaxWidth, settings.UserAvatarMaxHeight, settings.UserAvatarMaxkBytes, out _);
+			if (result != ImageValidationResult.Valid)
+				errors.Add($"{Resources.Avatar}: {_imageInspector.GetErrorMessage(result, settings.UserAvatarMaxWidth, settings.UserAvatarMaxHeight, settings.UserAvatarMaxkBytes)}");
+		}
+		if (hasPhoto)
+		{
+			var result = _imageInspector.Validate(photoFile, settings.UserImageMaxWidth, settings.UserImageMaxHeight, settings.UserImageMaxkBytes, out _);
+			if (result != ImageValidationResult.Valid)
+				errors.Add($"{Resources.Photo}: {_imageInspector.GetErrorMessage(result, settings.UserImageMaxWidth, settings.UserImageMaxHeight, settings.UserImageMaxkBytes)}");
+		}
+		if (errors.Count > 0)
+			return errors;
+
 		var profile = await _profileRepository.GetProfile(user.UserID);
 		if (removeAvatar)
 		{
@@ -445,23 +464,22 @@ public class UserService : IUserService
 		}
 		await _profileRepository.Update(profile);
 
-		if (avatarFile != null && avatarFile.Length > 0)
+		if (hasAvatar)
 		{
 			await _userAvatarRepository.DeleteAvatarsByUserID(user.UserID);
-			var bytes = _imageService.ConstrainResize(avatarFile, _settingsManager.Current.UserAvatarMaxWidth, _settingsManager.Current.UserAvatarMaxHeight, 70, true);
-			var avatarID = await _userAvatarRepository.SaveNewAvatar(user.UserID, bytes, DateTime.UtcNow);
+			var avatarID = await _userAvatarRepository.SaveNewAvatar(user.UserID, avatarFile, DateTime.UtcNow);
 			profile.AvatarID = avatarID;
 			await _profileRepository.Update(profile);
 		}
 
-		if (photoFile != null && photoFile.Length > 0)
+		if (hasPhoto)
 		{
 			await _userImageRepository.DeleteImagesByUserID(user.UserID);
-			var bytes = _imageService.ConstrainResize(photoFile, _settingsManager.Current.UserImageMaxWidth, _settingsManager.Current.UserImageMaxHeight, 70, false);
-			var imageID = await _userImageRepository.SaveNewImage(user.UserID, 0, _settingsManager.Current.IsNewUserImageApproved, bytes, DateTime.UtcNow);
+			var imageID = await _userImageRepository.SaveNewImage(user.UserID, 0, settings.IsNewUserImageApproved, photoFile, DateTime.UtcNow);
 			profile.ImageID = imageID;
 			await _profileRepository.Update(profile);
 		}
+		return errors;
 	}
 
 	public bool IsPasswordValid(string password, out string errorMessage)

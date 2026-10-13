@@ -13,8 +13,4 @@ public class UserEditPhoto
 	public int? AvatarID { get; set; }
 	public int? ImageID { get; set; }
 	public bool? IsImageApproved { get; set; }
-	public bool DeleteAvatar { get; set; }
-	public bool DeleteImage { get; set; }
-	public IFormFile AvatarFile { get; set; }
-	public IFormFile PhotoFile { get; set; }
 }

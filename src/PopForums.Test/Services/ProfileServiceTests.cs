@@ -49,6 +49,20 @@ public class ProfileServiceTests
 	}
 
 	[Fact]
+	public async Task GetProfileForEditIncludesImageIDs()
+	{
+		var service = GetService();
+		var profile = new Profile { UserID = 123, Signature = "", AvatarID = 45, ImageID = 67 };
+		var user = UserServiceTests.GetDummyUser("Jeff", "a@b.com");
+		_profileRepo.GetProfile(user.UserID).Returns(Task.FromResult(profile));
+
+		var result = await service.GetProfileForEdit(user);
+
+		Assert.Equal(45, result.AvatarID);
+		Assert.Equal(67, result.ImageID);
+	}
+
+	[Fact]
 	public async Task GetProfileForEditParsesSigPlainText()
 	{
 		var service = GetService();

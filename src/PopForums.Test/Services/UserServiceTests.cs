@@ -12,8 +12,8 @@ public class UserServiceTests
 	private ITextParsingService _mockTextParser;
 	private IBanRepository _mockBanRepo;
 	private IForgotPasswordMailer _mockForgotMailer;
-	private IImageService _mockImageService;
 	private IConfig _config;
+	private IImageInspector _mockImageInspector;
 
 	private UserService GetMockedUserService()
 	{
@@ -27,10 +27,10 @@ public class UserServiceTests
 		_mockTextParser = Substitute.For<ITextParsingService>();
 		_mockBanRepo = Substitute.For<IBanRepository>();
 		_mockForgotMailer = Substitute.For<IForgotPasswordMailer>();
-		_mockImageService = Substitute.For<IImageService>();
 		_config = Substitute.For<IConfig>();
+		_mockImageInspector = Substitute.For<IImageInspector>();
 		_mockRoleRepo.GetUserRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
-		return new UserService(_mockUserRepo, _mockRoleRepo, _mockProfileRepo, _mockSettingsManager, _mockUserAvatarRepo, _mockUserImageRepo, _mockSecurityLogService, _mockTextParser, _mockBanRepo, _mockForgotMailer, _mockImageService, _config);
+		return new UserService(_mockUserRepo, _mockRoleRepo, _mockProfileRepo, _mockSettingsManager, _mockUserAvatarRepo, _mockUserImageRepo, _mockSecurityLogService, _mockTextParser, _mockBanRepo, _mockForgotMailer, _config, _mockImageInspector);
 	}
 
 	[Fact]
@@ -1066,6 +1066,118 @@ public class UserServiceTests
 		await _mockProfileRepo.Received().Update(Arg.Any<Profile>());
 		await _mockUserImageRepo.DidNotReceive().DeleteImagesByUserID(user.UserID);
 		Assert.Equal(3, profile.ImageID);
+	}
+
+	private void SetupProfileImageLimits()
+	{
+		_mockSettingsManager.Current.UserAvatarMaxWidth.Returns(90);
+		_mockSettingsManager.Current.UserAvatarMaxHeight.Returns(80);
+		_mockSettingsManager.Current.UserAvatarMaxkBytes.Returns(10);
+		_mockSettingsManager.Current.UserImageMaxWidth.Returns(400);
+		_mockSettingsManager.Current.UserImageMaxHeight.Returns(300);
+		_mockSettingsManager.Current.UserImageMaxkBytes.Returns(200);
+	}
+
+	private void SetupInspector(byte[] bytes, ImageValidationResult result)
+	{
+		_mockImageInspector.Validate(bytes, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<int>(), out Arg.Any<ImageInfo>()).Returns(result);
+	}
+
+	[Fact]
+	public async Task UserEditPhotosValidatesWithAvatarAndPhotoLimits()
+	{
+		var service = GetMockedUserService();
+		SetupProfileImageLimits();
+		var user = new User { UserID = 1 };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(new UserEdit())));
+		var avatar = new byte[1];
+		var photo = new byte[2];
+
+		await service.EditUserProfileImages(user, false, false, avatar, photo);
+
+		_mockImageInspector.Received().Validate(avatar, 90, 80, 10, out Arg.Any<ImageInfo>());
+		_mockImageInspector.Received().Validate(photo, 400, 300, 200, out Arg.Any<ImageInfo>());
+	}
+
+	[Fact]
+	public async Task UserEditPhotosSavesValidAvatar()
+	{
+		var service = GetMockedUserService();
+		SetupProfileImageLimits();
+		var user = new User { UserID = 1 };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(new UserEdit())));
+		_mockUserAvatarRepo.SaveNewAvatar(1, Arg.Any<byte[]>(), Arg.Any<DateTime>()).Returns(Task.FromResult(7));
+		var profile = new Profile();
+		await _mockProfileRepo.Update(Arg.Do<Profile>(x => profile = x));
+		var avatar = new byte[1];
+		SetupInspector(avatar, ImageValidationResult.Valid);
+
+		var errors = await service.EditUserProfileImages(user, false, false, avatar, null);
+
+		Assert.Empty(errors);
+		await _mockUserAvatarRepo.Received().DeleteAvatarsByUserID(1);
+		await _mockUserAvatarRepo.Received().SaveNewAvatar(1, avatar, Arg.Any<DateTime>());
+		Assert.Equal(7, profile.AvatarID);
+	}
+
+	[Fact]
+	public async Task UserEditPhotosSavesValidPhotoWithApprovalSetting()
+	{
+		var service = GetMockedUserService();
+		SetupProfileImageLimits();
+		_mockSettingsManager.Current.IsNewUserImageApproved.Returns(true);
+		var user = new User { UserID = 1 };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(new UserEdit())));
+		var photo = new byte[1];
+		SetupInspector(photo, ImageValidationResult.Valid);
+
+		var errors = await service.EditUserProfileImages(user, false, false, null, photo);
+
+		Assert.Empty(errors);
+		await _mockUserImageRepo.Received().DeleteImagesByUserID(1);
+		await _mockUserImageRepo.Received().SaveNewImage(1, 0, true, photo, Arg.Any<DateTime>());
+	}
+
+	[Fact]
+	public async Task UserEditPhotosInvalidAvatarChangesNothing()
+	{
+		var service = GetMockedUserService();
+		SetupProfileImageLimits();
+		var user = new User { UserID = 1 };
+		var avatar = new byte[1];
+		SetupInspector(avatar, ImageValidationResult.Invalid);
+		_mockImageInspector.GetErrorMessage(ImageValidationResult.Invalid, 90, 80, 10).Returns("not an image");
+
+		var errors = await service.EditUserProfileImages(user, false, true, avatar, null);
+
+		Assert.Single(errors);
+		Assert.Contains("not an image", errors[0]);
+		await _mockUserAvatarRepo.DidNotReceive().DeleteAvatarsByUserID(Arg.Any<int>());
+		await _mockUserAvatarRepo.DidNotReceive().SaveNewAvatar(Arg.Any<int>(), Arg.Any<byte[]>(), Arg.Any<DateTime>());
+		await _mockUserImageRepo.DidNotReceive().DeleteImagesByUserID(Arg.Any<int>());
+		await _mockProfileRepo.DidNotReceive().Update(Arg.Any<Profile>());
+	}
+
+	[Fact]
+	public async Task UserEditPhotosTooLargePhotoChangesNothing()
+	{
+		var service = GetMockedUserService();
+		SetupProfileImageLimits();
+		var user = new User { UserID = 1 };
+		var avatar = new byte[1];
+		var photo = new byte[2];
+		SetupInspector(avatar, ImageValidationResult.Valid);
+		SetupInspector(photo, ImageValidationResult.TooLarge);
+		_mockImageInspector.GetErrorMessage(ImageValidationResult.TooLarge, 400, 300, 200).Returns("too big");
+
+		var errors = await service.EditUserProfileImages(user, true, false, avatar, photo);
+
+		Assert.Single(errors);
+		Assert.Contains("too big", errors[0]);
+		await _mockUserAvatarRepo.DidNotReceive().DeleteAvatarsByUserID(Arg.Any<int>());
+		await _mockUserImageRepo.DidNotReceive().DeleteImagesByUserID(Arg.Any<int>());
+		await _mockUserImageRepo.DidNotReceive().SaveNewImage(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<bool>(), Arg.Any<byte[]>(), Arg.Any<DateTime>());
+		await _mockProfileRepo.DidNotReceive().Update(Arg.Any<Profile>());
 	}
 
 	[Fact]

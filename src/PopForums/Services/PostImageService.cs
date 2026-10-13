@@ -1,10 +1,8 @@
-﻿using System.Net.Mime;
-
-namespace PopForums.Services;
+﻿namespace PopForums.Services;
 
 public interface IPostImageService
 {
-	bool ProcessImageIsOk(byte[] bytes, string contentType);
+	bool ProcessImageIsOk(byte[] bytes);
 	Task<PostImagePersistPayload> PersistAndGetPayload();
 	Task<PostImage> GetWithoutData(string id);
 	[Obsolete("Use the combination of GetWithoutData(int) and GetImageStream(int) instead.")]
@@ -17,19 +15,19 @@ public interface IPostImageService
 
 public class PostImageService : IPostImageService
 {
-	private readonly IImageService _imageService;
 	private readonly IPostImageRepository _postImageRepository;
 	private readonly IPostImageTempRepository _postImageTempRepository;
 	private readonly ISettingsManager _settingsManager;
 	private readonly ITenantService _tenantService;
+	private readonly IImageInspector _imageInspector;
 
-	public PostImageService(IImageService imageService, IPostImageRepository postImageRepository, IPostImageTempRepository postImageTempRepository, ISettingsManager settingsManager, ITenantService tenantService)
+	public PostImageService(IPostImageRepository postImageRepository, IPostImageTempRepository postImageTempRepository, ISettingsManager settingsManager, ITenantService tenantService, IImageInspector imageInspector)
 	{
-		_imageService = imageService;
 		_postImageRepository = postImageRepository;
 		_postImageTempRepository = postImageTempRepository;
 		_settingsManager = settingsManager;
 		_tenantService = tenantService;
+		_imageInspector = imageInspector;
 	}
 
 	private byte[] _bytes;
@@ -38,27 +36,15 @@ public class PostImageService : IPostImageService
 
 	private const int HoursOldToDelete = 8;
 
-	public bool ProcessImageIsOk(byte[] bytes, string contentType)
+	public bool ProcessImageIsOk(byte[] bytes)
 	{
-		_contentType = contentType;
 		_bytes = bytes;
-		if (bytes.Length > _settingsManager.Current.PostImageMaxkBytes * 1024)
-		{
-			_isOk = false;
-			return false;
-		}
-
-		if (contentType != MediaTypeNames.Image.Jpeg 
-		    && contentType != MediaTypeNames.Image.Gif
-		    && contentType != "image/png")
-		{
-			_isOk = false;
-			return false;
-		}
-
-		_bytes = _imageService.ConstrainResize(bytes, _settingsManager.Current.PostImageMaxWidth, _settingsManager.Current.PostImageMaxHeight, 60, false);
-		_isOk = true;
-		return true;
+		var settings = _settingsManager.Current;
+		var result = _imageInspector.Validate(bytes, settings.PostImageMaxWidth, settings.PostImageMaxHeight, settings.PostImageMaxkBytes, out var info);
+		// the content type comes from the bytes themselves, never from what the client claimed
+		_contentType = info?.ContentType;
+		_isOk = result == ImageValidationResult.Valid;
+		return _isOk;
 	}
 
 	public async Task<PostImagePersistPayload> PersistAndGetPayload()

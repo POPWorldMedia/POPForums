@@ -699,6 +699,48 @@ namespace PopForums {
             }
         }
         
+        public static string ImageInvalid {
+            get {
+                return ResourceManager.GetString("ImageInvalid", resourceCulture);
+            }
+        }
+        
+        public static string ImageTooLarge {
+            get {
+                return ResourceManager.GetString("ImageTooLarge", resourceCulture);
+            }
+        }
+        
+        public static string ImageProcessFailed {
+            get {
+                return ResourceManager.GetString("ImageProcessFailed", resourceCulture);
+            }
+        }
+        
+        public static string AvatarUploaded {
+            get {
+                return ResourceManager.GetString("AvatarUploaded", resourceCulture);
+            }
+        }
+        
+        public static string PhotoUploaded {
+            get {
+                return ResourceManager.GetString("PhotoUploaded", resourceCulture);
+            }
+        }
+        
+        public static string UploadFailed {
+            get {
+                return ResourceManager.GetString("UploadFailed", resourceCulture);
+            }
+        }
+        
+        public static string Uploading {
+            get {
+                return ResourceManager.GetString("Uploading", resourceCulture);
+            }
+        }
+        
         public static string PhotoNotApproved {
             get {
                 return ResourceManager.GetString("PhotoNotApproved", resourceCulture);

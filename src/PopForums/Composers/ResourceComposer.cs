@@ -26,7 +26,8 @@ public class ResourceComposer : IResourceComposer
 			SubscriptionRenewalFailedNotification = Resources.SubscriptionRenewalFailedNotification,
 			Send = Resources.Send,
 
-			UploadImage = Resources.UploadImage
+			UploadImage = Resources.UploadImage,
+			ImageProcessFailed = Resources.ImageProcessFailed
 		};
 		return resources;
 	}

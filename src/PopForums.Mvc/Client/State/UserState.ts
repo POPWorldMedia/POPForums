@@ -10,6 +10,9 @@ export class UserState extends StateBase {
 
     isPlainText!: boolean;
     isImageEnabled!: boolean;
+    postImageMaxWidth!: number;
+    postImageMaxHeight!: number;
+    postImageMaxkBytes!: number;
     postImageIds!: Array<string>;
     userID!: number;
     lastNotificationDate!: Date;

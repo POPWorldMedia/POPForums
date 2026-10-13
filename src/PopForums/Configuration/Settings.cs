@@ -32,7 +32,7 @@ public class Settings
 		IsMailerEnabled = true;
 		UserImageMaxHeight = 300;
 		UserImageMaxWidth = 400;
-		UserImageMaxkBytes = 100;
+		UserImageMaxkBytes = 200;
 		UserAvatarMaxHeight = 90;
 		UserAvatarMaxWidth = 90;
 		UserAvatarMaxkBytes = 10;

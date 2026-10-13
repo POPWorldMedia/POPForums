@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-using PopForums.Mvc.Areas.Forums.Authentication;
+﻿using PopForums.Mvc.Areas.Forums.Authentication;
 
 namespace PopForums.Mvc.Areas.Forums.Controllers;
 
@@ -37,6 +36,7 @@ public class ImageController : Controller
 		var timeStamp = await imageLastMod(id);
 		if (!timeStamp.HasValue)
 			return NotFound();
+		SetImageSecurityHeaders();
 		Response.Headers["Cache-control"] = "private";
 		Response.Headers["Last-modified"] = DateTime.SpecifyKind(timeStamp.Value, DateTimeKind.Utc).ToString("R");
 		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
@@ -61,6 +61,7 @@ public class ImageController : Controller
 		var postImageSansData = await _postImageService.GetWithoutData(id);
 		if (postImageSansData == null)
 			return NotFound();
+		SetImageSecurityHeaders();
 		Response.Headers["Cache-control"] = "private";
 		Response.Headers["Last-modified"] = DateTime.SpecifyKind(postImageSansData.TimeStamp, DateTimeKind.Utc).ToString("R");
 		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
@@ -90,16 +91,20 @@ public class ImageController : Controller
 		if (!_settingsManager.Current.AllowImages)
 			return BadRequest();
 		var file = Request.Form.Files[0];
-		if (file.ContentType != MediaTypeNames.Image.Jpeg 
-		    && file.ContentType != MediaTypeNames.Image.Gif
-		    && file.ContentType != "image/png")
-			return BadRequest();
 		var stream = file.OpenReadStream();
 		var bytes = stream.ToBytes();
-		var isOk = _postImageService.ProcessImageIsOk(bytes, file.ContentType);
+		var isOk = _postImageService.ProcessImageIsOk(bytes);
 		if (!isOk)
 			return BadRequest();
 		var url = await _postImageService.PersistAndGetPayload();
 		return Ok(url);
+	}
+
+	// Uploaded bytes are stored as-is, so if someone opens an image URL directly, make sure the browser
+	// can only ever treat the response as an image, and never runs anything smuggled inside the file.
+	private void SetImageSecurityHeaders()
+	{
+		Response.Headers["X-Content-Type-Options"] = "nosniff";
+		Response.Headers["Content-Security-Policy"] = "default-src 'none'; sandbox";
 	}
 }

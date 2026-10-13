@@ -16,5 +16,6 @@ namespace PopForums {
         send!: string;
 
         uploadImage!: string;
+        imageProcessFailed!: string;
     }
 }

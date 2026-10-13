@@ -818,15 +818,31 @@
 
 		<hr />
 		<h3>@PopForums.Resources.Avatar</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadAvatar($event.target)" accept="image/*" class="form-control mb-3">
-		<div><img v-if="user.avatarID" v-bind:src="'/Forums/Image/Avatar/' + user.avatarID" /></div>
-		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeAvatar" v-show="user.avatarID" value="@PopForums.Resources.AvatarDelete" /></p>
+		<div v-if="avatarUpload.success" class="alert alert-success alert-dismissible" role="alert">
+			@PopForums.Resources.AvatarUploaded
+			<button type="button" class="btn-close" v-on:click="avatarUpload.success = false" aria-label="Close"></button>
+		</div>
+		<div class="mb-3">
+			<input type="file" :disabled="loading || avatarUpload.busy" v-on:change="uploadAvatar($event.target)" accept="image/*" data-error="@PopForums.Resources.ImageProcessFailed" data-failed="@PopForums.Resources.UploadFailed" class="form-control" :class="{ 'is-invalid': avatarUpload.error }">
+			<div class="invalid-feedback">{{avatarUpload.error}}</div>
+			<div class="form-text" aria-live="polite"><span v-if="avatarUpload.busy">@PopForums.Resources.Uploading</span></div>
+		</div>
+		<p v-if="user.avatarID"><img v-bind:src="'/Forums/Image/Avatar/' + user.avatarID" alt="Avatar image" /></p>
+		<button type="button" class="btn btn-outline-danger mb-3" v-if="user.avatarID" :disabled="avatarUpload.busy" v-on:click="removeAvatar($event.target)" data-failed="@PopForums.Resources.UploadFailed">@PopForums.Resources.AvatarDelete</button>
 
 		<hr />
 		<h3>@PopForums.Resources.Photo</h3>
-		<input type="file" :disabled="loading" v-on:change="uploadImage($event.target)" accept="image/*" class="form-control mb-3">
-		<div><img v-if="user.imageID" v-bind:src="'/Forums/Image/UserImage/' + user.imageID" /></div>
-		<p><input type="button" class="btn btn-primary mt-3" v-on:click="removeImage" v-show="user.imageID" value="@PopForums.Resources.PhotoDelete" /></p>
+		<div v-if="photoUpload.success" class="alert alert-success alert-dismissible" role="alert">
+			@PopForums.Resources.PhotoUploaded
+			<button type="button" class="btn-close" v-on:click="photoUpload.success = false" aria-label="Close"></button>
+		</div>
+		<div class="mb-3">
+			<input type="file" :disabled="loading || photoUpload.busy" v-on:change="uploadImage($event.target)" accept="image/*" data-error="@PopForums.Resources.ImageProcessFailed" data-failed="@PopForums.Resources.UploadFailed" class="form-control" :class="{ 'is-invalid': photoUpload.error }">
+			<div class="invalid-feedback">{{photoUpload.error}}</div>
+			<div class="form-text" aria-live="polite"><span v-if="photoUpload.busy">@PopForums.Resources.Uploading</span></div>
+		</div>
+		<p v-if="user.imageID"><img v-bind:src="'/Forums/Image/UserImage/' + user.imageID" alt="User image" /></p>
+		<button type="button" class="btn btn-outline-danger mb-3" v-if="user.imageID" :disabled="photoUpload.busy" v-on:click="removeImage($event.target)" data-failed="@PopForums.Resources.UploadFailed">@PopForums.Resources.PhotoDelete</button>
 
 		@if (!isOAuthOnly)
 		{

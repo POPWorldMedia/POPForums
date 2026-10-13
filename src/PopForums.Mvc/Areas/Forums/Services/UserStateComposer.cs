@@ -31,6 +31,9 @@ public class UserStateComposer : IUserStateComposer
 			state.IsPlainText = profile.IsPlainText;
 			state.NewPmCount = await _privateMessageService.GetUnreadCount(user.UserID);
 			state.IsImageEnabled = _settingsManager.Current.AllowImages;
+			state.PostImageMaxWidth = _settingsManager.Current.PostImageMaxWidth;
+			state.PostImageMaxHeight = _settingsManager.Current.PostImageMaxHeight;
+			state.PostImageMaxkBytes = _settingsManager.Current.PostImageMaxkBytes;
 			state.NotificationCount = await _notificationManager.GetUnreadNotificationCount(user.UserID);
 			state.UserID = user.UserID;
 		}
