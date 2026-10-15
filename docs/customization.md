@@ -116,3 +116,22 @@ Now a different view will be rendered, and it might look something like this:
 This is super flexible, but not without a lot of work. You're highjacking the model from a page like `/Forums/Topic/some-topic`, replacing it with your own, then rendering your own view.
 
 To light one of these up, you'll have to go to the admin -> Forums -> Edit, and in the bottom field, labeled `Forum Adapter (optional, use "Namespace.Type, AssemblyName")`, you should enter what it's asking for. So if the fully qualified name of your adapter is `MyLibrary.MyForumAdapter` in the `MyLibrary` assembly, you would put `MyLibrary.MyForumAdapter, MyLibrary` here.
+
+## Swapping out anything with an interface
+
+Almost everything in POP Forums is an interface, and uses dependency injection to get the right thing running. In `PopForums.Extensions.ServiceCollections.AddPopForumsBase(this IServiceCollection services)`, you'll see how various classes are registered with the service collection, to be instantiated at runtime. Other libraries, like the `Mvc` library (in `AddPopForumsMvc()`), register additional classes, some of which cross into the domain of the web-based app, keeping web dependencies out of the core library.
+
+In the `AzureKit` project, you can see how we replace certain implementations to use the alternate functionality. `ServiceCollectionExtensions.AddPopForumsAzureFunctionsAndQueues(this IServiceCollection services)` replaces a bunch of implementations to shift the background processes and queues to the `AzureKit` bits:
+
+```
+services.Replace(ServiceDescriptor.Transient<IEmailQueueRepository, PopForums.AzureKit.Queue.EmailQueueRepository>());
+services.Replace(ServiceDescriptor.Transient<IAwardCalculationQueueRepository, PopForums.AzureKit.Queue.AwardCalculationQueueRepository>());
+services.Replace(ServiceDescriptor.Transient<ISearchIndexQueueRepository, PopForums.AzureKit.Queue.SearchIndexQueueRepository>());
+services.Replace(ServiceDescriptor.Transient<ISubscribeNotificationRepository, PopForums.AzureKit.Queue.SubscribeNotificationRepository>());
+services.Replace(ServiceDescriptor.Transient<IRenewalQueueRepository, PopForums.AzureKit.Queue.RenewalQueueRepository>());
+```
+The part in the generic portion of the function call first names the interface, followed by the concrete implementation to be used when another class calls for that interface. You could, in theory, replace most of the code in any of these cases to do something you would prefer. Most of the code base isn't written with this in mind, as the primary intention is to be able to test classes in as isolated a fashion as possible. But there are certain areas, like the above queueing example, where swapping out the parts was always a design intention.
+
+Importantly, replacing implementations requires that they were registered in the first place. These must happen in order in your `Program.cs` (or library) after the core bits are registered.
+
+Perhaps the biggest example is the entire `Sql` library. If you wanted to write a persistence layer for another database, or even to write to text files if that's your thing (and you want to go back to 1997), you can do that. It might be more useful to port that project for something useful, like PostgreSQL. You would also need a new implementation of `ICacheHelper`. That would be a pretty great pull request.
