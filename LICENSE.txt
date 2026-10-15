@@ -1,5 +1,5 @@
 POP Forums
-Copyright (c)1999-2023, POP World Media, LLC and Jeffrey M. Putz
+Copyright (c)1999-2026, POP World Media, LLC and Jeffrey M. Putz
 https://popw.com/
 https://jeffputz.com/
 
@@ -10,6 +10,7 @@ Dutch: Steven van Deursen
 Ukrainian: Nazar Harasym
 German: Manfred Theis
 Taiwanese Mandarin: Cheng Liu
+French: The robots
 
 MIT LICENSE:
 
