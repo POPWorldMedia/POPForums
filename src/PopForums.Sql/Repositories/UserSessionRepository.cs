@@ -19,7 +19,8 @@ public class UserSessionRepository : IUserSessionRepository
 	public async Task CreateSession(int sessionID, int? userID, DateTime lastTime)
 	{
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
-			connection.ExecuteAsync("INSERT INTO pf_UserSession (SessionID, UserID, LastTime) VALUES (@SessionID, @UserID, @LastTime)", new { SessionID = sessionID, UserID = userID, LastTime = lastTime }));
+			// guarded because parallel requests carrying the same new session cookie can both try to create the row
+			connection.ExecuteAsync("IF NOT EXISTS (SELECT 1 FROM pf_UserSession WITH (UPDLOCK, HOLDLOCK) WHERE SessionID = @SessionID) INSERT INTO pf_UserSession (SessionID, UserID, LastTime) VALUES (@SessionID, @UserID, @LastTime)", new { SessionID = sessionID, UserID = userID, LastTime = lastTime }));
 	}
 
 	public async Task<bool> UpdateSession(int sessionID, DateTime lastTime)

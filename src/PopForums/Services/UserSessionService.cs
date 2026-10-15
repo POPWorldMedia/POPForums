@@ -31,9 +31,18 @@ public class UserSessionService : IUserSessionService
 			userID = user.UserID;
 		if (sessionID == null)
 		{
-			sessionID = await StartNewSession(userID, ip, createSession);
-			if (user != null)
+			if (user == null)
+			{
+				// Anonymous: issue the cookie only. The session row is created when the cookie comes back,
+				// so clients that don't keep cookies (most bots) never write to the database.
+				sessionID = NewSessionID();
+				createSession(sessionID.Value);
+			}
+			else
+			{
+				sessionID = await StartNewSession(userID, ip, createSession);
 				await _userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
+			}
 		}
 		else
 		{
@@ -41,7 +50,8 @@ public class UserSessionService : IUserSessionService
 				await _userRepository.UpdateLastActivityDate(user, DateTime.UtcNow);
 			var updateSuccess = await _userSessionRepository.UpdateSession(sessionID.Value, DateTime.UtcNow);
 			if (!updateSuccess)
-				sessionID = await StartNewSession(userID, ip, createSession);
+				// No row yet (deferred anonymous start) or it expired: start the session under the cookie's ID.
+				await StartNewSession(userID, ip, createSession, sessionID.Value);
 			else
 			{
 				var isAnon = await _userSessionRepository.IsSessionAnonymous(sessionID.Value);
@@ -56,7 +66,7 @@ public class UserSessionService : IUserSessionService
 		return sessionID.Value;
 	}
 
-	private async Task<int> StartNewSession(int? userID, string ip, Action<int> createSession)
+	private async Task<int> StartNewSession(int? userID, string ip, Action<int> createSession, int? existingSessionID = null)
 	{
 		if (userID.HasValue)
 		{
@@ -64,12 +74,18 @@ public class UserSessionService : IUserSessionService
 			if (oldUserSession != null)
 				await EndAndDeleteSession(oldUserSession);
 		}
-		var random = new Random();
-		var sessionID = random.Next(int.MinValue, int.MaxValue);
+		var sessionID = existingSessionID ?? NewSessionID();
 		await _securityLogService.CreateLogEntry(null, userID, ip, sessionID.ToString(), SecurityLogType.UserSessionStart);
 		await _userSessionRepository.CreateSession(sessionID, userID, DateTime.UtcNow);
-		createSession(sessionID);
+		if (!existingSessionID.HasValue)
+			createSession(sessionID);
 		return sessionID;
+	}
+
+	private static int NewSessionID()
+	{
+		var random = new Random();
+		return random.Next(int.MinValue, int.MaxValue);
 	}
 
 	private async Task EndAndDeleteSession(ExpiredUserSession oldUserSession)
