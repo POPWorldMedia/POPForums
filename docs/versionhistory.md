@@ -36,6 +36,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * User table lacks index to look up most recent users #445
 * Use client-side image resize before upload #387
 * Refactor photo upload page to act on file selection #446
+* Improve session tracking #450
 * BUG: Forum auth middleware overwrites host app's ClaimsPrincipal instead of merging #427
 * BUG: Comment links from YouTube break parsing #398
 * BUG: Password reset potentially handles token validation wrong #439
