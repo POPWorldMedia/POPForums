@@ -37,6 +37,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * Use client-side image resize before upload #387
 * Refactor photo upload page to act on file selection #446
 * Improve session tracking #450
+* Replace pagerlinks icons with semantically correct ones #452
 * BUG: Forum auth middleware overwrites host app's ClaimsPrincipal instead of merging #427
 * BUG: Comment links from YouTube break parsing #398
 * BUG: Password reset potentially handles token validation wrong #439
