@@ -79,7 +79,7 @@ public class PagerLinksTagHelper : TagHelper
 					foreach (var item in RouteParameters)
 						previousRouteDictionary.Add(item.Key, item.Value);
 				var previousLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, previousRouteDictionary, new { title = Resources.Previous, rel = "prev", @class = "page-link" });
-				previousLink.InnerHtml.SetHtmlContent("<span class=\"icon icon-skip-backward-fill\"></span>");
+				previousLink.InnerHtml.SetHtmlContent("<span class=\"icon icon-rewind-fill\"></span>");
 				builder.Append(GetString(previousLink));
 				builder.Append("</li>");
 			}
@@ -167,7 +167,7 @@ public class PagerLinksTagHelper : TagHelper
 					foreach (var item in RouteParameters)
 						nextRouteDictionary.Add(item.Key, item.Value);
 				var nextLink = _htmlGenerator.GenerateActionLink(ViewContext, "", ActionName, ControllerName, null, null, null, nextRouteDictionary, new { title = Resources.Next, rel = "next", @class = "page-link" });
-				nextLink.InnerHtml.SetHtmlContent("<span class=\"icon icon-skip-forward-fill\"></span>");
+				nextLink.InnerHtml.SetHtmlContent("<span class=\"icon icon-fast-forward-fill\"></span>");
 				builder.Append(GetString(nextLink));
 				builder.Append("</li>");
 			}
