@@ -29,6 +29,7 @@ public class AccountControllerTests
 	private ISkuService _skuService;
 	private IBuyService _buyService;
 	private ISubscriptionHistoryService _subscriptionHistoryService;
+	private IBadgeService _badgeService;
 
 	private AccountController GetController()
 	{
@@ -53,7 +54,8 @@ public class AccountControllerTests
 		_skuService = Substitute.For<ISkuService>();
 		_buyService = Substitute.For<IBuyService>();
 		_subscriptionHistoryService = Substitute.For<ISubscriptionHistoryService>();
-		var controller = new AccountController(_userService, _profileService, _newAccountMailer, _settingsManager, _postService, _topicService, _forumService, _lastReadService, _imageService, _feedService, _userAwardService, _externalUserAssocManager, _userRetrievalShim, _externalLoginRoutingService, _externalLoginTempService, _config, _recaptchaService, _oAuthOnlyService, _skuService, _buyService, _subscriptionHistoryService);
+		_badgeService = Substitute.For<IBadgeService>();
+		var controller = new AccountController(_userService, _profileService, _newAccountMailer, _settingsManager, _postService, _topicService, _forumService, _lastReadService, _imageService, _feedService, _userAwardService, _externalUserAssocManager, _userRetrievalShim, _externalLoginRoutingService, _externalLoginTempService, _config, _recaptchaService, _oAuthOnlyService, _skuService, _buyService, _subscriptionHistoryService, _badgeService);
 		controller.ControllerContext = new ControllerContext
 		{
 			HttpContext = new DefaultHttpContext()

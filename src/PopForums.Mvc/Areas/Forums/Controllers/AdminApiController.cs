@@ -28,7 +28,8 @@ public class AdminApiController(
 	IServiceHeartbeatService serviceHeartbeatService,
 	ISkuService skuService,
 	ISubscriptionHistoryService subscriptionHistoryService,
-	IManualSubscriptionService manualSubscriptionService)
+	IManualSubscriptionService manualSubscriptionService,
+	IBadgeService badgeService)
 	: Controller
 {
 	// ********** settings
@@ -620,7 +621,9 @@ public class AdminApiController(
 	[HttpPost("/Forums/AdminApi/SaveSku")]
 	public async Task<ActionResult<List<Sku>>> SaveSku([FromBody]Sku skuEdit)
 	{
-		await skuService.Save(skuEdit);
+		var result = await skuService.Save(skuEdit);
+		if (!result.IsSuccessful)
+			return BadRequest(result.Message);
 		var skus = await skuService.GetAll();
 		return skus;
 	}
@@ -676,5 +679,41 @@ public class AdminApiController(
 		if (!result.IsSuccessful)
 			return BadRequest(result.Message);
 		return result.Data;
+	}
+
+	// ********** badges
+
+	[HttpGet("/Forums/AdminApi/GetBadges")]
+	public async Task<ActionResult<List<Badge>>> GetBadges()
+	{
+		var badges = await badgeService.GetAll();
+		return badges;
+	}
+
+	[HttpGet("/Forums/AdminApi/GetBadgeRoles")]
+	public async Task<ActionResult<List<string>>> GetBadgeRoles()
+	{
+		var roles = await userService.GetAllRoles();
+		var skus = await skuService.GetAll();
+		roles.AddRange(skus.Select(s => s.SkuID));
+		return roles;
+	}
+
+	[HttpPost("/Forums/AdminApi/SaveBadge")]
+	public async Task<ActionResult<List<Badge>>> SaveBadge([FromBody] Badge badge)
+	{
+		var result = await badgeService.Save(badge);
+		if (!result.IsSuccessful)
+			return BadRequest(result.Message);
+		var badges = await badgeService.GetAll();
+		return badges;
+	}
+
+	[HttpPost("/Forums/AdminApi/DeleteBadge/{id}")]
+	public async Task<ActionResult<List<Badge>>> DeleteBadge(int id)
+	{
+		await badgeService.Delete(id);
+		var badges = await badgeService.GetAll();
+		return badges;
 	}
 }

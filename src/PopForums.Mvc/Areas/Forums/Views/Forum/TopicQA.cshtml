@@ -39,7 +39,7 @@
 <div id="PostStream">
 
 	@{
-		@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
+		@(await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = Model.QuestionPostWithComments, Topic = Model.Topic, Avatars = Model.Avatars, Badges = Model.Badges, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = Model.QuestionPostWithComments.Post }))
 	}
 
 	@if (Model.PermissionContext.UserCanPost)
@@ -56,7 +56,7 @@
 
 	@foreach (var answer in Model.AnswersWithComments)
 	{
-		@await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = answer, Topic = Model.Topic, Avatars = Model.Avatars, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = answer.Post });
+		@await Html.PartialAsync("QAPost", new QAPostItemContainer { PostWithChildren = answer, Topic = Model.Topic, Avatars = Model.Avatars, Badges = Model.Badges, Signatures = Model.Signatures, User = user, Profile = profile, VotedPostIDs = Model.VotedPostIDs, Post = answer.Post });
 	}
 
 </div>

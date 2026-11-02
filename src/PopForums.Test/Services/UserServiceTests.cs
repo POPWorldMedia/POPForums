@@ -30,6 +30,7 @@ public class UserServiceTests
 		_config = Substitute.For<IConfig>();
 		_mockImageInspector = Substitute.For<IImageInspector>();
 		_mockRoleRepo.GetUserRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+		_mockRoleRepo.GetAllRoles().Returns(Task.FromResult(new List<string> { "Admin", "Moderator", "Subscriber", "SomethingElse" }));
 		return new UserService(_mockUserRepo, _mockRoleRepo, _mockProfileRepo, _mockSettingsManager, _mockUserAvatarRepo, _mockUserImageRepo, _mockSecurityLogService, _mockTextParser, _mockBanRepo, _mockForgotMailer, _config, _mockImageInspector);
 	}
 
@@ -148,6 +149,65 @@ public class UserServiceTests
 		var user = await userService.GetUserByName(name);
 
 		Assert.Contains(PermanentRoles.Subscriber, user.Roles);
+	}
+
+	[Fact]
+	public async Task GetUserByNameAddsSkuRoleWhenSubscriptionIsActive()
+	{
+		var dummyUser = GetDummyUser("Jeff", "a@b.com");
+		dummyUser.SubscriptionExpiration = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1);
+		var userService = GetMockedUserService();
+		_mockUserRepo.GetUserByName("jeff").Returns(Task.FromResult(dummyUser));
+		_mockProfileRepo.GetProfile(dummyUser.UserID).Returns(Task.FromResult(new Profile { SkuID = "annual" }));
+
+		var user = await userService.GetUserByName("Jeff");
+
+		Assert.Contains(PermanentRoles.Subscriber, user.Roles);
+		Assert.Contains("annual", user.Roles);
+	}
+
+	[Fact]
+	public async Task GetUserByNameOmitsSkuRoleWhenSubscriptionIsExpired()
+	{
+		var dummyUser = GetDummyUser("Jeff", "a@b.com");
+		dummyUser.SubscriptionExpiration = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-2);
+		var userService = GetMockedUserService();
+		_mockUserRepo.GetUserByName("jeff").Returns(Task.FromResult(dummyUser));
+		_mockProfileRepo.GetProfile(dummyUser.UserID).Returns(Task.FromResult(new Profile { SkuID = "annual" }));
+
+		var user = await userService.GetUserByName("Jeff");
+
+		Assert.DoesNotContain(PermanentRoles.Subscriber, user.Roles);
+		Assert.DoesNotContain("annual", user.Roles);
+	}
+
+	[Fact]
+	public async Task GetEffectiveRolesCombinesStoredAndComputedRoles()
+	{
+		var today = DateOnly.FromDateTime(DateTime.UtcNow);
+		var userIDs = new List<int> { 1, 2, 3, 4 };
+		var userService = GetMockedUserService();
+		_mockUserRepo.GetUsersFromIDs(userIDs).Returns(Task.FromResult(new List<User>
+		{
+			new User { UserID = 1, SubscriptionExpiration = today.AddDays(10) },
+			new User { UserID = 2, SubscriptionExpiration = today.AddDays(-1) },
+			new User { UserID = 3, SubscriptionExpiration = today.AddDays(-2) },
+			new User { UserID = 4 }
+		}));
+		_mockRoleRepo.GetUserRoles(1).Returns(Task.FromResult(new List<string> { "Moderator" }));
+		_mockRoleRepo.GetUserRoles(2).Returns(Task.FromResult(new List<string>()));
+		_mockRoleRepo.GetUserRoles(3).Returns(Task.FromResult(new List<string> { "UserOfTheWeek" }));
+		_mockRoleRepo.GetUserRoles(4).Returns(Task.FromResult(new List<string>()));
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(new Profile { SkuID = "annual" }));
+		_mockProfileRepo.GetProfile(2).Returns(Task.FromResult(new Profile { SkuID = "monthly" }));
+		_mockProfileRepo.GetProfile(3).Returns(Task.FromResult(new Profile { SkuID = "annual" }));
+
+		var result = await userService.GetEffectiveRoles(userIDs);
+
+		Assert.Equal(new[] { "Moderator", PermanentRoles.Subscriber, "annual" }, result[1]);
+		Assert.Equal(new[] { PermanentRoles.Subscriber, "monthly" }, result[2]);
+		Assert.Equal(new[] { "UserOfTheWeek" }, result[3]);
+		Assert.Empty(result[4]);
 	}
 
 	[Fact]
@@ -683,13 +743,15 @@ public class UserServiceTests
 	}
 
 	[Fact]
-	public async Task DeleteRoleThrowsOnAdminOrMod()
+	public async Task DeleteRoleThrowsOnPermanentRoles()
 	{
 		var userService = GetMockedUserService();
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Subscriber", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("subscriber", default, default));
 		await _mockRoleRepo.DidNotReceive().DeleteRole(Arg.Any<string>());
 	}
 
@@ -878,7 +940,7 @@ public class UserServiceTests
 		var userEdit = new UserEdit { Roles = new [] {"Admin", "Moderator"} };
 		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "Admin", "Moderator" })));
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserAddedToRole);
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserAddedToRole);
 	}
@@ -892,9 +954,32 @@ public class UserServiceTests
 		var userEdit = new UserEdit { Roles = new[] { "SomethingElse" } };
 		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "SomethingElse" })));
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserRemovedFromRole);
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserRemovedFromRole);
+	}
+
+	[Fact]
+	public async Task EditUserDoesNotPersistComputedSubscriberRole()
+	{
+		var service = GetMockedUserService();
+		var user = new User { UserID = 1, Roles = new List<string> { "Subscriber" } };
+		var userEdit = new UserEdit { Roles = new[] { "Subscriber", "Admin" } };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
+		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "Admin" })));
+		await _mockSecurityLogService.DidNotReceive().CreateLogEntry(Arg.Any<User>(), user, "123", "Subscriber", Arg.Any<SecurityLogType>());
+	}
+
+	[Fact]
+	public async Task EditUserDropsUnknownRoles()
+	{
+		var service = GetMockedUserService();
+		var user = new User { UserID = 1, Roles = new List<string>() };
+		var userEdit = new UserEdit { Roles = new[] { "NotARole" } };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
+		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.Length == 0));
 	}
 
 	[Fact]

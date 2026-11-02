@@ -1398,4 +1398,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>Bezig met uploaden…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Badge toevoegen</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Voorgrondkleur</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Achtergrondkleur</value>
+  </data>
 </root>

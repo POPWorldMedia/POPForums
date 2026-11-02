@@ -18,12 +18,23 @@
 @if (Model.IsApproved)
 {
 
-<h1>
+<h1 class="d-flex align-items-center">
 	@if (Model.AvatarID.HasValue)
 	{
-		<img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-fluid align-middle me-3 mt-3 mb-3"/>
+		<img src="@Url.Action("Avatar", "Image", new { id = Model.AvatarID })" alt="Avatar image" class="img-fluid me-3 mt-3 mb-3"/>
 	}
-	@Model.Name
+	<span>
+		@Model.Name
+		@if (Model.Badges != null && Model.Badges.Count > 0)
+		{
+			<span class="d-block fs-6">
+				@foreach (var badge in Model.Badges)
+				{
+					<span class="badge me-1" style="color: #@badge.ForegroundColor; background-color: #@badge.BackgroundColor;">@badge.Name</span>
+				}
+			</span>
+		}
+	</span>
 </h1>
 <ul id="TopBreadcrumb" class="breadcrumb sticky-top">
 	<li class="breadcrumb-item"><a asp-controller="@HomeController.Name" asp-action="Index">@PopForums.Resources.Forums</a></li>

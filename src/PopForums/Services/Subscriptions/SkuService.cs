@@ -5,7 +5,7 @@ public interface ISkuService
 	Task<List<Sku>> GetAll();
 	Task<List<Sku>> GetAllActive();
 	Task<Sku> Get(string skuID);
-	Task Save(Sku sku);
+	Task<BasicServiceResponse<Sku>> Save(Sku sku);
 	Task MoveSkuUp(string skuID);
 	Task MoveSkuDown(string skuID);
 }
@@ -27,8 +27,12 @@ public class SkuService(ISkuRepository skuRepository) : ISkuService
 		return await skuRepository.Get(skuID);
 	}
 
-	public async Task Save(Sku sku)
+	public async Task<BasicServiceResponse<Sku>> Save(Sku sku)
 	{
+		// a subscriber's SKU ID becomes a computed role, so it can't impersonate a permanent role
+		var reservedRoles = new[] { PermanentRoles.Admin, PermanentRoles.Moderator, PermanentRoles.Subscriber };
+		if (reservedRoles.Any(r => string.Equals(r, sku.SkuID, StringComparison.OrdinalIgnoreCase)))
+			return BasicServiceResponse<Sku>.Failed($"SKU ID can't be {sku.SkuID}, because that's a permanent role.");
 		var existing = await skuRepository.Get(sku.SkuID);
 		if (existing == null)
 		{
@@ -38,6 +42,7 @@ public class SkuService(ISkuRepository skuRepository) : ISkuService
 		}
 		else
 			await skuRepository.Update(sku);
+		return BasicServiceResponse<Sku>.Success(sku);
 	}
 
 	private async Task ChangeSkuSortOrder(Sku sku, int change)

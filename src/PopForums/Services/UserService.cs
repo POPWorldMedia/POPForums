@@ -40,6 +40,7 @@ public interface IUserService
 	Task GeneratePasswordResetEmail(User user, string resetLink);
 	Task ResetPassword(User user, string newPassword, string ip);
 	Task<List<User>> GetUsersFromIDs(IList<int> ids);
+	Task<Dictionary<int, List<string>>> GetEffectiveRoles(List<int> userIDs);
 	Task<int> GetTotalUsers();
 	Task<List<User>> GetSubscribedUsers();
 	Dictionary<int, (User, int)> GetUsersByPointTotals(int top);
@@ -140,14 +141,38 @@ public class UserService : IUserService
 		return await _userRepository.GetUsersFromIDs(ids);
 	}
 
+	public async Task<Dictionary<int, List<string>>> GetEffectiveRoles(List<int> userIDs)
+	{
+		var users = await _userRepository.GetUsersFromIDs(userIDs);
+		var result = new Dictionary<int, List<string>>();
+		foreach (var user in users)
+		{
+			var roles = await _roleRepository.GetUserRoles(user.UserID);
+			var profile = await _profileRepository.GetProfile(user.UserID);
+			AddComputedRoles(roles, user.SubscriptionExpiration, profile?.SkuID);
+			result[user.UserID] = roles;
+		}
+		return result;
+	}
+
 	private async Task PopulateRoles(User user)
 	{
 		if (user != null)
 		{
 			user.Roles = await _roleRepository.GetUserRoles(user.UserID);
-			// grace period of one day beyond expiration, since renewal doesn't fire until 12:01pm UTC on the expiration date and may not process immediately
-			if (user.SubscriptionExpiration.HasValue && user.SubscriptionExpiration.Value.AddDays(1) >= DateOnly.FromDateTime(DateTime.UtcNow))
-				user.Roles.Add(PermanentRoles.Subscriber);
+			var profile = await _profileRepository.GetProfile(user.UserID);
+			AddComputedRoles(user.Roles, user.SubscriptionExpiration, profile?.SkuID);
+		}
+	}
+
+	private static void AddComputedRoles(List<string> roles, DateOnly? subscriptionExpiration, string skuID)
+	{
+		// grace period of one day beyond expiration, since renewal doesn't fire until 12:01pm UTC on the expiration date and may not process immediately
+		if (subscriptionExpiration.HasValue && subscriptionExpiration.Value.AddDays(1) >= DateOnly.FromDateTime(DateTime.UtcNow))
+		{
+			roles.Add(PermanentRoles.Subscriber);
+			if (!string.IsNullOrEmpty(skuID))
+				roles.Add(skuID);
 		}
 	}
 
@@ -322,8 +347,8 @@ public class UserService : IUserService
 
 	public async Task DeleteRole(string role, User user, string ip)
 	{
-		if (role.ToLower() == PermanentRoles.Admin.ToLower() || role.ToLower() == PermanentRoles.Moderator.ToLower())
-			throw new InvalidOperationException("Can't delete Admin or Moderator roles.");
+		if (role.ToLower() == PermanentRoles.Admin.ToLower() || role.ToLower() == PermanentRoles.Moderator.ToLower() || role.ToLower() == PermanentRoles.Subscriber.ToLower())
+			throw new InvalidOperationException("Can't delete Admin, Moderator or Subscriber roles.");
 		await _roleRepository.DeleteRole(role);
 		await _securityLogService.CreateLogEntry(user, null, ip, "Role: " + role, SecurityLogType.RoleDeleted);
 	}
@@ -404,13 +429,17 @@ public class UserService : IUserService
 
 		if (!_config.IsOAuthOnly)
 		{
-			var newRoles = userEdit.Roles ?? new string[0];
+			// computed roles like Subscriber round-trip through the edit, so only persist roles that can be assigned
+			var assignableRoles = await _roleRepository.GetAllRoles();
+			assignableRoles.Remove(PermanentRoles.Subscriber);
+			var newRoles = (userEdit.Roles ?? new string[0]).Where(assignableRoles.Contains).ToArray();
+			var oldRoles = targetUser.Roles.Where(assignableRoles.Contains).ToList();
 			await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
-			foreach (var role in targetUser.Roles)
+			foreach (var role in oldRoles)
 				if (!newRoles.Contains(role))
 					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
 			foreach (var role in newRoles)
-				if (!targetUser.Roles.Contains(role))
+				if (!oldRoles.Contains(role))
 					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
 		}
 		

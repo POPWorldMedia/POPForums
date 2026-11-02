@@ -1392,4 +1392,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>上傳中…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>徽章</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>新增徽章</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>前景顏色</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>背景顏色</value>
+  </data>
 </root>

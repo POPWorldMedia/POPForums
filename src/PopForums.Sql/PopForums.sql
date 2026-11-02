@@ -1048,6 +1048,17 @@ CREATE TABLE [dbo].[pf_SubscriptionHistory](
 CREATE NONCLUSTERED INDEX IX_pf_SubscriptionHistory_UserID ON pf_SubscriptionHistory (UserID, TimeStamp);
 
 
+-- ***************************** [pf_Badge]
+
+CREATE TABLE [dbo].[pf_Badge](
+    [BadgeID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+    [Name] [nvarchar](256) NOT NULL,
+    [Role] [nvarchar](256) NOT NULL,
+    [ForegroundColor] [char](6) NOT NULL,
+    [BackgroundColor] [char](6) NOT NULL
+);
+
+
 
 
 INSERT INTO pf_JunkWords (JunkWord) VALUES ('an');

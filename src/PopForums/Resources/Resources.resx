@@ -1428,4 +1428,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>Uploading…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Add Badge</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Foreground Color</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Background Color</value>
+  </data>
 </root>

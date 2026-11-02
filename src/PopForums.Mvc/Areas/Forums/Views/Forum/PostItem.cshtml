@@ -18,6 +18,8 @@
 	var isAuthor = user?.UserID == Model.Post.UserID;
 	var isVoted = isLoggedIn && !isAuthor && Model.VotedPostIDs.Contains(Model.Post.PostID);
 	var isIgnored = Model.IgnoreUserIDs.Contains(Model.Post.UserID);
+	List<Badge> badges = null;
+	Model.Badges?.TryGetValue(Model.Post.UserID, out badges);
 }
 
 <div class="@(isIgnored ? "bg-light p-2 my-3" : "")" data-postID="@Model.Post.PostID">
@@ -29,13 +31,24 @@
 <div id="post@(Model.Post.PostID)" class="@(Model.Post.IsDeleted ? "bg-warning " : "")@(isIgnored ? "collapse " : "")postItem my-3" data-postID="@Model.Post.PostID">
 	<div class="postUserData bg-primary rounded mb-3 px-3 py-1">
 		<pf-postminiprofile username="@Model.Post.Name" userid="@Model.Post.UserID" miniprofileboxclass="miniProfileBox bg-light text-dark rounded" usernameclass="text-light"></pf-postminiprofile>
-		<small class="postTime text-end text-light text-secondary">
-			@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
+		<div class="@(badges != null ? "postBadges d-flex align-items-center" : null)">
+			@if (badges != null)
 			{
-				@:IP: @Model.Post.IP -
+				<div class="d-flex flex-wrap gap-1 flex-grow-1">
+					@foreach (var badge in badges)
+					{
+						<span class="badge" style="color: #@badge.ForegroundColor; background-color: #@badge.BackgroundColor;">@badge.Name</span>
+					}
+				</div>
 			}
-			<pf-formattedtime utctime="@Model.Post.PostTime.ToString("o")"></pf-formattedtime>
-		</small>
+			<small class="postTime text-end text-light text-secondary@(badges != null ? " ms-3" : null)">
+				@if (Model.User != null && Model.User.IsInRole(PermanentRoles.Moderator))
+				{
+					@:IP: @Model.Post.IP -
+				}
+				<pf-formattedtime utctime="@Model.Post.PostTime.ToString("o")"></pf-formattedtime>
+			</small>
+		</div>
 	</div>
 	@if (!hideVanity && Model.Avatars.ContainsKey(Model.Post.UserID))
 	{

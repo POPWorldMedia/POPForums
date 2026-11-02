@@ -19,6 +19,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 
 ### Change log
 * Enable subscriptions with Stripe integration #426
+* User badges #453
 * Add French translation #414
 * Make upvotes update in real time #251
 * Put Azure Functions into a class library #430

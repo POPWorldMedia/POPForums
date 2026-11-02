@@ -37,5 +37,6 @@ public class DisplayProfile
 	public int Points { get; set; }
 	public List<FeedEvent> Feed { get; set; }
 	public List<UserAward> UserAwards { get; set; }
+	public List<Badge> Badges { get; set; }
 	public bool IsApproved { get; set; }
 }

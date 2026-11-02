@@ -1413,4 +1413,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>Subiendo…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Insignias</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Agregar insignia</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Color de primer plano</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Color de fondo</value>
+  </data>
 </root>

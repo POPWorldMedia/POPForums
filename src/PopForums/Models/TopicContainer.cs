@@ -9,6 +9,7 @@ public class TopicContainer
 	public ForumPermissionContext PermissionContext { get; set; }
 	public Dictionary<int, string> Signatures { get; set; }
 	public Dictionary<int, int> Avatars { get; set; }
+	public Dictionary<int, List<Badge>> Badges { get; set; }
 	public List<int> VotedPostIDs { get; set; }
 	public DateTime? LastReadTime { get; set; }
 	public TopicState TopicState { get; set; }

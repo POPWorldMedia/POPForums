@@ -240,6 +240,7 @@ public class ForumService : IForumService
 			PermissionContext = topicContainer.PermissionContext,
 			Signatures = topicContainer.Signatures,
 			Avatars = topicContainer.Avatars,
+			Badges = topicContainer.Badges,
 			VotedPostIDs = topicContainer.VotedPostIDs,
 			TopicState = topicContainer.TopicState
 		};
