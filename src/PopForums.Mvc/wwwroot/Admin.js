@@ -1316,6 +1316,71 @@ const SubscriptionSkus = {
 					this.skus = response.data;
 					this.endLoad();
 				})
+				.catch(error => {
+					alert(error.response.data);
+					this.endLoad();
+				});
+		}
+	}
+}
+
+const Badges = {
+	mixins: [loadingMixin],
+	template: "#Badges",
+	data() {
+		return {
+			badges: [],
+			roles: [],
+			editingBadge: null
+		}
+	},
+	created: function () {
+		this.startLoad();
+		axios.get(basePath + "GetBadges").then(response => {
+			this.badges = response.data;
+			this.endLoad();
+		})
+			.catch(error => this.errorAlert());
+		axios.get(basePath + "GetBadgeRoles").then(response => {
+			this.roles = response.data;
+		})
+			.catch(error => this.errorAlert());
+		this.resetBadge();
+	},
+	methods: {
+		resetBadge: function () {
+			this.editingBadge = { badgeID: 0, name: "", role: "", foregroundColor: "ffffff", backgroundColor: "000000" };
+		},
+		newBadge: function () {
+			this.resetBadge();
+			const e = this.$refs.modal;
+			var modal = new bootstrap.Modal(e);
+			modal.show();
+		},
+		editBadge: function (badge) {
+			this.editingBadge = { ...badge };
+			const e = this.$refs.modal;
+			var modal = new bootstrap.Modal(e);
+			modal.show();
+		},
+		saveBadge: function () {
+			this.startLoad();
+			axios.post(basePath + "SaveBadge", this.editingBadge)
+				.then(response => {
+					this.badges = response.data;
+					this.endLoad();
+				})
+				.catch(error => {
+					alert(error.response.data);
+					this.endLoad();
+				});
+		},
+		deleteBadge: function (badge) {
+			this.startLoad();
+			axios.post(basePath + "DeleteBadge/" + badge.badgeID).then(response => {
+				this.badges = response.data;
+				this.endLoad();
+			})
 				.catch(error => this.errorAlert());
 		}
 	}
@@ -1352,7 +1417,8 @@ const routes = [
 			{ path: "/editusersub", component: EditUserSub },
 			{ path: "/updateusersubscription/:id", component: UpdateUserSubscription },
 			{ path: "/subscriptionconfig", component: SubscriptionConfig },
-			{ path: "/subscriptionskus", component: SubscriptionSkus }
+			{ path: "/subscriptionskus", component: SubscriptionSkus },
+			{ path: "/badges", component: Badges }
 		]
 	},
 	{ path: "/:pathMatch(.*)*", redirect: "/general" }

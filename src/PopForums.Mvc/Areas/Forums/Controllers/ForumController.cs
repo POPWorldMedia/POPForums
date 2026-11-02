@@ -6,7 +6,7 @@ namespace PopForums.Mvc.Areas.Forums.Controllers;
 [TypeFilter(typeof(PopForumsPrivateForumsFilter))]
 public class ForumController : Controller
 {
-	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ILastReadService lastReadService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer, IForumStateComposer forumStateComposer, IIgnoreService ignoreService)
+	public ForumController(ISettingsManager settingsManager, IForumService forumService, ITopicService topicService, IPostService postService, ITopicViewCountService topicViewCountService, ILastReadService lastReadService, IProfileService profileService, IUserRetrievalShim userRetrievalShim, ITopicViewLogService topicViewLogService, IPostMasterService postMasterService, IForumPermissionService forumPermissionService, ITopicStateComposer topicStateComposer, IForumStateComposer forumStateComposer, IIgnoreService ignoreService, IBadgeService badgeService)
 	{
 		_settingsManager = settingsManager;
 		_forumService = forumService;
@@ -22,6 +22,7 @@ public class ForumController : Controller
 		_topicStateComposer = topicStateComposer;
 		_forumStateComposer = forumStateComposer;
 		_ignoreService = ignoreService;
+		_badgeService = badgeService;
 	}
 
 	public static string Name = "Forum";
@@ -40,6 +41,7 @@ public class ForumController : Controller
 	private readonly ITopicStateComposer _topicStateComposer;
 	private readonly IForumStateComposer _forumStateComposer;
 	private readonly IIgnoreService _ignoreService;
+	private readonly IBadgeService _badgeService;
 
 	public async Task<ActionResult> Index(string urlName, int pageNumber = 1)
 	{
@@ -185,9 +187,10 @@ public class ForumController : Controller
 			return NotFound();
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
+		var badges = await _badgeService.GetBadges(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 		var ignores = await _ignoreService.GetIgnoredUserIdsInList(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime, ignores);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, badges, votedIDs, lastReadTime, ignores);
 		await _topicViewCountService.ProcessView(topic);
 		await _topicViewLogService.LogView(user?.UserID, topic.TopicID);
 		var topicState = await _topicStateComposer.GetState(topic, pagerContext?.PageIndex, pagerContext?.PageCount, posts.Last().PostID);
@@ -234,9 +237,10 @@ public class ForumController : Controller
 			return NotFound();
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
+		var badges = await _badgeService.GetBadges(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 		var ignores = await _ignoreService.GetIgnoredUserIdsInList(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime, ignores);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, badges, votedIDs, lastReadTime, ignores);
 		await _topicViewCountService.ProcessView(topic);
 		ViewBag.Low = low;
 		ViewBag.High = high;
@@ -308,12 +312,13 @@ public class ForumController : Controller
 		var postList = new List<Post> { post };
 		var signatures = await _profileService.GetSignatures(postList);
 		var avatars = await _profileService.GetAvatars(postList);
+		var badges = await _badgeService.GetBadges(postList);
 		var votedPostIDs = await _postService.GetVotedPostIDs(user, postList);
 		ViewData["PopForums.Identity.CurrentUser"] = user; // TODO: what is this used for?
 		if (user != null)
 			await _lastReadService.MarkTopicRead(user, topic);
 		var ignoreUserIDs = await _ignoreService.GetIgnoredUserIdsInList(user, postList);
-		return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, VotedPostIDs = votedPostIDs, Topic = topic, User = user, IgnoreUserIDs = ignoreUserIDs });
+		return View("PostItem", new PostItemContainer { Post = post, Avatars = avatars, Signatures = signatures, Badges = badges, VotedPostIDs = votedPostIDs, Topic = topic, User = user, IgnoreUserIDs = ignoreUserIDs });
 	}
 		
 	public async Task<ViewResult> Recent(int pageNumber = 1)
@@ -468,9 +473,10 @@ public class ForumController : Controller
 		var (posts, pagerContext) = await _postService.GetPosts(topic, lastPost, permissionContext.UserCanModerate);
 		var signatures = await _profileService.GetSignatures(posts);
 		var avatars = await _profileService.GetAvatars(posts);
+		var badges = await _badgeService.GetBadges(posts);
 		var votedIDs = await _postService.GetVotedPostIDs(user, posts);
 		var ignores = await _ignoreService.GetIgnoredUserIdsInList(user, posts);
-		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, votedIDs, lastReadTime, ignores);
+		var container = ComposeTopicContainer(topic, forum, permissionContext, posts, pagerContext, signatures, avatars, badges, votedIDs, lastReadTime, ignores);
 		ViewBag.Low = lowPage;
 		ViewBag.High = pagerContext.PageCount;
 		return View("TopicPage", container);
@@ -518,9 +524,9 @@ public class ForumController : Controller
 		return Content(result, "text/html");
 	}
 
-	private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, List<Post> posts, PagerContext pagerContext, Dictionary<int, string> signatures, Dictionary<int, int> avatars, List<int> votedPostIDs, DateTime? lastreadTime, List<int> ignoreUserIDs)
+	private static TopicContainer ComposeTopicContainer(Topic topic, Forum forum, ForumPermissionContext permissionContext, List<Post> posts, PagerContext pagerContext, Dictionary<int, string> signatures, Dictionary<int, int> avatars, Dictionary<int, List<Badge>> badges, List<int> votedPostIDs, DateTime? lastreadTime, List<int> ignoreUserIDs)
 	{
-		return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, Signatures = signatures, Avatars = avatars, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime, IgnoreUserIDs = ignoreUserIDs };
+		return new TopicContainer { Forum = forum, Topic = topic, Posts = posts, PagerContext = pagerContext, PermissionContext = permissionContext, Signatures = signatures, Avatars = avatars, Badges = badges, VotedPostIDs = votedPostIDs, LastReadTime = lastreadTime, IgnoreUserIDs = ignoreUserIDs };
 	}
 
 	public class SetAnswerModel

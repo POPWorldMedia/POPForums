@@ -6,6 +6,7 @@ public class PostItemContainer
 	public List<int> VotedPostIDs { get; set; }
 	public Dictionary <int, string> Signatures { get; set; }
 	public Dictionary<int, int> Avatars { get; set; }
+	public Dictionary<int, List<Badge>> Badges { get; set; }
 	public User User { get; set; }
 	public Profile Profile { get; set; }
 	public Topic Topic { get; set; }

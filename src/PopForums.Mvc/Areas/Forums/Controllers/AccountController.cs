@@ -26,7 +26,8 @@ public class AccountController(
 	IOAuthOnlyService oAuthOnlyService,
 	ISkuService skuService,
 	IBuyService buyService,
-	ISubscriptionHistoryService subscriptionHistoryService)
+	ISubscriptionHistoryService subscriptionHistoryService,
+	IBadgeService badgeService)
 	: Controller
 {
 	public static string Name = "Account";
@@ -525,6 +526,7 @@ public class AccountController(
 		model.PostCount = await postService.GetPostCount(user);
 		model.Feed = await feedService.GetFeed(user);
 		model.UserAwards = await userAwardService.GetAwards(user);
+		model.Badges = await badgeService.GetBadges(user.UserID);
 		var viewingUser = userRetrievalShim.GetUser();
 		if (viewingUser == null)
 			model.ShowDetails = false;

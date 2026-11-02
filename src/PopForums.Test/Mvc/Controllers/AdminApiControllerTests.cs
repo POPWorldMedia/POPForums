@@ -26,6 +26,7 @@ public class AdminApiControllerTests
 	private ISkuService _skuService;
 	private ISubscriptionHistoryService _subscriptionHistoryService;
 	private IManualSubscriptionService _manualSubscriptionService;
+	private IBadgeService _badgeService;
 
 	private AdminApiController GetController()
 	{
@@ -50,7 +51,8 @@ public class AdminApiControllerTests
 		_skuService = Substitute.For<ISkuService>();
 		_subscriptionHistoryService = Substitute.For<ISubscriptionHistoryService>();
 		_manualSubscriptionService = Substitute.For<IManualSubscriptionService>();
-		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService, _skuService, _subscriptionHistoryService, _manualSubscriptionService);
+		_badgeService = Substitute.For<IBadgeService>();
+		return new AdminApiController(_settingsManager, _categoryService, _forumService, _userService, _searchService, _profileService, _userRetrievalShim, _imageService, _banService, _mailingListService, _eventDefService, _awardDefService, _eventPublisher, _ipHistoryService, _securityLogService, _moderationLogService, _errorLog, _serviceHeartbeatService, _skuService, _subscriptionHistoryService, _manualSubscriptionService, _badgeService);
 	}
 
 	public class SaveForum : AdminApiControllerTests

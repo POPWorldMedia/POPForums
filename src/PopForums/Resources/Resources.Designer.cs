@@ -2618,5 +2618,29 @@ namespace PopForums {
                 return ResourceManager.GetString("SubscriptionRenewalFailedNotification", resourceCulture);
             }
         }
+
+        public static string Badges {
+            get {
+                return ResourceManager.GetString("Badges", resourceCulture);
+            }
+        }
+
+        public static string AddBadge {
+            get {
+                return ResourceManager.GetString("AddBadge", resourceCulture);
+            }
+        }
+
+        public static string ForegroundColor {
+            get {
+                return ResourceManager.GetString("ForegroundColor", resourceCulture);
+            }
+        }
+
+        public static string BackgroundColor {
+            get {
+                return ResourceManager.GetString("BackgroundColor", resourceCulture);
+            }
+        }
     }
 }

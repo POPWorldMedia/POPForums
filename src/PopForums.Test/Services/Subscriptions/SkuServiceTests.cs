@@ -64,6 +64,33 @@ public class SkuServiceTests
 		await _mockSkuRepo.Received().Create(sku);
 	}
 
+	[Theory]
+	[InlineData("Admin")]
+	[InlineData("Moderator")]
+	[InlineData("Subscriber")]
+	[InlineData("admin")]
+	[InlineData("SUBSCRIBER")]
+	public async Task SaveRejectsPermanentRoleSkuIDs(string skuID)
+	{
+		var service = GetService();
+		var sku = new Sku { SkuID = skuID };
+		var result = await service.Save(sku);
+		Assert.False(result.IsSuccessful);
+		await _mockSkuRepo.DidNotReceive().Create(Arg.Any<Sku>());
+		await _mockSkuRepo.DidNotReceive().Update(Arg.Any<Sku>());
+	}
+
+	[Fact]
+	public async Task SaveReturnsSuccess()
+	{
+		var service = GetService();
+		var sku = new Sku { SkuID = "sku1" };
+		_mockSkuRepo.Get(sku.SkuID).Returns(Task.FromResult(new Sku { SkuID = sku.SkuID }));
+		var result = await service.Save(sku);
+		Assert.True(result.IsSuccessful);
+		Assert.Same(sku, result.Data);
+	}
+
 	[Fact]
 	public async Task SaveFirstSkuIsSortOrderZero()
 	{

@@ -57,6 +57,7 @@ public static class Extensions
 		services.AddTransient<IAwardCalculationQueueRepository, AwardCalculationQueueRepository>();
 		services.AddTransient<IAwardConditionRepository, AwardConditionRepository>();
 		services.AddTransient<IAwardDefinitionRepository, AwardDefinitionRepository>();
+		services.AddTransient<IBadgeRepository, BadgeRepository>();
 		services.AddTransient<IBanRepository, BanRepository>();
 		services.AddTransient<ICategoryRepository, CategoryRepository>();
 		services.AddTransient<IEmailQueueRepository, EmailQueueRepository>();

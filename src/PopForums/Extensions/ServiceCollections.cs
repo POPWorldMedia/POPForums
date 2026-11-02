@@ -38,6 +38,7 @@ public static class ServiceCollections
 		services.AddTransient<IUserAwardService, UserAwardService>();
 
 		// services
+		services.AddTransient<IBadgeService, BadgeService>();
 		services.AddTransient<IBanService, BanService>();
 		services.AddTransient<IBuyService, BuyService>();
 		services.AddTransient<ICategoryService, CategoryService>();

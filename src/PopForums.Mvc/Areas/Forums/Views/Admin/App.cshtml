@@ -71,6 +71,7 @@
 				{
 					<router-link to="/userroles" class="dropdown-item">@PopForums.Resources.UserRoles</router-link>
 				}
+				<router-link to="/badges" class="dropdown-item">@PopForums.Resources.Badges</router-link>
 				<router-link to="/userimageapproval" class="dropdown-item">@PopForums.Resources.UserImageApproval</router-link>
 				@if (!isOAuthOnly)
 				{
@@ -1580,6 +1581,69 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" v-on:click="saveSku" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</script>
+
+<script type="x-templates" id="Badges">
+	<main>
+		<h2>@PopForums.Resources.Badges</h2>
+
+		<p><input type="button" class="btn btn-primary" v-on:click="newBadge" value="@PopForums.Resources.AddBadge" /></p>
+
+		<table class="table table-sm mt-3">
+			<thead>
+				<tr>
+					<th>@PopForums.Resources.Name</th>
+					<th>@PopForums.Resources.Role</th>
+					<th>@PopForums.Resources.ForegroundColor</th>
+					<th>@PopForums.Resources.BackgroundColor</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="badge in badges">
+					<td>{{badge.name}}</td>
+					<td>{{badge.role}}</td>
+					<td><span class="d-inline-block border rounded align-middle me-2" :style="{ backgroundColor: '#' + badge.foregroundColor, width: '1em', height: '1em' }"></span>{{badge.foregroundColor}}</td>
+					<td><span class="d-inline-block border rounded align-middle me-2" :style="{ backgroundColor: '#' + badge.backgroundColor, width: '1em', height: '1em' }"></span>{{badge.backgroundColor}}</td>
+					<td>
+						<input type="button" value="@PopForums.Resources.Edit" class="btn btn-primary ms-3" v-on:click="editBadge(badge)" />
+						<input type="button" value="@PopForums.Resources.Delete" class="btn btn-secondary ms-3" v-on:click="deleteBadge(badge)" :disabled="loading" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="modal" tabindex="-1" role="dialog" ref="modal">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">@PopForums.Resources.Edit</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3 row">
+							<label for="badgeName" class="col-sm-3 col-form-label">@PopForums.Resources.Name</label>
+							<div class="col-sm-9"><input type="text" v-model="editingBadge.name" class="form-control" id="badgeName" /></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="badgeRole" class="col-sm-3 col-form-label">@PopForums.Resources.Role</label>
+							<div class="col-sm-9"><select v-model="editingBadge.role" class="form-select" id="badgeRole"><option v-for="r in roles">{{r}}</option></select></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="badgeForegroundColor" class="col-sm-3 col-form-label">@PopForums.Resources.ForegroundColor</label>
+							<div class="col-sm-9"><div class="input-group"><span class="input-group-text"><span class="d-inline-block border rounded align-middle" :style="{ backgroundColor: '#' + editingBadge.foregroundColor, width: '1em', height: '1em' }"></span></span><input type="text" v-model="editingBadge.foregroundColor" class="form-control" id="badgeForegroundColor" maxlength="6" /></div></div>
+						</div>
+						<div class="mb-3 row">
+							<label for="badgeBackgroundColor" class="col-sm-3 col-form-label">@PopForums.Resources.BackgroundColor</label>
+							<div class="col-sm-9"><div class="input-group"><span class="input-group-text"><span class="d-inline-block border rounded align-middle" :style="{ backgroundColor: '#' + editingBadge.backgroundColor, width: '1em', height: '1em' }"></span></span><input type="text" v-model="editingBadge.backgroundColor" class="form-control" id="badgeBackgroundColor" maxlength="6" /></div></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" v-on:click="saveBadge" data-bs-dismiss="modal">@PopForums.Resources.Save</button>
 					</div>
 				</div>
 			</div>

@@ -97,3 +97,14 @@ IF INDEXPROPERTY(Object_Id('pf_PopForumsUser'), 'IX_PopForumsUser_CreationDate',
     BEGIN
         CREATE NONCLUSTERED INDEX IX_PopForumsUser_CreationDate ON pf_PopForumsUser (CreationDate DESC) INCLUDE ([Name], Email);
     END
+
+IF OBJECT_ID('pf_Badge', 'U') IS NULL
+    BEGIN
+        CREATE TABLE [dbo].[pf_Badge](
+          [BadgeID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+          [Name] [nvarchar](256) NOT NULL,
+          [Role] [nvarchar](256) NOT NULL,
+          [ForegroundColor] [char](6) NOT NULL,
+          [BackgroundColor] [char](6) NOT NULL
+        );
+    END

@@ -46,16 +46,19 @@ namespace PopForums {
                         const height = sub.getBoundingClientRect().height;
                         this.boxHeight = `${height}px`;
                         this.box.style.height = this.boxHeight;
+                        this.box.classList.add("open");
                         this.isOpen = true;
                         this.isLoaded = true;
                     }));
         }
         else if (!this.isOpen) {
             this.box.style.height = this.boxHeight;
+            this.box.classList.add("open");
             this.isOpen = true;
         }
         else {
             this.box.style.height = "0";
+            this.box.classList.remove("open");
             this.isOpen = false;
         }
     }

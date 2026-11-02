@@ -60,6 +60,9 @@ pf-notificationtoggle,
 	overflow: hidden;
 	transition: all .5s ease-in-out;
 }
+#ForumContainer pf-postminiprofile:has(+ .postBadges) .miniProfileBox.open {
+	margin-bottom: .5rem;
+}
 .voters {
     max-height: 10em;
     overflow: auto;
