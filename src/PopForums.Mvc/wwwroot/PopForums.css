@@ -201,7 +201,7 @@ pf-votecount div span {
 
 /* icons */
 
-.miniProfile a.icon {
+.miniProfile a.iconLink {
 	text-decoration: none !important;
 	margin-right: .5em;
 }
