@@ -1356,4 +1356,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>Envoi en cours…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Ajouter un badge</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Couleur de premier plan</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Couleur d'arrière-plan</value>
+  </data>
 </root>

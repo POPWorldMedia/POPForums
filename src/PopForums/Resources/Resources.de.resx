@@ -1397,4 +1397,16 @@ Bestätigungs-Code und fügen ihn ein: {5}{5}Link: {2} {5}Code: {3} {5}{5}{4}</v
   <data name="Uploading" xml:space="preserve">
     <value>Wird hochgeladen…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Abzeichen</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Abzeichen hinzufügen</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Vordergrundfarbe</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Hintergrundfarbe</value>
+  </data>
 </root>

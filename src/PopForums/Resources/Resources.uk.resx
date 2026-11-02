@@ -1413,4 +1413,16 @@
   <data name="Uploading" xml:space="preserve">
     <value>Завантаження…</value>
   </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Значки</value>
+  </data>
+  <data name="AddBadge" xml:space="preserve">
+    <value>Додати значок</value>
+  </data>
+  <data name="ForegroundColor" xml:space="preserve">
+    <value>Колір переднього плану</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Колір фону</value>
+  </data>
 </root>
