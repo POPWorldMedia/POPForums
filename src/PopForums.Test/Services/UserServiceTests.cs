@@ -30,6 +30,7 @@ public class UserServiceTests
 		_config = Substitute.For<IConfig>();
 		_mockImageInspector = Substitute.For<IImageInspector>();
 		_mockRoleRepo.GetUserRoles(Arg.Any<int>()).Returns(Task.FromResult(new List<string>()));
+		_mockRoleRepo.GetAllRoles().Returns(Task.FromResult(new List<string> { "Admin", "Moderator", "Subscriber", "SomethingElse" }));
 		return new UserService(_mockUserRepo, _mockRoleRepo, _mockProfileRepo, _mockSettingsManager, _mockUserAvatarRepo, _mockUserImageRepo, _mockSecurityLogService, _mockTextParser, _mockBanRepo, _mockForgotMailer, _config, _mockImageInspector);
 	}
 
@@ -683,13 +684,15 @@ public class UserServiceTests
 	}
 
 	[Fact]
-	public async Task DeleteRoleThrowsOnAdminOrMod()
+	public async Task DeleteRoleThrowsOnPermanentRoles()
 	{
 		var userService = GetMockedUserService();
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Admin", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("Subscriber", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("admin", default, default));
 		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("moderator", default, default));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => userService.DeleteRole("subscriber", default, default));
 		await _mockRoleRepo.DidNotReceive().DeleteRole(Arg.Any<string>());
 	}
 
@@ -878,7 +881,7 @@ public class UserServiceTests
 		var userEdit = new UserEdit { Roles = new [] {"Admin", "Moderator"} };
 		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "Admin", "Moderator" })));
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserAddedToRole);
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserAddedToRole);
 	}
@@ -892,9 +895,32 @@ public class UserServiceTests
 		var userEdit = new UserEdit { Roles = new[] { "SomethingElse" } };
 		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
 		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
-		await _mockRoleRepo.Received().ReplaceUserRoles(1, userEdit.Roles);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "SomethingElse" })));
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Admin", SecurityLogType.UserRemovedFromRole);
 		await _mockSecurityLogService.Received().CreateLogEntry(Arg.Any<User>(), user, "123", "Moderator", SecurityLogType.UserRemovedFromRole);
+	}
+
+	[Fact]
+	public async Task EditUserDoesNotPersistComputedSubscriberRole()
+	{
+		var service = GetMockedUserService();
+		var user = new User { UserID = 1, Roles = new List<string> { "Subscriber" } };
+		var userEdit = new UserEdit { Roles = new[] { "Subscriber", "Admin" } };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
+		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.SequenceEqual(new[] { "Admin" })));
+		await _mockSecurityLogService.DidNotReceive().CreateLogEntry(Arg.Any<User>(), user, "123", "Subscriber", Arg.Any<SecurityLogType>());
+	}
+
+	[Fact]
+	public async Task EditUserDropsUnknownRoles()
+	{
+		var service = GetMockedUserService();
+		var user = new User { UserID = 1, Roles = new List<string>() };
+		var userEdit = new UserEdit { Roles = new[] { "NotARole" } };
+		_mockProfileRepo.GetProfile(1).Returns(Task.FromResult(GetReturnedProfile(userEdit)));
+		await service.EditUser(user, userEdit, false, false, null, null, "123", user);
+		await _mockRoleRepo.Received().ReplaceUserRoles(1, Arg.Is<string[]>(x => x.Length == 0));
 	}
 
 	[Fact]

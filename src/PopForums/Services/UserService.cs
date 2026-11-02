@@ -322,8 +322,8 @@ public class UserService : IUserService
 
 	public async Task DeleteRole(string role, User user, string ip)
 	{
-		if (role.ToLower() == PermanentRoles.Admin.ToLower() || role.ToLower() == PermanentRoles.Moderator.ToLower())
-			throw new InvalidOperationException("Can't delete Admin or Moderator roles.");
+		if (role.ToLower() == PermanentRoles.Admin.ToLower() || role.ToLower() == PermanentRoles.Moderator.ToLower() || role.ToLower() == PermanentRoles.Subscriber.ToLower())
+			throw new InvalidOperationException("Can't delete Admin, Moderator or Subscriber roles.");
 		await _roleRepository.DeleteRole(role);
 		await _securityLogService.CreateLogEntry(user, null, ip, "Role: " + role, SecurityLogType.RoleDeleted);
 	}
@@ -404,13 +404,17 @@ public class UserService : IUserService
 
 		if (!_config.IsOAuthOnly)
 		{
-			var newRoles = userEdit.Roles ?? new string[0];
+			// computed roles like Subscriber round-trip through the edit, so only persist roles that can be assigned
+			var assignableRoles = await _roleRepository.GetAllRoles();
+			assignableRoles.Remove(PermanentRoles.Subscriber);
+			var newRoles = (userEdit.Roles ?? new string[0]).Where(assignableRoles.Contains).ToArray();
+			var oldRoles = targetUser.Roles.Where(assignableRoles.Contains).ToList();
 			await _roleRepository.ReplaceUserRoles(targetUser.UserID, newRoles);
-			foreach (var role in targetUser.Roles)
+			foreach (var role in oldRoles)
 				if (!newRoles.Contains(role))
 					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserRemovedFromRole);
 			foreach (var role in newRoles)
-				if (!targetUser.Roles.Contains(role))
+				if (!oldRoles.Contains(role))
 					await _securityLogService.CreateLogEntry(user, targetUser, ip, role, SecurityLogType.UserAddedToRole);
 		}
 		

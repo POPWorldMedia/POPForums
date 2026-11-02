@@ -45,9 +45,9 @@ public class RoleRepository : IRoleRepository
 	{
 		var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.AllRoles);
 		if (cacheObject != null)
-			return cacheObject;
+			return cacheObject.ToList();
 		Task<IEnumerable<string>> roles = null;
-		await _sqlObjectFactory.GetConnection().UsingAsync(connection => 
+		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			roles = connection.QueryAsync<string>("SELECT Role FROM pf_Role ORDER BY Role"));
 		_cacheHelper.SetCacheObject(CacheKeys.AllRoles, roles.Result);
 		return roles.Result.ToList();
@@ -57,13 +57,13 @@ public class RoleRepository : IRoleRepository
 	{
 		var cacheObject = _cacheHelper.GetCacheObject<List<string>>(CacheKeys.UserRole(userID));
 		if (cacheObject != null)
-			return cacheObject;
+			return cacheObject.ToList();
 		Task<IEnumerable<string>> roles = null;
 		await _sqlObjectFactory.GetConnection().UsingAsync(connection =>
 			roles = connection.QueryAsync<string>("SELECT Role FROM pf_PopForumsUserRole WHERE UserID = @UserID", new { UserID = userID }));
 		var list = roles.Result.ToList();
 		_cacheHelper.SetCacheObject(CacheKeys.UserRole(userID), list);
-		return list;
+		return list.ToList();
 	}
 
 	private async Task AddUserToRole(int userID, string role)
