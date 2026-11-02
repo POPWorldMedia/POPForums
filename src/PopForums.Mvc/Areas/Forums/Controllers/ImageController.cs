@@ -37,7 +37,7 @@ public class ImageController : Controller
 		if (!timeStamp.HasValue)
 			return NotFound();
 		SetImageSecurityHeaders();
-		Response.Headers["Cache-control"] = "private";
+		Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable";
 		Response.Headers["Last-modified"] = DateTime.SpecifyKind(timeStamp.Value, DateTimeKind.Utc).ToString("R");
 		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
 		{
@@ -62,7 +62,7 @@ public class ImageController : Controller
 		if (postImageSansData == null)
 			return NotFound();
 		SetImageSecurityHeaders();
-		Response.Headers["Cache-control"] = "private";
+		Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable";
 		Response.Headers["Last-modified"] = DateTime.SpecifyKind(postImageSansData.TimeStamp, DateTimeKind.Utc).ToString("R");
 		if (!string.IsNullOrEmpty(Request.Headers["If-Modified-Since"]))
 		{
