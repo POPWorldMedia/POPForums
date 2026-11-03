@@ -152,7 +152,7 @@ public class AdminApiController(
 		var container = new ForumPermissionContainer
 		{
 			ForumID = forum.ForumID,
-			AllRoles = await userService.GetAllRoles(),
+			AllRoles = await GetRolesAndSkus(),
 			PostRoles = await forumService.GetForumPostRoles(forum),
 			ViewRoles = await forumService.GetForumViewRoles(forum)
 		};
@@ -692,6 +692,13 @@ public class AdminApiController(
 
 	[HttpGet("/Forums/AdminApi/GetBadgeRoles")]
 	public async Task<ActionResult<List<string>>> GetBadgeRoles()
+	{
+		var roles = await GetRolesAndSkus();
+		return roles;
+	}
+
+	// a subscriber's SKU ID is a computed role (see UserService.AddComputedRoles), so badges and forum permissions can target tiers
+	private async Task<List<string>> GetRolesAndSkus()
 	{
 		var roles = await userService.GetAllRoles();
 		var skus = await skuService.GetAll();

@@ -106,6 +106,7 @@ public class AdminApiControllerTests
 			_forumService.Get(forum.ForumID).Returns(Task.FromResult(forum));
 			var all = new List<string> {"a", "b"};
 			_userService.GetAllRoles().Returns(Task.FromResult(all));
+			_skuService.GetAll().Returns(Task.FromResult(new List<Sku>()));
 			var allView = new List<string> {"c", "d"};
 			_forumService.GetForumViewRoles(forum).Returns(Task.FromResult(allView));
 			var allPost = new List<string> {"e", "f"};
@@ -117,6 +118,22 @@ public class AdminApiControllerTests
 			Assert.Same(all, container.Value.AllRoles);
 			Assert.Same(allView, container.Value.ViewRoles);
 			Assert.Same(allPost, container.Value.PostRoles);
+		}
+
+		[Fact]
+		public async Task AllRolesIncludesSkus()
+		{
+			var controller = GetController();
+			var forum = new Forum{ForumID = 123};
+			_forumService.Get(forum.ForumID).Returns(Task.FromResult(forum));
+			_userService.GetAllRoles().Returns(Task.FromResult(new List<string> {"Admin", "Subscriber"}));
+			_skuService.GetAll().Returns(Task.FromResult(new List<Sku> {new Sku {SkuID = "silver"}, new Sku {SkuID = "gold"}}));
+			_forumService.GetForumViewRoles(forum).Returns(Task.FromResult(new List<string>()));
+			_forumService.GetForumPostRoles(forum).Returns(Task.FromResult(new List<string>()));
+
+			var container = await controller.GetForumPermissions(forum.ForumID);
+
+			Assert.Equal(new List<string> {"Admin", "Subscriber", "silver", "gold"}, container.Value.AllRoles);
 		}
 	}
 
