@@ -51,10 +51,10 @@ public class SearchService : ISearchService
 		}
 		else
 		{
+			var exc = new Exception($"Search service error: {topics.Exception?.Message}", topics.Exception);
+			_errorLog.Log(exc, ErrorSeverity.Warning, topics.DebugInfo);
 			topics = new Response<List<Topic>>(new List<Topic>(), false);
 			pagerContext = new PagerContext {PageCount = 1, PageIndex = 1, PageSize = 1};
-			var exc = new Exception($"Search service error: {topics.Exception?.Message}");
-			_errorLog.Log(exc, ErrorSeverity.Warning, topics.DebugInfo);
 		}
 		return Tuple.Create(topics, pagerContext);
 	}

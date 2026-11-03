@@ -26,6 +26,10 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 	private readonly ElasticsearchClient _client;
 
 	private const string IndexName = "topicindex";
+	private const string SortNormalizer = "lowercase_sort";
+	private const string SortSubField = "sort";
+	private const string TitleSortField = "title." + SortSubField;
+	private const string StartedByNameSortField = "startedByName." + SortSubField;
 
 	public ElasticSearchClientWrapper(IConfig config, IErrorLog errorLog, ITenantService tenantService)
 	{
@@ -65,13 +69,13 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 				sortSelector.Field(sort => sort.LastPostTime, config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Name:
-				sortSelector.Field(sort => sort.StartedByName, config => config.Order(SortOrder.Asc));
+				sortSelector.Field(new Field(StartedByNameSortField), config => config.Order(SortOrder.Asc));
 				break;
 			case SearchType.Replies:
 				sortSelector.Field(sort => sort.Replies, config => config.Order(SortOrder.Desc));
 				break;
 			case SearchType.Title:
-				sortSelector.Field(sort => sort.Title, config => config.Order(SortOrder.Asc));
+				sortSelector.Field(new Field(TitleSortField), config => config.Order(SortOrder.Asc));
 				break;
 			default:
 				sortSelector.Score(config => config.Order(SortOrder.Desc));
@@ -134,21 +138,30 @@ public class ElasticSearchClientWrapper : IElasticSearchClientWrapper
 							.Stopwords(new List<string> { "_english_" })
 						)
 					)
+					.Normalizers(nn => nn
+						.Custom(SortNormalizer, cn => cn
+							.Filter(new List<string> { "lowercase" })
+						)
+					)
 				)
 			)
 			.Mappings(mm => mm
 				.Properties<SearchTopic>(p => p
 					.Text(t => t.Posts)
 					.Text(t => t.FirstPost)
-					.Text(t => t.Title, tp => tp.Fielddata())
-					.Text(t => t.StartedByName, tp => tp.Fielddata())
+					.Text(t => t.Title, tp => tp
+						.Fields(f => f.Keyword(SortSubField, k => k.Normalizer(SortNormalizer))))
+					.Text(t => t.StartedByName, tp => tp
+						.Fields(f => f.Keyword(SortSubField, k => k.Normalizer(SortNormalizer))))
 					.Keyword(t => t.TenantID))
 			)
 		);
 		if (!createIndexResponse.IsValidResponse)
 		{
+			// Don't let indexing continue: the first document write would auto-create the index
+			// with dynamic mapping (no sort fields, tenantID as analyzed text), silently breaking search.
 			createIndexResponse.TryGetOriginalException(out var exception);
-			_errorLog.Log(exception, ErrorSeverity.Error, createIndexResponse.DebugInformation);
+			throw new Exception($"Could not create ElasticSearch index '{IndexName}'. Debugging info: {createIndexResponse.DebugInformation}", exception);
 		}
 	}
 }
