@@ -22,7 +22,7 @@ public class AccountController(
 	IExternalLoginRoutingService externalLoginRoutingService,
 	IExternalLoginTempService externalLoginTempService,
 	IConfig config,
-	IReCaptchaService reCaptchaService,
+	ITurnstileService turnstileService,
 	IOAuthOnlyService oAuthOnlyService,
 	ISkuService skuService,
 	IBuyService buyService,
@@ -65,10 +65,10 @@ public class AccountController(
 	public async Task<IActionResult> Create(SignupData signupData)
 	{
 		var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-		if (config.UseReCaptcha)
+		if (config.UseTurnstile)
 		{
-			var reCaptchaResponse = await reCaptchaService.VerifyToken(signupData.Token, ip);
-			if (!reCaptchaResponse.IsSuccess)
+			var turnstileResponse = await turnstileService.VerifyToken(signupData.Token, ip);
+			if (!turnstileResponse.IsSuccess)
 				ModelState.AddModelError("Email", Resources.BotError);
 		}
 		await ValidateSignupData(signupData, ModelState, ip);

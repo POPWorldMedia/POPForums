@@ -15,10 +15,10 @@ public class ConfigLoader
 		container.QueueConnectionString = configuration["PopForums:Queue:ConnectionString"];
 		var logTopicViews = configuration["PopForums:LogTopicViews"];
 		container.LogTopicViews = logTopicViews != null && bool.Parse(logTopicViews);
-		var useReCaptcha = configuration["PopForums:ReCaptcha:UseReCaptcha"];
-		container.UseReCaptcha = useReCaptcha != null && bool.Parse(useReCaptcha);
-		container.ReCaptchaSiteKey = configuration["PopForums:ReCaptcha:SiteKey"];
-		container.ReCaptchaSecretKey = configuration["PopForums:ReCaptcha:SecretKey"];
+		var useTurnstile = configuration["PopForums:Turnstile:UseTurnstile"];
+		container.UseTurnstile = useTurnstile != null && bool.Parse(useTurnstile);
+		container.TurnstileSiteKey = configuration["PopForums:Turnstile:SiteKey"];
+		container.TurnstileSecretKey = configuration["PopForums:Turnstile:SecretKey"];
 		container.IpLookupUrlFormat = configuration["PopForums:IpLookupUrlFormat"];
 		container.WebAppUrlAndArea = configuration["PopForums:WebAppUrlAndArea"];
 		container.BaseImageBlobUrl = configuration["PopForums:BaseImageBlobUrl"];

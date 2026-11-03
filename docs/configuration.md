@@ -176,10 +176,10 @@ As environment variables, the keys use colons to show the hierarchy, for example
     "WebAppUrlAndArea": "https://localhost:5091/Forums",
     "IpLookupUrlFormat": "https://whatismyipaddress.com/ip/{0}",
     "LogTopicViews": true,
-    "ReCaptcha": {
-      "UseReCaptcha": true,
-      "SiteKey": "6Lc2drIUAAAAAPaa1iHozzu0Zt9rjCYHhjk4Jvtr",
-      "SecretKey": "6Lc2drIUAAAAADXBXpTjMp67L-T5HdLe7OoKlLrG"
+    "Turnstile": {
+      "UseTurnstile": true,
+      "SiteKey": "1x00000000000000000000AA",
+      "SecretKey": "1x0000000000000000000000000000000AA"
     },
     "RenderBootstrap": true,
     "OAuthOnly": {
@@ -189,7 +189,7 @@ As environment variables, the keys use colons to show the hierarchy, for example
 }
 ```
 
-The connection strings point at the local Docker containers described in [Start Here](starthere.md). The reCAPTCHA keys only work on `localhost`.
+The connection strings point at the local Docker containers described in [Start Here](starthere.md). The Turnstile keys are Cloudflare's test keys, which always pass on any host. Replace them with your own keys in production.
 
 ### Settings
 
@@ -209,8 +209,8 @@ All keys are under `PopForums:`.
 | `BaseImageBlobUrl` | Using `AddPopForumsAzureBlobStorageForPostImages()` | — | The base URL that post images are served from. Ideally, use a domain you own that's aliased to the storage account. |
 | `IpLookupUrlFormat` | Optional | — | A URL with `{0}` in place of the IP address, used for IP lookup links in the admin's Recent Users page. |
 | `LogTopicViews` | Optional | `false` | Records topic views for future analytics. |
-| `ReCaptcha:UseReCaptcha` | Optional | `false` | Turns on Google reCAPTCHA when people sign up. |
-| `ReCaptcha:SiteKey`, `ReCaptcha:SecretKey` | Using reCAPTCHA | — | Your reCAPTCHA keys. |
+| `Turnstile:UseTurnstile` | Optional | `false` | Turns on Cloudflare Turnstile when people sign up. |
+| `Turnstile:SiteKey`, `Turnstile:SecretKey` | Using Turnstile | — | Your Turnstile keys, from the Cloudflare dashboard. The widget type (managed, non-interactive or invisible) is set there, too. |
 | `RenderBootstrap` | Optional | `true` | Set it to `false` if your layout includes its own build of Bootstrap. See [customization](customization.md). |
 | `OAuthOnly:*` | Using OAuth-only mode | `IsOAuthOnly` is `false` | Delegates sign-in and roles to an external identity provider. See [OAuth-Only Mode](oauthonly.md) for these keys. |
 

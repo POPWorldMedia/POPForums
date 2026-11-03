@@ -24,7 +24,7 @@ public class AccountControllerTests
 	private IExternalLoginRoutingService _externalLoginRoutingService;
 	private IExternalLoginTempService _externalLoginTempService;
 	private IConfig _config;
-	private IReCaptchaService _recaptchaService;
+	private ITurnstileService _turnstileService;
 	private IOAuthOnlyService _oAuthOnlyService;
 	private ISkuService _skuService;
 	private IBuyService _buyService;
@@ -49,13 +49,13 @@ public class AccountControllerTests
 		_externalLoginRoutingService = Substitute.For<IExternalLoginRoutingService>();
 		_externalLoginTempService = Substitute.For<IExternalLoginTempService>();
 		_config = Substitute.For<IConfig>();
-		_recaptchaService = Substitute.For<IReCaptchaService>();
+		_turnstileService = Substitute.For<ITurnstileService>();
 		_oAuthOnlyService = Substitute.For<IOAuthOnlyService>();
 		_skuService = Substitute.For<ISkuService>();
 		_buyService = Substitute.For<IBuyService>();
 		_subscriptionHistoryService = Substitute.For<ISubscriptionHistoryService>();
 		_badgeService = Substitute.For<IBadgeService>();
-		var controller = new AccountController(_userService, _profileService, _newAccountMailer, _settingsManager, _postService, _topicService, _forumService, _lastReadService, _imageService, _feedService, _userAwardService, _externalUserAssocManager, _userRetrievalShim, _externalLoginRoutingService, _externalLoginTempService, _config, _recaptchaService, _oAuthOnlyService, _skuService, _buyService, _subscriptionHistoryService, _badgeService);
+		var controller = new AccountController(_userService, _profileService, _newAccountMailer, _settingsManager, _postService, _topicService, _forumService, _lastReadService, _imageService, _feedService, _userAwardService, _externalUserAssocManager, _userRetrievalShim, _externalLoginRoutingService, _externalLoginTempService, _config, _turnstileService, _oAuthOnlyService, _skuService, _buyService, _subscriptionHistoryService, _badgeService);
 		controller.ControllerContext = new ControllerContext
 		{
 			HttpContext = new DefaultHttpContext()
@@ -98,6 +98,35 @@ public class AccountControllerTests
 			Assert.Equal("tos", (result as ViewResult)?.ViewData[AccountController.TosKey]);
 			Assert.Equal(externalLoginState.ResultData.Email, signupData.Email);
 			Assert.Equal(externalLoginState.ResultData.Name, signupData.Name);
+		}
+
+		[Fact]
+		public async Task FailedTurnstileAddsErrorAndDoesNotCreateUser()
+		{
+			var controller = GetController();
+			_config.UseTurnstile.Returns(true);
+			_userService.IsPasswordValid(default, out _).ReturnsForAnyArgs(true);
+			var signupData = new SignupData { Token = "tok" };
+			_turnstileService.VerifyToken("tok", Arg.Any<string>()).Returns(new TurnstileResponse { IsSuccess = false });
+
+			var result = await controller.Create(signupData);
+
+			Assert.IsType<ViewResult>(result);
+			Assert.True(controller.ModelState.ContainsKey("Email"));
+			Assert.Contains(controller.ModelState["Email"].Errors, e => e.ErrorMessage == Resources.BotError);
+			await _userService.DidNotReceive().CreateUserWithProfile(Arg.Any<SignupData>(), Arg.Any<string>());
+		}
+
+		[Fact]
+		public async Task TurnstileOffDoesNotVerify()
+		{
+			var controller = GetController();
+			_config.UseTurnstile.Returns(false);
+			_userService.IsPasswordValid(default, out _).ReturnsForAnyArgs(true);
+
+			await controller.Create(new SignupData { Token = "tok" });
+
+			await _turnstileService.DidNotReceive().VerifyToken(Arg.Any<string>(), Arg.Any<string>());
 		}
 	}
 

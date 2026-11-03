@@ -10,9 +10,9 @@ public interface IConfig
 	string SearchKey { get; }
 	string QueueConnectionString { get; }
 	bool LogTopicViews { get; }
-	bool UseReCaptcha { get; }
-	string ReCaptchaSiteKey { get; }
-	string ReCaptchaSecretKey { get; }
+	bool UseTurnstile { get; }
+	string TurnstileSiteKey { get; }
+	string TurnstileSecretKey { get; }
 	string IpLookupUrlFormat { get; }
 	string WebAppUrlAndArea { get; }
 	string BaseImageBlobUrl { get; }
@@ -52,9 +52,9 @@ public class Config : IConfig
 	public string SearchKey => _configContainer.SearchKey;
 	public string QueueConnectionString => _configContainer.QueueConnectionString;
 	public bool LogTopicViews => _configContainer.LogTopicViews;
-	public bool UseReCaptcha => _configContainer.UseReCaptcha;
-	public string ReCaptchaSiteKey => _configContainer.ReCaptchaSiteKey;
-	public string ReCaptchaSecretKey => _configContainer.ReCaptchaSecretKey;
+	public bool UseTurnstile => _configContainer.UseTurnstile;
+	public string TurnstileSiteKey => _configContainer.TurnstileSiteKey;
+	public string TurnstileSecretKey => _configContainer.TurnstileSecretKey;
 	public string IpLookupUrlFormat => _configContainer.IpLookupUrlFormat;
 	public string WebAppUrlAndArea => _configContainer.WebAppUrlAndArea;
 	public string BaseImageBlobUrl => _configContainer.BaseImageBlobUrl;

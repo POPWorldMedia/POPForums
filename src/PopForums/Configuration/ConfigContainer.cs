@@ -10,9 +10,9 @@ public class ConfigContainer
 	public string SearchKey { get; set; }
 	public string QueueConnectionString { get; set; }
 	public bool LogTopicViews { get; set; }
-	public bool UseReCaptcha { get; set; }
-	public string ReCaptchaSiteKey { get; set; }
-	public string ReCaptchaSecretKey { get; set; }
+	public bool UseTurnstile { get; set; }
+	public string TurnstileSiteKey { get; set; }
+	public string TurnstileSecretKey { get; set; }
 	public string IpLookupUrlFormat { get; set; }
 	public string WebAppUrlAndArea { get; set; }
 	public string BaseImageBlobUrl { get; set; }

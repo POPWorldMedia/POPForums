@@ -11,16 +11,9 @@
 
 @section HeaderContent
 {
-	@if (Config.UseReCaptcha)
+	@if (Config.UseTurnstile)
 	{
-		<script src="https://www.google.com/recaptcha/api.js?render=@Config.ReCaptchaSiteKey"></script>
-		<script language="javascript" type="text/javascript">
-			grecaptcha.ready(function() {
-				grecaptcha.execute("@Config.ReCaptchaSiteKey", { action: "createaccount" }).then(function(token) {
-					document.querySelector("#Token").value = token;
-				});
-			});
-		</script>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 	}
 }
 
@@ -101,10 +94,14 @@
 		</div>
 		<div class="mb-3 row">
 			<div class="offset-sm-2 col-sm-10">
+				@if (Config.UseTurnstile)
+				{
+					@* Turnstile writes its token into a hidden field named by data-response-field-name, which binds to SignupData.Token *@
+					<div class="cf-turnstile mt-3" data-sitekey="@Config.TurnstileSiteKey" data-action="@TurnstileService.CreateAccountAction" data-response-field-name="Token"></div>
+				}
 				<input type="submit" value="@PopForums.Resources.CreateAccountButton" class="btn btn-primary my-3" />
 			</div>
 		</div>
-		<input type="hidden" asp-for="Token" id="Token" />
 	</form>
 }
 else

@@ -23,6 +23,6 @@ public enum SecurityLogType
 	ExternalAssociationRemoved = 18,
 	ExternalAssociationCheckSuccessful = 19,
 	ExternalAssociationCheckFailed = 20,
-	ReCaptchaFailed = 21,
+	CaptchaFailed = 21,
 	ExternalLoginChallengeFailed = 22
 }

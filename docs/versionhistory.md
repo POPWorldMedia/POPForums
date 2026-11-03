@@ -16,10 +16,14 @@ Here's a partial version history that shows how POP Forums has evolved over the 
   * `IPostImageService.ProcessImageIsOk()` takes only the bytes. The stored content type now comes from the image itself rather than what the browser sent.
   * `IUserService.EditUserProfileImages()` returns a list of error messages, and changes nothing when the list isn't empty.
   * `UserService` no longer takes an `IImageService` in its constructor, and both `UserService` and `PostImageService` now take an `IImageInspector`.
+* Replaced Google reCAPTCHA with Cloudflare Turnstile for sign-up. The `PopForums:ReCaptcha:*` settings are no longer read, so if you used reCAPTCHA, sign-up has no bot check until you add `PopForums:Turnstile:UseTurnstile`, `SiteKey` and `SecretKey`. See [configuration](configuration.md).
+  * `IReCaptchaService` and `ReCaptchaResponse` are now `ITurnstileService` and `TurnstileResponse`, and the `IConfig` properties are now `UseTurnstile`, `TurnstileSiteKey` and `TurnstileSecretKey`.
+  * `SecurityLogType.ReCaptchaFailed` is now `CaptchaFailed`, with the same value. Its log entries now include Turnstile's error codes.
 
 ### Change log
 * Enable subscriptions with Stripe integration #426
 * User badges #453
+* Replace reCAPTCHA with Turnstile #458
 * Add French translation #414
 * Make upvotes update in real time #251
 * Put Azure Functions into a class library #430
