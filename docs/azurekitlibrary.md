@@ -157,6 +157,8 @@ Look at the Azure documentation to see how to provision and deploy Azure Functio
 
 The `WebAppUrlAndArea` is used to point the functions back at your web app to notify them as necessary and have them in turn notify users in real-time. The URL should end without a slash, and probably ends in `/Forums` unless you changed the name of the area throughout the code. Behind the scenes, the award calculator uses this to call an endpoint on the web app and let it know that a user has received an award. For security, it uses a hash of the queue connection string, _which must be the same for the web app and the functions_.
 
+> If you use a WAF or something else looking to block bot traffic, it may interpret calls back to the web app as hostile. You'll have to allow-list the functions, or point directly to the web app without the WAF in between.
+
 The connection string for using the local Azure storage emulator is `UseDevelopmentStorage=true`.
 
 Starting in v23, the functions are contained in the `PopForums.AzureKit.Functions` Nuget package, and the source project here. You'll need to reference this package or project in an Azure Functions host project, like the one in `PopForums.FunctionHost`. 
