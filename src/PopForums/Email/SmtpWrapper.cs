@@ -30,7 +30,6 @@ public class SmtpWrapper : ISmtpWrapper
 		using var client = new SmtpClient();
 		try
 		{
-			client.CheckCertificateRevocation = false;
 			client.Connect(settings.SmtpServer, settings.SmtpPort, settings.UseSslSmtp ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
 			if (settings.UseEsmtp)
 				client.Authenticate(settings.SmtpUser, settings.SmtpPassword);
