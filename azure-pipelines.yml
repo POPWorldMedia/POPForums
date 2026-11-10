@@ -7,7 +7,7 @@ pr: none
 
 variables:
   buildConfiguration: 'Release'
-  dotnetVersion: '10.0.x'
+  dotnetVersion: '11.0.x'
   githubOwner: 'POPWorldMedia'
   functionAppName: 'popforumsdevfunctions'
   webAppName: 'popforumsdev'
@@ -61,9 +61,9 @@ stages:
           - task: Cache@2
             displayName: 'Cache NuGet packages'
             inputs:
-              # Excludes obj/** because the Azure Functions Worker SDK regenerates a
-              # WorkerExtensions.csproj under obj/ during build (even with --no-restore,
-              # see Azure/azure-functions-dotnet-worker#3183), which otherwise changes
+              # Excludes obj/** because the Azure Functions SDK (Azure.Functions.Sdk) generates
+              # obj/azure_functions/azure_functions.g.csproj during restore (and regenerates it
+              # during build if that restore hook didn't run), which would otherwise change
               # the resolved key between the restore and save steps of this task.
               key: 'nuget | "$(Agent.OS)" | **/*.csproj, !**/bin/**, !**/obj/**'
               restoreKeys: |

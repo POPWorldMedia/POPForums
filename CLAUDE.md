@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-POP Forums is an ASP.NET Core forum and Q&A application targeting .NET 10. It uses SignalR for real-time updates, TypeScript for front-end components, and SQL Server as the primary data store.
+POP Forums is an ASP.NET Core forum and Q&A application targeting .NET 11. It uses SignalR for real-time updates, TypeScript for front-end components, and SQL Server as the primary data store.
 
 ## Solution Structure
 
