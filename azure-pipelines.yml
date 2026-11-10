@@ -124,12 +124,16 @@ stages:
             displayName: 'Push packages to GitHub Packages'
 
           - task: DotNetCoreCLI@2
-            displayName: 'dotnet publish PopForums.Web (no rebuild)'
+            displayName: 'dotnet publish PopForums.Web (self-contained)'
             inputs:
               command: 'publish'
               projects: 'src/PopForums.Web/PopForums.Web.csproj'
               publishWebProjects: false
-              arguments: '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/web'
+              # TEMPORARY: self-contained because App Service only offers ".NET 11 STS (Preview)",
+              # which isn't the released .NET 11 runtime. Once App Service has the release
+              # runtime, set the web app to it and restore the framework-dependent publish:
+              # '--configuration $(buildConfiguration) --no-build --no-restore --output $(Build.ArtifactStagingDirectory)/web'
+              arguments: '--configuration $(buildConfiguration) --runtime linux-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)/web'
               zipAfterPublish: true
 
           - task: DotNetCoreCLI@2
