@@ -28,7 +28,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="3.4.5" />
+    <PackageReference Include="StackExchange.Redis" Version="3.4.31" />
   </ItemGroup>
 
 </Project>
