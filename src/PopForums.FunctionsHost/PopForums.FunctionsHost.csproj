@@ -11,6 +11,9 @@
 		<Copyright>2026, POP World Media, LLC</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\PopForums.AzureKit.Functions\PopForums.AzureKit.Functions.csproj" />
 		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
 		<ProjectReference Include="..\PopForums.ElasticKit\PopForums.ElasticKit.csproj" />

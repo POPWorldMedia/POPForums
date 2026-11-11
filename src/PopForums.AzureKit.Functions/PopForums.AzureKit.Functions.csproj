@@ -16,7 +16,6 @@
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage" Version="6.8.2" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
 		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.3.0" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\PopForums.AzureKit\PopForums.AzureKit.csproj" />
