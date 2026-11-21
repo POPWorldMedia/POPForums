@@ -153,7 +153,7 @@ You'll also need to add a connection string to your Azure Storage account and we
       "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=youraccountname;AccountKey=xxxYourAccountKeyxxx=="
 ...
 ```
-Look at the Azure documentation to see how to provision and deploy Azure Functions, and apply that new knowledge to deploy the `PopForums.AzureKit.Functions` project. (Defining Azure Functions is beyond the scope of this documentation.) You should avoid committing any connection secrets to configuration in source control. See the section above about configuration, and make sure that your Functions have the same settings as your web app.
+Look at the Azure documentation to see how to provision and deploy Azure Functions, and apply that new knowledge to deploy a functions host, like the `PopForums.FunctionsHost` project, which references `PopForums.AzureKit.Functions`. (Defining Azure Functions is beyond the scope of this documentation.) You should avoid committing any connection secrets to configuration in source control. See the section above about configuration, and make sure that your Functions have the same settings as your web app.
 
 The `WebAppUrlAndArea` is used to point the functions back at your web app to notify them as necessary and have them in turn notify users in real-time. The URL should end without a slash, and probably ends in `/Forums` unless you changed the name of the area throughout the code. Behind the scenes, the award calculator uses this to call an endpoint on the web app and let it know that a user has received an award. For security, it uses a hash of the queue connection string, _which must be the same for the web app and the functions_.
 
@@ -161,7 +161,7 @@ The `WebAppUrlAndArea` is used to point the functions back at your web app to no
 
 The connection string for using the local Azure storage emulator is `UseDevelopmentStorage=true`.
 
-Starting in v23, the functions are contained in the `PopForums.AzureKit.Functions` Nuget package, and the source project here. You'll need to reference this package or project in an Azure Functions host project, like the one in `PopForums.FunctionHost`. 
+Starting in v23, the functions are contained in the `PopForums.AzureKit.Functions` Nuget package, and the source project here. You'll need to reference this package or project in an Azure Functions host project, like the one in `PopForums.FunctionsHost`. 
 
 ## Using Azure Search
 
@@ -215,7 +215,7 @@ using PopForums.AzureKit;
 ...
 services.AddPopForumsAzureBlobStorageForPostImages();
 ```
-It's important to note that `PopForums.AzureKit.Functions` is already wired to use the blob storage `IPostImageRepository` version, because it's assumed that if you're already using an Azure queue, you also have a storage account.
+If you run background work in Azure Functions, add the same line to the functions host's `Program.cs`. The image cleanup job needs the same `IPostImageRepository` as the web app, so both hosts must use blob storage or neither.
 
 Another thing to keep in mind is that if you're working locally, and your Azurite instance doesn't have `https` configured, it will break because most browsers do not allow non-`https` images to appear in a secure page. The simplest work around for this is not to install a local certificate, but to change your launch settings for the web app to not run on `https`.
 

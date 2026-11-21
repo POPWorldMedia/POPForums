@@ -7,6 +7,7 @@
 		<TargetFramework>net11.0</TargetFramework>
 		<AssemblyName>PopForums</AssemblyName>
 		<PackageId>PopForums</PackageId>
+		<DebugType>embedded</DebugType>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
@@ -25,7 +26,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="11.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
-		<PackageReference Include="Stripe.net" Version="53.1.0" />
+		<PackageReference Include="Stripe.net" Version="53.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,10 +43,6 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 			<CustomToolNamespace>PopForums</CustomToolNamespace>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Update="Microsoft.NETCore.App" />
 	</ItemGroup>
 
 </Project>

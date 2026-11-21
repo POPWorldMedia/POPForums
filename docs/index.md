@@ -5,14 +5,14 @@ nav_order: 1
 ---
 ![POP Forums logo](https://avatars2.githubusercontent.com/u/8217691?s=200&v=4)
 
-POP Forums v22 is a forum app for ASP.NET (formerly known as Core), used as the base for several sites maintained by the author, as well as a commercial, cloud hosted product. It's a long-term commitment to great community.
+POP Forums v23 is a forum app for ASP.NET (formerly known as Core), used as the base for several sites maintained by the author. It's a long-term commitment to great community.
 
->_If you're working with a version that isn't v22, check the `/docs` folder in the source branch that matches the version you're using._
+>_If you're working with a version that isn't v23, check the `/docs` folder in the source branch that matches the version you're using._
 
 Get a load of [all the features](features.md).
 
 Make test posts and try it out here:  
-https://meta.popforums.com/Forums
+https://popforumsdev.azurewebsites.net/Forums
 
 The project goals include: 
 * Use ASP.NET Core and cloud resources for robust scale-out.

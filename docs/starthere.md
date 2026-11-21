@@ -11,13 +11,13 @@ How to use [The Scoring Game](scoringgame.md) in your own application.
 
 ## Upgrading?
 
-This version has data changes. From v21.x, run the `PopForums21to22.sql` script included in the `PopForums.Sql` project. If you need to upgrade from v16.x to v20.x, _first_ run the `PopForums16to20.sql` script against your database, which is found in the `PopForums.Sql` project. It's safe to run this script more than once. IMPORTANT: Going from v18 forward, because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
+This version has data changes. From v22.x, run the `PopForums22to23.sql` script included in the `PopForums.Sql` project. If you're coming from an older version, run the earlier scripts in order first: `PopForums16to21.sql` for v16.x through v20.x, then `PopForums21to22.sql` for v21.x. It's safe to run these scripts more than once. IMPORTANT: Going from v18 forward, because of the changes to private messages, you must first also delete all of the existing history by running `DELETE FROM pf_PrivateMessage` against your database. The reason that this isn't included in the upgrade script is because you should know it's necessary and do it on your own.
 
 Updating your app from the legacy ASP.NET MVC world to ASP.NET Core is non-trivial, and well beyond the scope of this documentation.
 
 ## Prerequisites
 You'll need the following locally:
-* Visual Studio 2026 or later, with the Azure workload (community version is fine), Visual Studio for Mac or Jetbrains Rider
+* Visual Studio 2026 or later, with the Azure workload (community version is fine), or Jetbrains Rider
 * Node.js (comes with npm)
 * SQL Server Developer, or SQL Server running in a Docker container
 * A mail sending service that supports SMTP
@@ -38,8 +38,8 @@ You should definitely get to know the installation information below to understa
 * v23 introduced the `PopForums.AzureKit.Functions` package, encapsulating the Azure Functions bits. These need to be hosted in a functions host, much like the one included here.
 * POP Forums uses ASP.NET Data Protection in multi-node or external login scenarios. Actually, the basic anti-forgery code baked into the framework does as well, so when you deploy, or swap deployment slots in Azure, you need to persist the underlying key somewhere. This is also true if you run multiple nodes (scale out). You can persist the underlying keys in a number of different ways (I prefer Azure Blob Storage). In your `Program.cs`, use `services.AddDataProtection()` and the appropriate extension method. If you don't do this for multi-node, things like social logins and anti-forgery will fail and fill your error logs with stuff about broken things. If you use slots in Azure App Services, you'll also want the Data Protection setup, otherwise the swap will cause everyone to be logged out.
 
-For the bleeding edge, latest build from `main`, the CI build packages can be obtained by a MyGet feed:
-* https://www.myget.org/F/popforums/api/v3/index.json (Nuget package includes the server application and front-end assets)
+For the bleeding edge, latest build from `main`, the CI build packages can be obtained from this GitHub Packages feed (requires GitHub auth):
+* https://nuget.pkg.github.com/POPWorldMedia/index.json (Nuget package includes the server application and front-end assets)
 
 ## Build
 

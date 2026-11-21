@@ -131,5 +131,5 @@ To add a new admin page: add a component object to `Admin.js` (`mixins: [loading
 
 - Initial schema: `src/PopForums.Sql/PopForums.sql`
 - Migration scripts follow the pattern `PopForumsXXtoYY.sql` in `src/PopForums.Sql/`
-- From v21.x to v22.x, run `PopForums21to22.sql`
+- From v22.x to v23.x, run `PopForums22to23.sql`
 - Statistics (post counts, etc.) are precomputed at write time rather than aggregated at query time

@@ -7,6 +7,7 @@
 		<TargetFramework>net11.0</TargetFramework>
 		<AssemblyName>PopForums.Sql</AssemblyName>
 		<PackageId>PopForums.Sql</PackageId>
+		<DebugType>embedded</DebugType>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
@@ -23,11 +24,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.89" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
+		<PackageReference Include="Dapper" Version="2.1.100" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="11.0.0" />
-		<!-- Below pinned until they update SqlClient -->
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
 	</ItemGroup>
 
 </Project>

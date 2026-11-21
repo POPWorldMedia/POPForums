@@ -5,7 +5,7 @@ POP Forums
 
 A forum and Q&A application with real-time updating, image uploading and private message chat in multiple languages.
 
-The main branch is now the work-in-progress for future versions running on .NET 11+. The v22.x branch is v22.x, running on .NET 10. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
+The main branch is now the work-in-progress for future versions running on .NET 11+. The v23.x branch is v23.x, running on .NET 11. If you're looking for the version that works on .NET Framework 4.5+ with MVC 5, check out v13.0.2.
 
 Roadmap:
 v23 is a significant release that includes subscriptions with Stripe integration, user badging and a ton of other changes. Check the release or version history in the docs for the specifics.
@@ -19,7 +19,7 @@ https://popforumsdev.azurewebsites.net/Forums
 [![Build Status](https://dev.azure.com/popw/POP%20Forums/_apis/build/status%2FPOPWorldMedia.POPForums?branchName=main)](https://dev.azure.com/popw/POP%20Forums/_build/latest?definitionId=19&branchName=main)
 
 Latest release:  
-https://github.com/POPWorldMedia/POPForums/releases/tag/v22.0.0  
+https://github.com/POPWorldMedia/POPForums/releases/tag/v23.0.0  
 Packages available on NuGet.
 
 The latest CI build packages can be found with these feeds (requires GitHub auth):  

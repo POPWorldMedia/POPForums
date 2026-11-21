@@ -36,5 +36,3 @@ OTHER LICENSES:
 NSubstitute: BSD 3-Clause
 .NET Core, ASP.NET Core, Bootstrap, popper.js, MailKit, TinyMCE: MIT
 SignalR, xunit: Apache 2.0
-ImageSharp: Apache 2.0 as long as you meet the open source and/or revenue stipulations 
-indicated in their license: https://github.com/SixLabors/ImageSharp/blob/main/LICENSE

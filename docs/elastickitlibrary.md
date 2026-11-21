@@ -5,7 +5,7 @@ nav_order: 7
 ---
 # Using ElasticKit Library
 The `PopForums.ElasticKit` library makes it possible to wire up the following scenarios:
-* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x,v17.x and v18.x, v19.x uses v7.x of ElasticSearch. v20.x and v21.x uses v8.x of ElasticSearch. v22.x uses v9.x of ElasticSearch. For prior versions, please see the `docs` folder in those branches. Configuration is significantly different for >=v22.1, and is a breaking change._
+* Use ElasticSearch for search instead of the built-in search indexing. _Important: The client library referenced in v15.x is designed to work against v6.x of ElasticSearch, while v16.x,v17.x and v18.x, v19.x uses v7.x of ElasticSearch. v20.x and v21.x uses v8.x of ElasticSearch. v22.x and v23.x use v9.x of ElasticSearch. For prior versions, please see the `docs` folder in those branches. Configuration is significantly different for >=v22.1, and is a breaking change._
 
 ElasticSearch can run quite literally anywhere in a docker container or straight up in a VM, if that's your thing. Also keep in mind that the implementation that AWS uses is actually a fork, so there are some differences about how the managed service is, uh, managed. Elastic runs in _all_ of the major clouds and is generally reasonably priced.
 

@@ -7,6 +7,7 @@
 		<TargetFramework>net11.0</TargetFramework>
 	  <AssemblyName>PopForums.AzureKit</AssemblyName>
 	  <PackageId>PopForums.AzureKit</PackageId>
+	  <DebugType>embedded</DebugType>
 	  <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 	  <PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>
@@ -22,13 +23,13 @@
 
   <ItemGroup>
 	<PackageReference Include="Azure.Data.Tables" Version="12.13.0" />
-    <PackageReference Include="Azure.Search.Documents" Version="12.0.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.30.1" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.28.1" />
+    <PackageReference Include="Azure.Search.Documents" Version="12.1.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.30.2" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.28.2" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="3.4.31" />
+    <PackageReference Include="StackExchange.Redis" Version="3.4.35" />
   </ItemGroup>
 
 </Project>

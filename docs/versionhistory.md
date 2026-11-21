@@ -7,9 +7,10 @@ nav_order: 4
 
 Here's a partial version history that shows how POP Forums has evolved over the years. It's fun to look back at some of the things we now take for granted in a forum app.
 
-## Version v23.0.0 (xx/xx/26)
+## Version v23.0.0 (11/21/26)
 
-### Breaking changes
+### Breaking Changes
+* Database changes for subscriptions and badges. Run `PopForums22to23.sql` from the `PopForums.Sql` project before deploying.
 * Removed the `PopForums:Search:Provider` setting. The functions host now chooses its search provider by calling `AddPopForumsAzureSearch()` or `AddPopForumsElasticSearch()` in `Program.cs`, the same as the web app. Use one of these if you're using the associated search provider. ElasticSearch now always uses `Search:Url`, and uses `Search:Key` only when it's set. Previously, the functions host used a config value to choose the provider.
 * Removed the dependency on SixLabors.ImageSharp. Avatars, profile photos and post images are now resized in the browser before upload, and the server only reads the image header to check the format (JPEG, PNG or GIF) and the size limits, without decoding the image. Uploads that are over the limits are rejected instead of resized, so anything that uploads without the forum's own front end must resize first. The avatar and photo KB limits are now enforced, too.
   * `IImageService.ConstrainResize()` is gone. Use the new `IImageInspector.Validate()` to check an image. It's registered in DI like the other services, so you can replace it, e.g. to accept other formats.
@@ -20,7 +21,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
   * `IReCaptchaService` and `ReCaptchaResponse` are now `ITurnstileService` and `TurnstileResponse`, and the `IConfig` properties are now `UseTurnstile`, `TurnstileSiteKey` and `TurnstileSecretKey`.
   * `SecurityLogType.ReCaptchaFailed` is now `CaptchaFailed`, with the same value. Its log entries now include Turnstile's error codes.
 
-### Change log
+### What's New?
 * Enable subscriptions with Stripe integration #426
 * User badges #453
 * Update to .NET 11 #460
@@ -57,6 +58,7 @@ Here's a partial version history that shows how POP Forums has evolved over the 
 * BUG: Rare but potential race condition in app startup if db is not available #415
 * BUG: Text parser can persist naughty strings in PM's #438
 * BUG: Login not considering target of redirect #410
+* Embed debug symbols (PDBs) in the NuGet packages, with Source Link, so you can step into POP Forums code when debugging.
 
 ## Version v21.1.0 (PopForums.ElasticKit only, 12/16/25)
 * The ElasticSearch key value in the configuration should simply be the API key, which is a more modern convention used in Elastic's cloud service.

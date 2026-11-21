@@ -6,6 +6,7 @@
 		<TargetFramework>net11.0</TargetFramework>
 		<AssemblyName>PopForums.AzureKit.Functions</AssemblyName>
 		<PackageId>PopForums.AzureKit.Functions</PackageId>
+		<DebugType>embedded</DebugType>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<PackageProjectUrl>https://github.com/POPWorldMedia/POPForums</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/POPWorldMedia/POPForums</RepositoryUrl>

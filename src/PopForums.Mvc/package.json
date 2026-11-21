@@ -7,8 +7,8 @@
     "axios": "1.21.1",
     "bootstrap": "5.3.9",
     "tinymce": "8.10.2",
-    "vue": "3.5.45",
-    "vue-router": "5.5.0"
+    "vue": "3.5.46",
+    "vue-router": "5.5.1"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
